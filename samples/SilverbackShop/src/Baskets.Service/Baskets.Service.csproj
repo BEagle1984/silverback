@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.2" />
+    <PackageReference Include="Silverback.Core" Version="1.0.0" />
+    <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="1.0.0" />
+    <PackageReference Include="Silverback.Integration" Version="1.0.13-alpha" />
+    <PackageReference Include="Silverback.Integration.FileSystem" Version="1.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Baskets.Domain\Baskets.Domain.csproj" />
+    <ProjectReference Include="..\Baskets.Infrastructure\Baskets.Infrastructure.csproj" />
+    <ProjectReference Include="..\Common.Data\Common.Data.csproj" />
+    <ProjectReference Include="..\Common.Domain\Common.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Silverback.Core">
+      <HintPath>..\..\libs\Silverback.Core\netstandard2.0\Silverback.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

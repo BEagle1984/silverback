@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Silverback</RootNamespace>
+    <Authors>BEagle1984</Authors>
+    <Company>Silverback</Company>
+    <Description>The Silverback framework enables fast and flexible development of resilient .NET microservices.
+This package contains a file system based implementation of a rudimental message broker. (just for testing)</Description>
+    <PackageLicenseUrl>https://github.com/BEagle1984/silverback-testing/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/BEagle1984/silverback-testing</PackageProjectUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Silverback.Integration" Version="1.0.13-alpha" />
+  </ItemGroup>
+
+</Project>
