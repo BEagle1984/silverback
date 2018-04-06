@@ -14,7 +14,7 @@ $sources =
     ("Silverback.Core", "..\silverback-core\src\Silverback.Core\bin\Debug"),
     ("Silverback.Core.EntityFrameworkCore", "..\silverback-core\src\Silverback.Core.EntityFrameworkCore\bin\Debug"),
 	("Silverback.Integration", "..\silverback-integration\src\Silverback.Integration\bin\Debug"),
-	("Silverback.Testing", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\Debug")
+	("Silverback.Integration.FileSystem", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\Debug")
 
 function Check-Location()
 {
