@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Configuration
             where TMessage : IIntegrationMessage
         {
             config.Bus.Subscribe(messages => new OutboundSubscriber<TMessage>(
-                messages.OfType<TMessage>(), config.TypeFactory, adapterType, endpoint));
+                messages, config.TypeFactory, adapterType, endpoint));
             return config;
         }
 
@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Configuration
             where TAdapter : IOutboundAdapter
         {
             config.Bus.Subscribe(messages => new OutboundSubscriber<TMessage>(
-                messages.OfType<TMessage>(), config.TypeFactory, typeof(TAdapter), endpoint));
+                messages, config.TypeFactory, typeof(TAdapter), endpoint));
             return config;
         }
 
@@ -94,17 +94,16 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages.</typeparam>
         /// <typeparam name="TIntegrationMessage">The type of the integration message.</typeparam>
-        /// <typeparam name="THandler">Type of the <see cref="IMessageHandler{TMessage}" /> to be used to handle the messages.</typeparam>
+        /// <typeparam name="THandler">Type of the <see cref="IMessageHandler" /> to be used to handle the messages.</typeparam>
         /// <param name="config">The configuration.</param>
-        /// <param name="filter">An optional filter to be applied to the published messages.</param>
         /// <returns></returns>
-        public static BusConfig AddTranslator<TMessage, TIntegrationMessage, THandler>(this BusConfig config, Func<TMessage, bool> filter = null)
+        public static BusConfig AddTranslator<TMessage, TIntegrationMessage, THandler>(this BusConfig config)
             where TMessage : IMessage
             where TIntegrationMessage : IIntegrationMessage
             where THandler : MessageTranslator<TMessage, TIntegrationMessage>
         {
-            config.Bus.Subscribe(messages => new DefaultSubscriber<TMessage>(
-                messages.OfType<TMessage>(), config.TypeFactory, typeof(THandler), filter));
+            config.Bus.Subscribe(messages => new DefaultSubscriber(
+                messages, config.TypeFactory, typeof(THandler)));
             return config;
         }
         
@@ -121,11 +120,10 @@ namespace Silverback.Messaging.Configuration
             where TMessage : IMessage
             where TIntegrationMessage : IIntegrationMessage
         {
-            config.Bus.Subscribe(messages => new DefaultSubscriber<TMessage>(
-                messages.OfType<TMessage>(),
-                new GenericTypeFactory(_ => new GenericMessageTranslator<TMessage, TIntegrationMessage>(mapper, config.Bus)),
-                typeof(GenericMessageHandler<IMessage>),
-                filter));
+            config.Bus.Subscribe(messages => new DefaultSubscriber(
+                messages,
+                new GenericTypeFactory(_ => new GenericMessageTranslator<TMessage, TIntegrationMessage>(mapper, config.Bus, filter)),
+                typeof(IMessageHandler)));
             return config;
         }
 

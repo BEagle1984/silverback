@@ -1,4 +1,5 @@
-﻿using Silverback.Messaging.Messages;
+﻿using System;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Adapters
 {
@@ -16,7 +17,9 @@ namespace Silverback.Messaging.Adapters
         /// Initializes a new instance of the <see cref="MessageTranslator{TMessage, TIntegrationMessage}"/> class.
         /// </summary>
         /// <param name="bus">The bus.</param>
-        protected MessageTranslator(IBus bus)
+        /// <param name="filter">An optional filter to be applied to the messages</param>
+        protected MessageTranslator(IBus bus, Func<TMessage, bool> filter = null)
+            : base(filter)
         {
             _bus = bus;
         }
