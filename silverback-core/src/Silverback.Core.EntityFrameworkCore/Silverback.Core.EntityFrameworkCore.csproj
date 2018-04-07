@@ -12,10 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+    <PackageReference Include="Silverback.Core" Version="1.0.1" />
   </ItemGroup>
 
 </Project>
