@@ -21,8 +21,9 @@ namespace Silverback.Messaging.Adapters
         /// </summary>
         /// <param name="mapper">The mapper.</param>
         /// <param name="bus">The bus.</param>
-        public GenericMessageTranslator(Func<TMessage, TIntegrationMessage> mapper, IBus bus)
-            : base(bus)
+        /// <param name="filter">An optional filter to be applied to the messages</param>
+        public GenericMessageTranslator(Func<TMessage, TIntegrationMessage> mapper, IBus bus, Func<TMessage, bool> filter = null)
+            : base(bus, filter)
         {
             _mapper = mapper;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Text;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Messages;
@@ -7,12 +8,12 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging
 {
     /// <summary>
-    /// The standard subscriber used to attach the <see cref="IOutboundAdapter{TMessage}"/>, suitable for most cases.
-    /// In more advanced use cases, when a greater degree of flexibility is required, it is advised to create an ad-hoc implementation of <see cref="Subscriber{TMessage}"/>. 
+    /// The standard subscriber used to attach the <see cref="IOutboundAdapter"/>, suitable for most cases.
+    /// In more advanced use cases, when a greater degree of flexibility is required, it is advised to create an ad-hoc implementation of <see cref="Subscriber"/>.
     /// </summary>
     /// <typeparam name="TMessage">The type of the message.</typeparam>
-    /// <seealso cref="Silverback.Messaging.DefaultSubscriber{TMessage}" />
-    public class OutboundSubscriber<TMessage> : Subscriber<TMessage>
+    /// <seealso cref="Silverback.Messaging.DefaultSubscriber" />
+    public class OutboundSubscriber<TMessage> : Subscriber
         where TMessage : IIntegrationMessage
     {
         private readonly ITypeFactory _typeFactory;
@@ -23,10 +24,10 @@ namespace Silverback.Messaging
         /// Initializes a new instance of the <see cref="OutboundSubscriber{TMessage}" /> class.
         /// </summary>
         /// <param name="messages">The observable stream of messages.</param>
-        /// <param name="typeFactory">The <see cref="ITypeFactory" /> that will be used to get an <see cref="IMessageHandler{TMessage}" /> instance to process each received message.</param>
-        /// <param name="handlerType">Type of the <see cref="IMessageHandler{TMessage}" /> to be used to handle the messages.</param>
+        /// <param name="typeFactory">The <see cref="ITypeFactory" /> that will be used to get an <see cref="IMessageHandler" /> instance to process each received message.</param>
+        /// <param name="handlerType">Type of the <see cref="IMessageHandler" /> to be used to handle the messages.</param>
         /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter"/>.</param>
-        public OutboundSubscriber(IObservable<TMessage> messages, ITypeFactory typeFactory, Type handlerType, IEndpoint endpoint)
+        public OutboundSubscriber(IObservable<IMessage> messages, ITypeFactory typeFactory, Type handlerType, IEndpoint endpoint)
             : base(messages)
         {
             _typeFactory = typeFactory ?? throw new ArgumentNullException(nameof(typeFactory));
@@ -43,15 +44,19 @@ namespace Silverback.Messaging
         /// Called when a message is published.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <exception cref="InvalidOperationException"></exception>
-        protected override void OnNext(TMessage message)
+        protected override void OnNext(IMessage message)
         {
+            // TODO: Trace
+
+            if (!(message is TMessage))
+                return;
+
             var handler = (IOutboundAdapter)_typeFactory.GetInstance(_handlerType);
 
             if (handler == null)
                 throw new InvalidOperationException($"Couldn't instantiate message handler of type {_handlerType}.");
 
-            handler.Relay(message, _endpoint);
+            handler.Relay((IIntegrationMessage)message, _endpoint);
         }
     }
 }

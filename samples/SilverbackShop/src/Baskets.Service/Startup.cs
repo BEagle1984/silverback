@@ -17,6 +17,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -87,10 +88,7 @@ namespace Baskets.Service
             var bus = app.ApplicationServices.GetService<IBus>();
             bus.Config()
                 .WithFactory(t => app.ApplicationServices.GetService(t))
-                .Subscribe<InventoryMultiMessageHandler>()
-                .AddOutbound<SimpleOutboundAdapter>(BasicEndpoint.Create("basket-events"));
-
-            MessagesMappingsConfigurator.Configure(bus);
+                .ConfigureUsing<BasketsDomainMessagingConfigurator>();
 
             // Init data
             var db = app.ApplicationServices.GetService<BasketsContext>();

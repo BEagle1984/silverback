@@ -5,7 +5,6 @@ namespace Silverback.Domain
     /// <summary>
     /// Represent an event published by an aggregate root or an entity.
     /// </summary>
-    /// <typeparam name="T">The type of the source entity.</typeparam>
     /// <seealso cref="IEvent" />
     public interface IDomainEvent : IEvent
     {

@@ -4,7 +4,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging
 {
     /// <summary>
-    /// Handles the <see cref="IMessage"/> of type <see cref="TMessage"/> executing the provided action.
+    /// Handles the <see cref="IMessage"/> of type TMessage executing the provided action.
     /// </summary>
     /// <typeparam name="TMessage">The type of <see cref="IMessage"/> to be handled.</typeparam>
     /// <seealso cref="MessageHandler{TMessage}" />

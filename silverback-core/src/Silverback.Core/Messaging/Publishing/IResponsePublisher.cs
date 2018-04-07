@@ -12,14 +12,12 @@ namespace Silverback.Messaging.Publishing
         /// <summary>
         /// Sends the specified response to the bus.
         /// </summary>
-        /// <typeparam name="TResponse">The type of the response.</typeparam>
         /// <param name="message">The response.</param>
         void Reply(TResponse message);
 
         /// <summary>
         /// Sends the specified response to the bus.
         /// </summary>
-        /// <typeparam name="TResponse">The type of the response.</typeparam>
         /// <param name="message">The response.</param>
         Task ReplyAsync(TResponse message);
     }

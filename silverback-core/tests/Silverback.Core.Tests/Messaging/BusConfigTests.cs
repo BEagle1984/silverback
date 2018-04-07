@@ -3,6 +3,7 @@ using NSubstitute;
 using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
+using Silverback.Tests.TestTypes.Configuration;
 using Silverback.Tests.TestTypes.Domain;
 using Silverback.Tests.TestTypes.Handlers;
 using Silverback.Tests.TestTypes.Subscribers;
@@ -17,6 +18,7 @@ namespace Silverback.Tests.Messaging
         {
             TestCommandOneHandler.Counter = 0;
             TestCommandTwoHandler.Counter = 0;
+            FakeConfigurator.Executed = false;
         }
 
         [Test]
@@ -98,6 +100,18 @@ namespace Silverback.Tests.Messaging
                 bus.Publish(new TestCommandTwo());
 
                 Assert.That(TestCustomSubscriber.Counter, Is.EqualTo(5));
+            }
+        }
+
+        [Test]
+        public void ConfigureUsingTest()
+        {
+            using (var bus = new Bus())
+            {
+                bus.Config()
+                    .ConfigureUsing<FakeConfigurator>();
+
+                Assert.That(FakeConfigurator.Executed, Is.True);
             }
         }
     }

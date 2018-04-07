@@ -19,8 +19,8 @@ namespace Silverback.Messaging
         /// Initializes a new instance of the <see cref="DefaultSubscriber" /> class.
         /// </summary>
         /// <param name="messages">The observable stream of messages.</param>
-        /// <param name="typeFactory">The <see cref="ITypeFactory" /> that will be used to get an <see cref="IMessageHandler{TMessage}" /> instance to process each received message.</param>
-        /// <param name="handlerType">Type of the <see cref="IMessageHandler{TMessage}" /> to be used to handle the messages.</param>
+        /// <param name="typeFactory">The <see cref="ITypeFactory" /> that will be used to get an <see cref="IMessageHandler" /> instance to process each received message.</param>
+        /// <param name="handlerType">Type of the <see cref="IMessageHandler" /> to be used to handle the messages.</param>
         public DefaultSubscriber(IObservable<IMessage> messages, ITypeFactory typeFactory, Type handlerType)
             : base(messages)
         {

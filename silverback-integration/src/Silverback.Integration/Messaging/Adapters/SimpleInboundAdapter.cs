@@ -15,7 +15,6 @@ namespace Silverback.Messaging.Adapters
     {
         private IBus _bus;
         private IConsumer _consumer;
-        private IMessageSerializer _serializer;
 
         /// <summary>
         /// Initializes the <see cref="T:Silverback.Messaging.Adapters.IInboundAdapter" />.
