@@ -9,9 +9,8 @@ namespace Silverback.Messaging
     /// Handles the <see cref="IMessage"/> of type <see cref="TMessage"/>.
     /// </summary>
     /// <typeparam name="TMessage">The type of <see cref="IMessage"/> to be handled.</typeparam>
-    /// <seealso cref="Silverback.Messaging.IMessageHandler{TMessage}" />
     /// <seealso cref="Silverback.Messaging.IMessageHandler" />
-    public abstract class MessageHandler<TMessage> : IMessageHandler<TMessage>
+    public abstract class MessageHandler<TMessage> : IMessageHandler
         where TMessage : IMessage
     {
         /// <summary>

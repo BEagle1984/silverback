@@ -42,6 +42,26 @@ namespace Silverback.Tests.Messaging
             }
         }
 
+
+        [Test]
+        public void SubscribeUntypedHandlerMethodTest()
+        {
+            using (var bus = new Bus())
+            {
+                int counter = 0;
+
+                bus.Config().Subscribe(m => counter++);
+
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandTwo());
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandTwo());
+                bus.Publish(new TestCommandTwo());
+
+                Assert.That(counter, Is.EqualTo(5));
+            }
+        }
+
         [Test]
         public void SubscribeHandlerTest()
         {
@@ -49,8 +69,8 @@ namespace Silverback.Tests.Messaging
             {
                 bus.Config()
                     .WithFactory(t => (IMessageHandler)Activator.CreateInstance(t))
-                    .Subscribe<TestCommandOne, TestCommandOneHandler>()
-                    .Subscribe<TestCommandTwo, TestCommandTwoHandler>();
+                    .Subscribe<TestCommandOneHandler>()
+                    .Subscribe<TestCommandTwoHandler>();
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -69,8 +89,7 @@ namespace Silverback.Tests.Messaging
             using (var bus = new Bus())
             {
                 bus.Config()
-                    .Subscribe<TestCommandOne>(o => new TestCommandOneSubscriber(o))
-                    .Subscribe<TestCommandTwo>(o => new TestCommandTwoSubscriber(o));
+                    .Subscribe(o => new TestCustomSubscriber(o));
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -78,8 +97,7 @@ namespace Silverback.Tests.Messaging
                 bus.Publish(new TestCommandTwo());
                 bus.Publish(new TestCommandTwo());
 
-                Assert.That(TestCommandOneSubscriber.Counter, Is.EqualTo(2));
-                Assert.That(TestCommandTwoSubscriber.Counter, Is.EqualTo(3));
+                Assert.That(TestCustomSubscriber.Counter, Is.EqualTo(5));
             }
         }
     }

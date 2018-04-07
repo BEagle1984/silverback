@@ -1,18 +1,19 @@
 ﻿using System;
 using Silverback.Messaging;
+using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes.Domain;
 
 namespace Silverback.Tests.TestTypes.Subscribers
 {
-    public class TestCommandOneSubscriber : Subscriber<TestCommandOne>
+    public class TestCustomSubscriber : Subscriber
     {
         public static int Counter { get; set; }
 
-        public TestCommandOneSubscriber(IObservable<TestCommandOne> messages) : base(messages)
+        public TestCustomSubscriber(IObservable<IMessage> messages) : base(messages)
         {
         }
 
-        protected override void OnNext(TestCommandOne message)
+        protected override void OnNext(IMessage message)
         {
             Counter++;
         }
