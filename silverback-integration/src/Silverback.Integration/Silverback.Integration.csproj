@@ -13,7 +13,7 @@ This package enables communication between them in a flexible and abstracted way
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType />
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.0.13-alpha</Version>
+    <Version>1.0.14</Version>
 	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
   </PropertyGroup>
 
