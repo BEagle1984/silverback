@@ -59,8 +59,6 @@ namespace Silverback.Messaging
         /// Sends the specified message to the message broker.
         /// </summary>
         /// <param name="message">The original message.</param>
-        /// <param name="serializedMessage">The serialized <see cref="IEnvelope"/> including the <see cref="IIntegrationMessage"/>.
-        /// This is what is supposed to be sent through the broker.</param>
         /// <param name="endpoint">The message broker endpoint.</param>
         protected virtual void SendMessage(IIntegrationMessage message, IEndpoint endpoint)
             => endpoint.GetProducer().Produce(Envelope.Create(message));

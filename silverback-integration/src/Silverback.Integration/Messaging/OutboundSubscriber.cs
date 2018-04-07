@@ -7,7 +7,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging
 {
     /// <summary>
-    /// The standard subscriber used to attach the <see cref="IOutboundAdapter{TMessage}"/>, suitable for most cases.
+    /// The standard subscriber used to attach the <see cref="IOutboundAdapter"/>, suitable for most cases.
     /// In more advanced use cases, when a greater degree of flexibility is required, it is advised to create an ad-hoc implementation of <see cref="Subscriber{TMessage}"/>. 
     /// </summary>
     /// <typeparam name="TMessage">The type of the message.</typeparam>
