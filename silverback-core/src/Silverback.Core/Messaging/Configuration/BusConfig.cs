@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Configuration
 
         #endregion
 
-        #region WithMessageHandlerProvider
+        #region WithFactory
 
         /// <summary>
         /// Set the function to be used to dinamically instantiate the types needed to handle the messages.
@@ -126,5 +126,20 @@ namespace Silverback.Messaging.Configuration
 
         #endregion
 
+        #region ConfigureUsing
+
+        /// <summary>
+        /// Apply the specified <see cref="IConfigurator"/>.
+        /// </summary>
+        /// <typeparam name="TConfig">The type of the <see cref="IConfigurator"/>.</typeparam>
+        /// <returns></returns>
+        public BusConfig ConfigureUsing<TConfig>()
+            where TConfig : IConfigurator, new()
+        {
+            new TConfig().Configure(this);
+            return this;
+        }
+
+        #endregion
     }
 }

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Integration" Version="1.0.13-alpha" />
+    <PackageReference Include="Silverback.Integration" Version="1.0.15" />
   </ItemGroup>
 
 </Project>

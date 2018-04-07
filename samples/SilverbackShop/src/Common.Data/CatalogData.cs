@@ -8,11 +8,11 @@ namespace Common.Data
         {
             get
             {
-                yield return "A1112";
-                yield return "A1134";
-                yield return "A1167";
-                yield return "B2414";
-                yield return "C0344";
+                yield return "A1";
+                yield return "A2";
+                yield return "A3";
+                yield return "B2";
+                yield return "C3";
             }
         }
     }
