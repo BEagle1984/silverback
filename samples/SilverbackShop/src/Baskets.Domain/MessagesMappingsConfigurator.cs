@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Baskets.Domain.Events;
+using Baskets.Domain.Model.BasketAggregate;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 

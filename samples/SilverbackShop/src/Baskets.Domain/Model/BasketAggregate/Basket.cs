@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Baskets.Domain.Events;
 using Common.Domain;
 using Silverback.Domain;
 

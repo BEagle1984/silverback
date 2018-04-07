@@ -1,8 +1,8 @@
 ﻿using System;
 using Baskets.Domain;
-using Baskets.Domain.Events;
-using Baskets.Domain.Events.Handlers;
+using Baskets.Domain.MessageHandlers;
 using Baskets.Domain.Model;
+using Baskets.Domain.Model.BasketAggregate;
 using Baskets.Domain.Repositories;
 using Baskets.Domain.Services;
 using Baskets.Infrastructure;
@@ -53,7 +53,7 @@ namespace Baskets.Service
             services.AddScoped<IBasketsRepository, BasketsRepository>();
             services.AddScoped<IInventoryItemRepository, InventoryItemRepository>();
 
-            services.AddTransient<BasketCheckoutEventHandler>();
+            services.AddTransient<InventoryMultiMessageHandler>();
             services.AddTransient<SimpleOutboundAdapter>();
 
             // TODO: Create extension method services.AddBus() in Silverback.AspNetCore
@@ -80,13 +80,14 @@ namespace Baskets.Service
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Baskets API V1");
             });
 
-            // TODO: Create extension method app.UseBus() in Silverback.AspNetCore
+            // TODO: Create extension method app.UseBrokers() in Silverback.AspNetCore
             BrokersConfig.Instance.Add<FileSystemBroker>(c => c.OnPath(@"D:\Temp\Broker\SilverbackShop"));
 
+            // TODO: Create extension method app.UseBus() in Silverback.AspNetCore
             var bus = app.ApplicationServices.GetService<IBus>();
             bus.Config()
                 .WithFactory(t => app.ApplicationServices.GetService(t))
-                .Subscribe<BasketCheckoutEvent, BasketCheckoutEventHandler>()
+                .Subscribe<InventoryMultiMessageHandler>()
                 .AddOutbound<SimpleOutboundAdapter>(BasicEndpoint.Create("basket-events"));
 
             MessagesMappingsConfigurator.Configure(bus);
