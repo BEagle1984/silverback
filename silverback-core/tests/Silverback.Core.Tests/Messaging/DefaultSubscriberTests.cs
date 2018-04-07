@@ -26,7 +26,7 @@ namespace Silverback.Tests.Messaging
         {
             using (var bus = new Bus())
             {
-                bus.Subscribe(o => new DefaultSubscriber<IMessage>(o, _typeFactory, typeof(IMessageHandler<IMessage>)));
+                bus.Subscribe(o => new DefaultSubscriber(o, _typeFactory, typeof(IMessageHandler)));
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandOne());
@@ -35,29 +35,6 @@ namespace Silverback.Tests.Messaging
                 _mockHandler.Received(3).Handle(Arg.Any<ICommand>());
                 _mockHandler.Received(2).Handle(Arg.Any<TestCommandOne>());
                 _mockHandler.Received(1).Handle(Arg.Any<TestCommandTwo>());
-            }
-        }
-
-        [Test]
-        public void FilteringTest()
-        {
-            using (var bus = new Bus())
-            {
-                bus.Subscribe(o => new DefaultSubscriber<IMessage>(o, _typeFactory, typeof(IMessageHandler<IMessage>),
-                    m => m is TestCommandTwo && ((TestCommandTwo)m).Message == "A"));
-
-                bus.Publish(new TestCommandTwo { Message = "B" });
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandTwo { Message = "A" });
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandTwo { Message = "B" });
-                bus.Publish(new TestCommandTwo { Message = "A" });
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandOne());
-
-                _mockHandler.DidNotReceive().Handle(Arg.Any<TestCommandOne>());
-                _mockHandler.Received(2).Handle(Arg.Any<TestCommandTwo>());
             }
         }
     }

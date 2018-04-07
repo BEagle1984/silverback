@@ -7,11 +7,11 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Tests.TestTypes
 {
-    public class FakeBroker : Broker
+    public class TestBroker : Broker
     {
         public string ServerName { get; private set; }
 
-        public FakeBroker UseServer(string name)
+        public TestBroker UseServer(string name)
         {
             ServerName = name;
             return this;
@@ -22,9 +22,9 @@ namespace Silverback.Tests.TestTypes
         private readonly List<Action<byte[]>> _consumers = new List<Action<byte[]>>();
 
         public override IProducer GetProducer(IEndpoint endpoint)
-            => new FakeProducer(endpoint);
+            => new TestProducer(endpoint);
 
         public override IConsumer GetConsumer(IEndpoint endpoint)
-            => new FakeConsumer(endpoint, _consumers);
+            => new TestConsumer(endpoint, _consumers);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Silverback.Messaging;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Core.Tests.TestTypes.Handlers
+namespace Silverback.Tests.TestTypes.Handlers
 {
     public class TestCommandTwoHandler : MessageHandler<TestCommandTwo>
     {

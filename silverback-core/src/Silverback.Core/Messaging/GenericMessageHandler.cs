@@ -17,9 +17,11 @@ namespace Silverback.Messaging
         /// Initializes a new instance of the <see cref="GenericMessageHandler{TMessage}"/> class.
         /// </summary>
         /// <param name="handler">The handler.</param>
-        public GenericMessageHandler(Action<TMessage> handler)
+        /// <param name="filter">An optional filter to be applied to the messages</param>
+        public GenericMessageHandler(Action<TMessage> handler, Func<TMessage, bool> filter = null)
+            : base(filter)
         {
-            _handler = handler;
+            _handler = handler ?? throw new ArgumentNullException(nameof(handler));
         }
 
         /// <summary>

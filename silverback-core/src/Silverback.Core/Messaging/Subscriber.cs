@@ -6,18 +6,16 @@ namespace Silverback.Messaging
     /// <summary>
     /// The base class for all subscribers.
     /// </summary>
-    /// <typeparam name="TMessage">The type of the subscribed message.</typeparam>
-    public abstract class Subscriber<TMessage> : IDisposable
-         where TMessage : IMessage
+    public abstract class Subscriber : IDisposable
     {
         private readonly IDisposable _subscription;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultSubscriber{TMessage}" /> class.
+        /// Initializes a new instance of the <see cref="Subscriber" /> class.
         /// </summary>
         /// <param name="messages">The observable stream of messages.</param>
         /// <exception cref="System.ArgumentNullException">messages</exception>
-        protected Subscriber(IObservable<TMessage> messages)
+        protected Subscriber(IObservable<IMessage> messages)
         {
             if (messages == null) throw new ArgumentNullException(nameof(messages));
 
@@ -29,7 +27,7 @@ namespace Silverback.Messaging
         /// Called when a message is published.
         /// </summary>
         /// <param name="message">The message.</param>
-        protected abstract void OnNext(TMessage message);
+        protected abstract void OnNext(IMessage message);
 
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
@@ -53,7 +51,7 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="Subscriber{TMessage}"/> class.
+        /// Finalizes an instance of the <see cref="Subscriber"/> class.
         /// </summary>
         ~Subscriber()
         {

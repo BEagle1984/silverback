@@ -30,8 +30,8 @@ namespace Silverback.Tests.Messaging
         public void GetBrokerTest()
         {
             BrokersConfig.Instance
-                .Add<FakeBroker>(c => c.UseServer("server1").WithName("broker1"))
-                .Add<FakeBroker>(c => c.UseServer("server2").WithName("broker2"));
+                .Add<TestBroker>(c => c.UseServer("server1").WithName("broker1"))
+                .Add<TestBroker>(c => c.UseServer("server2").WithName("broker2"));
 
             var endpoint = BasicEndpoint.Create("test").UseBroker("broker2");
 
@@ -44,22 +44,22 @@ namespace Silverback.Tests.Messaging
         public void GetBrokerTypedTest()
         {
             BrokersConfig.Instance
-                .Add<FakeBroker>(c => c.UseServer("server1").WithName("broker1"))
-                .Add<FakeBroker>(c => c.UseServer("server2").WithName("broker2"));
+                .Add<TestBroker>(c => c.UseServer("server1").WithName("broker1"))
+                .Add<TestBroker>(c => c.UseServer("server2").WithName("broker2"));
 
             var endpoint = BasicEndpoint.Create("test").UseBroker("broker2");
 
             Assert.That(endpoint, Is.Not.Null);
             Assert.That(endpoint.GetBroker(), Is.Not.Null);
-            Assert.That(endpoint.GetBroker<FakeBroker>().ServerName, Is.EqualTo("server2"));
+            Assert.That(endpoint.GetBroker<TestBroker>().ServerName, Is.EqualTo("server2"));
         }
 
         [Test]
         public void GetDefaultBrokerConfigurationTest()
         {
             BrokersConfig.Instance
-                .Add<FakeBroker>(c => c.UseServer("server1").WithName("broker1"))
-                .Add<FakeBroker>(c => c.UseServer("server2").WithName("broker2").AsDefault());
+                .Add<TestBroker>(c => c.UseServer("server1").WithName("broker1"))
+                .Add<TestBroker>(c => c.UseServer("server2").WithName("broker2").AsDefault());
 
             var endpoint = BasicEndpoint.Create("test");
 

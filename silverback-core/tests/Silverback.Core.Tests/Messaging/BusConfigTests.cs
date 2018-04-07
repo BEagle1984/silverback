@@ -1,17 +1,24 @@
 ﻿using System;
 using NSubstitute;
 using NUnit.Framework;
-using Silverback.Core.Tests.TestTypes.Handlers;
-using Silverback.Core.Tests.TestTypes.Subscribers;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.TestTypes.Domain;
+using Silverback.Tests.TestTypes.Handlers;
+using Silverback.Tests.TestTypes.Subscribers;
 
 namespace Silverback.Tests.Messaging
 {
     [TestFixture]
     public class BusConfigTests
     {
+        [SetUp]
+        public void Setup()
+        {
+            TestCommandOneHandler.Counter = 0;
+            TestCommandTwoHandler.Counter = 0;
+        }
+
         [Test]
         public void SubscribeHandlerMethodTest()
         {
@@ -35,18 +42,35 @@ namespace Silverback.Tests.Messaging
             }
         }
 
+
+        [Test]
+        public void SubscribeUntypedHandlerMethodTest()
+        {
+            using (var bus = new Bus())
+            {
+                int counter = 0;
+
+                bus.Config().Subscribe(m => counter++);
+
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandTwo());
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandTwo());
+                bus.Publish(new TestCommandTwo());
+
+                Assert.That(counter, Is.EqualTo(5));
+            }
+        }
+
         [Test]
         public void SubscribeHandlerTest()
         {
             using (var bus = new Bus())
             {
-                TestCommandOneHandler.Counter = 0;
-                TestCommandTwoHandler.Counter = 0;
-
                 bus.Config()
                     .WithFactory(t => (IMessageHandler)Activator.CreateInstance(t))
-                    .Subscribe<TestCommandOne, TestCommandOneHandler>()
-                    .Subscribe<TestCommandTwo, TestCommandTwoHandler>();
+                    .Subscribe<TestCommandOneHandler>()
+                    .Subscribe<TestCommandTwoHandler>();
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -64,12 +88,8 @@ namespace Silverback.Tests.Messaging
         {
             using (var bus = new Bus())
             {
-                TestCommandOneSubscriber.Counter = 0;
-                TestCommandTwoSubscriber.Counter = 0;
-
                 bus.Config()
-                    .Subscribe<TestCommandOne>(o => new TestCommandOneSubscriber(o))
-                    .Subscribe<TestCommandTwo>(o => new TestCommandTwoSubscriber(o));
+                    .Subscribe(o => new TestCustomSubscriber(o));
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -77,8 +97,7 @@ namespace Silverback.Tests.Messaging
                 bus.Publish(new TestCommandTwo());
                 bus.Publish(new TestCommandTwo());
 
-                Assert.That(TestCommandOneSubscriber.Counter, Is.EqualTo(2));
-                Assert.That(TestCommandTwoSubscriber.Counter, Is.EqualTo(3));
+                Assert.That(TestCustomSubscriber.Counter, Is.EqualTo(5));
             }
         }
     }
