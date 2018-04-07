@@ -1,17 +1,24 @@
 ﻿using System;
 using NSubstitute;
 using NUnit.Framework;
-using Silverback.Core.Tests.TestTypes.Handlers;
-using Silverback.Core.Tests.TestTypes.Subscribers;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.TestTypes.Domain;
+using Silverback.Tests.TestTypes.Handlers;
+using Silverback.Tests.TestTypes.Subscribers;
 
 namespace Silverback.Tests.Messaging
 {
     [TestFixture]
     public class BusConfigTests
     {
+        [SetUp]
+        public void Setup()
+        {
+            TestCommandOneHandler.Counter = 0;
+            TestCommandTwoHandler.Counter = 0;
+        }
+
         [Test]
         public void SubscribeHandlerMethodTest()
         {
@@ -40,9 +47,6 @@ namespace Silverback.Tests.Messaging
         {
             using (var bus = new Bus())
             {
-                TestCommandOneHandler.Counter = 0;
-                TestCommandTwoHandler.Counter = 0;
-
                 bus.Config()
                     .WithFactory(t => (IMessageHandler)Activator.CreateInstance(t))
                     .Subscribe<TestCommandOne, TestCommandOneHandler>()
@@ -64,9 +68,6 @@ namespace Silverback.Tests.Messaging
         {
             using (var bus = new Bus())
             {
-                TestCommandOneSubscriber.Counter = 0;
-                TestCommandTwoSubscriber.Counter = 0;
-
                 bus.Config()
                     .Subscribe<TestCommandOne>(o => new TestCommandOneSubscriber(o))
                     .Subscribe<TestCommandTwo>(o => new TestCommandTwoSubscriber(o));

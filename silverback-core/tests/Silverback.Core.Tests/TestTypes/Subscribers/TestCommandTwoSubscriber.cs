@@ -2,7 +2,7 @@
 using Silverback.Messaging;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Core.Tests.TestTypes.Subscribers
+namespace Silverback.Tests.TestTypes.Subscribers
 {
     public class TestCommandTwoSubscriber : Subscriber<TestCommandTwo>
     {

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Silverback.Messaging;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Core.Tests.TestTypes.Subscribers
+namespace Silverback.Tests.TestTypes.Subscribers
 {
     public class TestCommandOneSubscriber : Subscriber<TestCommandOne>
     {
