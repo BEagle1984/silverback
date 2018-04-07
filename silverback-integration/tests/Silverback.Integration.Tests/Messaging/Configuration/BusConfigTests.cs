@@ -20,7 +20,7 @@ namespace Silverback.Tests.Messaging.Configuration
         public void Setup()
         {
             BrokersConfig.Instance.Clear();
-            BrokersConfig.Instance.Add<FakeBroker>(c => c.UseServer("server"));
+            BrokersConfig.Instance.Add<TestBroker>(c => c.UseServer("server"));
 
             _outboxRepository = new OutboundMessagesRepository();
             _inboxRepository = new InboundMessagesRepository();
@@ -58,7 +58,7 @@ namespace Silverback.Tests.Messaging.Configuration
                     .WithFactory(t => Activator.CreateInstance(t, _outboxRepository))
                     .AddInbound(adapter, BasicEndpoint.Create("fake"));
 
-                var consumer = (FakeConsumer)BrokersConfig.Instance.Default.GetConsumer(BasicEndpoint.Create("test"));
+                var consumer = (TestConsumer)BrokersConfig.Instance.Default.GetConsumer(BasicEndpoint.Create("test"));
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
                 consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });

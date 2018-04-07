@@ -20,7 +20,7 @@ namespace Silverback.Tests.Messaging
         public void Setup()
         {
             BrokersConfig.Instance.Clear();
-            BrokersConfig.Instance.Add<FakeBroker>(c => c.UseServer("server"));
+            BrokersConfig.Instance.Add<TestBroker>(c => c.UseServer("server"));
 
             _repository = new OutboundMessagesRepository();
         }
@@ -63,11 +63,11 @@ namespace Silverback.Tests.Messaging
             var worker = new OutboundMessagesWorker<OutboundMessageEntity>(_repository);
             worker.SendPendingMessages();
 
-            var sentMessages = BrokersConfig.Instance.GetDefault<FakeBroker>().SentMessages;
+            var sentMessages = BrokersConfig.Instance.GetDefault<TestBroker>().SentMessages;
 
             Assert.That(sentMessages.Count, Is.EqualTo(2));
 
-            var serializer = BrokersConfig.Instance.GetDefault<FakeBroker>().GetSerializer();
+            var serializer = BrokersConfig.Instance.GetDefault<TestBroker>().GetSerializer();
             var msg = serializer.Deserialize(sentMessages.First());
             var msg2 = serializer.Deserialize(sentMessages.Last());
 
@@ -97,8 +97,8 @@ namespace Silverback.Tests.Messaging
             var worker = new OutboundMessagesWorker<OutboundMessageEntity>(_repository);
             worker.SendPendingMessages();
 
-            var sentMessages = BrokersConfig.Instance.GetDefault<FakeBroker>().SentMessages;
-            var serializer = BrokersConfig.Instance.GetDefault<FakeBroker>().GetSerializer();
+            var sentMessages = BrokersConfig.Instance.GetDefault<TestBroker>().SentMessages;
+            var serializer = BrokersConfig.Instance.GetDefault<TestBroker>().GetSerializer();
             var msg = serializer.Deserialize(sentMessages.First());
 
             Assert.That(((TestEventOne)msg.Message).Content, Is.EqualTo("Test"));
@@ -141,7 +141,7 @@ namespace Silverback.Tests.Messaging
             var worker = new OutboundMessagesWorker<OutboundMessageEntity>(_repository);
             worker.SendPendingMessages();
 
-            var sentMessages = BrokersConfig.Instance.GetDefault<FakeBroker>().SentMessages;
+            var sentMessages = BrokersConfig.Instance.GetDefault<TestBroker>().SentMessages;
 
             Assert.That(sentMessages.Count, Is.EqualTo(2));
 

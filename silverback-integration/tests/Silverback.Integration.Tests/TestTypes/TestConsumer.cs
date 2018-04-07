@@ -7,10 +7,10 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.TestTypes
 {
-    public class FakeConsumer : Consumer
+    public class TestConsumer : Consumer
     {
         private readonly List<System.Action<byte[]>> _consumers;
-        public FakeConsumer(IEndpoint endpoint, List<System.Action<byte[]>> consumers) 
+        public TestConsumer(IEndpoint endpoint, List<System.Action<byte[]>> consumers) 
             : base(endpoint)
         {
             _consumers = consumers;

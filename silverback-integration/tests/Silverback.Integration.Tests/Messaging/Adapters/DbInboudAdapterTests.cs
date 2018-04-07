@@ -19,7 +19,7 @@ namespace Silverback.Tests.Messaging.Adapters
         public void Setup()
         {
             BrokersConfig.Instance.Clear();
-            BrokersConfig.Instance.Add<FakeBroker>(c => c.UseServer("server"));
+            BrokersConfig.Instance.Add<TestBroker>(c => c.UseServer("server"));
 
             _repository = new InboundMessagesRepository();
         }
@@ -38,7 +38,7 @@ namespace Silverback.Tests.Messaging.Adapters
                 var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
                 var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
 
-                var consumer = (FakeConsumer)BrokersConfig.Instance.Default.GetConsumer(BasicEndpoint.Create("test"));
+                var consumer = (TestConsumer)BrokersConfig.Instance.Default.GetConsumer(BasicEndpoint.Create("test"));
                 consumer.TestPush(e1);
                 consumer.TestPush(e2);
 
@@ -55,7 +55,7 @@ namespace Silverback.Tests.Messaging.Adapters
 
             var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
 
-            var consumer = (FakeConsumer)BrokersConfig.Instance.Default.GetConsumer(BasicEndpoint.Create("test"));
+            var consumer = (TestConsumer)BrokersConfig.Instance.Default.GetConsumer(BasicEndpoint.Create("test"));
             consumer.TestPush(e);
 
             Assert.That(_repository.DbSet.Count, Is.EqualTo(1));

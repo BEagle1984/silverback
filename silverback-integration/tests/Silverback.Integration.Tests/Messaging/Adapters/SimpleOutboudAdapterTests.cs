@@ -15,7 +15,7 @@ namespace Silverback.Tests.Messaging.Adapters
         public void Setup()
         {
             BrokersConfig.Instance.Clear();
-            BrokersConfig.Instance.Add<FakeBroker>(c => c.UseServer("server"));
+            BrokersConfig.Instance.Add<TestBroker>(c => c.UseServer("server"));
         }
 
         [Test]
@@ -26,8 +26,8 @@ namespace Silverback.Tests.Messaging.Adapters
             var e = new TestEventOne {Content = "Test"};
             adapter.Relay(e, BasicEndpoint.Create("TestEventOneTopic"));
 
-            var producer = (FakeProducer)BrokersConfig.Instance.Default.GetProducer(BasicEndpoint.Create("test"));
-            var serializer = BrokersConfig.Instance.GetDefault<FakeBroker>().GetSerializer();
+            var producer = (TestProducer)BrokersConfig.Instance.Default.GetProducer(BasicEndpoint.Create("test"));
+            var serializer = BrokersConfig.Instance.GetDefault<TestBroker>().GetSerializer();
 
             Assert.That(producer.SentMessages.Count, Is.EqualTo(1));
             Assert.That(serializer.Deserialize(producer.SentMessages.First()).Message.Id, Is.EqualTo(e.Id));

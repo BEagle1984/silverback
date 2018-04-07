@@ -10,7 +10,7 @@ namespace Silverback.Tests.Messaging.Broker
         [Test]
         public void GetDefaultSerializerTest()
         {
-            var serializer = new FakeBroker().GetSerializer();
+            var serializer = new TestBroker().GetSerializer();
 
             Assert.That(serializer, Is.InstanceOf<JsonMessageSerializer>());
         }
@@ -18,7 +18,7 @@ namespace Silverback.Tests.Messaging.Broker
         [Test]
         public void GetSerializerTest()
         {
-            var broker = new FakeBroker();
+            var broker = new TestBroker();
             broker.SerializeUsing<FakeSerializer>();
             var serializer = broker.GetSerializer();
 
@@ -28,7 +28,7 @@ namespace Silverback.Tests.Messaging.Broker
         [Test]
         public void GetCachedSerializerTest()
         {
-            var broker = new FakeBroker();
+            var broker = new TestBroker();
             broker.SerializeUsing<FakeSerializer>();
             var serializer = broker.GetSerializer();
             var serializer2 = broker.GetSerializer();
@@ -38,7 +38,7 @@ namespace Silverback.Tests.Messaging.Broker
         [Test]
         public void WithNameTest()
         {
-            var broker = new FakeBroker().WithName("TestBroker");
+            var broker = new TestBroker().WithName("TestBroker");
 
             Assert.That(broker.Name, Is.EqualTo("TestBroker"));
         }
@@ -46,7 +46,7 @@ namespace Silverback.Tests.Messaging.Broker
         [Test]
         public void AsDefaultTest()
         {
-            var broker = new FakeBroker();
+            var broker = new TestBroker();
             Assert.That(broker.IsDefault, Is.False);
 
             broker.AsDefault();
