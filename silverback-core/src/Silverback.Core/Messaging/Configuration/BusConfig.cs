@@ -65,7 +65,7 @@ namespace Silverback.Messaging.Configuration
         #region Subscribe
 
         /// <summary>
-        /// Subscribes a <see cref="Subscriber" /> derived type to the messages of the specified type <see cref="TMessage" />.
+        /// Subscribes a <see cref="Subscriber" /> derived type to the messages of the specified type TMessage.
         /// </summary>
         /// <param name="subscriberFactory">The subscriber factory method.</param>
         /// <returns></returns>
