@@ -43,7 +43,8 @@ namespace Silverback.Messaging.Adapters
             _consumer = endpoint.GetConsumer();
             
             // TODO: Handle errors -> logging and stuff -> then?
-            _consumer.Consume(e => RelayMessage(e.Message));
+            _consumer.Received += (_, envelope) => RelayMessage(envelope.Message);
+            _consumer.Start();
         }
 
         /// <summary>
@@ -63,6 +64,7 @@ namespace Silverback.Messaging.Adapters
         {
             if (disposing)
             {
+                // TODO: IMPORTANT: Is this correct??
                 (_consumer as IDisposable)?.Dispose();
             }
         }

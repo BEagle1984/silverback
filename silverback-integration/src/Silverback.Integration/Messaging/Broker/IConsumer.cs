@@ -9,11 +9,18 @@ namespace Silverback.Messaging.Broker
     public interface IConsumer
     {
         /// <summary>
-        /// Start listening to the specified enpoint and consume the messages delivered
-        /// through the message broker.
+        /// Occurs when a message is received.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        void Consume(Action<IEnvelope> handler);
+        event EventHandler<IEnvelope> Received;
 
+        /// <summary>
+        /// Starts consuming.
+        /// </summary>
+        void Start();
+
+        /// <summary>
+        /// Stops consuming.
+        /// </summary>
+        void Stop();
     }
 }

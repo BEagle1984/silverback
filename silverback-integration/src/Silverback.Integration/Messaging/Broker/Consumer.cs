@@ -17,6 +17,11 @@ namespace Silverback.Messaging.Broker
         public IEndpoint Endpoint { get; }
 
         /// <summary>
+        /// Occurs when a message is received.
+        /// </summary>
+        public event EventHandler<IEnvelope> Received;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Consumer" /> class.
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
@@ -27,25 +32,37 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        /// Start listening to the specified enpoint and consume the messages delivered
-        /// through the message broker.
+        /// Starts consuming.
         /// </summary>
-        /// <param name="handler">The message handler.</param>
-        public void Consume(Action<IEnvelope> handler)
+        public void Start()
         {
             // TODO: Handle errors -> logging and stuff -> then?
-            Consume(buffer =>
+            StartConsuming(buffer =>
             {
+                if (Received == null)
+                    return;
+
                 var envelope = _serializer.Deserialize(buffer);
-                handler(envelope);
+                Received(this, envelope);
             });
         }
 
         /// <summary>
-        /// Start listening to the specified enpoint and consume the messages delivered
-        /// through the message broker.
+        /// Stops consuming.
+        /// </summary>
+        public void Stop()
+            => StopConsuming();
+
+        /// <summary>
+        /// Starts consuming messages from the related enpoint and call the specified handler when a message
+        /// is received.
         /// </summary>
         /// <param name="handler">The message handler.</param>
-        protected abstract void Consume(Action<byte[]> handler);
+        protected abstract void StartConsuming(Action<byte[]> handler);
+
+        /// <summary>
+        /// Stops consuming messages.
+        /// </summary>
+        protected abstract void StopConsuming();
     }
 }

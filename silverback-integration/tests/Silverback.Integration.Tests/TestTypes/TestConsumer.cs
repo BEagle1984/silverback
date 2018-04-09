@@ -9,8 +9,10 @@ namespace Silverback.Tests.TestTypes
 {
     public class TestConsumer : Consumer
     {
-        private readonly List<System.Action<byte[]>> _consumers;
-        public TestConsumer(IEndpoint endpoint, List<System.Action<byte[]>> consumers) 
+        private Action<byte[]> _handler;
+        private readonly List<Action<byte[]>> _consumers;
+
+        public TestConsumer(IEndpoint endpoint, List<Action<byte[]>> consumers) 
             : base(endpoint)
         {
             _consumers = consumers;
@@ -23,12 +25,19 @@ namespace Silverback.Tests.TestTypes
 
             var envelope = Envelope.Create(message);
             var serialized = serializer.Serialize(envelope);
-            _consumers.ForEach(c => c(serialized));
+            _consumers.ForEach(c => c.Invoke(serialized));
         }
 
-        protected override void Consume(Action<byte[]> handler)
+        protected override void StartConsuming(Action<byte[]> handler)
         {
-             _consumers.Add(handler);
+            _handler = handler;
+            _consumers.Add(_handler);
+        }
+
+        protected override void StopConsuming()
+        {
+            _handler = null;
+            _consumers.Remove(_handler);
         }
     }
 }
