@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -50,6 +51,20 @@ namespace Silverback.Messaging
         /// </summary>
         /// <param name="subscriber">The subscriber.</param>
         void Unsubscribe(IDisposable subscriber);
+
+        #endregion
+
+        #region Items
+
+        /// <summary>
+        /// Gets a dictionary to store objects related to the <see cref="IBus"/>.
+        /// The lifecycle of these objects will be bound to the bus and all objects
+        /// implementing <see cref="IDisposable"/> will be disposed with it.
+        /// </summary>
+        /// <value>
+        /// The items.
+        /// </value>
+        IDictionary<string, object> Items { get; }
 
         #endregion
     }
