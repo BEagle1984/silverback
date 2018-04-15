@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Text;
 using Silverback.Messaging.Adapters;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Configuration
@@ -12,6 +13,24 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public static class BusConfigExtensions
     {
+        #region ConfigureBroker
+
+        /// <summary>
+        /// Configures an <see cref="IBroker" /> to be used for inbound/outbound messaging.
+        /// </summary>
+        /// <typeparam name="TBroker">The type of the broker.</typeparam>
+        /// <param name="config">The configuration.</param>
+        /// <param name="brokerConfig">The method applying the broker configuration.</param>
+        /// <returns></returns>
+        public static BusConfig ConfigureBroker<TBroker>(this BusConfig config, Action<TBroker> brokerConfig)
+            where TBroker : IBroker, new()
+        {
+            config.Bus.GetBrokers().Add(brokerConfig);
+            return config;
+        }
+
+        #endregion
+
         #region AddOutbound
 
         /// <summary>
@@ -23,10 +42,10 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter"/>.</param>
         /// <returns></returns>
         public static BusConfig AddOutbound<TMessage>(this BusConfig config, Type adapterType, IEndpoint endpoint)
-            where TMessage : IIntegrationMessage
+        where TMessage : IIntegrationMessage
         {
             config.Bus.Subscribe(messages => new OutboundSubscriber<TMessage>(
-                messages, config.TypeFactory, adapterType, endpoint));
+                messages, config.TypeFactory, adapterType, config.Bus.GetBroker(endpoint.BrokerName), endpoint));
             return config;
         }
 
@@ -43,7 +62,7 @@ namespace Silverback.Messaging.Configuration
             where TAdapter : IOutboundAdapter
         {
             config.Bus.Subscribe(messages => new OutboundSubscriber<TMessage>(
-                messages, config.TypeFactory, typeof(TAdapter), endpoint));
+                messages, config.TypeFactory, typeof(TAdapter), config.Bus.GetBroker(endpoint.BrokerName), endpoint));
             return config;
         }
 
@@ -81,7 +100,11 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         public static BusConfig AddInbound(this BusConfig config, IInboundAdapter adapter, IEndpoint endpoint)
         {
-            adapter.Init(config.Bus, endpoint);
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            if (adapter == null) throw new ArgumentNullException(nameof(adapter));
+            if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
+
+            adapter.Init(config.Bus, config.Bus.GetBroker(endpoint.BrokerName), endpoint);
             return config;
         }
 
@@ -106,7 +129,7 @@ namespace Silverback.Messaging.Configuration
                 messages, config.TypeFactory, typeof(THandler)));
             return config;
         }
-        
+
         /// <summary>
         /// Configures a <see cref="MessageTranslator{TMessage, TIntegrationMessage}" />.
         /// </summary>

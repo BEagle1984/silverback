@@ -22,9 +22,14 @@ namespace Silverback.Tests.TestTypes
         private readonly List<Action<byte[]>> _consumers = new List<Action<byte[]>>();
 
         public override IProducer GetProducer(IEndpoint endpoint)
-            => new TestProducer(endpoint);
+            => new TestProducer(this, endpoint);
 
         public override IConsumer GetConsumer(IEndpoint endpoint)
-            => new TestConsumer(endpoint, _consumers);
+            => new TestConsumer(this, endpoint, _consumers);
+
+        public override void Connect(IEndpoint[] inboundEndpoints, IEndpoint[] outboundEndpoints)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -9,10 +9,10 @@ namespace Silverback.Tests.TestTypes
     {
         public List<byte[]> SentMessages { get; }
 
-        public TestProducer(IEndpoint endpoint)
-            : base(endpoint)
+        public TestProducer(TestBroker broker, IEndpoint endpoint)
+            : base(broker, endpoint)
         {
-            SentMessages = endpoint.GetBroker<TestBroker>().SentMessages;
+            SentMessages = broker.SentMessages;
         }
 
         protected override void Produce(IIntegrationMessage message, byte[] serializedMessage)

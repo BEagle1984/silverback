@@ -37,5 +37,14 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">The endpoint.</param>
         /// <returns></returns>
         IConsumer GetConsumer(IEndpoint endpoint);
+
+        /// <summary>
+        /// Initializes the connection to the specified endpoints.
+        /// </summary>
+        /// <remarks>This is called during the application startup and can be used to warm up the broker estabilishing 
+        /// the connection and/or creating the consumers and producers beforehand.</remarks>
+        /// <param name="inboundEndpoints">The inbound endpoints.</param>
+        /// <param name="outboundEndpoints">The outbound endpoints.</param>
+        void Connect(IEndpoint[] inboundEndpoints, IEndpoint[] outboundEndpoints);
     }
 }

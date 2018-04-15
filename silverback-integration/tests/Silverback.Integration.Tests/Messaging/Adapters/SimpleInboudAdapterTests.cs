@@ -12,33 +12,35 @@ namespace Silverback.Tests.Messaging.Adapters
     [TestFixture]
     public class SimpleInboudAdapterTests
     {
+        private Bus _bus;
+
         [SetUp]
         public void Setup()
         {
-            BrokersConfig.Instance.Clear();
-            BrokersConfig.Instance.Add<TestBroker>(c => c.UseServer("server"));
+            _bus = BusConfig.Create(c => c
+                .ConfigureBroker<TestBroker>(x => x
+                    .UseServer("server")
+                )
+            );
         }
 
         [Test]
         public void RelayMessageTest()
         {
-            using (var bus = new Bus())
-            {
-                int count = 0;
-                bus.Config().Subscribe<IMessage>(m => count++);
+            int count = 0;
+            _bus.Config().Subscribe<IMessage>(m => count++);
 
-                var adapter = new SimpleInboundAdapter();
-                adapter.Init(bus, BasicEndpoint.Create("fake"));
+            var adapter = new SimpleInboundAdapter();
+            adapter.Init(_bus, _bus.GetBroker(), BasicEndpoint.Create("fake"));
 
-                var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-                var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
+            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
 
-                var consumer = (TestConsumer)BrokersConfig.Instance.Default.GetConsumer(BasicEndpoint.Create("test"));
-                consumer.TestPush(e1);
-                consumer.TestPush(e2);
+            var consumer = (TestConsumer)_bus.GetBroker().GetConsumer(BasicEndpoint.Create("test"));
+            consumer.TestPush(e1);
+            consumer.TestPush(e2);
 
-                Assert.That(count, Is.EqualTo(2));
-            }
+            Assert.That(count, Is.EqualTo(2));
         }
     }
 }

@@ -7,23 +7,11 @@ using Silverback.Messaging.Broker;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    /// Holds the collection of <see cref="IBroker"/> for the current instance.
+    /// The collection of <see cref="IBroker"/> instances.
     /// </summary>
-    public class BrokersConfig : IEnumerable<IBroker>
+    internal class BrokersCollection : IEnumerable<IBroker>, IDisposable
     {
-        #region Singleton
-
-        private static readonly Lazy<BrokersConfig> InstanceValue = new Lazy<BrokersConfig>(true);
-
-        /// <summary>
-        /// Gets the current instance of the BrokerConfig.
-        /// </summary>
-        public static BrokersConfig Instance => InstanceValue.Value;
-
-        #endregion
-
-        private readonly HashSet<IBroker> _brokers =
-            new HashSet<IBroker>();
+        private readonly List<IBroker> _brokers = new List<IBroker>();
 
         /// <summary>
         /// Gets the default <see cref="IBroker"/>.
@@ -42,7 +30,7 @@ namespace Silverback.Messaging.Configuration
         /// Adds the an <see cref="IBroker"/> of the specified type TBroker.
         /// </summary>
         /// <param name="config">The method applying the configuration.</param>
-        public BrokersConfig Add<TBroker>(Action<TBroker> config)
+        public TBroker Add<TBroker>(Action<TBroker> config)
             where TBroker : IBroker, new()
         {
             if (config == null) throw new ArgumentNullException(nameof(config));
@@ -64,33 +52,27 @@ namespace Silverback.Messaging.Configuration
                     Default = broker;
             }
 
-            return this;
+            return broker;
         }
 
         /// <summary>
         /// Gets the <see cref="IBroker"/> with the specified name.
         /// </summary>
-        /// <param name="name">The name.</param>
+        /// <param name="name">The name of the broker. If not set the default one will be returned.</param>
         /// <returns></returns>
-        public IBroker Get(string name)
-            => _brokers.FirstOrDefault(b => b.Name == name);
+        public IBroker Get(string name = null)
+            => string.IsNullOrEmpty(name)
+                ? Default
+                : _brokers.FirstOrDefault(b => b.Name == name);
 
         /// <summary>
         /// Gets the <see cref="IBroker" /> with the specified name.
         /// </summary>
         /// <typeparam name="TBroker">The type of the broker.</typeparam>
-        /// <param name="name">The name of the broker.</param>
+        /// <param name="name">The name of the broker. If not set the default one will be returned.</param>
         /// <returns></returns>
-        public TBroker Get<TBroker>(string name) where TBroker : IBroker
+        public TBroker Get<TBroker>(string name = null) where TBroker : IBroker
             => (TBroker)Get(name);
-
-        /// <summary>
-        /// Gets the default <see cref="IBroker" />.
-        /// </summary>
-        /// <typeparam name="TBroker">The type of the broker.</typeparam>
-        /// <returns></returns>
-        public TBroker GetDefault<TBroker>() where TBroker : IBroker
-            => (TBroker)Default;
 
         /// <summary>
         /// Clears all configurations.
@@ -111,6 +93,16 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
             => _brokers.GetEnumerator();
+
+        #endregion
+
+        #region IDisposable
+
+        /// <summary>
+        /// Disposes all brokers that implement <see cref="IDisposable"/>.
+        /// </summary>
+        public void Dispose()
+            => _brokers?.ForEach(b => (b as IDisposable)?.Dispose());
 
         #endregion
     }

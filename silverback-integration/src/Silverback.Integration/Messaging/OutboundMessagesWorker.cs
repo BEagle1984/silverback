@@ -15,14 +15,17 @@ namespace Silverback.Messaging
         where TEntity : IOutboundMessageEntity
     {
         private readonly IOutboundMessagesRepository<TEntity> _repository;
+        private readonly IBroker _broker;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OutboundMessagesWorker{TEntity}" /> class.
         /// </summary>
         /// <param name="repository">The repository.</param>
-        public OutboundMessagesWorker(IOutboundMessagesRepository<TEntity> repository)
+        /// <param name="broker">The broker.</param>
+        public OutboundMessagesWorker(IOutboundMessagesRepository<TEntity> repository, IBroker broker)
         {
             _repository = repository;
+            _broker = broker;
         }
 
         /// <summary>
@@ -61,6 +64,6 @@ namespace Silverback.Messaging
         /// <param name="message">The original message.</param>
         /// <param name="endpoint">The message broker endpoint.</param>
         protected virtual void SendMessage(IIntegrationMessage message, IEndpoint endpoint)
-            => endpoint.GetProducer().Produce(Envelope.Create(message));
+            => _broker.GetProducer(endpoint).Produce(Envelope.Create(message));
     }
 }

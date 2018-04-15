@@ -11,11 +11,12 @@ namespace Silverback.Tests.Messaging.Adapters
     [TestFixture]
     public class SimpleOutboudAdapterTests
     {
+        private TestBroker _broker;
+
         [SetUp]
         public void Setup()
         {
-            BrokersConfig.Instance.Clear();
-            BrokersConfig.Instance.Add<TestBroker>(c => c.UseServer("server"));
+            _broker = new TestBroker().UseServer("server");
         }
 
         [Test]
@@ -24,10 +25,10 @@ namespace Silverback.Tests.Messaging.Adapters
             var adapter = new SimpleOutboundAdapter();
 
             var e = new TestEventOne {Content = "Test"};
-            adapter.Relay(e, BasicEndpoint.Create("TestEventOneTopic"));
+            adapter.Relay(e, _broker, BasicEndpoint.Create("TestEventOneTopic"));
 
-            var producer = (TestProducer)BrokersConfig.Instance.Default.GetProducer(BasicEndpoint.Create("test"));
-            var serializer = BrokersConfig.Instance.GetDefault<TestBroker>().GetSerializer();
+            var producer = (TestProducer)_broker.GetProducer(BasicEndpoint.Create("test"));
+            var serializer = producer.Serializer;
 
             Assert.That(producer.SentMessages.Count, Is.EqualTo(1));
             Assert.That(serializer.Deserialize(producer.SentMessages.First()).Message.Id, Is.EqualTo(e.Id));

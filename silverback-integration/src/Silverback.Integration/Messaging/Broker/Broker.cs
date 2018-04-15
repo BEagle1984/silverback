@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
@@ -51,6 +52,13 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">The endpoint.</param>
         /// <returns></returns>
         public abstract IConsumer GetConsumer(IEndpoint endpoint);
+
+        /// <summary>
+        /// Initializes the connection to the specified endpoints.
+        /// </summary>
+        /// <param name="inboundEndpoints">The inbound endpoints.</param>
+        /// <param name="outboundEndpoints">The outbound endpoints.</param>
+        public abstract void Connect(IEndpoint[] inboundEndpoints, IEndpoint[] outboundEndpoints);
 
         #region Configuration
 

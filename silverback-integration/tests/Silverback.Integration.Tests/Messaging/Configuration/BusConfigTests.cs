@@ -19,9 +19,6 @@ namespace Silverback.Tests.Messaging.Configuration
         [SetUp]
         public void Setup()
         {
-            BrokersConfig.Instance.Clear();
-            BrokersConfig.Instance.Add<TestBroker>(c => c.UseServer("server"));
-
             _outboxRepository = new OutboundMessagesRepository();
             _inboxRepository = new InboundMessagesRepository();
         }
@@ -55,10 +52,11 @@ namespace Silverback.Tests.Messaging.Configuration
             {
                 var adapter = new DbInboundAdapter<InboundMessageEntity>(_inboxRepository);
                 bus.Config()
+                    .ConfigureBroker<TestBroker>(x => { })
                     .WithFactory(t => Activator.CreateInstance(t, _outboxRepository))
                     .AddInbound(adapter, BasicEndpoint.Create("fake"));
 
-                var consumer = (TestConsumer)BrokersConfig.Instance.Default.GetConsumer(BasicEndpoint.Create("test"));
+                var consumer = (TestConsumer)bus.GetBroker().GetConsumer(BasicEndpoint.Create("test"));
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
                 consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
@@ -89,6 +87,18 @@ namespace Silverback.Tests.Messaging.Configuration
 
                 Assert.That(outputMessages.Count, Is.EqualTo(3));
             }
+        }
+
+        [Test]
+        public void ConfigBrokerTest()
+        {
+            Assert.Fail();
+        }
+
+        [Test]
+        public void ConnectBrokersTest()
+        {
+            Assert.Fail();
         }
     }
 }

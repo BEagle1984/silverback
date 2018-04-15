@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Repositories;
 
@@ -30,8 +31,9 @@ namespace Silverback.Messaging.Adapters
         /// Publishes the <see cref="T:Silverback.Messaging.Messages.IIntegrationMessage" /> to the specified <see cref="T:Silverback.Messaging.IEndpoint" />.
         /// </summary>
         /// <param name="message">The message to be handled.</param>
+        /// <param name="broker">The broker.</param>
         /// <param name="endpoint">The endpoint.</param>
-        public void Relay(IIntegrationMessage message, IEndpoint endpoint)
+        public void Relay(IIntegrationMessage message, IBroker broker, IEndpoint endpoint)
         {
             var entity = _outboxRepository.Create();
 

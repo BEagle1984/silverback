@@ -24,7 +24,7 @@ namespace Silverback.Tests.Messaging.Adapters
         {
             var adapter = new DbOutboundAdapter<OutboundMessageEntity>(_repository);
 
-            adapter.Relay(new TestEventOne { Content = "Test" }, BasicEndpoint.Create("TestEventOneTopic"));
+            adapter.Relay(new TestEventOne { Content = "Test" }, null, BasicEndpoint.Create("TestEventOneTopic"));
 
             Assert.That(_repository.DbSet.Count, Is.EqualTo(1));
             var entity = _repository.DbSet.First();

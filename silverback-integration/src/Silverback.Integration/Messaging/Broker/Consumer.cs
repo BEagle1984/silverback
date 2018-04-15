@@ -7,15 +7,8 @@ namespace Silverback.Messaging.Broker
     /// <summary>
     /// The default <see cref="IConsumer"/> implementation.
     /// </summary>
-    public abstract class Consumer : IConsumer
+    public abstract class Consumer : ConsumerProducerBase, IConsumer
     {
-        private readonly IMessageSerializer _serializer;
-
-        /// <summary>
-        /// Gets the endpoint.
-        /// </summary>
-        public IEndpoint Endpoint { get; }
-
         /// <summary>
         /// Occurs when a message is received.
         /// </summary>
@@ -24,11 +17,11 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         /// Initializes a new instance of the <see cref="Consumer" /> class.
         /// </summary>
+        /// <param name="broker">The broker.</param>
         /// <param name="endpoint">The endpoint.</param>
-        protected Consumer(IEndpoint endpoint)
+        protected Consumer(IBroker broker, IEndpoint endpoint)
+            : base(broker, endpoint)
         {
-            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
-            _serializer = endpoint.GetBroker().GetSerializer();
         }
 
         /// <summary>
@@ -42,7 +35,7 @@ namespace Silverback.Messaging.Broker
                 if (Received == null)
                     return;
 
-                var envelope = _serializer.Deserialize(buffer);
+                var envelope = Serializer.Deserialize(buffer);
                 Received(this, envelope);
             });
         }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 
@@ -9,7 +10,7 @@ namespace Silverback.Messaging
     /// Can be used as base class for more complex endpoints.
     /// </summary>
     /// <seealso cref="IEndpoint" />
-    public class BasicEndpoint : IEndpoint
+    public class BasicEndpoint : IEndpoint, IComparable<BasicEndpoint>, IComparable
     {
         #region Construction
 
@@ -69,38 +70,35 @@ namespace Silverback.Messaging
 
         #endregion
 
-        #region Get Broker / Producer / Consumer
+        #region IComparable
 
         /// <summary>
-        /// Gets the <see cref="T:Silverback.Messaging.Broker.IBroker" /> to be used.
+        /// Compares this instance to another <see cref="BasicEndpoint"/>.
         /// </summary>
+        /// <param name="other">The other instance.</param>
         /// <returns></returns>
-        public IBroker GetBroker()
-            => string.IsNullOrEmpty(BrokerName)
-                ? BrokersConfig.Instance.Default
-                : BrokersConfig.Instance.Get(BrokerName);
+        public int CompareTo(BasicEndpoint other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            if (ReferenceEquals(null, other)) return 1;
+            var brokerNameComparison = string.Compare(BrokerName, other.BrokerName, StringComparison.Ordinal);
+            if (brokerNameComparison != 0) return brokerNameComparison;
+            return string.Compare(Name, other.Name, StringComparison.Ordinal);
+        }
 
         /// <summary>
-        /// Gets the <see cref="T:Silverback.Messaging.Broker.IBroker" /> to be used casting it to the specified type.
+        /// Compares this instance to another <see cref="object"/>.
         /// </summary>
-        /// <typeparam name="TBroker">The type of the broker.</typeparam>
+        /// <param name="obj">The object.</param>
         /// <returns></returns>
-        public TBroker GetBroker<TBroker>() where TBroker : IBroker
-            => (TBroker)GetBroker();
-
-        /// <summary>
-        /// Gets an <see cref="T:Silverback.Messaging.Broker.IProducer" /> instance to produce messages to this endpoint.
-        /// </summary>
-        /// <returns></returns>
-        public virtual IProducer GetProducer()
-            => GetBroker().GetProducer(this);
-
-        /// <summary>
-        /// Gets an <see cref="T:Silverback.Messaging.Broker.IConsumer" /> instance to consume messages from this enpoint.
-        /// </summary>
-        /// <returns></returns>
-        public virtual IConsumer GetConsumer()
-            => GetBroker().GetConsumer(this);
+        /// <exception cref="ArgumentException">BasicEndpoint</exception>
+        public int CompareTo(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return 1;
+            if (ReferenceEquals(this, obj)) return 0;
+            if (!(obj is BasicEndpoint)) throw new ArgumentException($"Object must be of type {nameof(BasicEndpoint)}");
+            return CompareTo((BasicEndpoint) obj);
+        }
 
         #endregion
     }

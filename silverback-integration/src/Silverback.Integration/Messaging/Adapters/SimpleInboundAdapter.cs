@@ -14,16 +14,19 @@ namespace Silverback.Messaging.Adapters
     public class SimpleInboundAdapter : IInboundAdapter, IDisposable
     {
         private IBus _bus;
+        private IBroker _broker;
         private IConsumer _consumer;
 
         /// <summary>
         /// Initializes the <see cref="T:Silverback.Messaging.Adapters.IInboundAdapter" />.
         /// </summary>
         /// <param name="bus">The internal <see cref="IBus" /> where the messages have to be relayed.</param>
+        /// <param name="broker">The broker to be used.</param>
         /// <param name="endpoint">The endpoint this adapter has to connect to.</param>
-        public void Init(IBus bus, IEndpoint endpoint)
+        public void Init(IBus bus, IBroker broker, IEndpoint endpoint)
         {
             _bus = bus ?? throw new ArgumentNullException(nameof(bus));
+            _broker = broker ?? throw new ArgumentNullException(nameof(broker));
 
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
             endpoint.ValidateConfiguration();
@@ -40,7 +43,7 @@ namespace Silverback.Messaging.Adapters
             if (_consumer != null)
                 throw new InvalidOperationException("Connect was called twice.");
 
-            _consumer = endpoint.GetConsumer();
+            _consumer = _broker.GetConsumer(endpoint);
             
             // TODO: Handle errors -> logging and stuff -> then?
             _consumer.Received += (_, envelope) => RelayMessage(envelope.Message);
@@ -55,6 +58,8 @@ namespace Silverback.Messaging.Adapters
         {
             _bus.Publish(message);
         }
+
+        #region IDisposable
 
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
@@ -85,5 +90,7 @@ namespace Silverback.Messaging.Adapters
         {
             Dispose(false);
         }
+
+        #endregion
     }
 }

@@ -12,8 +12,8 @@ namespace Silverback.Tests.TestTypes
         private Action<byte[]> _handler;
         private readonly List<Action<byte[]>> _consumers;
 
-        public TestConsumer(IEndpoint endpoint, List<Action<byte[]>> consumers) 
-            : base(endpoint)
+        public TestConsumer(IBroker broker, IEndpoint endpoint, List<Action<byte[]>> consumers) 
+            : base(broker, endpoint)
         {
             _consumers = consumers;
         }

@@ -1,4 +1,5 @@
-﻿using Silverback.Messaging.Publishing;
+﻿using Silverback.Messaging.Broker;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Adapters
 {
@@ -11,7 +12,8 @@ namespace Silverback.Messaging.Adapters
         /// Initializes the <see cref="IInboundAdapter" />.
         /// </summary>
         /// <param name="bus">The internal <see cref="IBus" /> where the messages have to be relayed.</param>
+        /// <param name="broker">The broker to be used.</param>
         /// <param name="endpoint">The endpoint this adapter has to connect to.</param>
-        void Init(IBus bus, IEndpoint endpoint);
+        void Init(IBus bus, IBroker broker, IEndpoint endpoint);
     }
 }

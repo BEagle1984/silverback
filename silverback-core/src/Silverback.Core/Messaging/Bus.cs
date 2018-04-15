@@ -50,16 +50,6 @@ namespace Silverback.Messaging
         #region Subscribe / Unsubscribe
 
         /// <summary>
-        /// Subscribes to the messages stream. The function should return an <see cref="IDisposable"/> 
-        /// to let the <see cref="IBus"/> handle the subscriber lifecycle.
-        /// </summary>
-        /// <param name="subscription">The method performing the subscription.</param>
-        public void Subscribe(Action<IObservable<IMessage>> subscription)
-        {
-            subscription(_subject);
-        }
-
-        /// <summary>
         /// Subscribes to the messages stream. The function must return an <see cref="IDisposable" />
         /// to let the <see cref="IBus" /> handle the subscriber lifecycle.
         /// </summary>
@@ -106,7 +96,7 @@ namespace Silverback.Messaging
         /// <value>
         /// The items.
         /// </value>
-        public IDictionary<string, object> Items => _items;
+        public ConcurrentDictionary<string, object> Items => _items;
 
         #endregion
 
