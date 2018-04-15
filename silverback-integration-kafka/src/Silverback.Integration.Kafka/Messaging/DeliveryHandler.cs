@@ -1,34 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Concurrency;
 using System.Text;
 using Confluent.Kafka;
 
 namespace Silverback.Messaging
 {
     /// <summary>
-    /// 
+    /// Delivery Report Handler
     /// </summary>
-    public class DeliveryHandler : IDeliveryHandler<byte[], byte[]>
+    public abstract class DeliveryReportHandler : IDeliveryReportHandler
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        private readonly Func<IDeliveryResultHandler> _handler;
-
+        
         /// <inheritdoc />
-        public DeliveryHandler(Func<IDeliveryResultHandler> handler)
-        {
-            _handler = handler;
-        }
-
-        /// <inheritdoc />
-        public void HandleDeliveryReport(Message<byte[], byte[]> message)
-        {
-            using (var processor = _handler.Invoke())
-            {
-                processor.ProcessDelivery(message);
-            }
-        }
+        public abstract void HandleDeliveryReport(Message<byte[], byte[]> message);
 
         /// <inheritdoc />
         public bool MarshalData { get; }

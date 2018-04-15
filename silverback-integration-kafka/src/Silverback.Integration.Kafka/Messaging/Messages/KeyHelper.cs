@@ -4,14 +4,14 @@ using System.Text;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging
+namespace Silverback.Messaging.Messages
 {
     /// <summary>
     /// Attribute for decorating the message properties.
     /// </summary>
     /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Property)]
-    public class KeyMember : Attribute
+    public class KeyMemberAttribute : Attribute
     {
 
     }
@@ -23,7 +23,7 @@ namespace Silverback.Messaging
     {
         public static byte[] GetMessageKey(IIntegrationMessage message)
         {
-            var keyObj = message.GetType().GetProperties().Where(p => p.IsDefined(typeof(KeyMember), false))
+            var keyObj = message.GetType().GetProperties().Where(p => p.IsDefined(typeof(KeyMemberAttribute), false))
                 .ToDictionary(p => p.Name, p => p.GetValue(message, null));
 
             return keyObj.Count > 0

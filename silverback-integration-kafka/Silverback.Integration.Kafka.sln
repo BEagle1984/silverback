@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Kafka", "src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj", "{158D13AD-F689-4578-8C10-0BEE6B6705ED}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{85B2E04F-2441-43B1-99AC-830423DE55E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Producer", "examples\Producer\Producer.csproj", "{59CAD7DC-09D5-4433-8B66-3E997BCDB40B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,16 @@ Global
 		{158D13AD-F689-4578-8C10-0BEE6B6705ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{158D13AD-F689-4578-8C10-0BEE6B6705ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{158D13AD-F689-4578-8C10-0BEE6B6705ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59CAD7DC-09D5-4433-8B66-3E997BCDB40B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59CAD7DC-09D5-4433-8B66-3E997BCDB40B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59CAD7DC-09D5-4433-8B66-3E997BCDB40B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59CAD7DC-09D5-4433-8B66-3E997BCDB40B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{59CAD7DC-09D5-4433-8B66-3E997BCDB40B} = {85B2E04F-2441-43B1-99AC-830423DE55E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {31D21423-B33D-4987-B37B-705EAD6B05C0}

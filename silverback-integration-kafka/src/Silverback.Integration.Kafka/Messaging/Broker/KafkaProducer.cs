@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Confluent.Kafka;
 using Confluent.Kafka.Serialization;
@@ -14,25 +15,21 @@ namespace Silverback.Messaging.Broker
     /// <seealso cref="Silverback.Messaging.Broker.IProducer" />
     public class KafkaProducer : Producer
     {
-        private readonly Producer<byte[], byte[]> _producer;
+        private readonly ISerializingProducer<byte[], byte[]> _producer;
+        private readonly KafkaBroker _broker;
         private readonly string _topic;
-        private readonly IDeliveryHandler<byte[], byte[]> _deliveryHandler;
-
 
         /// <summary>
         /// Kafka producer constructor
         /// </summary>
         /// <param name="endpoint"></param>
-        /// <param name="config"></param>
-        /// <param name="handler"></param>
-        public KafkaProducer(IEndpoint endpoint, Dictionary<string, object> config, IDeliveryHandler<byte[], byte[]> handler = null)
+        /// <param name="context"></param>
+        public KafkaProducer(IEndpoint endpoint , ISerializingProducer<byte[], byte[]> context)
             : base(endpoint)
         {
+            _broker = endpoint.GetBroker<KafkaBroker>();
+            _producer = context;
             _topic = endpoint.Name;
-            _deliveryHandler = handler;
-            _producer = new Producer<byte[], byte[]>(config,
-                new ByteArraySerializer(),
-                new ByteArraySerializer());
         }
 
         /// <summary>
@@ -43,23 +40,15 @@ namespace Silverback.Messaging.Broker
         /// </param>
         protected override void Produce(IIntegrationMessage message, byte[] serializedMessage)
         {
-            if (_deliveryHandler != null)
+            if(_broker.Publishers.TryGetValue(_topic, out var handler))
             {
-                _producer.ProduceAsync(_topic, KeyHelper.GetMessageKey(message), serializedMessage, _deliveryHandler); 
+                _producer.ProduceAsync(_topic, KeyHelper.GetMessageKey(message), serializedMessage, handler.Invoke());
             }
             else
             {
-                var deliveryReport = _producer.ProduceAsync(_topic, KeyHelper.GetMessageKey(message), serializedMessage);
-                if (deliveryReport.Result.Error.HasError) throw new Exception(deliveryReport.Result.Error.Reason);
+                var deliveryReport = _producer.ProduceAsync(_topic, KeyHelper.GetMessageKey(message), serializedMessage).Result;
+                if (deliveryReport.Error.HasError) throw new Exception(deliveryReport.Error.Reason);
             }
-        }
-        
-        /// <summary>
-        /// Dispose method
-        /// </summary>
-        public void Dispose()
-        {
-            _producer?.Dispose();
         }
     }
 }
