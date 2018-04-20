@@ -5,10 +5,11 @@ using Silverback.Messaging.Serialization;
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    /// The default <see cref="IProducer"/> implementation.
+    /// The default <see cref="IProducer" /> implementation.
     /// </summary>
+    /// <seealso cref="Silverback.Messaging.Broker.EndpointConnectedObject" />
     /// <seealso cref="Silverback.Messaging.Broker.IProducer" />
-    public abstract class Producer : ConsumerProducerBase, IProducer
+    public abstract class Producer : EndpointConnectedObject, IProducer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Consumer" /> class.

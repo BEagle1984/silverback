@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Silverback.Messaging.Broker;
+using Silverback.Extensions;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -12,7 +13,7 @@ namespace Silverback.Messaging.Configuration
     {
         private const string KeyPrefix = "Silverback.Integration.Configuration.";
 
-        #region Items
+        #region Brokers
 
         /// <summary>
         /// Gets the list of <see cref="IEndpoint"/> configured as inbound.
@@ -21,10 +22,6 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         internal static BrokersCollection GetBrokers(this IBus bus)
             => (BrokersCollection)bus.Items.GetOrAdd(KeyPrefix + "Brokers", _ => new BrokersCollection());
-
-        #endregion
-
-        #region GetBroker / GetProducer / GetConsumer
 
         /// <summary>
         /// Gets the <see cref="T:Silverback.Messaging.Broker.IBroker" /> associated with the <see cref="IBus"/>.
@@ -44,64 +41,29 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         internal static TBroker GetBroker<TBroker>(this IBus bus, string name = null) where TBroker : IBroker
             => (TBroker)GetBroker(bus, name);
-
-        /// <summary>
-        /// Gets an <see cref="T:Silverback.Messaging.Broker.IProducer" /> instance to produce messages to the
-        /// specified endpoint.
-        /// </summary>
-        /// <returns></returns>
-        internal static IProducer GetProducer(this IBus bus, IEndpoint endpoint)
-            => GetBroker(bus, endpoint.BrokerName).GetProducer(endpoint);
-
-        /// <summary>
-        /// Gets an <see cref="T:Silverback.Messaging.Broker.IConsumer" /> instance to consume messages from
-        /// the specified endpoint.
-        /// </summary>
-        /// <returns></returns>
-        internal static IConsumer GetConsumer(this IBus bus, IEndpoint endpoint)
-            => GetBroker(bus, endpoint.BrokerName).GetConsumer(endpoint);
-
+        
         #endregion
 
         #region Connect
 
         /// <summary>
-        /// Initializes the connection to all configured endpoints.
+        /// Connects to the message brokers to start consuming and producing messages.
         /// </summary>
         /// <param name="bus">The bus.</param>
         /// <param name="inboundEndpoints">The inbound endpoints.</param>
         /// <param name="outboundEndpoints">The outbound endpoints.</param>
         public static void ConnectBrokers(this IBus bus, IEndpoint[] inboundEndpoints, IEndpoint[] outboundEndpoints)
-        {
-            foreach (var broker in GetBrokers(bus))
-            {
-                broker.Connect(
-                    GetBrokerEndpoints(broker, inboundEndpoints),
-                    GetBrokerEndpoints(broker, outboundEndpoints));
-            }
-        }
+            => GetBrokers(bus).ForEach(b => b.Connect());
+
 
         /// <summary>
-        /// Gets the endpoints that belong to the specified broker.
+        /// Disconnects from the message brokers.
         /// </summary>
-        /// <param name="broker">The broker.</param>
-        /// <param name="endpoints">The endpoints.</param>
-        /// <returns></returns>
-        private static IEndpoint[] GetBrokerEndpoints(IBroker broker, IEndpoint[] endpoints)
-        {
-            if (endpoints == null) return Array.Empty<IEndpoint>();
-
-            var result = endpoints.Where(e => e.BrokerName == broker.Name);
-
-            if (broker.IsDefault)
-            {
-                result = result
-                    .Union(endpoints.Where(e => string.IsNullOrEmpty(e.BrokerName)))
-                    .Distinct();
-            }
-
-            return result.ToArray();
-        }
+        /// <param name="bus">The bus.</param>
+        /// <param name="inboundEndpoints">The inbound endpoints.</param>
+        /// <param name="outboundEndpoints">The outbound endpoints.</param>
+        public static void DisconnectBrokers(this IBus bus, IEndpoint[] inboundEndpoints, IEndpoint[] outboundEndpoints)
+            => GetBrokers(bus).ForEach(b => b.Disconnect());
 
         #endregion
 

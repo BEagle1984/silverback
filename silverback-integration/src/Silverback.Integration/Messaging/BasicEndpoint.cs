@@ -10,6 +10,7 @@ namespace Silverback.Messaging
     /// Can be used as base class for more complex endpoints.
     /// </summary>
     /// <seealso cref="IEndpoint" />
+    /// TODO: Test IComparable
     public class BasicEndpoint : IEndpoint, IComparable<BasicEndpoint>, IComparable
     {
         #region Construction

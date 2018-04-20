@@ -5,9 +5,11 @@ using Silverback.Messaging.Serialization;
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    /// The default <see cref="IConsumer"/> implementation.
+    /// The default <see cref="IConsumer" /> implementation.
     /// </summary>
-    public abstract class Consumer : ConsumerProducerBase, IConsumer
+    /// <seealso cref="Silverback.Messaging.Broker.EndpointConnectedObject" />
+    /// <seealso cref="Silverback.Messaging.Broker.IConsumer" />
+    public abstract class Consumer : EndpointConnectedObject, IConsumer
     {
         /// <summary>
         /// Occurs when a message is received.

@@ -24,14 +24,15 @@ namespace Silverback.Tests.Messaging.Adapters
         {
             var adapter = new SimpleOutboundAdapter();
 
-            var e = new TestEventOne {Content = "Test"};
-            adapter.Relay(e, _broker, BasicEndpoint.Create("TestEventOneTopic"));
+            var @event = new TestEventOne {Content = "Test"};
+            var endpoint = BasicEndpoint.Create("TestEventOneTopic");
+            adapter.Relay(@event, _broker.GetProducer(endpoint), endpoint);
 
             var producer = (TestProducer)_broker.GetProducer(BasicEndpoint.Create("test"));
             var serializer = producer.Serializer;
 
             Assert.That(producer.SentMessages.Count, Is.EqualTo(1));
-            Assert.That(serializer.Deserialize(producer.SentMessages.First()).Message.Id, Is.EqualTo(e.Id));
+            Assert.That(serializer.Deserialize(producer.SentMessages.First()).Message.Id, Is.EqualTo(@event.Id));
         }
     }
 }

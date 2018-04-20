@@ -20,8 +20,8 @@ namespace Silverback.Messaging
         private readonly ITypeFactory _typeFactory;
         private readonly Type _handlerType;
 
-        private readonly IBroker _broker;
         private readonly IEndpoint _endpoint;
+        private readonly IProducer _producer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OutboundSubscriber{TMessage}" /> class.
@@ -36,7 +36,7 @@ namespace Silverback.Messaging
         {
             _typeFactory = typeFactory ?? throw new ArgumentNullException(nameof(typeFactory));
             _handlerType = handlerType ?? throw new ArgumentNullException(nameof(handlerType));
-            _broker = broker;
+            _producer = broker?.GetProducer(endpoint);
             _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
 
             _endpoint.ValidateConfiguration();
@@ -61,7 +61,7 @@ namespace Silverback.Messaging
             if (handler == null)
                 throw new InvalidOperationException($"Couldn't instantiate message handler of type {_handlerType}.");
 
-            handler.Relay((IIntegrationMessage)message, _broker, _endpoint);
+            handler.Relay((IIntegrationMessage)message, _producer, _endpoint);
         }
     }
 }

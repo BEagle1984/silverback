@@ -13,8 +13,8 @@ namespace Silverback.Messaging.Adapters
         /// Publishes the <see cref="T:Silverback.Messaging.Messages.IIntegrationMessage" /> to the specified <see cref="IEndpoint" />.
         /// </summary>
         /// <param name="message">The message to be relayed.</param>
-        /// <param name="broker">The broker.</param>
+        /// <param name="producer">The producer to be used to send the message.</param>
         /// <param name="endpoint">The endpoint.</param>
-        void Relay(IIntegrationMessage message, IBroker broker, IEndpoint endpoint);
+        void Relay(IIntegrationMessage message, IProducer producer, IEndpoint endpoint);
     }
 }

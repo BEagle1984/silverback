@@ -9,10 +9,10 @@ namespace Silverback.Messaging.Adapters
 {
 
     /// <summary>
-    /// Stores the <see cref="IMessage"/> into an outbox table to be fowarded to the message broker later on.
+    /// Stores the <see cref="IMessage" /> into an outbox table to be fowarded to the message broker later on.
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
-    /// <seealso cref="IOutboundAdapter" />
+    /// <seealso cref="Silverback.Messaging.Adapters.IOutboundAdapter" />
     public class DbOutboundAdapter<TEntity> : IOutboundAdapter
         where TEntity : IOutboundMessageEntity
     {
@@ -26,14 +26,14 @@ namespace Silverback.Messaging.Adapters
         {
             _outboxRepository = outboxRepository ?? throw new ArgumentNullException(nameof(outboxRepository));
         }
-
+        
         /// <summary>
         /// Publishes the <see cref="T:Silverback.Messaging.Messages.IIntegrationMessage" /> to the specified <see cref="T:Silverback.Messaging.IEndpoint" />.
         /// </summary>
-        /// <param name="message">The message to be handled.</param>
-        /// <param name="broker">The broker.</param>
+        /// <param name="message">The message to be relayed.</param>
+        /// <param name="producer">The producer to be used to send the message.</param>
         /// <param name="endpoint">The endpoint.</param>
-        public void Relay(IIntegrationMessage message, IBroker broker, IEndpoint endpoint)
+        public void Relay(IIntegrationMessage message, IProducer producer, IEndpoint endpoint)
         {
             var entity = _outboxRepository.Create();
 
