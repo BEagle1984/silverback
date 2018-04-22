@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -29,13 +31,6 @@ namespace Silverback.Messaging
         #region Subscribe / Unsubscribe
 
         /// <summary>
-        /// Subscribes to the messages stream. The function should return an <see cref="IDisposable"/> 
-        /// to let the <see cref="IBus"/> handle the subscriber lifecycle.
-        /// </summary>
-        /// <param name="subscription">The method performing the subscription.</param>
-        void Subscribe(Action<IObservable<IMessage>> subscription);
-
-        /// <summary>
         /// Subscribes to the messages stream. The function must return an <see cref="IDisposable" />
         /// to let the <see cref="IBus" /> handle the subscriber lifecycle.
         /// </summary>
@@ -50,6 +45,20 @@ namespace Silverback.Messaging
         /// </summary>
         /// <param name="subscriber">The subscriber.</param>
         void Unsubscribe(IDisposable subscriber);
+
+        #endregion
+
+        #region Items
+
+        /// <summary>
+        /// Gets a dictionary to store objects related to the <see cref="IBus"/>.
+        /// The lifecycle of these objects will be bound to the bus and all objects
+        /// implementing <see cref="IDisposable"/> will be disposed with it.
+        /// </summary>
+        /// <value>
+        /// The items.
+        /// </value>
+        ConcurrentDictionary<string, object> Items { get; }
 
         #endregion
     }

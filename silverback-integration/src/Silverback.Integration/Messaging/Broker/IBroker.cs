@@ -25,17 +25,38 @@ namespace Silverback.Messaging.Broker
         IMessageSerializer GetSerializer();
 
         /// <summary>
-        /// Gets a new <see cref="IProducer" /> instance.
+        /// Gets an <see cref="IProducer" /> instance to publish messages to the specified endpoint.
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <returns></returns>
         IProducer GetProducer(IEndpoint endpoint);
 
         /// <summary>
-        /// Gets a new <see cref="IConsumer" /> instance.
+        /// Gets an <see cref="IConsumer" /> instance to listen to the specified endpoint.
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <returns></returns>
         IConsumer GetConsumer(IEndpoint endpoint);
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is connected with the message broker.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is connected; otherwise, <c>false</c>.
+        /// </value>
+        bool IsConnected { get; }
+
+        /// <summary>
+        /// Connects to the message broker.
+        /// After a successful call to this method the created consumers will start listening to 
+        /// their endpoints and the producers will be ready to send messages.
+        /// </summary>
+        void Connect();
+        
+        /// <summary>
+        /// Disconnects from the message broker. The related consumers will not receive any further
+        /// message and the producers will not be able to send messages anymore.
+        /// </summary>
+        void Disconnect();
     }
 }

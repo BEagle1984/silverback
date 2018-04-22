@@ -5,47 +5,40 @@ using Silverback.Messaging.Serialization;
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    /// The default <see cref="IConsumer"/> implementation.
+    /// The default <see cref="IConsumer" /> implementation.
     /// </summary>
-    public abstract class Consumer : IConsumer
+    /// <seealso cref="Silverback.Messaging.Broker.EndpointConnectedObject" />
+    /// <seealso cref="Silverback.Messaging.Broker.IConsumer" />
+    public abstract class Consumer : EndpointConnectedObject, IConsumer
     {
-        private readonly IMessageSerializer _serializer;
-
         /// <summary>
-        /// Gets the endpoint.
+        /// Occurs when a message is received.
         /// </summary>
-        public IEndpoint Endpoint { get; }
+        public event EventHandler<IEnvelope> Received;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Consumer" /> class.
         /// </summary>
+        /// <param name="broker">The broker.</param>
         /// <param name="endpoint">The endpoint.</param>
-        protected Consumer(IEndpoint endpoint)
+        protected Consumer(IBroker broker, IEndpoint endpoint)
+            : base(broker, endpoint)
         {
-            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
-            _serializer = endpoint.GetBroker().GetSerializer();
         }
 
         /// <summary>
-        /// Start listening to the specified enpoint and consume the messages delivered
-        /// through the message broker.
+        /// Handles the received message firing the Received event.
         /// </summary>
-        /// <param name="handler">The message handler.</param>
-        public void Consume(Action<IEnvelope> handler)
+        /// <remarks>In a derived class use this method to deserialize the message and fire 
+        /// the event.</remarks>
+        protected void HandleMessage(byte[] buffer)
         {
             // TODO: Handle errors -> logging and stuff -> then?
-            Consume(buffer =>
-            {
-                var envelope = _serializer.Deserialize(buffer);
-                handler(envelope);
-            });
-        }
+            if (Received == null)
+                return;
 
-        /// <summary>
-        /// Start listening to the specified enpoint and consume the messages delivered
-        /// through the message broker.
-        /// </summary>
-        /// <param name="handler">The message handler.</param>
-        protected abstract void Consume(Action<byte[]> handler);
+            var envelope = Serializer.Deserialize(buffer);
+            Received(this, envelope);
+        }
     }
 }

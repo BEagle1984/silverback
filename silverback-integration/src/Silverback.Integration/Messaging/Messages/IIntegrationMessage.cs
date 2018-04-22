@@ -14,5 +14,7 @@ namespace Silverback.Messaging.Messages
         /// Gets or sets the message unique identifier.
         /// </summary>
         Guid Id { get; set; }
+
+        // TODO: Need more properties like SourceTopic etc.?
     }
 }

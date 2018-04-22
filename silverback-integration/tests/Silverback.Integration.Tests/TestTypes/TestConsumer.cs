@@ -9,26 +9,28 @@ namespace Silverback.Tests.TestTypes
 {
     public class TestConsumer : Consumer
     {
-        private readonly List<System.Action<byte[]>> _consumers;
-        public TestConsumer(IEndpoint endpoint, List<System.Action<byte[]>> consumers) 
-            : base(endpoint)
+        public bool IsReady { get; set; }
+
+        public TestConsumer(IBroker broker, IEndpoint endpoint) 
+            : base(broker, endpoint)
         {
-            _consumers = consumers;
         }
 
         public void TestPush(IIntegrationMessage message, IMessageSerializer serializer = null)
         {
+            if (!Broker.IsConnected)
+                throw new InvalidOperationException("The broker is not connected.");
+
+            if (!IsReady)
+                throw new InvalidOperationException("The consumer is not ready.");
+
             if (serializer == null)
                 serializer = new JsonMessageSerializer();
 
             var envelope = Envelope.Create(message);
-            var serialized = serializer.Serialize(envelope);
-            _consumers.ForEach(c => c(serialized));
-        }
+            var buffer = serializer.Serialize(envelope);
 
-        protected override void Consume(Action<byte[]> handler)
-        {
-             _consumers.Add(handler);
+            HandleMessage(buffer);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
@@ -15,12 +16,13 @@ namespace Silverback.Tests.Messaging
     public class OutboundMessageWorkerTests
     {
         private OutboundMessagesRepository _repository;
+        private TestBroker _broker;
 
         [SetUp]
         public void Setup()
         {
-            BrokersConfig.Instance.Clear();
-            BrokersConfig.Instance.Add<TestBroker>(c => c.UseServer("server"));
+            _broker = new TestBroker().UseServer("server");
+            _broker.Connect();
 
             _repository = new OutboundMessagesRepository();
         }
@@ -31,6 +33,7 @@ namespace Silverback.Tests.Messaging
         public void SendPendingMessagesOnlyTest()
         {
             var endpoint = JsonConvert.SerializeObject(BasicEndpoint.Create("topic"));
+            var endpoint2 = JsonConvert.SerializeObject(BasicEndpoint.Create("topic", "rat"));
             var message = JsonConvert.SerializeObject(new TestEventOne { Content = "Test" });
             var message2 = JsonConvert.SerializeObject(new TestEventOne { Content = "Test2" });
             var message3 = JsonConvert.SerializeObject(new TestEventOne { Content = "Test3" });
@@ -53,21 +56,21 @@ namespace Silverback.Tests.Messaging
             });
             _repository.Add(new OutboundMessageEntity
             {
-                Endpoint = endpoint,
+                Endpoint = endpoint2,
                 EndpointType = typeof(BasicEndpoint).AssemblyQualifiedName,
                 Message = message3,
                 MessageType = typeof(TestEventOne).AssemblyQualifiedName,
                 Headers = null
             });
 
-            var worker = new OutboundMessagesWorker<OutboundMessageEntity>(_repository);
+            var worker = new OutboundMessagesWorker<OutboundMessageEntity>(_repository, _broker);
             worker.SendPendingMessages();
 
-            var sentMessages = BrokersConfig.Instance.GetDefault<TestBroker>().SentMessages;
+            var sentMessages = _broker.SentMessages;
 
             Assert.That(sentMessages.Count, Is.EqualTo(2));
 
-            var serializer = BrokersConfig.Instance.GetDefault<TestBroker>().GetSerializer();
+            var serializer = _broker.GetSerializer();
             var msg = serializer.Deserialize(sentMessages.First());
             var msg2 = serializer.Deserialize(sentMessages.Last());
 
@@ -94,11 +97,11 @@ namespace Silverback.Tests.Messaging
                 Headers = headers
             });
 
-            var worker = new OutboundMessagesWorker<OutboundMessageEntity>(_repository);
+            var worker = new OutboundMessagesWorker<OutboundMessageEntity>(_repository, _broker);
             worker.SendPendingMessages();
 
-            var sentMessages = BrokersConfig.Instance.GetDefault<TestBroker>().SentMessages;
-            var serializer = BrokersConfig.Instance.GetDefault<TestBroker>().GetSerializer();
+            var sentMessages =_broker.SentMessages;
+            var serializer = _broker.GetSerializer();
             var msg = serializer.Deserialize(sentMessages.First());
 
             Assert.That(((TestEventOne)msg.Message).Content, Is.EqualTo("Test"));
@@ -138,10 +141,10 @@ namespace Silverback.Tests.Messaging
                 Headers = null
             });
 
-            var worker = new OutboundMessagesWorker<OutboundMessageEntity>(_repository);
+            var worker = new OutboundMessagesWorker<OutboundMessageEntity>(_repository, _broker);
             worker.SendPendingMessages();
 
-            var sentMessages = BrokersConfig.Instance.GetDefault<TestBroker>().SentMessages;
+            var sentMessages = _broker.SentMessages;
 
             Assert.That(sentMessages.Count, Is.EqualTo(2));
 

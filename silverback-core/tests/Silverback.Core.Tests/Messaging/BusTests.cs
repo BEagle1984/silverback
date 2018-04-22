@@ -32,9 +32,9 @@ namespace Silverback.Tests.Messaging
                 var counter = 0;
                 var counterOne = 0;
                 var counterTwo = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
-                bus.Subscribe(o => o.OfType<TestCommandOne>().Subscribe(m => counterOne++));
-                bus.Subscribe(o => o.OfType<TestCommandTwo>().Subscribe(m => counterTwo++));
+                bus.Subscribe((o, _) => o.Subscribe(m => counter++));
+                bus.Subscribe((o, _) => o.OfType<TestCommandOne>().Subscribe(m => counterOne++));
+                bus.Subscribe((o, _) => o.OfType<TestCommandTwo>().Subscribe(m => counterTwo++));
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -72,6 +72,6 @@ namespace Silverback.Tests.Messaging
             }
         }
 
-        // TODO: Test lifecycle and unsubscribe
+        // TODO: Test lifecycle (dispose) and unsubscribe
     }
 }

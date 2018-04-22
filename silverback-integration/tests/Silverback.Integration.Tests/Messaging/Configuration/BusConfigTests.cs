@@ -19,9 +19,6 @@ namespace Silverback.Tests.Messaging.Configuration
         [SetUp]
         public void Setup()
         {
-            BrokersConfig.Instance.Clear();
-            BrokersConfig.Instance.Add<TestBroker>(c => c.UseServer("server"));
-
             _outboxRepository = new OutboundMessagesRepository();
             _inboxRepository = new InboundMessagesRepository();
         }
@@ -55,10 +52,12 @@ namespace Silverback.Tests.Messaging.Configuration
             {
                 var adapter = new DbInboundAdapter<InboundMessageEntity>(_inboxRepository);
                 bus.Config()
+                    .ConfigureBroker<TestBroker>(x => { })
                     .WithFactory(t => Activator.CreateInstance(t, _outboxRepository))
-                    .AddInbound(adapter, BasicEndpoint.Create("fake"));
+                    .AddInbound(adapter, BasicEndpoint.Create("test"))
+                    .ConnectBrokers();
 
-                var consumer = (TestConsumer)BrokersConfig.Instance.Default.GetConsumer(BasicEndpoint.Create("test"));
+                var consumer = (TestConsumer)bus.GetBroker().GetConsumer(BasicEndpoint.Create("test"));
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
                 consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
@@ -74,7 +73,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             using (var bus = new Bus())
             {
-                List<TestEventOne> outputMessages = new List<TestEventOne>();
+                var outputMessages = new List<TestEventOne>();
                 bus.Config()
                     .WithFactory(t => Activator.CreateInstance(t, _outboxRepository))
                     .AddTranslator<TestInternalEventOne, TestEventOne>(m => new TestEventOne { Content = m.InternalMessage })
@@ -88,6 +87,55 @@ namespace Silverback.Tests.Messaging.Configuration
                 bus.Publish(new TestEventTwo());
 
                 Assert.That(outputMessages.Count, Is.EqualTo(3));
+            }
+        }
+
+        [Test]
+        public void ConfigureBrokerTest()
+        {
+            using (var bus = new Bus())
+            {
+                bus.Config()
+                    .ConfigureBroker<TestBroker>(b => b.WithName("Test1"))
+                    .ConfigureBroker<TestBroker>(b => b.WithName("Test2"));
+
+                var brokers = bus.GetBrokers();
+                Assert.That(brokers.Count, Is.EqualTo(2));
+                Assert.That(brokers.First(), Is.InstanceOf<TestBroker>());
+                Assert.That(brokers.OfType<TestBroker>().First().Name, Is.EqualTo("Test1"));
+            }
+        }
+
+        [Test]
+        public void ConnectBrokersTest()
+        {
+            using (var bus = new Bus())
+            {
+                bus.Config()
+                    .ConfigureBroker<TestBroker>(b => b.WithName("Test1"))
+                    .ConfigureBroker<TestBroker>(b => b.WithName("Test2"));
+
+                bus.ConnectBrokers();
+
+                var brokers = bus.GetBrokers();
+                Assert.That(brokers.All(b => b.IsConnected));
+            }
+        }
+
+        [Test]
+        public void DisconnectBrokersTest()
+        {
+            using (var bus = new Bus())
+            {
+                bus.Config()
+                    .ConfigureBroker<TestBroker>(b => b.WithName("Test1"))
+                    .ConfigureBroker<TestBroker>(b => b.WithName("Test2"));
+
+                bus.ConnectBrokers();
+                bus.DisconnectBrokers();
+
+                var brokers = bus.GetBrokers();
+                Assert.That(brokers.All(b => !b.IsConnected));
             }
         }
     }

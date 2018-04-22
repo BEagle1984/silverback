@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Silverback.Messaging;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.TestTypes;
 
@@ -52,6 +53,44 @@ namespace Silverback.Tests.Messaging.Broker
             broker.AsDefault();
 
             Assert.That(broker.IsDefault, Is.True);
+        }
+
+        [Test]
+        public void GetProducerTest()
+        {
+            var broker = new TestBroker();
+            var producer = broker.GetProducer(BasicEndpoint.Create("test"));
+
+            Assert.That(producer, Is.Not.Null);
+        }
+
+        [Test]
+        public void GetCachedProducerTest()
+        {
+            var broker = new TestBroker();
+            var producer = broker.GetProducer(BasicEndpoint.Create("test"));
+            var producer2 = broker.GetProducer(BasicEndpoint.Create("test"));
+
+            Assert.That(producer2, Is.SameAs(producer));
+        }
+
+        [Test]
+        public void GetConsumerTest()
+        {
+            var broker = new TestBroker();
+            var producer = broker.GetConsumer(BasicEndpoint.Create("test"));
+
+            Assert.That(producer, Is.Not.Null);
+        }
+
+        [Test]
+        public void GetCachedConsumerTest()
+        {
+            var broker = new TestBroker();
+            var producer = broker.GetConsumer(BasicEndpoint.Create("test"));
+            var producer2 = broker.GetConsumer(BasicEndpoint.Create("test"));
+
+            Assert.That(producer2, Is.SameAs(producer));
         }
     }
 }

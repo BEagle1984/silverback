@@ -11,12 +11,6 @@ namespace Silverback.Tests.Messaging
     [TestFixture]
     public class BasicEndpointTests
     {
-        [SetUp]
-        public void Setup()
-        {
-            BrokersConfig.Instance.Clear();
-        }
-
         [Test]
         public void CreateTest()
         {
@@ -27,45 +21,27 @@ namespace Silverback.Tests.Messaging
         }
 
         [Test]
-        public void GetBrokerTest()
+        [TestCase("Test", "Test", true)]
+        [TestCase("Test", "Other", false)]
+        [TestCase("Test", "test", true)]
+        public void EqualsTest(string name1, string name2, bool areEqual)
         {
-            BrokersConfig.Instance
-                .Add<TestBroker>(c => c.UseServer("server1").WithName("broker1"))
-                .Add<TestBroker>(c => c.UseServer("server2").WithName("broker2"));
+            var endpoint1 = BasicEndpoint.Create(name1);
+            var endpoint2 = BasicEndpoint.Create(name2);
 
-            var endpoint = BasicEndpoint.Create("test").UseBroker("broker2");
-
-            Assert.That(endpoint, Is.Not.Null);
-            Assert.That(endpoint.GetBroker(), Is.Not.Null);
-            Assert.That(endpoint.GetBroker().Name, Is.EqualTo("broker2"));
+            Assert.That(endpoint1.Equals(endpoint2), Is.EqualTo(areEqual));
         }
 
         [Test]
-        public void GetBrokerTypedTest()
+        [TestCase("Test", "Test", true)]
+        [TestCase("Test", "Other", false)]
+        [TestCase("Test", "test", true)]
+        public void EqualsObjectTest(string name1, string name2, bool areEqual)
         {
-            BrokersConfig.Instance
-                .Add<TestBroker>(c => c.UseServer("server1").WithName("broker1"))
-                .Add<TestBroker>(c => c.UseServer("server2").WithName("broker2"));
+            object endpoint1 = BasicEndpoint.Create(name1);
+            object endpoint2 = BasicEndpoint.Create(name2);
 
-            var endpoint = BasicEndpoint.Create("test").UseBroker("broker2");
-
-            Assert.That(endpoint, Is.Not.Null);
-            Assert.That(endpoint.GetBroker(), Is.Not.Null);
-            Assert.That(endpoint.GetBroker<TestBroker>().ServerName, Is.EqualTo("server2"));
-        }
-
-        [Test]
-        public void GetDefaultBrokerConfigurationTest()
-        {
-            BrokersConfig.Instance
-                .Add<TestBroker>(c => c.UseServer("server1").WithName("broker1"))
-                .Add<TestBroker>(c => c.UseServer("server2").WithName("broker2").AsDefault());
-
-            var endpoint = BasicEndpoint.Create("test");
-
-            Assert.That(endpoint, Is.Not.Null);
-            Assert.That(endpoint.GetBroker(), Is.Not.Null);
-            Assert.That(endpoint.GetBroker().Name, Is.EqualTo("broker2"));
+            Assert.That(endpoint1.Equals(endpoint2), Is.EqualTo(areEqual));
         }
     }
 }

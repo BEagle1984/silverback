@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Silverback.Extensions;
+using Silverback.Messaging.Messages;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Silverback.Extensions;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging
 {
@@ -16,6 +16,7 @@ namespace Silverback.Messaging
     {
         private readonly Subject<IMessage> _subject = new Subject<IMessage>();
         private readonly List<IDisposable> _subscribers = new List<IDisposable>();
+        private readonly ConcurrentDictionary<string, object> _items = new ConcurrentDictionary<string, object>();
 
         #region Publish
 
@@ -47,16 +48,6 @@ namespace Silverback.Messaging
         #endregion
 
         #region Subscribe / Unsubscribe
-
-        /// <summary>
-        /// Subscribes to the messages stream. The function should return an <see cref="IDisposable"/> 
-        /// to let the <see cref="IBus"/> handle the subscriber lifecycle.
-        /// </summary>
-        /// <param name="subscription">The method performing the subscription.</param>
-        public void Subscribe(Action<IObservable<IMessage>> subscription)
-        {
-            subscription(_subject);
-        }
 
         /// <summary>
         /// Subscribes to the messages stream. The function must return an <see cref="IDisposable" />
@@ -95,6 +86,20 @@ namespace Silverback.Messaging
 
         #endregion
 
+        #region Items
+
+        /// <summary>
+        /// Gets a dictionary to store objects related to the <see cref="IBus"/>.
+        /// The lifecycle of these objects will be bound to the bus and all objects
+        /// implementing <see cref="IDisposable"/> will be disposed with it.
+        /// </summary>
+        /// <value>
+        /// The items.
+        /// </value>
+        public ConcurrentDictionary<string, object> Items => _items;
+
+        #endregion
+
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
@@ -107,6 +112,7 @@ namespace Silverback.Messaging
                 lock (_subscribers)
                 {
                     _subscribers?.ForEach(s => s.Dispose());
+                    _items?.ForEach(i => (i.Value as IDisposable)?.Dispose());
                 }
                 _subject?.Dispose();
             }

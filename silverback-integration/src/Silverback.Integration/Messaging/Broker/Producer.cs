@@ -5,26 +5,20 @@ using Silverback.Messaging.Serialization;
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    /// The default <see cref="IProducer"/> implementation.
+    /// The default <see cref="IProducer" /> implementation.
     /// </summary>
+    /// <seealso cref="Silverback.Messaging.Broker.EndpointConnectedObject" />
     /// <seealso cref="Silverback.Messaging.Broker.IProducer" />
-    public abstract class Producer : IProducer
+    public abstract class Producer : EndpointConnectedObject, IProducer
     {
-        private readonly IMessageSerializer _serializer;
-
-        /// <summary>
-        /// Gets the endpoint.
-        /// </summary>
-        public IEndpoint Endpoint { get; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Consumer" /> class.
         /// </summary>
+        /// <param name="broker">The broker.</param>
         /// <param name="endpoint">The endpoint.</param>
-        protected Producer(IEndpoint endpoint)
+        protected Producer(IBroker broker, IEndpoint endpoint)
+            : base(broker, endpoint)
         {
-            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
-            _serializer = Endpoint.GetBroker().GetSerializer();
         }
 
         /// <summary>
@@ -33,7 +27,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="envelope">The envelope containing the message to be sent.</param>
         public void Produce(IEnvelope envelope)
         {
-            Produce(envelope.Message, _serializer.Serialize(envelope));
+            Produce(envelope.Message, Serializer.Serialize(envelope));
         }
 
         /// <summary>

@@ -12,17 +12,20 @@ namespace Silverback.Messaging
     /// Publishes the messages in the outbox queue to the configured message broker.
     /// </summary>
     public class OutboundMessagesWorker<TEntity>
-        where TEntity : IOutboundMessageEntity
+        where TEntity : class, IOutboundMessageEntity
     {
         private readonly IOutboundMessagesRepository<TEntity> _repository;
+        private readonly IBroker _broker;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OutboundMessagesWorker{TEntity}" /> class.
         /// </summary>
         /// <param name="repository">The repository.</param>
-        public OutboundMessagesWorker(IOutboundMessagesRepository<TEntity> repository)
+        /// <param name="broker">The broker.</param>
+        public OutboundMessagesWorker(IOutboundMessagesRepository<TEntity> repository, IBroker broker)
         {
             _repository = repository;
+            _broker = broker;
         }
 
         /// <summary>
@@ -34,7 +37,7 @@ namespace Silverback.Messaging
 
             foreach (var entity in entities)
             {
-                try
+                //try
                 {
                     var endpointType = ReflectionHelper.GetType(entity.EndpointType);
                     var endpoint = (IEndpoint)JsonConvert.DeserializeObject(entity.Endpoint, endpointType);
@@ -48,7 +51,7 @@ namespace Silverback.Messaging
 
                     _repository.SaveChanges();
                 }
-                catch
+                //catch
                 {
                     // TODO: Log and...?
                 }
@@ -61,6 +64,6 @@ namespace Silverback.Messaging
         /// <param name="message">The original message.</param>
         /// <param name="endpoint">The message broker endpoint.</param>
         protected virtual void SendMessage(IIntegrationMessage message, IEndpoint endpoint)
-            => endpoint.GetProducer().Produce(Envelope.Create(message));
+            => _broker.GetProducer(endpoint).Produce(Envelope.Create(message));
     }
 }

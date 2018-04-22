@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Text;
 using Silverback.Messaging.Adapters;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging
@@ -18,7 +19,9 @@ namespace Silverback.Messaging
     {
         private readonly ITypeFactory _typeFactory;
         private readonly Type _handlerType;
+
         private readonly IEndpoint _endpoint;
+        private readonly IProducer _producer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OutboundSubscriber{TMessage}" /> class.
@@ -26,15 +29,15 @@ namespace Silverback.Messaging
         /// <param name="messages">The observable stream of messages.</param>
         /// <param name="typeFactory">The <see cref="ITypeFactory" /> that will be used to get an <see cref="IMessageHandler" /> instance to process each received message.</param>
         /// <param name="handlerType">Type of the <see cref="IMessageHandler" /> to be used to handle the messages.</param>
-        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter"/>.</param>
-        public OutboundSubscriber(IObservable<IMessage> messages, ITypeFactory typeFactory, Type handlerType, IEndpoint endpoint)
+        /// <param name="broker">The broker to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        public OutboundSubscriber(IObservable<IMessage> messages, ITypeFactory typeFactory, Type handlerType, IBroker broker, IEndpoint endpoint)
             : base(messages)
         {
             _typeFactory = typeFactory ?? throw new ArgumentNullException(nameof(typeFactory));
             _handlerType = handlerType ?? throw new ArgumentNullException(nameof(handlerType));
+            _producer = broker?.GetProducer(endpoint);
             _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
-
-            _endpoint.ValidateConfiguration();
 
             if (!typeof(IOutboundAdapter).IsAssignableFrom(handlerType))
                 throw new ArgumentException("The specified handler type does not implement IOutboundAdapter.");
@@ -56,7 +59,7 @@ namespace Silverback.Messaging
             if (handler == null)
                 throw new InvalidOperationException($"Couldn't instantiate message handler of type {_handlerType}.");
 
-            handler.Relay((IIntegrationMessage)message, _endpoint);
+            handler.Relay((IIntegrationMessage)message, _producer, _endpoint);
         }
     }
 }
