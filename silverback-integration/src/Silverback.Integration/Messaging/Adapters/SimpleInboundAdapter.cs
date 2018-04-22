@@ -47,7 +47,6 @@ namespace Silverback.Messaging.Adapters
             
             // TODO: Handle errors -> logging and stuff -> then?
             _consumer.Received += (_, envelope) => RelayMessage(envelope.Message);
-            _consumer.Start();
         }
 
         /// <summary>

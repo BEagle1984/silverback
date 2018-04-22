@@ -12,15 +12,5 @@ namespace Silverback.Messaging.Broker
         /// Occurs when a message is received.
         /// </summary>
         event EventHandler<IEnvelope> Received;
-
-        /// <summary>
-        /// Starts consuming.
-        /// </summary>
-        void Start();
-
-        /// <summary>
-        /// Stops consuming.
-        /// </summary>
-        void Stop();
     }
 }

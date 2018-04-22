@@ -31,7 +31,9 @@ namespace Silverback.Tests.Messaging.Adapters
             _bus.Config().Subscribe<IMessage>(m => count++);
 
             var adapter = new SimpleInboundAdapter();
-            adapter.Init(_bus, _bus.GetBroker(), BasicEndpoint.Create("fake"));
+            adapter.Init(_bus, _bus.GetBroker(), BasicEndpoint.Create("test"));
+
+            _bus.ConnectBrokers();
 
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };

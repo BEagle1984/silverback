@@ -12,7 +12,7 @@ namespace Silverback.Messaging
     /// Publishes the messages in the outbox queue to the configured message broker.
     /// </summary>
     public class OutboundMessagesWorker<TEntity>
-        where TEntity : IOutboundMessageEntity
+        where TEntity : class, IOutboundMessageEntity
     {
         private readonly IOutboundMessagesRepository<TEntity> _repository;
         private readonly IBroker _broker;
@@ -37,7 +37,7 @@ namespace Silverback.Messaging
 
             foreach (var entity in entities)
             {
-                try
+                //try
                 {
                     var endpointType = ReflectionHelper.GetType(entity.EndpointType);
                     var endpoint = (IEndpoint)JsonConvert.DeserializeObject(entity.Endpoint, endpointType);
@@ -51,7 +51,7 @@ namespace Silverback.Messaging
 
                     _repository.SaveChanges();
                 }
-                catch
+                //catch
                 {
                     // TODO: Log and...?
                 }

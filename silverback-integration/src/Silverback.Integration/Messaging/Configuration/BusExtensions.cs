@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         internal static TBroker GetBroker<TBroker>(this IBus bus, string name = null) where TBroker : IBroker
             => (TBroker)GetBroker(bus, name);
-        
+
         #endregion
 
         #region Connect
@@ -50,9 +50,7 @@ namespace Silverback.Messaging.Configuration
         /// Connects to the message brokers to start consuming and producing messages.
         /// </summary>
         /// <param name="bus">The bus.</param>
-        /// <param name="inboundEndpoints">The inbound endpoints.</param>
-        /// <param name="outboundEndpoints">The outbound endpoints.</param>
-        public static void ConnectBrokers(this IBus bus, IEndpoint[] inboundEndpoints, IEndpoint[] outboundEndpoints)
+        public static void ConnectBrokers(this IBus bus)
             => GetBrokers(bus).ForEach(b => b.Connect());
 
 
@@ -60,9 +58,7 @@ namespace Silverback.Messaging.Configuration
         /// Disconnects from the message brokers.
         /// </summary>
         /// <param name="bus">The bus.</param>
-        /// <param name="inboundEndpoints">The inbound endpoints.</param>
-        /// <param name="outboundEndpoints">The outbound endpoints.</param>
-        public static void DisconnectBrokers(this IBus bus, IEndpoint[] inboundEndpoints, IEndpoint[] outboundEndpoints)
+        public static void DisconnectBrokers(this IBus bus)
             => GetBrokers(bus).ForEach(b => b.Disconnect());
 
         #endregion

@@ -10,12 +10,12 @@ namespace Silverback.Messaging
         /// <summary>
         /// Gets or sets the topic/queue name.
         /// </summary>
-        string Name { get; set; }
+        string Name { get; }
 
         /// <summary>
         /// Gets or sets the name of the broker to be used.
         /// If not set the default one will be used.
         /// </summary>
-        string BrokerName { get; set; }
+        string BrokerName { get; }
     }
 }

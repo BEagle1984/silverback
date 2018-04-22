@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public static class BusConfigExtensions
     {
-        #region ConfigureBroker
+        #region Broker
 
         /// <summary>
         /// Configures an <see cref="IBroker" /> to be used for inbound/outbound messaging.
@@ -29,9 +29,18 @@ namespace Silverback.Messaging.Configuration
             return config;
         }
 
+        /// <summary>
+        /// Connects to the message brokers to start consuming and producing messages.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        public static void ConnectBrokers(this BusConfig config)
+        {
+            config.Bus.ConnectBrokers();
+        }
+
         #endregion
 
-        #region AddOutbound
+        #region Outbound
 
         /// <summary>
         /// Attaches the <see cref="IOutboundAdapter"/> to the bus.
@@ -89,7 +98,7 @@ namespace Silverback.Messaging.Configuration
 
         #endregion
 
-        #region AddInbound
+        #region Inbound
 
         /// <summary>
         /// Configures the <see cref="IInboundAdapter" /> to forward the messages to the internal bus.
@@ -110,7 +119,7 @@ namespace Silverback.Messaging.Configuration
 
         #endregion
 
-        #region AddTranslator
+        #region Translator
 
         /// <summary>
         /// Configures a <see cref="MessageTranslator{TMessage, TIntegrationMessage}" />.

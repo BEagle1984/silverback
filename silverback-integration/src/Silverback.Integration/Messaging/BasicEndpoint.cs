@@ -10,13 +10,22 @@ namespace Silverback.Messaging
     /// Can be used as base class for more complex endpoints.
     /// </summary>
     /// <seealso cref="IEndpoint" />
-    /// TODO: Test IComparable
-    public class BasicEndpoint : IEndpoint, IComparable<BasicEndpoint>, IComparable
+    /// TODO: Test equality check
+    /// TODO: Review immutability / creation (UseBroker creates a new instance)
+    public sealed class BasicEndpoint : IEndpoint, IEquatable<BasicEndpoint>
     {
         #region Construction
 
-        private BasicEndpoint()
+        /// <summary>
+        /// Prevents a default instance of the <see cref="BasicEndpoint" /> class from being created.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="brokerName">Name of the broker.</param>
+        [JsonConstructor]
+        private BasicEndpoint(string name, string brokerName = null)
         {
+            Name = name;
+            BrokerName = brokerName;
         }
 
         /// <summary>
@@ -25,9 +34,9 @@ namespace Silverback.Messaging
         /// <param name="name">The queue/topic name.</param>
         /// <returns></returns>
         public static BasicEndpoint Create(string name)
-            => new BasicEndpoint { Name = name };
+            => new BasicEndpoint(name);
 
-            #endregion
+        #endregion
 
         #region Properties
 
@@ -36,12 +45,12 @@ namespace Silverback.Messaging
         /// If not set the default one will be used.
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string BrokerName { get; set; }
+        public string BrokerName { get; }
 
         /// <summary>
         /// Gets or sets the topic/queue name.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get;  }
 
         #endregion
 
@@ -54,8 +63,7 @@ namespace Silverback.Messaging
         /// <returns></returns>
         public BasicEndpoint UseBroker(string brokerName)
         {
-            BrokerName = brokerName;
-            return this;
+            return new BasicEndpoint(Name, brokerName);
         }
 
         /// <summary>
@@ -65,7 +73,7 @@ namespace Silverback.Messaging
         /// <remarks>
         /// An exception must be thrown if the confgiuration is not conistent.
         /// </remarks>
-        public virtual void ValidateConfiguration()
+        public void ValidateConfiguration()
         {
         }
 
@@ -98,9 +106,57 @@ namespace Silverback.Messaging
             if (ReferenceEquals(null, obj)) return 1;
             if (ReferenceEquals(this, obj)) return 0;
             if (!(obj is BasicEndpoint)) throw new ArgumentException($"Object must be of type {nameof(BasicEndpoint)}");
-            return CompareTo((BasicEndpoint) obj);
+            return CompareTo((BasicEndpoint)obj);
         }
 
         #endregion
+
+        #region Equality
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <param name="other">An object to compare with this object.</param>
+        /// <returns>
+        /// true if the current object is equal to the <paramref name="other">other</paramref> parameter; otherwise, false.
+        /// </returns>
+        public bool Equals(BasicEndpoint other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(BrokerName, other.BrokerName) && string.Equals(Name, other.Name);
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((BasicEndpoint)obj);
+        }
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((BrokerName != null ? BrokerName.GetHashCode() : 0) * 397) ^ (Name != null ? Name.GetHashCode() : 0);
+            }
+        }
+
+        #endregion
+
     }
 }

@@ -39,6 +39,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">The endpoint.</param>
         /// <returns></returns>
         /// TODO: Test reusage
+        /// TODO: Throw exception if connected?
         public IProducer GetProducer(IEndpoint endpoint)
             => _producers.GetOrAdd(endpoint, GetNewProducer(endpoint));
 
@@ -56,9 +57,23 @@ namespace Silverback.Messaging.Broker
         /// <returns></returns>
         /// TODO: Test reusage
         public IConsumer GetConsumer(IEndpoint endpoint)
-            => _consumers.GetOrAdd(endpoint, GetNewConsumer(endpoint));
+        {
+            if (!IsConnected)
+                return _consumers.GetOrAdd(endpoint, GetNewConsumer(endpoint));
 
-        public bool IsConnected { get; }
+            if (!_consumers.TryGetValue(endpoint, out var consumer))
+                throw new InvalidOperationException("The broker is already connected. Disconnect it to get a new consumer.");
+
+            return consumer;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is connected with the message broker.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is connected; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsConnected { get; private set; }
 
         /// <summary>
         /// Gets a new <see cref="Consumer" /> instance to listen to the specified endpoint.
@@ -83,6 +98,8 @@ namespace Silverback.Messaging.Broker
 
             Connect(_consumers.Values);
             Connect(_producers.Values);
+
+            IsConnected = true;
         }
 
         /// <summary>
@@ -120,8 +137,10 @@ namespace Silverback.Messaging.Broker
             RemoveDisposedObjects(_consumers);
             RemoveDisposedObjects(_producers);
 
-            Connect(_consumers.Values);
-            Connect(_producers.Values);
+            Disconnect(_consumers.Values);
+            Disconnect(_producers.Values);
+
+            IsConnected = false;
         }
 
         /// <summary>

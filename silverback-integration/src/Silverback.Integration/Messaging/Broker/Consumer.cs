@@ -27,37 +27,18 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        /// Starts consuming.
+        /// Handles the received message firing the Received event.
         /// </summary>
-        public void Start()
+        /// <remarks>In a derived class use this method to deserialize the message and fire 
+        /// the event.</remarks>
+        protected void HandleMessage(byte[] buffer)
         {
             // TODO: Handle errors -> logging and stuff -> then?
-            StartConsuming(buffer =>
-            {
-                if (Received == null)
-                    return;
+            if (Received == null)
+                return;
 
-                var envelope = Serializer.Deserialize(buffer);
-                Received(this, envelope);
-            });
+            var envelope = Serializer.Deserialize(buffer);
+            Received(this, envelope);
         }
-
-        /// <summary>
-        /// Stops consuming.
-        /// </summary>
-        public void Stop()
-            => StopConsuming();
-
-        /// <summary>
-        /// Starts consuming messages from the related enpoint and call the specified handler when a message
-        /// is received.
-        /// </summary>
-        /// <param name="handler">The message handler.</param>
-        protected abstract void StartConsuming(Action<byte[]> handler);
-
-        /// <summary>
-        /// Stops consuming messages.
-        /// </summary>
-        protected abstract void StopConsuming();
     }
 }

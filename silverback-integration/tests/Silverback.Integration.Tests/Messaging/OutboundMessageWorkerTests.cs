@@ -22,6 +22,7 @@ namespace Silverback.Tests.Messaging
         public void Setup()
         {
             _broker = new TestBroker().UseServer("server");
+            _broker.Connect();
 
             _repository = new OutboundMessagesRepository();
         }
@@ -32,6 +33,7 @@ namespace Silverback.Tests.Messaging
         public void SendPendingMessagesOnlyTest()
         {
             var endpoint = JsonConvert.SerializeObject(BasicEndpoint.Create("topic"));
+            var endpoint2 = JsonConvert.SerializeObject(BasicEndpoint.Create("topic").UseBroker("rat"));
             var message = JsonConvert.SerializeObject(new TestEventOne { Content = "Test" });
             var message2 = JsonConvert.SerializeObject(new TestEventOne { Content = "Test2" });
             var message3 = JsonConvert.SerializeObject(new TestEventOne { Content = "Test3" });
@@ -54,7 +56,7 @@ namespace Silverback.Tests.Messaging
             });
             _repository.Add(new OutboundMessageEntity
             {
-                Endpoint = endpoint,
+                Endpoint = endpoint2,
                 EndpointType = typeof(BasicEndpoint).AssemblyQualifiedName,
                 Message = message3,
                 MessageType = typeof(TestEventOne).AssemblyQualifiedName,
