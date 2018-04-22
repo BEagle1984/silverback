@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Adapters
     /// This is the simplest implementation and it doesn't prevent duplicated processing of the same message. 
     /// </summary>
     /// <seealso cref="Silverback.Messaging.Adapters.IInboundAdapter" />
-    public class SimpleInboundAdapter : IInboundAdapter, IDisposable
+    public class SimpleInboundAdapter : IInboundAdapter
     {
         private IBus _bus;
         private IBroker _broker;
@@ -29,7 +29,6 @@ namespace Silverback.Messaging.Adapters
             _broker = broker ?? throw new ArgumentNullException(nameof(broker));
 
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
-            endpoint.ValidateConfiguration();
 
             Connect(endpoint);
         }
@@ -57,39 +56,5 @@ namespace Silverback.Messaging.Adapters
         {
             _bus.Publish(message);
         }
-
-        #region IDisposable
-
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                // TODO: IMPORTANT: Is this correct??
-                (_consumer as IDisposable)?.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Finalizes an instance of the <see cref="SimpleInboundAdapter"/> class.
-        /// </summary>
-        ~SimpleInboundAdapter()
-        {
-            Dispose(false);
-        }
-
-        #endregion
     }
 }

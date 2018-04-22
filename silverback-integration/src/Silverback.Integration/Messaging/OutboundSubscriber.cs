@@ -39,8 +39,6 @@ namespace Silverback.Messaging
             _producer = broker?.GetProducer(endpoint);
             _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
 
-            _endpoint.ValidateConfiguration();
-
             if (!typeof(IOutboundAdapter).IsAssignableFrom(handlerType))
                 throw new ArgumentException("The specified handler type does not implement IOutboundAdapter.");
         }

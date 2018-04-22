@@ -5,7 +5,7 @@ namespace Silverback.Messaging
     /// <summary>
     /// Contains information to identify the endpoint on the message broker (server address, topic, queue name, ...).
     /// </summary>
-    public interface IEndpoint : IConfigurationValidation
+    public interface IEndpoint
     {
         /// <summary>
         /// Gets or sets the topic/queue name.

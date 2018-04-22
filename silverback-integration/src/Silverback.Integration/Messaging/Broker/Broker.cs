@@ -38,7 +38,6 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <returns></returns>
-        /// TODO: Test reusage
         /// TODO: Throw exception if connected?
         public IProducer GetProducer(IEndpoint endpoint)
             => _producers.GetOrAdd(endpoint, GetNewProducer(endpoint));
@@ -55,7 +54,6 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <returns></returns>
-        /// TODO: Test reusage
         public IConsumer GetConsumer(IEndpoint endpoint)
         {
             if (!IsConnected)

@@ -33,7 +33,7 @@ namespace Silverback.Tests.Messaging
         public void SendPendingMessagesOnlyTest()
         {
             var endpoint = JsonConvert.SerializeObject(BasicEndpoint.Create("topic"));
-            var endpoint2 = JsonConvert.SerializeObject(BasicEndpoint.Create("topic").UseBroker("rat"));
+            var endpoint2 = JsonConvert.SerializeObject(BasicEndpoint.Create("topic", "rat"));
             var message = JsonConvert.SerializeObject(new TestEventOne { Content = "Test" });
             var message2 = JsonConvert.SerializeObject(new TestEventOne { Content = "Test2" });
             var message3 = JsonConvert.SerializeObject(new TestEventOne { Content = "Test3" });
