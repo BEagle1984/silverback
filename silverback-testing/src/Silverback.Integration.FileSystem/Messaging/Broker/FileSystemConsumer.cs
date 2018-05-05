@@ -10,29 +10,30 @@ namespace Silverback.Messaging.Broker
     /// <seealso cref="Silverback.Messaging.Broker.Consumer" />
     /// <seealso cref="Silverback.Messaging.Broker.IConsumer" />
     /// <seealso cref="System.IDisposable" />
-    public class FileSystemConsumer : Consumer, IDisposable
+    public class FileSystemConsumer : Consumer
     {
-        private readonly FileSystemBroker _broker;
         private FileSystemWatcher _watcher;
-        
+
+        /// <summary>
+        /// Gets the associated <see cref="T:Silverback.Messaging.Broker.IBroker" />.
+        /// </summary>
+        private new FileSystemBroker Broker => (FileSystemBroker)base.Broker;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FileSystemConsumer"/> class.
         /// </summary>
+        /// <param name="broker">The broker.</param>
         /// <param name="endpoint">The endpoint.</param>
-        public FileSystemConsumer(IEndpoint endpoint) 
-            : base(endpoint)
+        public FileSystemConsumer(IBroker broker, IEndpoint endpoint) 
+            : base(broker, endpoint)
         {
-            _broker = endpoint.GetBroker<FileSystemBroker>();
         }
 
-        /// <summary>
-        /// Start listening to the specified enpoint and consume the messages delivered
-        /// through the message broker.
-        /// </summary>
-        /// <param name="handler">The handler.</param>
-        protected override void Consume(Action<byte[]> handler)
+        internal void Connect()
         {
-            var topicPath = _broker.GetTopicPath(Endpoint.Name);
+            if (_watcher != null) throw new InvalidOperationException("Already connected");
+
+            var topicPath = Broker.GetTopicPath(Endpoint.Name);
 
             _watcher = new FileSystemWatcher(topicPath)
             {
@@ -44,13 +45,20 @@ namespace Silverback.Messaging.Broker
             {
                 //try
                 {
-                    handler.Invoke(ReadFile(args.FullPath));
+                    var buffer = ReadFile(args.FullPath);
+                    HandleMessage(buffer);
                 }
                 //catch
                 {
                     // TODO: Logging and stuff but...what do?
                 }
             };
+        }
+
+        internal void Disconnect()
+        {
+            _watcher?.Dispose();
+            _watcher = null;
         }
 
         /// <summary>
@@ -79,12 +87,17 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        public void Dispose()
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
         {
-            _watcher?.Dispose();
-            _watcher = null;
+            if (disposing)
+            {
+                Disconnect();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

@@ -18,9 +18,6 @@ namespace Silverback.Integration.FileSystem.TestConsole
 
         public Program()
         {
-            BrokersConfig.Instance
-                .Add<FileSystemBroker>(c => c
-                    .OnPath(@"D:\Temp\Broker"));
         }
 
         private void Execute()
@@ -61,12 +58,21 @@ namespace Silverback.Integration.FileSystem.TestConsole
             }
         }
 
+        private FileSystemBroker GetBroker()
+        {
+            // TODO: An helper like Broker.Create<T>().OnPath would be nice
+            return new FileSystemBroker().OnPath(@"D:\Temp\Broker");
+        }
+
         private void Produce(string topicName, string messageContent)
         {
             var message = new TestMessage { Content = messageContent };
             var endpoint = BasicEndpoint.Create(topicName);
 
-            endpoint.GetProducer().Produce(Envelope.Create(message));
+            using (var broker = GetBroker())
+            {
+                broker.GetProducer(endpoint).Produce(Envelope.Create(message));
+            }
 
             WriteSuccess($"Successfully produced message {message.Id} to topic '{topicName}'.");
         }
@@ -75,13 +81,17 @@ namespace Silverback.Integration.FileSystem.TestConsole
         {
             var endpoint = BasicEndpoint.Create(topicName);
 
-            using (var consumer = (FileSystemConsumer)endpoint.GetConsumer())
+            using (var broker = GetBroker())
             {
-                consumer.Consume(e =>
+                var consumer = broker.GetConsumer(endpoint);
+
+                broker.Connect();
+
+                consumer.Received += (_, e) =>
                 {
                     var message = (TestMessage)e.Message;
                     WriteLine($"Received message {message.Id} from topic '{topicName}' with content '{message.Content}'.", ConsoleColor.Yellow);
-                });
+                };
 
                 while (Console.ReadKey(true).Key != ConsoleKey.Q)
                 {

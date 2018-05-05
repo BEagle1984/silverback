@@ -10,12 +10,19 @@ namespace Silverback.Messaging.Broker
     /// <seealso cref="Silverback.Messaging.Broker.IProducer" />
     public class FileSystemProducer : Producer
     {
-        private readonly FileSystemBroker _broker;
+        /// <summary>
+        /// Gets the associated <see cref="T:Silverback.Messaging.Broker.IBroker" />.
+        /// </summary>
+        private new FileSystemBroker Broker => (FileSystemBroker) base.Broker;
 
-        public FileSystemProducer(IEndpoint endpoint) 
-            : base(endpoint)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileSystemProducer"/> class.
+        /// </summary>
+        /// <param name="broker">The broker.</param>
+        /// <param name="endpoint">The endpoint.</param>
+        public FileSystemProducer(IBroker broker, IEndpoint endpoint) 
+            : base(broker, endpoint)
         {
-            _broker = endpoint.GetBroker<FileSystemBroker>();
         }
 
         /// <summary>
@@ -26,7 +33,7 @@ namespace Silverback.Messaging.Broker
         /// This is what is supposed to be sent through the broker.</param>
         protected override void Produce(IIntegrationMessage message, byte[] serializedMessage)
         {
-            var filePath = Path.Combine(_broker.GetTopicPath(Endpoint.Name), $"{message.Id}.txt");
+            var filePath = Path.Combine(Broker.GetTopicPath(Endpoint.Name), $"{message.Id}.txt");
             File.WriteAllBytes(filePath, serializedMessage);
         }
     }
