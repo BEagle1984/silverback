@@ -1,8 +1,8 @@
 ﻿using System;
-using Baskets.Domain.Model.BasketAggregate;
 using Common.Domain;
+using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
 
-namespace Baskets.Domain.Repositories
+namespace SilverbackShop.Baskets.Domain.Repositories
 {
     public interface IBasketsRepository : IShopRepository<Basket>
     {

@@ -1,12 +1,4 @@
 ﻿using System;
-using Baskets.Domain;
-using Baskets.Domain.MessageHandlers;
-using Baskets.Domain.Model;
-using Baskets.Domain.Model.BasketAggregate;
-using Baskets.Domain.Repositories;
-using Baskets.Domain.Services;
-using Baskets.Infrastructure;
-using Common.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +9,16 @@ using Silverback.Messaging;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
+using SilverbackShop.Baskets.Domain;
+using SilverbackShop.Baskets.Domain.MessageHandlers;
+using SilverbackShop.Baskets.Domain.Model;
+using SilverbackShop.Baskets.Domain.Repositories;
+using SilverbackShop.Baskets.Domain.Services;
+using SilverbackShop.Baskets.Infrastructure;
+using SilverbackShop.Common.Data;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace Baskets.Service
+namespace SilverbackShop.Baskets.Service
 {
     public class Startup
     {
@@ -81,12 +78,10 @@ namespace Baskets.Service
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Baskets API V1");
             });
 
-            // TODO: Create extension method app.UseBrokers() in Silverback.AspNetCore
-            BrokersConfig.Instance.Add<FileSystemBroker>(c => c.OnPath(@"D:\Temp\Broker\SilverbackShop"));
-
             // TODO: Create extension method app.UseBus() in Silverback.AspNetCore
             var bus = app.ApplicationServices.GetService<IBus>();
             bus.Config()
+                .ConfigureBroker<FileSystemBroker>(c => c.OnPath(@"D:\Temp\Broker\SilverbackShop"))
                 .WithFactory(t => app.ApplicationServices.GetService(t))
                 .ConfigureUsing<BasketsDomainMessagingConfigurator>();
 

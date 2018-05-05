@@ -1,8 +1,8 @@
-﻿using Baskets.Domain.Model.BasketAggregate;
-using Baskets.Domain.Services;
-using Silverback.Messaging;
+﻿using Silverback.Messaging;
+using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
+using SilverbackShop.Baskets.Domain.Services;
 
-namespace Baskets.Domain.MessageHandlers
+namespace SilverbackShop.Baskets.Domain.MessageHandlers
 {
     public class InventoryMultiMessageHandler : MultiMessageHandler
     {
@@ -13,11 +13,8 @@ namespace Baskets.Domain.MessageHandlers
             _inventoryService = inventoryService;
         }
 
-        protected override void Configure(MultiMessageHandlerConfiguration config)
-        {
-            config
-                .AddHandler<BasketCheckoutEvent>(OnCheckout);
-        }
+        protected override void Configure(MultiMessageHandlerConfiguration config) => config
+            .AddHandler<BasketCheckoutEvent>(OnCheckout);
 
         public void OnCheckout(BasketCheckoutEvent message)
         {

@@ -1,7 +1,7 @@
-﻿using Baskets.Domain.Model;
-using Common.Domain;
+﻿using Common.Domain;
+using SilverbackShop.Baskets.Domain.Model;
 
-namespace Baskets.Domain.Repositories
+namespace SilverbackShop.Baskets.Domain.Repositories
 {
     public interface IInventoryItemRepository : IShopRepository<InventoryItem>
     {

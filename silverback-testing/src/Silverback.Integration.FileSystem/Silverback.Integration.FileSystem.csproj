@@ -10,6 +10,7 @@ This package contains a file system based implementation of a rudimental message
     <PackageLicenseUrl>https://github.com/BEagle1984/silverback-testing/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback-testing</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

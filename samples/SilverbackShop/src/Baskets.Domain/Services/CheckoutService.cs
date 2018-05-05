@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Baskets.Domain.Model.BasketAggregate;
-using Baskets.Domain.Repositories;
+using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
+using SilverbackShop.Baskets.Domain.Repositories;
 
-namespace Baskets.Domain.Services
+namespace SilverbackShop.Baskets.Domain.Services
 {
     public class CheckoutService
     {

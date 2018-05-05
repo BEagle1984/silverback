@@ -6,7 +6,7 @@ using Silverback.Core.EntityFrameworkCore;
 using Silverback.Domain;
 using Silverback.Infrastructure;
 
-namespace Common.Infrastructure
+namespace SilverbackShop.Common.Infrastructure
 {
     public abstract class ShopRepository<TAggregateRoot> : Repository<TAggregateRoot> , IShopRepository<TAggregateRoot>
         where TAggregateRoot : ShopEntity, IAggregateRoot

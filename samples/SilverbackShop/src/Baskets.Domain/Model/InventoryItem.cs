@@ -2,7 +2,7 @@
 using Common.Domain;
 using Silverback.Domain;
 
-namespace Baskets.Domain.Model
+namespace SilverbackShop.Baskets.Domain.Model
 {
     public class InventoryItem : ShopEntity, IAggregateRoot
     {

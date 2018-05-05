@@ -4,7 +4,7 @@ using System.Linq;
 using Common.Domain;
 using Silverback.Domain;
 
-namespace Baskets.Domain.Model.BasketAggregate
+namespace SilverbackShop.Baskets.Domain.Model.BasketAggregate
 {
     public class Basket : ShopEntity, IAggregateRoot
     {

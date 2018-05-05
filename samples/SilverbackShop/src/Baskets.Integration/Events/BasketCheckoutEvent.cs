@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 
-namespace Baskets.Integration.Events
+namespace SilverbackShop.Baskets.Integration.Events
 {
     public class BasketCheckoutEvent : IIntegrationEvent
     {

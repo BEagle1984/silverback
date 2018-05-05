@@ -1,13 +1,11 @@
-﻿using System;
-using Baskets.Domain;
-using Baskets.Domain.Model;
-using Baskets.Domain.Model.BasketAggregate;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Silverback.Core.EntityFrameworkCore;
 using Silverback.Domain;
 using Silverback.Messaging.Publishing;
+using SilverbackShop.Baskets.Domain.Model;
+using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
 
-namespace Baskets.Infrastructure
+namespace SilverbackShop.Baskets.Infrastructure
 {
     public class BasketsContext : SilverbackDbContext
     {

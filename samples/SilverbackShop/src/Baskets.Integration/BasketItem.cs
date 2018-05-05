@@ -1,4 +1,4 @@
-﻿namespace Baskets.Integration
+﻿namespace SilverbackShop.Baskets.Integration
 {
     public class BasketItem
     {

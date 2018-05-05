@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq;
-using Baskets.Domain.Model.BasketAggregate;
-using Baskets.Domain.Repositories;
-using Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Silverback.Infrastructure;
+using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
+using SilverbackShop.Baskets.Domain.Repositories;
+using SilverbackShop.Common.Infrastructure;
 
-namespace Baskets.Infrastructure
+namespace SilverbackShop.Baskets.Infrastructure
 {
     public class BasketsRepository : ShopRepository<Basket>, IBasketsRepository
     {

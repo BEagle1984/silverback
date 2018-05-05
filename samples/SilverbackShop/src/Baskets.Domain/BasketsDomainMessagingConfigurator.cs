@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Baskets.Domain.MessageHandlers;
-using Baskets.Domain.Model.BasketAggregate;
+﻿using System.Linq;
 using Silverback.Messaging;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using SilverbackShop.Baskets.Domain.MessageHandlers;
+using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
 
-namespace Baskets.Domain
+namespace SilverbackShop.Baskets.Domain
 {
     public class BasketsDomainMessagingConfigurator : IConfigurator
     {

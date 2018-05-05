@@ -1,11 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Baskets.Domain.Model.BasketAggregate;
-using Baskets.Domain.Repositories;
-using Baskets.Domain.Services;
-using Common.Data;
 using Microsoft.AspNetCore.Mvc;
+using SilverbackShop.Baskets.Domain.Services;
+using SilverbackShop.Common.Data;
 
-namespace Baskets.Service.Controllers
+namespace SilverbackShop.Baskets.Service.Controllers
 {
     [Route("basket")]
     public class BasketsController : Controller

@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>SilverbackShop.Baskets.Domain</AssemblyName>
+    <RootNamespace>SilverbackShop.Baskets.Domain</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Core" Version="1.0.2" />
-    <PackageReference Include="Silverback.Integration" Version="1.0.15" />
+    <PackageReference Include="Silverback.Core" Version="1.0.6" />
+    <PackageReference Include="Silverback.Integration" Version="1.1.0" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Baskets.Domain.Model;
-using Baskets.Domain.Repositories;
+using SilverbackShop.Baskets.Domain.Model;
+using SilverbackShop.Baskets.Domain.Repositories;
 
-namespace Baskets.Domain.Services
+namespace SilverbackShop.Baskets.Domain.Services
 {
     public class InventoryService
     {
