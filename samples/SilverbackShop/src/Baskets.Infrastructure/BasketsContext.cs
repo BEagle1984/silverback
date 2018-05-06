@@ -3,7 +3,6 @@ using Silverback.Core.EntityFrameworkCore;
 using Silverback.Domain;
 using Silverback.Messaging.Publishing;
 using SilverbackShop.Baskets.Domain.Model;
-using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
 
 namespace SilverbackShop.Baskets.Infrastructure
 {

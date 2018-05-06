@@ -6,4 +6,8 @@
     <RootNamespace>SilverbackShop.Catalog.Domain</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Model\" />
+  </ItemGroup>
+
 </Project>

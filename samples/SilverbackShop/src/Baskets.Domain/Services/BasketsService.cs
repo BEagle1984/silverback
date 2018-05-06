@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
+using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 
 namespace SilverbackShop.Baskets.Domain.Services

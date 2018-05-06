@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
+using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 using SilverbackShop.Common.Infrastructure;
 

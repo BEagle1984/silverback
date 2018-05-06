@@ -1,6 +1,6 @@
 ﻿using System;
 using Common.Domain;
-using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
+using SilverbackShop.Baskets.Domain.Model;
 
 namespace SilverbackShop.Baskets.Domain.Repositories
 {

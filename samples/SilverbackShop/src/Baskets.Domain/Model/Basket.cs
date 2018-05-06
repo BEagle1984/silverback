@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Domain;
 using Silverback.Domain;
+using SilverbackShop.Baskets.Domain.Model.Events;
 
-namespace SilverbackShop.Baskets.Domain.Model.BasketAggregate
+namespace SilverbackShop.Baskets.Domain.Model
 {
     public class Basket : ShopEntity, IAggregateRoot
     {

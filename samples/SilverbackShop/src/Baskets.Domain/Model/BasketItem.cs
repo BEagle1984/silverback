@@ -1,6 +1,6 @@
 using Common.Domain;
 
-namespace SilverbackShop.Baskets.Domain.Model.BasketAggregate
+namespace SilverbackShop.Baskets.Domain.Model
 {
     public class BasketItem : ShopEntity
     {

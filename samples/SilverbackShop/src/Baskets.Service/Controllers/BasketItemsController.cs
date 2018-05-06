@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using SilverbackShop.Baskets.Domain.Model.BasketAggregate;
+using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 using SilverbackShop.Baskets.Domain.Services;
 using SilverbackShop.Baskets.Service.Dto;
