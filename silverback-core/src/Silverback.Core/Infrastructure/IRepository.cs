@@ -12,7 +12,6 @@ namespace Silverback.Infrastructure
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     public interface IRepository<TEntity>
-            where TEntity : IDomainEntity
     {
         /// <summary>
         /// Gets an <see cref="IQueryable" /> to query this repository.

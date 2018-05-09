@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Silverback.Domain;
 using Silverback.Infrastructure;
 
 namespace Silverback.Core.EntityFrameworkCore
@@ -14,7 +13,7 @@ namespace Silverback.Core.EntityFrameworkCore
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <seealso cref="Silverback.Infrastructure.IRepository{TEntity}" />
     public abstract class Repository<TEntity> : IRepository<TEntity>
-        where TEntity : class, IDomainEntity
+        where TEntity : class
     {
         protected DbSet<TEntity> DbSet { get; }
 
