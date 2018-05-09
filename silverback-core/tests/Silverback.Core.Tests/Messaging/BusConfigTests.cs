@@ -44,7 +44,6 @@ namespace Silverback.Tests.Messaging
             }
         }
 
-
         [Test]
         public void SubscribeUntypedHandlerMethodTest()
         {
@@ -114,5 +113,30 @@ namespace Silverback.Tests.Messaging
                 Assert.That(FakeConfigurator.Executed, Is.True);
             }
         }
+
+        [Test]
+        public void MessageHierarchyTest()
+        {
+            var counterBase = 0;
+            var counterA = 0;
+            var counterB = 0;
+            using (var bus = new Bus())
+            {
+                bus.Config().Subscribe<TestEventHierarchyBase>(m => counterBase++);
+                bus.Config().Subscribe<TestEventHierarchyChildA>(m => counterA++);
+                bus.Config().Subscribe<TestEventHierarchyChildB>(m => counterB++);
+
+                bus.Publish(new TestEventHierarchyChildA());
+                bus.Publish(new TestEventHierarchyChildB());
+                bus.Publish(new TestEventHierarchyBase());
+                bus.Publish(new TestEventHierarchyChildA());
+                bus.Publish(new TestEventHierarchyChildA());
+
+                Assert.That(counterBase, Is.EqualTo(5));
+                Assert.That(counterA, Is.EqualTo(3));
+                Assert.That(counterB, Is.EqualTo(1));
+            }
+        }
+
     }
 }
