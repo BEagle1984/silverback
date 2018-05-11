@@ -1,4 +1,4 @@
-﻿using SilverbackShop.Common.Infrastructure;
+﻿using Common.Domain;
 
 namespace SilverbackShop.Catalog.Domain.Repositories
 {

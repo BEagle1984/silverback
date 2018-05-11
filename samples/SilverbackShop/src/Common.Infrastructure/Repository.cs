@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Domain;
+using Microsoft.EntityFrameworkCore;
+using Silverback.Domain;
 
 namespace SilverbackShop.Common.Infrastructure
 {
@@ -6,9 +8,9 @@ namespace SilverbackShop.Common.Infrastructure
     /// The base class for the repositories.
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
-    /// <seealso cref="Silverback.Infrastructure.IRepository{TEntity}" />
+    /// <seealso cref="IRepository{TEntity}" />
     public abstract class Repository<TEntity> : IRepository<TEntity>
-        where TEntity : class
+        where TEntity : ShopEntity, IAggregateRoot
     {
         protected DbSet<TEntity> DbSet { get; }
 
@@ -22,16 +24,6 @@ namespace SilverbackShop.Common.Infrastructure
             DbSet = dbSet;
             UnitOfWork = unitOfWork;
         }
-
-        ///// <summary>
-        ///// Gets an <see cref="T:System.Linq.IQueryable" /> to query this repository.
-        ///// </summary>
-        //public IQueryable<TEntity> Queryable => DbSet.AsQueryable();
-
-        ///// <summary>
-        ///// Gets an <see cref="T:System.Linq.IQueryable" /> to query this repository. The loaded entities will not be tracked or cached.
-        ///// </summary>
-        //public IQueryable<TEntity> NoTrackingQueryable => DbSet.AsNoTracking();
 
         /// <summary>
         /// Adds the specified entity.

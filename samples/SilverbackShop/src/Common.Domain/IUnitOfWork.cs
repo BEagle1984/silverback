@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace SilverbackShop.Common.Infrastructure
+namespace Common.Domain
 {
     /// <summary>
     /// The unit of work.

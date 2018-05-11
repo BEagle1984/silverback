@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Common.Domain;
 using SilverbackShop.Catalog.Domain.Dto;
 using SilverbackShop.Catalog.Domain.Model;
-using SilverbackShop.Common.Infrastructure;
 
 namespace SilverbackShop.Catalog.Domain.Repositories
 {
