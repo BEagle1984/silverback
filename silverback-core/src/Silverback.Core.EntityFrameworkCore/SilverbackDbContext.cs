@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Domain;
-using Silverback.Infrastructure;
 using Silverback.Messaging.Publishing;
 
 namespace Silverback.Core.EntityFrameworkCore
@@ -13,7 +12,7 @@ namespace Silverback.Core.EntityFrameworkCore
     /// </summary>
     /// <seealso cref="T:Microsoft.EntityFrameworkCore.DbContext" />
     /// <seealso cref="T:Silverback.Core.Domain.IUnitOfWork" />
-    public class SilverbackDbContext : DbContext, IUnitOfWork
+    public class SilverbackDbContext : DbContext
     {
         private readonly IEventPublisher<IDomainEvent<IDomainEntity>> _eventPublisher;
 
@@ -35,16 +34,6 @@ namespace Silverback.Core.EntityFrameworkCore
             : base(options)
         {
             _eventPublisher = eventPublisher;
-        }
-
-        /// <summary>
-        /// Asynchronously saves all pending changes and published all queued events.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task IUnitOfWork.SaveChangesAsync(CancellationToken cancellationToken)
-        {
-            return SaveChangesAsync(true, cancellationToken);
         }
 
         /// <summary>

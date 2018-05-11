@@ -41,6 +41,7 @@ namespace Silverback.Messaging
         /// <param name="message">The message to be handled.</param>
         public override void Handle(IMessage message)
         {
+            // TODO: Should simply subscribe all methods using a generichandler
             GetHandlers().ForEach(h => h.Handle(message));
         }
     }
