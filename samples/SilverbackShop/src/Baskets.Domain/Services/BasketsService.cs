@@ -17,7 +17,7 @@ namespace SilverbackShop.Baskets.Domain.Services
 
         public async Task<Basket> GetUserBasket(Guid userId)
         {
-            var basket = _repository.AggregateQueryable.FirstOrDefault(b => b.UserId == userId);
+            var basket = await _repository.FindByUserAsync(userId);
 
             if (basket != null)
                 return basket;

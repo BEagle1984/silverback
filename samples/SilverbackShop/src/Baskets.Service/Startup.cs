@@ -48,8 +48,9 @@ namespace SilverbackShop.Baskets.Service
             services.AddScoped<InventoryService>();
             services.AddScoped<BasketsService>();
 
-            services.AddScoped<IBasketsRepository, BasketsRepository>();
-            services.AddScoped<IInventoryItemRepository, InventoryItemRepository>();
+            services.AddScoped<IBasketsUnitOfWork, BasketsUnitOfWork>();
+            services.AddTransient(s => s.GetService<IBasketsUnitOfWork>().Baskets);
+            services.AddTransient(s => s.GetService<IBasketsUnitOfWork>().InventoryItems);
 
             services.AddTransient<InventoryMultiMessageHandler>();
             services.AddTransient<SimpleOutboundAdapter>();

@@ -20,9 +20,29 @@ namespace SilverbackShop.Baskets.Domain.Model
             };
         }
 
-        public void UpdateStock(int delta)
+        public void DecrementStock(int quantity)
         {
-            StockQuantity += delta;
+            if (quantity <= 0)
+                throw new ArgumentOutOfRangeException();
+            if (quantity >= StockQuantity)
+                throw new DomainValidationException($"Cannot decrement by {quantity} units. Current stock quantity is {StockQuantity}.");
+
+            StockQuantity -= quantity;
+        }
+        public void IncrementStock(int quantity)
+        {
+            if (quantity <= 0)
+                throw new ArgumentOutOfRangeException();
+
+            StockQuantity += quantity;
+        }
+
+        public void UpdateStock(int quantity)
+        {
+            if (quantity < 0)
+                throw new ArgumentOutOfRangeException();
+
+            StockQuantity = quantity;
         }
     }
 }

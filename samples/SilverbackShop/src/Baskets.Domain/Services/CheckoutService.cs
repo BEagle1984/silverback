@@ -17,16 +17,16 @@ namespace SilverbackShop.Baskets.Domain.Services
             _inventoryService = inventoryService;
         }
 
-        public Task Checkout(Basket basket)
+        public async Task Checkout(Basket basket)
         {
-            ValidateBasket(basket);
+            await ValidateBasket(basket);
 
             basket.Checkout();
 
-            return _repository.UnitOfWork.SaveChangesAsync();
+            await _repository.UnitOfWork.SaveChangesAsync();
         }
 
-        private void ValidateBasket(Basket basket)
+        private async Task ValidateBasket(Basket basket)
         {
             if (basket == null || !basket.Items.Any())
                 throw new BasketValidationException("The basket is empty.");
@@ -35,7 +35,7 @@ namespace SilverbackShop.Baskets.Domain.Services
 
             foreach (var item in basket.Items)
             {
-                if (!_inventoryService.CheckIsInStock(item.ProductId, item.Quantity))
+                if (!await _inventoryService.CheckIsInStock(item.ProductId, item.Quantity))
                 {
                     inventoryErrors.Add($"The product {item.ProductId} is not available in the desired quantity.");
                 }

@@ -1,4 +1,5 @@
-﻿using Silverback.Messaging;
+﻿using System.Threading.Tasks;
+using Silverback.Messaging;
 using SilverbackShop.Baskets.Domain.Events;
 using SilverbackShop.Baskets.Domain.Services;
 
@@ -20,7 +21,8 @@ namespace SilverbackShop.Baskets.Domain.MessageHandlers
         {
             foreach (var item in message.Source.Items)
             {
-                _inventoryService.UpdateStock(item.ProductId, -item.Quantity);
+                // TODO: Properly await as soon as the async message handlers are available.
+                _inventoryService.DecrementStock(item.ProductId, item.Quantity).Wait();
             }
         }
     }

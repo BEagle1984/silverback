@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SilverbackShop.Catalog.Domain.Model;
+using SilverbackShop.Catalog.Domain.Repositories;
 using SilverbackShop.Catalog.Infrastructure;
 using SilverbackShop.Catalog.Service.Dto;
 
@@ -20,21 +21,24 @@ namespace SilverbackShop.Catalog.Service.Controllers
             _repository = repository;
         }
 
-        // GET api/values
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _repository.AggregateQueryable.ToListAsync());
+            return Ok(await _repository.GetAllAsync());
         }
 
-        // GET api/values/5
+        [HttpGet("discontinued")]
+        public async Task<IActionResult> GetDiscontinued()
+        {
+            return Ok(await _repository.GetAllDiscontinuedAsync());
+        }
+
         [HttpGet("{sku}")]
         public async Task<IActionResult> Get(string sku)
         {
             return Ok(await _repository.FindBySkuAsync(sku));
         }
 
-        // POST api/values
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]NewProductDto dto)
         {
@@ -47,7 +51,6 @@ namespace SilverbackShop.Catalog.Service.Controllers
             return Ok(product);
         }
 
-        // PUT api/values/5
         [HttpPut("{sku}")]
         public async Task<IActionResult> Put(string sku, [FromBody]UpdateProductDto dto)
         {

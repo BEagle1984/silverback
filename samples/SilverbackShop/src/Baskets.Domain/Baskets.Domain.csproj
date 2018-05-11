@@ -10,6 +10,7 @@
     <ProjectReference Include="..\Baskets.Integration\Baskets.Integration.csproj" />
     <ProjectReference Include="..\Common.Data\Common.Data.csproj" />
     <ProjectReference Include="..\Common.Domain\Common.Domain.csproj" />
+    <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Core" Version="1.0.8" />
+    <PackageReference Include="Silverback.Core" Version="1.0.9" />
     <PackageReference Include="Silverback.Integration" Version="1.1.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
   </ItemGroup>
