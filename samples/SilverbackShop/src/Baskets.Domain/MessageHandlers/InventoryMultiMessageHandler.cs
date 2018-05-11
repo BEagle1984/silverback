@@ -1,5 +1,5 @@
 ﻿using Silverback.Messaging;
-using SilverbackShop.Baskets.Domain.Model.Events;
+using SilverbackShop.Baskets.Domain.Events;
 using SilverbackShop.Baskets.Domain.Services;
 
 namespace SilverbackShop.Baskets.Domain.MessageHandlers

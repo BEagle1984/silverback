@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Domain;
 using Silverback.Domain;
-using SilverbackShop.Baskets.Domain.Model.Events;
+using SilverbackShop.Baskets.Domain.Events;
 
 namespace SilverbackShop.Baskets.Domain.Model
 {
@@ -18,6 +18,10 @@ namespace SilverbackShop.Baskets.Domain.Model
         public DateTime Created { get; private set; }
 
         public DateTime? CheckoutDate { get; private set; }
+
+        private Basket()
+        {
+        }
 
         public static Basket Create(Guid userId)
         {

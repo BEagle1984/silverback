@@ -1,8 +1,10 @@
-﻿using System;
+﻿// TODO: DELETE?
 
-namespace SilverbackShop.Common.Infrastructure
-{
-    public class EntityNotFoundException : Exception
-    {
-    }
-}
+//using System;
+
+//namespace SilverbackShop.Common.Infrastructure
+//{
+//    public class EntityNotFoundException : Exception
+//    {
+//    }
+//}

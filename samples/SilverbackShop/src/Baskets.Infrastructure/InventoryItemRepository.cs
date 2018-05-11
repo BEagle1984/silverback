@@ -1,11 +1,11 @@
 ﻿using System.Linq;
+using Silverback.Core.EntityFrameworkCore;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
-using SilverbackShop.Common.Infrastructure;
 
 namespace SilverbackShop.Baskets.Infrastructure
 {
-    public class InventoryItemRepository : ShopRepository<InventoryItem>, IInventoryItemRepository
+    public class InventoryItemRepository : AggregateRepository<InventoryItem>, IInventoryItemRepository
     {
         public InventoryItemRepository(BasketsContext context)
             : base(context.InventoryItems, context)

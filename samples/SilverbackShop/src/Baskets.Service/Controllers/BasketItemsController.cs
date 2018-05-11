@@ -24,7 +24,7 @@ namespace SilverbackShop.Baskets.Service.Controllers
         }
 
         private Task<Basket> GetBasket()
-            => _basketService.GetBasket(UserData.DefaultUserId);
+            => _basketService.GetUserBasket(UserData.DefaultUserId);
 
         [HttpGet("")]
         public async Task<ActionResult> Get()

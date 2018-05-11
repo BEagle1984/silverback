@@ -1,13 +1,10 @@
 ﻿using System;
-using Common.Domain;
+using Silverback.Infrastructure;
 using SilverbackShop.Baskets.Domain.Model;
 
 namespace SilverbackShop.Baskets.Domain.Repositories
 {
-    public interface IBasketsRepository : IShopRepository<Basket>
+    public interface IBasketsRepository : IAggregateRepository<Basket>
     {
-        Basket FindUserBasket(Guid userId);
-
-        Basket GetUserBasket(Guid userId);
     }
 }

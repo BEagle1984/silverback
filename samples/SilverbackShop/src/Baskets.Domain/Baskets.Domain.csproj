@@ -19,8 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Core" Version="1.0.6" />
+    <PackageReference Include="Silverback.Core" Version="1.0.8" />
     <PackageReference Include="Silverback.Integration" Version="1.1.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
@@ -14,9 +15,9 @@ namespace SilverbackShop.Baskets.Domain.Services
             _repository = repository;
         }
 
-        public async Task<Basket> GetBasket(Guid userId)
+        public async Task<Basket> GetUserBasket(Guid userId)
         {
-            var basket = _repository.FindUserBasket(userId);
+            var basket = _repository.AggregateQueryable.FirstOrDefault(b => b.UserId == userId);
 
             if (basket != null)
                 return basket;

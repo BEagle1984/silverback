@@ -3,8 +3,8 @@ using Silverback.Messaging;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using SilverbackShop.Baskets.Domain.Events;
 using SilverbackShop.Baskets.Domain.MessageHandlers;
-using SilverbackShop.Baskets.Domain.Model.Events;
 
 namespace SilverbackShop.Baskets.Domain
 {
