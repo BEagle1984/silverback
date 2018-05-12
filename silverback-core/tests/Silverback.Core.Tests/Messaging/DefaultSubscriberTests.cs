@@ -26,7 +26,7 @@ namespace Silverback.Tests.Messaging
         {
             using (var bus = new Bus())
             {
-                bus.Subscribe(o => new DefaultSubscriber(o, _typeFactory, typeof(IMessageHandler)));
+                bus.Subscribe(o => new MessageHandlerSubscriber<>(o, _typeFactory, typeof(IMessageHandler)));
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandOne());

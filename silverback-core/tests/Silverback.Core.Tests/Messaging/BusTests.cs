@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive.Linq;
 using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Tests.TestTypes.Domain;

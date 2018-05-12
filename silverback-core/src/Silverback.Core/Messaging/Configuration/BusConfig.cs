@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Reactive.Linq;
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -24,12 +25,13 @@ namespace Silverback.Messaging.Configuration
         #region Create
 
         /// <summary>
-        /// Creates a new <see cref="Bus"/>.
+        /// Creates a new bus of the specified type.
         /// </summary>
         /// <returns></returns>
-        public static Bus Create(Action<BusConfig> config)
+        public static IBus Create<TBus>(Action<BusConfig> config)
+            where TBus : IBus, new()
         {
-            var bus = new Bus();
+            var bus = new TBus();
             config(new BusConfig(bus));
             return bus;
         }
@@ -65,41 +67,30 @@ namespace Silverback.Messaging.Configuration
         #region Subscribe
 
         /// <summary>
-        /// Subscribes a <see cref="Subscriber" /> derived type to the messages of the specified type TMessage.
+        /// Subscribes an instance <see cref="ISubscriber" /> to the messages sent through this bus.
         /// </summary>
-        /// <param name="subscriberFactory">The subscriber factory method.</param>
+        /// <param name="subscriber">The subscriber.</param>
         /// <returns></returns>
-        public BusConfig Subscribe(Func<IObservable<IMessage>, Subscriber> subscriberFactory)
+        public BusConfig Subscribe(ISubscriber subscriber)
         {
-            Bus.Subscribe(subscriberFactory);
+            Bus.Subscribe(subscriber);
             return this;
         }
 
         /// <summary>
-        /// Subscribes an <see cref="IMessageHandler" /> using the <see cref="DefaultSubscriber" />.
+        /// Subscribes an <see cref="ISubscriber" /> using a <see cref="SubscriberFactory{TSubscriber}" />.
         /// </summary>
-        /// <param name="handlerType">Type of the <see cref="IMessageHandler" /> to be used to handle the messages.</param>
+        /// <typeparam name="TSubscriber">Type of the <see cref="ISubscriber" /> to subscribe.</typeparam>
         /// <returns></returns>
-        public BusConfig Subscribe(Type handlerType)
+        public BusConfig Subscribe<TSubscriber>()
+            where TSubscriber : ISubscriber
         {
-            Bus.Subscribe(messages => new DefaultSubscriber(messages, TypeFactory, handlerType));
+            Bus.Subscribe(new SubscriberFactory<TSubscriber>(TypeFactory));
             return this;
         }
 
         /// <summary>
-        /// Subscribes an <see cref="IMessageHandler" /> using the <see cref="DefaultSubscriber" />.
-        /// </summary>
-        /// <typeparam name="THandler">Type of the <see cref="IMessageHandler" /> to be used to handle the messages.</typeparam>
-        /// <returns></returns>
-        public BusConfig Subscribe<THandler>()
-            where THandler : IMessageHandler
-        {
-            Bus.Subscribe(messages => new DefaultSubscriber(messages, TypeFactory, typeof(THandler)));
-            return this;
-        }
-
-        /// <summary>
-        /// Subscribes an action method using the <see cref="DefaultSubscriber" />.
+        /// Subscribes an action method using a <see cref="GenericSubscriber{TMessage}" />.
         /// </summary>
         /// <param name="handler">The message handler method.</param>
         /// <param name="filter">An optional filter to be applied to the published messages.</param>
@@ -108,7 +99,7 @@ namespace Silverback.Messaging.Configuration
             => Subscribe<IMessage>(handler, filter);
 
         /// <summary>
-        /// Subscribes an action method using the <see cref="DefaultSubscriber" />.
+        /// Subscribes an action method using a <see cref="GenericSubscriber{TMessage}" />.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages.</typeparam>
         /// <param name="handler">The message handler method.</param>
@@ -117,13 +108,32 @@ namespace Silverback.Messaging.Configuration
         public BusConfig Subscribe<TMessage>(Action<TMessage> handler, Func<TMessage, bool> filter = null)
             where TMessage : IMessage
         {
-            Bus.Subscribe(messages => new DefaultSubscriber(
-                messages,
-                new GenericTypeFactory(_ => new GenericMessageHandler<TMessage>(handler, filter)),
-                typeof(GenericMessageHandler<IMessage>)));
+            Bus.Subscribe(new GenericSubscriber<TMessage>(handler, filter));
             return this;
         }
 
+        /// <summary>
+        /// Subscribes an action method using a <see cref="GenericAsyncSubscriber{TMessage}" />.
+        /// </summary>
+        /// <param name="handler">The message handler method.</param>
+        /// <param name="filter">An optional filter to be applied to the published messages.</param>
+        /// <returns></returns>
+        public BusConfig Subscribe(Func<IMessage, Task> handler, Func<IMessage, bool> filter = null)
+            => Subscribe<IMessage>(handler, filter);
+
+        /// <summary>
+        /// Subscribes an action method using a <see cref="GenericAsyncSubscriber{TMessage}" />.
+        /// </summary>
+        /// <typeparam name="TMessage">The type of the messages.</typeparam>
+        /// <param name="handler">The message handler method.</param>
+        /// <param name="filter">An optional filter to be applied to the published messages.</param>
+        /// <returns></returns>
+        public BusConfig Subscribe<TMessage>(Func<TMessage, Task> handler, Func<TMessage, bool> filter = null)
+            where TMessage : IMessage
+        {
+            Bus.Subscribe(new GenericAsyncSubscriber<TMessage>(handler, filter));
+            return this;
+        }
         #endregion
 
         #region ConfigureUsing
