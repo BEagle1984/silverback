@@ -12,7 +12,7 @@ This package enables communication between them in a flexible and abstracted way
     <PackageProjectUrl>https://github.com/BEagle1984/silverback-integration</PackageProjectUrl>
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType />
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyVersion>1.0.15.0</AssemblyVersion>
     <Version>1.0.15</Version>
 	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
   </PropertyGroup>

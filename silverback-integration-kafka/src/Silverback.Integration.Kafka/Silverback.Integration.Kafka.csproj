@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Silverback</RootNamespace>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <Company>Silverback</Company>
+    <Version>1.0.1</Version>
+    <Authors>ppx80</Authors>
+    <PackageLicenseUrl>https://github.com/BEagle1984/silverback-integration/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/BEagle1984/silverback</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Messaging\Adapters\" />
+    <Folder Include="Messaging\Broker\" />
+    <Folder Include="Messaging\Configuration\" />
+    <Folder Include="Messaging\Messages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" Version="0.11.4" />
+    <PackageReference Include="Silverback.Integration" Version="1.0.15" />
+  </ItemGroup>
+
+</Project>
