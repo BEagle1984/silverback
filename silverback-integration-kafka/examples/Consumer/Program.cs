@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using Messages;
 using Silverback;
-using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 
 namespace Consumer
 {
@@ -50,7 +47,6 @@ namespace Consumer
                 broker.Connect();
             }
         }
-
 
         private static void PrintHeader()
         {
