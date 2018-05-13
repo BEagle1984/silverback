@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Reactive.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Tests.TestTypes.Domain;
+using Silverback.Tests.TestTypes.Subscribers;
 
 namespace Silverback.Tests.Messaging
 {
@@ -14,13 +15,26 @@ namespace Silverback.Tests.Messaging
         {
             using (var bus = new Bus())
             {
-                var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
+                var subscriber = (TestSubscriber)bus.Subscribe(new TestSubscriber());
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
 
-                Assert.That(counter, Is.EqualTo(2));
+                Assert.That(subscriber.Counter, Is.EqualTo(2));
+            }
+        }
+
+        [Test]
+        public async Task PublishAsyncTest()
+        {
+            using (var bus = new Bus())
+            {
+                var subscriber = (TestAsyncSubscriber)bus.Subscribe(new TestAsyncSubscriber());
+
+                await bus.PublishAsync(new TestCommandOne());
+                await bus.PublishAsync(new TestCommandTwo());
+
+                Assert.That(subscriber.Handled, Is.EqualTo(2));
             }
         }
 
@@ -29,12 +43,8 @@ namespace Silverback.Tests.Messaging
         {
             using (var bus = new Bus())
             {
-                var counter = 0;
-                var counterOne = 0;
-                var counterTwo = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
-                bus.Subscribe(o => o.OfType<TestCommandOne>().Subscribe(m => counterOne++));
-                bus.Subscribe(o => o.OfType<TestCommandTwo>().Subscribe(m => counterTwo++));
+                var subscriber1 = (TestSubscriber)bus.Subscribe(new TestSubscriber());
+                var subscriber2 = (TestAsyncSubscriber)bus.Subscribe(new TestAsyncSubscriber());
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -42,36 +52,72 @@ namespace Silverback.Tests.Messaging
                 bus.Publish(new TestCommandTwo());
                 bus.Publish(new TestCommandTwo());
 
-                Assert.That(counter, Is.EqualTo(5));
-                Assert.That(counterOne, Is.EqualTo(2));
-                Assert.That(counterTwo, Is.EqualTo(3));
+                Assert.That(subscriber1.Counter, Is.EqualTo(5));
+                Assert.That(subscriber2.Handled, Is.EqualTo(5));
             }
         }
 
         [Test]
-        public void FilteringTest()
+        public async Task MultipleSubscribersAsyncTest()
         {
             using (var bus = new Bus())
             {
-                var counter = 0;
-                bus.Subscribe(o => o
-                    .Where(m => m is TestCommandTwo && ((TestCommandTwo) m).Message == "A")
-                    .Subscribe(m => counter++));
+                var subscriber1 = (TestSubscriber)bus.Subscribe(new TestSubscriber());
+                var subscriber2 = (TestAsyncSubscriber)bus.Subscribe(new TestAsyncSubscriber());
 
-                bus.Publish(new TestCommandTwo { Message = "B" });
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandTwo { Message = "A" });
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandTwo { Message = "B" });
-                bus.Publish(new TestCommandTwo { Message = "A" });
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandOne());
+                await bus.PublishAsync(new TestCommandOne());
+                await bus.PublishAsync(new TestCommandTwo());
+                await bus.PublishAsync(new TestCommandOne());
+                await bus.PublishAsync(new TestCommandTwo());
+                await bus.PublishAsync(new TestCommandTwo());
 
-                Assert.That(counter, Is.EqualTo(2));
+                Assert.That(subscriber1.Counter, Is.EqualTo(5));
+                Assert.That(subscriber2.Handled, Is.EqualTo(5));
             }
         }
 
-        // TODO: Test lifecycle (dispose) and unsubscribe
+        [Test]
+        public void UnsubscribeTest()
+        {
+            using (var bus = new Bus())
+            {
+                var subscriber1 = (TestAsyncSubscriber)bus.Subscribe(new TestAsyncSubscriber());
+                var subscriber2 = (TestSubscriber)bus.Subscribe(new TestSubscriber());
+
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandTwo());
+
+                bus.Unsubscribe(subscriber1);
+
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandTwo());
+                bus.Publish(new TestCommandTwo());
+
+                Assert.That(subscriber1.Handled, Is.EqualTo(2));
+                Assert.That(subscriber2.Counter, Is.EqualTo(5));
+            }
+        }
+
+        [Test]
+        public void DisposeTest()
+        {
+            var subscriber1 = new TestAsyncSubscriber();
+            var subscriber2 = new TestSubscriber();
+
+            using (var bus = new Bus())
+            {
+                bus.Subscribe(subscriber1);
+                bus.Subscribe(subscriber2);
+
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandTwo());
+
+                Assert.That(subscriber1.Disposed, Is.EqualTo(false));
+                Assert.That(subscriber1.Disposed, Is.EqualTo(false));
+            }
+
+            Assert.That(subscriber1.Disposed, Is.EqualTo(true));
+            Assert.That(subscriber1.Disposed, Is.EqualTo(true));
+        }
     }
 }

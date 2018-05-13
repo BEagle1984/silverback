@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Silverback.Core.EntityFrameworkCore;
 using Silverback.Domain;
+using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Publishing;
 using SilverbackShop.Baskets.Domain.Model;
 

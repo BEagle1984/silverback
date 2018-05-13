@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
@@ -26,9 +27,15 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="envelope">The envelope containing the message to be sent.</param>
         public void Produce(IEnvelope envelope)
-        {
-            Produce(envelope.Message, Serializer.Serialize(envelope));
-        }
+            => Produce(envelope.Message, Serializer.Serialize(envelope));
+
+        /// <summary>
+        /// Sends the specified message through the message broker.
+        /// </summary>
+        /// <param name="envelope">The envelope containing the message to be sent.</param>
+        /// <returns></returns>
+        public Task ProduceAsync(IEnvelope envelope)
+            => ProduceAsync(envelope.Message, Serializer.Serialize(envelope));
 
         /// <summary>
         /// Sends the specified message through the message broker.
@@ -37,5 +44,13 @@ namespace Silverback.Messaging.Broker
         /// <param name="serializedMessage">The serialized <see cref="IEnvelope"/> including the <see cref="IIntegrationMessage"/>.
         /// This is what is supposed to be sent through the broker.</param>
         protected abstract void Produce(IIntegrationMessage message, byte[] serializedMessage);
+
+        /// <summary>
+        /// Sends the specified message through the message broker.
+        /// </summary>
+        /// <param name="message">The original message.</param>
+        /// <param name="serializedMessage">The serialized <see cref="IEnvelope"/> including the <see cref="IIntegrationMessage"/>.
+        /// This is what is supposed to be sent through the broker.</param>
+        protected abstract Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage);
     }
 }

@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
-    <PackageReference Include="Silverback.Integration.FileSystem" Version="1.0.1" />
+    <PackageReference Include="Silverback.Integration.FileSystem" Version="1.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="2.3.0" />
   </ItemGroup>
 

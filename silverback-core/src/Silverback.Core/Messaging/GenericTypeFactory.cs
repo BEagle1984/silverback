@@ -22,9 +22,17 @@ namespace Silverback.Messaging
         /// <summary>
         /// Returns an instance of the specified type.
         /// </summary>
-        /// <param name="type">The type to be instanciated.</param>
+        /// <param name="type">The type to be instantiated.</param>
         /// <returns></returns>
         public object GetInstance(Type type)
             => _actualProvider(type);
+
+        /// <summary>
+        /// Returns an instance of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to be instantiated.</typeparam>
+        /// <returns></returns>
+        public T GetInstance<T>()
+            => (T)_actualProvider(typeof(T));
     }
 }

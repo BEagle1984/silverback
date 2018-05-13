@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
@@ -18,5 +19,15 @@ namespace Silverback.Messaging.Adapters
         /// <param name="endpoint">The endpoint.</param>
         public void Relay(IIntegrationMessage message, IProducer producer, IEndpoint endpoint)
             => producer.Produce(Envelope.Create(message));
+
+        /// <summary>
+        /// Publishes the <see cref="T:Silverback.Messaging.Messages.IIntegrationMessage" /> to the specified <see cref="T:Silverback.Messaging.IEndpoint" /> asynchronously.
+        /// </summary>
+        /// <param name="message">The message to be relayed.</param>
+        /// <param name="producer">The producer to be used to send the message.</param>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <returns></returns>
+        public Task RelayAsync(IIntegrationMessage message, IProducer producer, IEndpoint endpoint)
+            => producer.ProduceAsync(Envelope.Create(message));
     }
 }

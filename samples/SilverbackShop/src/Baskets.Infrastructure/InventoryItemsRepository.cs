@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Common.Domain;
 using Microsoft.EntityFrameworkCore;
-using Silverback.Core.EntityFrameworkCore;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 using SilverbackShop.Common.Infrastructure;

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Silverback.Core.EntityFrameworkCore;
+using Silverback.EntityFrameworkCore;
 using Silverback.Domain;
 using Silverback.Messaging.Publishing;
 using SilverbackShop.Catalog.Domain.Model;

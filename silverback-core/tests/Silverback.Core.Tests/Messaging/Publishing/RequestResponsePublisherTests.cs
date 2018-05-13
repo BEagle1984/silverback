@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging
+namespace Silverback.Tests.Messaging.Publishing
 {
     [TestFixture]
     public class RequestResponsePublisherTests
@@ -19,7 +19,7 @@ namespace Silverback.Tests.Messaging
                 var responsePublisher = bus.GetResponsePublisher<IResponse>();
 
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m =>
+                bus.Config().Subscribe(m =>
                 {
                     switch (m)
                     {
@@ -32,7 +32,7 @@ namespace Silverback.Tests.Messaging
                             responsePublisher.Reply(new TestResponseTwo { Message = "two", RequestId = req.RequestId });
                             break;
                     }
-                }));
+                });
 
                 var responseOne = requestPublisher.GetResponse(new TestRequestOne()) as TestResponseOne;
                 var responseTwo = requestPublisher.GetResponse(new TestRequestTwo()) as TestResponseTwo;
@@ -54,7 +54,7 @@ namespace Silverback.Tests.Messaging
                 var responsePublisher = bus.GetResponsePublisher<TestResponseOne>();
 
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m =>
+                bus.Config().Subscribe(m =>
                 {
                     switch (m)
                     {
@@ -63,7 +63,7 @@ namespace Silverback.Tests.Messaging
                             responsePublisher.Reply(new TestResponseOne { Message = "one", RequestId = req.RequestId });
                             break;
                     }
-                }));
+                });
 
                 var responseOne = requestPublisher.GetResponse(new TestRequestOne());
 
@@ -82,7 +82,7 @@ namespace Silverback.Tests.Messaging
                 var responsePublisher = bus.GetResponsePublisher<IResponse>();
 
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m =>
+                bus.Config().Subscribe(m =>
                 {
                     switch (m)
                     {
@@ -95,7 +95,7 @@ namespace Silverback.Tests.Messaging
                             responsePublisher.ReplyAsync(new TestResponseTwo { Message = "two", RequestId = req.RequestId });
                             break;
                     }
-                }));
+                });
 
                 var responseOne = await requestPublisher.GetResponseAsync(new TestRequestOne()) as TestResponseOne;
                 var responseTwo = await requestPublisher.GetResponseAsync(new TestRequestTwo()) as TestResponseTwo;
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Messaging
                 var responsePublisher = bus.GetResponsePublisher<TestResponseOne>();
 
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m =>
+                bus.Config().Subscribe(m =>
                 {
                     switch (m)
                     {
@@ -126,7 +126,7 @@ namespace Silverback.Tests.Messaging
                             responsePublisher.ReplyAsync(new TestResponseOne { Message = "one", RequestId = req.RequestId });
                             break;
                     }
-                }));
+                });
 
                 var responseOne = await requestPublisher.GetResponseAsync(new TestRequestOne());
 

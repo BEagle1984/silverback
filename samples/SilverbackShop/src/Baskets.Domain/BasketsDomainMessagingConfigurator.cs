@@ -27,7 +27,7 @@ namespace SilverbackShop.Baskets.Domain
                             }).ToList()
                     })
                 // Message Handlers
-                .Subscribe<InventoryMultiMessageHandler>()
+                .Subscribe<InventoryMultiSubscriber>()
                 // Outbound Adapters
                 .AddOutbound<IIntegrationEvent, SimpleOutboundAdapter>(BasicEndpoint.Create("basket-events"));
         }

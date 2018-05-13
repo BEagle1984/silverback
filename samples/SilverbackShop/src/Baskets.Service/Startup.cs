@@ -52,7 +52,7 @@ namespace SilverbackShop.Baskets.Service
             services.AddTransient(s => s.GetService<IBasketsUnitOfWork>().Baskets);
             services.AddTransient(s => s.GetService<IBasketsUnitOfWork>().InventoryItems);
 
-            services.AddTransient<InventoryMultiMessageHandler>();
+            services.AddTransient<InventoryMultiSubscriber>();
             services.AddTransient<SimpleOutboundAdapter>();
 
             // TODO: Create extension method services.AddBus() in Silverback.AspNetCore

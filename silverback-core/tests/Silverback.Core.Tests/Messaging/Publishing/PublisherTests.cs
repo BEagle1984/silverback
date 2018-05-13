@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging
+namespace Silverback.Tests.Messaging.Publishing
 {
     [TestFixture]
     public class PublisherTests
@@ -15,7 +15,7 @@ namespace Silverback.Tests.Messaging
             using (var bus = new Bus())
             {
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
+                bus.Config().Subscribe(m => counter++);
 
                 var publisher = bus.GetPublisher();
 
@@ -32,7 +32,7 @@ namespace Silverback.Tests.Messaging
             using (var bus = new Bus())
             {
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
+                bus.Config().Subscribe(m => counter++);
 
                 var publisher = bus.GetPublisher();
 
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Messaging
             using (var bus = new Bus())
             {
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
+                bus.Config().Subscribe(m => counter++);
 
                 var publisher = bus.GetPublisher();
 
@@ -66,7 +66,7 @@ namespace Silverback.Tests.Messaging
             using (var bus = new Bus())
             {
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
+                bus.Config().Subscribe(m => counter++);
 
                 var publisher = bus.GetPublisher();
 
@@ -85,7 +85,7 @@ namespace Silverback.Tests.Messaging
                 var publisher = bus.GetPublisher();
 
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m =>
+                bus.Config().Subscribe(m => 
                 {
                     switch (m)
                     {
@@ -98,7 +98,7 @@ namespace Silverback.Tests.Messaging
                             publisher.Reply(new TestResponseTwo { Message = "two", RequestId = req.RequestId });
                             break;
                     }
-                }));
+                });
 
                 var responseOne = publisher.GetResponse<TestRequestOne, TestResponseOne>(new TestRequestOne());
                 var responseTwo = publisher.GetResponse<TestRequestTwo, TestResponseTwo>(new TestRequestTwo());
@@ -119,7 +119,7 @@ namespace Silverback.Tests.Messaging
                 var publisher = bus.GetPublisher();
 
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m =>
+                bus.Config().Subscribe(m =>
                 {
                     switch (m)
                     {
@@ -132,7 +132,7 @@ namespace Silverback.Tests.Messaging
                             publisher.ReplyAsync(new TestResponseTwo { Message = "two", RequestId = req.RequestId });
                             break;
                     }
-                }));
+                });
 
                 var responseOne = await publisher.GetResponseAsync<TestRequestOne, TestResponseOne>(new TestRequestOne());
                 var responseTwo = await publisher.GetResponseAsync<TestRequestTwo, TestResponseTwo>(new TestRequestTwo());

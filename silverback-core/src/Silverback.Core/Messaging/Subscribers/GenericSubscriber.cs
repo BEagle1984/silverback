@@ -1,24 +1,24 @@
 ﻿using System;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging
+namespace Silverback.Messaging.Subscribers
 {
     /// <summary>
-    /// Handles the <see cref="IMessage"/> of type TMessage executing the provided action.
+    /// Subscribes to the messages published in a bus and executes the specified action for each message.
     /// </summary>
-    /// <typeparam name="TMessage">The type of <see cref="IMessage"/> to be handled.</typeparam>
-    /// <seealso cref="MessageHandler{TMessage}" />
-    public class GenericMessageHandler<TMessage> : MessageHandler<TMessage>
-        where TMessage : IMessage
+    /// <typeparam name="TMessage">The type of the message.</typeparam>
+    /// <seealso cref="Subscriber{TMessage}" />
+    public class GenericSubscriber<TMessage> : Subscriber<TMessage>
+            where TMessage : IMessage
     {
         private readonly Action<TMessage> _handler;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenericMessageHandler{TMessage}"/> class.
+        /// Initializes a new instance of the <see cref="GenericSubscriber{TMessage}"/> class.
         /// </summary>
-        /// <param name="handler">The handler.</param>
+        /// <param name="handler">The action to be executed for each message.</param>
         /// <param name="filter">An optional filter to be applied to the messages</param>
-        public GenericMessageHandler(Action<TMessage> handler, Func<TMessage, bool> filter = null)
+        public GenericSubscriber(Action<TMessage> handler, Func<TMessage, bool> filter = null)
             : base(filter)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));

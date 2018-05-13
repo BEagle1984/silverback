@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging
+namespace Silverback.Tests.Messaging.Publishing
 {
     [TestFixture]
     public class CommandPublisherTests
@@ -16,7 +16,7 @@ namespace Silverback.Tests.Messaging
             using (var bus = new Bus())
             {
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
+                bus.Config().Subscribe(m => counter++);
 
                 var publisher = bus.GetCommandPublisher<ICommand>();
 
@@ -33,7 +33,7 @@ namespace Silverback.Tests.Messaging
             using (var bus = new Bus())
             {
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
+                bus.Config().Subscribe(m => counter++);
 
                 var publisher = bus.GetCommandPublisher<TestCommandOne>();
 
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Messaging
             using (var bus = new Bus())
             {
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
+                bus.Config().Subscribe(m => counter++);
 
                 var publisher = bus.GetCommandPublisher<ICommand>();
 
@@ -66,7 +66,7 @@ namespace Silverback.Tests.Messaging
             using (var bus = new Bus())
             {
                 var counter = 0;
-                bus.Subscribe(o => o.Subscribe(m => counter++));
+                bus.Config().Subscribe(m => counter++);
 
                 var publisher = bus.GetCommandPublisher<TestCommandOne>();
 

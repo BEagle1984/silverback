@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.TestTypes.Configuration;
 using Silverback.Tests.TestTypes.Domain;
-using Silverback.Tests.TestTypes.Handlers;
 using Silverback.Tests.TestTypes.Subscribers;
 
 namespace Silverback.Tests.Messaging
@@ -13,12 +13,68 @@ namespace Silverback.Tests.Messaging
     [TestFixture]
     public class BusConfigTests
     {
-        [SetUp]
-        public void Setup()
+        [Test]
+        public void SubscribeTest()
         {
-            TestCommandOneHandler.Counter = 0;
-            TestCommandTwoHandler.Counter = 0;
-            FakeConfigurator.Executed = false;
+            using (var bus = new Bus())
+            {
+                var subscriber = new TestCommandOneSubscriber();
+                bus.Config()
+                    .Subscribe(subscriber);
+
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandOne());
+
+                Assert.That(subscriber.Handled, Is.EqualTo(2));
+            }
+        }
+
+        [Test]
+        public void SubscribeWithFactoryTest()
+        {
+            var subscriberOne = new TestCommandOneSubscriber();
+            var subscriberTwo = new TestCommandTwoAsyncSubscriber();
+
+            using (var bus = new Bus())
+            {
+                bus.Config()
+                    .WithFactory(t =>
+                    {
+                        if (t == typeof(TestCommandOneSubscriber))
+                            return subscriberOne;
+                        if (t == typeof(TestCommandTwoAsyncSubscriber))
+                            return subscriberTwo;
+
+                        throw new ArgumentOutOfRangeException();
+                    })
+                    .Subscribe<TestCommandOneSubscriber>()
+                    .Subscribe<TestCommandTwoAsyncSubscriber>();
+
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandTwo());
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandTwo());
+                bus.Publish(new TestCommandTwo());
+
+                Assert.That(subscriberOne.Handled, Is.EqualTo(2));
+                Assert.That(subscriberTwo.Handled, Is.EqualTo(3));
+            }
+        }
+
+        [Test]
+        public void SubscribeWithDefaultFactoryTest()
+        {
+            using (var bus = new Bus())
+            {
+                bus.Config()
+                    .WithDefaultFactory()
+                    .Subscribe<TestCommandOneSubscriber>();
+
+                bus.Publish(new TestCommandOne());
+                bus.Publish(new TestCommandOne());
+
+                // Cannot really assert much, but no exception is good already.
+            }
         }
 
         [Test]
@@ -31,7 +87,11 @@ namespace Silverback.Tests.Messaging
 
                 bus.Config()
                     .Subscribe<TestCommandOne>(m => counterOne++)
-                    .Subscribe<TestCommandTwo>(m => counterTwo++);
+                    .Subscribe<TestCommandTwo>(async m =>
+                    {
+                        await Task.Delay(1);
+                        counterTwo++;
+                    });
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -60,45 +120,6 @@ namespace Silverback.Tests.Messaging
                 bus.Publish(new TestCommandTwo());
 
                 Assert.That(counter, Is.EqualTo(5));
-            }
-        }
-
-        [Test]
-        public void SubscribeHandlerTest()
-        {
-            using (var bus = new Bus())
-            {
-                bus.Config()
-                    .WithFactory(t => (IMessageHandler)Activator.CreateInstance(t))
-                    .Subscribe<TestCommandOneHandler>()
-                    .Subscribe<TestCommandTwoHandler>();
-
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandTwo());
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandTwo());
-                bus.Publish(new TestCommandTwo());
-
-                Assert.That(TestCommandOneHandler.Counter, Is.EqualTo(2));
-                Assert.That(TestCommandTwoHandler.Counter, Is.EqualTo(3));
-            }
-        }
-
-        [Test]
-        public void SubscribeCustomSubscriberTest()
-        {
-            using (var bus = new Bus())
-            {
-                bus.Config()
-                    .Subscribe(o => new TestCustomSubscriber(o));
-
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandTwo());
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandTwo());
-                bus.Publish(new TestCommandTwo());
-
-                Assert.That(TestCustomSubscriber.Counter, Is.EqualTo(5));
             }
         }
 
