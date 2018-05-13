@@ -5,7 +5,7 @@ namespace Silverback.Tests.TestTypes.Subscribers
 {
     public class TestCommandOneSubscriber : Subscriber<TestCommandOne>
     {
-        public static int Counter { get; set; }
+        public int Counter { get; set; }
 
         public override void Handle(TestCommandOne message)
         {

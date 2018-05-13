@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Subscribers
     /// <seealso cref="AsyncSubscriber{TMessage}" />
     public abstract class MultiSubscriber : AsyncSubscriber<IMessage>
     {
-        private static readonly ConcurrentDictionary<Type, ISubscriber[]> _handlers = new ConcurrentDictionary<Type, ISubscriber[]>();
+        private IEnumerable<ISubscriber> _handlers;
 
         /// <summary>
         /// Gets the configuration for this <see cref="MultiSubscriber"/> implementation.
@@ -23,12 +23,16 @@ namespace Silverback.Messaging.Subscribers
         /// The configuration is built through the Configure method and then cached.
         /// </remarks>
         private IEnumerable<ISubscriber> GetHandlers()
-            => _handlers.GetOrAdd(GetType(), t =>
-            {
-                var config = new MultiSubscriberConfig();
-                Configure(config);
-                return config.GetHandlers().ToArray();
-            });
+        {
+            // TODO: Is there a way to statically cache the configuration?
+
+            if (_handlers != null)
+                return _handlers;
+
+            var config = new MultiSubscriberConfig();
+            Configure(config);
+            return _handlers = config.GetHandlers().ToArray();
+        }
 
         /// <summary>
         /// Configures the <see cref="MultiSubscriber"/> binding the actual message handlers methods.

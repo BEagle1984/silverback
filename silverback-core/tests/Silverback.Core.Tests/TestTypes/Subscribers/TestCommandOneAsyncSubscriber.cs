@@ -6,7 +6,7 @@ namespace Silverback.Tests.TestTypes.Subscribers
 {
     public class TestCommandOneAsyncSubscriber : AsyncSubscriber<TestCommandOne>
     {
-        public static int Counter { get; set; }
+        public int Counter { get; set; }
 
         public override async Task HandleAsync(TestCommandOne message)
         {

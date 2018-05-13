@@ -30,7 +30,7 @@ namespace Silverback.Extensions
         /// <returns></returns>
         public static async Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> action)
         {
-            foreach (T element in source)
+            foreach (var element in source)
             {
                 await action(element);
             }
