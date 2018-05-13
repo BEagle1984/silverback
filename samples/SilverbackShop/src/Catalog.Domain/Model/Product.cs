@@ -44,6 +44,7 @@ namespace SilverbackShop.Catalog.Domain.Model
 
             return this;
         }
+
         public void Publish()
         {
             switch (Status)

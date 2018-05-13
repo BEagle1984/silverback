@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Silverback.Messaging;
 using Silverback.Messaging.Subscribers;
 using SilverbackShop.Baskets.Domain.Events;
 using SilverbackShop.Baskets.Domain.Services;
 
-namespace SilverbackShop.Baskets.Domain.MessageHandlers
+namespace SilverbackShop.Baskets.Domain.Subscribers
 {
     public class InventoryMultiSubscriber : MultiSubscriber
     {

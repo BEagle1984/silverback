@@ -11,6 +11,7 @@ namespace SilverbackShop.Baskets.Infrastructure
         public DbSet<Basket> Baskets { get; set; }
         public DbSet<BasketItem> BasketItems { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BasketsContext"/> class.

@@ -1,6 +1,6 @@
-﻿namespace SilverbackShop.Baskets.Integration
+﻿namespace SilverbackShop.Baskets.Integration.Dto
 {
-    public class BasketItem
+    public class BasketItemDto
     {
         public string ProductId { get; set; }
 

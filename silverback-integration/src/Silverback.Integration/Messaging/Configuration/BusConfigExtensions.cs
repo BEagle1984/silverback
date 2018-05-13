@@ -91,6 +91,44 @@ namespace Silverback.Messaging.Configuration
             return config;
         }
 
+        // TODO: Test
+        /// <summary>
+        /// Configures an <see cref="IInboundAdapter" /> of the specified type to forward the messages to the internal bus.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <returns></returns>
+        public static BusConfig AddInbound<TAdapter>(this BusConfig config, IEndpoint endpoint)
+            where TAdapter : IInboundAdapter
+        {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
+
+            var adapter = config.TypeFactory.GetInstance<TAdapter>();
+            config.Bus.AddInboundAdapterItem(adapter);
+            adapter.Init(config.Bus, config.Bus.GetBroker(endpoint.BrokerName), endpoint);
+            return config;
+        }
+
+        // TODO: Test
+        /// <summary>
+        /// Configures a <see cref="SimpleInboundAdapter" /> to forward the messages to the internal bus.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        /// <param name="adapter">The adapter.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <returns></returns>
+        public static BusConfig AddInbound(this BusConfig config, IEndpoint endpoint)
+        {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
+
+            var adapter = new SimpleInboundAdapter();
+            config.Bus.AddInboundAdapterItem(adapter);
+            adapter.Init(config.Bus, config.Bus.GetBroker(endpoint.BrokerName), endpoint);
+            return config;
+        }
+
         #endregion
 
         #region Translator

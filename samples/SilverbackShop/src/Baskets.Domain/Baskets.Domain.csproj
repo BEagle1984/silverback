@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Baskets.Integration\Baskets.Integration.csproj" />
+    <ProjectReference Include="..\Catalog.Integration\Catalog.Integration.csproj" />
     <ProjectReference Include="..\Common.Data\Common.Data.csproj" />
     <ProjectReference Include="..\Common.Domain\Common.Domain.csproj" />
     <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />

@@ -10,9 +10,11 @@ namespace SilverbackShop.Baskets.Infrastructure
         {
             Baskets = new BasketsRepository(dbContext.Baskets, this);
             InventoryItems = new InventoryItemsRepository(dbContext.InventoryItems, this);
+            Products = new ProductsRepository(dbContext.Products, this);
         }
 
         public IBasketsRepository Baskets { get; }
         public IInventoryItemsRepository InventoryItems { get; }
+        public IProductsRepository Products { get; }
     }
 }

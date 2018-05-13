@@ -11,5 +11,7 @@ namespace SilverbackShop.Baskets.Domain.Repositories
         IBasketsRepository Baskets { get; }
 
         IInventoryItemsRepository InventoryItems { get; }
+
+        IProductsRepository Products { get; }
     }
 }

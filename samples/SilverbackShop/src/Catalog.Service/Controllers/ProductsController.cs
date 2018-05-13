@@ -86,7 +86,7 @@ namespace SilverbackShop.Catalog.Service.Controllers
             if (product == null)
                 return NotFound();
 
-            product.Publish();
+            product.Discontinue();
 
             await _repository.UnitOfWork.SaveChangesAsync();
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
+using SilverbackShop.Baskets.Integration.Dto;
 
 namespace SilverbackShop.Baskets.Integration.Events
 {
@@ -11,6 +12,6 @@ namespace SilverbackShop.Baskets.Integration.Events
         /// </summary>
         public Guid Id { get; set; }
 
-        public List<BasketItem> Items { get; set; }
+        public List<BasketItemDto> Items { get; set; }
     }
 }

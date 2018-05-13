@@ -10,10 +10,10 @@ using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using SilverbackShop.Baskets.Domain;
-using SilverbackShop.Baskets.Domain.MessageHandlers;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 using SilverbackShop.Baskets.Domain.Services;
+using SilverbackShop.Baskets.Domain.Subscribers;
 using SilverbackShop.Baskets.Infrastructure;
 using SilverbackShop.Common.Data;
 using Swashbuckle.AspNetCore.Swagger;
@@ -51,9 +51,13 @@ namespace SilverbackShop.Baskets.Service
             services.AddScoped<IBasketsUnitOfWork, BasketsUnitOfWork>();
             services.AddTransient(s => s.GetService<IBasketsUnitOfWork>().Baskets);
             services.AddTransient(s => s.GetService<IBasketsUnitOfWork>().InventoryItems);
+            services.AddTransient(s => s.GetService<IBasketsUnitOfWork>().Products);
 
             services.AddTransient<InventoryMultiSubscriber>();
-            services.AddTransient<SimpleOutboundAdapter>();
+            services.AddTransient<CatalogMultiSubscriber>();
+
+            // TODO: Can get rid of this?
+            services.AddSingleton<SimpleOutboundAdapter>();
 
             // TODO: Create extension method services.AddBus() in Silverback.AspNetCore
             var bus = new Bus();
@@ -84,7 +88,8 @@ namespace SilverbackShop.Baskets.Service
             bus.Config()
                 .ConfigureBroker<FileSystemBroker>(c => c.OnPath(@"D:\Temp\Broker\SilverbackShop"))
                 .WithFactory(t => app.ApplicationServices.GetService(t))
-                .ConfigureUsing<BasketsDomainMessagingConfigurator>();
+                .ConfigureUsing<BasketsDomainMessagingConfigurator>()
+                .ConnectBrokers();
 
             // Init data
             var db = app.ApplicationServices.GetService<BasketsContext>();

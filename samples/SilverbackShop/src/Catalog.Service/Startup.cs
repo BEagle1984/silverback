@@ -8,6 +8,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using SilverbackShop.Catalog.Domain;
 using SilverbackShop.Catalog.Domain.Repositories;
 using SilverbackShop.Catalog.Infrastructure;
 using SilverbackShop.Common.Data;
@@ -42,7 +43,8 @@ namespace SilverbackShop.Catalog.Service
             services.AddScoped<ICatalogUnitOfWork, CatalogUnitOfWork>();
             services.AddTransient(s => s.GetService<ICatalogUnitOfWork>().Products);
 
-            services.AddTransient<SimpleOutboundAdapter>();
+            // TODO: Can get rid of this?
+            services.AddSingleton<SimpleOutboundAdapter>();
 
             // TODO: Create extension method services.AddBus() in Silverback.AspNetCore
             var bus = new Bus();
@@ -70,7 +72,8 @@ namespace SilverbackShop.Catalog.Service
             var bus = app.ApplicationServices.GetService<IBus>();
             bus.Config()
                 .ConfigureBroker<FileSystemBroker>(c => c.OnPath(@"D:\Temp\Broker\SilverbackShop"))
-                .WithFactory(t => app.ApplicationServices.GetService(t));
+                .WithFactory(t => app.ApplicationServices.GetService(t))
+                .ConfigureUsing<CatalogDomainMessagingConfigurator>();
         }
     }
 }
