@@ -62,6 +62,14 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        /// <summary>
+        /// Setup a factory that uses reflection to instanciate the subscribers.
+        /// All types must have a parameterless constructor.
+        /// </summary>
+        /// <returns></returns>
+        public BusConfig WithDefaultFactory()
+            => WithFactory(Activator.CreateInstance);
+
         #endregion
 
         #region Subscribe

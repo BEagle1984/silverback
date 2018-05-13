@@ -6,12 +6,12 @@ namespace Silverback.Tests.TestTypes.Subscribers
 {
     public class TestCommandOneAsyncSubscriber : AsyncSubscriber<TestCommandOne>
     {
-        public int Counter { get; set; }
+        public int Handled { get; set; }
 
         public override async Task HandleAsync(TestCommandOne message)
         {
             await Task.Delay(1);
-            Counter++;
+            Handled++;
         }
     }
 }

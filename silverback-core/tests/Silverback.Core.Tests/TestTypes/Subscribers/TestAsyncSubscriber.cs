@@ -7,13 +7,14 @@ namespace Silverback.Tests.TestTypes.Subscribers
 {
     public class TestAsyncSubscriber : AsyncSubscriber<IMessage>, IDisposable
     {
-        public int Counter { get; private set; }
+        public int Handled { get; private set; }
+
         public bool Disposed { get; private set; }
 
         public override async Task HandleAsync(IMessage message)
         {
             await Task.Delay(1);
-            Counter++;
+            Handled++;
         }
 
         public void Dispose()

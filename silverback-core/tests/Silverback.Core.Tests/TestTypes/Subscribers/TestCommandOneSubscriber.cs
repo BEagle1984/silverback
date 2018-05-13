@@ -5,11 +5,11 @@ namespace Silverback.Tests.TestTypes.Subscribers
 {
     public class TestCommandOneSubscriber : Subscriber<TestCommandOne>
     {
-        public int Counter { get; set; }
+        public int Handled { get; set; }
 
         public override void Handle(TestCommandOne message)
         {
-            Counter++;
+            Handled++;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Silverback.Tests.Messaging.Subscribers
             await _subscriber.OnNextAsync(new TestCommandOne());
             _subscriber.OnNext(new TestCommandOne());
 
-            Assert.That(_subscriber.Counter, Is.EqualTo(2));
+            Assert.That(_subscriber.Handled, Is.EqualTo(2));
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace Silverback.Tests.Messaging.Subscribers
             _subscriber.OnNext(new TestCommandTwo());
             _subscriber.OnNext(new TestCommandOne());
 
-            Assert.That(_subscriber.Counter, Is.EqualTo(2));
+            Assert.That(_subscriber.Handled, Is.EqualTo(2));
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace Silverback.Tests.Messaging.Subscribers
             _subscriber.OnNext(new TestCommandOne { Message = "yes" });
             _subscriber.OnNext(new TestCommandOne { Message = "yes" });
 
-            Assert.That(_subscriber.Counter, Is.EqualTo(2));
+            Assert.That(_subscriber.Handled, Is.EqualTo(2));
         }
     }
 }

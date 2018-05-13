@@ -31,7 +31,7 @@ namespace Silverback.Tests.Messaging.Subscribers
             subscriberFactory.OnNext(new TestCommandOne());
             await subscriberFactory.OnNextAsync(new TestCommandTwo());
 
-            Assert.That(asyncSubscriber.Counter, Is.EqualTo(2));
+            Assert.That(asyncSubscriber.Handled, Is.EqualTo(2));
         }
     }
 }

@@ -6,10 +6,10 @@ namespace Silverback.Tests.TestTypes.Subscribers
 {
     public class TestEventsMultiSubscriber : MultiSubscriber
     {
-        public int CounterEventOne { get; set; }
-        public int CounterEventTwo { get; set; }
-        public int CounterFilteredOne { get; set; }
-        public int CounterFilteredTwo { get; set; }
+        public int HandledEventOne { get; set; }
+        public int HandledEventTwo { get; set; }
+        public int HandledFilteredEventOne { get; set; }
+        public int HandledFilteredEventTwo { get; set; }
 
         /// <summary>
         /// Configures the <see cref="T:Silverback.Messaging.MultiMessageHandler" /> binding the actual message handlers methods.
@@ -27,23 +27,23 @@ namespace Silverback.Tests.TestTypes.Subscribers
         private async Task OnEventOne(TestEventOne message)
         {
             await Task.Delay(1);
-            CounterEventOne++;
+            HandledEventOne++;
         }
 
         private void OnEventTwo(TestEventTwo message)
         {
-            CounterEventTwo++;
+            HandledEventTwo++;
         }
 
         private void OnEventOneFiltered(TestEventOne message)
         {
-            CounterFilteredOne++;
+            HandledFilteredEventOne++;
         }
 
         private async Task OnEventTwoFiltered(TestEventTwo message)
         {
             await Task.Delay(1);
-            CounterFilteredTwo++;
+            HandledFilteredEventTwo++;
         }
     }
 }

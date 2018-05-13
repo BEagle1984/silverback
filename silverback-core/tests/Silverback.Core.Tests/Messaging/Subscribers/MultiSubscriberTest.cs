@@ -25,8 +25,8 @@ namespace Silverback.Tests.Messaging.Subscribers
             _subscriber.OnNext(new TestEventOne());
             _subscriber.OnNext(new TestEventTwo());
 
-            Assert.That(_subscriber.CounterEventOne, Is.EqualTo(3));
-            Assert.That(_subscriber.CounterEventTwo, Is.EqualTo(2));
+            Assert.That(_subscriber.HandledEventOne, Is.EqualTo(3));
+            Assert.That(_subscriber.HandledEventTwo, Is.EqualTo(2));
         }
 
         [Test]
@@ -39,8 +39,8 @@ namespace Silverback.Tests.Messaging.Subscribers
             _subscriber.OnNext(new TestEventTwo { Message = "no" });
             _subscriber.OnNext(new TestEventTwo { Message = "yes" });
 
-            Assert.That(_subscriber.CounterFilteredOne, Is.EqualTo(2));
-            Assert.That(_subscriber.CounterFilteredTwo, Is.EqualTo(1));
+            Assert.That(_subscriber.HandledFilteredEventOne, Is.EqualTo(2));
+            Assert.That(_subscriber.HandledFilteredEventTwo, Is.EqualTo(1));
         }
     }
 }
