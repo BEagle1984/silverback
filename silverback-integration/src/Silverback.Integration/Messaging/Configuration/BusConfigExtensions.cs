@@ -5,6 +5,7 @@ using System.Text;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -43,47 +44,22 @@ namespace Silverback.Messaging.Configuration
         #region Outbound
 
         /// <summary>
-        /// Attaches the <see cref="IOutboundAdapter"/> to the bus.
-        /// </summary>
-        /// <typeparam name="TMessage">The type of the message.</typeparam>
-        /// <param name="config">The configuration.</param>
-        /// <param name="adapterType">The type of the adapter to be instanciated to relay the messages.</param>
-        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter"/>.</param>
-        /// <returns></returns>
-        public static BusConfig AddOutbound<TMessage>(this BusConfig config, Type adapterType, IEndpoint endpoint)
-        where TMessage : IIntegrationMessage
-        {
-            config.Bus.Subscribe(messages => new OutboundSubscriber<TMessage>(
-                messages, config.TypeFactory, adapterType, config.Bus.GetBroker(endpoint.BrokerName), endpoint));
-            return config;
-        }
-
-        /// <summary>
         /// Attaches the <see cref="IOutboundAdapter" /> to the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the message.</typeparam>
         /// <typeparam name="TAdapter">The type of the adapter.</typeparam>
         /// <param name="config">The configuration.</param>
         /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <param name="filter">An optional filter to be applied to the messages.</param>
         /// <returns></returns>
-        public static BusConfig AddOutbound<TMessage, TAdapter>(this BusConfig config, IEndpoint endpoint)
+        public static BusConfig AddOutbound<TMessage, TAdapter>(this BusConfig config, IEndpoint endpoint, Func<TMessage, bool> filter = null)
             where TMessage : IIntegrationMessage
             where TAdapter : IOutboundAdapter
         {
-            config.Bus.Subscribe(messages => new OutboundSubscriber<TMessage>(
-                messages, config.TypeFactory, typeof(TAdapter), config.Bus.GetBroker(endpoint.BrokerName), endpoint));
+            config.Bus.Subscribe(new OutboundSubscriber<TMessage, TAdapter>(
+                config.TypeFactory, config.Bus.GetBroker(endpoint.BrokerName), endpoint));
             return config;
         }
-
-        /// <summary>
-        /// Attaches the <see cref="IOutboundAdapter"/> to the bus.
-        /// </summary>
-        /// <param name="config">The configuration.</param>
-        /// <param name="adapterType">The type of the adapter to be instanciated to relay the messages.</param>
-        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter"/>.</param>
-        /// <returns></returns>
-        public static BusConfig AddOutbound(this BusConfig config, Type adapterType, IEndpoint endpoint)
-            => AddOutbound<IIntegrationMessage>(config, adapterType, endpoint);
 
         /// <summary>
         /// Attaches the <see cref="IOutboundAdapter" /> to the bus.
@@ -91,10 +67,11 @@ namespace Silverback.Messaging.Configuration
         /// <typeparam name="TAdapter">The type of the adapter.</typeparam>
         /// <param name="config">The configuration.</param>
         /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <param name="filter">An optional filter to be applied to the messages.</param>
         /// <returns></returns>
-        public static BusConfig AddOutbound<TAdapter>(this BusConfig config, IEndpoint endpoint)
+        public static BusConfig AddOutbound<TAdapter>(this BusConfig config, IEndpoint endpoint, Func<IIntegrationMessage, bool> filter = null)
             where TAdapter : IOutboundAdapter
-            => AddOutbound<IIntegrationMessage, TAdapter>(config, endpoint);
+            => AddOutbound<IIntegrationMessage, TAdapter>(config, endpoint, filter);
 
         #endregion
 
@@ -126,16 +103,15 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages.</typeparam>
         /// <typeparam name="TIntegrationMessage">The type of the integration message.</typeparam>
-        /// <typeparam name="THandler">Type of the <see cref="IMessageHandler" /> to be used to handle the messages.</typeparam>
+        /// <typeparam name="TTranslator">Type of the <see cref="MessageTranslator{TMessage, TIntegrationMessage}" /> to be used to translate the messages.</typeparam>
         /// <param name="config">The configuration.</param>
         /// <returns></returns>
-        public static BusConfig AddTranslator<TMessage, TIntegrationMessage, THandler>(this BusConfig config)
+        public static BusConfig AddTranslator<TMessage, TIntegrationMessage, TTranslator>(this BusConfig config)
             where TMessage : IMessage
             where TIntegrationMessage : IIntegrationMessage
-            where THandler : MessageTranslator<TMessage, TIntegrationMessage>
+            where TTranslator : MessageTranslator<TMessage, TIntegrationMessage>
         {
-            config.Bus.Subscribe(messages => new DefaultSubscriber(
-                messages, config.TypeFactory, typeof(THandler)));
+            config.Subscribe<TTranslator>();
             return config;
         }
 
@@ -152,10 +128,7 @@ namespace Silverback.Messaging.Configuration
             where TMessage : IMessage
             where TIntegrationMessage : IIntegrationMessage
         {
-            config.Bus.Subscribe(messages => new DefaultSubscriber(
-                messages,
-                new GenericTypeFactory(_ => new GenericMessageTranslator<TMessage, TIntegrationMessage>(mapper, config.Bus, filter)),
-                typeof(IMessageHandler)));
+            config.Subscribe(new GenericMessageTranslator<TMessage, TIntegrationMessage>(mapper, config.Bus, filter));
             return config;
         }
 

@@ -34,7 +34,7 @@ namespace Silverback.Messaging.Subscribers
             var subscriber = _typeFactory.GetInstance<TSubscriber>();
 
             if (subscriber == null)
-                throw new InvalidOperationException($"Couldn't instantiate message handler of type {typeof(TSubscriber)}.");
+                throw new InvalidOperationException($"Couldn't instantiate subscriber of type {typeof(TSubscriber)}.");
 
             return subscriber;
         }

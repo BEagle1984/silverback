@@ -13,5 +13,11 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="envelope">The envelope containing the message to be sent.</param>
         void Produce(IEnvelope envelope);
+
+        /// <summary>
+        /// Sends the specified message through the message broker.
+        /// </summary>
+        /// <param name="envelope">The envelope containing the message to be sent.</param>
+        Task ProduceAsync(IEnvelope envelope);
     }
 }

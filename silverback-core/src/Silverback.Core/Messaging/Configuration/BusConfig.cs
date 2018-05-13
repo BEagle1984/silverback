@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Configuration
         /// Creates a new bus of the specified type.
         /// </summary>
         /// <returns></returns>
-        public static IBus Create<TBus>(Action<BusConfig> config)
+        public static TBus Create<TBus>(Action<BusConfig> config)
             where TBus : IBus, new()
         {
             var bus = new TBus();
@@ -75,7 +75,7 @@ namespace Silverback.Messaging.Configuration
         #region Subscribe
 
         /// <summary>
-        /// Subscribes an instance <see cref="ISubscriber" /> to the messages sent through this bus.
+        /// Subscribes an instance of <see cref="ISubscriber" /> to the messages sent through this bus.
         /// </summary>
         /// <param name="subscriber">The subscriber.</param>
         /// <returns></returns>

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.Adapters;
@@ -27,6 +28,22 @@ namespace Silverback.Tests.Messaging.Adapters
             var @event = new TestEventOne {Content = "Test"};
             var endpoint = BasicEndpoint.Create("TestEventOneTopic");
             adapter.Relay(@event, _broker.GetProducer(endpoint), endpoint);
+
+            var producer = (TestProducer)_broker.GetProducer(BasicEndpoint.Create("test"));
+            var serializer = producer.Serializer;
+
+            Assert.That(producer.SentMessages.Count, Is.EqualTo(1));
+            Assert.That(serializer.Deserialize(producer.SentMessages.First()).Message.Id, Is.EqualTo(@event.Id));
+        }
+
+        [Test]
+        public async Task RelayAsyncTest()
+        {
+            var adapter = new SimpleOutboundAdapter();
+
+            var @event = new TestEventOne { Content = "Test" };
+            var endpoint = BasicEndpoint.Create("TestEventOneTopic");
+            await adapter.RelayAsync(@event, _broker.GetProducer(endpoint), endpoint);
 
             var producer = (TestProducer)_broker.GetProducer(BasicEndpoint.Create("test"));
             var serializer = producer.Serializer;
