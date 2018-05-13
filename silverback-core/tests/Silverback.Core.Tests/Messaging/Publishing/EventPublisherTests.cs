@@ -1,13 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging
+namespace Silverback.Tests.Messaging.Publishing
 {
     [TestFixture]
     public class EventPublisherTests

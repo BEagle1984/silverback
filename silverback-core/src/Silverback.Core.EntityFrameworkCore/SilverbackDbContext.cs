@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Silverback.Domain;
 using Silverback.Messaging.Publishing;
 
-namespace Silverback.Core.EntityFrameworkCore
+namespace Silverback.EntityFrameworkCore
 {
     /// <summary>
     /// The base class to be used for a <see cref="T:Microsoft.EntityFrameworkCore.DbContext" /> to be used with Silverback.Core.
@@ -76,11 +76,11 @@ namespace Silverback.Core.EntityFrameworkCore
         /// that any asynchronous operations have completed before calling another method on this context.
         /// </para>
         /// </remarks>
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            _eventPublisher.PublishDomainEvents(this);
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            await _eventPublisher.PublishDomainEventsAsync(this);
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
     }
 }
