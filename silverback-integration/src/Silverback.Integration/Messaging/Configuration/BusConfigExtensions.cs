@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Text;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;

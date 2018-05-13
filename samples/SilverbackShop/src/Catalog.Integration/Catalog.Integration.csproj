@@ -6,4 +6,8 @@
     <RootNamespace>SilverbackShop.Catalog.Integration</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Silverback.Integration" Version="1.0.17" />
+  </ItemGroup>
+
 </Project>
