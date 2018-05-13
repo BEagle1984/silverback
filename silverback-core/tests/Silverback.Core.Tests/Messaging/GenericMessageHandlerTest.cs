@@ -1,52 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using Silverback.Messaging;
-using Silverback.Messaging.Messages;
-using Silverback.Tests.TestTypes.Domain;
-using Silverback.Tests.TestTypes.Handlers;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Text;
+//using NUnit.Framework;
+//using Silverback.Messaging;
+//using Silverback.Messaging.Messages;
+//using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging
-{
-    [TestFixture]
-    public class GenericMessageHandlerTest
-    {
-        [Test]
-        public void HandleTest()
-        {
-            int counter = 0;
-            IMessageHandler handler = new GenericMessageHandler<TestCommandOne>(m => counter++);
+//namespace Silverback.Tests.Messaging
+//{
+//    [TestFixture]
+//    public class GenericMessageHandlerTest
+//    {
+//        [Test]
+//        public void HandleTest()
+//        {
+//            int counter = 0;
+//            IMessageHandler handler = new GenericMessageHandler<TestCommandOne>(m => counter++);
 
-            handler.Handle(new TestCommandOne());
+//            handler.Handle(new TestCommandOne());
 
-            Assert.That(counter, Is.EqualTo(1));
-        }
+//            Assert.That(counter, Is.EqualTo(1));
+//        }
 
-        [Test]
-        public void HandleByTypeTest()
-        {
-            int counter = 0;
-            IMessageHandler handler = new GenericMessageHandler<TestCommandOne>(m => counter++);
+//        [Test]
+//        public void HandleByTypeTest()
+//        {
+//            int counter = 0;
+//            IMessageHandler handler = new GenericMessageHandler<TestCommandOne>(m => counter++);
 
-            handler.Handle(new TestCommandOne());
-            handler.Handle(new TestCommandTwo());
-            handler.Handle(new TestCommandOne());
+//            handler.Handle(new TestCommandOne());
+//            handler.Handle(new TestCommandTwo());
+//            handler.Handle(new TestCommandOne());
 
-            Assert.That(counter, Is.EqualTo(2));
-        }
+//            Assert.That(counter, Is.EqualTo(2));
+//        }
 
-        [Test]
-        public void HandleFilterTest()
-        {
-            int counter = 0;
-            IMessageHandler handler = new GenericMessageHandler<TestCommandOne>(m => counter++, m => m.Message != "skip");
+//        [Test]
+//        public void HandleFilterTest()
+//        {
+//            int counter = 0;
+//            IMessageHandler handler = new GenericMessageHandler<TestCommandOne>(m => counter++, m => m.Message != "skip");
 
-            handler.Handle(new TestCommandOne());
-            handler.Handle(new TestCommandOne { Message = "skip" });
-            handler.Handle(new TestCommandOne { Message = "abc" });
+//            handler.Handle(new TestCommandOne());
+//            handler.Handle(new TestCommandOne { Message = "skip" });
+//            handler.Handle(new TestCommandOne { Message = "abc" });
 
-            Assert.That(counter, Is.EqualTo(2));
-        }
-    }
-}
+//            Assert.That(counter, Is.EqualTo(2));
+//        }
+//    }
+//}

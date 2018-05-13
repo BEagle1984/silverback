@@ -46,7 +46,7 @@ namespace Silverback.Messaging.Subscribers
         /// <param name="handler">The handler.</param>
         /// <param name="filter">The filter.</param>
         /// <returns></returns>
-        public MultiSubscriberConfig AddHandler(Func<IMessage, Task> handler, Func<IMessage, bool> filter = null)
+        public MultiSubscriberConfig AddAsyncHandler(Func<IMessage, Task> handler, Func<IMessage, bool> filter = null)
         {
             _handlers.Add(new GenericAsyncSubscriber<IMessage>(handler, filter));
 
@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Subscribers
         /// <param name="handler">The handler.</param>
         /// <param name="filter">The filter.</param>
         /// <returns></returns>
-        public MultiSubscriberConfig AddHandler<TMessage>(Func<TMessage, Task> handler, Func<TMessage, bool> filter = null)
+        public MultiSubscriberConfig AddAsyncHandler<TMessage>(Func<TMessage, Task> handler, Func<TMessage, bool> filter = null)
             where TMessage : IMessage
         {
             _handlers.Add(new GenericAsyncSubscriber<TMessage>(handler, filter));

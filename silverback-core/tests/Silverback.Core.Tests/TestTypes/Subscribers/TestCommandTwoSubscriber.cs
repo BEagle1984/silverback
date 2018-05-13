@@ -1,9 +1,9 @@
-﻿using Silverback.Messaging;
+﻿using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.TestTypes.Handlers
+namespace Silverback.Tests.TestTypes.Subscribers
 {
-    public class TestCommandTwoHandler : MessageHandler<TestCommandTwo>
+    public class TestCommandTwoSubscriber : Subscriber<TestCommandTwo>
     {
         public static int Counter { get; set; }
 
