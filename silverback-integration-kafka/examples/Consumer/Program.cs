@@ -10,8 +10,6 @@ namespace Consumer
     {
         private static void Main()
         {
-            PrintHeader();
-
             using (var broker = new KafkaBroker())
             {
                 var configurations = new Dictionary<string, object>
@@ -46,6 +44,8 @@ namespace Consumer
 
                 broker.Connect();
             }
+
+            PrintHeader();
         }
 
         private static void PrintHeader()

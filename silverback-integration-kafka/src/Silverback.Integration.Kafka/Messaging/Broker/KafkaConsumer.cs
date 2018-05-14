@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc />
     public class KafkaConsumer : Consumer
     {
-        private bool Retrieves;
+        private bool _disconnected = false;
         private readonly KafkaEndpoint _endpoint;
         private Consumer<byte[], byte[]> _consumer;
 
@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Broker
             _endpoint = endpoint;
         }
 
-        
+        /// <inheritdoc />
         internal void Connect()
         {
             _consumer = new Consumer<byte[], byte[]>(_endpoint.Configuration,
@@ -43,23 +43,33 @@ namespace Silverback.Messaging.Broker
             };
 
             _consumer.Subscribe(_endpoint.Name);
-            Retrieves = true;
-            while (Retrieves)
+            
+            while (!_disconnected)
             {
                 if (!_consumer.Consume(out var msg, TimeSpan.FromMilliseconds(100)))
-                {
                     continue;
-                }
+
                 HandleMessage(msg.Value);
+                if (!IsAutocommitEnabled)
+                {
+                    var committedOffsets = _consumer.CommitAsync(msg).Result;
+                    // TODO: Log.Trace($"Committed offset: {committedOffsets}");
+                }
             }
         }
 
+        /// <inheritdoc />
         internal void Disconnect()
         {
-            Retrieves = false;
+            Disconnected = true;
             _consumer.Unassign();
             _consumer.Unsubscribe();
         }
+
+        private bool IsAutocommitEnabled =>
+            _endpoint.Configuration.ContainsKey("enable.auto.commit") ?
+            (bool)_endpoint.Configuration["enable.auto.commit"] :
+            false;
 
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
@@ -75,5 +85,7 @@ namespace Silverback.Messaging.Broker
 
             base.Dispose(disposing);
         }
+
+        
     }
 }
