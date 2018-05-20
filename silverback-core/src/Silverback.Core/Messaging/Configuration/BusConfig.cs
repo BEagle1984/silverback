@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
@@ -11,7 +12,9 @@ namespace Silverback.Messaging.Configuration
     public class BusConfig
     {
         internal IBus Bus { get; }
-        internal ITypeFactory TypeFactory { get; private set; } // TODO: Change this into a function to allow WithFactory to be called at any time during configuration
+        internal ITypeFactory GetTypeFactory() => _typeFactory;
+
+        private ITypeFactory _typeFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BusConfig"/> class.
@@ -40,14 +43,38 @@ namespace Silverback.Messaging.Configuration
 
         #region WithFactory
 
+
         /// <summary>
         /// Set the function to be used to dinamically instantiate the types needed to handle the messages.
         /// </summary>
-        /// <param name="factory">The factory.</param>
+        /// <param name="singleInstanceFactory">The factory method used to instanciate a single instance.</param>
         /// <returns></returns>
-        public BusConfig WithFactory(Func<Type, object> factory)
+        public BusConfig WithFactory(Func<Type, object> singleInstanceFactory)
         {
-            TypeFactory = new GenericTypeFactory(factory);
+            _typeFactory = new GenericTypeFactory(singleInstanceFactory);
+            return this;
+        }
+
+        /// <summary>
+        /// Set the function to be used to dinamically instantiate the types needed to handle the messages.
+        /// </summary>
+        /// <param name="multiInstancesFactory">TThe factory method used to instanciate multiple instances of a type.</param>
+        /// <returns></returns>
+        public BusConfig WithFactory(Func<Type, object[]> multiInstancesFactory)
+        {
+            _typeFactory = new GenericTypeFactory(multiInstancesFactory);
+            return this;
+        }
+
+        /// <summary>
+        /// Set the function to be used to dinamically instantiate the types needed to handle the messages.
+        /// </summary>
+        /// <param name="singleInstanceFactory">The factory method used to instanciate a single instance.</param>
+        /// <param name="multiInstancesFactory">TThe factory method used to instanciate multiple instances of a type.</param>
+        /// <returns></returns>
+        public BusConfig WithFactory(Func<Type, object> singleInstanceFactory, Func<Type, object[]> multiInstancesFactory)
+        {
+            _typeFactory = new GenericTypeFactory(singleInstanceFactory, multiInstancesFactory);
             return this;
         }
 
@@ -58,7 +85,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         public BusConfig WithFactory(ITypeFactory factory)
         {
-            TypeFactory = factory;
+            _typeFactory = factory;
             return this;
         }
 
@@ -68,11 +95,23 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <returns></returns>
         public BusConfig WithDefaultFactory()
-            => WithFactory(Activator.CreateInstance);
+            => WithFactory(t => Activator.CreateInstance(t));
 
         #endregion
 
         #region Subscribe
+
+        /// <summary>
+        /// Automatically subscribe all instances of <see cref="ISubscriber" /> that are resolved by the 
+        /// configured <see cref="ITypeFactory"/>.
+        /// This is the same as calling <code>Subscribe&lt;ISubscriber&gt;</code>.
+        /// </summary>
+        /// <returns></returns>
+        public BusConfig AutoSubscribe()
+        {
+            Subscribe<ISubscriber>();
+            return this;
+        }
 
         /// <summary>
         /// Subscribes an instance of <see cref="ISubscriber" /> to the messages sent through this bus.
@@ -93,7 +132,7 @@ namespace Silverback.Messaging.Configuration
         public BusConfig Subscribe<TSubscriber>()
             where TSubscriber : ISubscriber
         {
-            Bus.Subscribe(new SubscriberFactory<TSubscriber>(TypeFactory));
+            Bus.Subscribe(new SubscriberFactory<TSubscriber>(GetTypeFactory));
             return this;
         }
 

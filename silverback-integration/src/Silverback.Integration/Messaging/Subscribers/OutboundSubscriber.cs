@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Subscribers
         where TMessage : IIntegrationMessage
         where TAdapter : IOutboundAdapter
     {
-        private readonly ITypeFactory _typeFactory;
+        private readonly Func<ITypeFactory> _typeFactoryProvider;
 
         private readonly IEndpoint _endpoint;
         private readonly IProducer _producer;
@@ -25,14 +25,14 @@ namespace Silverback.Messaging.Subscribers
         /// <summary>
         /// Initializes a new instance of the <see cref="OutboundSubscriber{TMessage, TAdapter}" /> class.
         /// </summary>
-        /// <param name="typeFactory">The <see cref="ITypeFactory" /> that will be used to get an <see cref="IOutboundAdapter" /> instance to relay each received message.</param>
+        /// <param name="typeFactoryProvider">The method used to retrieve the <see cref="ITypeFactory" /> that will be used to get an <see cref="IOutboundAdapter" /> instance to relay each received message.</param>
         /// <param name="broker">The broker to be passed to the <see cref="IOutboundAdapter" />.</param>
         /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
         /// <param name="filter">An optional filter to be applied to the messages.</param>
-        public OutboundSubscriber(ITypeFactory typeFactory, IBroker broker, IEndpoint endpoint, Func<TMessage, bool> filter = null)
+        public OutboundSubscriber(Func<ITypeFactory> typeFactoryProvider, IBroker broker, IEndpoint endpoint, Func<TMessage, bool> filter = null)
             :base(filter)
         {
-            _typeFactory = typeFactory ?? throw new ArgumentNullException(nameof(typeFactory));
+            _typeFactoryProvider = typeFactoryProvider ?? throw new ArgumentNullException(nameof(typeFactoryProvider));
             _producer = broker?.GetProducer(endpoint);
             _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
         }
@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Subscribers
         /// <returns></returns>
         private TAdapter GetAdapter()
         {
-            var adapter = _typeFactory.GetInstance<TAdapter>();
+            var adapter = _typeFactoryProvider().GetInstance<TAdapter>();
 
             if (adapter == null)
                 throw new InvalidOperationException($"Couldn't instantiate adapter of type {typeof(TAdapter)}.");
