@@ -28,7 +28,7 @@ namespace SilverbackShop.Catalog.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CatalogContext>(o => o.UseInMemoryDatabase("CatalogContext"));
+            services.AddDbContext<CatalogContext>(o => o.UseSqlite(@"Data Source=Data\Catalog.db"));
 
             services.AddMvc();
             services.AddSwaggerGen(c =>
