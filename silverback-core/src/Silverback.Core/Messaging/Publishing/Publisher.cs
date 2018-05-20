@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Publishing
 {
@@ -143,34 +144,36 @@ namespace Silverback.Messaging.Publishing
 
             CheckRequestMessage(message);
 
-            TResponse response = default(TResponse);
+            TResponse response = default;
 
-            var replySubscription = replyBus.Subscribe(messages => messages
-                .OfType<TResponse>()
-                .Where(m => m.RequestId == message.RequestId)
-                .Subscribe(m =>
-                {
-                    response = m;
-                }));
+            var replySubscriber = replyBus.Subscribe(
+                new GenericSubscriber<TResponse>(
+                    m => response = m,
+                    m => m.RequestId == message.RequestId));
 
-            _bus.Publish(message);
-
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            while (response == null)
+            try
             {
-                if (stopwatch.Elapsed >= timeout)
-                    throw new TimeoutException($"The request with id {message.RequestId} was not replied in the allotted time.");
+                _bus.Publish(message);
 
-                await Task.Delay(50); // TODO: Check this
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                while (response == null)
+                {
+                    if (stopwatch.Elapsed >= timeout)
+                        throw new TimeoutException($"The request with id {message.RequestId} was not replied in the allotted time.");
+
+                    await Task.Delay(50); // TODO: Check this
+                }
+
+                stopwatch.Stop();
+
+                return response;
             }
-
-            stopwatch.Stop();
-
-            replyBus.Unsubscribe(replySubscription);
-
-            return response;
+            finally
+            {
+                replyBus.Unsubscribe(replySubscriber);
+            }
         }
 
         /// <summary>

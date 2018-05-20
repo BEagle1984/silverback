@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -48,6 +49,19 @@ namespace Silverback.Messaging.Adapters
             entity.MessageId = Guid.NewGuid();
 
             _outboxRepository.Add(entity);
+        }
+
+        /// <summary>
+        /// Publishes the <see cref="T:Silverback.Messaging.Messages.IIntegrationMessage" /> to the specified <see cref="T:Silverback.Messaging.IEndpoint" /> asynchronously.
+        /// </summary>
+        /// <param name="message">The message to be relayed.</param>
+        /// <param name="producer">The producer to be used to send the message.</param>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <returns></returns>
+        public Task RelayAsync(IIntegrationMessage message, IProducer producer, IEndpoint endpoint)
+        {
+            Relay(message, producer, endpoint);
+            return Task.CompletedTask;
         }
     }
 }

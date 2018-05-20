@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Baskets.Service
+namespace SilverbackShop.Baskets.Service
 {
     public class Program
     {

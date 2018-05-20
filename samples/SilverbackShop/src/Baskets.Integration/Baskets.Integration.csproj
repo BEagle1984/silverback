@@ -2,10 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>SilverbackShop.Baskets.Integration</AssemblyName>
+    <RootNamespace>SilverbackShop.Baskets.Integration</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Integration" Version="1.0.15" />
+    <PackageReference Include="Silverback.Integration" Version="1.0.19" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// TODO: DELETE?
 
-namespace Common.Infrastructure
-{
-    public class EntityNotFoundException : Exception
-    {
-    }
-}
+//using System;
+
+//namespace SilverbackShop.Common.Infrastructure
+//{
+//    public class EntityNotFoundException : Exception
+//    {
+//    }
+//}

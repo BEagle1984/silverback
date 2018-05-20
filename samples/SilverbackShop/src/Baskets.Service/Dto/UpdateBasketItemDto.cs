@@ -1,4 +1,4 @@
-﻿namespace Baskets.Service.Dto
+﻿namespace SilverbackShop.Baskets.Service.Dto
 {
     public class UpdateBasketItemDto
     {

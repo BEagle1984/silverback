@@ -1,40 +1,35 @@
 ﻿using System;
 using System.Linq;
-using Baskets.Domain.Model;
-using Baskets.Domain.Repositories;
+using System.Threading.Tasks;
+using SilverbackShop.Baskets.Domain.Model;
+using SilverbackShop.Baskets.Domain.Repositories;
 
-namespace Baskets.Domain.Services
+namespace SilverbackShop.Baskets.Domain.Services
 {
     public class InventoryService
     {
-        private readonly IInventoryItemRepository _repository;
+        private readonly IInventoryItemsRepository _repository;
 
-        public InventoryService(IInventoryItemRepository repository)
+        public InventoryService(IInventoryItemsRepository repository)
         {
             _repository = repository;
         }
 
-        public bool CheckIsInStock(string productId, int quantity)
+        public async Task<bool> CheckIsInStock(string productId, int quantity)
         {
-            var inventory = _repository.NoTrackingQueryable.FirstOrDefault(i => i.ProductId == productId);
+            var stockQuantity = await _repository.GetStockQuantityAsync(productId);
 
-            return inventory != null && inventory.StockQuantity >= quantity;
+            return stockQuantity >= quantity;
         }
 
-        public void UpdateStock(string productId, int quantity)
+        public async Task DecrementStock(string productId, int quantity)
         {
-            var inventory = _repository.Queryable.FirstOrDefault(i => i.ProductId == productId);
+            var inventory = await _repository.FindInventoryItemAsync(productId);
 
-            if (inventory != null)
-            {
-                inventory.UpdateStock(quantity);
-                return;
-            }
-
-            if (quantity < 0)
+            if (inventory == null)
                 throw new InvalidOperationException($"No stock information found for product '{productId}'.");
 
-            _repository.Add(InventoryItem.Create(productId, quantity));
+            inventory.DecrementStock(quantity);
         }
     }
 }

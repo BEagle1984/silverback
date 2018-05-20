@@ -1,13 +1,13 @@
 ﻿using System;
-using Baskets.Domain.Model.BasketAggregate;
+using System.Threading.Tasks;
 using Common.Domain;
+using SilverbackShop.Baskets.Domain.Model;
+using SilverbackShop.Common.Infrastructure;
 
-namespace Baskets.Domain.Repositories
+namespace SilverbackShop.Baskets.Domain.Repositories
 {
-    public interface IBasketsRepository : IShopRepository<Basket>
+    public interface IBasketsRepository : IRepository<Basket>
     {
-        Basket FindUserBasket(Guid userId);
-
-        Basket GetUserBasket(Guid userId);
+        Task<Basket> FindByUserAsync(Guid userId);
     }
 }

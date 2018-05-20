@@ -3,9 +3,9 @@ using Silverback.Messaging.Messages;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging
 {
@@ -14,9 +14,9 @@ namespace Silverback.Messaging
     /// </summary>
     public class Bus : IBus, IDisposable
     {
-        private readonly Subject<IMessage> _subject = new Subject<IMessage>();
-        private readonly List<IDisposable> _subscribers = new List<IDisposable>();
+        private readonly List<ISubscriber> _subscribers = new List<ISubscriber>();
         private readonly ConcurrentDictionary<string, object> _items = new ConcurrentDictionary<string, object>();
+        private bool _disposed = false;
 
         #region Publish
 
@@ -29,7 +29,9 @@ namespace Silverback.Messaging
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
-            _subject.OnNext(message);
+            CheckDisposed();
+
+            _subscribers.ForEach(s => s.OnNext(message));
         }
 
         /// <summary>
@@ -42,7 +44,9 @@ namespace Silverback.Messaging
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
-            return Task.Run(() => _subject.OnNext(message));
+            CheckDisposed();
+
+            return _subscribers.ForEachAsync(async s => await s.OnNextAsync(message));
         }
 
         #endregion
@@ -50,16 +54,13 @@ namespace Silverback.Messaging
         #region Subscribe / Unsubscribe
 
         /// <summary>
-        /// Subscribes to the messages stream. The function must return an <see cref="IDisposable" />
-        /// to let the <see cref="IBus" /> handle the subscriber lifecycle.
+        /// Subscribes the specified <see cref="T:Silverback.Messaging.ISubscriber" /> to receive
+        /// the messages sent through this bus.
         /// </summary>
-        /// <param name="subscription">The method performing the subscription.</param>
-        /// <returns>
-        /// Returns the subscriber.
-        /// </returns>
-        public IDisposable Subscribe(Func<IObservable<IMessage>, IDisposable> subscription)
+        /// <param name="subscriber">The subscriber.</param>
+        public ISubscriber Subscribe(ISubscriber subscriber)
         {
-            var subscriber = subscription(_subject);
+            CheckDisposed();
 
             lock (_subscribers)
             {
@@ -73,17 +74,13 @@ namespace Silverback.Messaging
         /// Dispose the specified subscriber.
         /// </summary>
         /// <param name="subscriber">The subscriber.</param>
-        public void Unsubscribe(IDisposable subscriber)
+        public void Unsubscribe(ISubscriber subscriber)
         {
             lock (_subscribers)
             {
-                subscriber.Dispose();
-
-                if (_subscribers.Contains(subscriber))
-                    _subscribers.Remove(subscriber);
+                _subscribers.Remove(subscriber);
             }
         }
-
         #endregion
 
         #region Items
@@ -96,9 +93,28 @@ namespace Silverback.Messaging
         /// <value>
         /// The items.
         /// </value>
-        public ConcurrentDictionary<string, object> Items => _items;
+        public ConcurrentDictionary<string, object> Items
+        {
+            get
+            {
+                CheckDisposed();
+                return _items;
+            }
+        }
 
         #endregion
+
+        #region Dispose
+
+        /// <summary>
+        /// Throws an exception if the current instance was disposed.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"></exception>
+        private void CheckDisposed()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException(GetType().FullName);
+        }
 
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
@@ -106,15 +122,16 @@ namespace Silverback.Messaging
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && !_disposed)
             {
-                // Dispose all subscribers and the subject
                 lock (_subscribers)
                 {
-                    _subscribers?.ForEach(s => s.Dispose());
-                    _items?.ForEach(i => (i.Value as IDisposable)?.Dispose());
+                    _subscribers?.OfType<IDisposable>().ForEach(s => s.Dispose());
                 }
-                _subject?.Dispose();
+
+                _items?.ForEach(i => (i.Value as IDisposable)?.Dispose());
+
+                _disposed = true;
             }
         }
 
@@ -134,5 +151,7 @@ namespace Silverback.Messaging
         {
             Dispose(false);
         }
+
+        #endregion
     }
 }
