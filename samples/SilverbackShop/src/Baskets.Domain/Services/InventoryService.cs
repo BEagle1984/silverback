@@ -10,24 +10,24 @@ namespace SilverbackShop.Baskets.Domain.Services
     {
         private readonly IInventoryItemsRepository _repository;
 
-        public InventoryService(IInventoryItemsRepository repository)
+        public InventoryService(IBasketsUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _repository = unitOfWork.InventoryItems;
         }
 
-        public async Task<bool> CheckIsInStock(string productId, int quantity)
+        public async Task<bool> CheckIsInStock(string sku, int quantity)
         {
-            var stockQuantity = await _repository.GetStockQuantityAsync(productId);
+            var stockQuantity = await _repository.GetStockQuantityAsync(sku);
 
             return stockQuantity >= quantity;
         }
 
-        public async Task DecrementStock(string productId, int quantity)
+        public async Task DecrementStock(string sku, int quantity)
         {
-            var inventory = await _repository.FindInventoryItemAsync(productId);
+            var inventory = await _repository.FindInventoryItemAsync(sku);
 
             if (inventory == null)
-                throw new InvalidOperationException($"No stock information found for product '{productId}'.");
+                throw new InvalidOperationException($"No stock information found for product '{sku}'.");
 
             inventory.DecrementStock(quantity);
         }

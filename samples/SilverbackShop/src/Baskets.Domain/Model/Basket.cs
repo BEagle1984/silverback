@@ -33,14 +33,12 @@ namespace SilverbackShop.Baskets.Domain.Model
             };
         }
 
-        public void Add(string productId, string name, int quantity, decimal unitPrice)
+        public void Add(Product product, int quantity)
         {
-            if (string.IsNullOrEmpty(productId)) throw new ArgumentNullException(nameof(productId));
-            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
+            if (product == null) throw new ArgumentNullException(nameof(product));
             if (quantity <= 0) throw new ArgumentException("quantity must be greater than 0", nameof(quantity));
-            if (unitPrice <= 0) throw new ArgumentException("unitPrice must be greater than 0", nameof(unitPrice));
 
-            var item = _items.FirstOrDefault(i => i.ProductId == productId);
+            var item = _items.FirstOrDefault(i => i.SKU == product.SKU);
             if (item != null)
             {
                 item.Quantity += quantity;
@@ -49,30 +47,30 @@ namespace SilverbackShop.Baskets.Domain.Model
 
             _items.Add(new BasketItem
             {
-                ProductId = productId,
-                Name = name,
+                SKU = product.SKU,
+                Name = product.DisplayName,
                 Quantity = quantity,
-                UnitPrice = unitPrice
+                UnitPrice = product.UnitPrice
             });
         }
 
-        public void UpdateQuantity(string productId, int newQuantity)
+        public void UpdateQuantity(string sku, int newQuantity)
         {
-            if (string.IsNullOrEmpty(productId)) throw new ArgumentNullException(nameof(productId));
+            if (string.IsNullOrEmpty(sku)) throw new ArgumentNullException(nameof(sku));
             if (newQuantity <= 0) throw new ArgumentException("newQuantity must be greater than 0", nameof(newQuantity));
 
-            var item = _items.FirstOrDefault(i => i.ProductId == productId)
-                       ?? throw new InvalidOperationException($"No item found with ProductId '{productId}'.");
+            var item = _items.FirstOrDefault(i => i.SKU == sku)
+                       ?? throw new InvalidOperationException($"No item found with SKU '{sku}'.");
 
             item.Quantity = newQuantity;
         }
 
-        public void Remove(string productId)
+        public void Remove(string sku)
         {
-            if (string.IsNullOrEmpty(productId)) throw new ArgumentNullException(nameof(productId));
+            if (string.IsNullOrEmpty(sku)) throw new ArgumentNullException(nameof(sku));
 
-            var item = _items.FirstOrDefault(i => i.ProductId == productId)
-                       ?? throw new InvalidOperationException($"No item found with ProductId '{productId}'.");
+            var item = _items.FirstOrDefault(i => i.SKU == sku)
+                       ?? throw new InvalidOperationException($"No item found with SKU '{sku}'.");
 
             _items.Remove(item);
         }

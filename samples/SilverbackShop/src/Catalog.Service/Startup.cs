@@ -72,8 +72,18 @@ namespace SilverbackShop.Catalog.Service
             var bus = app.ApplicationServices.GetService<IBus>();
             bus.Config()
                 .ConfigureBroker<FileSystemBroker>(c => c.OnPath(@"D:\Temp\Broker\SilverbackShop"))
-                .WithFactory(t => app.ApplicationServices.GetService(t))
+                .WithFactory(t => app.ApplicationServices.GetService(t), t => app.ApplicationServices.GetServices(t))
                 .ConfigureUsing<CatalogDomainMessagingConfigurator>();
+
+            InitializeDatabase(app);
+        }
+
+        private void InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<CatalogContext>().Database.Migrate();
+            }
         }
     }
 }

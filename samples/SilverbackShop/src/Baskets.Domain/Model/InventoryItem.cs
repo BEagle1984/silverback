@@ -6,16 +6,22 @@ namespace SilverbackShop.Baskets.Domain.Model
 {
     public class InventoryItem : ShopEntity, IAggregateRoot
     {
-        public string ProductId { get; private set; }
+        public string SKU { get; private set; }
 
         public int StockQuantity { get; private set; }
 
-        public static InventoryItem Create(string productId, int quantity)
+        /// <summary>
+        /// Creates the specified sku.
+        /// </summary>
+        /// <param name="sku">The sku.</param>
+        /// <param name="quantity">The quantity.</param>
+        /// <returns></returns>
+        public static InventoryItem Create(string sku, int quantity)
         {
             return new InventoryItem
             {
                 Id = Guid.NewGuid(),
-                ProductId = productId,
+                SKU = sku,
                 StockQuantity = quantity
             };
         }

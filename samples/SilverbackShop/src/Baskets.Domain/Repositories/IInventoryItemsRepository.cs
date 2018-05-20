@@ -7,8 +7,8 @@ namespace SilverbackShop.Baskets.Domain.Repositories
 {
     public interface IInventoryItemsRepository : IRepository<InventoryItem>
     {
-        Task<InventoryItem> FindInventoryItemAsync(string productId);
+        Task<InventoryItem> FindInventoryItemAsync(string sku);
 
-        Task<int> GetStockQuantityAsync(string productId);
+        Task<int> GetStockQuantityAsync(string sku);
     }
 }

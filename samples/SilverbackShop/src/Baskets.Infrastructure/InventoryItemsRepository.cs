@@ -15,12 +15,12 @@ namespace SilverbackShop.Baskets.Infrastructure
         {
         }
 
-        public Task<InventoryItem> FindInventoryItemAsync(string productId)
-            => DbSet.FirstOrDefaultAsync(i => i.ProductId == productId);
+        public Task<InventoryItem> FindInventoryItemAsync(string sku)
+            => DbSet.FirstOrDefaultAsync(i => i.SKU == sku);
 
-        public Task<int> GetStockQuantityAsync(string productId)
+        public Task<int> GetStockQuantityAsync(string sku)
             => DbSet
-                .Where(i => i.ProductId == productId)
+                .Where(i => i.SKU == sku)
                 .Select(i => i.StockQuantity)
                 .FirstOrDefaultAsync();
     }

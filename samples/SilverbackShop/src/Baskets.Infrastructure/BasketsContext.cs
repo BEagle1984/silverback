@@ -46,7 +46,7 @@ namespace SilverbackShop.Baskets.Infrastructure
         /// </remarks>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<InventoryItem>().HasIndex(i => i.ProductId).IsUnique();
+            modelBuilder.Entity<InventoryItem>().HasIndex(i => i.SKU).IsUnique();
 
             modelBuilder
                 .Entity<Basket>().Metadata

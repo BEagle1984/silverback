@@ -9,6 +9,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Subscribers;
 using SilverbackShop.Baskets.Domain;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
@@ -32,7 +33,7 @@ namespace SilverbackShop.Baskets.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BasketsContext>(o => o.UseInMemoryDatabase("BasketsContext"));
+            services.AddDbContext<BasketsContext>(o => o.UseSqlite(@"Data Source=Data\Baskets.db"));
 
             services.AddMvc();
             services.AddSwaggerGen(c =>
@@ -49,12 +50,9 @@ namespace SilverbackShop.Baskets.Service
             services.AddScoped<BasketsService>();
 
             services.AddScoped<IBasketsUnitOfWork, BasketsUnitOfWork>();
-            services.AddTransient(s => s.GetService<IBasketsUnitOfWork>().Baskets);
-            services.AddTransient(s => s.GetService<IBasketsUnitOfWork>().InventoryItems);
-            services.AddTransient(s => s.GetService<IBasketsUnitOfWork>().Products);
 
-            services.AddTransient<InventoryMultiSubscriber>();
-            services.AddTransient<CatalogMultiSubscriber>();
+            services.AddTransient<ISubscriber, InventoryMultiSubscriber>();
+            services.AddTransient<ISubscriber, CatalogMultiSubscriber>();
 
             // TODO: Can get rid of this?
             services.AddSingleton<SimpleOutboundAdapter>();
@@ -87,18 +85,20 @@ namespace SilverbackShop.Baskets.Service
             var bus = app.ApplicationServices.GetService<IBus>();
             bus.Config()
                 .ConfigureBroker<FileSystemBroker>(c => c.OnPath(@"D:\Temp\Broker\SilverbackShop"))
-                .WithFactory(t => app.ApplicationServices.GetService(t))
+                .WithFactory(t => app.ApplicationServices.GetService(t), t => app.ApplicationServices.GetServices(t))
                 .ConfigureUsing<BasketsDomainMessagingConfigurator>()
                 .AutoSubscribe()
                 .ConnectBrokers();
 
-            // Init data
-            var db = app.ApplicationServices.GetService<BasketsContext>();
+            InitializeDatabase(app);
+        }
 
-            foreach (var stock in InventoryData.InitialStock)
-                db.Add(InventoryItem.Create(stock.Item1, stock.Item2));
-
-            db.SaveChanges();
+        private void InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<BasketsContext>().Database.Migrate();
+            }
         }
     }
 }

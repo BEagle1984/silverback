@@ -10,9 +10,9 @@ namespace SilverbackShop.Baskets.Domain.Services
     {
         private readonly IBasketsRepository _repository;
 
-        public BasketsService(IBasketsRepository repository)
+        public BasketsService(IBasketsUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _repository = unitOfWork.Baskets;
         }
 
         public async Task<Basket> GetUserBasket(Guid userId)

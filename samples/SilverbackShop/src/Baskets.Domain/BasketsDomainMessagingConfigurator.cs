@@ -22,7 +22,7 @@ namespace SilverbackShop.Baskets.Domain
                             new BasketItemDto
                             {
                                 Name = i.Name,
-                                ProductId = i.ProductId,
+                                SKU = i.SKU,
                                 Quantity = i.Quantity,
                                 UnitPrice = i.UnitPrice
                             }).ToList()

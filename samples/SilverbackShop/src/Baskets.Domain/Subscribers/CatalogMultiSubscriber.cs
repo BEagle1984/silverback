@@ -11,9 +11,9 @@ namespace SilverbackShop.Baskets.Domain.Subscribers
     {
         private readonly IProductsRepository _repository;
 
-        public CatalogMultiSubscriber(IProductsRepository repository)
+        public CatalogMultiSubscriber(IBasketsUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _repository = unitOfWork.Products;
         }
 
         protected override void Configure(MultiSubscriberConfig config) => config
@@ -44,11 +44,11 @@ namespace SilverbackShop.Baskets.Domain.Subscribers
 
             if (product != null)
             {
-                product.UpdatePrice(dto.UnitPrice);
+                product.Update(dto.DisplayName, dto.UnitPrice);
             }
             else
             {
-                _repository.Add(Product.Create(dto.SKU, dto.UnitPrice));
+                _repository.Add(Product.Create(dto.SKU, dto.DisplayName, dto.UnitPrice));
             }
 
             await _repository.UnitOfWork.SaveChangesAsync();

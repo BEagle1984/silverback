@@ -21,7 +21,7 @@ namespace SilverbackShop.Baskets.Domain.Subscribers
         {
             foreach (var item in message.Source.Items)
             {
-                await _inventoryService.DecrementStock(item.ProductId, item.Quantity);
+                await _inventoryService.DecrementStock(item.SKU, item.Quantity);
             }
         }
     }

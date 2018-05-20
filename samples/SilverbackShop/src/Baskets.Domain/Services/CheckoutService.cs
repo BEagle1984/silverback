@@ -11,9 +11,9 @@ namespace SilverbackShop.Baskets.Domain.Services
         private readonly IBasketsRepository _repository;
         private readonly InventoryService _inventoryService;
 
-        public CheckoutService(IBasketsRepository repository, InventoryService inventoryService)
+        public CheckoutService(IBasketsUnitOfWork unitOfWork, InventoryService inventoryService)
         {
-            _repository = repository;
+            _repository = unitOfWork.Baskets;
             _inventoryService = inventoryService;
         }
 
@@ -35,9 +35,9 @@ namespace SilverbackShop.Baskets.Domain.Services
 
             foreach (var item in basket.Items)
             {
-                if (!await _inventoryService.CheckIsInStock(item.ProductId, item.Quantity))
+                if (!await _inventoryService.CheckIsInStock(item.SKU, item.Quantity))
                 {
-                    inventoryErrors.Add($"The product {item.ProductId} is not available in the desired quantity.");
+                    inventoryErrors.Add($"The product '{item.SKU}' is not available in the desired quantity.");
                 }
             }
 

@@ -11,13 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Data\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.3" />
-    <PackageReference Include="Silverback.Core" Version="1.0.13" />
+    <PackageReference Include="Silverback.Core" Version="1.0.14" />
     <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="1.0.5" />
     <PackageReference Include="Silverback.Integration.FileSystem" Version="1.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="2.4.0" />

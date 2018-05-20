@@ -15,12 +15,12 @@ namespace SilverbackShop.Baskets.Service.Controllers
     public class BasketItemsController : Controller
     {
         private readonly BasketsService _basketService;
-        private readonly IBasketsRepository _repository;
+        private readonly IBasketsUnitOfWork _unitOfWork;
 
-        public BasketItemsController(IBasketsRepository repository, BasketsService basketService)
+        public BasketItemsController(BasketsService basketService, IBasketsUnitOfWork unitOfWork)
         {
-            _repository = repository;
             _basketService = basketService;
+            _unitOfWork = unitOfWork;
         }
 
         private Task<Basket> GetBasket()
@@ -38,26 +38,30 @@ namespace SilverbackShop.Baskets.Service.Controllers
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 
+            var product = await _unitOfWork.Products.FindBySkuAsync(dto.SKU);
+            if (product == null)
+                return BadRequest("Product not found.");
+
             var basket = await GetBasket();
-            basket.Add(dto.ProductId, dto.ProductName, dto.Quantity, dto.UnitPrice);
-            await _repository.UnitOfWork.SaveChangesAsync();
+            basket.Add(product, dto.Quantity);
+            await _unitOfWork.SaveChangesAsync();
             return NoContent();
         }
-        [HttpPatch("{productId}")]
-        public async Task<ActionResult> Post(string productId, UpdateBasketItemDto dto)
+        [HttpPatch("{sku}")]
+        public async Task<ActionResult> Post(string sku, UpdateBasketItemDto dto)
         {
             var basket = await GetBasket();
-            basket.UpdateQuantity(productId, dto.Quantity);
-            await _repository.UnitOfWork.SaveChangesAsync();
+            basket.UpdateQuantity(sku, dto.Quantity);
+            await _unitOfWork.SaveChangesAsync();
             return NoContent();
         }
 
-        [HttpDelete("{productId}")]
-        public async Task<ActionResult> Delete(string productId)
+        [HttpDelete("{sku}")]
+        public async Task<ActionResult> Delete(string sku)
         {
             var basket = await GetBasket();
-            basket.Remove(productId);
-            await _repository.UnitOfWork.SaveChangesAsync();
+            basket.Remove(sku);
+            await _unitOfWork.SaveChangesAsync();
             return NoContent();
         }
 
