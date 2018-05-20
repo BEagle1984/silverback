@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Silverback.Messaging
 {
@@ -27,13 +28,13 @@ namespace Silverback.Messaging
         /// </summary>
         /// <param name="type">The type to be instantiated.</param>
         /// <returns></returns>
-        object[] GetInstances(Type type);
+        IEnumerable<object> GetInstances(Type type);
 
         /// <summary>
         /// Returns all instances of the specified type.
         /// </summary>
         /// <typeparam name="T">The type to be instantiated.</typeparam>
         /// <returns></returns>
-        T[] GetInstances<T>();
+        IEnumerable<T> GetInstances<T>();
     }
 }

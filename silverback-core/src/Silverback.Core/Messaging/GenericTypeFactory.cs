@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Silverback.Messaging
@@ -10,14 +11,14 @@ namespace Silverback.Messaging
     public class GenericTypeFactory : ITypeFactory
     {
         private readonly Func<Type, object> _singleInstanceFactory;
-        private readonly Func<Type, object[]> _multiInstancesFactory;
+        private readonly Func<Type, IEnumerable<object>> _multiInstancesFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericTypeFactory" /> class.
         /// </summary>
         /// <param name="singleInstanceFactory">The actual factory method used to retrieve a single instance.</param>
         /// <param name="multiInstancesFactory">The actual factory method used to retrieve all instances of a type.</param>
-        public GenericTypeFactory(Func<Type, object> singleInstanceFactory, Func<Type, object[]> multiInstancesFactory)
+        public GenericTypeFactory(Func<Type, object> singleInstanceFactory, Func<Type,IEnumerable<object>> multiInstancesFactory)
         {
             _singleInstanceFactory = singleInstanceFactory ?? throw new ArgumentNullException(nameof(singleInstanceFactory));
             _multiInstancesFactory = multiInstancesFactory ?? throw new ArgumentNullException(nameof(multiInstancesFactory));
@@ -27,27 +28,16 @@ namespace Silverback.Messaging
         /// Initializes a new instance of the <see cref="GenericTypeFactory" /> class.
         /// </summary>
         /// <param name="singleInstanceFactory">The actual factory method used to retrieve a single instance.</param>
-        /// <exception cref="ArgumentNullException">
-        /// singleInstanceFactory
-        /// or
-        /// multiInstancesFactory
-        /// </exception>
         public GenericTypeFactory(Func<Type, object> singleInstanceFactory)
         {
             _singleInstanceFactory = singleInstanceFactory ?? throw new ArgumentNullException(nameof(singleInstanceFactory));
             _multiInstancesFactory = t => new[] { singleInstanceFactory(t) };
         }
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericTypeFactory" /> class.
         /// </summary>
         /// <param name="multiInstancesFactory">The actual factory method used to retrieve all instances of a type.</param>
-        /// <exception cref="ArgumentNullException">
-        /// singleInstanceFactory
-        /// or
-        /// multiInstancesFactory
-        /// </exception>
         public GenericTypeFactory(Func<Type, object[]> multiInstancesFactory)
         {
             _multiInstancesFactory = multiInstancesFactory ?? throw new ArgumentNullException(nameof(multiInstancesFactory));
@@ -75,7 +65,7 @@ namespace Silverback.Messaging
         /// </summary>
         /// <param name="type">The type to be instantiated.</param>
         /// <returns></returns>
-        public object[] GetInstances(Type type)
+        public IEnumerable<object> GetInstances(Type type)
             => _multiInstancesFactory(type);
 
         /// <summary>
@@ -83,7 +73,7 @@ namespace Silverback.Messaging
         /// </summary>
         /// <typeparam name="T">The type to be instantiated.</typeparam>
         /// <returns></returns>
-        public T[] GetInstances<T>()
+        public IEnumerable<T> GetInstances<T>()
             => _multiInstancesFactory(typeof(T)).Cast<T>().ToArray();
     }
 }

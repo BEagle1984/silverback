@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -60,7 +61,7 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <param name="multiInstancesFactory">TThe factory method used to instanciate multiple instances of a type.</param>
         /// <returns></returns>
-        public BusConfig WithFactory(Func<Type, object[]> multiInstancesFactory)
+        public BusConfig WithFactory(Func<Type, IEnumerable<object>> multiInstancesFactory)
         {
             _typeFactory = new GenericTypeFactory(multiInstancesFactory);
             return this;
@@ -72,7 +73,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="singleInstanceFactory">The factory method used to instanciate a single instance.</param>
         /// <param name="multiInstancesFactory">TThe factory method used to instanciate multiple instances of a type.</param>
         /// <returns></returns>
-        public BusConfig WithFactory(Func<Type, object> singleInstanceFactory, Func<Type, object[]> multiInstancesFactory)
+        public BusConfig WithFactory(Func<Type, object> singleInstanceFactory, Func<Type, IEnumerable<object>> multiInstancesFactory)
         {
             _typeFactory = new GenericTypeFactory(singleInstanceFactory, multiInstancesFactory);
             return this;

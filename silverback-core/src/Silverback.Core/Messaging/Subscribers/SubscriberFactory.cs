@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Extensions;
 using Silverback.Messaging.Messages;
@@ -30,7 +31,7 @@ namespace Silverback.Messaging.Subscribers
         /// Gets a new subscriber instance.
         /// </summary>
         /// <returns></returns>
-        private TSubscriber[] GetSubscribers()
+        private IEnumerable<TSubscriber> GetSubscribers()
         {
             var subscribers = _typeFactoryProvider.Invoke().GetInstances<TSubscriber>();
 
