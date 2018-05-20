@@ -79,6 +79,7 @@ namespace Silverback.Messaging.Broker
             {
                 Disconnect();
                 _consumer.Dispose();
+                _consumer = null;
             }
             base.Dispose(disposing);
         }
