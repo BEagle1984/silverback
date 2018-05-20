@@ -2,6 +2,7 @@
 using System.Linq;
 using Silverback.Messaging.Broker;
 using Silverback.Extensions;
+using Silverback.Messaging.Adapters;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -11,7 +12,7 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public static class BusExtensions
     {
-        private const string KeyPrefix = "Silverback.Integration.Configuration.";
+        private const string ItemsKeyPrefix = "Silverback.Integration.Configuration.";
 
         #region Brokers
 
@@ -21,7 +22,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="bus">The bus.</param>
         /// <returns></returns>
         internal static BrokersCollection GetBrokers(this IBus bus)
-            => (BrokersCollection)bus.Items.GetOrAdd(KeyPrefix + "Brokers", _ => new BrokersCollection());
+            => (BrokersCollection)bus.Items.GetOrAdd(ItemsKeyPrefix + "Brokers", _ => new BrokersCollection());
 
         /// <summary>
         /// Gets the <see cref="T:Silverback.Messaging.Broker.IBroker" /> associated with the <see cref="IBus"/>.
@@ -44,6 +45,23 @@ namespace Silverback.Messaging.Configuration
 
         #endregion
 
+        #region Inbound Adapters
+
+        /// <summary>
+        /// Gets the item with of the specified .
+        /// </summary>
+        /// <param name="bus">The bus.</param>
+        /// <param name="adapter">The adapter.</param>
+        internal static void AddInboundAdapterItem(this IBus bus, IInboundAdapter adapter)
+        {
+            if (!bus.Items.TryAdd($"{ItemsKeyPrefix}InboundAdapter.{adapter.GetType().Name}.{Guid.NewGuid():N}", adapter))
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+        #endregion
+
         #region Connect
 
         /// <summary>
@@ -62,21 +80,5 @@ namespace Silverback.Messaging.Configuration
             => GetBrokers(bus).ForEach(b => b.Disconnect());
 
         #endregion
-
-        ///// <summary>
-        ///// Gets the list of <see cref="IEndpoint"/> configured as inbound.
-        ///// </summary>
-        ///// <param name="bus">The bus.</param>
-        ///// <returns></returns>
-        //public static List<IEndpoint> GetInboundEndpoints(this IBus bus)
-        //    => (List<IEndpoint>)bus.Items.GetOrAdd(KeyPrefix + "InboundEndpoints", _ => new List<IEndpoint>());
-
-        ///// <summary>
-        ///// Gets the list of <see cref="IEndpoint"/> configured as inbound.
-        ///// </summary>
-        ///// <param name="bus">The bus.</param>
-        ///// <returns></returns>
-        //public static List<IEndpoint> GetOutboundEndpoints(this IBus bus)
-        //    => (List<IEndpoint>) bus.Items.GetOrAdd(KeyPrefix + "InboundEndpoints", _ => new List<IEndpoint>());
     }
 }

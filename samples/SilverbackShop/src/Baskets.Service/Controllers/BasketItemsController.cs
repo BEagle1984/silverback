@@ -1,12 +1,15 @@
-﻿using System.Threading.Tasks;
-using Baskets.Domain.Model.BasketAggregate;
-using Baskets.Domain.Repositories;
-using Baskets.Domain.Services;
-using Baskets.Service.Dto;
-using Common.Data;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using SilverbackShop.Baskets.Domain.Model;
+using SilverbackShop.Baskets.Domain.Repositories;
+using SilverbackShop.Baskets.Domain.Services;
+using SilverbackShop.Baskets.Service.Dto;
+using SilverbackShop.Common.Data;
 
-namespace Baskets.Service.Controllers
+namespace SilverbackShop.Baskets.Service.Controllers
 {
     [Route("basket/items")]
     public class BasketItemsController : Controller
@@ -21,7 +24,7 @@ namespace Baskets.Service.Controllers
         }
 
         private Task<Basket> GetBasket()
-            => _basketService.GetBasket(UserData.DefaultUserId);
+            => _basketService.GetUserBasket(UserData.DefaultUserId);
 
         [HttpGet("")]
         public async Task<ActionResult> Get()
@@ -31,8 +34,10 @@ namespace Baskets.Service.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(AddBasketItemDto dto)
+        public async Task<ActionResult> Post([FromBody]AddBasketItemDto dto)
         {
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+
             var basket = await GetBasket();
             basket.Add(dto.ProductId, dto.ProductName, dto.Quantity, dto.UnitPrice);
             await _repository.UnitOfWork.SaveChangesAsync();
@@ -54,6 +59,17 @@ namespace Baskets.Service.Controllers
             basket.Remove(productId);
             await _repository.UnitOfWork.SaveChangesAsync();
             return NoContent();
+        }
+
+        public override void OnActionExecuted(ActionExecutedContext context)
+        {
+            var ex = context?.Exception;
+
+            if (ex is ArgumentException argEx)
+            {
+                context.Result = new ObjectResult(new { Error = argEx.Message }) { StatusCode = (int)HttpStatusCode.BadRequest };
+            }
+
         }
     }
 }

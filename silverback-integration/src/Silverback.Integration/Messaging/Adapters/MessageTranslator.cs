@@ -1,5 +1,6 @@
 ﻿using System;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Adapters
 {
@@ -7,7 +8,7 @@ namespace Silverback.Messaging.Adapters
     /// Translates the internal <see cref="IMessage"/> into an <see cref="IIntegrationMessage"/> that can be sent over 
     /// the message broker.
     /// </summary>
-    public abstract class MessageTranslator<TMessage, TIntegrationMessage> : MessageHandler<TMessage> 
+    public abstract class MessageTranslator<TMessage, TIntegrationMessage> : Subscriber<TMessage> 
         where TMessage : IMessage
         where TIntegrationMessage : IIntegrationMessage
     {

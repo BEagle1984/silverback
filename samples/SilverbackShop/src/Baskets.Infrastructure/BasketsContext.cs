@@ -1,19 +1,17 @@
-﻿using System;
-using Baskets.Domain;
-using Baskets.Domain.Model;
-using Baskets.Domain.Model.BasketAggregate;
-using Microsoft.EntityFrameworkCore;
-using Silverback.Core.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Silverback.Domain;
+using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Publishing;
+using SilverbackShop.Baskets.Domain.Model;
 
-namespace Baskets.Infrastructure
+namespace SilverbackShop.Baskets.Infrastructure
 {
     public class BasketsContext : SilverbackDbContext
     {
         public DbSet<Basket> Baskets { get; set; }
         public DbSet<BasketItem> BasketItems { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BasketsContext"/> class.

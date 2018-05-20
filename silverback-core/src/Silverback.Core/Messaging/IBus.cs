@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging
 {
@@ -31,20 +32,18 @@ namespace Silverback.Messaging
         #region Subscribe / Unsubscribe
 
         /// <summary>
-        /// Subscribes to the messages stream. The function must return an <see cref="IDisposable" />
-        /// to let the <see cref="IBus" /> handle the subscriber lifecycle.
-        /// </summary>
-        /// <param name="subscription">The method performing the subscription.</param>
-        /// <returns>
-        /// Returns the subscriber.
-        /// </returns>
-        IDisposable Subscribe(Func<IObservable<IMessage>, IDisposable> subscription);
-
-        /// <summary>
-        /// Dispose the specified subscriber.
+        /// Subscribes the specified <see cref="ISubscriber"/> to receive
+        /// the messages sent through this bus.
         /// </summary>
         /// <param name="subscriber">The subscriber.</param>
-        void Unsubscribe(IDisposable subscriber);
+        ISubscriber Subscribe(ISubscriber subscriber);
+
+        /// <summary>
+        /// Unsubscribes the specified <see cref="ISubscriber"/> to stop receiving
+        /// the messages sent through this bus.
+        /// </summary>
+        /// <param name="subscriber">The subscriber.</param>
+        void Unsubscribe(ISubscriber subscriber);
 
         #endregion
 

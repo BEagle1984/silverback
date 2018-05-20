@@ -1,38 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Baskets.Domain.MessageHandlers;
-using Baskets.Domain.Model.BasketAggregate;
+﻿using System.Linq;
 using Silverback.Messaging;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using SilverbackShop.Baskets.Domain.Events;
+using SilverbackShop.Baskets.Domain.Subscribers;
+using SilverbackShop.Baskets.Integration.Dto;
 
-namespace Baskets.Domain
+namespace SilverbackShop.Baskets.Domain
 {
     public class BasketsDomainMessagingConfigurator : IConfigurator
     {
         public void Configure(BusConfig config)
         {
+            // Translators
             config
-                // Translators
                 .AddTranslator<BasketCheckoutEvent, Integration.Events.BasketCheckoutEvent>(m =>
                     new Integration.Events.BasketCheckoutEvent
                     {
                         Items = m.Source.Items.Select(i =>
-                            new Integration.BasketItem
+                            new BasketItemDto
                             {
                                 Name = i.Name,
                                 ProductId = i.ProductId,
                                 Quantity = i.Quantity,
                                 UnitPrice = i.UnitPrice
                             }).ToList()
-                    })
-                // Message Handlers
-                .Subscribe<InventoryMultiMessageHandler>()
-                // Outbound Adapters
-                .AddOutbound<IIntegrationEvent, SimpleOutboundAdapter>(BasicEndpoint.Create("basket-events"));
+                    });
+
+            // Adapters
+            config
+                .AddOutbound<IIntegrationEvent, SimpleOutboundAdapter>(BasicEndpoint.Create("basket-events"))
+                .AddInbound(BasicEndpoint.Create("catalog-events"));
         }
     }
 }
