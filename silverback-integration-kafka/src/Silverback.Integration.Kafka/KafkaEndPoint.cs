@@ -7,6 +7,9 @@ namespace Silverback
     /// <inheritdoc cref="IEndpoint"/>
     public sealed class KafkaEndpoint : IEndpoint, IEquatable<KafkaEndpoint>
     {
+        /// <summary>
+        /// The hash code referer.
+        /// </summary>
         private readonly string _hashCodeReferer;
 
         /// <summary>
@@ -14,9 +17,10 @@ namespace Silverback
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="configs">The configs.</param>
+        /// <param name="pollTimeOut">The timeout.</param>
         /// <param name="commitOffset">The commit offset.</param>
         /// <param name="brokerName">Name of the broker.</param>
-        private KafkaEndpoint(string name, Dictionary<string, object> configs, int commitOffset = 1, string brokerName = null)
+        private KafkaEndpoint(string name, Dictionary<string, object> configs, int pollTimeOut = 100, int commitOffset = 1, string brokerName = null)
         {
             if (configs == null || configs.Count == 0 || !configs.TryGetValue("bootstrap.servers", out var serverAddress))
                 throw new Exception("The configuration must contain at least the bootstrap.server key.");
@@ -24,8 +28,9 @@ namespace Silverback
             Name = name;
             Configuration = configs;
             BrokerName = brokerName;
+            TimeoutPollBlock = pollTimeOut;
             CommitOffsetEach = commitOffset;
-            _hashCodeReferer = $"{name}-{BrokerName}-{commitOffset}-{configs.Count}-{serverAddress}";
+            _hashCodeReferer = $"{Name}-{BrokerName}-{TimeoutPollBlock}-{CommitOffsetEach}-{Configuration.Count}-{serverAddress}";
         }
 
         /// <summary>
@@ -33,12 +38,13 @@ namespace Silverback
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="configs">The configs.</param>
+        /// <param name="pollTimeOut">The time out.</param>
         /// <param name="commitOffset">The commit offset.</param>
         /// <param name="brokerName">Name of the broker.</param>
         /// <returns></returns>
-        public static KafkaEndpoint Create(string name, Dictionary<string, object> configs, int commitOffset = 1, string brokerName = null)
+        public static KafkaEndpoint Create(string name, Dictionary<string, object> configs, int pollTimeOut = 100, int commitOffset = 1, string brokerName = null)
         {
-            return new KafkaEndpoint(name, configs, commitOffset, brokerName);
+            return new KafkaEndpoint(name, configs, pollTimeOut, commitOffset, brokerName);
         }
 
         #region public properties
@@ -56,14 +62,24 @@ namespace Silverback
         /// </value>
         public Dictionary<string, object> Configuration { get; set; }
 
+        //TODO: Should be set by extension method?
         /// <summary>
-        /// Define the number of message processed befor committing the offset to the server.
+        /// Define the number of message processed before committing the offset to the server.
         /// The most reliable level is one but it reduces throughput.
         /// </summary>
         /// <value>
         /// The commit offset.
         /// </value>
         public int CommitOffsetEach { get; set; }
+
+        //TODO: Should be set by extension method?
+        /// <summary>
+        /// The maximum time (in milliseconds -1 to block indefinitely) within which the poll remain blocked.
+        /// </summary>
+        /// <value>
+        /// The poll time out.
+        /// </value>
+        public int TimeoutPollBlock { get; set; }
 
         #endregion
 
