@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+
+  baskets.service:
+    image: silverbackshop-baskets
+    volumes:
+      - d:/Temp:/tempdata
+    build:
+      context: .
+      dockerfile: Baskets.Service/Dockerfile
+
+  catalog.service:
+    image: silverbackshop-catalog
+    volumes:
+      - d:/Temp:/tempdata
+    build:
+      context: .
+      dockerfile: Catalog.Service/Dockerfile   

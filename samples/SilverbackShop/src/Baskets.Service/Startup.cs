@@ -33,7 +33,7 @@ namespace SilverbackShop.Baskets.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BasketsContext>(o => o.UseSqlite(@"Data Source=Data\Baskets.db"));
+            services.AddDbContext<BasketsContext>(o => o.UseSqlite($"Data Source={Environment.GetEnvironmentVariable("DB_PATH")}Baskets.db"));
 
             services.AddMvc();
             services.AddSwaggerGen(c =>
@@ -84,7 +84,7 @@ namespace SilverbackShop.Baskets.Service
             // TODO: Create extension method app.UseBus() in Silverback.AspNetCore
             var bus = app.ApplicationServices.GetService<IBus>();
             bus.Config()
-                .ConfigureBroker<FileSystemBroker>(c => c.OnPath(@"D:\Temp\Broker\SilverbackShop"))
+                .ConfigureBroker<FileSystemBroker>(c => c.OnPath(Environment.GetEnvironmentVariable("BROKER_PATH")))
                 .WithFactory(t => app.ApplicationServices.GetService(t), t => app.ApplicationServices.GetServices(t))
                 .ConfigureUsing<BasketsDomainMessagingConfigurator>()
                 .AutoSubscribe()
