@@ -21,5 +21,19 @@ namespace Silverback.Messaging
         /// <typeparam name="T">The type to be instantiated.</typeparam>
         /// <returns></returns>
         T GetInstance<T>();
+
+        /// <summary>
+        /// Returns all instances of the specified type.
+        /// </summary>
+        /// <param name="type">The type to be instantiated.</param>
+        /// <returns></returns>
+        object[] GetInstances(Type type);
+
+        /// <summary>
+        /// Returns all instances of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to be instantiated.</typeparam>
+        /// <returns></returns>
+        T[] GetInstances<T>();
     }
 }

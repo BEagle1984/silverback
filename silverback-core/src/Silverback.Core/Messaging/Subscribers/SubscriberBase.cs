@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Subscribers
 
             if (!(message is TMessage))
             {
-                typedMessage = default(TMessage);
+                typedMessage = default;
                 return false;
             }
 

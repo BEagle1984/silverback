@@ -89,6 +89,7 @@ namespace SilverbackShop.Baskets.Service
                 .ConfigureBroker<FileSystemBroker>(c => c.OnPath(@"D:\Temp\Broker\SilverbackShop"))
                 .WithFactory(t => app.ApplicationServices.GetService(t))
                 .ConfigureUsing<BasketsDomainMessagingConfigurator>()
+                .AutoSubscribe()
                 .ConnectBrokers();
 
             // Init data

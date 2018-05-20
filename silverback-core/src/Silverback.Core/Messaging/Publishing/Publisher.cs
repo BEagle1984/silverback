@@ -144,7 +144,7 @@ namespace Silverback.Messaging.Publishing
 
             CheckRequestMessage(message);
 
-            TResponse response = default(TResponse);
+            TResponse response = default;
 
             var replySubscriber = replyBus.Subscribe(
                 new GenericSubscriber<TResponse>(

@@ -20,7 +20,7 @@ namespace Silverback.Tests.Messaging
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
 
-                Assert.That(subscriber.Counter, Is.EqualTo(2));
+                Assert.That(subscriber.Handled, Is.EqualTo(2));
             }
         }
 
@@ -52,7 +52,7 @@ namespace Silverback.Tests.Messaging
                 bus.Publish(new TestCommandTwo());
                 bus.Publish(new TestCommandTwo());
 
-                Assert.That(subscriber1.Counter, Is.EqualTo(5));
+                Assert.That(subscriber1.Handled, Is.EqualTo(5));
                 Assert.That(subscriber2.Handled, Is.EqualTo(5));
             }
         }
@@ -71,7 +71,7 @@ namespace Silverback.Tests.Messaging
                 await bus.PublishAsync(new TestCommandTwo());
                 await bus.PublishAsync(new TestCommandTwo());
 
-                Assert.That(subscriber1.Counter, Is.EqualTo(5));
+                Assert.That(subscriber1.Handled, Is.EqualTo(5));
                 Assert.That(subscriber2.Handled, Is.EqualTo(5));
             }
         }
@@ -94,7 +94,7 @@ namespace Silverback.Tests.Messaging
                 bus.Publish(new TestCommandTwo());
 
                 Assert.That(subscriber1.Handled, Is.EqualTo(2));
-                Assert.That(subscriber2.Counter, Is.EqualTo(5));
+                Assert.That(subscriber2.Handled, Is.EqualTo(5));
             }
         }
 

@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Configuration
             where TAdapter : IOutboundAdapter
         {
             config.Bus.Subscribe(new OutboundSubscriber<TMessage, TAdapter>(
-                config.TypeFactory, config.Bus.GetBroker(endpoint.BrokerName), endpoint));
+                config.GetTypeFactory, config.Bus.GetBroker(endpoint.BrokerName), endpoint));
             return config;
         }
 
@@ -104,7 +104,7 @@ namespace Silverback.Messaging.Configuration
             if (config == null) throw new ArgumentNullException(nameof(config));
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
 
-            var adapter = config.TypeFactory.GetInstance<TAdapter>();
+            var adapter = config.GetTypeFactory().GetInstance<TAdapter>();
             config.Bus.AddInboundAdapterItem(adapter);
             adapter.Init(config.Bus, config.Bus.GetBroker(endpoint.BrokerName), endpoint);
             return config;
@@ -115,7 +115,6 @@ namespace Silverback.Messaging.Configuration
         /// Configures a <see cref="SimpleInboundAdapter" /> to forward the messages to the internal bus.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        /// <param name="adapter">The adapter.</param>
         /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
         /// <returns></returns>
         public static BusConfig AddInbound(this BusConfig config, IEndpoint endpoint)
