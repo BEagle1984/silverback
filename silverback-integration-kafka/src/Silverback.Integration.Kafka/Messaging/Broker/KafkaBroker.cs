@@ -21,6 +21,7 @@ namespace Silverback.Messaging.Broker
         protected override void Disconnect(IEnumerable<IConsumer> consumers)
             => consumers.Cast<KafkaConsumer>().ToList().ForEach(c => c.Disconnect());
 
-        protected override void Disconnect(IEnumerable<IProducer> producer) { }
+        protected override void Disconnect(IEnumerable<IProducer> producer)
+            => producer.Cast<KafkaProducer>().ToList().ForEach(c => c.Disconnect());
     }
 }
