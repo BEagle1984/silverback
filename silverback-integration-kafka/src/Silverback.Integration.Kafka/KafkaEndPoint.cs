@@ -1,30 +1,71 @@
 ﻿using Silverback.Messaging;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Silverback
 {
+    /// <inheritdoc cref="IEndpoint"/>
     public sealed class KafkaEndpoint : IEndpoint, IEquatable<KafkaEndpoint>
     {
-        public KafkaEndpoint(string name, Dictionary<string, object> configs, string brokerName = null)
+        private readonly string _hashCodeReferer;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KafkaEndpoint"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="configs">The configs.</param>
+        /// <param name="commitOffset">The commit offset.</param>
+        /// <param name="brokerName">Name of the broker.</param>
+        private KafkaEndpoint(string name, Dictionary<string, object> configs, int commitOffset = 1, string brokerName = null)
         {
+            if (configs == null || configs.Count == 0 || !configs.TryGetValue("bootstrap.servers", out var serverAddress))
+                throw new Exception("The configuration must contain at least the bootstrap.server key.");
+
             Name = name;
             Configuration = configs;
             BrokerName = brokerName;
+            CommitOffsetEach = commitOffset;
+            _hashCodeReferer = $"{name}-{BrokerName}-{commitOffset}-{configs.Count}-{serverAddress}";
         }
 
-        public static KafkaEndpoint Create(string name, Dictionary<string, object> configs)
+        /// <summary>
+        /// Creates new Kafka endpoint.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="configs">The configs.</param>
+        /// <param name="commitOffset">The commit offset.</param>
+        /// <param name="brokerName">Name of the broker.</param>
+        /// <returns></returns>
+        public static KafkaEndpoint Create(string name, Dictionary<string, object> configs, int commitOffset = 1, string brokerName = null)
         {
-            return new KafkaEndpoint(name, configs);
+            return new KafkaEndpoint(name, configs, commitOffset, brokerName);
         }
-        
 
+        #region public properties
+        /// <inheritdoc/>
         public string Name { get; set; }
-
+        
+        /// <inheritdoc/>
         public string BrokerName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the configuration.
+        /// </summary>
+        /// <value>
+        /// The configuration.
+        /// </value>
         public Dictionary<string, object> Configuration { get; set; }
+
+        /// <summary>
+        /// Define the number of message processed befor committing the offset to the server.
+        /// The most reliable level is one but it reduces throughput.
+        /// </summary>
+        /// <value>
+        /// The commit offset.
+        /// </value>
+        public int CommitOffsetEach { get; set; }
+
+        #endregion
 
         #region IComparable
 
@@ -38,8 +79,7 @@ namespace Silverback
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
             var brokerNameComparison = string.Compare(BrokerName, other.BrokerName, StringComparison.Ordinal);
-            if (brokerNameComparison != 0) return brokerNameComparison;
-            return string.Compare(Name, other.Name, StringComparison.Ordinal);
+            return brokerNameComparison != 0 ? brokerNameComparison : string.Compare(Name, other.Name, StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -60,18 +100,14 @@ namespace Silverback
 
         #region Equality
 
-        /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <param name="other">An object to compare with this object.</param>
-        /// <returns>
-        /// true if the current object is equal to the <paramref name="other">other</paramref> parameter; otherwise, false.
-        /// </returns>
+        /// <inheritdoc />
         public bool Equals(KafkaEndpoint other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(BrokerName, other.BrokerName) && string.Equals(Name, other.Name, StringComparison.InvariantCultureIgnoreCase);
+            return string.Equals(BrokerName, other.BrokerName)
+                && string.Equals(Name, other.Name, StringComparison.InvariantCultureIgnoreCase)
+                && CompareConfiguration(Configuration, other.Configuration);
         }
 
         /// <summary>
@@ -79,14 +115,13 @@ namespace Silverback
         /// </summary>
         /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
         /// <returns>
-        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this inst ance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((KafkaEndpoint)obj);
+            return obj.GetType() == GetType() && Equals((KafkaEndpoint)obj);
         }
 
         /// <summary>
@@ -98,13 +133,34 @@ namespace Silverback
         public override int GetHashCode()
         {
             unchecked
-            {                
-                int hash = 17;
-                hash = hash * 23 + (BrokerName ?? "").GetHashCode();
-                hash = hash * 23 + (Name ?? "").GetHashCode();
-                hash = hash * 23 + (Configuration != null ? Configuration.GetHashCode() : 0);
-                return hash;
+            {
+                return 23 + _hashCodeReferer.GetHashCode();
             }
+        }
+
+        /// <summary>
+        /// Compares the configuration.
+        /// </summary>
+        /// <param name="dict1">The dict1.</param>
+        /// <param name="dict2">The dict2.</param>
+        /// <returns></returns>
+        private static bool CompareConfiguration(
+            Dictionary<string, object> dict1, IReadOnlyDictionary<string, object> dict2)
+        {
+            if (dict1 == null || dict2 == null) return false;
+            if (dict1.Count != dict2.Count) return false;
+
+            var valueComparer = EqualityComparer<object>.Default;
+
+            foreach (var kvp in dict1)
+            {
+                if (!dict2.TryGetValue(kvp.Key, out var value2)) return false;
+                if (value2 is Dictionary<string, object> val2 && kvp.Value is Dictionary<string, object> val1 &&
+                    CompareConfiguration(val2, val1))
+                    continue;
+                if (!valueComparer.Equals(kvp.Value, value2)) return false;
+            }
+            return true;
         }
 
         #endregion
