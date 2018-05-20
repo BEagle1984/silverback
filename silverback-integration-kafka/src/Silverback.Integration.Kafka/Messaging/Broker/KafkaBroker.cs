@@ -3,10 +3,7 @@ using System.Linq;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <summary>
-    /// Silverback Broker class for Apache Kafka streaming platform.
-    /// </summary>
-    /// <seealso cref="Silverback.Messaging.Broker.Broker" />
+    /// <inheritdoc />
     public class KafkaBroker : Broker
     {
         public override Producer GetNewProducer(IEndpoint endpoint)
