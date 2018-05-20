@@ -28,11 +28,6 @@ namespace SilverbackShop.Baskets.Domain
                             }).ToList()
                     });
 
-            // Subscribers
-            config
-                .Subscribe<InventoryMultiSubscriber>()
-                .Subscribe<CatalogMultiSubscriber>();
-
             // Adapters
             config
                 .AddOutbound<IIntegrationEvent, SimpleOutboundAdapter>(BasicEndpoint.Create("basket-events"))
