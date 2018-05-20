@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Common.Data
+namespace SilverbackShop.Common.Data
 {
     public static class CatalogData
     {

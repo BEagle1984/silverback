@@ -17,7 +17,7 @@ namespace Silverback.Tests.Messaging.Adapters
         [SetUp]
         public void Setup()
         {
-            _bus = BusConfig.Create(c => c
+            _bus = BusConfig.Create<Bus>(c => c
                 .ConfigureBroker<TestBroker>(x => x
                     .UseServer("server")
                 )

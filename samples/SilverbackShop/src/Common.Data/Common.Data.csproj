@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>SilverbackShop.Common.Data</AssemblyName>
+    <RootNamespace>SilverbackShop.Common.Data</RootNamespace>
   </PropertyGroup>
 
 </Project>

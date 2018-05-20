@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Domain;
-using Silverback.Infrastructure;
 using Silverback.Messaging.Publishing;
 
-namespace Silverback.Core.EntityFrameworkCore
+namespace Silverback.EntityFrameworkCore
 {
     /// <summary>
     /// The base class to be used for a <see cref="T:Microsoft.EntityFrameworkCore.DbContext" /> to be used with Silverback.Core.
@@ -13,7 +12,7 @@ namespace Silverback.Core.EntityFrameworkCore
     /// </summary>
     /// <seealso cref="T:Microsoft.EntityFrameworkCore.DbContext" />
     /// <seealso cref="T:Silverback.Core.Domain.IUnitOfWork" />
-    public class SilverbackDbContext : DbContext, IUnitOfWork
+    public class SilverbackDbContext : DbContext
     {
         private readonly IEventPublisher<IDomainEvent<IDomainEntity>> _eventPublisher;
 
@@ -35,16 +34,6 @@ namespace Silverback.Core.EntityFrameworkCore
             : base(options)
         {
             _eventPublisher = eventPublisher;
-        }
-
-        /// <summary>
-        /// Asynchronously saves all pending changes and published all queued events.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task IUnitOfWork.SaveChangesAsync(CancellationToken cancellationToken)
-        {
-            return SaveChangesAsync(true, cancellationToken);
         }
 
         /// <summary>
@@ -87,11 +76,11 @@ namespace Silverback.Core.EntityFrameworkCore
         /// that any asynchronous operations have completed before calling another method on this context.
         /// </para>
         /// </remarks>
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            _eventPublisher.PublishDomainEvents(this);
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            await _eventPublisher.PublishDomainEventsAsync(this);
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
     }
 }

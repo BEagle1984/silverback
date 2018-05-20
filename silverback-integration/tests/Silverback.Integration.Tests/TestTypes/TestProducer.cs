@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -18,6 +19,12 @@ namespace Silverback.Tests.TestTypes
         protected override void Produce(IIntegrationMessage message, byte[] serializedMessage)
         {
             SentMessages.Add(serializedMessage);
+        }
+
+        protected override Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)
+        {
+            Produce(message, serializedMessage);
+            return Task.CompletedTask;
         }
     }
 }

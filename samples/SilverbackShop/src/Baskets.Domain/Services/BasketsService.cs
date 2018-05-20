@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
-using Baskets.Domain.Model.BasketAggregate;
-using Baskets.Domain.Repositories;
+using SilverbackShop.Baskets.Domain.Model;
+using SilverbackShop.Baskets.Domain.Repositories;
 
-namespace Baskets.Domain.Services
+namespace SilverbackShop.Baskets.Domain.Services
 {
     public class BasketsService
     {
@@ -16,9 +15,9 @@ namespace Baskets.Domain.Services
             _repository = repository;
         }
 
-        public async Task<Basket> GetBasket(Guid userId)
+        public async Task<Basket> GetUserBasket(Guid userId)
         {
-            var basket = _repository.FindUserBasket(userId);
+            var basket = await _repository.FindByUserAsync(userId);
 
             if (basket != null)
                 return basket;
