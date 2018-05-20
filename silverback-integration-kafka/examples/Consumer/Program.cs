@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using Messages;
 using Silverback;
+using Silverback.Messaging;
+using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 
 namespace Consumer
 {
@@ -10,7 +13,7 @@ namespace Consumer
     {
         private static void Main()
         {
-            using (var broker = new KafkaBroker())
+            using (var bus = new Bus())
             {
                 var configurations = new Dictionary<string, object>
                 {
@@ -27,22 +30,21 @@ namespace Consumer
                     }
                 };
 
-                var endpoint = KafkaEndpoint.Create("Topic1", configurations);
-                var consumer = broker.GetConsumer(endpoint);
+                bus.Subscribe(o => o.Subscribe(m =>
+                    Console.WriteLine($"Message '{((TestMessage)m).Id}' received successfully!")));
 
-                consumer.Received += (_, e) =>
-                {
-                    var message = (TestMessage)e.Message;
-                    Console.WriteLine($"Received message {message.Id} from topic 'Topic1' with content '{message.Text}'.");
-                };
+                bus.Config()
+                   .ConfigureBroker<KafkaBroker>(x => { })
+                   .WithFactory(t => (IInboundAdapter)Activator.CreateInstance(t))
+                   .AddInbound(new SimpleInboundAdapter(), KafkaEndpoint.Create("Topic1", configurations))
+                   .ConnectBrokers();
                 
                 Console.CancelKeyPress += (_, e) =>
                 {
                     e.Cancel = true;
-                    broker.Disconnect();
+                    bus.DisconnectBrokers();
                 };
-
-                broker.Connect();
+                
             }
 
             PrintHeader();

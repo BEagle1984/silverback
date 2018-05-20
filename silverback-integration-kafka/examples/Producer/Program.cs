@@ -16,17 +16,17 @@ namespace Producer
         {
             var configurations = new Dictionary<string, object>
             {
-                {"bootstrap.servers", "PLAINTEXT://192.168.99.100:29092"},
-                {"client.id", "ClientTest"},
-                { "retries", 0},
-                {"batch.num.messages", 1},
-                {"socket.blocking.max.ms", 1},
-                {"socket.nagle.disable", true},
-                {"queue.buffering.max.ms", 0},
+                { "bootstrap.servers", "PLAINTEXT://192.168.99.100:29092" },
+                { "client.id", "ClientTest" },
+                { "retries", 0 },
+                { "batch.num.messages", 1 },
+                { "socket.blocking.max.ms", 1 },
+                { "socket.nagle.disable", true },
+                { "queue.buffering.max.ms", 0 },
                 {
                     "default.topic.config", new Dictionary<string, object>
                     {
-                        {"acks", 0}
+                        { "acks", 0 }
                     }
                 }
             };
@@ -38,7 +38,7 @@ namespace Producer
                 bus.Config()
                    .ConfigureBroker<KafkaBroker>(x => { })
                    .WithFactory(t => (IOutboundAdapter)Activator.CreateInstance(t))
-                   .AddOutbound<TestMessage, KafkaOutboudAdapter>(KafkaEndpoint.Create("Topic1",configurations))
+                   .AddOutbound<TestMessage, SimpleOutboundAdapter>(KafkaEndpoint.Create("Topic1",configurations))
                    .ConnectBrokers();
 
                 var cancelled = false;
