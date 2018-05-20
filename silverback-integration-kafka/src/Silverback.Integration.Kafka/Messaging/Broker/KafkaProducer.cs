@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Serialization;
 using Silverback.Messaging.Messages;
@@ -33,6 +34,12 @@ namespace Silverback.Messaging.Broker
                     new ByteArraySerializer());
         }
 
+        internal void Disconnect()
+        {
+            _producer.Dispose();
+            _producer = null;
+        }
+
         /// <inheritdoc />
         protected override void Produce(IIntegrationMessage message, byte[] serializedMessage)
         {
@@ -40,12 +47,17 @@ namespace Silverback.Messaging.Broker
             if (deliveryReport.Error.HasError) throw new Exception(deliveryReport.Error.Reason);
         }
 
+        /// <inheritdoc />
+        protected override Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)
+        {
+            return _producer.ProduceAsync(_endpoint.Name, KeyHelper.GetMessageKey(message), serializedMessage);
+        }
 
         /// <inheritdoc />
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                _producer.Dispose();
+                Disconnect();
 
             base.Dispose(disposing);
         }
