@@ -13,6 +13,8 @@ namespace Consumer
     {
         private static void Main()
         {
+            PrintHeader();
+
             using (var bus = new Bus())
             {
                 var configurations = new Dictionary<string, object>
@@ -30,8 +32,7 @@ namespace Consumer
                     }
                 };
 
-                bus.Subscribe(o => o.Subscribe(m =>
-                    Console.WriteLine($"Message '{((TestMessage)m).Id}' received successfully!")));
+                bus.Subscribe(new Subscriber());
 
                 bus.Config()
                    .ConfigureBroker<KafkaBroker>(x => { })
@@ -47,7 +48,6 @@ namespace Consumer
                 
             }
 
-            PrintHeader();
         }
 
         private static void PrintHeader()

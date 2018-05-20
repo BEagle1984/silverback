@@ -33,7 +33,7 @@ namespace Producer
 
             using (var bus = new Bus())
             {
-                bus.Subscribe(o => o.Subscribe(m => Console.WriteLine($"Message '{((TestMessage)m).Id}' delivered successfully!")));
+                bus.Subscribe(new Subscriber());
 
                 bus.Config()
                    .ConfigureBroker<KafkaBroker>(x => { })
@@ -46,7 +46,7 @@ namespace Producer
                 {
                     e.Cancel = true; // prevent the process from terminating.
                     cancelled = true;
-                    bus.DisconnectBrokers();
+                    //bus.DisconnectBrokers();
                 };
 
                 PrintUsage();
