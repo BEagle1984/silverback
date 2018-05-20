@@ -21,7 +21,7 @@
     <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="Common.Logging.Core" Version="3.4.1" />
     <PackageReference Include="Confluent.Kafka" Version="0.11.4" />
-    <PackageReference Include="Silverback.Integration" Version="1.0.15" />
+    <PackageReference Include="Silverback.Integration" Version="1.0.19" />
   </ItemGroup>
 
 </Project>
