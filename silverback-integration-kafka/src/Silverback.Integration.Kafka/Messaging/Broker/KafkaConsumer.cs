@@ -1,20 +1,17 @@
-﻿using System;
+﻿using Common.Logging;
 using Confluent.Kafka;
 using Confluent.Kafka.Serialization;
-using Silverback.Messaging.Messages;
-using Common.Logging.Factory;
-using Common.Logging;
+using System;
 
 namespace Silverback.Messaging.Broker
-{    
+{
     /// <inheritdoc />
     public class KafkaConsumer : Consumer
     {
-        private bool _disconnected = false;
+        private bool _disconnected;
         private readonly KafkaEndpoint _endpoint;
         private Consumer<byte[], byte[]> _consumer;
         private readonly ILog _log;
-        
 
         /// <inheritdoc />
         public KafkaConsumer(IBroker broker, KafkaEndpoint endpoint) :
@@ -54,7 +51,7 @@ namespace Silverback.Messaging.Broker
             };
 
             _consumer.Subscribe(_endpoint.Name);
-            
+
             while (!_disconnected)
             {
                 if (!_consumer.Consume(out var msg, TimeSpan.FromMilliseconds(_endpoint.TimeoutPollBlock)))
