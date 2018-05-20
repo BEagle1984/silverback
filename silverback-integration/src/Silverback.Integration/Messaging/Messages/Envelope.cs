@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Messages
         {
             Message = message;
 
-            if (Message.Id == default(Guid))
+            if (Message.Id == default)
                 Message.Id = Guid.NewGuid();
         }
 
