@@ -13,6 +13,10 @@ This package contains a file system based implementation of a rudimental message
     <Version>1.0.3</Version>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Silverback.Integration" Version="1.0.17" />
   </ItemGroup>

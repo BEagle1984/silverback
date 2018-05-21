@@ -11,18 +11,40 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public class FileSystemBroker : Broker
     {
-        public string BasePath { get; private set; }
+        /// <summary>
+        /// Gets the path of the folder used to exchange the messages.
+        /// </summary>
+        /// <value>
+        /// The base path.
+        /// </value>
+        public string Path { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether a <see cref="System.IO.FileSystemWatcher"/> is used
+        /// to monitor the topic folder.
+        /// </summary>
+        public bool IsUsingFileSystemWatcher { get; private set; }
 
         #region Configuration
 
         /// <summary>
-        /// Sets the base path.
+        /// Sets the path of the folder used to exchange the messages.
         /// </summary>
         /// <param name="path">The path.</param>
         /// <returns></returns>
         public FileSystemBroker OnPath(string path)
         {
-            BasePath = path;
+            Path = path;
+            return this;
+        }
+
+        /// <summary>
+        /// Configures the broker to use a <see cref="System.IO.FileSystemWatcher"/> to monitor the topic folders.
+        /// </summary>
+        /// <returns></returns>
+        public FileSystemBroker UseFileSystemWatcher()
+        {
+            IsUsingFileSystemWatcher = true;
             return this;
         }
 
@@ -32,8 +54,8 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public override void ValidateConfiguration()
         {
-            if (string.IsNullOrEmpty(BasePath)) throw new InvalidOperationException("The BasePath must be set.");
-            if (!Directory.Exists(BasePath)) throw new InvalidOperationException("The BasePath must be set to an existing directory path.");
+            if (string.IsNullOrEmpty(Path)) throw new InvalidOperationException("The BasePath must be set.");
+            if (!Directory.Exists(Path)) throw new InvalidOperationException("The BasePath must be set to an existing directory path.");
         }
 
         #endregion
@@ -52,7 +74,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">The endpoint.</param>
         /// <returns></returns>
         public override Consumer GetNewConsumer(IEndpoint endpoint)
-            => new FileSystemConsumer(this, endpoint);
+            => new FileSystemConsumer(this, endpoint, IsUsingFileSystemWatcher);
 
         /// <summary>
         /// Connects the specified consumers.
@@ -97,7 +119,7 @@ namespace Silverback.Messaging.Broker
         /// <returns></returns>
         internal string GetTopicPath(string topicName, bool create = true)
         {
-            var topicPath = Path.Combine(BasePath, topicName);
+            var topicPath = System.IO.Path.Combine(Path, topicName);
 
             if (create && !Directory.Exists(topicPath))
                 Directory.CreateDirectory(topicPath);

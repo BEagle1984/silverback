@@ -5,6 +5,10 @@
     <RootNamespace>Silverback.Tests</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Silverback.Integration" Version="1.0.17" />
   </ItemGroup>

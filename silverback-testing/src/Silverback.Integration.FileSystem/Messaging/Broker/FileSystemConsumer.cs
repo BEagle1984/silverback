@@ -12,7 +12,8 @@ namespace Silverback.Messaging.Broker
     /// <seealso cref="System.IDisposable" />
     public class FileSystemConsumer : Consumer
     {
-        private FileSystemWatcher _watcher;
+        private FolderWatcher _watcher;
+        private bool _useFileSystemWatcher;
 
         /// <summary>
         /// Gets the associated <see cref="T:Silverback.Messaging.Broker.IBroker" />.
@@ -20,13 +21,15 @@ namespace Silverback.Messaging.Broker
         private new FileSystemBroker Broker => (FileSystemBroker)base.Broker;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileSystemConsumer"/> class.
+        /// Initializes a new instance of the <see cref="FileSystemConsumer" /> class.
         /// </summary>
         /// <param name="broker">The broker.</param>
         /// <param name="endpoint">The endpoint.</param>
-        public FileSystemConsumer(IBroker broker, IEndpoint endpoint) 
+        /// <param name="useFileSystemWatcher">if set to <c>true</c> a <see cref="System.IO.FileSystemWatcher"/> will be used to monitor the topic folder.</param>
+        public FileSystemConsumer(IBroker broker, IEndpoint endpoint, bool useFileSystemWatcher) 
             : base(broker, endpoint)
         {
+            _useFileSystemWatcher = useFileSystemWatcher;
         }
 
         internal void Connect()
@@ -35,17 +38,15 @@ namespace Silverback.Messaging.Broker
 
             var topicPath = Broker.GetTopicPath(Endpoint.Name);
 
-            _watcher = new FileSystemWatcher(topicPath)
-            {
-                Filter = "*.txt",
-                EnableRaisingEvents = true
-            };
+            _watcher = _useFileSystemWatcher
+                ? (FolderWatcher) new FileSystemFolderWatcher(topicPath)
+                : (FolderWatcher) new PollingFolderWatcher(topicPath);
 
-            _watcher.Created += (sender, args) =>
+            _watcher.FileCreated += (sender, path) =>
             {
                 //try
                 {
-                    var buffer = ReadFile(args.FullPath);
+                    var buffer = ReadFile(path);
                     HandleMessage(buffer);
                 }
                 //catch
@@ -55,6 +56,9 @@ namespace Silverback.Messaging.Broker
             };
         }
 
+        /// <summary>
+        /// Disconnects this instance.
+        /// </summary>
         internal void Disconnect()
         {
             _watcher?.Dispose();
