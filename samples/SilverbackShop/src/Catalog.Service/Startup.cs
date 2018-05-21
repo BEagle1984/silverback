@@ -29,7 +29,7 @@ namespace SilverbackShop.Catalog.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CatalogContext>(o => o.UseSqlite($"Data Source={Environment.GetEnvironmentVariable("DB_PATH")}Catalog.db"));
+            services.AddDbContext<CatalogContext>(o => o.UseSqlite($"Data Source={Configuration["DB:Path"]}Catalog.db"));
 
             services.AddMvc();
             services.AddSwaggerGen(c =>
@@ -72,7 +72,7 @@ namespace SilverbackShop.Catalog.Service
             // TODO: Create extension method app.UseBus() in Silverback.AspNetCore
             var bus = app.ApplicationServices.GetService<IBus>();
             bus.Config()
-                .ConfigureBroker<FileSystemBroker>(c => c.OnPath(Environment.GetEnvironmentVariable("BROKER_PATH")))
+                .ConfigureBroker<FileSystemBroker>(c => c.OnPath(Configuration["Broker:Path"]))
                 .WithFactory(t => app.ApplicationServices.GetService(t), t => app.ApplicationServices.GetServices(t))
                 .ConfigureUsing<CatalogDomainMessagingConfigurator>();
 

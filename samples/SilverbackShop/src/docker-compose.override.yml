@@ -5,16 +5,16 @@ services:
   baskets.service:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DB_PATH=/tempdata/db/SilverbackShop/
-      - BROKER_PATH=/tempdata/broker/SilverbackShop/
+      - DB__PATH=/tempdata/db/SilverbackShop/
+      - BROKER__PATH=/tempdata/broker/SilverbackShop/
     ports:
       - "13001:80"
 
   catalog.service:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DB_PATH=/tempdata/db/SilverbackShop/
-      - BROKER_PATH=/tempdata/broker/SilverbackShop/
+      - DB__PATH=/tempdata/db/SilverbackShop/
+      - BROKER__PATH=/tempdata/broker/SilverbackShop/
     ports:
       - "13002:80"
 

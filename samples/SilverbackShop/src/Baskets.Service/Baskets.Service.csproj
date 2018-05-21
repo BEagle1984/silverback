@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.3" />
     <PackageReference Include="Silverback.Core" Version="1.0.14" />
     <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="1.0.5" />
-    <PackageReference Include="Silverback.Integration.FileSystem" Version="1.0.3" />
+    <PackageReference Include="Silverback.Integration.FileSystem" Version="1.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="2.4.0" />
   </ItemGroup>
 
