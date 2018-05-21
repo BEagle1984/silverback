@@ -32,6 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Baskets.Domain\Baskets.Domain.csproj" />
     <ProjectReference Include="..\Baskets.Infrastructure\Baskets.Infrastructure.csproj" />
+    <ProjectReference Include="..\Common.Api\Common.Api.csproj" />
     <ProjectReference Include="..\Common.Data\Common.Data.csproj" />
     <ProjectReference Include="..\Common.Domain\Common.Domain.csproj" />
   </ItemGroup>

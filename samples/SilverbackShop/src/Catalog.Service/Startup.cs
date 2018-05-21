@@ -1,4 +1,5 @@
 ﻿using System;
+using Common.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -56,11 +57,7 @@ namespace SilverbackShop.Catalog.Service
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+            app.ReturnExceptionsAsJson();
             app.UseMvc();
 
             app.UseSwagger();
