@@ -42,6 +42,8 @@ namespace SilverbackShop.Catalog.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasAlternateKey("SKU");
+
                     b.ToTable("Products");
                 });
 #pragma warning restore 612, 618

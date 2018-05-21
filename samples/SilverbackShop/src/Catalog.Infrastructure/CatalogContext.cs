@@ -19,5 +19,12 @@ namespace SilverbackShop.Catalog.Infrastructure
             : base(options, eventPublisher)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Product>().HasAlternateKey(p => p.SKU);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

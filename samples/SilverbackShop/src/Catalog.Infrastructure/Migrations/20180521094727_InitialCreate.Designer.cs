@@ -12,7 +12,7 @@ using System;
 namespace SilverbackShop.Catalog.Infrastructure.Migrations
 {
     [DbContext(typeof(CatalogContext))]
-    [Migration("20180517130809_InitialCreate")]
+    [Migration("20180521094727_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,6 +42,8 @@ namespace SilverbackShop.Catalog.Infrastructure.Migrations
                     b.Property<decimal>("UnitPrice");
 
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("SKU");
 
                     b.ToTable("Products");
                 });

@@ -22,6 +22,7 @@ namespace SilverbackShop.Catalog.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
+                    table.UniqueConstraint("AK_Products_SKU", x => x.SKU);
                 });
         }
 

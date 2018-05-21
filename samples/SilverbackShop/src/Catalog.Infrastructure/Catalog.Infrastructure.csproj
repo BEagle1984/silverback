@@ -11,6 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20180521093906_UniqueSKU.cs" />
+    <Compile Remove="Migrations\20180521094436_IntialCreate.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.0.3" />
     <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="1.0.5" />
   </ItemGroup>
