@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 
+// TODO: (REVIEW) I believe that the proper namespace should be Silverback.Messaging
 namespace Silverback
 {
     /// <inheritdoc cref="IEndpoint"/>
@@ -83,6 +84,7 @@ namespace Silverback
 
         #endregion
 
+        // TODO: (REVIEW) Do we implement IComparable? It doesn't look like we do from the class signature.
         #region IComparable
 
         /// <summary>

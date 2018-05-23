@@ -10,6 +10,7 @@ namespace Silverback.Messaging.Messages
     /// Attribute for decorating the message properties.
     /// </summary>
     /// <seealso cref="System.Attribute" />
+    // TODO: (REVIEW) Move in another file
     [AttributeUsage(AttributeTargets.Property)]
     public class KeyMemberAttribute : Attribute
     {

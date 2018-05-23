@@ -52,6 +52,11 @@ namespace Silverback.Messaging.Broker
 
             _consumer.Subscribe(_endpoint.Name);
 
+            // TODO: (REVIEW) This must be executed in another thread. 
+            // The Connect() method is of course expected to exit so that the framework can go ahead
+            // connecting and starting up the rest of the application.
+            // Plus, it would be great if we could await the CommitAsync.
+            // Something like: Task.Run(async () => { ... await ...; ... });
             while (!_disconnected)
             {
                 if (!_consumer.Consume(out var msg, TimeSpan.FromMilliseconds(_endpoint.TimeoutPollBlock)))
@@ -78,6 +83,7 @@ namespace Silverback.Messaging.Broker
             if (disposing)
             {
                 Disconnect();
+                // TODO: (REVIEW) Check for null (for example _consumer?.Dispose()) to avoid errors if Dispose is called twice (do the same in Disconnect() method)
                 _consumer.Dispose();
                 _consumer = null;
             }
