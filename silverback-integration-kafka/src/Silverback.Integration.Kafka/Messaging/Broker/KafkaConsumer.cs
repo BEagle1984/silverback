@@ -2,6 +2,7 @@
 using Confluent.Kafka;
 using Confluent.Kafka.Serialization;
 using System;
+using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Broker
 {
@@ -30,6 +31,7 @@ namespace Silverback.Messaging.Broker
         private bool IsAutocommitEnabled =>
             _endpoint.Configuration.ContainsKey("enable.auto.commit") && (bool)_endpoint.Configuration["enable.auto.commit"];
 
+
         internal void Connect()
         {
             if (_consumer != null) return;
@@ -51,30 +53,15 @@ namespace Silverback.Messaging.Broker
             };
 
             _consumer.Subscribe(_endpoint.Name);
-
-            // TODO: (REVIEW) This must be executed in another thread. 
-            // The Connect() method is of course expected to exit so that the framework can go ahead
-            // connecting and starting up the rest of the application.
-            // Plus, it would be great if we could await the CommitAsync.
-            // Something like: Task.Run(async () => { ... await ...; ... });
-            while (!_disconnected)
-            {
-                if (!_consumer.Consume(out var msg, TimeSpan.FromMilliseconds(_endpoint.TimeoutPollBlock)))
-                    continue;
-
-                HandleMessage(msg.Value);
-                if (IsAutocommitEnabled) continue;
-                if (msg.Offset % _endpoint.CommitOffsetEach != 0) continue;
-                var committedOffsets = _consumer.CommitAsync(msg).Result;
-                _log.Trace($"Committed offset: {committedOffsets}");
-            }
+             
+            Task.Run(async() => await StartConsumingAsync());
         }
 
         internal void Disconnect()
         {
             _disconnected = true;
-            _consumer.Unassign();
-            _consumer.Unsubscribe();
+            _consumer?.Unassign();
+            _consumer?.Unsubscribe();
         }
 
         /// <inheritdoc/>
@@ -83,11 +70,29 @@ namespace Silverback.Messaging.Broker
             if (disposing)
             {
                 Disconnect();
-                // TODO: (REVIEW) Check for null (for example _consumer?.Dispose()) to avoid errors if Dispose is called twice (do the same in Disconnect() method)
-                _consumer.Dispose();
+                _consumer?.Dispose();
                 _consumer = null;
             }
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Starts the poll process to retrieve the messages. 
+        /// </summary>
+        /// <returns></returns>
+        private async Task StartConsumingAsync()
+        {            
+            while (!_disconnected)
+            {
+                if (!_consumer.Consume(out var message, TimeSpan.FromMilliseconds(_endpoint.TimeoutPollBlock)))
+                    continue;
+
+                HandleMessage(message.Value);
+                if (IsAutocommitEnabled) continue;
+                if (message.Offset % _endpoint.CommitOffsetEach != 0) continue;
+                var committedOffsets = await _consumer.CommitAsync(message);
+                _log.Trace($"Committed offset: {committedOffsets}");
+            }
         }
     }
 }
