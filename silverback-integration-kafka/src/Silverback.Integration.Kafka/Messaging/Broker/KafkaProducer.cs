@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Common.Logging;
 using Confluent.Kafka;
 using Confluent.Kafka.Serialization;
 using Silverback.Messaging.Messages;
@@ -15,15 +16,22 @@ namespace Silverback.Messaging.Broker
     public class KafkaProducer : Producer
     {
         private readonly KafkaEndpoint _endpoint;
+        private readonly KafkaBroker _broker;
         private Producer<byte[], byte[]> _producer;
+        private readonly ILog _log;
 
-        // TODO: (REVIEW) Erm, inheriting the constructor summary doesn't make a whole lot of sense
         /// <inheritdoc />
-        public KafkaProducer(IBroker broker, KafkaEndpoint endpoint)
-            : base(broker,endpoint)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KafkaProducer"/> class.
+        /// </summary>
+        /// <param name="broker">The broker.</param>
+        /// <param name="endpoint">The endpoint.</param>
+        public KafkaProducer(IBroker broker, KafkaEndpoint endpoint) : base(broker, endpoint)
         {
             _endpoint = endpoint;
+            _broker = (KafkaBroker)broker;
         }
+            
 
         internal void Connect()
         {
@@ -48,26 +56,23 @@ namespace Silverback.Messaging.Broker
 
         internal void Disconnect()
         {
-            // TODO: (REVIEW) Should check for null, otherwise it will break if the Disconnect() is called twice
-            _producer.Dispose();
+            _producer?.Dispose();
             _producer = null;
         }
-
 
         /// <inheritdoc />
         protected override void Produce(IIntegrationMessage message, byte[] serializedMessage)
         {
-            // TODO: (REVIEW) The sync and async methods are quite just duplicated. Why don't you just call this.ProduceAsync(...).Result?
             var deliveryReport = _producer.ProduceAsync(_endpoint.Name, KeyHelper.GetMessageKey(message), serializedMessage).Result;
-            // TODO: (REVIEW) Use a dedicated exception type?
-            if (deliveryReport.Error.HasError) throw new Exception(deliveryReport.Error.Reason);
+            if(deliveryReport.Error.HasError) throw new Exception(deliveryReport.Error.Reason);
+            //=> ProduceAsync(message, serializedMessage).RunSynchronously();
         }
 
         /// <inheritdoc />
-        protected override Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)
+        protected override async Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)
         {
-            // TODO: (REVIEW) Here we don't care about the delivery report...is this correct?
-            return _producer.ProduceAsync(_endpoint.Name, KeyHelper.GetMessageKey(message), serializedMessage);
+            var msg = await _producer.ProduceAsync(_endpoint.Name, KeyHelper.GetMessageKey(message), serializedMessage);
+            if(msg.Error.HasError) _log.Fatal(msg.Error.Reason); 
         }
 
         /// <inheritdoc />
