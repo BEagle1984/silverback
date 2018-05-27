@@ -11,6 +11,7 @@ namespace Consumer
 {
     internal static class Program
     {
+
         private static void Main()
         {
             PrintHeader();
@@ -21,13 +22,14 @@ namespace Consumer
                 {
                     {"bootstrap.servers", "PLAINTEXT://192.168.99.100:29092"},
                     {"client.id", "ClientTest"},
-                    { "group.id", "advanced-silverback-consumer" },
-                    { "enable.auto.commit", true },
-                    { "auto.commit.interval.ms", 5000 },
-                    { "statistics.interval.ms", 60000 },
-                    { "default.topic.config", new Dictionary<string, object>()
+                    {"group.id", "advanced-silverback-consumer"},
+                    {"enable.auto.commit", true},
+                    {"auto.commit.interval.ms", 5000},
+                    {"statistics.interval.ms", 60000},
+                    {
+                        "default.topic.config", new Dictionary<string, object>()
                         {
-                            { "auto.offset.reset", "smallest" }
+                            {"auto.offset.reset", "smallest"}
                         }
                     }
                 };
@@ -35,19 +37,19 @@ namespace Consumer
                 bus.Subscribe(new Subscriber());
 
                 bus.Config()
-                   .ConfigureBroker<KafkaBroker>(x => { })
-                   .WithFactory(t => (IInboundAdapter)Activator.CreateInstance(t))
-                   .AddInbound(new SimpleInboundAdapter(), KafkaEndpoint.Create("Topic1", configurations))
-                   .ConnectBrokers();
-                
+                    .ConfigureBroker<KafkaBroker>(x => { })
+                    .WithFactory(t => (IInboundAdapter) Activator.CreateInstance(t))
+                    .AddInbound(new SimpleInboundAdapter(), KafkaEndpoint.Create("Topic1", configurations))
+                    .ConnectBrokers();
+
                 Console.CancelKeyPress += (_, e) =>
                 {
                     e.Cancel = true;
                     bus.DisconnectBrokers();
                 };
-                
-            }
 
+                Console.ReadLine();
+            }
         }
 
         private static void PrintHeader()
