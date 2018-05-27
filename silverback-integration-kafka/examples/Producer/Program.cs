@@ -33,7 +33,7 @@ namespace Producer
 
             using (var bus = new Bus())
             {
-                bus.Subscribe(new Subscriber());
+                bus.Subscribe(new SubscriberAsync());
 
                 bus.Config()
                    .ConfigureBroker<KafkaBroker>(x => { })
@@ -46,7 +46,6 @@ namespace Producer
                 {
                     e.Cancel = true; // prevent the process from terminating.
                     cancelled = true;
-                    //bus.DisconnectBrokers();
                 };
 
                 PrintUsage();
@@ -68,18 +67,15 @@ namespace Producer
 
                     if (text == null)
                     {
-                        // Console returned null before 
-                        // the CancelKeyPress was treated
                         break;
                     }
-                    
-                    bus.Publish(new TestMessage
+
+                    bus.PublishAsync(new TestMessage
                     {
                         Id = Guid.NewGuid(),
                         Text = text,
                         Type = "TestMessage"
-                    });
-
+                    });               
                 }            
             }
         }
