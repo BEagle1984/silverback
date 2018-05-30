@@ -1,6 +1,7 @@
 ﻿using Silverback.Messaging;
 using System;
 using System.Collections.Generic;
+using Silverback.Messaging.Broker;
 
 
 namespace Silverback.Messaging
@@ -62,8 +63,7 @@ namespace Silverback.Messaging
         /// The configuration.
         /// </value>
         public Dictionary<string, object> Configuration { get; set; }
-
-        //TODO: Should be set by extension method?
+        
         /// <summary>
         /// Define the number of message processed before committing the offset to the server.
         /// The most reliable level is one but it reduces throughput.
@@ -72,8 +72,7 @@ namespace Silverback.Messaging
         /// The commit offset.
         /// </value>
         public int CommitOffsetEach { get; set; }
-
-        //TODO: Should be set by extension method?
+        
         /// <summary>
         /// The maximum time (in milliseconds -1 to block indefinitely) within which the poll remain blocked.
         /// </summary>
@@ -84,37 +83,6 @@ namespace Silverback.Messaging
 
         #endregion
 
-        // TODO: (REVIEW) Do we implement IComparable? It doesn't look like we do from the class signature.
-        #region IComparable
-
-        /// <summary>
-        /// Compares this instance to another <see cref="KafkaEndpoint"/>.
-        /// </summary>
-        /// <param name="other">The other instance.</param>
-        /// <returns></returns>
-        public int CompareTo(KafkaEndpoint other)
-        {
-            if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
-            var brokerNameComparison = string.Compare(BrokerName, other.BrokerName, StringComparison.Ordinal);
-            return brokerNameComparison != 0 ? brokerNameComparison : string.Compare(Name, other.Name, StringComparison.Ordinal);
-        }
-
-        /// <summary>
-        /// Compares this instance to another <see cref="object"/>.
-        /// </summary>
-        /// <param name="obj">The object.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException">BasicEndpoint</exception>
-        public int CompareTo(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return 1;
-            if (ReferenceEquals(this, obj)) return 0;
-            if (!(obj is KafkaEndpoint)) throw new ArgumentException($"Object must be of type {nameof(KafkaEndpoint)}");
-            return CompareTo((KafkaEndpoint)obj);
-        }
-
-        #endregion
 
         #region Equality
 
@@ -125,7 +93,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other)) return true;
             return string.Equals(BrokerName, other.BrokerName)
                 && string.Equals(Name, other.Name, StringComparison.InvariantCultureIgnoreCase)
-                && CompareConfiguration(Configuration, other.Configuration);
+                && ConfigurationComparer.Compare(Configuration, other.Configuration);
         }
 
         /// <summary>
@@ -155,31 +123,7 @@ namespace Silverback.Messaging
                 return 23 + _hashCodeReferer.GetHashCode();
             }
         }
-
-        /// <summary>
-        /// Compares the configuration.
-        /// </summary>
-        /// <param name="dict1">The dict1.</param>
-        /// <param name="dict2">The dict2.</param>
-        /// <returns></returns>
-        private static bool CompareConfiguration(
-            Dictionary<string, object> dict1, IReadOnlyDictionary<string, object> dict2)
-        {
-            if (dict1 == null || dict2 == null) return false;
-            if (dict1.Count != dict2.Count) return false;
-
-            var valueComparer = EqualityComparer<object>.Default;
-
-            foreach (var kvp in dict1)
-            {
-                if (!dict2.TryGetValue(kvp.Key, out var value2)) return false;
-                if (value2 is Dictionary<string, object> val2 && kvp.Value is Dictionary<string, object> val1 &&
-                    CompareConfiguration(val2, val1))
-                    continue;
-                if (!valueComparer.Equals(kvp.Value, value2)) return false;
-            }
-            return true;
-        }
+        
 
         #endregion
     }
