@@ -36,10 +36,12 @@ namespace Silverback.Messaging.Broker
             _endpoint = endpoint;
         }
 
+
+        /// <summary>
+        /// Create, if not aleady exist, a new istance of confluent producer and cache it by configuration.
+        /// </summary>
         internal void Connect()
         {
-            if (_producer != null) return;
-            
             _producer = _producersChache.GetOrAdd( _endpoint.Configuration ,new Producer<byte[], byte[]>(
                 _endpoint.Configuration,
                     new ByteArraySerializer(),
@@ -54,7 +56,7 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc />
         protected override void Produce(IIntegrationMessage message, byte[] serializedMessage)
-            => ProduceAsync(message, serializedMessage).RunSynchronously();
+            =>ProduceAsync(message, serializedMessage).ConfigureAwait(false);
 
         /// <inheritdoc />
         protected override async Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)
