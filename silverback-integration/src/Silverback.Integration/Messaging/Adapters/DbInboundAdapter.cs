@@ -38,6 +38,8 @@ namespace Silverback.Messaging.Adapters
                 return;
             }
 
+            // TODO: IMPORTANT: If the message is moved into a retry queue it shouldn't be added to the inbox table,
+            // even though no exception is returned.
             var entity = _inboxRepository.Create();
             entity.MessageId = message.Id;
             entity.Received = DateTime.UtcNow;

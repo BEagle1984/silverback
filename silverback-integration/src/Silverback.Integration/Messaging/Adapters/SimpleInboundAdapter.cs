@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Adapters
                 throw new InvalidOperationException("Connect was called twice.");
 
             _consumer = _broker.GetConsumer(endpoint);
-            
+
             // TODO: Handle errors -> logging and stuff -> then?
             _consumer.Received += (_, envelope) => RelayMessage(envelope.Message);
         }
