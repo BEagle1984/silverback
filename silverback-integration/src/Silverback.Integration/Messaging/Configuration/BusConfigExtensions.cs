@@ -130,7 +130,7 @@ namespace Silverback.Messaging.Configuration
             if (adapter == null) throw new ArgumentNullException(nameof(adapter));
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
 
-            adapter.Init(config.Bus, config.Bus.GetBroker(endpoint.BrokerName), endpoint, errorPolicy);
+            adapter.Init(config.Bus, endpoint, errorPolicy);
             return config;
         }
 
@@ -150,7 +150,7 @@ namespace Silverback.Messaging.Configuration
 
             var adapter = config.GetTypeFactory().GetInstance<TAdapter>();
             config.Bus.AddInboundAdapterItem(adapter);
-            adapter.Init(config.Bus, config.Bus.GetBroker(endpoint.BrokerName), endpoint, errorPolicy);
+            adapter.Init(config.Bus, endpoint, errorPolicy);
             return config;
         }
 

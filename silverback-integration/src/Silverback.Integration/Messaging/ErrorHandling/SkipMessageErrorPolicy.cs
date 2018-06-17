@@ -9,6 +9,11 @@ namespace Silverback.Messaging.ErrorHandling
     /// <seealso cref="Silverback.Messaging.ErrorHandling.ErrorPolicyBase" />
     public class SkipMessageErrorPolicy : ErrorPolicyBase
     {
+        /// <summary>
+        /// Wraps the specified policy.
+        /// </summary>
+        /// <param name="policy">The policy to be executed if this one fails.</param>
+        /// <returns></returns>
         public override IErrorPolicy Wrap(IErrorPolicy policy)
         {
             throw new NotSupportedException("This policy never fails and can't therefore wrap other policies.");

@@ -9,6 +9,12 @@ namespace Silverback.Messaging.ErrorHandling
     public interface IErrorPolicy
     {
         /// <summary>
+        /// Initializes the policy, binding to the specified bus.
+        /// </summary>
+        /// <param name="bus">The bus.</param>
+        void Init(IBus bus);
+
+        /// <summary>
         /// Wraps the specified policy.
         /// </summary>
         /// <param name="policy">The policy to be executed if this one fails.</param>

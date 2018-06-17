@@ -13,9 +13,8 @@ namespace Silverback.Messaging.Adapters
         /// Initializes the <see cref="IInboundAdapter" />.
         /// </summary>
         /// <param name="bus">The internal <see cref="IBus" /> where the messages have to be relayed.</param>
-        /// <param name="broker">The broker to be used.</param>
         /// <param name="endpoint">The endpoint this adapter has to connect to.</param>
         /// <param name="errorPolicy">An optional error handling policy.</param>
-        void Init(IBus bus, IBroker broker, IEndpoint endpoint, IErrorPolicy errorPolicy);
+        void Init(IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null);
     }
 }

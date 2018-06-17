@@ -11,6 +11,15 @@ namespace Silverback.Messaging.ErrorHandling
         private ErrorPolicyBase _childPolicy;
 
         /// <summary>
+        /// Initializes the policy, binding to the specified bus.
+        /// </summary>
+        /// <param name="bus">The bus.</param>
+        public virtual void Init(IBus bus)
+        {
+            _childPolicy?.Init(bus);
+        }
+
+        /// <summary>
         /// Wraps the specified policy.
         /// </summary>
         /// <param name="policy">The policy to be executed if this one fails.</param>

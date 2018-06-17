@@ -35,7 +35,7 @@ namespace Silverback.Tests.Messaging.Adapters
             _bus.Config().Subscribe<IMessage>(m => count++);
 
             var adapter = new DbInboundAdapter<InboundMessageEntity>(_repository);
-            adapter.Init(_bus, _bus.GetBroker(), BasicEndpoint.Create("test"));
+            adapter.Init(_bus, BasicEndpoint.Create("test"));
 
             _bus.ConnectBrokers();
 
@@ -53,7 +53,7 @@ namespace Silverback.Tests.Messaging.Adapters
         public void AddToInboxTest()
         {
             var adapter = new DbInboundAdapter<InboundMessageEntity>(_repository);
-            adapter.Init(_bus, _bus.GetBroker(), BasicEndpoint.Create("test"));
+            adapter.Init(_bus, BasicEndpoint.Create("test"));
 
             _bus.ConnectBrokers();
 

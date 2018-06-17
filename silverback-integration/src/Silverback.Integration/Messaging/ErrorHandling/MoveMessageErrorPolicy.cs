@@ -1,5 +1,6 @@
 ﻿using System;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.ErrorHandling
@@ -10,18 +11,26 @@ namespace Silverback.Messaging.ErrorHandling
     /// <seealso cref="Silverback.Messaging.ErrorHandling.ErrorPolicyBase" />
     public class MoveMessageErrorPolicy : ErrorPolicyBase
     {
-        private readonly IProducer _producer;
+        private readonly IEndpoint _endpoint;
+        private IProducer _producer;
+
+        /// <summary>
+        /// Initializes the policy, binding to the specified bus.
+        /// </summary>
+        /// <param name="bus">The bus.</param>
+        public override void Init(IBus bus)
+        {
+            _producer = bus.GetBroker(_endpoint.BrokerName).GetProducer(_endpoint);
+            base.Init(bus);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MoveMessageErrorPolicy" /> class.
         /// </summary>
-        /// <param name="broker">The broker.</param>
         /// <param name="endpoint">The target endpoint.</param>
-        public MoveMessageErrorPolicy(IBroker broker, IEndpoint endpoint)
+        public MoveMessageErrorPolicy(IEndpoint endpoint)
         {
-            if (broker == null) throw new ArgumentNullException(nameof(broker));
-            if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
-            _producer = broker.GetProducer(endpoint);
+            _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -14,53 +15,66 @@ namespace Silverback.Messaging.Adapters
     /// <seealso cref="Silverback.Messaging.Adapters.IInboundAdapter" />
     public class SimpleInboundAdapter : IInboundAdapter
     {
-        private IBus _bus;
-        private IBroker _broker;
+        /// <summary>
+        /// The underlying bus.
+        /// </summary>
+        protected IBus Bus;
+
+        /// <summary>
+        /// The error policy
+        /// </summary>
+        protected IErrorPolicy ErrorPolicy;
+
         private IConsumer _consumer;
-        private IErrorPolicy _errorPolicy;
 
         /// <summary>
         /// Initializes the <see cref="T:Silverback.Messaging.Adapters.IInboundAdapter" />.
         /// </summary>
         /// <param name="bus">The internal <see cref="IBus" /> where the messages have to be relayed.</param>
-        /// <param name="broker">The broker to be used.</param>
         /// <param name="endpoint">The endpoint this adapter has to connect to.</param>
         /// <param name="errorPolicy">An optional error handling policy.</param>
-        public void Init(IBus bus, IBroker broker, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
+        public void Init(IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
         {
-            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
-            _broker = broker ?? throw new ArgumentNullException(nameof(broker));
-            _errorPolicy = errorPolicy ?? new NoErrorPolicy();
-
+            Bus = bus ?? throw new ArgumentNullException(nameof(bus));
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
 
-            Connect(endpoint);
+            ErrorPolicy = errorPolicy ?? new NoErrorPolicy();
+            ErrorPolicy.Init(bus);
+
+            Connect(bus.GetBroker(endpoint.BrokerName), endpoint);
         }
 
         /// <summary>
         /// Implements the logic to connect and start listening to the specified endpoint.
         /// </summary>
+        /// <param name="broker">The broker.</param>
         /// <param name="endpoint">The endpoint.</param>
-        protected virtual void Connect(IEndpoint endpoint)
+        /// <exception cref="InvalidOperationException">Connect was called twice.</exception>
+        protected virtual void Connect(IBroker broker, IEndpoint endpoint)
         {
             if (_consumer != null)
                 throw new InvalidOperationException("Connect was called twice.");
 
-            _consumer = _broker.GetConsumer(endpoint);
+            _consumer = broker.GetConsumer(endpoint);
 
-            _consumer.Received += (_, envelope) =>
-                _errorPolicy.TryHandleMessage(
-                    envelope,
-                    e => RelayMessage(e.Message));
+            _consumer.Received += OnMessageReceived;
         }
 
+        /// <summary>
+        /// Called when a message is received.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="envelope">The envelope containing the received message.</param>
+        protected virtual void OnMessageReceived(object sender, IEnvelope envelope)
+            => ErrorPolicy.TryHandleMessage(
+                envelope,
+                e => RelayMessage(e.Message));
+        
         /// <summary>
         /// Relays the message.
         /// </summary>
         /// <param name="message">The message.</param>
         protected virtual void RelayMessage(IIntegrationMessage message)
-        {
-            _bus.Publish(message);
-        }
+            => Bus.Publish(message);
     }
 }
