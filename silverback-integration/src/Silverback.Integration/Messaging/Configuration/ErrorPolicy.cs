@@ -34,7 +34,7 @@ namespace Silverback.Messaging.Configuration
         public static T Retry<T>(this T policy, int retryCount, TimeSpan? initialDelay = null, TimeSpan? delayIncreament = null)
             where T : RetryErrorPolicy
         {
-            policy.ChildPolicy = new RetryErrorPolicy(retryCount, initialDelay, delayIncreament);
+            policy.Wrap(new RetryErrorPolicy(retryCount, initialDelay, delayIncreament));
 
             return policy;
 

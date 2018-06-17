@@ -24,7 +24,7 @@ namespace Silverback.Messaging.ErrorHandling
         /// <exception cref="ArgumentOutOfRangeException">retryCount - Specify a retry count greater than 0.</exception>
         public RetryErrorPolicy(int retryCount, TimeSpan? initialDelay = null, TimeSpan? delayIncreament = null)
         {
-            if (_retryCount <= 0) throw new ArgumentOutOfRangeException(nameof(retryCount), retryCount, "Specify a retry count greater than 0.");
+            if (retryCount <= 0) throw new ArgumentOutOfRangeException(nameof(retryCount), retryCount, "Specify a retry count greater than 0.");
 
             _retryCount = retryCount;
             _initialDelay = initialDelay ?? TimeSpan.Zero;
@@ -54,6 +54,7 @@ namespace Silverback.Messaging.ErrorHandling
                 try
                 {
                     handler.Invoke(message);
+                    break;
                 }
                 catch (Exception)
                 {

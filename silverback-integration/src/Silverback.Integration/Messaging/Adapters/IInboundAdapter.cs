@@ -1,4 +1,5 @@
 ﻿using Silverback.Messaging.Broker;
+using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Adapters
@@ -14,6 +15,7 @@ namespace Silverback.Messaging.Adapters
         /// <param name="bus">The internal <see cref="IBus" /> where the messages have to be relayed.</param>
         /// <param name="broker">The broker to be used.</param>
         /// <param name="endpoint">The endpoint this adapter has to connect to.</param>
-        void Init(IBus bus, IBroker broker, IEndpoint endpoint);
+        /// <param name="errorPolicy">An optional error handling policy.</param>
+        void Init(IBus bus, IBroker broker, IEndpoint endpoint, IErrorPolicy errorPolicy);
     }
 }

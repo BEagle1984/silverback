@@ -1,5 +1,6 @@
 ﻿using System;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
@@ -16,6 +17,7 @@ namespace Silverback.Messaging.Adapters
         private IBus _bus;
         private IBroker _broker;
         private IConsumer _consumer;
+        private IErrorPolicy _errorPolicy;
 
         /// <summary>
         /// Initializes the <see cref="T:Silverback.Messaging.Adapters.IInboundAdapter" />.
@@ -23,10 +25,12 @@ namespace Silverback.Messaging.Adapters
         /// <param name="bus">The internal <see cref="IBus" /> where the messages have to be relayed.</param>
         /// <param name="broker">The broker to be used.</param>
         /// <param name="endpoint">The endpoint this adapter has to connect to.</param>
-        public void Init(IBus bus, IBroker broker, IEndpoint endpoint)
+        /// <param name="errorPolicy">An optional error handling policy.</param>
+        public void Init(IBus bus, IBroker broker, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
         {
             _bus = bus ?? throw new ArgumentNullException(nameof(bus));
             _broker = broker ?? throw new ArgumentNullException(nameof(broker));
+            _errorPolicy = errorPolicy ?? new NoErrorPolicy();
 
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
 
@@ -44,8 +48,10 @@ namespace Silverback.Messaging.Adapters
 
             _consumer = _broker.GetConsumer(endpoint);
 
-            // TODO: Handle errors -> logging and stuff -> then?
-            _consumer.Received += (_, envelope) => RelayMessage(envelope.Message);
+            _consumer.Received += (_, envelope) =>
+                _errorPolicy.TryHandleMessage(
+                    envelope.Message,
+                    m => RelayMessage(envelope.Message));
         }
 
         /// <summary>

@@ -6,15 +6,26 @@ namespace Silverback.Messaging.ErrorHandling
     /// <summary>
     /// The base class for all error policies.
     /// </summary>
-    public abstract class ErrorPolicyBase
+    public abstract class ErrorPolicyBase : IErrorPolicy
     {
+        private ErrorPolicyBase _childPolicy;
+
         /// <summary>
-        /// Gets or sets the policy to apply after the current one failed.
+        /// Wraps the specified policy.
         /// </summary>
-        /// <value>
-        /// The child policy.
-        /// </value>
-        public ErrorPolicyBase ChildPolicy { get; set; }
+        /// <param name="policy">The policy to be executed if this one fails.</param>
+        /// <exception cref="ArgumentNullException">policy</exception>
+        /// <exception cref="ArgumentException">The wrapped policy must inherit from ErrorPolicyBase. - policy</exception>
+        public IErrorPolicy Wrap(IErrorPolicy policy)
+        {
+            if (policy == null) throw new ArgumentNullException(nameof(policy));
+
+            _childPolicy = policy as ErrorPolicyBase;
+
+            if (_childPolicy == null) throw new ArgumentException("The wrapped policy must inherit from ErrorPolicyBase.", nameof(policy));
+
+            return this;
+        }
 
         /// <summary>
         /// Tries to process the message with the specified handler and takes care of handling
@@ -38,7 +49,6 @@ namespace Silverback.Messaging.ErrorHandling
                 // TODO: Log & Trace
                 HandleError(message, handler);
             }
-
         }
 
         /// <summary>
@@ -59,10 +69,10 @@ namespace Silverback.Messaging.ErrorHandling
             {
                 // TODO: Log & Trace (needed?)
 
-                if (ChildPolicy != null)
-                    ChildPolicy.HandleError(message, handler);
+                if (_childPolicy != null)
+                    _childPolicy.HandleError(message, handler);
                 else
-                    throw new ErrorPolicyException($"Failed to handle error processing message '{message.Id}'. See InnerException for details.", e);
+                    throw new ErrorPolicyException($"Failed to process message '{message.Id}'. See InnerException for details.", e);
             }
         }
 
