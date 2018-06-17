@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.ErrorHandling
 {
     /// <summary>
-    /// This policy specifies that the handler method is retried multiple times 
-    /// in case of exception.
+    /// This policy retries the handler method multiple times in case of exception.
     /// An optional delay can be specified.
     /// </summary>
     /// <seealso cref="Silverback.Messaging.ErrorHandling.ErrorPolicyBase" />
@@ -34,10 +34,9 @@ namespace Silverback.Messaging.ErrorHandling
         /// <summary>
         /// Applies the error handling policy.
         /// </summary>
-        /// <typeparam name="T">The type of the message</typeparam>
-        /// <param name="message">The failed message.</param>
+        /// <param name="envelope">The envelope containing the failed message.</param>
         /// <param name="handler">The method that was used to handle the message.</param>
-        protected override void ApplyPolicy<T>(T message, Action<T> handler)
+        protected override void ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler)
         {
             var delay = _initialDelay;
 
@@ -53,7 +52,7 @@ namespace Silverback.Messaging.ErrorHandling
 
                 try
                 {
-                    handler.Invoke(message);
+                    handler.Invoke(envelope);
                     break;
                 }
                 catch (Exception)

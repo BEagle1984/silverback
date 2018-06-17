@@ -50,8 +50,8 @@ namespace Silverback.Messaging.Adapters
 
             _consumer.Received += (_, envelope) =>
                 _errorPolicy.TryHandleMessage(
-                    envelope.Message,
-                    m => RelayMessage(envelope.Message));
+                    envelope,
+                    e => RelayMessage(e.Message));
         }
 
         /// <summary>

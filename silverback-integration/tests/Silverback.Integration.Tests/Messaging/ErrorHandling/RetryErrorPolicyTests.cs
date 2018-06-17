@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
@@ -13,7 +14,9 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         public void SuccessTest()
         {
             var executed = false;
-            new NoErrorPolicy().TryHandleMessage(new TestEventOne(), _ => executed = true);
+            new NoErrorPolicy().TryHandleMessage(
+                Envelope.Create(new TestEventOne()),
+                _ => executed = true);
 
             Assert.That(executed, Is.True);
         }
@@ -24,13 +27,15 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var tryCount = 0;
             var success = false;
 
-            new RetryErrorPolicy(5).TryHandleMessage(new TestEventOne(), _ =>
-            {
-                if (++tryCount < 3)
-                    throw new Exception("retry, please");
+            new RetryErrorPolicy(5).TryHandleMessage(
+                Envelope.Create(new TestEventOne()),
+                _ =>
+                {
+                    if (++tryCount < 3)
+                        throw new Exception("retry, please");
 
-                success = true;
-            });
+                    success = true;
+                });
 
             Assert.That(success, Is.True);
             Assert.That(tryCount, Is.EqualTo(3));
@@ -42,11 +47,13 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var tryCount = 0;
 
             Assert.Throws<ErrorPolicyException>(() =>
-                new RetryErrorPolicy(3).TryHandleMessage(new TestEventOne(), _ =>
-                {
-                    tryCount++;
-                    throw new Exception("retry, please");
-                }));
+                new RetryErrorPolicy(3).TryHandleMessage(
+                    Envelope.Create(new TestEventOne()),
+                    _ =>
+                    {
+                        tryCount++;
+                        throw new Exception("retry, please");
+                    }));
 
             Assert.That(tryCount, Is.EqualTo(4));
         }
@@ -60,11 +67,13 @@ namespace Silverback.Tests.Messaging.ErrorHandling
 
             new RetryErrorPolicy(1)
                 .Wrap(testPolicy)
-                .TryHandleMessage(new TestEventOne(), _ =>
-                {
-                    tryCount++;
-                    throw new Exception("retry, please");
-                });
+                .TryHandleMessage(
+                    Envelope.Create(new TestEventOne()),
+                    _ =>
+                    {
+                        tryCount++;
+                        throw new Exception("retry, please");
+                    });
 
             Assert.That(testPolicy.Applied, Is.True);
             Assert.That(tryCount, Is.EqualTo(2));

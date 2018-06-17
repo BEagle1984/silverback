@@ -19,9 +19,8 @@ namespace Silverback.Messaging.ErrorHandling
         /// Tries to process the message with the specified handler and takes care of handling
         /// the possible errors.
         /// </summary>
-        /// <typeparam name="T">The type of the message</typeparam>
-        /// <param name="message">The message.</param>
+        /// <param name="envelope">The envelope containing the message to be handled.</param>
         /// <param name="handler">The method that handles the message.</param>
-        void TryHandleMessage<T>(T message, Action<T> handler) where T : IIntegrationMessage;
+        void TryHandleMessage(IEnvelope envelope, Action<IEnvelope> handler);
     }
 }

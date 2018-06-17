@@ -14,8 +14,6 @@ namespace Silverback.Messaging.ErrorHandling
         /// Wraps the specified policy.
         /// </summary>
         /// <param name="policy">The policy to be executed if this one fails.</param>
-        /// <exception cref="ArgumentNullException">policy</exception>
-        /// <exception cref="ArgumentException">The wrapped policy must inherit from ErrorPolicyBase. - policy</exception>
         public IErrorPolicy Wrap(IErrorPolicy policy)
         {
             if (policy == null) throw new ArgumentNullException(nameof(policy));
@@ -31,58 +29,52 @@ namespace Silverback.Messaging.ErrorHandling
         /// Tries to process the message with the specified handler and takes care of handling
         /// the possible errors.
         /// </summary>
-        /// <typeparam name="T">The type of the message</typeparam>
-        /// <param name="message">The message.</param>
+        /// <param name="envelope">The envelope containing the message to be handled.</param>
         /// <param name="handler">The method that handles the message.</param>
-        public void TryHandleMessage<T>(T message, Action<T> handler)
-            where T : IIntegrationMessage
+        public void TryHandleMessage(IEnvelope envelope, Action<IEnvelope> handler)
         {
-            if (message == null) throw new ArgumentNullException(nameof(message));
+            if (envelope == null) throw new ArgumentNullException(nameof(envelope));
             if (handler == null) throw new ArgumentNullException(nameof(handler));
 
             try
             {
-                handler.Invoke(message);
+                handler.Invoke(envelope);
             }
             catch (Exception)
             {
                 // TODO: Log & Trace
-                HandleError(message, handler);
+                HandleError(envelope, handler);
             }
         }
 
         /// <summary>
         /// Handles the error.
         /// </summary>
-        /// <typeparam name="T">The type of the message</typeparam>
-        /// <param name="message">The failed message.</param>
+        /// <param name="envelope">The envelope containing the failed message.</param>
         /// <param name="handler">The method that was used to handle the message.</param>
         /// <exception cref="Silverback.Messaging.ErrorHandling.ErrorPolicyException"></exception>
-        private void HandleError<T>(T message, Action<T> handler)
-            where T : IIntegrationMessage
+        private void HandleError(IEnvelope envelope, Action<IEnvelope> handler)
         {
             try
             {
-                ApplyPolicy(message, handler);
+                ApplyPolicy(envelope, handler);
             }
             catch (Exception e)
             {
                 // TODO: Log & Trace (needed?)
 
                 if (_childPolicy != null)
-                    _childPolicy.HandleError(message, handler);
+                    _childPolicy.HandleError(envelope, handler);
                 else
-                    throw new ErrorPolicyException($"Failed to process message '{message.Id}'. See InnerException for details.", e);
+                    throw new ErrorPolicyException($"Failed to process message '{envelope.Message.Id}'. See InnerException for details.", e);
             }
         }
 
         /// <summary>
         /// Applies the error handling policy.
         /// </summary>
-        /// <typeparam name="T">The type of the message</typeparam>
-        /// <param name="message">The failed message.</param>
+        /// <param name="envelope">The envelope containing the failed message.</param>
         /// <param name="handler">The method that was used to handle the message.</param>
-        protected abstract void ApplyPolicy<T>(T message, Action<T> handler)
-            where T : IIntegrationMessage;
+        protected abstract void ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler);
     }
 }
