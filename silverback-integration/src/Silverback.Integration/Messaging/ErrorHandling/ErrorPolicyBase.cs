@@ -14,7 +14,7 @@ namespace Silverback.Messaging.ErrorHandling
         /// Wraps the specified policy.
         /// </summary>
         /// <param name="policy">The policy to be executed if this one fails.</param>
-        public IErrorPolicy Wrap(IErrorPolicy policy)
+        public virtual IErrorPolicy Wrap(IErrorPolicy policy)
         {
             if (policy == null) throw new ArgumentNullException(nameof(policy));
 

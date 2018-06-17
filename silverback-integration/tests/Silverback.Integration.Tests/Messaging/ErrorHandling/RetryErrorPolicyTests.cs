@@ -78,5 +78,23 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             Assert.That(testPolicy.Applied, Is.True);
             Assert.That(tryCount, Is.EqualTo(2));
         }
+
+        [Test]
+        public void ChainingTest2()
+        {
+            var tryCount = 0;
+
+            new RetryErrorPolicy(1)
+                .Wrap(new SkipMessageErrorPolicy())
+                .TryHandleMessage(
+                    Envelope.Create(new TestEventOne()),
+                    _ =>
+                    {
+                        tryCount++;
+                        throw new Exception("retry, please");
+                    });
+
+            Assert.That(tryCount, Is.EqualTo(2));
+        }
     }
 }
