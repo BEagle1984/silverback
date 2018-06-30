@@ -148,7 +148,6 @@ namespace Silverback.Messaging.Publishing
 
             var replySubscriber = replyBus.Subscribe(
                 new GenericSubscriber<TResponse>(
-                    _bus.GetLoggerFactory(),
                     m => response = m,
                     m => m.RequestId == message.RequestId));
 

@@ -13,21 +13,30 @@ namespace Silverback.Messaging.Subscribers
     public abstract class SubscriberBase<TMessage> : ISubscriber
         where TMessage : IMessage
     {
-        private readonly ILogger _logger;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SubscriberBase{TMessage}" /> class.
-        /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
-        protected SubscriberBase(ILoggerFactory loggerFactory)
-        {
-            _logger = loggerFactory.CreateLogger<SubscriberBase<TMessage>>();
-        }
+        private ILogger _logger;
 
         /// <summary>
         /// Gets or sets an optional filter to be applied to the messages.
         /// </summary>
         public Func<TMessage, bool> Filter { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubscriberBase{TMessage}" /> class.
+        /// </summary>
+        /// <param name="filter">An optional filter to be applied to the messages</param>
+        protected SubscriberBase(Func<TMessage, bool> filter = null)
+        {
+            Filter = filter;
+        }
+
+        /// <summary>
+        /// Initializes the subscriber.
+        /// </summary>
+        /// <param name="bus">The subscribed bus.</param>
+        public virtual void Init(IBus bus)
+        {
+            _logger = bus.GetLoggerFactory().CreateLogger<SubscriberBase<TMessage>>();
+        }
 
         /// <summary>
         /// Checks whether the message must be handled according to its type and 
@@ -49,9 +58,11 @@ namespace Silverback.Messaging.Subscribers
 
             if (Filter != null && !Filter.Invoke(typedMessage))
             {
-                _logger.LogTrace($"Discarding message because it was filtered out by the custom filter function.");
+                _logger.LogTrace("Discarding message because it was filtered out by the custom filter function.");
                 return false;
             }
+
+            _logger.LogDebug($"Processing message of type '{typeof(TMessage).Name}'.");
 
             return true;
         }

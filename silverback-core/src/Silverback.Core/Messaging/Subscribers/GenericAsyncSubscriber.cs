@@ -18,15 +18,13 @@ namespace Silverback.Messaging.Subscribers
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericAsyncSubscriber{TMessage}" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
         /// <param name="handler">The action to be executed for each message.</param>
         /// <param name="filter">An optional filter to be applied to the messages</param>
         /// <exception cref="ArgumentNullException">handler</exception>
-        public GenericAsyncSubscriber(ILoggerFactory loggerFactory, Func<TMessage, Task> handler, Func<TMessage, bool> filter = null)
-            : base(loggerFactory)
+        public GenericAsyncSubscriber(Func<TMessage, Task> handler, Func<TMessage, bool> filter = null)
+            : base(filter)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
-            Filter = filter;
         }
 
         /// <summary>

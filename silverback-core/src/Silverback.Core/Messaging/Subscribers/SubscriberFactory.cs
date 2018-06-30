@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Extensions;
 using Silverback.Messaging.Messages;
 
@@ -16,6 +17,8 @@ namespace Silverback.Messaging.Subscribers
         where TSubscriber : ISubscriber
     {
         private readonly ITypeFactory _typeFactory;
+        private IBus _bus;
+        private ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SubscriberFactory{THandler}" /> class.
@@ -27,6 +30,16 @@ namespace Silverback.Messaging.Subscribers
         }
 
         /// <summary>
+        /// Initializes the subscriber.
+        /// </summary>
+        /// <param name="bus">The subscribed bus.</param>
+        public void Init(IBus bus)
+        {
+            _bus = bus;
+            _logger = _bus.GetLoggerFactory().CreateLogger<SubscriberFactory<TSubscriber>>();
+        }
+
+        /// <summary>
         /// Gets a new subscriber instance.
         /// </summary>
         /// <returns></returns>
@@ -35,7 +48,11 @@ namespace Silverback.Messaging.Subscribers
             var subscribers = _typeFactory.GetInstances<TSubscriber>();
 
             if (subscribers == null)
-                throw new InvalidOperationException($"Couldn't instantiate subscriber of type {typeof(TSubscriber)}.");
+                throw new InvalidOperationException($"No subscriber of type '{typeof(TSubscriber).Name}' has been instantiated.");
+
+            _logger.LogTrace($"Found {subscribers.Length} subscribers of type '{typeof(TSubscriber).Name}'.");
+
+            subscribers.ForEach(s => s.Init(_bus));
 
             return subscribers;
         }

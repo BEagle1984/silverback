@@ -16,16 +16,16 @@ namespace Silverback.Messaging.Subscribers
     public abstract class MultiSubscriber : AsyncSubscriber<IMessage>
     {
         private IEnumerable<ISubscriber> _handlers;
-        private readonly ILoggerFactory _loggerFactory;
+        private IBus _bus;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MultiSubscriber"/> class.
+        /// Initializes the subscriber.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
-        protected MultiSubscriber(ILoggerFactory loggerFactory)
-            : base(loggerFactory)
+        /// <param name="bus">The subscribed bus.</param>
+        public override void Init(IBus bus)
         {
-            _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+            _bus = bus;
+            base.Init(bus);
         }
 
         /// <summary>
@@ -41,9 +41,13 @@ namespace Silverback.Messaging.Subscribers
             if (_handlers != null)
                 return _handlers;
 
-            var config = new MultiSubscriberConfig(_loggerFactory);
+            var config = new MultiSubscriberConfig();
             Configure(config);
-            return _handlers = config.GetHandlers().ToArray();
+            _handlers = config.GetHandlers().ToArray();
+
+            _handlers.ForEach(h => h.Init(_bus));
+
+            return _handlers;
         }
 
         /// <summary>

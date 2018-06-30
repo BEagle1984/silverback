@@ -9,6 +9,12 @@ namespace Silverback.Messaging.Subscribers
     public interface ISubscriber
     {
         /// <summary>
+        /// Initializes the subscriber.
+        /// </summary>
+        /// <param name="bus">The subscribed bus.</param>
+        void Init(IBus bus);
+
+        /// <summary>
         /// Called when a message is published.
         /// </summary>
         /// <param name="message">The message.</param>

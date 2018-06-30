@@ -16,9 +16,9 @@ namespace Silverback.Messaging.Subscribers
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncSubscriber{TMessage}" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
-        protected AsyncSubscriber(ILoggerFactory loggerFactory)
-            : base(loggerFactory)
+        /// <param name="filter">An optional filter to be applied to the messages</param>
+        protected AsyncSubscriber(Func<TMessage, bool> filter = null)
+            : base(filter)
         {
         }
 

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using Silverback.Messaging.Configuration;
 using Silverback.Tests.TestTypes.Domain;
 using Silverback.Tests.TestTypes.Subscribers;
 
@@ -15,6 +16,7 @@ namespace Silverback.Tests.Messaging.Subscribers
         public void Setup()
         {
             _subscriber = new TestCommandOneAsyncSubscriber();
+            _subscriber.Init(new BusBuilder().Build());
         }
 
         [Test]

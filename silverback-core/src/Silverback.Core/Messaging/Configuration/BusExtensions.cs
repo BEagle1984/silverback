@@ -31,7 +31,7 @@ public static class BusExtensions
     /// <returns></returns>
     internal static ITypeFactory GetTypeFactory(this IBus bus)
     {
-        if (bus.Items.TryGetValue(ItemsKeyPrefix + "ITypeFactory", out object loggerFactory))
+        if (bus.Items.TryGetValue(ItemsKeyPrefix + "ITypeFactory", out var loggerFactory))
             return loggerFactory as ITypeFactory;
 
         return null;
@@ -125,7 +125,7 @@ public static class BusExtensions
     public static IBus Subscribe<TMessage>(this IBus bus, Action<TMessage> handler, Func<TMessage, bool> filter = null)
         where TMessage : IMessage
     {
-        bus.Subscribe(new GenericSubscriber<TMessage>(bus.GetLoggerFactory(), handler, filter));
+        bus.Subscribe(new GenericSubscriber<TMessage>(handler, filter));
         return bus;
     }
 
@@ -150,7 +150,7 @@ public static class BusExtensions
     public static IBus Subscribe<TMessage>(this IBus bus, Func<TMessage, Task> handler, Func<TMessage, bool> filter = null)
         where TMessage : IMessage
     {
-        bus.Subscribe(new GenericAsyncSubscriber<TMessage>(bus.GetLoggerFactory(), handler, filter));
+        bus.Subscribe(new GenericAsyncSubscriber<TMessage>(handler, filter));
         return bus;
     }
     #endregion

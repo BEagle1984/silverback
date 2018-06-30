@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes.Domain;
 
@@ -14,11 +11,6 @@ namespace Silverback.Tests.TestTypes.Subscribers
         public int HandledEventTwo { get; set; }
         public int HandledFilteredEventOne { get; set; }
         public int HandledFilteredEventTwo { get; set; }
-
-        public TestEventsMultiSubscriber()
-            : base(NullLoggerFactory.Instance)
-        {
-        }
 
         /// <summary>
         /// Configures the <see cref="T:Silverback.Messaging.MultiMessageHandler" /> binding the actual message handlers methods.

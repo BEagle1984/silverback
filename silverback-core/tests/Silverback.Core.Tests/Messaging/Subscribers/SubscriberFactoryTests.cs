@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes.Domain;
 using Silverback.Tests.TestTypes.Subscribers;
@@ -16,6 +16,7 @@ namespace Silverback.Tests.Messaging.Subscribers
         {
             var subscriber = new TestSubscriber();
             var subscriberFactory = new SubscriberFactory<TestSubscriber>(new GenericTypeFactory(t => subscriber));
+            subscriberFactory.Init(new BusBuilder().Build());
 
             subscriberFactory.OnNext(new TestCommandOne());
             await subscriberFactory.OnNextAsync(new TestCommandTwo());
@@ -28,6 +29,7 @@ namespace Silverback.Tests.Messaging.Subscribers
         {
             var asyncSubscriber = new TestAsyncSubscriber();
             var subscriberFactory = new SubscriberFactory<TestAsyncSubscriber>(new GenericTypeFactory(t => asyncSubscriber));
+            subscriberFactory.Init(new BusBuilder().Build());
 
             subscriberFactory.OnNext(new TestCommandOne());
             await subscriberFactory.OnNextAsync(new TestCommandTwo());
@@ -42,6 +44,7 @@ namespace Silverback.Tests.Messaging.Subscribers
             var subscriber2 = new TestSubscriber();
             var subscriberFactory = new SubscriberFactory<ISubscriber>(
                 new GenericTypeFactory(t => new object[] { subscriber1, subscriber2 }));
+            subscriberFactory.Init(new BusBuilder().Build());
 
             subscriberFactory.OnNext(new TestCommandOne());
             await subscriberFactory.OnNextAsync(new TestCommandTwo());
@@ -57,6 +60,7 @@ namespace Silverback.Tests.Messaging.Subscribers
             var subscriber2 = new TestAsyncSubscriber();
             var subscriberFactory = new SubscriberFactory<ISubscriber>(
                 new GenericTypeFactory(t => new object[] { subscriber1, subscriber2 }));
+            subscriberFactory.Init(new BusBuilder().Build());
 
             subscriberFactory.OnNext(new TestCommandOne());
             await subscriberFactory.OnNextAsync(new TestCommandTwo());

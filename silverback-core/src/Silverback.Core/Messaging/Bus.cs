@@ -70,6 +70,7 @@ namespace Silverback.Messaging
             lock (_subscribers)
             {
                 _subscribers.Add(subscriber);
+                subscriber.Init(this);
             }
 
             return subscriber;
