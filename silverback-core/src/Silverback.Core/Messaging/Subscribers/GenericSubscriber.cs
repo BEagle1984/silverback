@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using Silverback.Logging;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers
@@ -22,9 +21,10 @@ namespace Silverback.Messaging.Subscribers
         /// <param name="handler">The action to be executed for each message.</param>
         /// <param name="filter">An optional filter to be applied to the messages</param>
         public GenericSubscriber(ILoggerFactory loggerFactory, Action<TMessage> handler, Func<TMessage, bool> filter = null)
-            : base(loggerFactory, filter)
+            : base(loggerFactory)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            Filter = filter;
         }
 
         /// <summary>

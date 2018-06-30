@@ -12,10 +12,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public void PublishEventTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetPublisher();
 
@@ -29,10 +29,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public async Task PublishEventAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetPublisher();
 
@@ -46,10 +46,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public void SendCommandTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetPublisher();
 
@@ -63,10 +63,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public async Task SendCommandAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetPublisher();
 
@@ -80,12 +80,12 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public void GetResponseTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var publisher = bus.GetPublisher();
 
                 var counter = 0;
-                bus.Config().Subscribe(m => 
+                bus.Subscribe(m => 
                 {
                     switch (m)
                     {
@@ -114,12 +114,12 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public async Task GetResponseAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var publisher = bus.GetPublisher();
 
                 var counter = 0;
-                bus.Config().Subscribe(m =>
+                bus.Subscribe(m =>
                 {
                     switch (m)
                     {

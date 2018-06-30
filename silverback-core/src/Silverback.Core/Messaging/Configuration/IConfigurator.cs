@@ -8,7 +8,7 @@
         /// <summary>
         /// Configures the <see cref="IBus"/>.
         /// </summary>
-        /// <param name="config">The configuration.</param>
-        void Configure(BusConfig config);
+        /// <param name="bus">The <see cref="IBus"/> to be configured.</param>
+        void Configure(IBus bus);
     }
 }

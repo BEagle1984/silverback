@@ -13,10 +13,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public void SendCommandTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetCommandPublisher<ICommand>();
 
@@ -30,10 +30,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public void SendSpecificCommandTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetCommandPublisher<TestCommandOne>();
 
@@ -46,10 +46,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public async Task SendCommandAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetCommandPublisher<ICommand>();
 
@@ -63,10 +63,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public async Task SendSpecificCommandAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetCommandPublisher<TestCommandOne>();
 

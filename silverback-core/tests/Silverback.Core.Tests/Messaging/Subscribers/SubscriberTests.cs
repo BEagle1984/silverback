@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Silverback.Tests.TestTypes.Domain;
 using Silverback.Tests.TestTypes.Subscribers;

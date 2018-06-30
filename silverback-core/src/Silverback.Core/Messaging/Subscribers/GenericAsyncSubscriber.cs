@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers
@@ -15,14 +16,17 @@ namespace Silverback.Messaging.Subscribers
         private readonly Func<TMessage, Task> _handler;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenericAsyncSubscriber{TMessage}"/> class.
+        /// Initializes a new instance of the <see cref="GenericAsyncSubscriber{TMessage}" /> class.
         /// </summary>
+        /// <param name="loggerFactory">The logger factory.</param>
         /// <param name="handler">The action to be executed for each message.</param>
         /// <param name="filter">An optional filter to be applied to the messages</param>
-        public GenericAsyncSubscriber(Func<TMessage, Task> handler, Func<TMessage, bool> filter = null)
-            : base(filter)
+        /// <exception cref="ArgumentNullException">handler</exception>
+        public GenericAsyncSubscriber(ILoggerFactory loggerFactory, Func<TMessage, Task> handler, Func<TMessage, bool> filter = null)
+            : base(loggerFactory)
         {
             _handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            Filter = filter;
         }
 
         /// <summary>

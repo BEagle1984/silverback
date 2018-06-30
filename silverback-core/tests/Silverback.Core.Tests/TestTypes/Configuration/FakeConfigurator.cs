@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 
 namespace Silverback.Tests.TestTypes.Configuration
@@ -9,9 +10,9 @@ namespace Silverback.Tests.TestTypes.Configuration
     {
         public static bool Executed { get; set; }
 
-        public void Configure(BusConfig config)
+        public void Configure(IBus bus)
         {
-            if (config == null) throw new ArgumentNullException();
+            if (bus == null) throw new ArgumentNullException();
 
             Executed = true;
         }

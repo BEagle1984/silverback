@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.Subscribers;
@@ -14,7 +15,7 @@ namespace Silverback.Tests.Messaging.Subscribers
         public async Task BasicTest()
         {
             var subscriber = new TestSubscriber();
-            var subscriberFactory = new SubscriberFactory<TestSubscriber>(() => new GenericTypeFactory(t => subscriber));
+            var subscriberFactory = new SubscriberFactory<TestSubscriber>(new GenericTypeFactory(t => subscriber));
 
             subscriberFactory.OnNext(new TestCommandOne());
             await subscriberFactory.OnNextAsync(new TestCommandTwo());
@@ -26,7 +27,7 @@ namespace Silverback.Tests.Messaging.Subscribers
         public async Task AsyncSubscriberTest()
         {
             var asyncSubscriber = new TestAsyncSubscriber();
-            var subscriberFactory = new SubscriberFactory<TestAsyncSubscriber>(() => new GenericTypeFactory(t => asyncSubscriber));
+            var subscriberFactory = new SubscriberFactory<TestAsyncSubscriber>(new GenericTypeFactory(t => asyncSubscriber));
 
             subscriberFactory.OnNext(new TestCommandOne());
             await subscriberFactory.OnNextAsync(new TestCommandTwo());
@@ -39,7 +40,7 @@ namespace Silverback.Tests.Messaging.Subscribers
         {
             var subscriber1 = new TestSubscriber();
             var subscriber2 = new TestSubscriber();
-            var subscriberFactory = new SubscriberFactory<ISubscriber>(() =>
+            var subscriberFactory = new SubscriberFactory<ISubscriber>(
                 new GenericTypeFactory(t => new object[] { subscriber1, subscriber2 }));
 
             subscriberFactory.OnNext(new TestCommandOne());
@@ -54,7 +55,7 @@ namespace Silverback.Tests.Messaging.Subscribers
         {
             var subscriber1 = new TestAsyncSubscriber();
             var subscriber2 = new TestAsyncSubscriber();
-            var subscriberFactory = new SubscriberFactory<ISubscriber>(() =>
+            var subscriberFactory = new SubscriberFactory<ISubscriber>(
                 new GenericTypeFactory(t => new object[] { subscriber1, subscriber2 }));
 
             subscriberFactory.OnNext(new TestCommandOne());

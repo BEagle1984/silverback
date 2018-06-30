@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Extensions;
 using Silverback.Messaging.Messages;
 
@@ -15,6 +16,17 @@ namespace Silverback.Messaging.Subscribers
     public abstract class MultiSubscriber : AsyncSubscriber<IMessage>
     {
         private IEnumerable<ISubscriber> _handlers;
+        private readonly ILoggerFactory _loggerFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MultiSubscriber"/> class.
+        /// </summary>
+        /// <param name="loggerFactory">The logger factory.</param>
+        protected MultiSubscriber(ILoggerFactory loggerFactory)
+            : base(loggerFactory)
+        {
+            _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+        }
 
         /// <summary>
         /// Gets the configuration for this <see cref="MultiSubscriber"/> implementation.
@@ -29,7 +41,7 @@ namespace Silverback.Messaging.Subscribers
             if (_handlers != null)
                 return _handlers;
 
-            var config = new MultiSubscriberConfig();
+            var config = new MultiSubscriberConfig(_loggerFactory);
             Configure(config);
             return _handlers = config.GetHandlers().ToArray();
         }

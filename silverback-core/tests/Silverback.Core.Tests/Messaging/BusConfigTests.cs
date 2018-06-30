@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NUnit.Framework;
 using Silverback.Messaging;
@@ -16,11 +17,10 @@ namespace Silverback.Tests.Messaging
         [Test]
         public void SubscribeTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var subscriber = new TestCommandOneSubscriber();
-                bus.Config()
-                    .Subscribe(subscriber);
+                bus.Subscribe(subscriber);
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandOne());
@@ -35,19 +35,9 @@ namespace Silverback.Tests.Messaging
             var subscriberOne = new TestCommandOneSubscriber();
             var subscriberTwo = new TestCommandTwoAsyncSubscriber();
 
-            using (var bus = new Bus())
+            using (var bus = BuildBus())
             {
-                bus.Config()
-                    .WithFactory(t =>
-                    {
-                        if (t == typeof(TestCommandOneSubscriber))
-                            return subscriberOne;
-                        if (t == typeof(TestCommandTwoAsyncSubscriber))
-                            return subscriberTwo;
-
-                        throw new ArgumentOutOfRangeException();
-                    })
-                    .Subscribe<TestCommandOneSubscriber>()
+                bus.Subscribe<TestCommandOneSubscriber>()
                     .Subscribe<TestCommandTwoAsyncSubscriber>();
 
                 bus.Publish(new TestCommandOne());
@@ -59,16 +49,27 @@ namespace Silverback.Tests.Messaging
                 Assert.That(subscriberOne.Handled, Is.EqualTo(2));
                 Assert.That(subscriberTwo.Handled, Is.EqualTo(3));
             }
+
+            Bus BuildBus()
+                => new BusBuilder()
+                    .WithFactory(t =>
+                    {
+                        if (t == typeof(TestCommandOneSubscriber))
+                            return subscriberOne;
+                        if (t == typeof(TestCommandTwoAsyncSubscriber))
+                            return subscriberTwo;
+
+                        throw new ArgumentOutOfRangeException();
+                    })
+                    .Build();
         }
 
         [Test]
         public void SubscribeWithDefaultFactoryTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().WithDefaultFactory().Build())
             {
-                bus.Config()
-                    .WithDefaultFactory()
-                    .Subscribe<TestCommandOneSubscriber>();
+                bus.Subscribe<TestCommandOneSubscriber>();
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandOne());
@@ -80,13 +81,12 @@ namespace Silverback.Tests.Messaging
         [Test]
         public void SubscribeHandlerMethodTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 int counterOne = 0;
                 int counterTwo = 0;
 
-                bus.Config()
-                    .Subscribe<TestCommandOne>(m => counterOne++)
+                bus.Subscribe<TestCommandOne>(m => counterOne++)
                     .Subscribe<TestCommandTwo>(async m =>
                     {
                         await Task.Delay(1);
@@ -107,11 +107,11 @@ namespace Silverback.Tests.Messaging
         [Test]
         public void SubscribeUntypedHandlerMethodTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 int counter = 0;
 
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -126,10 +126,9 @@ namespace Silverback.Tests.Messaging
         [Test]
         public void ConfigureUsingTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
-                bus.Config()
-                    .ConfigureUsing<FakeConfigurator>();
+                bus.ConfigureUsing<FakeConfigurator>();
 
                 Assert.That(FakeConfigurator.Executed, Is.True);
             }
@@ -141,11 +140,11 @@ namespace Silverback.Tests.Messaging
             var counterBase = 0;
             var counterA = 0;
             var counterB = 0;
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
-                bus.Config().Subscribe<TestEventHierarchyBase>(m => counterBase++);
-                bus.Config().Subscribe<TestEventHierarchyChildA>(m => counterA++);
-                bus.Config().Subscribe<TestEventHierarchyChildB>(m => counterB++);
+                bus.Subscribe<TestEventHierarchyBase>(m => counterBase++);
+                bus.Subscribe<TestEventHierarchyChildA>(m => counterA++);
+                bus.Subscribe<TestEventHierarchyChildB>(m => counterB++);
 
                 bus.Publish(new TestEventHierarchyChildA());
                 bus.Publish(new TestEventHierarchyChildB());
@@ -158,6 +157,5 @@ namespace Silverback.Tests.Messaging
                 Assert.That(counterB, Is.EqualTo(1));
             }
         }
-
     }
 }

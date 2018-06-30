@@ -10,10 +10,28 @@ namespace Silverback.Messaging.Configuration
     /// Builds the bus instance.
     /// </summary>
     /// <typeparam name="TBus">The type of the bus.</typeparam>
-    public class BusBuilder<TBus>
-        where TBus : IBus, new()
+    public abstract class BusBuilder<TBus>
+        where TBus : IBus
     {
-        private readonly TBus _bus = new TBus();
+        private readonly TBus _bus;
+
+        #region Ctor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BusBuilder{TBus}"/> class.
+        /// </summary>
+        protected BusBuilder()
+        {
+            _bus = CreateInstance();
+        }
+
+        /// <summary>
+        /// Creates a new instance of the bus.
+        /// </summary>
+        /// <returns></returns>
+        protected abstract TBus CreateInstance();
+
+        #endregion
 
         #region Build
 
@@ -105,5 +123,18 @@ namespace Silverback.Messaging.Configuration
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Builds the <see cref="Bus"/> instance.
+    /// </summary>
+    public class BusBuilder : BusBuilder<Bus>
+    {
+        /// <summary>
+        /// Creates a new instance of the bus.
+        /// </summary>
+        /// <returns></returns>
+        protected override Bus CreateInstance()
+            => new Bus();
     }
 }

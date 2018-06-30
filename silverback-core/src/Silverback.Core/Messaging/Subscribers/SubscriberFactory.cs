@@ -15,15 +15,15 @@ namespace Silverback.Messaging.Subscribers
     public class SubscriberFactory<TSubscriber> : ISubscriber
         where TSubscriber : ISubscriber
     {
-        private readonly Func<ITypeFactory> _typeFactoryProvider;
+        private readonly ITypeFactory _typeFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SubscriberFactory{THandler}" /> class.
         /// </summary>
-        /// <param name="typeFactoryProvider">The method returning the <see cref="ITypeFactory" /> that will be used to get an <see cref="ISubscriber" /> instance to process each received message.</param>
-        public SubscriberFactory(Func<ITypeFactory> typeFactoryProvider)
+        /// <param name="typeFactory">The <see cref="ITypeFactory" /> that will be used to get an <see cref="ISubscriber" /> instance to process each received message.</param>
+        public SubscriberFactory(ITypeFactory typeFactory)
         {
-            _typeFactoryProvider = typeFactoryProvider ?? throw new ArgumentNullException(nameof(typeFactoryProvider));
+            _typeFactory = typeFactory ?? throw new ArgumentNullException(nameof(typeFactory));
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Subscribers
         /// <returns></returns>
         private TSubscriber[] GetSubscribers()
         {
-            var subscribers = _typeFactoryProvider.Invoke().GetInstances<TSubscriber>();
+            var subscribers = _typeFactory.GetInstances<TSubscriber>();
 
             if (subscribers == null)
                 throw new InvalidOperationException($"Couldn't instantiate subscriber of type {typeof(TSubscriber)}.");

@@ -13,10 +13,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public void PublishEventTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetEventPublisher<IEvent>();
 
@@ -30,10 +30,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public void PublishSpecificEventTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetEventPublisher<TestEventOne>();
 
@@ -46,10 +46,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public async Task PublishEventAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetEventPublisher<IEvent>();
 
@@ -63,10 +63,10 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public async Task PublishSpecificEventAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var counter = 0;
-                bus.Config().Subscribe(m => counter++);
+                bus.Subscribe(m => counter++);
 
                 var publisher = bus.GetEventPublisher<TestEventOne>();
 
