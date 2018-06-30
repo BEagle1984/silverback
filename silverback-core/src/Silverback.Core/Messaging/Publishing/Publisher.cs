@@ -163,7 +163,7 @@ namespace Silverback.Messaging.Publishing
                     if (stopwatch.Elapsed >= timeout)
                         throw new TimeoutException($"The request with id {message.RequestId} was not replied in the allotted time.");
 
-                    await Task.Delay(50); // TODO: Check this
+                    await Task.Delay(50); // TODO: Check this!
                 }
 
                 stopwatch.Stop();

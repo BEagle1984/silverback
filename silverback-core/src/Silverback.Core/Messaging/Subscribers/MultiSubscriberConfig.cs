@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers
@@ -10,7 +11,17 @@ namespace Silverback.Messaging.Subscribers
     /// </summary>
     public class MultiSubscriberConfig
     {
+        private readonly ILoggerFactory _loggerFactory;
         private readonly List<ISubscriber> _handlers = new List<ISubscriber>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MultiSubscriberConfig"/> class.
+        /// </summary>
+        /// <param name="loggerFactory">The logger factory.</param>
+        public MultiSubscriberConfig(ILoggerFactory loggerFactory)
+        {
+            _loggerFactory = loggerFactory;
+        }
 
         /// <summary>
         /// Adds an handler for all messages.
@@ -20,7 +31,7 @@ namespace Silverback.Messaging.Subscribers
         /// <returns></returns>
         public MultiSubscriberConfig AddHandler(Action<IMessage> handler, Func<IMessage, bool> filter = null)
         {
-            _handlers.Add(new GenericSubscriber<IMessage>(handler, filter));
+            _handlers.Add(new GenericSubscriber<IMessage>(_loggerFactory, handler, filter));
 
             return this;
         }

@@ -9,6 +9,7 @@ namespace Silverback.Messaging.ErrorHandling
     /// An optional delay can be specified.
     /// </summary>
     /// <seealso cref="Silverback.Messaging.ErrorHandling.ErrorPolicyBase" />
+    /// TODO: Exponential backoff variant
     public class RetryErrorPolicy : ErrorPolicyBase
     {
         private readonly int _retryCount;

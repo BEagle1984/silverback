@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging
@@ -17,6 +18,10 @@ namespace Silverback.Messaging
         private readonly List<ISubscriber> _subscribers = new List<ISubscriber>();
         private readonly ConcurrentDictionary<string, object> _items = new ConcurrentDictionary<string, object>();
         private bool _disposed = false;
+
+        internal Bus()
+        {
+        }
 
         #region Publish
 

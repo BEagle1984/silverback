@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers
@@ -13,11 +14,12 @@ namespace Silverback.Messaging.Subscribers
         where TMessage : IMessage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Subscriber{TMessage}"/> class.
+        /// Initializes a new instance of the <see cref="Subscriber{TMessage}" /> class.
         /// </summary>
+        /// <param name="loggerFactory">The logger factory.</param>
         /// <param name="filter">An optional filter to be applied to the messages.</param>
-        protected Subscriber(Func<TMessage, bool> filter = null)
-            : base(filter)
+        protected Subscriber(ILoggerFactory loggerFactory, Func<TMessage, bool> filter = null)
+            : base(loggerFactory, filter)
         {
         }
 

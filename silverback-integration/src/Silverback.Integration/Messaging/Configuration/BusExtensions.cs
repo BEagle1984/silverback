@@ -7,8 +7,7 @@ using Silverback.Messaging.Adapters;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    /// Contains the extension methods to store and retrieve the objects stored in the <see cref="IBus"/>
-    /// items collection.
+    /// Contains a set of extention methods useful to setup the <see cref="IBus"/>.
     /// </summary>
     public static class BusExtensions
     {
