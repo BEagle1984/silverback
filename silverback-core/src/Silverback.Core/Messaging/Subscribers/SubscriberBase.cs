@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers

@@ -1,5 +1,7 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -9,6 +11,17 @@ namespace Silverback.Messaging.ErrorHandling
     /// <seealso cref="Silverback.Messaging.ErrorHandling.ErrorPolicyBase" />
     public class SkipMessageErrorPolicy : ErrorPolicyBase
     {
+        private ILogger _logger;
+
+        /// <summary>
+        /// Initializes the policy, binding to the specified bus.
+        /// </summary>
+        /// <param name="bus">The bus.</param>
+        public override void Init(IBus bus)
+        {
+            _logger = bus.GetLoggerFactory().CreateLogger<ErrorPolicyBase>();
+            base.Init(bus);
+        }
         /// <summary>
         /// Wraps the specified policy.
         /// </summary>
@@ -26,7 +39,8 @@ namespace Silverback.Messaging.ErrorHandling
         /// <param name="handler">The method that was used to handle the message.</param>
         protected override void ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler)
         {
-            // TODO: Trace
+            _logger.LogWarning($"The message '{envelope.Message.Id}' couldn't be successfully " +
+                               $"processed and will be skipped.");
         }
     }
 }

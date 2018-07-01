@@ -38,15 +38,7 @@ namespace Silverback.Messaging.ErrorHandling
         {
             if (handler == null) throw new ArgumentNullException(nameof(handler));
 
-            try
-            {
-                handler.Invoke(envelope);
-            }
-            catch (Exception)
-            {
-                // TODO: Log & Trace
-                throw;
-            }
+            handler.Invoke(envelope);
         }
     }
 }

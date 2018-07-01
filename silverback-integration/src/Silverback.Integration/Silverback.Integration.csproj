@@ -28,7 +28,7 @@ This package enables communication between them in a flexible and abstracted way
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="Silverback.Core" Version="1.0.13" />
+    <PackageReference Include="Silverback.Core" Version="1.0.15" />
   </ItemGroup>
 
 </Project>

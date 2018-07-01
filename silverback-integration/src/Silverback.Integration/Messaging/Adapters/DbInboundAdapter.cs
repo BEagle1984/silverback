@@ -18,6 +18,7 @@ namespace Silverback.Messaging.Adapters
         where TEntity : IInboundMessageEntity
     {
         private readonly IInboundMessagesRepository<TEntity> _inboxRepository;
+        private readonly ILogger _logger
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DbInboundAdapter{TEntity}"/> class.

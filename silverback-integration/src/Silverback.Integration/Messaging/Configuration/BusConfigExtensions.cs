@@ -176,7 +176,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         public static BusConfig AddDbInbound<TEntity>(this BusConfig config, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
             where TEntity : IInboundMessageEntity
-            => AddInbound< DbInboundAdapter<TEntity>>(config, endpoint, errorPolicy);
+            => AddInbound<DbInboundAdapter<TEntity>>(config, endpoint, errorPolicy);
 
         #endregion
 

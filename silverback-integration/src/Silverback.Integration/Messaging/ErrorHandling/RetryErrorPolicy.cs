@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -15,6 +17,17 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly int _retryCount;
         private readonly TimeSpan _initialDelay;
         private readonly TimeSpan _delayIncreament;
+        private ILogger _logger;
+
+        /// <summary>
+        /// Initializes the policy, binding to the specified bus.
+        /// </summary>
+        /// <param name="bus">The bus.</param>
+        public override void Init(IBus bus)
+        {
+            _logger = bus.GetLoggerFactory().CreateLogger<ErrorPolicyBase>();
+            base.Init(bus);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RetryErrorPolicy"/> class.
@@ -56,12 +69,13 @@ namespace Silverback.Messaging.ErrorHandling
                     handler.Invoke(envelope);
                     break;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // TODO: Log & Trace
-
                     if (i == _retryCount)
                         throw;
+
+                    _logger.LogWarning(ex, $"An error occurred retrying the message '{envelope.Message.Id}'. " +
+                                           $"Will try again.");
                 }
             }
         }
