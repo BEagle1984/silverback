@@ -22,7 +22,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Messaging\Broker\" />
     <Folder Include="Messaging\Messages\" />
   </ItemGroup>
 

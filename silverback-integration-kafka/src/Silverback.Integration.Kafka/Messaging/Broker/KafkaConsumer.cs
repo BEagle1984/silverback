@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Broker
 
             _consumer.Subscribe(_endpoint.Name);
              
-            Task.Run(async() => await StartConsumingAsync());
+            Task.Run(StartConsuming);
         }
 
         internal void Disconnect()
@@ -80,7 +80,7 @@ namespace Silverback.Messaging.Broker
         /// Starts the poll process to retrieve the messages. 
         /// </summary>
         /// <returns></returns>
-        private async Task StartConsumingAsync()
+        private async Task StartConsuming()
         {            
             while (!_disconnected)
             {

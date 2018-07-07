@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Messages;
 using Silverback;
 using Silverback.Messaging;
@@ -8,7 +9,7 @@ using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 
-namespace Producer
+namespace AsyncProducer
 {
     internal static class Program
     {
@@ -33,12 +34,12 @@ namespace Producer
 
             using (var bus = new Bus())
             {
-                bus.Subscribe(new Subscriber());
+                bus.Subscribe(new SubscriberAsync());
 
                 bus.Config()
                    .ConfigureBroker<KafkaBroker>(x => { })
                    .WithFactory(t => (IOutboundAdapter)Activator.CreateInstance(t))
-                   .AddOutbound<TestMessage, SimpleOutboundAdapter>(KafkaEndpoint.Create("Topic1",configurations))
+                   .AddOutbound<TestMessage, SimpleOutboundAdapter>(KafkaEndpoint.Create("Topic1", configurations))
                    .ConnectBrokers();
 
                 var cancelled = false;
@@ -70,14 +71,14 @@ namespace Producer
                         break;
                     }
 
-                    bus.Publish(new TestMessage
+                    bus.PublishAsync(new TestMessage
                     {
                         Id = Guid.NewGuid(),
                         Text = text,
                         Type = "TestMessage"
-                    });
+                    }).ConfigureAwait(false);
                     Console.WriteLine("Message sent to broker");
-                }            
+                }
             }
         }
 

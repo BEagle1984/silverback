@@ -1,12 +1,8 @@
-﻿using System;
+﻿using Silverback.Messaging.Messages;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Common.Logging;
-using Confluent.Kafka;
-using Confluent.Kafka.Serialization;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
@@ -19,13 +15,20 @@ namespace Silverback.Messaging.Broker
     public class KafkaProducer : Producer
     {
         private readonly KafkaEndpoint _endpoint;
-        private Producer<byte[], byte[]> _producer;
 
-        private static ConcurrentDictionary<Dictionary<string, object>, Producer<byte[], byte[]>> _producersChache =
-            new ConcurrentDictionary<Dictionary<string, object>, Producer<byte[], byte[]>>(new ConfigurationComparer());
-        
+        private IKafkaSerializingProducer _producer;
 
-        /// <inheritdoc />
+        private readonly Func<IKafkaSerializingProducer> _producerFactory; 
+
+        private static readonly ConcurrentDictionary<Dictionary<string, object>, IKafkaSerializingProducer> Producers =
+            new ConcurrentDictionary<Dictionary<string, object>, IKafkaSerializingProducer>(new ConfigurationComparer());
+
+        private static readonly ConcurrentDictionary<Dictionary<string, object>, int> ProducersInstanceCounter =
+            new ConcurrentDictionary<Dictionary<string, object>, int>(new ConfigurationComparer());
+
+        private static readonly object SyncLock = new object();
+
+        /// <inheritdoc /> 
         /// <summary>
         /// Initializes a new instance of the <see cref="KafkaProducer"/> class.
         /// </summary>
@@ -34,29 +37,59 @@ namespace Silverback.Messaging.Broker
         public KafkaProducer(IBroker broker, KafkaEndpoint endpoint) : base(broker, endpoint)
         {
             _endpoint = endpoint;
+            _producerFactory =  () => new KafkaSerializingProducer(_endpoint.Configuration);
         }
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KafkaProducer"/> class.
+        /// </summary>
+        /// <param name="broker">The broker.</param>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="producerFactory">The KafkaSerializerProducer factory.</param>
+        public KafkaProducer(IBroker broker, KafkaEndpoint endpoint, Func<IKafkaSerializingProducer> producerFactory) : base(broker, endpoint)
+        {
+            _endpoint = endpoint;
+            _producerFactory = producerFactory;
+        }
 
         /// <summary>
-        /// Create, if not aleady exist, a new istance of confluent producer and cache it by configuration.
+        /// Create, if not already exist, a new istance of producer and cache it by configuration.
         /// </summary>
         internal void Connect()
         {
-            _producer = _producersChache.GetOrAdd( _endpoint.Configuration ,new Producer<byte[], byte[]>(
-                _endpoint.Configuration,
-                    new ByteArraySerializer(),
-                    new ByteArraySerializer()));
+            lock (SyncLock)
+            {
+                if (Producers.ContainsKey(_endpoint.Configuration))
+                {
+                    ProducersInstanceCounter.TryGetValue(_endpoint.Configuration, out var producerInstanceCounter);
+                    ProducersInstanceCounter.TryUpdate(_endpoint.Configuration, producerInstanceCounter++, producerInstanceCounter);
+                    Producers.TryGetValue(_endpoint.Configuration, out _producer);
+                    return;
+                }
+                ProducersInstanceCounter.GetOrAdd(_endpoint.Configuration, 1);
+                _producer = Producers.GetOrAdd(_endpoint.Configuration, _producerFactory.Invoke());
+            }
         }
 
         internal void Disconnect()
         {
-            _producersChache.ToList().ForEach(x => x.Value?.Dispose());
-            _producer = null;
+            lock (SyncLock)
+            {
+                ProducersInstanceCounter.TryGetValue(_endpoint.Configuration, out var count);
+                if (count == 1)
+                {
+                    Producers.TryRemove(_endpoint.Configuration, out var removedItem);
+                    ProducersInstanceCounter.TryRemove(_endpoint.Configuration, out var removed);
+                    removedItem?.Dispose();
+                }
+                ProducersInstanceCounter.TryUpdate(_endpoint.Configuration, count--, count);
+            }
         }
-
+        
         /// <inheritdoc />
         protected override void Produce(IIntegrationMessage message, byte[] serializedMessage)
-            =>ProduceAsync(message, serializedMessage).ConfigureAwait(false);
+            => Task.Run(() => ProduceAsync(message, serializedMessage)).Wait();
 
         /// <inheritdoc />
         protected override async Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)
