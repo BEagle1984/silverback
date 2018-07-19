@@ -11,7 +11,7 @@ using Silverback.Tests.TestTypes.Domain;
 namespace Silverback.Tests.Messaging.Configuration
 {
     [TestFixture]
-    public class BusConfigTests
+    public class BusExtensionsTests
     {
         private OutboundMessagesRepository _outboxRepository;
         private InboundMessagesRepository _inboxRepository;
@@ -26,10 +26,9 @@ namespace Silverback.Tests.Messaging.Configuration
         [Test]
         public void AddOutboundTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboxRepository)).Build())
             {
-                bus.Config()
-                    .WithFactory(t => Activator.CreateInstance(t, _outboxRepository))
+                bus
                     .AddOutbound<TestEventOne, DbOutboundAdapter<OutboundMessageEntity>>(BasicEndpoint.Create("topicEventOne"))
                     .AddOutbound<TestEventTwo, DbOutboundAdapter<OutboundMessageEntity>>(BasicEndpoint.Create("topicEventTwo"));
 
@@ -48,12 +47,11 @@ namespace Silverback.Tests.Messaging.Configuration
         [Test]
         public void AddInboundTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboxRepository)).Build())
             {
                 var adapter = new DbInboundAdapter<InboundMessageEntity>(_inboxRepository);
-                bus.Config()
+                bus
                     .ConfigureBroker<TestBroker>(x => { })
-                    .WithFactory(t => Activator.CreateInstance(t, _outboxRepository))
                     .AddInbound(adapter, BasicEndpoint.Create("test"))
                     .ConnectBrokers();
 
@@ -71,11 +69,10 @@ namespace Silverback.Tests.Messaging.Configuration
         [Test]
         public void AddTranslatorTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboxRepository)).Build())
             {
                 var outputMessages = new List<TestEventOne>();
-                bus.Config()
-                    .WithFactory(t => Activator.CreateInstance(t, _outboxRepository))
+                bus
                     .AddTranslator<TestInternalEventOne, TestEventOne>(m => new TestEventOne { Content = m.InternalMessage })
                     .Subscribe<TestEventOne>(m => outputMessages.Add(m));
 
@@ -93,9 +90,9 @@ namespace Silverback.Tests.Messaging.Configuration
         [Test]
         public void ConfigureBrokerTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
-                bus.Config()
+                bus
                     .ConfigureBroker<TestBroker>(b => b.WithName("Test1"))
                     .ConfigureBroker<TestBroker>(b => b.WithName("Test2"));
 
@@ -109,9 +106,9 @@ namespace Silverback.Tests.Messaging.Configuration
         [Test]
         public void ConnectBrokersTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
-                bus.Config()
+                bus
                     .ConfigureBroker<TestBroker>(b => b.WithName("Test1"))
                     .ConfigureBroker<TestBroker>(b => b.WithName("Test2"));
 
@@ -125,9 +122,9 @@ namespace Silverback.Tests.Messaging.Configuration
         [Test]
         public void DisconnectBrokersTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
-                bus.Config()
+                bus
                     .ConfigureBroker<TestBroker>(b => b.WithName("Test1"))
                     .ConfigureBroker<TestBroker>(b => b.WithName("Test2"));
 

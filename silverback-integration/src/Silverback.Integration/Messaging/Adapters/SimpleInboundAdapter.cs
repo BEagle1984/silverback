@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Adapters
         /// <param name="bus">The internal <see cref="IBus" /> where the messages have to be relayed.</param>
         /// <param name="endpoint">The endpoint this adapter has to connect to.</param>
         /// <param name="errorPolicy">An optional error handling policy.</param>
-        public void Init(IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
+        public virtual void Init(IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
         {
             Bus = bus ?? throw new ArgumentNullException(nameof(bus));
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));

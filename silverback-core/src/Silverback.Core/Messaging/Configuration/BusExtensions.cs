@@ -7,7 +7,8 @@ using Silverback.Messaging.Subscribers;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    /// Contains a set of extention methods useful to setup the <see cref="IBus"/>.
+    /// Contains a set of extension methods useful to setup the <see cref="IBus"/> and 
+    /// subscribe to the published messages.
     /// </summary>
     public static class BusExtensions
     {

@@ -11,8 +11,8 @@ using Silverback.Tests.TestTypes.Subscribers;
 
 namespace Silverback.Tests.Messaging
 {
-    [TestFixture]
-    public class BusConfigTests
+    [TestFixture, Description("Tests for BusBuilder and other setup related extension methods.")]
+    public class BusSetupTests
     {
         [Test]
         public void SubscribeTest()

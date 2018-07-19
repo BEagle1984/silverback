@@ -10,7 +10,6 @@ namespace Silverback.Messaging.ErrorHandling
     /// </summary>
     public abstract class ErrorPolicyBase : IErrorPolicy
     {
-        private ErrorPolicyBase _childPolicy;
         private ILogger _logger;
 
         /// <summary>
@@ -19,23 +18,7 @@ namespace Silverback.Messaging.ErrorHandling
         /// <param name="bus">The bus.</param>
         public virtual void Init(IBus bus)
         {
-            _childPolicy?.Init(bus);
             _logger = bus.GetLoggerFactory().CreateLogger<ErrorPolicyBase>();
-        }
-
-        /// <summary>
-        /// Wraps the specified policy.
-        /// </summary>
-        /// <param name="policy">The policy to be executed if this one fails.</param>
-        public virtual IErrorPolicy Wrap(IErrorPolicy policy)
-        {
-            if (policy == null) throw new ArgumentNullException(nameof(policy));
-
-            _childPolicy = policy as ErrorPolicyBase;
-
-            if (_childPolicy == null) throw new ArgumentException("The wrapped policy must inherit from ErrorPolicyBase.", nameof(policy));
-
-            return this;
         }
 
         /// <summary>
@@ -56,7 +39,7 @@ namespace Silverback.Messaging.ErrorHandling
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, $"An error occurred handling the message '{envelope.Message.Id}'. " +
-                                       $"The policy '{GetType().Name}' will be applied.");
+                                       $"The policy '{this}' will be applied.");
                 HandleError(envelope, handler);
             }
         }
@@ -75,30 +58,18 @@ namespace Silverback.Messaging.ErrorHandling
             }
             catch (Exception ex)
             {
-                if (_childPolicy != null)
-                {
-                    _logger.LogInformation(ex, $"The error policy has been applied but the message " +
-                                               $"'{envelope.Message.Id}' still couldn't be successfully " +
-                                               $"processed. Will continue applying the next policy " +
-                                               $"({_childPolicy.GetType().Name}");
-
-                    _childPolicy.HandleError(envelope, handler);
-                }
-                else
-                {
-                    _logger.LogWarning(ex, $"All policies have been applied but the message " +
-                                           $"'{envelope.Message.Id}' still couldn't be successfully " +
-                                           $"processed. An exception will be thrown.");
-                    throw new ErrorPolicyException($"Failed to process message '{envelope.Message.Id}'. See InnerException for details.", ex);
-                }
+                _logger.LogWarning(ex, $"The policy was applied but the message " +
+                                       $"'{envelope.Message.Id}' still couldn't be successfully " +
+                                       $"processed. An exception will be thrown.");
+                throw new ErrorPolicyException($"Failed to process message '{envelope.Message.Id}'. See InnerException for details.", ex);
             }
         }
 
         /// <summary>
-        /// Applies the error handling policy.
+        /// When implemented in a derived class applies the error handling policy.
         /// </summary>
         /// <param name="envelope">The envelope containing the failed message.</param>
         /// <param name="handler">The method that was used to handle the message.</param>
-        protected abstract void ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler);
+        public abstract void ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler);
     }
 }

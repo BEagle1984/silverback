@@ -13,23 +13,22 @@ namespace Silverback.Tests.Messaging.Adapters
     [TestFixture]
     public class SimpleInboudAdapterTests
     {
-        private Bus _bus;
+        private IBus _bus;
 
         [SetUp]
         public void Setup()
         {
-            _bus = BusConfig.Create<Bus>(c => c
+            _bus = new BusBuilder().Build()
                 .ConfigureBroker<TestBroker>(x => x
                     .UseServer("server")
-                )
-            );
+                );
         }
 
         [Test]
         public void RelayMessageTest()
         {
             int count = 0;
-            _bus.Config().Subscribe<IMessage>(m => count++);
+            _bus.Subscribe<IMessage>(m => count++);
 
             var adapter = new SimpleInboundAdapter();
             adapter.Init(_bus, BasicEndpoint.Create("test"));
@@ -50,7 +49,7 @@ namespace Silverback.Tests.Messaging.Adapters
         public void ErrorPolicyTest()
         {
             int count = 0;
-            _bus.Config().Subscribe<IMessage>(m =>
+            _bus.Subscribe<IMessage>(m =>
             {
                 count++;
                 if (count < 4)
@@ -72,7 +71,7 @@ namespace Silverback.Tests.Messaging.Adapters
         public void ChainedErrorPolicyTest()
         {
             int count = 0;
-            _bus.Config().Subscribe<IMessage>(m =>
+            _bus.Subscribe<IMessage>(m =>
             {
                 count++;
                 throw new Exception("Retry please");

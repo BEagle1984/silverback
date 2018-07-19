@@ -14,16 +14,15 @@ namespace Silverback.Tests.Messaging.Adapters
     public class DbInboudAdapterTests
     {
         private InboundMessagesRepository _repository;
-        private Bus _bus;
+        private IBus _bus;
 
         [SetUp]
         public void Setup()
         {
-            _bus = BusConfig.Create<Bus>(c => c
+            _bus = new BusBuilder().Build()
                 .ConfigureBroker<TestBroker>(x => x
                     .UseServer("server")
-                )
-            );
+                );
 
             _repository = new InboundMessagesRepository();
         }
@@ -32,7 +31,7 @@ namespace Silverback.Tests.Messaging.Adapters
         public void RelayMessageTest()
         {
             int count = 0;
-            _bus.Config().Subscribe<IMessage>(m => count++);
+            _bus.Subscribe<IMessage>(m => count++);
 
             var adapter = new DbInboundAdapter<InboundMessageEntity>(_repository);
             adapter.Init(_bus, BasicEndpoint.Create("test"));

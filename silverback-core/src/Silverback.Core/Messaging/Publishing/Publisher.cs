@@ -146,10 +146,10 @@ namespace Silverback.Messaging.Publishing
 
             TResponse response = default;
 
-            var replySubscriber = replyBus.Subscribe(
-                new GenericSubscriber<TResponse>(
-                    m => response = m,
-                    m => m.RequestId == message.RequestId));
+            var replySubscriber = new GenericSubscriber<TResponse>(
+                m => response = m,
+                m => m.RequestId == message.RequestId);
+            replyBus.Subscribe(replySubscriber);
 
             try
             {

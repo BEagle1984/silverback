@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Transactions;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Repositories;
 
 namespace Silverback.Messaging.Adapters
@@ -18,7 +19,7 @@ namespace Silverback.Messaging.Adapters
         where TEntity : IInboundMessageEntity
     {
         private readonly IInboundMessagesRepository<TEntity> _inboxRepository;
-        private readonly ILogger _logger
+        private ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DbInboundAdapter{TEntity}"/> class.
@@ -31,18 +32,30 @@ namespace Silverback.Messaging.Adapters
         }
 
         /// <summary>
+        /// Initializes the <see cref="T:Silverback.Messaging.Adapters.IInboundAdapter" />.
+        /// </summary>
+        /// <param name="bus">The internal <see cref="T:Silverback.Messaging.IBus" /> where the messages have to be relayed.</param>
+        /// <param name="endpoint">The endpoint this adapter has to connect to.</param>
+        /// <param name="errorPolicy">An optional error handling policy.</param>
+        public override void Init(IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
+        {
+            _logger = bus.GetLoggerFactory().CreateLogger<DbInboundAdapter<TEntity>>();
+            base.Init(bus, endpoint, errorPolicy);
+        }
+
+        /// <summary>
         /// Relays the message ensuring that it wasn't processed already by this microservice.
         /// </summary>
         /// <param name="message">The message.</param>
         protected override void RelayMessage(IIntegrationMessage message)
         {
+            // TODO: IMPORTANT: The check must be extended to Id + QUEUE in order to allow retry of messages that are moved to a retry queue
             if (_inboxRepository.Exists(message.Id))
             {
-                // TODO: Trace
+                _logger.LogInformation($"Message '{message.Id}' is being skipped since it was already processed.");
                 return;
             }
 
-            // TODO: IMPORTANT: If the message is moved into a retry queue it shouldn't be added to the inbox table, even though no exception is returned.
             var entity = _inboxRepository.Create();
             entity.MessageId = message.Id;
             entity.Received = DateTime.UtcNow;

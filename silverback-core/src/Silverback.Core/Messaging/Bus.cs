@@ -19,6 +19,9 @@ namespace Silverback.Messaging
         private readonly ConcurrentDictionary<string, object> _items = new ConcurrentDictionary<string, object>();
         private bool _disposed = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Bus"/> class.
+        /// </summary>
         internal Bus()
         {
         }
@@ -63,7 +66,7 @@ namespace Silverback.Messaging
         /// the messages sent through this bus.
         /// </summary>
         /// <param name="subscriber">The subscriber.</param>
-        public ISubscriber Subscribe(ISubscriber subscriber)
+        public IBus Subscribe(ISubscriber subscriber)
         {
             CheckDisposed();
 
@@ -73,20 +76,23 @@ namespace Silverback.Messaging
                 subscriber.Init(this);
             }
 
-            return subscriber;
+            return this;
         }
 
         /// <summary>
         /// Dispose the specified subscriber.
         /// </summary>
         /// <param name="subscriber">The subscriber.</param>
-        public void Unsubscribe(ISubscriber subscriber)
+        public IBus Unsubscribe(ISubscriber subscriber)
         {
             lock (_subscribers)
             {
                 _subscribers.Remove(subscriber);
             }
+
+            return this;
         }
+
         #endregion
 
         #region Items

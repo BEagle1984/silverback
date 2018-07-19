@@ -13,19 +13,17 @@ namespace Silverback.Tests.Messaging.ErrorHandling
     [TestFixture]
     public class MoveMessageErrorPolicyTests
     {
-        private Bus _bus;
-        private IEndpoint _endpoint = BasicEndpoint.Create("test_target");
+        private IBus _bus;
+        private readonly IEndpoint _endpoint = BasicEndpoint.Create("test_target");
 
         [SetUp]
         public void Setup()
         {
-            _bus = BusConfig.Create<Bus>(c => c
+            _bus = new BusBuilder().Build()
                 .ConfigureBroker<TestBroker>(x => x
                     .UseServer("server")
-                )
-            );
+                );
         }
-
 
         [Test]
         public void SuccessTest()

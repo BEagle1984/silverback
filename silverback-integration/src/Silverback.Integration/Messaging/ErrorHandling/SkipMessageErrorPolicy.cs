@@ -19,7 +19,7 @@ namespace Silverback.Messaging.ErrorHandling
         /// <param name="bus">The bus.</param>
         public override void Init(IBus bus)
         {
-            _logger = bus.GetLoggerFactory().CreateLogger<ErrorPolicyBase>();
+            _logger = bus.GetLoggerFactory().CreateLogger<SkipMessageErrorPolicy>();
             base.Init(bus);
         }
         /// <summary>

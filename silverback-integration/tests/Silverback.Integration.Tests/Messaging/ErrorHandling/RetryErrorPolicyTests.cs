@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
@@ -10,11 +11,20 @@ namespace Silverback.Tests.Messaging.ErrorHandling
     [TestFixture]
     public class RetryErrorPolicyTests
     {
+        private RetryErrorPolicy _policy;
+
+        [SetUp]
+        public void Setup()
+        {
+            _policy = new RetryErrorPolicy(3);
+            _policy.Init(new BusBuilder().Build());
+        }
+
         [Test]
         public void SuccessTest()
         {
             var executed = false;
-            new NoErrorPolicy().TryHandleMessage(
+            _policy.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
                 _ => executed = true);
 
@@ -27,7 +37,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var tryCount = 0;
             var success = false;
 
-            new RetryErrorPolicy(5).TryHandleMessage(
+            _policy.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
                 _ =>
                 {
@@ -47,7 +57,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var tryCount = 0;
 
             Assert.Throws<ErrorPolicyException>(() =>
-                new RetryErrorPolicy(3).TryHandleMessage(
+                _policy.TryHandleMessage(
                     Envelope.Create(new TestEventOne()),
                     _ =>
                     {
@@ -64,10 +74,10 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var tryCount = 0;
 
             var testPolicy = new TestErrorPolicy();
+            _policy.Wrap(testPolicy);
+            _policy.Init(new BusBuilder().Build());
 
-            new RetryErrorPolicy(1)
-                .Wrap(testPolicy)
-                .TryHandleMessage(
+            _policy.TryHandleMessage(
                     Envelope.Create(new TestEventOne()),
                     _ =>
                     {
@@ -76,7 +86,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                     });
 
             Assert.That(testPolicy.Applied, Is.True);
-            Assert.That(tryCount, Is.EqualTo(2));
+            Assert.That(tryCount, Is.EqualTo(4));
         }
 
         [Test]
@@ -84,17 +94,38 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         {
             var tryCount = 0;
 
-            new RetryErrorPolicy(1)
-                .Wrap(new SkipMessageErrorPolicy())
-                .TryHandleMessage(
-                    Envelope.Create(new TestEventOne()),
-                    _ =>
-                    {
-                        tryCount++;
-                        throw new Exception("retry, please");
-                    });
+            _policy.Wrap(new SkipMessageErrorPolicy());
+            _policy.Init(new BusBuilder().Build());
 
-            Assert.That(tryCount, Is.EqualTo(2));
+            _policy.TryHandleMessage(
+                Envelope.Create(new TestEventOne()),
+                _ =>
+                {
+                    tryCount++;
+                    throw new Exception("retry, please");
+                });
+
+            Assert.That(tryCount, Is.EqualTo(4));
+        }
+
+
+        [Test]
+        public void MultiChainingTest()
+        {
+            var tryCount = 0;
+
+            _policy.Wrap( new SkipMessageErrorPolicy());
+            _policy.Init(new BusBuilder().Build());
+
+            _policy.TryHandleMessage(
+                Envelope.Create(new TestEventOne()),
+                _ =>
+                {
+                    tryCount++;
+                    throw new Exception("retry, please");
+                });
+
+            Assert.That(tryCount, Is.EqualTo(4));
         }
     }
 }

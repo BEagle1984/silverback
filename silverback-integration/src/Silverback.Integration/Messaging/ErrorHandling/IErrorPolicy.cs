@@ -15,13 +15,6 @@ namespace Silverback.Messaging.ErrorHandling
         void Init(IBus bus);
 
         /// <summary>
-        /// Wraps the specified policy.
-        /// </summary>
-        /// <param name="policy">The policy to be executed if this one fails.</param>
-        /// <returns>Returns the outer policy.</returns>
-        IErrorPolicy Wrap(IErrorPolicy policy);
-
-        /// <summary>
         /// Tries to process the message with the specified handler and takes care of handling
         /// the possible errors.
         /// </summary>
