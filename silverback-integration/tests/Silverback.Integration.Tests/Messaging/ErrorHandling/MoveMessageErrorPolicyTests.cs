@@ -29,7 +29,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         public void SuccessTest()
         {
             var executed = false;
-            var policy = new MoveMessageErrorPolicy(_endpoint);
+            var policy = ErrorPolicy.Move(_endpoint);
 
             policy.Init(_bus);
             _bus.ConnectBrokers();
@@ -47,7 +47,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         [Test]
         public void ErrorTest()
         {
-            var policy = new MoveMessageErrorPolicy(_endpoint);
+            var policy = ErrorPolicy.Move(_endpoint);
 
             policy.Init(_bus);
             _bus.ConnectBrokers();

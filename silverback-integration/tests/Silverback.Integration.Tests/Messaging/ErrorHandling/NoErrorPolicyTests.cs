@@ -29,12 +29,5 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                     Envelope.Create(new TestEventOne()),
                     _ => throw new Exception("test")));
         }
-
-        [Test]
-        public void ChainingTest()
-        {
-            Assert.Throws<NotSupportedException>(() =>
-                new NoErrorPolicy().Wrap(new TestErrorPolicy()));
-        }
     }
 }

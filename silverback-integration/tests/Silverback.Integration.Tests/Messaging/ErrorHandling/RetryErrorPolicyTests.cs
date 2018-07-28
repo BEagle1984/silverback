@@ -3,7 +3,6 @@ using NUnit.Framework;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
 namespace Silverback.Tests.Messaging.ErrorHandling
@@ -64,66 +63,6 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                         tryCount++;
                         throw new Exception("retry, please");
                     }));
-
-            Assert.That(tryCount, Is.EqualTo(4));
-        }
-
-        [Test]
-        public void ChainingTest()
-        {
-            var tryCount = 0;
-
-            var testPolicy = new TestErrorPolicy();
-            _policy.Wrap(testPolicy);
-            _policy.Init(new BusBuilder().Build());
-
-            _policy.TryHandleMessage(
-                    Envelope.Create(new TestEventOne()),
-                    _ =>
-                    {
-                        tryCount++;
-                        throw new Exception("retry, please");
-                    });
-
-            Assert.That(testPolicy.Applied, Is.True);
-            Assert.That(tryCount, Is.EqualTo(4));
-        }
-
-        [Test]
-        public void ChainingTest2()
-        {
-            var tryCount = 0;
-
-            _policy.Wrap(new SkipMessageErrorPolicy());
-            _policy.Init(new BusBuilder().Build());
-
-            _policy.TryHandleMessage(
-                Envelope.Create(new TestEventOne()),
-                _ =>
-                {
-                    tryCount++;
-                    throw new Exception("retry, please");
-                });
-
-            Assert.That(tryCount, Is.EqualTo(4));
-        }
-
-
-        [Test]
-        public void MultiChainingTest()
-        {
-            var tryCount = 0;
-
-            _policy.Wrap( new SkipMessageErrorPolicy());
-            _policy.Init(new BusBuilder().Build());
-
-            _policy.TryHandleMessage(
-                Envelope.Create(new TestEventOne()),
-                _ =>
-                {
-                    tryCount++;
-                    throw new Exception("retry, please");
-                });
 
             Assert.That(tryCount, Is.EqualTo(4));
         }

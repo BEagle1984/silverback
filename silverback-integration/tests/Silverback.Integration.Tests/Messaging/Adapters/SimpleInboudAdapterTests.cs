@@ -78,7 +78,12 @@ namespace Silverback.Tests.Messaging.Adapters
             });
 
             var adapter = new SimpleInboundAdapter();
-            adapter.Init(_bus, BasicEndpoint.Create("test"), ErrorPolicy.Retry(1).Move(BasicEndpoint.Create("bad")));
+            adapter.Init(
+                _bus,
+                BasicEndpoint.Create("test"),
+                ErrorPolicy.Chain(
+                    ErrorPolicy.Retry(1),
+                    ErrorPolicy.Move(BasicEndpoint.Create("bad"))));
 
             _bus.ConnectBrokers();
 

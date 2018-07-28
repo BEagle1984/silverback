@@ -18,16 +18,6 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         /// <summary>
-        /// Wraps the specified policy.
-        /// </summary>
-        /// <param name="policy">The policy to be executed if this one fails.</param>
-        /// <exception cref="NotImplementedException"></exception>
-        public IErrorPolicy Wrap(IErrorPolicy policy)
-        {
-            throw new NotSupportedException("Chaining is not supported by the NoErrorPolicy.");
-        }
-
-        /// <summary>
         /// Tries to process the message with the specified handler and takes care of handling
         /// the possible errors.
         /// </summary>

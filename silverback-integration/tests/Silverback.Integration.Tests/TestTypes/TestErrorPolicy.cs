@@ -8,7 +8,7 @@ namespace Silverback.Tests.TestTypes
     {
         public bool Applied { get; private set; }
 
-        protected override void ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler)
+        public override void ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler)
         {
             Applied = true;
         }

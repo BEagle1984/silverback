@@ -4,10 +4,10 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Extensions;
 
 namespace Silverback.Messaging.ErrorHandling
 {
-    // TODO: TEST
     /// <summary>
     /// A chain of error policies to be applied one after another.
     /// </summary>
@@ -20,7 +20,16 @@ namespace Silverback.Messaging.ErrorHandling
         /// <summary>
         /// Initializes a new instance of the <see cref="ErrorPolicyChain"/> class.
         /// </summary>
-        /// <param name="policies">The policies.</param>
+        /// <param name="policies">The policies to be applied one after the other.</param>
+        public ErrorPolicyChain(params ErrorPolicyBase[] policies)
+            : this (policies.AsEnumerable())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ErrorPolicyChain"/> class.
+        /// </summary>
+        /// <param name="policies">The policies to be applied one after the other.</param>
         public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies)
         {
             if (policies == null) throw new ArgumentNullException(nameof(policies));
@@ -37,6 +46,8 @@ namespace Silverback.Messaging.ErrorHandling
         {
             _logger = bus.GetLoggerFactory().CreateLogger<ErrorPolicyChain>();
             base.Init(bus);
+
+            _policies?.ForEach(p => p.Init(bus));
         }
 
         /// <summary>
