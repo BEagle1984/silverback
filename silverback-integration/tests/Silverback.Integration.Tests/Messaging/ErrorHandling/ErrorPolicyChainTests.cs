@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
+using Silverback.Messaging;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
@@ -31,11 +32,32 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 Envelope.Create(new TestEventOne()),
                 _ => throw new Exception("retry, please"));
 
-            Assert.That(testPolicies.All(x => x.Applied));
+            Assert.That(testPolicies.Count(x => x.Applied), Is.EqualTo(1));
         }
 
         [Test]
         public void ChainingTest2()
+        {
+            var testPolicy = new TestErrorPolicy();
+
+            var chain = ErrorPolicy.Chain(
+                ErrorPolicy.Retry(1),
+                ErrorPolicy.Retry(1),
+                ErrorPolicy.Retry(1),
+                ErrorPolicy.Retry(1), 
+                testPolicy);
+
+            chain.Init(new BusBuilder().Build());
+
+            chain.TryHandleMessage(
+                Envelope.Create(new TestEventOne()),
+                _ => throw new Exception("retry, please"));
+
+            Assert.That(testPolicy.Applied);
+        }
+
+        [Test]
+        public void ChainingTest3()
         {
             var tryCount = 0;
 
@@ -56,7 +78,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         }
 
         [Test]
-        public void ChainingTest3()
+        public void ChainingTest4()
         {
             var tryCount = 0;
 
@@ -72,6 +94,27 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 });
 
             Assert.That(tryCount, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void ChainingTest5()
+        {
+            var tryCount = 0;
+
+            var chain = ErrorPolicy.Chain(ErrorPolicy.Retry(3).ApplyTo<InvalidOperationException>(), ErrorPolicy.Skip());
+            chain.Init(new BusBuilder().Build());
+
+            chain.TryHandleMessage(
+                Envelope.Create(new TestEventOne()),
+                _ =>
+                {
+                    tryCount++;
+                    if (tryCount < 2)
+                        throw new InvalidOperationException();
+                    throw new Exception("retry, please");
+                });
+
+            Assert.That(tryCount, Is.EqualTo(2));
         }
     }
 }

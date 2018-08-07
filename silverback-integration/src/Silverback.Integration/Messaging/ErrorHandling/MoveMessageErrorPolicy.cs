@@ -38,7 +38,8 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="envelope">The envelope containing the failed message.</param>
         /// <param name="handler">The method that was used to handle the message.</param>
-        public override void ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler)
+        /// <param name="exception">The exception that occurred.</param>
+        protected override void ApplyPolicyImpl(IEnvelope envelope, Action<IEnvelope> handler, Exception exception)
             => _producer.Produce(envelope);
     }
 }

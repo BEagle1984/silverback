@@ -50,7 +50,8 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="envelope">The envelope containing the failed message.</param>
         /// <param name="handler">The method that was used to handle the message.</param>
-        public override void ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler)
+        /// <param name="exception">The exception that occurred.</param>
+        protected override void ApplyPolicyImpl(IEnvelope envelope, Action<IEnvelope> handler, Exception exception)
         {
             var delay = _initialDelay;
 
@@ -71,9 +72,10 @@ namespace Silverback.Messaging.ErrorHandling
                 }
                 catch (Exception ex)
                 {
-                    if (i == _retryCount)
+                    if (i == _retryCount || !MustHandle(ex)) // TODO: Is it correct to reevaluate the exception type?
                         throw;
 
+                    // TODO: Is this really to be a warning?
                     _logger.LogWarning(ex, $"An error occurred retrying the message '{envelope.Message.Id}'. " +
                                            $"Will try again.");
                 }

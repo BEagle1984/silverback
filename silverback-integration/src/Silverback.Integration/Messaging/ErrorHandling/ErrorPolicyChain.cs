@@ -55,15 +55,17 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="envelope">The envelope containing the failed message.</param>
         /// <param name="handler">The method that was used to handle the message.</param>
-        public override void ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler)
+        /// <param name="exception">The exception that occurred.</param>
+        protected override void ApplyPolicyImpl(IEnvelope envelope, Action<IEnvelope> handler, Exception exception)
         {
             for (var i = 0; i < _policies.Length; i++)
             {
-                _logger.LogInformation($"Applying chained policy '{_policies[i]}' to handle failed message '{envelope.Message.Id}'.");
+                _logger.LogInformation($"Applying chained policy {i+1} of {_policies.Length} ({_policies[i]}) to handle failed message '{envelope.Message.Id}'.");
 
                 try
                 {
-                    _policies[i].ApplyPolicy(envelope, handler);
+                    if (_policies[i].ApplyPolicy(envelope, handler, exception))
+                        break;
                 }
                 catch (Exception ex)
                 {
@@ -73,6 +75,8 @@ namespace Silverback.Messaging.ErrorHandling
                     _logger.LogWarning(ex, $"The error policy has been applied but the message " +
                                            $"'{envelope.Message.Id}' still couldn't be successfully " +
                                            $"processed. Will continue applying the next policy. ");
+
+                    exception = ex; // TODO: Correct to overwrite the exception?
                 }
             }
         }
