@@ -31,6 +31,7 @@ namespace Silverback.Messaging.Adapters
         /// <param name="message">The message to be handled.</param>
         public override void Handle(TMessage message)
         {
+            // TODO: Trace
             _bus.Publish(Map(message));
         }
 

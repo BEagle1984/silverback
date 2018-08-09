@@ -52,6 +52,7 @@ namespace Silverback.Messaging.Adapters
         /// <exception cref="InvalidOperationException">Connect was called twice.</exception>
         protected virtual void Connect(IBroker broker, IEndpoint endpoint)
         {
+            // TODO: Trace
             if (_consumer != null)
                 throw new InvalidOperationException("Connect was called twice.");
 
@@ -75,6 +76,6 @@ namespace Silverback.Messaging.Adapters
         /// </summary>
         /// <param name="message">The message.</param>
         protected virtual void RelayMessage(IIntegrationMessage message)
-            => Bus.Publish(message);
+            => Bus.Publish(message);            // TODO: Trace
     }
 }

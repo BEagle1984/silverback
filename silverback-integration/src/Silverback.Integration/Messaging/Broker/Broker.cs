@@ -2,6 +2,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Extensions;
@@ -15,6 +17,18 @@ namespace Silverback.Messaging.Broker
     /// <seealso cref="IBroker" />
     public abstract class Broker : IBroker, IDisposable
     {
+        #region Ctor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Broker" /> class.
+        /// </summary>
+        protected Broker()
+        {
+            UseLogger(NullLoggerFactory.Instance);
+        }
+
+        #endregion
+
         #region Get Producers / Consumers / Serializer
 
         private ConcurrentDictionary<IEndpoint, Producer> _producers = new ConcurrentDictionary<IEndpoint, Producer>();
@@ -40,7 +54,13 @@ namespace Silverback.Messaging.Broker
         /// <returns></returns>
         /// TODO: Throw exception if connected?
         public IProducer GetProducer(IEndpoint endpoint)
-            => _producers.GetOrAdd(endpoint, GetNewProducer(endpoint));
+        {
+            return _producers.GetOrAdd(endpoint, _ =>
+            {
+                _logger.LogInformation($"Creating new producer for endpoint '{endpoint.Name}'");
+                return GetNewProducer(endpoint);
+            });
+        }
 
         /// <summary>
         /// Gets a new <see cref="Producer" /> instance to publish messages to the specified endpoint.
@@ -57,7 +77,13 @@ namespace Silverback.Messaging.Broker
         public IConsumer GetConsumer(IEndpoint endpoint)
         {
             if (!IsConnected)
-                return _consumers.GetOrAdd(endpoint, GetNewConsumer(endpoint));
+            {
+                return _consumers.GetOrAdd(endpoint, _ =>
+                {
+                    _logger.LogInformation($"Creating new consumer for endpoint '{endpoint.Name}'");
+                    return GetNewConsumer(endpoint);
+                });
+            }
 
             if (!_consumers.TryGetValue(endpoint, out var consumer))
                 throw new InvalidOperationException("The broker is already connected. Disconnect it to get a new consumer.");
@@ -91,6 +117,8 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public void Connect()
         {
+            _logger.LogTrace("Connecting...");
+
             RemoveDisposedObjects(_consumers);
             RemoveDisposedObjects(_producers);
 
@@ -98,6 +126,8 @@ namespace Silverback.Messaging.Broker
             Connect(_producers.Values);
 
             IsConnected = true;
+
+            _logger.LogTrace("Connected!");
         }
 
         /// <summary>
@@ -132,6 +162,8 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public void Disconnect()
         {
+            _logger.LogTrace("Disconnecting...");
+
             RemoveDisposedObjects(_consumers);
             RemoveDisposedObjects(_producers);
 
@@ -139,6 +171,8 @@ namespace Silverback.Messaging.Broker
             Disconnect(_producers.Values);
 
             IsConnected = false;
+
+            _logger.LogTrace("Disconnected!");
         }
 
         /// <summary>
@@ -159,6 +193,7 @@ namespace Silverback.Messaging.Broker
 
         #region Configuration
 
+        private ILogger _logger;
         private Type _serializerType;
         private IMessageSerializer _serializer;
 
@@ -172,6 +207,11 @@ namespace Silverback.Messaging.Broker
         /// Gets a value indicating whether this configuration is the default one.
         /// </summary>
         public bool IsDefault { get; private set; }
+
+        /// <summary>
+        /// The logger factory
+        /// </summary>
+        public ILoggerFactory LoggerFactory { get; private set; }
 
         /// <summary>
         /// Set a name to the configuration. Necessary if working with multiple
@@ -217,6 +257,19 @@ namespace Silverback.Messaging.Broker
         /// <remarks>An exception must be thrown if the confgiuration is not conistent.</remarks>
         public virtual void ValidateConfiguration()
         {
+        }
+
+        /// <summary>
+        /// Configures the specified <see cref="ILoggerFactory" /> to be used within the bus.
+        /// </summary>
+        /// <param name="loggerFactory">The logger factory.</param>
+        /// <returns></returns>
+        public Broker UseLogger(ILoggerFactory loggerFactory)
+        {
+            LoggerFactory = loggerFactory;
+            _logger = loggerFactory.CreateLogger<Broker>();
+
+            return this;
         }
 
         #endregion
