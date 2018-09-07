@@ -8,18 +8,18 @@ namespace Silverback.Messaging.Adapters
     /// Translates the internal <see cref="IMessage"/> into an <see cref="IIntegrationMessage"/> that can be sent over 
     /// the message broker.
     /// </summary>
-    public abstract class MessageTranslator<TMessage, TIntegrationMessage> : Subscriber<TMessage> 
+    public abstract class MessageMapper<TMessage, TIntegrationMessage> : Subscriber<TMessage> 
         where TMessage : IMessage
         where TIntegrationMessage : IIntegrationMessage
     {
         private readonly IBus _bus;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MessageTranslator{TMessage, TIntegrationMessage}"/> class.
+        /// Initializes a new instance of the <see cref="MessageMapper{TMessage,TIntegrationMessage}"/> class.
         /// </summary>
         /// <param name="bus">The bus.</param>
         /// <param name="filter">An optional filter to be applied to the messages</param>
-        protected MessageTranslator(IBus bus, Func<TMessage, bool> filter = null)
+        protected MessageMapper(IBus bus, Func<TMessage, bool> filter = null)
             : base(filter)
         {
             _bus = bus;

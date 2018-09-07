@@ -67,13 +67,13 @@ namespace Silverback.Tests.Messaging.Configuration
         }
 
         [Test]
-        public void AddTranslatorTest()
+        public void AddMapperTest()
         {
             using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboxRepository)).Build())
             {
                 var outputMessages = new List<TestEventOne>();
                 bus
-                    .AddTranslator<TestInternalEventOne, TestEventOne>(m => new TestEventOne { Content = m.InternalMessage })
+                    .AddMapper<TestInternalEventOne, TestEventOne>(m => new TestEventOne { Content = m.InternalMessage })
                     .Subscribe<TestEventOne>(m => outputMessages.Add(m));
 
                 bus.Publish(new TestInternalEventOne());

@@ -243,24 +243,24 @@ namespace Silverback.Messaging.Configuration
 
         #endregion
 
-        #region Translator
+        #region Mapper
 
         /// <summary>
-        /// Configures a <see cref="MessageTranslator{TMessage, TIntegrationMessage}" />.
+        /// Configures a <see cref="MessageMapper{TMessage,TIntegrationMessage}" />.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages.</typeparam>
         /// <typeparam name="TIntegrationMessage">The type of the integration message.</typeparam>
-        /// <typeparam name="TTranslator">Type of the <see cref="MessageTranslator{TMessage, TIntegrationMessage}" /> to be used to translate the messages.</typeparam>
+        /// <typeparam name="TMapper">Type of the <see cref="MessageMapper{TMessage,TIntegrationMessage}" /> to be used to translate the messages.</typeparam>
         /// <param name="bus">The bus.</param>
         /// <returns></returns>
-        public static IBus AddTranslator<TMessage, TIntegrationMessage, TTranslator>(this IBus bus)
+        public static IBus AddMapper<TMessage, TIntegrationMessage, TMapper>(this IBus bus)
             where TMessage : IMessage
             where TIntegrationMessage : IIntegrationMessage
-            where TTranslator : MessageTranslator<TMessage, TIntegrationMessage>
-            => bus.Subscribe<TTranslator>();
+            where TMapper : MessageMapper<TMessage, TIntegrationMessage>
+            => bus.Subscribe<TMapper>();
 
         /// <summary>
-        /// Configures a <see cref="MessageTranslator{TMessage, TIntegrationMessage}" />.
+        /// Configures a <see cref="MessageMapper{TMessage,TIntegrationMessage}" />.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages.</typeparam>
         /// <typeparam name="TIntegrationMessage">The type of the integration message.</typeparam>
@@ -268,10 +268,10 @@ namespace Silverback.Messaging.Configuration
         /// <param name="mapper">The mapper method.</param>
         /// <param name="filter">An optional filter to be applied to the published messages.</param>
         /// <returns></returns>
-        public static IBus AddTranslator<TMessage, TIntegrationMessage>(this IBus bus, Func<TMessage, TIntegrationMessage> mapper, Func<TMessage, bool> filter = null)
+        public static IBus AddMapper<TMessage, TIntegrationMessage>(this IBus bus, Func<TMessage, TIntegrationMessage> mapper, Func<TMessage, bool> filter = null)
             where TMessage : IMessage
             where TIntegrationMessage : IIntegrationMessage
-            => bus.Subscribe(new GenericMessageTranslator<TMessage, TIntegrationMessage>(mapper, bus, filter));
+            => bus.Subscribe(new GenericMessageMapper<TMessage, TIntegrationMessage>(mapper, bus, filter));
 
         #endregion
     }
