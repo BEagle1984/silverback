@@ -15,8 +15,8 @@ namespace Silverback.Tests.TestTypes
         public void Add(InboundMessageEntity entity)
             => DbSet.Add(entity);
 
-        public bool Exists(Guid messageId)
-            => DbSet.Any(m => m.MessageId == messageId);
+        public bool Exists(Guid messageId, string endpoint)
+            => DbSet.Any(m => m.MessageId == messageId && m.EndpointName == endpoint);
 
         public void SaveChanges()
         {

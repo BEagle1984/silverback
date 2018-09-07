@@ -13,6 +13,11 @@ namespace Silverback.Messaging.Repositories
         Guid MessageId { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the source endpoint.
+        /// </summary>
+        string EndpointName { get; set; }
+
+        /// <summary>
         /// Gets or sets the received timestamp.
         /// </summary>
         DateTime Received { get; set; }

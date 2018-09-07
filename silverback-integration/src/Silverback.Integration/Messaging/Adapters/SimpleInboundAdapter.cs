@@ -21,10 +21,16 @@ namespace Silverback.Messaging.Adapters
         protected IBus Bus;
 
         /// <summary>
-        /// The error policy
+        /// The endpoint this adapter is listening to.
+        /// </summary>
+        protected IEndpoint Endpoint;
+
+        /// <summary>
+        /// The error policy to be applied if an exception occurs
+        /// while processing the incoming message.
         /// </summary>
         protected IErrorPolicy ErrorPolicy;
-
+        
         private IConsumer _consumer;
 
         /// <summary>
@@ -40,6 +46,8 @@ namespace Silverback.Messaging.Adapters
 
             ErrorPolicy = errorPolicy ?? new NoErrorPolicy();
             ErrorPolicy.Init(bus);
+
+            Endpoint = endpoint;
 
             Connect(bus.GetBroker(endpoint.BrokerName), endpoint);
         }

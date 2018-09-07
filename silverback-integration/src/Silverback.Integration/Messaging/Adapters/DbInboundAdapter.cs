@@ -49,8 +49,7 @@ namespace Silverback.Messaging.Adapters
         /// <param name="message">The message.</param>
         protected override void RelayMessage(IIntegrationMessage message)
         {
-            // TODO: IMPORTANT: The check must be extended to Id + QUEUE in order to allow retry of messages that are moved to a retry queue
-            if (_inboxRepository.Exists(message.Id))
+            if (_inboxRepository.Exists(message.Id, Endpoint.Name))
             {
                 _logger.LogInformation($"Message '{message.Id}' is being skipped since it was already processed.");
                 return;
@@ -59,6 +58,7 @@ namespace Silverback.Messaging.Adapters
             var entity = _inboxRepository.Create();
             entity.MessageId = message.Id;
             entity.Received = DateTime.UtcNow;
+            entity.EndpointName = Endpoint.Name;
             _inboxRepository.Add(entity);
 
             base.RelayMessage(message);

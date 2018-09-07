@@ -26,8 +26,10 @@ namespace Silverback.Messaging.Repositories
         /// Returns a boolean value indicating whether a message with the specified Id is already
         /// stored in the inbox table.
         /// </summary>
+        /// <param name="messageId">The message identifier.</param>
+        /// <param name="endpoint">The name of the source endpoint.</param>
         /// <returns></returns>
-        bool Exists(Guid messageId);
+        bool Exists(Guid messageId, string endpoint);
 
         /// <summary>
         /// Saves the changes made to the tracked entities.
