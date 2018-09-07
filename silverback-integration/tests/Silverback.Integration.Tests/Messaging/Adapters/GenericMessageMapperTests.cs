@@ -1,5 +1,8 @@
-﻿using NSubstitute;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using Silverback.Messaging;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Messages;
@@ -16,6 +19,11 @@ namespace Silverback.Tests.Messaging.Adapters
         public void Setup()
         {
             _mockBus = Substitute.For<IBus>();
+            _mockBus.Items.Returns(new System.Collections.Concurrent.ConcurrentDictionary<string, object>(
+                new Dictionary<string, object>
+                {
+                    {"Silverback.Configuration.ILoggerFactory", NullLoggerFactory.Instance}
+                }));
         }
 
         [Test]
@@ -23,7 +31,8 @@ namespace Silverback.Tests.Messaging.Adapters
         {
             var mapper =
                 new GenericMessageMapper<TestInternalEventOne, TestEventOne>(m =>
-                    new TestEventOne { Content = m.InternalMessage }, _mockBus);
+                    new TestEventOne { Content = m.InternalMessage });
+            mapper.Init(_mockBus);
 
             var input = new TestInternalEventOne { InternalMessage = "abcd" };
             mapper.Handle(input);
@@ -38,7 +47,8 @@ namespace Silverback.Tests.Messaging.Adapters
         {
             var mapper =
                 new GenericMessageMapper<TestInternalEventOne, TestEventOne>(m =>
-                    new TestEventOne { Content = m.InternalMessage }, _mockBus);
+                    new TestEventOne { Content = m.InternalMessage });
+            mapper.Init(_mockBus);
 
             TestEventOne output = null;
             _mockBus.When(b => b.Publish(Arg.Any<TestEventOne>())).Do(i => output = i.Arg<TestEventOne>());

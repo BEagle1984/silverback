@@ -257,7 +257,14 @@ namespace Silverback.Messaging.Configuration
             where TMessage : IMessage
             where TIntegrationMessage : IIntegrationMessage
             where TMapper : MessageMapper<TMessage, TIntegrationMessage>
-            => bus.Subscribe<TMapper>();
+        {
+            if (bus == null) throw new ArgumentNullException(nameof(bus));
+
+            var mapper = bus.GetTypeFactory().GetInstance<TMapper>();
+            mapper.Init(bus);
+
+            return bus.Subscribe(mapper);
+        }
 
         /// <summary>
         /// Configures a <see cref="MessageMapper{TMessage,TIntegrationMessage}" />.
@@ -271,7 +278,14 @@ namespace Silverback.Messaging.Configuration
         public static IBus AddMapper<TMessage, TIntegrationMessage>(this IBus bus, Func<TMessage, TIntegrationMessage> mapper, Func<TMessage, bool> filter = null)
             where TMessage : IMessage
             where TIntegrationMessage : IIntegrationMessage
-            => bus.Subscribe(new GenericMessageMapper<TMessage, TIntegrationMessage>(mapper, bus, filter));
+        {
+            if (bus == null) throw new ArgumentNullException(nameof(bus));
+
+            var genericMapper = new GenericMessageMapper<TMessage, TIntegrationMessage>(mapper, filter);
+            genericMapper.Init(bus);
+
+            return bus.Subscribe(genericMapper);
+        }
 
         #endregion
     }

@@ -17,13 +17,12 @@ namespace Silverback.Messaging.Adapters
         private readonly Func<TMessage, TIntegrationMessage> _mapper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenericMessageMapper{TMessage,TIntegrationMessage}"/> class.
+        /// Initializes a new instance of the <see cref="GenericMessageMapper{TMessage,TIntegrationMessage}" /> class.
         /// </summary>
         /// <param name="mapper">The mapper.</param>
-        /// <param name="bus">The bus.</param>
         /// <param name="filter">An optional filter to be applied to the messages</param>
-        public GenericMessageMapper(Func<TMessage, TIntegrationMessage> mapper, IBus bus, Func<TMessage, bool> filter = null)
-            : base(bus, filter)
+        public GenericMessageMapper(Func<TMessage, TIntegrationMessage> mapper, Func<TMessage, bool> filter = null)
+            : base(filter)
         {
             _mapper = mapper;
         }

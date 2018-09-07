@@ -1,6 +1,8 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Adapters
 {
@@ -12,17 +14,27 @@ namespace Silverback.Messaging.Adapters
         where TMessage : IMessage
         where TIntegrationMessage : IIntegrationMessage
     {
-        private readonly IBus _bus;
+        private IBus _bus;
+        private ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MessageMapper{TMessage,TIntegrationMessage}"/> class.
+        /// Initializes a new instance of the <see cref="MessageMapper{TMessage,TIntegrationMessage}" /> class.
         /// </summary>
-        /// <param name="bus">The bus.</param>
         /// <param name="filter">An optional filter to be applied to the messages</param>
-        protected MessageMapper(IBus bus, Func<TMessage, bool> filter = null)
+        protected MessageMapper(Func<TMessage, bool> filter = null)
             : base(filter)
         {
+        }
+
+        /// <summary>
+        /// Initializes the mapper, binding to the specified bus.
+        /// </summary>
+        /// <param name="bus">The bus.</param>
+        public override void Init(IBus bus)
+        {
             _bus = bus;
+            _logger = bus.GetLoggerFactory().CreateLogger<MessageMapper<TMessage, TIntegrationMessage>>();
+            base.Init(bus);
         }
 
         /// <summary>
@@ -31,7 +43,9 @@ namespace Silverback.Messaging.Adapters
         /// <param name="message">The message to be handled.</param>
         public override void Handle(TMessage message)
         {
-            // TODO: Trace
+            if (_bus == null) throw new InvalidOperationException("Not initialized.");
+
+            _logger.LogTrace($"Mapping message of type '{message.GetType().Name}' to a '{typeof(TIntegrationMessage).Name}'.");
             _bus.Publish(Map(message));
         }
 
