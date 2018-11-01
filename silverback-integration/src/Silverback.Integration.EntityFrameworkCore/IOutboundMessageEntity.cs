@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Silverback.Messaging.Repositories
+namespace Silverback.Integration.EntityFrameworkCore
 {
     /// <summary>
     /// The interface for the entity to be stored in the outbox table.

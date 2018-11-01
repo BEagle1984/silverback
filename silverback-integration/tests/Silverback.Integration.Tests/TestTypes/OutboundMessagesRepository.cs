@@ -4,22 +4,24 @@ using Silverback.Messaging.Repositories;
 
 namespace Silverback.Tests.TestTypes
 {
-    public class OutboundMessagesRepository : IOutboundMessagesRepository<OutboundMessageEntity>
-    {
-        public HashSet<OutboundMessageEntity> DbSet { get; } = new HashSet<OutboundMessageEntity>();
+    // TODO 1
 
-        public OutboundMessageEntity Create()
-            => new OutboundMessageEntity();
+    //public class OutboundMessagesRepository : IOutboundMessagesRepository<OutboundMessageEntity>
+    //{
+    //    public HashSet<OutboundMessageEntity> DbSet { get; } = new HashSet<OutboundMessageEntity>();
 
-        public void Add(OutboundMessageEntity entity)
-            => DbSet.Add(entity);
+    //    public OutboundMessageEntity Create()
+    //        => new OutboundMessageEntity();
 
-        public IEnumerable<OutboundMessageEntity> GetPending()
-            => DbSet.Where(m => m.Sent == null).ToList();
+    //    public void Add(OutboundMessageEntity entity)
+    //        => DbSet.Add(entity);
 
-        public void SaveChanges()
-        {
-            // Nothing to do
-        }
-    }
+    //    public IEnumerable<OutboundMessageEntity> GetPending()
+    //        => DbSet.Where(m => m.Sent == null).ToList();
+
+    //    public void SaveChanges()
+    //    {
+    //        // Nothing to do
+    //    }
+    //}
 }

@@ -20,6 +20,7 @@ This package enables communication between them in a flexible and abstracted way
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
+    <NoWarn>1701;1702;S125;CS1591;S1172</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

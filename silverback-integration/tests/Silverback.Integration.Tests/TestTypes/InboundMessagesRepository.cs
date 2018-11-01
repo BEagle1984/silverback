@@ -5,22 +5,24 @@ using Silverback.Messaging.Repositories;
 
 namespace Silverback.Tests.TestTypes
 {
-    public class InboundMessagesRepository : IInboundMessagesRepository<InboundMessageEntity>
-    {
-        public HashSet<InboundMessageEntity> DbSet { get; } = new HashSet<InboundMessageEntity>();
+    // TODO 1
 
-        public InboundMessageEntity Create()
-            => new InboundMessageEntity();
+    //public class InboundMessagesRepository : IInboundMessagesRepository<InboundMessageEntity>
+    //{
+    //    public HashSet<InboundMessageEntity> DbSet { get; } = new HashSet<InboundMessageEntity>();
 
-        public void Add(InboundMessageEntity entity)
-            => DbSet.Add(entity);
+    //    public InboundMessageEntity Create()
+    //        => new InboundMessageEntity();
 
-        public bool Exists(Guid messageId, string endpoint)
-            => DbSet.Any(m => m.MessageId == messageId && m.EndpointName == endpoint);
+    //    public void Add(InboundMessageEntity entity)
+    //        => DbSet.Add(entity);
 
-        public void SaveChanges()
-        {
-            // Nothing to do
-        }
-    }
+    //    public bool Exists(Guid messageId, string endpoint)
+    //        => DbSet.Any(m => m.MessageId == messageId && m.EndpointName == endpoint);
+
+    //    public void SaveChanges()
+    //    {
+    //        // Nothing to do
+    //    }
+    //}
 }
