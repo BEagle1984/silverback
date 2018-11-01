@@ -10,7 +10,7 @@ using Silverback.Messaging.Publishing;
 namespace Silverback.Core.EntityFrameworkCore.Tests
 {
     [TestFixture]
-    public class SilverbackDbContextTests
+    public class DbContextEventPublisherExtensionsTests
     {
         private TestDbContext _dbContext;
         private IEventPublisher<IDomainEvent<IDomainEntity>> _eventPublisher;
