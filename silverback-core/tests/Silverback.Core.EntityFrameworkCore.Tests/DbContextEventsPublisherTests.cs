@@ -5,20 +5,21 @@ using NSubstitute;
 using NUnit.Framework;
 using Silverback.Core.EntityFrameworkCore.Tests.TestTypes;
 using Silverback.Domain;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
 namespace Silverback.Core.EntityFrameworkCore.Tests
 {
     [TestFixture]
-    public class DbContextEventPublisherExtensionsTests
+    public class DbContextEventsPublisherTests
     {
         private TestDbContext _dbContext;
-        private IEventPublisher<IDomainEvent<IDomainEntity>> _eventPublisher;
+        private IEventPublisher<IEvent> _eventPublisher;
 
         [SetUp]
         public void Setup()
         {
-            _eventPublisher = Substitute.For<IEventPublisher<IDomainEvent<IDomainEntity>>>();
+            _eventPublisher = Substitute.For<IEventPublisher<IEvent>>();
 
             var dbOptions = new DbContextOptionsBuilder<TestDbContext>()
                 .UseInMemoryDatabase("TestDbContext")
