@@ -1,7 +1,7 @@
 using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Silverback.Extensions;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers
 {
@@ -28,8 +28,7 @@ namespace Silverback.Messaging.Subscribers
         /// <param name="message">The message to be handled.</param>
         public sealed override void Handle(TMessage message)
         {
-            // TODO: Check this!
-            Task.Run(() => HandleAsync(message)).Wait();
+            AsyncHelper.RunSynchronously(() => HandleAsync(message));
         }
     }
 }
