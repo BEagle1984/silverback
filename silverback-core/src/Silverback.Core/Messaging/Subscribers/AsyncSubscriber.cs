@@ -1,7 +1,6 @@
 using System;
-using Silverback.Extensions;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers
 {

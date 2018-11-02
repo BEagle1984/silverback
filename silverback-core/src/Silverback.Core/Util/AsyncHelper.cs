@@ -9,16 +9,14 @@ namespace Silverback.Util
     internal static class AsyncHelper
     {
         /// <summary>
-        /// Runs the async method synchronously.
+        /// Runs the async method synchronously (avoiding deadlocks).
         /// </summary>
-        /// <param name="asyncMethod">The asynchronous method.</param>
         public static void RunSynchronously(Func<Task> asyncMethod)
             => Task.Run(asyncMethod).Wait();
 
         /// <summary>
-        /// Runs the async method synchronously.
+        /// Runs the async method synchronously(avoiding deadlocks).
         /// </summary>
-        /// <param name="asyncMethod">The asynchronous method.</param>
         public static TResult RunSynchronously<TResult>(Func<Task<TResult>> asyncMethod)
             => Task.Run(asyncMethod).Result;
     }

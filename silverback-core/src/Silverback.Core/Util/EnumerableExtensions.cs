@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Silverback.Extensions
+namespace Silverback.Util
 {
     internal static class EnumerableExtensions
     {

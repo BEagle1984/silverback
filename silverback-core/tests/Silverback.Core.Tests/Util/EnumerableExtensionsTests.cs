@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Silverback.Extensions;
+using Silverback.Util;
 
-namespace Silverback.Tests.Extensions
+namespace Silverback.Tests.Util
 {
     [TestFixture]
     public class EnumerableExtensionsTests

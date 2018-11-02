@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Domain;
-using Silverback.Extensions;
+using Silverback.Util;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
