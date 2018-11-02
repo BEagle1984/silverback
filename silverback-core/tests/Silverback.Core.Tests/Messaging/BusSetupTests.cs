@@ -32,35 +32,26 @@ namespace Silverback.Tests.Messaging
         [Test]
         public void SubscribeWithFactoryTest()
         {
-            var subscriberOne = new TestCommandOneSubscriber();
-            var subscriberTwo = new TestCommandTwoAsyncSubscriber();
+            var serviceOne = new ServiceOne();
+            var serviceTwo = new ServiceTwo();
 
             using (var bus = BuildBus())
             {
-                bus.Subscribe<TestCommandOneSubscriber>()
-                    .Subscribe<TestCommandTwoAsyncSubscriber>();
+                bus.Subscribe<IService>();
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
-                bus.Publish(new TestCommandOne());
-                bus.Publish(new TestCommandTwo());
+                bus.PublishAsync(new TestCommandOne()).Wait();
+                bus.PublishAsync(new TestCommandTwo()).Wait();
                 bus.Publish(new TestCommandTwo());
 
-                Assert.That(subscriberOne.Handled, Is.EqualTo(2));
-                Assert.That(subscriberTwo.Handled, Is.EqualTo(3));
+                Assert.That(serviceOne.Handled, Is.EqualTo(4)); // Each service got 2 subscribed methods
+                Assert.That(serviceTwo.Handled, Is.EqualTo(6)); // Each service got 2 subscribed methods
             }
 
             Bus BuildBus()
                 => new BusBuilder()
-                    .WithFactory(t =>
-                    {
-                        if (t == typeof(TestCommandOneSubscriber))
-                            return subscriberOne;
-                        if (t == typeof(TestCommandTwoAsyncSubscriber))
-                            return subscriberTwo;
-
-                        throw new ArgumentOutOfRangeException();
-                    })
+                    .WithFactory(t => new object[] { serviceOne, serviceTwo })
                     .Build();
         }
 
