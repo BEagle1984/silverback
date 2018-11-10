@@ -1,17 +1,17 @@
 ﻿using System;
 using NUnit.Framework;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Integration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging.Adapters
+namespace Silverback.Tests.Messaging.Integration
 {
     [TestFixture]
-    public class SimpleInboudAdapterTests
+    public class InboundConnectorTests
     {
         private IBus _bus;
 
@@ -30,8 +30,8 @@ namespace Silverback.Tests.Messaging.Adapters
             int count = 0;
             _bus.Subscribe<IMessage>(m => count++);
 
-            var adapter = new InboundAdapter();
-            adapter.Init(_bus, BasicEndpoint.Create("test"));
+            var connector = new InboundConnector();
+            connector.Init(_bus, BasicEndpoint.Create("test"));
 
             _bus.ConnectBrokers();
 
@@ -56,8 +56,8 @@ namespace Silverback.Tests.Messaging.Adapters
                     throw new Exception("Retry please");
             });
 
-            var adapter = new InboundAdapter();
-            adapter.Init(_bus, BasicEndpoint.Create("test"), new RetryErrorPolicy(5));
+            var connector = new InboundConnector();
+            connector.Init(_bus, BasicEndpoint.Create("test"), new RetryErrorPolicy(5));
 
             _bus.ConnectBrokers();
 
@@ -77,8 +77,8 @@ namespace Silverback.Tests.Messaging.Adapters
                 throw new Exception("Retry please");
             });
 
-            var adapter = new InboundAdapter();
-            adapter.Init(
+            var connector = new InboundConnector();
+            connector.Init(
                 _bus,
                 BasicEndpoint.Create("test"),
                 ErrorPolicy.Chain(

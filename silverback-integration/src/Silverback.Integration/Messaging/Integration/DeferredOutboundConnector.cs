@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Integration.Repositories;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Repositories;
 using Silverback.Messaging.Subscribers;
 
-namespace Silverback.Messaging.Adapters
+namespace Silverback.Messaging.Integration
 {
     // TODO: Test?
     /// <summary>
     /// Stores the <see cref="IMessage" /> into a queue to be forwarded to the message broker later on.
     /// </summary>
-    /// <seealso cref="IOutboundAdapter" />
-    public class DeferredOutboundAdapter : IOutboundAdapter
+    /// <seealso cref="IOutboundConnector" />
+    public class DeferredOutboundConnector : IOutboundConnector
     {
         private readonly IOutboundQueueWriter _queueWriter;
 
-        public DeferredOutboundAdapter(IOutboundQueueWriter queueWriter)
+        public DeferredOutboundConnector(IOutboundQueueWriter queueWriter)
         {
             _queueWriter = queueWriter;
         }

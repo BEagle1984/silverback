@@ -2,13 +2,12 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
+using Silverback.Messaging.Integration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging.Adapters
+namespace Silverback.Tests.Messaging.Integration
 {
     [TestFixture]
     public class GenericMessageMapperTests

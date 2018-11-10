@@ -2,17 +2,16 @@
 using System.Linq;
 using Silverback.Messaging.Broker;
 using Silverback.Util;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Integration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Repositories;
 using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
     /// Contains a set of extension methods useful to setup the <see cref="IBus"/> 
-    /// configuring the brokers and adding inbound/outbound adapters.
+    /// configuring the brokers and adding inbound/outbound connectors.
     /// </summary>
     public static class BusExtensions
     {
@@ -20,45 +19,25 @@ namespace Silverback.Messaging.Configuration
 
         #region Brokers Collection
 
-        /// <summary>
-        /// Gets the list of <see cref="IEndpoint"/> configured as inbound.
-        /// </summary>
-        /// <param name="bus">The bus.</param>
-        /// <returns></returns>
         internal static BrokersCollection GetBrokers(this IBus bus)
             => (BrokersCollection)bus.Items.GetOrAdd(ItemsKeyPrefix + "Brokers", _ => new BrokersCollection());
 
-        /// <summary>
-        /// Gets the <see cref="T:Silverback.Messaging.Broker.IBroker" /> associated with the <see cref="IBus"/>.
-        /// </summary>
-        /// <param name="bus">The bus.</param>
-        /// <param name="name">The name of the broker. If not set the default one will be returned.</param>
-        /// <returns></returns>
         internal static IBroker GetBroker(this IBus bus, string name = null)
             => GetBrokers(bus).Get(name);
 
-        /// <summary>
-        /// Gets the <see cref="T:Silverback.Messaging.Broker.IBroker" /> associated with the <see cref="IBus"/>.
-        /// </summary>
-        /// <typeparam name="TBroker">The type of the broker.</typeparam>
-        /// <param name="bus">The bus.</param>
-        /// <param name="name">The name of the broker. If not set the default one will be returned.</param>
-        /// <returns></returns>
         internal static TBroker GetBroker<TBroker>(this IBus bus, string name = null) where TBroker : IBroker
             => (TBroker)GetBroker(bus, name);
 
         #endregion
 
-        #region Inbound Adapters
+        #region Inbound Connectors
 
         /// <summary>
-        /// Gets the item with of the specified .
+        /// Binds the connector lifecycle to the bus so that it stays alive until the bus is disposed.
         /// </summary>
-        /// <param name="bus">The bus.</param>
-        /// <param name="adapter">The adapter.</param>
-        internal static void AddInboundAdapterItem(this IBus bus, IInboundAdapter adapter)
+        internal static void BindConnectorLifecycle(this IBus bus, IInboundConnector connector)
         {
-            if (!bus.Items.TryAdd($"{ItemsKeyPrefix}InboundAdapter.{adapter.GetType().Name}.{Guid.NewGuid():N}", adapter))
+            if (!bus.Items.TryAdd($"{ItemsKeyPrefix}InboundConnector.{connector.GetType().Name}.{Guid.NewGuid():N}", connector))
             {
                 throw new InvalidOperationException();
             }
@@ -94,7 +73,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="bus">The bus.</param>
         /// <param name="brokerConfig">The method applying the broker configuration.</param>
         /// <returns></returns>
-        public static IBus ConfigureBroker<TBroker>(this IBus bus, Action<TBroker> brokerConfig)
+        public static IBus ConfigureBroker<TBroker>(this IBus bus, Action<TBroker> brokerConfig = null)
             where TBroker : IBroker, new()
         {
             bus.GetBrokers().Add(brokerConfig);
@@ -106,143 +85,135 @@ namespace Silverback.Messaging.Configuration
         #region Outbound
 
         /// <summary>
-        /// Attaches the <see cref="IOutboundAdapter" /> to the bus.
+        /// Attaches the <see cref="IOutboundConnector" /> to the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the message.</typeparam>
-        /// <typeparam name="TAdapter">The type of the adapter.</typeparam>
+        /// <typeparam name="TConnector">The type of the connector.</typeparam>
         /// <param name="bus">The bus.</param>
-        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundConnector" />.</param>
         /// <param name="filter">An optional filter to be applied to the messages.</param>
         /// <returns></returns>
-        public static IBus AddOutbound<TMessage, TAdapter>(this IBus bus, IEndpoint endpoint, Func<TMessage, bool> filter = null)
+        public static IBus AddOutbound<TMessage, TConnector>(this IBus bus, IEndpoint endpoint, Func<TMessage, bool> filter = null)
             where TMessage : IIntegrationMessage
-            where TAdapter : IOutboundAdapter
+            where TConnector : IOutboundConnector
         {
-            bus.Subscribe(new OutboundSubscriber<TMessage, TAdapter>(bus.GetTypeFactory(), bus.GetBroker(endpoint.BrokerName), endpoint, filter));
+            bus.Subscribe(new OutboundSubscriber<TMessage, TConnector>(bus.GetTypeFactory(), bus.GetBroker(endpoint.BrokerName), endpoint, filter));
             return bus;
         }
 
         // TODO: Test
         /// <summary>
-        /// Attaches a <see cref="OutboundAdapter" /> to the bus.
+        /// Attaches an <see cref="OutboundConnector" /> to the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the message.</typeparam>
         /// <param name="bus">The bus.</param>
-        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundConnector" />.</param>
         /// <param name="filter">An optional filter to be applied to the messages.</param>
         /// <returns></returns>
         public static IBus AddOutbound<TMessage>(this IBus bus, IEndpoint endpoint, Func<TMessage, bool> filter = null)
             where TMessage : IIntegrationMessage
-            => bus.AddOutbound<TMessage, OutboundAdapter>(endpoint, filter);
+            => bus.AddOutbound<TMessage, OutboundConnector>(endpoint, filter);
 
         // TODO: Test
         /// <summary>
-        /// Attaches a <see cref="OutboundAdapter" /> to the bus.
+        /// Attaches an <see cref="OutboundConnector" /> to the bus.
         /// </summary>
         /// <param name="bus">The bus.</param>
-        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundConnector" />.</param>
         /// <param name="filter">An optional filter to be applied to the messages.</param>
         /// <returns></returns>
         public static IBus AddOutbound(this IBus bus, IEndpoint endpoint, Func<IIntegrationMessage, bool> filter = null)
             => bus.AddOutbound<IIntegrationMessage>(endpoint, filter);
 
         // TODO: Test
-        // TODO 1
-        ///// <summary>
-        ///// Attaches a <see cref="DbOutboundAdapter{TEntity}" /> to the bus.
-        ///// </summary>
-        ///// <typeparam name="TMessage">The type of the message.</typeparam>
-        ///// <typeparam name="TEntity">The type of the entity.</typeparam>
-        ///// <param name="bus">The bus.</param>
-        ///// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
-        ///// <param name="filter">An optional filter to be applied to the messages.</param>
-        ///// <returns></returns>
-        //public static IBus AddDbOutbound<TMessage, TEntity>(this IBus bus, IEndpoint endpoint, Func<TMessage, bool> filter = null)
-        //    where TMessage : IIntegrationMessage
-        //    where TEntity : IOutboundMessageEntity
-        //    => bus.AddOutbound<TMessage, DbOutboundAdapter<TEntity>>(endpoint, filter);
+        /// <summary>
+        /// Attaches a <see cref="DeferredOutboundConnector" /> to the bus.
+        /// </summary>
+        /// <typeparam name="TMessage">The type of the message.</typeparam>
+        /// <param name="bus">The bus.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundConnector" />.</param>
+        /// <param name="filter">An optional filter to be applied to the messages.</param>
+        /// <returns></returns>
+        public static IBus AddDeferredOutbound<TMessage>(this IBus bus, IEndpoint endpoint, Func<TMessage, bool> filter = null)
+            where TMessage : IIntegrationMessage
+            => bus.AddOutbound<TMessage, DeferredOutboundConnector>(endpoint, filter);
 
-        // TODO 1
         // TODO: Test
-        ///// <summary>
-        ///// Attaches a <see cref="DbOutboundAdapter{TEntity}" /> to the bus.
-        ///// </summary>
-        ///// <typeparam name="TEntity">The type of the entity.</typeparam>
-        ///// <param name="bus">The bus.</param>
-        ///// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
-        ///// <param name="filter">An optional filter to be applied to the messages.</param>
-        ///// <returns></returns>
-        //public static IBus AddDbOutbound<TEntity>(this IBus bus, IEndpoint endpoint, Func<IIntegrationMessage, bool> filter = null)
-        //    where TEntity : IOutboundMessageEntity
-        //    => bus.AddDbOutbound<IIntegrationMessage, TEntity>(endpoint, filter);
+        /// <summary>
+        /// Attaches a <see cref="DeferredOutboundConnector" /> to the bus.
+        /// </summary>
+        /// <param name="bus">The bus.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundConnector" />.</param>
+        /// <param name="filter">An optional filter to be applied to the messages.</param>
+        /// <returns></returns>
+        public static IBus AddDeferredOutbound(this IBus bus, IEndpoint endpoint, Func<IIntegrationMessage, bool> filter = null)
+            => bus.AddDeferredOutbound<IIntegrationMessage>(endpoint, filter);
 
         #endregion
 
         #region Inbound
 
         /// <summary>
-        /// Configures the <see cref="IInboundAdapter" /> to forward the messages to the internal bus.
+        /// Configures the <see cref="IInboundConnector" /> to forward the messages to the internal bus.
         /// </summary>
         /// <param name="bus">The bus.</param>
-        /// <param name="adapter">The adapter.</param>
-        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <param name="connector">The connector.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundConnector" />.</param>
         /// <param name="errorPolicy">An optional error handling policy.</param>
         /// <returns></returns>
-        public static IBus AddInbound(this IBus bus, IInboundAdapter adapter, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
+        public static IBus AddInbound(this IBus bus, IInboundConnector connector, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
         {
             if (bus == null) throw new ArgumentNullException(nameof(bus));
-            if (adapter == null) throw new ArgumentNullException(nameof(adapter));
+            if (connector == null) throw new ArgumentNullException(nameof(connector));
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
 
-            adapter.Init(bus, endpoint, errorPolicy);
+            connector.Init(bus, endpoint, errorPolicy);
             return bus;
         }
 
         // TODO: Test
         /// <summary>
-        /// Configures an <see cref="IInboundAdapter" /> of the specified type to forward the messages to the internal bus.
+        /// Configures an <see cref="IInboundConnector" /> of the specified type to forward the messages to the internal bus.
         /// </summary>
-        /// <typeparam name="TAdapter">The type of the adapter.</typeparam>
+        /// <typeparam name="TConnector">The type of the connector.</typeparam>
         /// <param name="bus">The bus.</param>
-        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundConnector" />.</param>
         /// <param name="errorPolicy">An optional error handling policy.</param>
         /// <returns></returns>
-        public static IBus AddInbound<TAdapter>(this IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
-            where TAdapter : IInboundAdapter
+        public static IBus AddInbound<TConnector>(this IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
+            where TConnector : IInboundConnector
         {
             if (bus == null) throw new ArgumentNullException(nameof(bus));
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
 
-            var adapter = bus.GetTypeFactory().GetInstance<TAdapter>();
-            bus.AddInboundAdapterItem(adapter);
-            adapter.Init(bus, endpoint, errorPolicy);
+            // TODO: Move get instance in ConnectBroker() (here the DI could be not ready)
+            var connector = bus.GetTypeFactory().GetInstance<TConnector>();
+            bus.BindConnectorLifecycle(connector);
+            connector.Init(bus, endpoint, errorPolicy);
             return bus;
         }
 
         // TODO: Test
         /// <summary>
-        /// Configures a <see cref="InboundAdapter" /> to forward the messages to the internal bus.
+        /// Configures a <see cref="InboundConnector" /> to forward the messages to the internal bus.
         /// </summary>
         /// <param name="bus">The bus.</param>
-        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundConnector" />.</param>
         /// <param name="errorPolicy">An optional error handling policy.</param>
         /// <returns></returns>
         public static IBus AddInbound(this IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
-            => bus.AddInbound(new InboundAdapter(), endpoint, errorPolicy);
+            => bus.AddInbound(new InboundConnector(), endpoint, errorPolicy);
 
         // TODO: Test
-        // TODO 1
-        ///// <summary>
-        ///// Configures a <see cref="DbInboundAdapter{TEntity}" /> to forward the messages to the internal bus.
-        ///// </summary>
-        ///// <typeparam name="TEntity">The type of the entity.</typeparam>
-        ///// <param name="bus">The bus.</param>
-        ///// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
-        ///// <param name="errorPolicy">An optional error handling policy.</param>
-        ///// <returns></returns>
-        //public static IBus AddDbInbound<TEntity>(this IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
-        //    where TEntity : IInboundMessageEntity
-        //    => bus.AddInbound<DbInboundAdapter<TEntity>>(endpoint, errorPolicy);
+        /// <summary>
+        /// Configures a <see cref="LoggedInboundConnector" /> to forward the messages to the internal bus.
+        /// </summary>
+        /// <param name="bus">The bus.</param>
+        /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundConnector" />.</param>
+        /// <param name="errorPolicy">An optional error handling policy.</param>
+        /// <returns></returns>
+        public static IBus AddLoggedInbound(this IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
+            => bus.AddInbound<LoggedInboundConnector>(endpoint, errorPolicy);
 
         #endregion
 
@@ -256,7 +227,7 @@ namespace Silverback.Messaging.Configuration
         /// <typeparam name="TMapper">Type of the <see cref="MessageMapper{TMessage,TIntegrationMessage}" /> to be used to translate the messages.</typeparam>
         /// <param name="bus">The bus.</param>
         /// <returns></returns>
-        public static IBus AddMapper<TMessage, TIntegrationMessage, TMapper>(this IBus bus)
+        public static IBus AddTranslator<TMessage, TIntegrationMessage, TMapper>(this IBus bus)
             where TMessage : IMessage
             where TIntegrationMessage : IIntegrationMessage
             where TMapper : MessageMapper<TMessage, TIntegrationMessage>
@@ -278,7 +249,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="mapper">The mapper method.</param>
         /// <param name="filter">An optional filter to be applied to the published messages.</param>
         /// <returns></returns>
-        public static IBus AddMapper<TMessage, TIntegrationMessage>(this IBus bus, Func<TMessage, TIntegrationMessage> mapper, Func<TMessage, bool> filter = null)
+        public static IBus AddTranslator<TMessage, TIntegrationMessage>(this IBus bus, Func<TMessage, TIntegrationMessage> mapper, Func<TMessage, bool> filter = null)
             where TMessage : IMessage
             where TIntegrationMessage : IIntegrationMessage
         {

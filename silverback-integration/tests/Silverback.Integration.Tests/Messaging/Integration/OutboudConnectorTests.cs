@@ -2,15 +2,14 @@
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Integration;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging.Adapters
+namespace Silverback.Tests.Messaging.Integration
 {
     [TestFixture]
-    public class OutboudAdapterTests
+    public class OutboudConnectorTests
     {
         private TestBroker _broker;
 
@@ -23,33 +22,33 @@ namespace Silverback.Tests.Messaging.Adapters
         [Test]
         public void RelayTest()
         {
-            var adapter = new OutboundAdapter();
+            var connector = new OutboundConnector();
 
-            var @event = new TestEventOne {Content = "Test"};
+            var message = new TestEventOne {Content = "Test"};
             var endpoint = BasicEndpoint.Create("TestEventOneTopic");
-            adapter.Relay(@event, _broker.GetProducer(endpoint), endpoint);
+            connector.Relay(message, _broker.GetProducer(endpoint), endpoint);
 
             var producer = (TestProducer)_broker.GetProducer(BasicEndpoint.Create("test"));
             var serializer = producer.Serializer;
 
             Assert.That(producer.SentMessages.Count, Is.EqualTo(1));
-            Assert.That(serializer.Deserialize(producer.SentMessages.First()).Message.Id, Is.EqualTo(@event.Id));
+            Assert.That(serializer.Deserialize(producer.SentMessages.First()).Message.Id, Is.EqualTo(message.Id));
         }
 
         [Test]
         public async Task RelayAsyncTest()
         {
-            var adapter = new OutboundAdapter();
+            var connector = new OutboundConnector();
 
-            var @event = new TestEventOne { Content = "Test" };
+            var message = new TestEventOne { Content = "Test" };
             var endpoint = BasicEndpoint.Create("TestEventOneTopic");
-            await adapter.RelayAsync(@event, _broker.GetProducer(endpoint), endpoint);
+            await connector.RelayAsync(message, _broker.GetProducer(endpoint), endpoint);
 
             var producer = (TestProducer)_broker.GetProducer(BasicEndpoint.Create("test"));
             var serializer = producer.Serializer;
 
             Assert.That(producer.SentMessages.Count, Is.EqualTo(1));
-            Assert.That(serializer.Deserialize(producer.SentMessages.First()).Message.Id, Is.EqualTo(@event.Id));
+            Assert.That(serializer.Deserialize(producer.SentMessages.First()).Message.Id, Is.EqualTo(message.Id));
         }
     }
 }

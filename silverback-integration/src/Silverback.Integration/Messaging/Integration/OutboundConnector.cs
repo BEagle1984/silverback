@@ -1,15 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Adapters
+namespace Silverback.Messaging.Integration
 {
     /// <summary>
-    /// The basic outbound adapter that sends the messages directly through the message broker.
+    /// The basic outbound connector that sends the messages directly through the message broker.
     /// </summary>
-    /// <seealso cref="Silverback.Messaging.Adapters.IOutboundAdapter" />
-    public class OutboundAdapter : IOutboundAdapter
+    /// <seealso cref="IOutboundConnector" />
+    public class OutboundConnector : IOutboundConnector
     {
         public void Relay(IIntegrationMessage message, IProducer producer, IEndpoint endpoint)
             => producer.Produce(Envelope.Create(message));

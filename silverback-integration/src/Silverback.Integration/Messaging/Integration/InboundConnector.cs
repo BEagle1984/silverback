@@ -4,13 +4,13 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Adapters
+namespace Silverback.Messaging.Integration
 {
     /// <summary>
-    /// An adapter that subscribes to the message broker and forwards the messages to the internal bus.
+    /// Subscribes to a message broker and forwards the incoming integration messages to the internal bus.
     /// </summary>
-    /// <seealso cref="IInboundAdapter" />
-    public class InboundAdapter : IInboundAdapter
+    /// <seealso cref="IInboundConnector" />
+    public class InboundConnector : IInboundConnector
     {
         private IConsumer _consumer;
 

@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Repositories
+namespace Silverback.Messaging.Integration.Repositories
 {
     public class InMemoryInboundLog : TransactionalList<InboundLogEntry>, IInboundLog
     {

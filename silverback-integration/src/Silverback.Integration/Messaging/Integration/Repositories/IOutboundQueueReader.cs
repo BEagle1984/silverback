@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Silverback.Messaging.Repositories
+namespace Silverback.Messaging.Integration.Repositories
 {
     public interface IOutboundQueueReader
     {

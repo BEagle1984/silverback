@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
-using Silverback.Messaging.Configuration;
 
-namespace Silverback.Messaging.Adapters
+namespace Silverback.Messaging.Integration
 {
     /// <summary>
     /// Translates the internal <see cref="IMessage"/> into an <see cref="IIntegrationMessage"/> that can be sent over 

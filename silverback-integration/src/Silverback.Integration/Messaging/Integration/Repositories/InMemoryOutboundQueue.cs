@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Repositories
+namespace Silverback.Messaging.Integration.Repositories
 {
     /// <summary>
     /// An outbound queue persisted in memory. Note that writing in the queue is thread-safe but

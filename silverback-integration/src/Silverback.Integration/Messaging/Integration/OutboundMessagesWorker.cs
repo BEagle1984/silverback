@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Messages;
-using Silverback.Messaging.Repositories;
-
-namespace Silverback.Messaging
+﻿namespace Silverback.Messaging.Integration
 {
     // TODO 2
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Adapters
+namespace Silverback.Messaging.Integration
 {
     /// <summary>
     /// Maps an internal <see cref="IMessage"/> to an <see cref="IIntegrationMessage"/> that can be sent over 

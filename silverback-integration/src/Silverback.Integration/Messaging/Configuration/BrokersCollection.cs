@@ -33,10 +33,8 @@ namespace Silverback.Messaging.Configuration
         public TBroker Add<TBroker>(Action<TBroker> config)
             where TBroker : IBroker, new()
         {
-            if (config == null) throw new ArgumentNullException(nameof(config));
-
             var broker = new TBroker();
-            config(broker);
+            config?.Invoke(broker);
             broker.ValidateConfiguration();
 
             lock (_brokers)

@@ -1,31 +1,30 @@
 ﻿using System;
-using System.Transactions;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.ErrorHandling;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Repositories;
+using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Integration.Repositories;
+using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Adapters
+namespace Silverback.Messaging.Integration
 {
     /// <summary>
-    /// An adapter that subscribes to the message broker and forwards the messages to the internal bus.
+    /// Subscribes to a message broker and forwards the incoming integration messages to the internal bus.
     /// This implementation logs the incoming messages and prevents duplicated processing of the same message.
     /// </summary>
-    /// <seealso cref="InboundAdapter" />
-    public class LoggedInboundAdapter : InboundAdapter
+    /// <seealso cref="InboundConnector" />
+    public class LoggedInboundConnector : InboundConnector
     {
         private readonly IInboundLog _inboundLog;
         private ILogger _logger;
 
-        public LoggedInboundAdapter(IInboundLog inboundLog)
+        public LoggedInboundConnector(IInboundLog inboundLog)
         {
             _inboundLog = inboundLog;
         }
 
         public override void Init(IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
         {
-            _logger = bus.GetLoggerFactory().CreateLogger<LoggedInboundAdapter>();
+            _logger = bus.GetLoggerFactory().CreateLogger<LoggedInboundConnector>();
             base.Init(bus, endpoint, errorPolicy);
         }
 

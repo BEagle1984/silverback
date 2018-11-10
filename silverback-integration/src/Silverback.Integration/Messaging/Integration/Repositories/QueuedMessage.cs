@@ -1,6 +1,6 @@
 ﻿using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Repositories
+namespace Silverback.Messaging.Integration.Repositories
 {
     public class QueuedMessage
     {

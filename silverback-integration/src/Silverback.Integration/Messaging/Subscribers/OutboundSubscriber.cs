@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Integration;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers
 {
     /// <summary>
-    /// The standard subscriber used to attach the <see cref="IOutboundAdapter" />, suitable for most cases.
+    /// The standard subscriber used to attach the <see cref="IOutboundConnector" />, suitable for most cases.
     /// In more advanced use cases, when a greater degree of flexibility is required, it is advised to create an ad-hoc implementation of <see cref="Subscriber{TMessage}" />.
     /// </summary>
-    public class OutboundSubscriber<TMessage, TAdapter> : SubscriberBase<TMessage>
+    public class OutboundSubscriber<TMessage, TConnector> : SubscriberBase<TMessage>
         where TMessage : IIntegrationMessage
-        where TAdapter : IOutboundAdapter
+        where TConnector : IOutboundConnector
     {
         private readonly ITypeFactory _typeFactory;
 
@@ -28,19 +28,19 @@ namespace Silverback.Messaging.Subscribers
         }
 
         public override void Handle(TMessage message)
-            => GetAdapter().Relay(message, _producer, _endpoint);
+            => GetConnector().Relay(message, _producer, _endpoint);
 
         public override Task HandleAsync(TMessage message)
-            => GetAdapter().RelayAsync(message, _producer, _endpoint);
+            => GetConnector().RelayAsync(message, _producer, _endpoint);
 
-        private TAdapter GetAdapter()
+        private TConnector GetConnector()
         {
-            var adapter = _typeFactory.GetInstance<TAdapter>();
+            var connector = _typeFactory.GetInstance<TConnector>();
 
-            if (adapter == null)
-                throw new InvalidOperationException($"Couldn't instantiate adapter of type {typeof(TAdapter)}.");
+            if (connector == null)
+                throw new InvalidOperationException($"Couldn't instantiate connector of type {typeof(TConnector)}.");
 
-            return adapter;
+            return connector;
         }
     }
 }

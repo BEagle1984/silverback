@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Linq;
 using NUnit.Framework;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Integration;
+using Silverback.Messaging.Integration.Repositories;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Repositories;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging.Adapters
+namespace Silverback.Tests.Messaging.Integration
 {
     [TestFixture]
-    public class LoggedInboundAdapterTests
+    public class LoggedInboundConnectorTests
     {
         private IInboundLog _inboundLog;
         private IBus _bus;
-        private LoggedInboundAdapter _adapter;
+        private LoggedInboundConnector _connector;
         private TestConsumer _testConsumer;
 
         [SetUp]
@@ -29,9 +28,9 @@ namespace Silverback.Tests.Messaging.Adapters
 
             _inboundLog = new InMemoryInboundLog();
 
-            _adapter = new LoggedInboundAdapter(_inboundLog);
+            _connector = new LoggedInboundConnector(_inboundLog);
 
-            _adapter.Init(_bus, BasicEndpoint.Create("test"));
+            _connector.Init(_bus, BasicEndpoint.Create("test"));
             _bus.ConnectBrokers();
 
             _testConsumer = (TestConsumer)_bus.GetBroker().GetConsumer(BasicEndpoint.Create("test"));

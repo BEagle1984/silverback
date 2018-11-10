@@ -2,12 +2,12 @@
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Adapters
+namespace Silverback.Messaging.Integration
 {
     /// <summary>
-    /// An adapter that publishes the outgoing messages to the message broker.
+    /// Connecto to a message broker to relay the outgoing integration messages.
     /// </summary>
-    public interface IOutboundAdapter
+    public interface IOutboundConnector
     {
         void Relay(IIntegrationMessage message, IProducer producer, IEndpoint endpoint);
 

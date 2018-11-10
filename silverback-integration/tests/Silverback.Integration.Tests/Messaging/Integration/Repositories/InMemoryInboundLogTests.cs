@@ -2,10 +2,10 @@
 using System.Threading;
 using NUnit.Framework;
 using Silverback.Messaging;
-using Silverback.Messaging.Repositories;
+using Silverback.Messaging.Integration.Repositories;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging.Repositories
+namespace Silverback.Tests.Messaging.Integration.Repositories
 {
     [TestFixture]
     public class InMemoryInboundLogTests

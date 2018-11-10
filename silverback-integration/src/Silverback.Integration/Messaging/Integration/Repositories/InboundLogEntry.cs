@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Silverback.Messaging.Repositories
+namespace Silverback.Messaging.Integration.Repositories
 {
     public class InboundLogEntry : IEquatable<InboundLogEntry>
     {

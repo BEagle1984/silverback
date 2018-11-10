@@ -1,27 +1,25 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
-using Silverback.Messaging.Repositories;
-using Silverback.Tests.TestTypes;
+using Silverback.Messaging.Integration;
+using Silverback.Messaging.Integration.Repositories;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging.Adapters
+namespace Silverback.Tests.Messaging.Integration
 {
     [TestFixture]
-    public class DeferredOutboundAdapterTests
+    public class DeferredOutboundConnectorTests
     {
         private InMemoryOutboundQueue _queue;
-        private DeferredOutboundAdapter _adapter;
+        private DeferredOutboundConnector _connector;
 
         [SetUp]
         public void Setup()
         {
             _queue = new InMemoryOutboundQueue();
             _queue.Clear();
-            _adapter = new DeferredOutboundAdapter(_queue);
+            _connector = new DeferredOutboundConnector(_queue);
         }
 
         [Test]
@@ -30,9 +28,9 @@ namespace Silverback.Tests.Messaging.Adapters
             var message = new TestEventOne { Content = "Test" };
             var endpoint = BasicEndpoint.Create("TestEventOneTopic");
 
-            _adapter.Relay(message, null, endpoint);
+            _connector.Relay(message, null, endpoint);
 
-            _adapter.OnTransactionCommit(null);
+            _connector.OnTransactionCommit(null);
 
             Assert.That(_queue.Length, Is.EqualTo(1));
             var item =_queue.Dequeue(1).First();
@@ -46,9 +44,9 @@ namespace Silverback.Tests.Messaging.Adapters
             var message = new TestEventOne { Content = "Test" };
             var endpoint = BasicEndpoint.Create("TestEventOneTopic");
 
-            await _adapter.RelayAsync(message, null, endpoint);
+            await _connector.RelayAsync(message, null, endpoint);
 
-            _adapter.OnTransactionCommit(null);
+            _connector.OnTransactionCommit(null);
 
             Assert.That(_queue.Length, Is.EqualTo(1));
             var item = _queue.Dequeue(1).First();
@@ -62,9 +60,9 @@ namespace Silverback.Tests.Messaging.Adapters
             var message = new TestEventOne { Content = "Test" };
             var endpoint = BasicEndpoint.Create("TestEventOneTopic");
 
-            _adapter.Relay(message, null, endpoint);
+            _connector.Relay(message, null, endpoint);
 
-            _adapter.OnTransactionRollback(null);
+            _connector.OnTransactionRollback(null);
 
             Assert.That(_queue.Length, Is.EqualTo(0));
         }
