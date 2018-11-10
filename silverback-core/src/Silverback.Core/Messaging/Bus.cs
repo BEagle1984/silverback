@@ -1,4 +1,4 @@
-﻿using Silverback.Extensions;
+﻿using Silverback.Util;
 using Silverback.Messaging.Messages;
 using System;
 using System.Collections.Concurrent;
@@ -19,40 +19,26 @@ namespace Silverback.Messaging
         private readonly ConcurrentDictionary<string, object> _items = new ConcurrentDictionary<string, object>();
         private bool _disposed = false;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Bus"/> class.
-        /// </summary>
         internal Bus()
         {
         }
 
         #region Publish
 
-        /// <summary>
-        /// Publishes the specified message.
-        /// </summary>
-        /// <param name="message">The message to be published.</param>
-        /// <exception cref="ArgumentNullException">message</exception>
         public void Publish(IMessage message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
-            CheckDisposed();
+            ThrowIfDisposed();
 
             _subscribers.ForEach(s => s.OnNext(message));
         }
 
-        /// <summary>
-        /// Asynchronously publishes the specified message.
-        /// </summary>
-        /// <param name="message">The message to be published.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">message</exception>
         public Task PublishAsync(IMessage message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
-            CheckDisposed();
+            ThrowIfDisposed();
 
             return _subscribers.ForEachAsync(async s => await s.OnNextAsync(message));
         }
@@ -61,14 +47,9 @@ namespace Silverback.Messaging
 
         #region Subscribe / Unsubscribe
 
-        /// <summary>
-        /// Subscribes the specified <see cref="T:Silverback.Messaging.ISubscriber" /> to receive
-        /// the messages sent through this bus.
-        /// </summary>
-        /// <param name="subscriber">The subscriber.</param>
         public IBus Subscribe(ISubscriber subscriber)
         {
-            CheckDisposed();
+            ThrowIfDisposed();
 
             lock (_subscribers)
             {
@@ -79,10 +60,6 @@ namespace Silverback.Messaging
             return this;
         }
 
-        /// <summary>
-        /// Dispose the specified subscriber.
-        /// </summary>
-        /// <param name="subscriber">The subscriber.</param>
         public IBus Unsubscribe(ISubscriber subscriber)
         {
             lock (_subscribers)
@@ -109,7 +86,7 @@ namespace Silverback.Messaging
         {
             get
             {
-                CheckDisposed();
+                ThrowIfDisposed();
                 return _items;
             }
         }
@@ -118,20 +95,12 @@ namespace Silverback.Messaging
 
         #region Dispose
 
-        /// <summary>
-        /// Throws an exception if the current instance was disposed.
-        /// </summary>
-        /// <exception cref="ObjectDisposedException"></exception>
-        private void CheckDisposed()
+        private void ThrowIfDisposed()
         {
             if (_disposed)
                 throw new ObjectDisposedException(GetType().FullName);
         }
 
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing && !_disposed)
@@ -147,18 +116,12 @@ namespace Silverback.Messaging
             }
         }
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Finalizes an instance of the <see cref="Bus"/> class.
-        /// </summary>
         ~Bus()
         {
             Dispose(false);

@@ -1,76 +1,122 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Silverback.Extensions;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers
 {
-    /// <summary>
-    /// Subscribes to the messages published in a bus and forward them to 
-    /// all <see cref="ISubscriber"/> of type <typeparamref name="TSubscriber"/>.
-    /// thenewly instantiated for every single message.
-    /// </summary>
-    /// <typeparam name="TSubscriber">The type of the <see cref="ISubscriber"/> to be instanciated to handle the messages.</typeparam>
-    /// <seealso cref="ISubscriber" />
-    public class SubscriberFactory<TSubscriber> : ISubscriber
-        where TSubscriber : ISubscriber
+    public class SubscriberFactory<TSubscriber> : AsyncSubscriber<IMessage>
     {
         private readonly ITypeFactory _typeFactory;
         private IBus _bus;
         private ILogger _logger;
+        private ConcurrentDictionary<Type, AnnotatedMethod[]> _methodsCache;
+        private const bool UseCache = true; // TODO: Test performance gain and/or clean it up
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SubscriberFactory{THandler}" /> class.
-        /// </summary>
-        /// <param name="typeFactory">The <see cref="ITypeFactory" /> that will be used to get an <see cref="ISubscriber" /> instance to process each received message.</param>
         public SubscriberFactory(ITypeFactory typeFactory)
         {
             _typeFactory = typeFactory ?? throw new ArgumentNullException(nameof(typeFactory));
         }
-
-        /// <summary>
-        /// Initializes the subscriber.
-        /// </summary>
-        /// <param name="bus">The subscribed bus.</param>
-        public void Init(IBus bus)
+        
+        public override void Init(IBus bus)
         {
+            base.Init(bus);
             _bus = bus;
-            _logger = _bus.GetLoggerFactory().CreateLogger<SubscriberFactory<TSubscriber>>();
+            _logger = bus.GetLoggerFactory().CreateLogger<SubscriberFactory<TSubscriber>>();
+            _methodsCache = (ConcurrentDictionary<Type, AnnotatedMethod[]>) bus.Items.GetOrAdd(
+                $"Silverback.Messaging.Subscribers.AnnotatedMethods<{typeof(TSubscriber).AssemblyQualifiedName}>",
+                _ => new ConcurrentDictionary<Type, AnnotatedMethod[]>());
         }
 
-        /// <summary>
-        /// Gets a new subscriber instance.
-        /// </summary>
-        /// <returns></returns>
-        private TSubscriber[] GetSubscribers()
+        public override Task HandleAsync(IMessage message) =>
+            GetAllAnnotatedMethods()
+                .Where(method => method.SubscribedMessageType.IsInstanceOfType(message))
+                .ForEachAsync(method => InvokeAnnotatedMethod(method, message));
+
+        private AnnotatedMethod[] GetAllAnnotatedMethods()
+            => GetSubscriberInstancesFromTypeFactory()
+                .SelectMany(GetAnnotatedMethods)
+                .ToArray();
+
+        private TSubscriber[] GetSubscriberInstancesFromTypeFactory()
         {
-            var subscribers = _typeFactory.GetInstances<TSubscriber>();
+            var subscribers = _typeFactory.GetInstances<TSubscriber>() ?? Array.Empty<TSubscriber>();
 
-            if (subscribers == null)
-                throw new InvalidOperationException($"No subscriber of type '{typeof(TSubscriber).Name}' has been instantiated.");
-
-            _logger.LogTrace($"Found {subscribers.Length} subscribers of type '{typeof(TSubscriber).Name}'.");
-
-            subscribers.ForEach(s => s.Init(_bus));
+            _logger.LogTrace($"Resolved {subscribers.Length} object(s) of type '{typeof(TSubscriber).Name}'.");
 
             return subscribers;
         }
 
-        /// <summary>
-        /// Called when a message is published, forwards the message to a new instance of <typeparamref name="TSubscriber"/>.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        public void OnNext(IMessage message)
-            => GetSubscribers().ForEach(s => s.OnNext(message));
+        private IEnumerable<AnnotatedMethod> GetAnnotatedMethods(TSubscriber subscriber) =>
+            GetAnnotatedMethods(subscriber.GetType())
+                .Select(method =>
+                {
+                    method.Instance = subscriber;
+                    return method;
+                });
 
-        /// <summary>
-        /// Called when a message is published asynchronously, forwards the message to a new instance of <typeparamref name="TSubscriber"/>.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <returns></returns>
-        public Task OnNextAsync(IMessage message)
-            => GetSubscribers().ForEachAsync(s => s.OnNextAsync(message));
+        private AnnotatedMethod[] GetAnnotatedMethods(Type type)
+            => _methodsCache.GetOrAdd(type, t =>
+                t.GetAnnotatedMethods<SubscribeAttribute>()
+                    .Select(methodInfo =>
+                    {
+                        var parameters = methodInfo.GetParameters();
+                        return new AnnotatedMethod
+                        {
+                            MethodInfo = methodInfo,
+                            Parameters = parameters,
+                            SubscribedMessageType = GetMessageParameterType(methodInfo, parameters)
+                        };
+                    })
+                    .ToArray());
+
+        private Type GetMessageParameterType(MethodInfo methodInfo, ParameterInfo[] parameters)
+        {
+            var messageParameters = parameters.Where(p => typeof(IMessage).IsAssignableFrom(p.ParameterType)).ToArray();
+
+            if (messageParameters.Length != 1)
+                ThrowMethodSignatureException(methodInfo, "A single parameter of type IMessage or drived type is expected.");
+
+            return parameters.First().ParameterType;
+        }
+
+        private void ThrowMethodSignatureException(MethodInfo methodInfo, string message) =>
+            throw new SilverbackException(
+                $"The method {methodInfo.DeclaringType.FullName}.{methodInfo.Name} " +
+                $"has an invalid signature. {message}");
+
+        private Task InvokeAnnotatedMethod(AnnotatedMethod method, IMessage message)
+        {
+            _logger.LogTrace($"Invoking {method.MethodInfo.DeclaringType.FullName}.{method.MethodInfo.Name}...");
+
+            var result = method.MethodInfo.Invoke(method.Instance, GetMethodParameterValues(method.Parameters, message));
+
+            return method.MethodInfo.IsAsync() ? (Task) result : Task.CompletedTask;
+        }
+
+        private object[] GetMethodParameterValues(ParameterInfo[] parameters, IMessage message)
+            => parameters.Length == 1
+                ? new object[] {message}
+                : parameters.MapParameterValues(new Dictionary<Type, Func<Type, object>>
+                {
+                    {typeof(IMessage), _ => message},
+                    {typeof(IBus), _ => _bus},
+                    {typeof(IPublisher), _ => _bus.GetPublisher()}
+                });
+
+        private class AnnotatedMethod
+        {
+            public TSubscriber Instance { get; set; }
+            public MethodInfo MethodInfo { get; set; }
+            public ParameterInfo[] Parameters { get; set; }
+            public Type SubscribedMessageType { get; set; }
+        }
     }
 }

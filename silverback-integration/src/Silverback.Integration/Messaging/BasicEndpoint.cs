@@ -12,10 +12,21 @@ namespace Silverback.Messaging
     /// <seealso cref="IEndpoint" />
     public sealed class BasicEndpoint : IEndpoint, IEquatable<BasicEndpoint>
     {
-        #region Construction
+        /// <summary>
+        /// Gets or sets the name of the broker to be used.
+        /// If not set the default one will be used.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string BrokerName { get; }
+
+        /// <summary>
+        /// Gets or sets the topic/queue name.
+        /// </summary>
+        public string Name { get; }
 
         /// <summary>
         /// Prevents a default instance of the <see cref="BasicEndpoint" /> class from being created.
+        /// The Create method is supposed to be used to create the object.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="brokerName">The name of the broker.</param>
@@ -34,24 +45,6 @@ namespace Silverback.Messaging
         /// <returns></returns>
         public static BasicEndpoint Create(string name, string brokerName = null)
             => new BasicEndpoint(name, brokerName);
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets or sets the name of the broker to be used.
-        /// If not set the default one will be used.
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string BrokerName { get; }
-
-        /// <summary>
-        /// Gets or sets the topic/queue name.
-        /// </summary>
-        public string Name { get;  }
-
-        #endregion
 
         #region IComparable
 

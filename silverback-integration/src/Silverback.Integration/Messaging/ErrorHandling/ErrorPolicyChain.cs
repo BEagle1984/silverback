@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Extensions;
+using Silverback.Util;
 
 namespace Silverback.Messaging.ErrorHandling
 {

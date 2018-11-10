@@ -1,5 +1,6 @@
 ﻿namespace Silverback
 {
+    // TODO: Needed?
     /// <summary>
     /// Exposes the interface to let verify the object's configuration.
     /// </summary>

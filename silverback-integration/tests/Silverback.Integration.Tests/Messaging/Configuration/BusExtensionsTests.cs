@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Integration;
+using Silverback.Messaging.Integration.Repositories;
+using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
@@ -13,24 +15,27 @@ namespace Silverback.Tests.Messaging.Configuration
     [TestFixture]
     public class BusExtensionsTests
     {
-        private OutboundMessagesRepository _outboxRepository;
-        private InboundMessagesRepository _inboxRepository;
+        private InMemoryOutboundQueue _outboundQueue;
+        private InMemoryInboundLog _inboundLog;
 
         [SetUp]
         public void Setup()
         {
-            _outboxRepository = new OutboundMessagesRepository();
-            _inboxRepository = new InboundMessagesRepository();
+            _outboundQueue = new InMemoryOutboundQueue();
+            _outboundQueue.Clear();
+
+            _inboundLog = new InMemoryInboundLog();
+            _inboundLog.Clear();
         }
 
         [Test]
         public void AddOutboundTest()
         {
-            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboxRepository)).Build())
+            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboundQueue)).Build())
             {
-                bus
-                    .AddOutbound<TestEventOne, DbOutboundAdapter<OutboundMessageEntity>>(BasicEndpoint.Create("topicEventOne"))
-                    .AddOutbound<TestEventTwo, DbOutboundAdapter<OutboundMessageEntity>>(BasicEndpoint.Create("topicEventTwo"));
+                bus.AddOutbound<TestEventOne, DeferredOutboundConnector>(BasicEndpoint.Create("topicEventOne"))
+                    .AddOutbound<TestEventTwo, DeferredOutboundConnector>(BasicEndpoint.Create("topicEventTwo"))
+                    .Subscribe<DeferredOutboundConnector>();
 
                 bus.Publish(new TestEventOne());
                 bus.Publish(new TestEventTwo());
@@ -38,21 +43,85 @@ namespace Silverback.Tests.Messaging.Configuration
                 bus.Publish(new TestEventTwo());
                 bus.Publish(new TestEventTwo());
 
-                Assert.That(_outboxRepository.DbSet.Count, Is.EqualTo(5));
-                Assert.That(_outboxRepository.DbSet.Count(m => m.MessageType == typeof(TestEventOne).AssemblyQualifiedName), Is.EqualTo(2));
-                Assert.That(_outboxRepository.DbSet.Count(m => m.MessageType == typeof(TestEventTwo).AssemblyQualifiedName), Is.EqualTo(3));
+                bus.Publish(new TransactionCommitEvent());
+
+                Assert.That(_outboundQueue.Length, Is.EqualTo(5));
+            }
+        }
+
+        [Test]
+        public void AddDeferredOutboundTest()
+        {
+            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboundQueue)).Build())
+            {
+                bus.AddDeferredOutbound<TestEventOne>(BasicEndpoint.Create("topicEventOne"))
+                    .AddDeferredOutbound<TestEventTwo>(BasicEndpoint.Create("topicEventTwo"))
+                    .Subscribe<DeferredOutboundConnector>();
+
+                bus.Publish(new TestEventOne());
+                bus.Publish(new TestEventTwo());
+                bus.Publish(new TestEventOne());
+                bus.Publish(new TestEventTwo());
+                bus.Publish(new TestEventTwo());
+
+                bus.Publish(new TransactionCommitEvent());
+
+                Assert.That(_outboundQueue.Length, Is.EqualTo(5));
+            }
+        }
+
+        [Test]
+        public void AddDeferredOutboundRollbackTest()
+        {
+            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboundQueue)).Build())
+            {
+                bus.AddDeferredOutbound<TestEventOne>(BasicEndpoint.Create("topicEventOne"))
+                    .AddDeferredOutbound<TestEventTwo>(BasicEndpoint.Create("topicEventTwo"))
+                    .Subscribe<DeferredOutboundConnector>();
+
+                bus.Publish(new TestEventOne());
+                bus.Publish(new TestEventTwo());
+
+                bus.Publish(new TransactionCommitEvent());
+
+                bus.Publish(new TestEventTwo());
+                bus.Publish(new TestEventTwo());
+
+                bus.Publish(new TransactionRollbackEvent());
+
+                Assert.That(_outboundQueue.Length, Is.EqualTo(2));
+            }
+        }
+        [Test]
+        public void AddDeferredOutboundWithFilterTest()
+        {
+            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboundQueue)).Build())
+            {
+                bus.AddDeferredOutbound<TestEventOne>(BasicEndpoint.Create("topicEventOne"), e => e.Content == "YES")
+                    .AddDeferredOutbound<TestEventTwo>(BasicEndpoint.Create("topicEventTwo"))
+                    .Subscribe<DeferredOutboundConnector>();
+
+                bus.Publish(new TestEventOne {Content = "YES"});
+                bus.Publish(new TestEventTwo());
+                bus.Publish(new TestEventOne { Content = "YES" });
+                bus.Publish(new TestEventOne { Content = "NO" });
+                bus.Publish(new TestEventOne { Content = "NO" });
+
+                bus.Publish(new TransactionCommitEvent());
+
+                Assert.That(_outboundQueue.Length, Is.EqualTo(3));
             }
         }
 
         [Test]
         public void AddInboundTest()
         {
-            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboxRepository)).Build())
+            using (var bus = new BusBuilder().Build())
             {
-                var adapter = new DbInboundAdapter<InboundMessageEntity>(_inboxRepository);
+                var connector = new LoggedInboundConnector(_inboundLog);
                 bus
-                    .ConfigureBroker<TestBroker>(x => { })
-                    .AddInbound(adapter, BasicEndpoint.Create("test"))
+                    .ConfigureBroker<TestBroker>()
+                    .AddInbound(connector, BasicEndpoint.Create("test"))
                     .ConnectBrokers();
 
                 var consumer = (TestConsumer)bus.GetBroker().GetConsumer(BasicEndpoint.Create("test"));
@@ -62,18 +131,38 @@ namespace Silverback.Tests.Messaging.Configuration
                 consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
                 consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-                Assert.That(_inboxRepository.DbSet.Count, Is.EqualTo(5));
+                Assert.That(_inboundLog.Length, Is.EqualTo(5));
             }
         }
 
         [Test]
-        public void AddMapperTest()
+        public void AddLoggedInboundTest()
         {
-            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboxRepository)).Build())
+            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _inboundLog)).Build())
+            {
+                bus.ConfigureBroker<TestBroker>()
+                    .AddLoggedInbound(BasicEndpoint.Create("test"))
+                    .ConnectBrokers();
+
+                var consumer = (TestConsumer)bus.GetBroker().GetConsumer(BasicEndpoint.Create("test"));
+                consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
+                consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+                consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
+                consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+                consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+
+                Assert.That(_inboundLog.Length, Is.EqualTo(5));
+            }
+        }
+
+        [Test]
+        public void AddTranslatorTest()
+        {
+            using (var bus = new BusBuilder().WithFactory(t => Activator.CreateInstance(t, _outboundQueue)).Build())
             {
                 var outputMessages = new List<TestEventOne>();
                 bus
-                    .AddMapper<TestInternalEventOne, TestEventOne>(m => new TestEventOne { Content = m.InternalMessage })
+                    .AddTranslator<TestInternalEventOne, TestEventOne>(m => new TestEventOne { Content = m.InternalMessage })
                     .Subscribe<TestEventOne>(m => outputMessages.Add(m));
 
                 bus.Publish(new TestInternalEventOne());
