@@ -18,6 +18,7 @@ namespace Silverback.Messaging.Subscribers
         private IBus _bus;
         private ILogger _logger;
         private ConcurrentDictionary<Type, AnnotatedMethod[]> _methodsCache;
+        private const bool UseCache = true; // TODO: Test performance gain and/or clean it up
 
         public SubscriberFactory(ITypeFactory typeFactory)
         {

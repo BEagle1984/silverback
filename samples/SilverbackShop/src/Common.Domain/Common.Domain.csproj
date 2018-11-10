@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Core" Version="0.1.0.19" />
+    <PackageReference Include="Silverback.Core" Version="1.0.14" />
   </ItemGroup>
 
   <ItemGroup>
