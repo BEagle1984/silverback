@@ -22,7 +22,7 @@ namespace Silverback.Tests.Messaging.Adapters
             _mockBus.Items.Returns(new System.Collections.Concurrent.ConcurrentDictionary<string, object>(
                 new Dictionary<string, object>
                 {
-                    {"Silverback.Configuration.ILoggerFactory", NullLoggerFactory.Instance}
+                    {"Silverback.Messaging.Configuration.ILoggerFactory", NullLoggerFactory.Instance}
                 }));
         }
 

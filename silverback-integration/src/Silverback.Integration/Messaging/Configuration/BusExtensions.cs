@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Silverback.Messaging.Broker;
-using Silverback.Extensions;
+using Silverback.Util;
 using Silverback.Messaging.Adapters;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
@@ -124,7 +124,7 @@ namespace Silverback.Messaging.Configuration
 
         // TODO: Test
         /// <summary>
-        /// Attaches a <see cref="SimpleOutboundAdapter" /> to the bus.
+        /// Attaches a <see cref="OutboundAdapter" /> to the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the message.</typeparam>
         /// <param name="bus">The bus.</param>
@@ -133,11 +133,11 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         public static IBus AddOutbound<TMessage>(this IBus bus, IEndpoint endpoint, Func<TMessage, bool> filter = null)
             where TMessage : IIntegrationMessage
-            => bus.AddOutbound<TMessage, SimpleOutboundAdapter>(endpoint, filter);
+            => bus.AddOutbound<TMessage, OutboundAdapter>(endpoint, filter);
 
         // TODO: Test
         /// <summary>
-        /// Attaches a <see cref="SimpleOutboundAdapter" /> to the bus.
+        /// Attaches a <see cref="OutboundAdapter" /> to the bus.
         /// </summary>
         /// <param name="bus">The bus.</param>
         /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>

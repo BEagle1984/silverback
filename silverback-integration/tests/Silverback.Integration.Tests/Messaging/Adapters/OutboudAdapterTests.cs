@@ -10,7 +10,7 @@ using Silverback.Tests.TestTypes.Domain;
 namespace Silverback.Tests.Messaging.Adapters
 {
     [TestFixture]
-    public class SimpleOutboudAdapterTests
+    public class OutboudAdapterTests
     {
         private TestBroker _broker;
 
@@ -23,7 +23,7 @@ namespace Silverback.Tests.Messaging.Adapters
         [Test]
         public void RelayTest()
         {
-            var adapter = new SimpleOutboundAdapter();
+            var adapter = new OutboundAdapter();
 
             var @event = new TestEventOne {Content = "Test"};
             var endpoint = BasicEndpoint.Create("TestEventOneTopic");
@@ -39,7 +39,7 @@ namespace Silverback.Tests.Messaging.Adapters
         [Test]
         public async Task RelayAsyncTest()
         {
-            var adapter = new SimpleOutboundAdapter();
+            var adapter = new OutboundAdapter();
 
             var @event = new TestEventOne { Content = "Test" };
             var endpoint = BasicEndpoint.Create("TestEventOneTopic");

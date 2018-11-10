@@ -13,7 +13,7 @@ This package enables communication between them in a flexible and abstracted way
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType />
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.0.19</Version>
+    <Version>0.1.0.20</Version>
 	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
   </PropertyGroup>
 
@@ -29,7 +29,7 @@ This package enables communication between them in a flexible and abstracted way
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="Silverback.Core" Version="1.0.16" />
+    <PackageReference Include="Silverback.Core" Version="0.1.0.19" />
   </ItemGroup>
 
 </Project>
