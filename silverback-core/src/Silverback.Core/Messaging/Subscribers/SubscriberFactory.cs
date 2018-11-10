@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers
@@ -14,6 +15,7 @@ namespace Silverback.Messaging.Subscribers
     public class SubscriberFactory<TSubscriber> : AsyncSubscriber<IMessage>
     {
         private readonly ITypeFactory _typeFactory;
+        private IBus _bus;
         private ILogger _logger;
         private ConcurrentDictionary<Type, AnnotatedMethod[]> _methodsCache;
         private const bool UseCache = true; // TODO: Test performance gain and/or clean it up
@@ -26,6 +28,7 @@ namespace Silverback.Messaging.Subscribers
         public override void Init(IBus bus)
         {
             base.Init(bus);
+            _bus = bus;
             _logger = bus.GetLoggerFactory().CreateLogger<SubscriberFactory<TSubscriber>>();
             _methodsCache = (ConcurrentDictionary<Type, AnnotatedMethod[]>) bus.Items.GetOrAdd(
                 $"Silverback.Messaging.Subscribers.AnnotatedMethods<{typeof(TSubscriber).AssemblyQualifiedName}>",
@@ -35,7 +38,7 @@ namespace Silverback.Messaging.Subscribers
         public override Task HandleAsync(IMessage message) =>
             GetAllAnnotatedMethods()
                 .Where(method => method.SubscribedMessageType.IsInstanceOfType(message))
-                .ForEachAsync(method => ForwardMessage(method, message));
+                .ForEachAsync(method => InvokeAnnotatedMethod(method, message));
 
         private AnnotatedMethod[] GetAllAnnotatedMethods()
             => GetSubscriberInstancesFromTypeFactory()
@@ -63,43 +66,56 @@ namespace Silverback.Messaging.Subscribers
             => _methodsCache.GetOrAdd(type, t =>
                 t.GetAnnotatedMethods<SubscribeAttribute>()
                     .Select(methodInfo =>
-                        new AnnotatedMethod
+                    {
+                        var parameters = methodInfo.GetParameters();
+                        return new AnnotatedMethod
                         {
                             MethodInfo = methodInfo,
-                            SubscribedMessageType = GetMessageParameterType(methodInfo)
-                        })
+                            Parameters = parameters,
+                            SubscribedMessageType = GetMessageParameterType(methodInfo, parameters)
+                        };
+                    })
                     .ToArray());
 
-        private Type GetMessageParameterType(MethodInfo methodInfo)
+        private Type GetMessageParameterType(MethodInfo methodInfo, ParameterInfo[] parameters)
         {
-            var parameters = methodInfo.GetParameters();
+            var messageParameters = parameters.Where(p => typeof(IMessage).IsAssignableFrom(p.ParameterType)).ToArray();
 
-            var messageType = parameters.FirstOrDefault()?.ParameterType;
+            if (messageParameters.Length != 1)
+                ThrowMethodSignatureException(methodInfo, "A single parameter of type IMessage or drived type is expected.");
 
-            if (parameters.Length != 1 || !typeof(IMessage).IsAssignableFrom(messageType))
-            {
-                throw new SilverbackException(
-                    $"The method {methodInfo.DeclaringType.FullName}.{methodInfo.Name} " +
-                    $"has an invalid signature. " +
-                    $"A single parameter of type IMessage or drived type is expected.");
-            }
-
-            return messageType;
+            return parameters.First().ParameterType;
         }
 
-        private Task ForwardMessage(AnnotatedMethod method, IMessage message)
+        private void ThrowMethodSignatureException(MethodInfo methodInfo, string message) =>
+            throw new SilverbackException(
+                $"The method {methodInfo.DeclaringType.FullName}.{methodInfo.Name} " +
+                $"has an invalid signature. {message}");
+
+        private Task InvokeAnnotatedMethod(AnnotatedMethod method, IMessage message)
         {
             _logger.LogTrace($"Invoking {method.MethodInfo.DeclaringType.FullName}.{method.MethodInfo.Name}...");
 
-            var result = method.MethodInfo.Invoke(method.Instance, new[] {message});
+            var result = method.MethodInfo.Invoke(method.Instance, GetMethodParameterValues(method.Parameters, message));
 
             return method.MethodInfo.IsAsync() ? (Task) result : Task.CompletedTask;
         }
+
+        private object[] GetMethodParameterValues(ParameterInfo[] parameters, IMessage message)
+            => parameters.Length == 1
+                ? new object[] {message}
+                : parameters.MapParameterValues(new Dictionary<Type, Func<Type, object>>
+                {
+                    {typeof(IMessage), _ => message},
+                    {typeof(IBus), _ => _bus},
+                    {typeof(IPublisher), _ => _bus.GetPublisher()}
+                });
 
         private class AnnotatedMethod
         {
             public TSubscriber Instance { get; set; }
             public MethodInfo MethodInfo { get; set; }
+            public ParameterInfo[] Parameters { get; set; }
             public Type SubscribedMessageType { get; set; }
         }
     }
