@@ -28,13 +28,12 @@ namespace Silverback.Tests.Messaging.Integration
         [Test]
         public void HandleTest()
         {
-            var mapper =
-                new GenericMessageMapper<TestInternalEventOne, TestEventOne>(m =>
+            var translator =
+                new GenericMessageTranslator<TestInternalEventOne, TestEventOne>(m =>
                     new TestEventOne { Content = m.InternalMessage });
-            mapper.Init(_mockBus);
 
             var input = new TestInternalEventOne { InternalMessage = "abcd" };
-            mapper.Handle(input);
+            translator.OnNext(input, _mockBus);
 
             _mockBus.Received(1).Publish(Arg.Any<IMessage>());
             _mockBus.Received(1).Publish(Arg.Any<TestEventOne>());
@@ -44,16 +43,15 @@ namespace Silverback.Tests.Messaging.Integration
         [Test]
         public void MapTest()
         {
-            var mapper =
-                new GenericMessageMapper<TestInternalEventOne, TestEventOne>(m =>
+            var translator =
+                new GenericMessageTranslator<TestInternalEventOne, TestEventOne>(m =>
                     new TestEventOne { Content = m.InternalMessage });
-            mapper.Init(_mockBus);
 
             TestEventOne output = null;
             _mockBus.When(b => b.Publish(Arg.Any<TestEventOne>())).Do(i => output = i.Arg<TestEventOne>());
 
             var input = new TestInternalEventOne { InternalMessage = "abcd" };
-            mapper.Handle(input);
+            translator.OnNext(input, _mockBus);
 
             Assert.That(output, Is.Not.Null);
             Assert.That(output.Content, Is.EqualTo(input.InternalMessage));
