@@ -3,8 +3,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Adapters
 {
@@ -42,12 +40,10 @@ namespace Silverback.Messaging.Adapters
         public virtual void Init(IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
         {
             Bus = bus ?? throw new ArgumentNullException(nameof(bus));
-            if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
-
             ErrorPolicy = errorPolicy ?? new NoErrorPolicy();
             ErrorPolicy.Init(bus);
 
-            Endpoint = endpoint;
+            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
 
             Connect(bus.GetBroker(endpoint.BrokerName), endpoint);
         }
