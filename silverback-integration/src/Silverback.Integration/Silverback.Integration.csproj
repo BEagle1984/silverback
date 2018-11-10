@@ -13,13 +13,14 @@ This package enables communication between them in a flexible and abstracted way
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType />
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.0.20</Version>
+    <Version>0.1.0.20</Version>
 	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
+    <NoWarn>1701;1702;S125;CS1591;S1172</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -28,7 +29,7 @@ This package enables communication between them in a flexible and abstracted way
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="Silverback.Core" Version="1.0.14" />
+    <PackageReference Include="Silverback.Core" Version="0.1.0.19" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using Silverback.Messaging.Subscribers;
+﻿using System;
+using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes.Domain;
 
 namespace Silverback.Tests.TestTypes.Subscribers

@@ -146,10 +146,10 @@ namespace Silverback.Messaging.Publishing
 
             TResponse response = default;
 
-            var replySubscriber = replyBus.Subscribe(
-                new GenericSubscriber<TResponse>(
-                    m => response = m,
-                    m => m.RequestId == message.RequestId));
+            var replySubscriber = new GenericSubscriber<TResponse>(
+                m => response = m,
+                m => m.RequestId == message.RequestId);
+            replyBus.Subscribe(replySubscriber);
 
             try
             {
@@ -163,7 +163,7 @@ namespace Silverback.Messaging.Publishing
                     if (stopwatch.Elapsed >= timeout)
                         throw new TimeoutException($"The request with id {message.RequestId} was not replied in the allotted time.");
 
-                    await Task.Delay(50); // TODO: Check this
+                    await Task.Delay(50); // TODO: Check this!
                 }
 
                 stopwatch.Stop();

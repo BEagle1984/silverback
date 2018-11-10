@@ -7,43 +7,21 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging
 {
-    /// <summary>
-    /// A publish-subscribe based observable bus.
-    /// </summary>
     public interface IBus
     {
         #region Publish
 
-        /// <summary>
-        /// Publishes the specified message.
-        /// </summary>
-        /// <param name="message">The message to be published.</param>
         void Publish(IMessage message);
 
-        /// <summary>
-        /// Asynchronously publishes the specified message.
-        /// </summary>
-        /// <param name="message">The message to be published.</param>
-        /// <returns></returns>
         Task PublishAsync(IMessage message);
 
         #endregion
 
         #region Subscribe / Unsubscribe
 
-        /// <summary>
-        /// Subscribes the specified <see cref="ISubscriber"/> to receive
-        /// the messages sent through this bus.
-        /// </summary>
-        /// <param name="subscriber">The subscriber.</param>
-        ISubscriber Subscribe(ISubscriber subscriber);
+        IBus Subscribe(ISubscriber subscriber);
 
-        /// <summary>
-        /// Unsubscribes the specified <see cref="ISubscriber"/> to stop receiving
-        /// the messages sent through this bus.
-        /// </summary>
-        /// <param name="subscriber">The subscriber.</param>
-        void Unsubscribe(ISubscriber subscriber);
+        IBus Unsubscribe(ISubscriber subscriber);
 
         #endregion
 

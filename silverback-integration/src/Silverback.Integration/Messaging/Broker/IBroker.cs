@@ -1,4 +1,5 @@
-﻿using Silverback.Messaging.Serialization;
+﻿using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Broker
 {
@@ -45,6 +46,11 @@ namespace Silverback.Messaging.Broker
         ///   <c>true</c> if this instance is connected; otherwise, <c>false</c>.
         /// </value>
         bool IsConnected { get; }
+
+        /// <summary>
+        /// The logger factory
+        /// </summary>
+        ILoggerFactory LoggerFactory { get; }
 
         /// <summary>
         /// Connects to the message broker.

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using NUnit.Framework;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes.Domain;
@@ -21,6 +22,8 @@ namespace Silverback.Tests.Messaging.Subscribers
                 await Task.Delay(1);
                 _counter++;
             });
+
+            _subscriber.Init(new BusBuilder().Build());
         }
 
         [Test]

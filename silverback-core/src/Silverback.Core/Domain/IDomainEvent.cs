@@ -8,9 +8,6 @@ namespace Silverback.Domain
     /// <seealso cref="IEvent" />
     public interface IDomainEvent : IEvent
     {
-        /// <summary>
-        /// Gets or sets the entity instance that generated this event.
-        /// </summary>
         IDomainEntity Source { get; set; }
     }
 
@@ -22,9 +19,6 @@ namespace Silverback.Domain
     public interface IDomainEvent<out T> : IDomainEvent
         where T : IDomainEntity
     {
-        /// <summary>
-        /// Gets the entity instance that generated this event.
-        /// </summary>
         new T Source { get; }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Tests.TestTypes.Domain;
 using Silverback.Tests.TestTypes.Subscribers;
 
@@ -13,9 +15,10 @@ namespace Silverback.Tests.Messaging
         [Test]
         public void PublishSubscribeBasicTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
-                var subscriber = (TestSubscriber)bus.Subscribe(new TestSubscriber());
+                var subscriber = new TestSubscriber();
+                bus.Subscribe(subscriber);
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -27,9 +30,10 @@ namespace Silverback.Tests.Messaging
         [Test]
         public async Task PublishAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
-                var subscriber = (TestAsyncSubscriber)bus.Subscribe(new TestAsyncSubscriber());
+                var subscriber = new TestAsyncSubscriber();
+                bus.Subscribe(subscriber);
 
                 await bus.PublishAsync(new TestCommandOne());
                 await bus.PublishAsync(new TestCommandTwo());
@@ -41,10 +45,12 @@ namespace Silverback.Tests.Messaging
         [Test]
         public void MultipleSubscribersTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
-                var subscriber1 = (TestSubscriber)bus.Subscribe(new TestSubscriber());
-                var subscriber2 = (TestAsyncSubscriber)bus.Subscribe(new TestAsyncSubscriber());
+                var subscriber1 = new TestSubscriber();
+                var subscriber2 = new TestAsyncSubscriber();
+                bus.Subscribe(subscriber1);
+                bus.Subscribe(subscriber2);
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -60,10 +66,12 @@ namespace Silverback.Tests.Messaging
         [Test]
         public async Task MultipleSubscribersAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
-                var subscriber1 = (TestSubscriber)bus.Subscribe(new TestSubscriber());
-                var subscriber2 = (TestAsyncSubscriber)bus.Subscribe(new TestAsyncSubscriber());
+                var subscriber1 = new TestSubscriber();
+                var subscriber2 = new TestAsyncSubscriber();
+                bus.Subscribe(subscriber1);
+                bus.Subscribe(subscriber2);
 
                 await bus.PublishAsync(new TestCommandOne());
                 await bus.PublishAsync(new TestCommandTwo());
@@ -79,10 +87,12 @@ namespace Silverback.Tests.Messaging
         [Test]
         public void UnsubscribeTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
-                var subscriber1 = (TestAsyncSubscriber)bus.Subscribe(new TestAsyncSubscriber());
-                var subscriber2 = (TestSubscriber)bus.Subscribe(new TestSubscriber());
+                var subscriber1 = new TestAsyncSubscriber();
+                var subscriber2 = new TestSubscriber();
+                bus.Subscribe(subscriber1);
+                bus.Subscribe(subscriber2);
 
                 bus.Publish(new TestCommandOne());
                 bus.Publish(new TestCommandTwo());
@@ -104,7 +114,7 @@ namespace Silverback.Tests.Messaging
             var subscriber1 = new TestAsyncSubscriber();
             var subscriber2 = new TestSubscriber();
 
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 bus.Subscribe(subscriber1);
                 bus.Subscribe(subscriber2);

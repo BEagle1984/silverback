@@ -5,10 +5,6 @@
     /// </summary>
     public interface IConfigurator
     {
-        /// <summary>
-        /// Configures the <see cref="IBus"/>.
-        /// </summary>
-        /// <param name="config">The configuration.</param>
-        void Configure(BusConfig config);
+        void Configure(IBus bus);
     }
 }

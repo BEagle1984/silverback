@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
@@ -11,6 +12,8 @@ namespace Silverback.Messaging.Broker
     /// <seealso cref="Silverback.Messaging.Broker.IConsumer" />
     public abstract class Consumer : EndpointConnectedObject, IConsumer
     {
+        private readonly ILogger _logger;
+
         /// <summary>
         /// Occurs when a message is received.
         /// </summary>
@@ -22,8 +25,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="broker">The broker.</param>
         /// <param name="endpoint">The endpoint.</param>
         protected Consumer(IBroker broker, IEndpoint endpoint)
-            : base(broker, endpoint)
+           : base(broker, endpoint)
         {
+            _logger = broker.LoggerFactory.CreateLogger<Consumer>();
         }
 
         /// <summary>
@@ -33,11 +37,13 @@ namespace Silverback.Messaging.Broker
         /// the event.</remarks>
         protected void HandleMessage(byte[] buffer)
         {
-            // TODO: Handle errors -> logging and stuff -> then?
             if (Received == null)
-                return;
+                throw new InvalidOperationException("A message was received but no handler is attached to the Received event.");
 
             var envelope = Serializer.Deserialize(buffer);
+
+            _logger.LogTrace($"Received message '{envelope.Message.Id}' on endpoint '{Endpoint.Name}' (source: '{envelope.Source}').");
+
             Received(this, envelope);
         }
     }

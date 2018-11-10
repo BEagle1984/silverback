@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Subscribers
         where TMessage : IMessage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Subscriber{TMessage}"/> class.
+        /// Initializes a new instance of the <see cref="Subscriber{TMessage}" /> class.
         /// </summary>
         /// <param name="filter">An optional filter to be applied to the messages.</param>
         protected Subscriber(Func<TMessage, bool> filter = null)

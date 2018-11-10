@@ -13,13 +13,13 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public void GetResponseTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var requestPublisher = bus.GetRequestPublisher<IRequest, IResponse>();
                 var responsePublisher = bus.GetResponsePublisher<IResponse>();
 
                 var counter = 0;
-                bus.Config().Subscribe(m =>
+                bus.Subscribe(m =>
                 {
                     switch (m)
                     {
@@ -48,13 +48,13 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public void GetSpecificResponseTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var requestPublisher = bus.GetRequestPublisher<TestRequestOne, TestResponseOne>();
                 var responsePublisher = bus.GetResponsePublisher<TestResponseOne>();
 
                 var counter = 0;
-                bus.Config().Subscribe(m =>
+                bus.Subscribe(m =>
                 {
                     switch (m)
                     {
@@ -76,13 +76,13 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public async Task GetResponseAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var requestPublisher = bus.GetRequestPublisher<IRequest, IResponse>();
                 var responsePublisher = bus.GetResponsePublisher<IResponse>();
 
                 var counter = 0;
-                bus.Config().Subscribe(m =>
+                bus.Subscribe(m =>
                 {
                     switch (m)
                     {
@@ -111,13 +111,13 @@ namespace Silverback.Tests.Messaging.Publishing
         [Test]
         public async Task GetSpecificResponseAsyncTest()
         {
-            using (var bus = new Bus())
+            using (var bus = new BusBuilder().Build())
             {
                 var requestPublisher = bus.GetRequestPublisher<TestRequestOne, TestResponseOne>();
                 var responsePublisher = bus.GetResponsePublisher<TestResponseOne>();
 
                 var counter = 0;
-                bus.Config().Subscribe(m =>
+                bus.Subscribe(m =>
                 {
                     switch (m)
                     {
