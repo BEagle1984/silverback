@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Configuration
 {
     public static class BusConfigurationExtensions
     {
-        private const string ItemsKeyPrefix = "Silverback.Configuration.";
+        private const string ItemsKeyPrefix = "Silverback.Messaging.Configuration.";
 
         #region Type Factory (IoC)
 

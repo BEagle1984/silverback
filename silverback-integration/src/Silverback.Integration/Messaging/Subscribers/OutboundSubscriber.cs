@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Subscribers
         /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
         /// <param name="filter">An optional filter to be applied to the messages.</param>
         public OutboundSubscriber(ITypeFactory typeFactory, IBroker broker, IEndpoint endpoint, Func<TMessage, bool> filter = null)
-            :base(filter)
+            : base(filter)
         {
             _typeFactory = typeFactory ?? throw new ArgumentNullException(nameof(typeFactory));
             _producer = broker?.GetProducer(endpoint);

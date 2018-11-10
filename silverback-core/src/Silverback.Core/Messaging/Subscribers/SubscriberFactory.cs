@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -14,25 +15,34 @@ namespace Silverback.Messaging.Subscribers
     {
         private readonly ITypeFactory _typeFactory;
         private ILogger _logger;
+        private ConcurrentDictionary<Type, AnnotatedMethod[]> _methodsCache;
+        private const bool UseCache = true; // TODO: Test performance gain and/or clean it up
 
         public SubscriberFactory(ITypeFactory typeFactory)
         {
             _typeFactory = typeFactory ?? throw new ArgumentNullException(nameof(typeFactory));
         }
-
+        
         public override void Init(IBus bus)
         {
             base.Init(bus);
             _logger = bus.GetLoggerFactory().CreateLogger<SubscriberFactory<TSubscriber>>();
+            _methodsCache = (ConcurrentDictionary<Type, AnnotatedMethod[]>) bus.Items.GetOrAdd(
+                $"Silverback.Messaging.Subscribers.AnnotatedMethods<{typeof(TSubscriber).AssemblyQualifiedName}>",
+                _ => new ConcurrentDictionary<Type, AnnotatedMethod[]>());
         }
 
         public override Task HandleAsync(IMessage message) =>
-            GetSubscriberInstances()
-                .SelectMany(GetSubscriberMethods)
+            GetAllAnnotatedMethods()
                 .Where(method => method.SubscribedMessageType.IsInstanceOfType(message))
                 .ForEachAsync(method => ForwardMessage(method, message));
-        
-        private TSubscriber[] GetSubscriberInstances()
+
+        private AnnotatedMethod[] GetAllAnnotatedMethods()
+            => GetSubscriberInstancesFromTypeFactory()
+                .SelectMany(GetAnnotatedMethods)
+                .ToArray();
+
+        private TSubscriber[] GetSubscriberInstancesFromTypeFactory()
         {
             var subscribers = _typeFactory.GetInstances<TSubscriber>() ?? Array.Empty<TSubscriber>();
 
@@ -41,21 +51,26 @@ namespace Silverback.Messaging.Subscribers
             return subscribers;
         }
 
-        private static SubscriberMethod[] GetSubscriberMethods(TSubscriber subscriber) => subscriber
-            .GetType()
-            .GetAnnotatedMethods<SubscribeAttribute>()
-            .Select(methodInfo => GetSubscriberMethod(subscriber, methodInfo))
-            .ToArray();
+        private IEnumerable<AnnotatedMethod> GetAnnotatedMethods(TSubscriber subscriber) =>
+            GetAnnotatedMethods(subscriber.GetType())
+                .Select(method =>
+                {
+                    method.Instance = subscriber;
+                    return method;
+                });
 
-        private static SubscriberMethod GetSubscriberMethod(TSubscriber subscriber, MethodInfo methodInfo) =>
-            new SubscriberMethod
-            {
-                Instance = subscriber,
-                MethodInfo = methodInfo,
-                SubscribedMessageType = GetMessageType(methodInfo)
-            };
+        private AnnotatedMethod[] GetAnnotatedMethods(Type type)
+            => _methodsCache.GetOrAdd(type, t =>
+                t.GetAnnotatedMethods<SubscribeAttribute>()
+                    .Select(methodInfo =>
+                        new AnnotatedMethod
+                        {
+                            MethodInfo = methodInfo,
+                            SubscribedMessageType = GetMessageParameterType(methodInfo)
+                        })
+                    .ToArray());
 
-        private static Type GetMessageType(MethodInfo methodInfo)
+        private Type GetMessageParameterType(MethodInfo methodInfo)
         {
             var parameters = methodInfo.GetParameters();
 
@@ -72,7 +87,7 @@ namespace Silverback.Messaging.Subscribers
             return messageType;
         }
 
-        private Task ForwardMessage(SubscriberMethod method, IMessage message)
+        private Task ForwardMessage(AnnotatedMethod method, IMessage message)
         {
             _logger.LogTrace($"Invoking {method.MethodInfo.DeclaringType.FullName}.{method.MethodInfo.Name}...");
 
@@ -81,7 +96,7 @@ namespace Silverback.Messaging.Subscribers
             return method.MethodInfo.IsAsync() ? (Task) result : Task.CompletedTask;
         }
 
-        private class SubscriberMethod
+        private class AnnotatedMethod
         {
             public TSubscriber Instance { get; set; }
             public MethodInfo MethodInfo { get; set; }
