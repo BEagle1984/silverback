@@ -12,56 +12,19 @@ namespace Silverback.Messaging.Repositories
     /// </summary>
     /// <seealso cref="IOutboundQueueWriter" />
     /// <seealso cref="IOutboundQueueReader" />
-    /// <seealso cref="IDisposable" />
-    public class InMemoryOutboundQueue : IOutboundQueueWriter, IOutboundQueueReader
+    public class InMemoryOutboundQueue : TransactionalList<QueuedMessage>, IOutboundQueueWriter, IOutboundQueueReader
     {
-        private static readonly List<QueuedMessage> Queue = new List<QueuedMessage>();
-        private readonly List<QueuedMessage> _uncommittedQueue = new List<QueuedMessage>();
-
         #region Writer
 
         public void Enqueue(IIntegrationMessage message, IEndpoint endpoint)
-        {
-            lock (_uncommittedQueue)
-            {
-                _uncommittedQueue.Add(new QueuedMessage(message, endpoint));
-            }
-        }
-
-        public void Commit()
-        {
-            lock (_uncommittedQueue)
-            {
-                lock (Queue)
-                {
-                    Queue.AddRange(_uncommittedQueue);
-                }
-
-                _uncommittedQueue.Clear();
-            }
-        }
-
-        public void Rollback()
-        {
-            lock (_uncommittedQueue)
-            {
-                _uncommittedQueue.Clear();
-            }
-        }
+            => Add(new QueuedMessage(message, endpoint));
 
         #endregion
 
         #region Reader
 
-        public int Length => Queue.Count;
-
         public IEnumerable<QueuedMessage> Dequeue(int count)
-        {
-            lock (Queue)
-            {
-                return Queue.Take(count);
-            }
-        }
+            => Entries.Take(count);
 
         public void Retry(QueuedMessage message)
         {
@@ -71,21 +34,8 @@ namespace Silverback.Messaging.Repositories
         }
 
         public void Acknowledge(QueuedMessage message)
-        {
-            lock (Queue)
-            {
-                Queue.Remove(message);
-            }
-        }
+            => Remove(message);
 
         #endregion
-
-        public void Clear()
-        {
-            lock (Queue)
-            {
-                Queue.Clear();
-            }
-        }
     }
 }

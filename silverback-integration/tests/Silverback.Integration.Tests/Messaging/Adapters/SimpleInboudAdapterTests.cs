@@ -30,7 +30,7 @@ namespace Silverback.Tests.Messaging.Adapters
             int count = 0;
             _bus.Subscribe<IMessage>(m => count++);
 
-            var adapter = new SimpleInboundAdapter();
+            var adapter = new InboundAdapter();
             adapter.Init(_bus, BasicEndpoint.Create("test"));
 
             _bus.ConnectBrokers();
@@ -56,7 +56,7 @@ namespace Silverback.Tests.Messaging.Adapters
                     throw new Exception("Retry please");
             });
 
-            var adapter = new SimpleInboundAdapter();
+            var adapter = new InboundAdapter();
             adapter.Init(_bus, BasicEndpoint.Create("test"), new RetryErrorPolicy(5));
 
             _bus.ConnectBrokers();
@@ -77,7 +77,7 @@ namespace Silverback.Tests.Messaging.Adapters
                 throw new Exception("Retry please");
             });
 
-            var adapter = new SimpleInboundAdapter();
+            var adapter = new InboundAdapter();
             adapter.Init(
                 _bus,
                 BasicEndpoint.Create("test"),

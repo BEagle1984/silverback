@@ -8,6 +8,10 @@ namespace Silverback.Messaging.Repositories
     {
         void Add(IIntegrationMessage message, IEndpoint endpoint);
 
+        void Commit();
+
+        void Rollback();
+
         /// <summary>
         /// Returns a boolean value indicating whether a message with the same id and endpoint
         /// has already been processed.
@@ -16,6 +20,6 @@ namespace Silverback.Messaging.Repositories
 
         void ClearOlderEntries(DateTime threshold);
 
-        int Count { get; }
+        int Length { get; }
     }
 }

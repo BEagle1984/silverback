@@ -16,7 +16,7 @@ namespace Silverback.Tests.Messaging.Repositories
          public void Setup()
          {
              _log = new InMemoryInboundLog();
-             _log.ClearOlderEntries(DateTime.Now);
+             _log.Clear();
          }
 
         [Test]
@@ -26,7 +26,31 @@ namespace Silverback.Tests.Messaging.Repositories
             _log.Add(new TestEventOne(), BasicEndpoint.Create("test"));
             _log.Add(new TestEventOne(), BasicEndpoint.Create("test"));
 
-            Assert.That(_log.Count, Is.EqualTo(3));
+            Assert.That(_log.Length, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void CommitTest()
+        {
+            _log.Add(new TestEventOne(), BasicEndpoint.Create("test"));
+            _log.Add(new TestEventOne(), BasicEndpoint.Create("test"));
+            _log.Add(new TestEventOne(), BasicEndpoint.Create("test"));
+
+            _log.Commit();
+
+            Assert.That(_log.Length, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void RollbackTest()
+        {
+            _log.Add(new TestEventOne(), BasicEndpoint.Create("test"));
+            _log.Add(new TestEventOne(), BasicEndpoint.Create("test"));
+            _log.Add(new TestEventOne(), BasicEndpoint.Create("test"));
+
+            _log.Rollback();
+
+            Assert.That(_log.Length, Is.EqualTo(0));
         }
 
         [Test]
@@ -36,6 +60,7 @@ namespace Silverback.Tests.Messaging.Repositories
             _log.Add(new TestEventOne { Id = Guid.NewGuid() }, BasicEndpoint.Create("test"));
             _log.Add(new TestEventOne { Id = messageId }, BasicEndpoint.Create("test"));
             _log.Add(new TestEventOne { Id = Guid.NewGuid() }, BasicEndpoint.Create("test"));
+            _log.Commit();
 
             var result = _log.Exists(new TestEventOne{Id = messageId}, BasicEndpoint.Create("test"));
 
@@ -60,16 +85,18 @@ namespace Silverback.Tests.Messaging.Repositories
             _log.Add(new TestEventOne { Id = Guid.NewGuid() }, BasicEndpoint.Create("test"));
             _log.Add(new TestEventOne { Id = Guid.NewGuid() }, BasicEndpoint.Create("test"));
             _log.Add(new TestEventOne { Id = Guid.NewGuid() }, BasicEndpoint.Create("test"));
+            _log.Commit();
 
             var threshold = DateTime.Now;
             Thread.Sleep(100);
 
             _log.Add(new TestEventOne { Id = Guid.NewGuid() }, BasicEndpoint.Create("test"));
             _log.Add(new TestEventOne { Id = Guid.NewGuid() }, BasicEndpoint.Create("test"));
+            _log.Commit();
 
             _log.ClearOlderEntries(threshold);
 
-            Assert.That(_log.Count, Is.EqualTo(2));
+            Assert.That(_log.Length, Is.EqualTo(2));
         }
     }
 }

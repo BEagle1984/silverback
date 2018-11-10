@@ -221,14 +221,14 @@ namespace Silverback.Messaging.Configuration
 
         // TODO: Test
         /// <summary>
-        /// Configures a <see cref="SimpleInboundAdapter" /> to forward the messages to the internal bus.
+        /// Configures a <see cref="InboundAdapter" /> to forward the messages to the internal bus.
         /// </summary>
         /// <param name="bus">The bus.</param>
         /// <param name="endpoint">The endpoint to be passed to the <see cref="IOutboundAdapter" />.</param>
         /// <param name="errorPolicy">An optional error handling policy.</param>
         /// <returns></returns>
         public static IBus AddInbound(this IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
-            => bus.AddInbound(new SimpleInboundAdapter(), endpoint, errorPolicy);
+            => bus.AddInbound(new InboundAdapter(), endpoint, errorPolicy);
 
         // TODO: Test
         // TODO 1
