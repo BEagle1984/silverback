@@ -3,6 +3,7 @@ using Silverback.Domain;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using SilverbackShop.Baskets.Domain.Model;
+using SilverbackShop.Baskets.Infrastructure.EntityConfigurations;
 using SilverbackShop.Common.Infrastructure;
 
 namespace SilverbackShop.Baskets.Infrastructure
@@ -26,14 +27,14 @@ namespace SilverbackShop.Baskets.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<InventoryItem>().HasIndex(i => i.SKU).IsUnique();
-
-            modelBuilder
-                .Entity<Basket>().Metadata
-                .FindNavigation(nameof(Basket.Items))
-                .SetPropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.ApplyConfiguration(new InventoryItemEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new BasketEntityConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }
+    }
+
+    namespace EntityConfigurations
+    {
     }
 }
