@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 using SilverbackShop.Common.Infrastructure;
+using SilverbackShop.Common.Infrastructure.Data;
 
 namespace SilverbackShop.Baskets.Infrastructure
 {

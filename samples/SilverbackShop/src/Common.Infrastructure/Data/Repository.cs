@@ -1,10 +1,9 @@
-﻿using Common.Domain;
-using Common.Domain.Model;
+﻿using Common.Domain.Model;
 using Common.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Domain;
 
-namespace SilverbackShop.Common.Infrastructure
+namespace SilverbackShop.Common.Infrastructure.Data
 {
     public abstract class Repository<TEntity> : IRepository<TEntity>
         where TEntity : ShopEntity, IAggregateRoot

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
-namespace SilverbackShop.Common.Infrastructure
+namespace SilverbackShop.Common.Infrastructure.Data
 {
     public abstract class ShopDbContext : DbContext
     {

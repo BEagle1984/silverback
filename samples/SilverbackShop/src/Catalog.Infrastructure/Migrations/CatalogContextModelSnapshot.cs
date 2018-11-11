@@ -11,7 +11,7 @@ using System;
 
 namespace SilverbackShop.Catalog.Infrastructure.Migrations
 {
-    [DbContext(typeof(CatalogContext))]
+    [DbContext(typeof(CatalogDbContext))]
     partial class CatalogContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

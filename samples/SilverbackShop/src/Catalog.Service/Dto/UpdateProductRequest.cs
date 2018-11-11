@@ -1,6 +1,7 @@
 ﻿namespace SilverbackShop.Catalog.Service.Dto
 {
-    public class UpdateProductDto
+    public class UpdateProductRequest
+
     {
         public string DisplayName { get; set; }
 

@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Common.Domain;
 using Common.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace SilverbackShop.Common.Infrastructure
+namespace SilverbackShop.Common.Infrastructure.Data
 {
     public class UnitOfWork : IUnitOfWork
     {

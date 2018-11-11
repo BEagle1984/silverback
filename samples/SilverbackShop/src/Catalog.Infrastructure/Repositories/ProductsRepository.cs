@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Common.Domain;
 using Microsoft.EntityFrameworkCore;
-using SilverbackShop.Baskets.Domain.Model;
-using SilverbackShop.Baskets.Domain.Repositories;
-using SilverbackShop.Common.Infrastructure;
+using SilverbackShop.Catalog.Domain.Model;
+using SilverbackShop.Catalog.Domain.Repositories;
 using SilverbackShop.Common.Infrastructure.Data;
 
-namespace SilverbackShop.Baskets.Infrastructure
+namespace SilverbackShop.Catalog.Infrastructure
 {
     public class ProductsRepository : Repository<Product>, IProductsRepository
     {

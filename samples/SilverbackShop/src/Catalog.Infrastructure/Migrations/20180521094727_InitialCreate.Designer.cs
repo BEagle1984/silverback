@@ -11,7 +11,7 @@ using System;
 
 namespace SilverbackShop.Catalog.Infrastructure.Migrations
 {
-    [DbContext(typeof(CatalogContext))]
+    [DbContext(typeof(CatalogDbContext))]
     [Migration("20180521094727_InitialCreate")]
     partial class InitialCreate
     {

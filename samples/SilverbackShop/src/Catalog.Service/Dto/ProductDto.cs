@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SilverbackShop.Catalog.Domain.Model;
-
-namespace SilverbackShop.Catalog.Domain.Dto
+﻿namespace SilverbackShop.Catalog.Service.Dto
 {
     public class ProductDto
     {

@@ -23,6 +23,7 @@ namespace SilverbackShop.Baskets.Service
     {
         private readonly ILoggerFactory _loggerFactory;
         private readonly IConfiguration _configuration;
+
         public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             _configuration = configuration;

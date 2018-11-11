@@ -1,21 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Silverback.EntityFrameworkCore;
-using Silverback.Domain;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using SilverbackShop.Catalog.Domain.Model;
+using SilverbackShop.Common.Infrastructure.Data;
 
 namespace SilverbackShop.Catalog.Infrastructure
 {
-    public class CatalogContext : SilverbackDbContext
+    public class CatalogDbContext : ShopDbContext
     {
         public DbSet<Product> Products { get; set; }
 
-        public CatalogContext(IEventPublisher<IDomainEvent<IDomainEntity>> eventPublisher) 
+        public CatalogDbContext(IEventPublisher<IEvent> eventPublisher) 
             : base(eventPublisher)
         {
         }
 
-        public CatalogContext(DbContextOptions options, IEventPublisher<IDomainEvent<IDomainEntity>> eventPublisher) 
+        public CatalogDbContext(DbContextOptions options, IEventPublisher<IEvent> eventPublisher) 
             : base(options, eventPublisher)
         {
         }

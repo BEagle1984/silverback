@@ -1,34 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Common.Domain;
 using Microsoft.EntityFrameworkCore;
-using SilverbackShop.Catalog.Domain.Dto;
 using SilverbackShop.Catalog.Domain.Model;
-using SilverbackShop.Catalog.Domain.Repositories;
-using SilverbackShop.Common.Infrastructure;
+using SilverbackShop.Catalog.Infrastructure;
+using SilverbackShop.Catalog.Service.Dto;
+using SilverbackShop.Common.Infrastructure.Data;
 
-namespace SilverbackShop.Catalog.Infrastructure
+namespace SilverbackShop.Catalog.Service.Queries
 {
-    public class ProductsRepository : Repository<Product>, IProductsRepository
+    public class ProductQueries : Queries<Product>, IProductQueries
     {
-        public ProductsRepository(DbSet<Product> dbSet, IUnitOfWork unitOfWork)
-            : base(dbSet, unitOfWork)
+        public ProductQueries(CatalogDbContext dbContext) : base(dbContext)
         {
         }
 
-        public Task<Product> FindBySkuAsync(string sku)
-            => DbSet.FirstOrDefaultAsync(p => p.SKU == sku);
-
         public Task<ProductDto[]> GetAllAsync(bool includeDiscontinued = false)
-            => DbSet
+            => Query
                 .Where(p => includeDiscontinued || p.Status != ProductStatus.Discontinued)
                 .Select(p => Map(p))
                 .ToArrayAsync();
-        
+
         public Task<ProductDto[]> GetAllDiscontinuedAsync()
-            => DbSet
+            => Query
                 .Where(p => p.Status == ProductStatus.Discontinued)
                 .Select(p => Map(p))
                 .ToArrayAsync();

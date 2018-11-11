@@ -5,6 +5,7 @@ using Silverback.Messaging.Publishing;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Infrastructure.EntityConfigurations;
 using SilverbackShop.Common.Infrastructure;
+using SilverbackShop.Common.Infrastructure.Data;
 
 namespace SilverbackShop.Baskets.Infrastructure
 {
