@@ -1,5 +1,4 @@
-﻿using System;
-using Common.Api;
+﻿using Common.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -7,34 +6,33 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Domain;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Subscribers;
 using SilverbackShop.Baskets.Domain;
-using SilverbackShop.Baskets.Domain.Model;
-using SilverbackShop.Baskets.Domain.Repositories;
 using SilverbackShop.Baskets.Domain.Services;
-using SilverbackShop.Baskets.Domain.Subscribers;
-using SilverbackShop.Baskets.Infrastructure;
-using SilverbackShop.Common.Data;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Integration;
+using SilverbackShop.Baskets.Domain.Repositories;
+using SilverbackShop.Baskets.Infrastructure;
 
 namespace SilverbackShop.Baskets.Service
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILoggerFactory _loggerFactory;
+        private readonly IConfiguration _configuration;
+        public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
-            Configuration = configuration;
+            _configuration = configuration;
+            _loggerFactory = loggerFactory;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BasketsContext>(o => o.UseSqlite($"Data Source={Configuration["DB:Path"]}Baskets.db"));
+            services.AddDbContext<BasketsDbContext>(o => o.UseSqlite($"Data Source={_configuration["DB:Path"]}Baskets.db"));
 
             services.AddMvc();
             services.AddSwaggerGen(c =>
@@ -46,24 +44,37 @@ namespace SilverbackShop.Baskets.Service
                 });
             });
 
+
+            // Domain Services
             services.AddScoped<CheckoutService>();
             services.AddScoped<InventoryService>();
             services.AddScoped<BasketsService>();
+            services.AddScoped<ProductsService>();
 
-            services.AddScoped<IBasketsUnitOfWork, BasketsUnitOfWork>();
-
-            services.AddTransient<ISubscriber, InventoryMultiSubscriber>();
-            services.AddTransient<ISubscriber, CatalogMultiSubscriber>();
+            // Repositories
+            services.AddScoped<IBasketsRepository>();
+            services.AddScoped<IInventoryItemsRepository>();
+            services.AddScoped<IProductsRepository>();
 
             // TODO: Can get rid of this?
-            services.AddSingleton<SimpleOutboundAdapter>();
+            services.AddSingleton<OutboundConnector>();
+
+            var serviceProvider = services.BuildServiceProvider();
 
             // TODO: Create extension method services.AddBus() in Silverback.AspNetCore
-            var bus = new Bus();
-            services.AddSingleton<IBus>(bus);
+            var bus = new BusBuilder()
+                .WithFactory(t => serviceProvider.GetService(t), t => serviceProvider.GetServices(t))
+                .UseLogger(_loggerFactory)
+                .Build()
+                .ConfigureBroker<FileSystemBroker>(c => c.OnPath(_configuration["Broker:Path"]))
+                .ConfigureUsing<BasketsDomainMessagingConfigurator>();
+
+            services.AddSingleton(bus);
             services.AddSingleton(bus.GetEventPublisher<IDomainEvent<IDomainEntity>>());
 
-            return services.BuildServiceProvider();
+            bus.ConnectBrokers();
+
+            return serviceProvider;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,15 +89,6 @@ namespace SilverbackShop.Baskets.Service
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Baskets API V1");
             });
 
-            // TODO: Create extension method app.UseBus() in Silverback.AspNetCore
-            var bus = app.ApplicationServices.GetService<IBus>();
-            bus.Config()
-                .ConfigureBroker<FileSystemBroker>(c => c.OnPath(Configuration["Broker:Path"]))
-                .WithFactory(t => app.ApplicationServices.GetService(t), t => app.ApplicationServices.GetServices(t))
-                .ConfigureUsing<BasketsDomainMessagingConfigurator>()
-                .AutoSubscribe()
-                .ConnectBrokers();
-
             InitializeDatabase(app);
         }
 
@@ -94,7 +96,7 @@ namespace SilverbackShop.Baskets.Service
         {
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                scope.ServiceProvider.GetRequiredService<BasketsContext>().Database.Migrate();
+                scope.ServiceProvider.GetRequiredService<BasketsDbContext>().Database.Migrate();
             }
         }
     }

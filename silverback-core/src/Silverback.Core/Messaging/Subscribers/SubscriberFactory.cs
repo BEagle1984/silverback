@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Subscribers
 
         private TSubscriber[] GetSubscriberInstancesFromTypeFactory()
         {
-            var subscribers = _typeFactory.GetInstances<TSubscriber>() ?? Array.Empty<TSubscriber>();
+            var subscribers = _typeFactory.GetInstances<TSubscriber>()?.ToArray() ?? Array.Empty<TSubscriber>();
 
             _logger.LogTrace($"Resolved {subscribers.Length} object(s) of type '{typeof(TSubscriber).Name}'.");
 

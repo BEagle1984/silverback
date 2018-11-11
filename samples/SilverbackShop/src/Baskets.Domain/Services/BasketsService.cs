@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Domain.Services;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 
 namespace SilverbackShop.Baskets.Domain.Services
 {
-    public class BasketsService
+    public class BasketsService : IDomainService
     {
         private readonly IBasketsRepository _repository;
 
-        public BasketsService(IBasketsUnitOfWork unitOfWork)
+        public BasketsService(IBasketsRepository repository)
         {
-            _repository = unitOfWork.Baskets;
+            _repository = repository;
         }
 
-        public async Task<Basket> GetUserBasket(Guid userId)
+        public async Task<Basket> GetOrCreateBasket(Guid userId)
         {
             var basket = await _repository.FindByUserAsync(userId);
 

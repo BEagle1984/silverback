@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common.Domain;
+using Common.Domain.Model;
 using Silverback.Domain;
 using SilverbackShop.Baskets.Domain.Events;
 
@@ -27,7 +28,6 @@ namespace SilverbackShop.Baskets.Domain.Model
         {
             return new Basket
             {
-                Id = Guid.NewGuid(),
                 UserId = userId,
                 Created = DateTime.UtcNow
             };

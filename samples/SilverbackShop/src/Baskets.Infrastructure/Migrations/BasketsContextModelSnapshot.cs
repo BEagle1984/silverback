@@ -10,7 +10,7 @@ using System;
 
 namespace SilverbackShop.Baskets.Infrastructure.Migrations
 {
-    [DbContext(typeof(BasketsContext))]
+    [DbContext(typeof(BasketsDbContext))]
     partial class BasketsContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

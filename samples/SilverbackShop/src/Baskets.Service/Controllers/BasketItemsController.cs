@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Common.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SilverbackShop.Baskets.Domain.Model;
@@ -15,16 +16,18 @@ namespace SilverbackShop.Baskets.Service.Controllers
     public class BasketItemsController : Controller
     {
         private readonly BasketsService _basketService;
-        private readonly IBasketsUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IProductsRepository _productsRepository;
 
-        public BasketItemsController(BasketsService basketService, IBasketsUnitOfWork unitOfWork)
+        public BasketItemsController(BasketsService basketService, IProductsRepository productsRepository, IUnitOfWork unitOfWork)
         {
             _basketService = basketService;
+            _productsRepository = productsRepository;
             _unitOfWork = unitOfWork;
         }
 
         private Task<Basket> GetBasket()
-            => _basketService.GetUserBasket(UserData.DefaultUserId);
+            => _basketService.GetOrCreateBasket(UserData.DefaultUserId);
 
         [HttpGet("")]
         public async Task<ActionResult> Get()
@@ -38,7 +41,7 @@ namespace SilverbackShop.Baskets.Service.Controllers
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 
-            var product = await _unitOfWork.Products.FindBySkuAsync(dto.SKU);
+            var product = await _productsRepository.FindBySkuAsync(dto.SKU);
             if (product == null)
                 return BadRequest("Product not found.");
 

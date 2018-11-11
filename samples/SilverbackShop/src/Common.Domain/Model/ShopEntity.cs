@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Common.Domain
+namespace Common.Domain.Model
 {
     /// <summary>
     /// The base class for all entities
@@ -9,6 +8,8 @@ namespace Common.Domain
     public abstract class ShopEntity : Silverback.Domain.Entity
     {
         [Key]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
+
+        public bool IsTransient() => Id == default;
     }
 }

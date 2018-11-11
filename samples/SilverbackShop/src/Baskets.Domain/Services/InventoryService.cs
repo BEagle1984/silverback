@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Domain.Services;
+using Silverback.Messaging.Subscribers;
+using SilverbackShop.Baskets.Domain.Events;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 
 namespace SilverbackShop.Baskets.Domain.Services
 {
-    public class InventoryService
+    public class InventoryService : IDomainService
     {
         private readonly IInventoryItemsRepository _repository;
 
-        public InventoryService(IBasketsUnitOfWork unitOfWork)
+        public InventoryService(IInventoryItemsRepository repository)
         {
-            _repository = unitOfWork.InventoryItems;
+            _repository = repository;
         }
 
         public async Task<bool> CheckIsInStock(string sku, int quantity)
@@ -30,6 +33,15 @@ namespace SilverbackShop.Baskets.Domain.Services
                 throw new InvalidOperationException($"No stock information found for product '{sku}'.");
 
             inventory.DecrementStock(quantity);
+        }
+
+        [Subscribe]
+        public async Task OnCheckout(BasketCheckoutEvent message)
+        {
+            foreach (var item in message.Source.Items)
+            {
+                await DecrementStock(item.SKU, item.Quantity);
+            }
         }
     }
 }

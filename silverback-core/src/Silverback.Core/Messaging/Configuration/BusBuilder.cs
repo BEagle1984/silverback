@@ -15,6 +15,9 @@ namespace Silverback.Messaging.Configuration
 
         protected abstract TBus CreateInstance();
 
+        /// <summary>
+        /// Builds and returns the <see cref="IBus"/> instance.
+        /// </summary>
         public TBus Build()
         {
             if (_bus.GetTypeFactory() == null)
@@ -38,7 +41,7 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         /// Sets the function to be used to dinamically instantiate the types needed to handle the messages.
         /// </summary>
-        public BusBuilder<TBus> WithFactory(Func<Type, object[]> multiInstancesFactory)
+        public BusBuilder<TBus> WithFactory(Func<Type, IEnumerable<object>> multiInstancesFactory)
         {
             _bus.SetTypeFactory(new GenericTypeFactory(multiInstancesFactory));
             return this;
@@ -47,7 +50,7 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         /// Sets the function to be used to dinamically instantiate the types needed to handle the messages.
         /// </summary>
-        public BusBuilder<TBus> WithFactory(Func<Type, object> singleInstanceFactory, Func<Type, object[]> multiInstancesFactory)
+        public BusBuilder<TBus> WithFactory(Func<Type, object> singleInstanceFactory, Func<Type, IEnumerable<object>> multiInstancesFactory)
         {
             _bus.SetTypeFactory(new GenericTypeFactory(singleInstanceFactory, multiInstancesFactory));
             return this;

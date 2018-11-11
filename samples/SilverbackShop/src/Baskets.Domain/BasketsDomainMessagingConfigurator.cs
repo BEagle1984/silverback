@@ -1,6 +1,6 @@
 ﻿using System.Linq;
+using Common.Domain.Services;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using SilverbackShop.Baskets.Domain.Events;
@@ -10,10 +10,10 @@ namespace SilverbackShop.Baskets.Domain
 {
     public class BasketsDomainMessagingConfigurator : IConfigurator
     {
-        public void Configure(BusConfig config)
+        public void Configure(IBus bus)
         {
-            // Translators
-            config
+            bus
+                // Translators
                 .AddTranslator<BasketCheckoutEvent, Integration.Events.BasketCheckoutEvent>(m =>
                     new Integration.Events.BasketCheckoutEvent
                     {
@@ -25,11 +25,11 @@ namespace SilverbackShop.Baskets.Domain
                                 Quantity = i.Quantity,
                                 UnitPrice = i.UnitPrice
                             }).ToList()
-                    });
-
-            // Adapters
-            config
-                .AddOutbound<IIntegrationEvent, SimpleOutboundAdapter>(BasicEndpoint.Create("basket-events"))
+                    })
+                // Subscribers
+                .Subscribe<IDomainService>()
+                // Connectors
+                .AddOutbound<IIntegrationEvent>(BasicEndpoint.Create("basket-events"))
                 .AddInbound(BasicEndpoint.Create("catalog-events"));
         }
     }

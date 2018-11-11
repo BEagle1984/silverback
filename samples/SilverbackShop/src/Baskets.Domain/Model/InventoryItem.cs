@@ -1,5 +1,6 @@
 ﻿using System;
 using Common.Domain;
+using Common.Domain.Model;
 using Silverback.Domain;
 
 namespace SilverbackShop.Baskets.Domain.Model
@@ -20,7 +21,6 @@ namespace SilverbackShop.Baskets.Domain.Model
         {
             return new InventoryItem
             {
-                Id = Guid.NewGuid(),
                 SKU = sku,
                 StockQuantity = quantity
             };

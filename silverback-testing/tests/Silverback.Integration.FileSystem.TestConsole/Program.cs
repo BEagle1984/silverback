@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Integration.FileSystem.TestConsole
@@ -14,10 +11,6 @@ namespace Silverback.Integration.FileSystem.TestConsole
         static void Main(string[] args)
         {
             new Program().Execute();
-        }
-
-        public Program()
-        {
         }
 
         private void Execute()
@@ -35,6 +28,9 @@ namespace Silverback.Integration.FileSystem.TestConsole
                 Console.Write("? ");
 
                 var command = Console.ReadLine().Split(' ', 3, StringSplitOptions.RemoveEmptyEntries);
+
+                if (command.Length == 0)
+                    continue;
 
                 try
                 {
@@ -87,10 +83,12 @@ namespace Silverback.Integration.FileSystem.TestConsole
 
                 broker.Connect();
 
+                WriteSuccess($"Connected to topic '{topicName}'...");
+
                 consumer.Received += (_, e) =>
                 {
                     var message = (TestMessage)e.Message;
-                    WriteLine($"Received message {message.Id} from topic '{topicName}' with content '{message.Content}'.", ConsoleColor.Yellow);
+                    WriteSuccess($"Received message {message.Id} from topic '{topicName}' with content '{message.Content}'.");
                 };
 
                 while (Console.ReadKey(true).Key != ConsoleKey.Q)
@@ -112,6 +110,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
             Console.WriteLine(message);
             Console.ResetColor();
         }
+
         private void PrintLogo()
         {
             Console.Clear();

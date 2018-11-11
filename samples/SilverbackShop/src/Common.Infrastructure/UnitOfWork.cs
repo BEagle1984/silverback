@@ -1,16 +1,16 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Common.Domain;
+using Common.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace SilverbackShop.Common.Infrastructure
 {
-    public abstract class UnitOfWork<T> : IUnitOfWork
-        where T : DbContext
+    public class UnitOfWork : IUnitOfWork
     {
-        private readonly T _dbContext;
+        private readonly DbContext _dbContext;
 
-        protected UnitOfWork(T dbContext)
+        public UnitOfWork(DbContext dbContext)
         {
             _dbContext = dbContext;
         }

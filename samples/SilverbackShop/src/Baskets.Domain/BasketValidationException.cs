@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SilverbackShop.Baskets.Domain.Services
+namespace SilverbackShop.Baskets.Domain
 {
     public class BasketValidationException : Exception
     {

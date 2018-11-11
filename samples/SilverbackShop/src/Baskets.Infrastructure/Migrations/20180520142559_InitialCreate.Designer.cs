@@ -10,7 +10,7 @@ using System;
 
 namespace SilverbackShop.Baskets.Infrastructure.Migrations
 {
-    [DbContext(typeof(BasketsContext))]
+    [DbContext(typeof(BasketsDbContext))]
     [Migration("20180520142559_InitialCreate")]
     partial class InitialCreate
     {

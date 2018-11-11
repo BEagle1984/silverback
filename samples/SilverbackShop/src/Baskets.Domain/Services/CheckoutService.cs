@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Domain.Services;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 
 namespace SilverbackShop.Baskets.Domain.Services
 {
-    public class CheckoutService
+    public class CheckoutService : IDomainService
     {
         private readonly IBasketsRepository _repository;
         private readonly InventoryService _inventoryService;
 
-        public CheckoutService(IBasketsUnitOfWork unitOfWork, InventoryService inventoryService)
+        public CheckoutService(InventoryService inventoryService, IBasketsRepository repository)
         {
-            _repository = unitOfWork.Baskets;
             _inventoryService = inventoryService;
+            _repository = repository;
         }
 
         public async Task Checkout(Basket basket)

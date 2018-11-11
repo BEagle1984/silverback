@@ -1,4 +1,5 @@
 using Common.Domain;
+using Common.Domain.Model;
 
 namespace SilverbackShop.Baskets.Domain.Model
 {

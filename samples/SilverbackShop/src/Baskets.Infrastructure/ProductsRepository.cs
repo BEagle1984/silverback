@@ -12,8 +12,7 @@ namespace SilverbackShop.Baskets.Infrastructure
 {
     public class ProductsRepository : Repository<Product>, IProductsRepository
     {
-        public ProductsRepository(DbSet<Product> dbSet, IUnitOfWork unitOfWork) 
-            : base(dbSet, unitOfWork)
+        public ProductsRepository(DbContext dbContext) : base(dbContext)
         {
         }
 

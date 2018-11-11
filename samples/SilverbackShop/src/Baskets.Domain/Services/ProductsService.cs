@@ -1,33 +1,32 @@
 ﻿using System.Threading.Tasks;
+using Common.Domain.Services;
 using Silverback.Messaging.Subscribers;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 using CatalogEvents = SilverbackShop.Catalog.Integration.Events;
 using CatalogDto = SilverbackShop.Catalog.Integration.Dto;
 
-namespace SilverbackShop.Baskets.Domain.Subscribers
+namespace SilverbackShop.Baskets.Domain.Services
 {
-    public class CatalogMultiSubscriber : MultiSubscriber
+    public class ProductsService : IDomainService
     {
         private readonly IProductsRepository _repository;
 
-        public CatalogMultiSubscriber(IBasketsUnitOfWork unitOfWork)
+        public ProductsService(IProductsRepository repository)
         {
-            _repository = unitOfWork.Products;
+            _repository = repository;
         }
 
-        protected override void Configure(MultiSubscriberConfig config) => config
-            .AddAsyncHandler<CatalogEvents.ProductPublishedEvent>(OnProductPublished)
-            .AddAsyncHandler<CatalogEvents.ProductUpdatedEvent>(OnProductUpdated)
-            .AddAsyncHandler<CatalogEvents.ProductDiscontinuedEvent>(OnProductDiscontinued);
-
-        private Task OnProductPublished(CatalogEvents.ProductPublishedEvent message)
+        [Subscribe]
+        public Task OnProductPublished(CatalogEvents.ProductPublishedEvent message)
             => AddOrUpdateProduct(message.Product);
 
-        private Task OnProductUpdated(CatalogEvents.ProductUpdatedEvent message)
+        [Subscribe]
+        public Task OnProductUpdated(CatalogEvents.ProductUpdatedEvent message)
             => AddOrUpdateProduct(message.Product);
 
-        private async Task OnProductDiscontinued(CatalogEvents.ProductDiscontinuedEvent message)
+        [Subscribe]
+        public async Task OnProductDiscontinued(CatalogEvents.ProductDiscontinuedEvent message)
         {
             var product = await _repository.FindBySkuAsync(message.SKU);
 

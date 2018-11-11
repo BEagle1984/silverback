@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Common.Domain;
+using Common.Domain.Model;
 using Silverback.Domain;
 
 namespace SilverbackShop.Baskets.Domain.Model
