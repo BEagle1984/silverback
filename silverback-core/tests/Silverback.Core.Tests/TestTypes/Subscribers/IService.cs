@@ -1,7 +1,8 @@
-﻿namespace Silverback.Tests.TestTypes.Subscribers
+﻿using Silverback.Messaging.Subscribers;
+
+namespace Silverback.Tests.TestTypes.Subscribers
 {
-    public interface IService
+    public interface IService : ISubscriber
     {
-        
     }
 }

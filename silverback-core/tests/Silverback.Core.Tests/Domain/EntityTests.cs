@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using NUnit.Framework;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging
+namespace Silverback.Tests.Domain
 {
     [TestFixture]
     public class EntityTests

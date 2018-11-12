@@ -1,79 +1,68 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.TestTypes.Domain;
+using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Subscribers;
+using Silverback.Tests.TestTypes.Messages;
+using Silverback.Tests.TestTypes.Subscribers;
 
 namespace Silverback.Tests.Messaging.Publishing
 {
     [TestFixture]
     public class CommandPublisherTests
     {
+        private IPublisher _publisher;
+        private TestSubscriber _subscriber;
+
+        [SetUp]
+        public void Setup()
+        {
+            _subscriber = new TestSubscriber(NullLoggerFactory.Instance.CreateLogger<TestSubscriber>());
+            _publisher = new Publisher(new[] {_subscriber}, NullLoggerFactory.Instance.CreateLogger<Publisher>());
+        }
+
         [Test]
         public void SendCommandTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new CommandPublisher<ICommand>(_publisher);
 
-                var publisher = bus.GetCommandPublisher<ICommand>();
+            publisher.Send(new TestCommandOne());
+            publisher.Send(new TestCommandTwo());
 
-                publisher.Send(new TestCommandOne());
-                publisher.Send(new TestCommandTwo());
-
-                Assert.That(counter, Is.EqualTo(2));
-            }
+            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(2));
         }
 
         [Test]
         public void SendSpecificCommandTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new CommandPublisher<TestCommandOne>(_publisher);
 
-                var publisher = bus.GetCommandPublisher<TestCommandOne>();
+            publisher.Send(new TestCommandOne());
 
-                publisher.Send(new TestCommandOne());
-
-                Assert.That(counter, Is.EqualTo(1));
-            }
+            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(1));
         }
 
         [Test]
         public async Task SendCommandAsyncTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new CommandPublisher<ICommand>(_publisher);
 
-                var publisher = bus.GetCommandPublisher<ICommand>();
+            await publisher.SendAsync(new TestCommandOne());
+            await publisher.SendAsync(new TestCommandTwo());
 
-                await publisher.SendAsync(new TestCommandOne());
-                await publisher.SendAsync(new TestCommandTwo());
-
-                Assert.That(counter, Is.EqualTo(2));
-            }
+            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(2));
         }
 
         [Test]
         public async Task SendSpecificCommandAsyncTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new CommandPublisher<TestCommandTwo>(_publisher);
 
-                var publisher = bus.GetCommandPublisher<TestCommandOne>();
+            await publisher.SendAsync(new TestCommandTwo());
 
-                await publisher.SendAsync(new TestCommandOne());
-
-                Assert.That(counter, Is.EqualTo(1));
-            }
+            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(1));
         }
     }
 }

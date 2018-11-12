@@ -1,8 +1,8 @@
 ﻿using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.TestTypes.Domain
+namespace Silverback.Tests.TestTypes.Messages
 {
-    public class TestEventHierarchyBase : IEvent
+    public class TestEventTwo : IEvent, ITestMessage
     {
         public string Message { get; set; }
     }

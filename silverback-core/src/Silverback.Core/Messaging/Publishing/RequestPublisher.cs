@@ -1,66 +1,80 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Publishing
 {
-    /// <summary>
-    /// Publishes the <see cref="IRequest"/> to the bus.
-    /// </summary>
-    /// <typeparam name="TRequest">The type of the request.</typeparam>
-    /// <typeparam name="TResponse">The type of the response.</typeparam>
-    /// <seealso cref="Silverback.Messaging.Publishing.IRequestPublisher{TRequest, TResponse}" />
     public class RequestPublisher<TRequest, TResponse> : IRequestPublisher<TRequest, TResponse>
         where TRequest : IRequest
         where TResponse : IResponse
     {
         private readonly IPublisher _publisher;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RequestPublisher{TRequest, TResponse}"/> class.
-        /// </summary>
-        /// <param name="bus">The bus.</param>
-        public RequestPublisher(IBus bus)
+        public RequestPublisher(IPublisher publisher)
         {
-            _publisher = new Publisher(bus);
+            _publisher = publisher;
         }
 
-        /// <summary>
-        /// Sends the specified request to the bus and wait for the response to be received.
-        /// </summary>
-        /// <param name="message">The request.</param>
-        /// <param name="timeout">The timeout. If not specified, the default timeout of 2 seconds will be used.</param>
-        /// <returns></returns>
-        public TResponse GetResponse(TRequest message, TimeSpan? timeout = null) 
-            => _publisher.GetResponse<TRequest, TResponse>(message, timeout);
+        public TResponse GetResponse(TRequest requestMessage, TimeSpan? timeout = null)
+            => AsyncHelper.RunSynchronously(() => GetResponseAsync(requestMessage, timeout));
 
-        /// <summary>
-        /// Sends the specified request to the bus and wait for the response to be received.
-        /// </summary>
-        /// <param name="message">The request.</param>
-        /// <param name="timeout">The timeout. If not specified, the default timeout of 2 seconds will be used.</param>
-        /// <returns></returns>
-        public Task<TResponse> GetResponseAsync(TRequest message, TimeSpan? timeout = null)
-            => _publisher.GetResponseAsync<TRequest, TResponse>( message, timeout);
+        public async Task<TResponse> GetResponseAsync(TRequest requestMessage, TimeSpan? timeout = null)
+        {
+            if (requestMessage == null) throw new ArgumentNullException(nameof(requestMessage));
 
-        /// <summary>
-        /// Sends the specified request to the bus and wait for the response to be received on another bus.
-        /// </summary>
-        /// <param name="replyBus">The reply bus.</param>
-        /// <param name="message">The request.</param>
-        /// <param name="timeout">The timeout. If not specified, the default timeout of 2 seconds will be used.</param>
-        /// <returns></returns>
-        public TResponse GetResponse(IBus replyBus, TRequest message, TimeSpan? timeout = null)
-            => _publisher.GetResponse<TRequest, TResponse>(replyBus, message, timeout);
+            timeout = timeout ?? TimeSpan.FromSeconds(2);
 
-        /// <summary>
-        /// Sends the specified request to the bus and wait for the response to be received on another bus.
-        /// </summary>
-        /// <param name="replyBus">The reply bus.</param>
-        /// <param name="message">The request.</param>
-        /// <param name="timeout">The timeout. If not specified, the default timeout of 2 seconds will be used.</param>
-        /// <returns></returns>
-        public Task<TResponse> GetResponseAsync(IBus replyBus, TRequest message, TimeSpan? timeout = null)
-            => _publisher.GetResponseAsync<TRequest, TResponse>(replyBus, message, timeout);
+            EnsureRequestIdIsSet(requestMessage);
+
+            IResponse response = default;
+
+            try
+            {
+                ResponseSubscriber.ResponseReceived += OnResponseSubscriberOnResponseReceived;
+
+#pragma warning disable 4014
+                _publisher.PublishAsync(requestMessage);
+#pragma warning restore 4014
+
+                await WaitForResponse();
+
+                return (TResponse) response;
+            }
+            finally
+            {
+                ResponseSubscriber.ResponseReceived -= OnResponseSubscriberOnResponseReceived;
+            }
+
+            void EnsureRequestIdIsSet(IRequest message)
+            {
+                if (message.RequestId == Guid.Empty)
+                    message.RequestId = Guid.NewGuid();
+            }
+
+            void OnResponseSubscriberOnResponseReceived(object _, IResponse r)
+            {
+                if (r.RequestId == requestMessage.RequestId)
+                    response = r;
+            }
+
+            async Task WaitForResponse()
+            {
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                while (response == null)
+                {
+                    if (stopwatch.Elapsed >= timeout)
+                        throw new TimeoutException($"The request with id {requestMessage.RequestId} was not replied in the allotted time.");
+
+                    await Task.Delay(50); // TODO: Check this!
+                }
+
+                stopwatch.Stop();
+            }
+        }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.TestTypes.Domain
+namespace Silverback.Tests.TestTypes.Messages
 {
-    public class TestResponseOne : IResponse
+    public class TestRequestTwo : IRequest, ITestMessage
     {
         public Guid RequestId { get; set; }
+
         public string Message { get; set; }
     }
 }

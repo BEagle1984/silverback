@@ -1,148 +1,111 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
-using Silverback.Tests.TestTypes.Domain;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Subscribers;
+using Silverback.Tests.TestTypes.Messages;
+using Silverback.Tests.TestTypes.Subscribers;
 
 namespace Silverback.Tests.Messaging.Publishing
 {
     [TestFixture]
     public class PublisherTests
     {
-        [Test]
-        public void PublishEventTest()
+        private TestSubscriber _syncSubscriber;
+        private TestAsyncSubscriber _asyncSubscriber;
+
+        [SetUp]
+        public void Setup()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
-
-                var publisher = bus.GetPublisher();
-
-                publisher.Publish(new TestEventOne());
-                publisher.Publish(new TestEventTwo());
-
-                Assert.That(counter, Is.EqualTo(2));
-            }
+            _syncSubscriber = new TestSubscriber(NullLoggerFactory.Instance.CreateLogger<TestSubscriber>());
+            _asyncSubscriber = new TestAsyncSubscriber(NullLoggerFactory.Instance.CreateLogger<TestAsyncSubscriber>());
         }
 
         [Test]
-        public async Task PublishEventAsyncTest()
+        public void PublishTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new Publisher(new[] { _syncSubscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
-                var publisher = bus.GetPublisher();
+            publisher.Publish(new TestCommandOne());
+            publisher.Publish(new TestCommandTwo());
 
-                await publisher.PublishAsync(new TestEventOne());
-                await publisher.PublishAsync(new TestEventTwo());
-
-                Assert.That(counter, Is.EqualTo(2));
-            }
+            Assert.That(_syncSubscriber.ReceivedMessagesCount, Is.EqualTo(2));
         }
 
         [Test]
-        public void SendCommandTest()
+        public async Task PublishAsyncTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new Publisher(new[] { _syncSubscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
-                var publisher = bus.GetPublisher();
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
 
-                publisher.Send(new TestCommandOne());
-                publisher.Send(new TestCommandTwo());
-
-                Assert.That(counter, Is.EqualTo(2));
-            }
+            Assert.That(_syncSubscriber.ReceivedMessagesCount, Is.EqualTo(2));
         }
 
         [Test]
-        public async Task SendCommandAsyncTest()
+        public void MultipleSubscribersTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new Publisher(new ISubscriber[] { _syncSubscriber, _asyncSubscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
-                var publisher = bus.GetPublisher();
+            publisher.Publish(new TestCommandOne());
+            publisher.Publish(new TestCommandTwo());
+            publisher.Publish(new TestCommandOne());
+            publisher.Publish(new TestCommandTwo());
+            publisher.Publish(new TestCommandTwo());
 
-                await publisher.SendAsync(new TestCommandOne());
-                await publisher.SendAsync(new TestCommandTwo());
-
-                Assert.That(counter, Is.EqualTo(2));
-            }
+            Assert.That(_syncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
+            Assert.That(_asyncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
         }
 
         [Test]
-        public void GetResponseTest()
+        public async Task MultipleSubscribersAsyncTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var publisher = bus.GetPublisher();
+            var publisher = new Publisher(new ISubscriber[] { _syncSubscriber, _asyncSubscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
-                var counter = 0;
-                bus.Subscribe(m => 
-                {
-                    switch (m)
-                    {
-                        case TestRequestOne req:
-                            counter++;
-                            publisher.Reply(new TestResponseOne { Message = "one", RequestId = req.RequestId });
-                            break;
-                        case TestRequestTwo req:
-                            counter++;
-                            publisher.Reply(new TestResponseTwo { Message = "two", RequestId = req.RequestId });
-                            break;
-                    }
-                });
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+            await publisher.PublishAsync(new TestCommandTwo());
 
-                var responseOne = publisher.GetResponse<TestRequestOne, TestResponseOne>(new TestRequestOne());
-                var responseTwo = publisher.GetResponse<TestRequestTwo, TestResponseTwo>(new TestRequestTwo());
-
-                Assert.That(counter, Is.EqualTo(2));
-                Assert.That(responseOne, Is.Not.Null);
-                Assert.That(responseOne.Message, Is.EqualTo("one"));
-                Assert.That(responseTwo, Is.Not.Null);
-                Assert.That(responseTwo.Message, Is.EqualTo("two"));
-            }
+            Assert.That(_syncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
+            Assert.That(_asyncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
         }
 
         [Test]
-        public async Task GetResponseAsyncTest()
+        public async Task MultipleSubscribersSyncAndAsyncTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var publisher = bus.GetPublisher();
+            var publisher = new Publisher(new ISubscriber[] { _syncSubscriber, _asyncSubscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
-                var counter = 0;
-                bus.Subscribe(m =>
-                {
-                    switch (m)
-                    {
-                        case TestRequestOne req:
-                            counter++;
-                            publisher.ReplyAsync(new TestResponseOne { Message = "one", RequestId = req.RequestId });
-                            break;
-                        case TestRequestTwo req:
-                            counter++;
-                            publisher.ReplyAsync(new TestResponseTwo { Message = "two", RequestId = req.RequestId });
-                            break;
-                    }
-                });
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+            publisher.Publish(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+            publisher.Publish(new TestCommandTwo());
 
-                var responseOne = await publisher.GetResponseAsync<TestRequestOne, TestResponseOne>(new TestRequestOne());
-                var responseTwo = await publisher.GetResponseAsync<TestRequestTwo, TestResponseTwo>(new TestRequestTwo());
+            Assert.That(_syncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
+            Assert.That(_asyncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
+        }
 
-                Assert.That(counter, Is.EqualTo(2));
-                Assert.That(responseOne, Is.Not.Null);
-                Assert.That(responseOne.Message, Is.EqualTo("one"));
-                Assert.That(responseTwo, Is.Not.Null);
-                Assert.That(responseTwo.Message, Is.EqualTo("two"));
-            }
+
+        [Test]
+        public async Task MultipleSubscribedMethodsTest()
+        {
+            var service1 = new TestServiceOne();
+            var service2 = new TestServiceTwo();
+            var publisher = new Publisher(new ISubscriber[] { service1, service2 }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            await publisher.PublishAsync(new TestCommandOne());         // service1 +2
+            await publisher.PublishAsync(new TestCommandTwo());         // service2 +2
+            publisher.Publish(new TestCommandOne());                    // service1 +2
+            await publisher.PublishAsync(new TransactionCommitEvent()); // service1/2 +1
+            publisher.Publish(new TransactionRollbackEvent());          // service1/2 +1
+
+            Assert.That(service1.ReceivedMessagesCount, Is.EqualTo(6));
+            Assert.That(service2.ReceivedMessagesCount, Is.EqualTo(4));
         }
     }
 }

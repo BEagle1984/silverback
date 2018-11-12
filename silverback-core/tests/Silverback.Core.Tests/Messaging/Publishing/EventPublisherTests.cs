@@ -1,79 +1,67 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.TestTypes.Domain;
+using Silverback.Messaging.Publishing;
+using Silverback.Tests.TestTypes.Messages;
+using Silverback.Tests.TestTypes.Subscribers;
 
 namespace Silverback.Tests.Messaging.Publishing
 {
     [TestFixture]
     public class EventPublisherTests
     {
+        private IPublisher _publisher;
+        private TestSubscriber _subscriber;
+
+        [SetUp]
+        public void Setup()
+        {
+            _subscriber = new TestSubscriber(NullLoggerFactory.Instance.CreateLogger<TestSubscriber>());
+            _publisher = new Publisher(new[] { _subscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
+        }
+
         [Test]
         public void PublishEventTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new EventPublisher<IEvent>(_publisher);
 
-                var publisher = bus.GetEventPublisher<IEvent>();
+            publisher.Publish(new TestEventOne());
+            publisher.Publish(new TestEventTwo());
 
-                publisher.Publish(new TestEventOne());
-                publisher.Publish(new TestEventTwo());
-
-                Assert.That(counter, Is.EqualTo(2));
-            }
+            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(2));
         }
 
         [Test]
         public void PublishSpecificEventTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new EventPublisher<TestEventOne>(_publisher);
 
-                var publisher = bus.GetEventPublisher<TestEventOne>();
+            publisher.Publish(new TestEventOne());
 
-                publisher.Publish(new TestEventOne());
-
-                Assert.That(counter, Is.EqualTo(1));
-            }
+            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(1));
         }
 
         [Test]
         public async Task PublishEventAsyncTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new EventPublisher<IEvent>(_publisher);
 
-                var publisher = bus.GetEventPublisher<IEvent>();
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventTwo());
 
-                await publisher.PublishAsync(new TestEventOne());
-                await publisher.PublishAsync(new TestEventTwo());
-
-                Assert.That(counter, Is.EqualTo(2));
-            }
+            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(2));
         }
 
         [Test]
         public async Task PublishSpecificEventAsyncTest()
         {
-            using (var bus = new BusBuilder().Build())
-            {
-                var counter = 0;
-                bus.Subscribe(m => counter++);
+            var publisher = new EventPublisher<TestEventTwo>(_publisher);
 
-                var publisher = bus.GetEventPublisher<TestEventOne>();
+            await publisher.PublishAsync(new TestEventTwo());
 
-                await publisher.PublishAsync(new TestEventOne());
-
-                Assert.That(counter, Is.EqualTo(1));
-            }
+            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(1));
         }
     }
 }

@@ -3,38 +3,18 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Publishing
 {
-    /// <summary>
-    /// Publishes the <see cref="IEvent" /> to the bus.
-    /// </summary>
-    /// <typeparam name="TEvent">The type of the event.</typeparam>
-    /// <seealso cref="Silverback.Messaging.Publishing.IEventPublisher{TEvent}" />
     public class EventPublisher<TEvent> : IEventPublisher<TEvent>
         where TEvent : IEvent
     {
         private readonly IPublisher _publisher;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EventPublisher{TEvent}"/> class.
-        /// </summary>
-        /// <param name="bus">The bus.</param>
-        public EventPublisher(IBus bus)
+        public EventPublisher(IPublisher publisher)
         {
-            _publisher = new Publisher(bus);
+            _publisher = publisher;
         }
 
-        /// <summary>
-        /// Publishes the specified event to the bus.
-        /// </summary>
-        /// <param name="message">The event to be published.</param>
-        public void Publish(TEvent message)
-            => _publisher.Publish(message);
+        public void Publish(TEvent eventMessage) => _publisher.Publish(eventMessage);
 
-        /// <summary>
-        /// Asynchronously publishes the specified event to the bus.
-        /// </summary>
-        /// <param name="message">The event to be published.</param>
-        /// <returns></returns>
-        public Task PublishAsync(TEvent message)
-            => _publisher.PublishAsync(message);
+        public Task PublishAsync(TEvent eventMessage) => _publisher.PublishAsync(eventMessage);
     }
 }
