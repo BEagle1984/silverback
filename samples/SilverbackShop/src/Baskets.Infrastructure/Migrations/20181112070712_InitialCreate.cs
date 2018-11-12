@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SilverbackShop.Baskets.Infrastructure.Migrations
 {
@@ -12,10 +12,11 @@ namespace SilverbackShop.Baskets.Infrastructure.Migrations
                 name: "Baskets",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    CheckoutDate = table.Column<DateTime>(nullable: true),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<Guid>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false)
+                    CheckoutDate = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -26,7 +27,8 @@ namespace SilverbackShop.Baskets.Infrastructure.Migrations
                 name: "InventoryItems",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     SKU = table.Column<string>(nullable: true),
                     StockQuantity = table.Column<int>(nullable: false)
                 },
@@ -39,9 +41,10 @@ namespace SilverbackShop.Baskets.Infrastructure.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    DisplayName = table.Column<string>(maxLength: 300, nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     SKU = table.Column<string>(maxLength: 100, nullable: false),
+                    DisplayName = table.Column<string>(maxLength: 300, nullable: false),
                     UnitPrice = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
@@ -53,12 +56,13 @@ namespace SilverbackShop.Baskets.Infrastructure.Migrations
                 name: "BasketItems",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    BasketId = table.Column<Guid>(nullable: true),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    SKU = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     Quantity = table.Column<int>(nullable: false),
-                    SKU = table.Column<string>(nullable: true),
-                    UnitPrice = table.Column<decimal>(nullable: false)
+                    UnitPrice = table.Column<decimal>(nullable: false),
+                    BasketId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -80,7 +84,8 @@ namespace SilverbackShop.Baskets.Infrastructure.Migrations
                 name: "IX_InventoryItems_SKU",
                 table: "InventoryItems",
                 column: "SKU",
-                unique: true);
+                unique: true,
+                filter: "[SKU] IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

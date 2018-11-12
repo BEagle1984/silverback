@@ -10,9 +10,9 @@ using SilverbackShop.Common.Infrastructure.Data;
 
 namespace SilverbackShop.Catalog.Service.Queries
 {
-    public class ProductQueries : Queries<Product>, IProductQueries
+    public class ProductsQueries : Queries<Product>, IProductsQueries
     {
-        public ProductQueries(CatalogDbContext dbContext) : base(dbContext)
+        public ProductsQueries(CatalogDbContext dbContext) : base(dbContext)
         {
         }
 

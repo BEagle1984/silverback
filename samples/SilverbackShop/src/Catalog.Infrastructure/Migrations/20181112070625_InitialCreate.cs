@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SilverbackShop.Catalog.Infrastructure.Migrations
 {
@@ -12,12 +11,13 @@ namespace SilverbackShop.Catalog.Infrastructure.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    Description = table.Column<string>(nullable: false),
-                    DisplayName = table.Column<string>(maxLength: 300, nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     SKU = table.Column<string>(maxLength: 100, nullable: false),
-                    Status = table.Column<int>(nullable: false),
-                    UnitPrice = table.Column<decimal>(nullable: false)
+                    DisplayName = table.Column<string>(maxLength: 300, nullable: false),
+                    Description = table.Column<string>(nullable: false),
+                    UnitPrice = table.Column<decimal>(nullable: false),
+                    Status = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

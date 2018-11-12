@@ -1,26 +1,26 @@
-FROM microsoft/aspnetcore:2.0 AS base
+FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM microsoft/aspnetcore-build:2.0 AS build
+FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /src
-COPY SilverbackShop.sln ./
-COPY Catalog.Service/Catalog.Service.csproj Catalog.Service/
-COPY Catalog.Integration/Catalog.Integration.csproj Catalog.Integration/
-COPY Catalog.Infrastructure/Catalog.Infrastructure.csproj Catalog.Infrastructure/
-COPY Catalog.Domain/Catalog.Domain.csproj Catalog.Domain/
-COPY Common.Domain/Common.Domain.csproj Common.Domain/
-COPY Common.Data/Common.Data.csproj Common.Data/
-COPY Common.Infrastructure/Common.Infrastructure.csproj Common.Infrastructure/
-RUN dotnet restore -nowarn:msb3202,nu1503
+COPY ["Catalog.Service/Catalog.Service.csproj", "Catalog.Service/"]
+COPY ["Common.Api/Common.Api.csproj", "Common.Api/"]
+COPY ["Common.Domain/Common.Domain.csproj", "Common.Domain/"]
+COPY ["Common.Infrastructure/Common.Infrastructure.csproj", "Common.Infrastructure/"]
+COPY ["Catalog.Integration/Catalog.Integration.csproj", "Catalog.Integration/"]
+COPY ["Catalog.Infrastructure/Catalog.Infrastructure.csproj", "Catalog.Infrastructure/"]
+COPY ["Catalog.Domain/Catalog.Domain.csproj", "Catalog.Domain/"]
+COPY ["Common.Data/Common.Data.csproj", "Common.Data/"]
+RUN dotnet restore "Catalog.Service/Catalog.Service.csproj"
 COPY . .
-WORKDIR /src/Catalog.Service
-RUN dotnet build -c Release -o /app
+WORKDIR "/src/Catalog.Service"
+RUN dotnet build "Catalog.Service.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish -c Release -o /app
+RUN dotnet publish "Catalog.Service.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "Catalog.Service.dll"]
+ENTRYPOINT ["dotnet", "SilverbackShop.Catalog.Service.dll"]

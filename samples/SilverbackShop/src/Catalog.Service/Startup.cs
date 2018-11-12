@@ -10,8 +10,13 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Integration;
+using Silverback.Messaging.Messages;
 using SilverbackShop.Catalog.Domain;
+using SilverbackShop.Catalog.Domain.Repositories;
 using SilverbackShop.Catalog.Infrastructure;
+using SilverbackShop.Catalog.Infrastructure.Repositories;
+using SilverbackShop.Catalog.Service.Queries;
+using SilverbackShop.Common.Infrastructure;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SilverbackShop.Catalog.Service
@@ -30,7 +35,11 @@ namespace SilverbackShop.Catalog.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CatalogDbContext>(o => o.UseSqlite($"Data Source={_configuration["DB:Path"]}Catalog.db"));
+            services.AddDbContext<CatalogDbContext>(o =>
+            {
+                o.UseSqlServer(_configuration.GetConnectionString("CatalogDbContext").SetServerName());
+                //o.UseSqlite($"Data Source={_configuration["DB:Path"]}Catalog.db");
+            });
 
             services.AddMvc();
             services.AddSwaggerGen(c =>
@@ -42,23 +51,21 @@ namespace SilverbackShop.Catalog.Service
                 });
             });
 
-            services.AddScoped<ProductsRepository>();
+            // Repositories & Query Objects
+            services.AddScoped<IProductsRepository, ProductsRepository>();
+            services.AddScoped<IProductsQueries, ProductsQueries>();
 
             // TODO: Can get rid of this?
             services.AddSingleton<OutboundConnector>();
 
-            var serviceProvider = services.BuildServiceProvider();
-
             // TODO: Create extension method services.AddBus() in Silverback.AspNetCore
-            var bus = new BusBuilder()
-                .WithFactory(t => serviceProvider.GetService(t), t => serviceProvider.GetServices(t))
+            services.AddSingleton(serviceProvider => new BusBuilder()
+                .WithFactory(serviceProvider.GetService, serviceProvider.GetServices)
                 .UseLogger(_loggerFactory)
                 .Build()
                 .ConfigureBroker<FileSystemBroker>(c => c.OnPath(_configuration["Broker:Path"]))
-                .ConfigureUsing<CatalogDomainMessagingConfigurator>();
-
-            services.AddSingleton(bus);
-            services.AddSingleton(bus.GetEventPublisher<IDomainEvent<IDomainEntity>>());
+                .ConfigureUsing<CatalogDomainMessagingConfigurator>());
+            services.AddSingleton(serviceProvider => serviceProvider.GetService<IBus>().GetEventPublisher<IEvent>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,6 +81,9 @@ namespace SilverbackShop.Catalog.Service
             });
 
             InitializeDatabase(app);
+
+            // TODO: Create extension method app.ConnectBrokers();
+            app.ApplicationServices.GetService<IBus>().ConnectBrokers();
         }
 
         private void InitializeDatabase(IApplicationBuilder app)

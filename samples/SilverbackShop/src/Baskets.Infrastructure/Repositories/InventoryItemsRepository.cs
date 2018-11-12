@@ -11,7 +11,7 @@ namespace SilverbackShop.Baskets.Infrastructure
 {
     public class InventoryItemsRepository : Repository<InventoryItem>, IInventoryItemsRepository
     {
-        public InventoryItemsRepository(DbContext dbContext) : base(dbContext)
+        public InventoryItemsRepository(BasketsDbContext dbContext) : base(dbContext)
         {
         }
 

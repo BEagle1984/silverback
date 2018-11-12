@@ -16,9 +16,9 @@ namespace SilverbackShop.Catalog.Service.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductsRepository _repository;
-        private readonly IProductQueries _queries;
+        private readonly IProductsQueries _queries;
 
-        public ProductsController(IProductsRepository repository, IProductQueries queries)
+        public ProductsController(IProductsRepository repository, IProductsQueries queries)
         {
             _repository = repository;
             _queries = queries;

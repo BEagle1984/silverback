@@ -1,17 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SilverbackShop.Catalog.Domain.Model;
 using SilverbackShop.Catalog.Domain.Repositories;
 using SilverbackShop.Common.Infrastructure.Data;
 
-namespace SilverbackShop.Catalog.Infrastructure
+namespace SilverbackShop.Catalog.Infrastructure.Repositories
 {
     public class ProductsRepository : Repository<Product>, IProductsRepository
     {
-        public ProductsRepository(DbContext dbContext) : base(dbContext)
+        public ProductsRepository(CatalogDbContext dbContext) : base(dbContext)
         {
         }
 
