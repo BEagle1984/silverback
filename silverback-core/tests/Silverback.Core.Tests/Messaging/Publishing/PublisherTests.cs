@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
@@ -19,12 +20,12 @@ namespace Silverback.Tests.Messaging.Publishing
         [SetUp]
         public void Setup()
         {
-            _syncSubscriber = new TestSubscriber(NullLoggerFactory.Instance.CreateLogger<TestSubscriber>());
-            _asyncSubscriber = new TestAsyncSubscriber(NullLoggerFactory.Instance.CreateLogger<TestAsyncSubscriber>());
+            _syncSubscriber = new TestSubscriber();
+            _asyncSubscriber = new TestAsyncSubscriber();
         }
 
         [Test]
-        public void PublishTest()
+        public void Publish_SomeMessages_Received()
         {
             var publisher = new Publisher(new[] { _syncSubscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
@@ -35,7 +36,7 @@ namespace Silverback.Tests.Messaging.Publishing
         }
 
         [Test]
-        public async Task PublishAsyncTest()
+        public async Task PublishAsync_SomeMessages_Received()
         {
             var publisher = new Publisher(new[] { _syncSubscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
@@ -46,7 +47,7 @@ namespace Silverback.Tests.Messaging.Publishing
         }
 
         [Test]
-        public void MultipleSubscribersTest()
+        public void Publish_SomeMessages_ReceivedByAllSubscribers()
         {
             var publisher = new Publisher(new ISubscriber[] { _syncSubscriber, _asyncSubscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
@@ -61,7 +62,7 @@ namespace Silverback.Tests.Messaging.Publishing
         }
 
         [Test]
-        public async Task MultipleSubscribersAsyncTest()
+        public async Task PublishAsync_SomeMessages_ReceivedByAllSubscribers()
         {
             var publisher = new Publisher(new ISubscriber[] { _syncSubscriber, _asyncSubscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
@@ -76,7 +77,7 @@ namespace Silverback.Tests.Messaging.Publishing
         }
 
         [Test]
-        public async Task MultipleSubscribersSyncAndAsyncTest()
+        public async Task PublishSyncAndAsync_SomeMessages_ReceivedByAllSubscribers()
         {
             var publisher = new Publisher(new ISubscriber[] { _syncSubscriber, _asyncSubscriber }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
@@ -90,9 +91,8 @@ namespace Silverback.Tests.Messaging.Publishing
             Assert.That(_asyncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
         }
 
-
         [Test]
-        public async Task MultipleSubscribedMethodsTest()
+        public async Task Publish_SomeMessages_ReceivedByAllSubscribedMethods()
         {
             var service1 = new TestServiceOne();
             var service2 = new TestServiceTwo();
@@ -106,6 +106,41 @@ namespace Silverback.Tests.Messaging.Publishing
 
             Assert.That(service1.ReceivedMessagesCount, Is.EqualTo(6));
             Assert.That(service2.ReceivedMessagesCount, Is.EqualTo(4));
+        }
+
+        public static IEnumerable<TestCaseData> Publish_SubscribedMessage_ReceivedRepublishedMessages_TestCases
+        {
+            get
+            {
+                yield return new TestCaseData(new TestEventOne(), 1, 0);
+                yield return new TestCaseData(new TestEventTwo(), 1, 1);
+            }
+        }
+
+        [Test,TestCaseSource(nameof(Publish_SubscribedMessage_ReceivedRepublishedMessages_TestCases))]
+        public void Publish_SubscribedMessage_ReceivedRepublishedMessages(IEvent message, int expectedEventOne, int expectedEventTwo)
+        {
+            var service1 = new TestServiceOne();
+            var service2 = new TestServiceTwo();
+            var publisher = new Publisher(new ISubscriber[] { new RepublishMessagesTestService(), service1, service2 }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            publisher.Publish(message);
+
+            Assert.That(service1.ReceivedMessagesCount, Is.EqualTo(expectedEventOne * 2));
+            Assert.That(service2.ReceivedMessagesCount, Is.EqualTo(expectedEventTwo * 2));
+        }
+
+        [Test, TestCaseSource(nameof(Publish_SubscribedMessage_ReceivedRepublishedMessages_TestCases))]
+        public async Task PublishAsync_SubscribedMessage_ReceivedRepublishedMessages(IEvent message, int expectedEventOne, int expectedEventTwo)
+        {
+            var service1 = new TestServiceOne();
+            var service2 = new TestServiceTwo();
+            var publisher = new Publisher(new ISubscriber[] { new RepublishMessagesTestService(), service1, service2 }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            await publisher.PublishAsync(message);
+
+            Assert.That(service1.ReceivedMessagesCount, Is.EqualTo(expectedEventOne * 2));
+            Assert.That(service2.ReceivedMessagesCount, Is.EqualTo(expectedEventTwo * 2));
         }
     }
 }

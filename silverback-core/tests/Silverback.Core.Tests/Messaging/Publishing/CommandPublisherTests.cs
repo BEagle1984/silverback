@@ -19,7 +19,7 @@ namespace Silverback.Tests.Messaging.Publishing
         [SetUp]
         public void Setup()
         {
-            _subscriber = new TestSubscriber(NullLoggerFactory.Instance.CreateLogger<TestSubscriber>());
+            _subscriber = new TestSubscriber();
             _publisher = new Publisher(new[] {_subscriber}, NullLoggerFactory.Instance.CreateLogger<Publisher>());
         }
 

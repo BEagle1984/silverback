@@ -12,7 +12,7 @@ namespace Silverback.Util
         public static MethodInfo[] GetAnnotatedMethods<TAttribute>(this Type type)
             where TAttribute : Attribute
             => type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(m => m.GetCustomAttribute<TAttribute>() != null)
+                .Where(m => m.GetCustomAttribute<TAttribute>(true) != null)
                 .ToArray();
 
         public static bool IsAsync(this MethodInfo methodInfo)

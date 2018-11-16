@@ -6,10 +6,8 @@ namespace Silverback.Messaging.Publishing
 {
     public interface IPublisher
     {
-        void Publish<TMessage>(TMessage message)
-            where TMessage : IMessage;
+        void Publish(IMessage message);
 
-        Task PublishAsync<TMessage>(TMessage message)
-            where TMessage : IMessage;
+        Task PublishAsync(IMessage message);
     }
 }

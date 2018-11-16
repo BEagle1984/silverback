@@ -1,51 +1,53 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
-using Silverback.Tests.TestTypes.Messages;
-using Silverback.Tests.TestTypes.Subscribers;
+﻿// TODO: DELETE
 
-namespace Silverback.Tests.Messaging.Subscribers
-{
-    [TestFixture]
-    public class SubscriberTests
-    {
-        private TestSubscriber _subscriber;
+//using System.Threading.Tasks;
+//using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Logging.Abstractions;
+//using NUnit.Framework;
+//using Silverback.Tests.TestTypes.Messages;
+//using Silverback.Tests.TestTypes.Subscribers;
 
-        [SetUp]
-        public void Setup()
-        {
-            _subscriber = new TestSubscriber(NullLoggerFactory.Instance.CreateLogger<TestSubscriber>());
-        }
+//namespace Silverback.Tests.Messaging.Subscribers
+//{
+//    [TestFixture]
+//    public class SubscriberTests
+//    {
+//        private TestSubscriber _subscriber;
 
-        [Test]
-        public void BasicTest()
-        {
-            _subscriber.OnMessageReceived(new TestCommandOne());
+//        [SetUp]
+//        public void Setup()
+//        {
+//            _subscriber = new TestSubscriber(NullLoggerFactory.Instance.CreateLogger<TestSubscriber>());
+//        }
 
-            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(1));
-        }
+//        [Test]
+//        public void BasicTest()
+//        {
+//            _subscriber.OnMessageReceived(new TestCommandOne());
 
-        [Test]
-        public void TypeFilteringTest()
-        {
-            _subscriber.OnMessageReceived(new TestCommandOne());
-            _subscriber.OnMessageReceived(new TestCommandTwo());
-            _subscriber.OnMessageReceived(new TestCommandOne());
+//            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(1));
+//        }
 
-            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(3));
-        }
+//        [Test]
+//        public void TypeFilteringTest()
+//        {
+//            _subscriber.OnMessageReceived(new TestCommandOne());
+//            _subscriber.OnMessageReceived(new TestCommandTwo());
+//            _subscriber.OnMessageReceived(new TestCommandOne());
 
-        [Test]
-        public void CustomFilteringTest()
-        {
-            _subscriber.Filter = m => m.Message == "yes";
+//            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(3));
+//        }
 
-            _subscriber.OnMessageReceived(new TestCommandOne { Message = "no" });
-            _subscriber.OnMessageReceived(new TestCommandOne { Message = "yes" });
-            _subscriber.OnMessageReceived(new TestCommandOne { Message = "yes" });
+//        [Test]
+//        public void CustomFilteringTest()
+//        {
+//            _subscriber.Filter = m => m.Message == "yes";
 
-            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(2));
-        }
-    }
-}
+//            _subscriber.OnMessageReceived(new TestCommandOne { Message = "no" });
+//            _subscriber.OnMessageReceived(new TestCommandOne { Message = "yes" });
+//            _subscriber.OnMessageReceived(new TestCommandOne { Message = "yes" });
+
+//            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(2));
+//        }
+//    }
+//}

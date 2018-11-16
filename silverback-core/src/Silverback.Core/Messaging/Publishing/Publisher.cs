@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -13,98 +10,60 @@ namespace Silverback.Messaging.Publishing
 {
     public class Publisher : IPublisher
     {
-        private readonly IEnumerable<ISubscriber> _subscribers;
         private readonly ILogger<Publisher> _logger;
-
-        private static readonly ConcurrentDictionary<Type, AnnotatedMethod[]> MethodsCache = new ConcurrentDictionary<Type, AnnotatedMethod[]>();
+        private readonly SubscribedMethodProvider _subscribedMethodsProvider;
 
         public Publisher(IEnumerable<ISubscriber> subscribers, ILogger<Publisher> logger)
         {
-            _subscribers = subscribers;
+            _subscribedMethodsProvider = new SubscribedMethodProvider(subscribers);
             _logger = logger;
         }
 
-        public void Publish<TMessage>(TMessage message) where TMessage : IMessage =>
-            GetSubscribedMethods(message)
-                .ForEach(method => InvokeAnnotatedMethod(method, message, false));
-
-        public Task PublishAsync<TMessage>(TMessage message) where TMessage : IMessage =>
-            GetSubscribedMethods(message)
-                .ForEachAsync(method => InvokeAnnotatedMethod(method, message, true));
-
-        private AnnotatedMethod[] GetSubscribedMethods<TMessage>(TMessage message) =>
-            _subscribers
-                .SelectMany(GetAnnotatedMethods)
-                .Where(method => method.SubscribedMessageType.IsInstanceOfType(message))
-                .ToArray();
-
-        private IEnumerable<AnnotatedMethod> GetAnnotatedMethods(ISubscriber subscriber) =>
-            GetAnnotatedMethods(subscriber.GetType())
-                .Select(method =>
-                {
-                    method.Instance = subscriber;
-                    return method;
-                });
-
-        private AnnotatedMethod[] GetAnnotatedMethods(Type type)
-            => MethodsCache.GetOrAdd(type, t =>
-                t.GetAnnotatedMethods<SubscribeAttribute>()
-                    .Select(methodInfo =>
-                    {
-                        var parameters = methodInfo.GetParameters();
-                        return new AnnotatedMethod
-                        {
-                            MethodInfo = methodInfo,
-                            Parameters = parameters,
-                            SubscribedMessageType = GetMessageParameterType(methodInfo, parameters)
-                        };
-                    })
-                    .ToArray());
-
-        private Type GetMessageParameterType(MethodInfo methodInfo, ParameterInfo[] parameters)
+        public void Publish(IMessage message)
         {
-            var messageParameters = parameters.Where(p => typeof(IMessage).IsAssignableFrom(p.ParameterType)).ToArray();
+            if (message == null) return;
 
-            if (messageParameters.Length != 1)
-                ThrowMethodSignatureException(methodInfo, "A single parameter of type IMessage or drived type is expected.");
+            _logger.LogTrace($"Publishing message of type '{message.GetType().FullName}'...");
 
-            return parameters.First().ParameterType;
+#pragma warning disable 4014
+            _subscribedMethodsProvider.GetSubscribedMethods(message)
+                .ForEach(method => InvokeMethodAndRepublishResult(method, message, false));
+#pragma warning restore 4014
         }
 
-        private void ThrowMethodSignatureException(MethodInfo methodInfo, string message) =>
-            throw new SilverbackException(
-                $"The method {methodInfo.DeclaringType.FullName}.{methodInfo.Name} " +
-                $"has an invalid signature. {message}");
-
-        private Task InvokeAnnotatedMethod(AnnotatedMethod method, IMessage message, bool executeAsync)
+        public Task PublishAsync(IMessage message)
         {
-            _logger.LogTrace($"Invoking {method.MethodInfo.DeclaringType.FullName}.{method.MethodInfo.Name}...");
+            if (message == null) return Task.CompletedTask;
+
+            _logger.LogTrace($"Publishing message of type '{message.GetType().FullName}'...");
+
+            return _subscribedMethodsProvider.GetSubscribedMethods(message)
+                .ForEachAsync(method => InvokeMethodAndRepublishResult(method, message, true));
+        }
+
+        private async Task InvokeMethodAndRepublishResult(SubscribedMethod method, IMessage message, bool executeAsync)
+        {
+            var resultMessages = await InvokeMethodAndGetResult(method, message, executeAsync);
 
             if (executeAsync)
-            {
-                var result = InvokeAnnotatedMethod(method, message);
-                return method.MethodInfo.IsAsync() ? (Task)result : Task.CompletedTask;
-            }
+                await resultMessages.ForEachAsync(PublishAsync);
             else
-            {
-                if (method.MethodInfo.IsAsync())
-                    AsyncHelper.RunSynchronously(() => (Task)InvokeAnnotatedMethod(method, message));
-                else
-                    InvokeAnnotatedMethod(method, message);
-
-                return Task.CompletedTask;
-            }
+                resultMessages.ForEach(Publish);
         }
 
-        private object InvokeAnnotatedMethod(AnnotatedMethod method, IMessage message) =>
-            method.MethodInfo.Invoke(method.Instance, new object[] { message });
-        
-        private class AnnotatedMethod
+        private async Task<IEnumerable<IMessage>> InvokeMethodAndGetResult(SubscribedMethod method, IMessage message, bool executeAsync)
         {
-            public ISubscriber Instance { get; set; }
-            public MethodInfo MethodInfo { get; set; }
-            public ParameterInfo[] Parameters { get; set; }
-            public Type SubscribedMessageType { get; set; }
+            _logger.LogTrace($"Invoking subscribed method {method.MethodInfo.DeclaringType.FullName}.{method.MethodInfo.Name}...");
+
+            var result = await SubscribedMethodInvoker.InvokeAndGetResult(method, message, executeAsync);
+
+            if (result is IMessage returnMessage)
+                return new[] { returnMessage };
+
+            if (result is IEnumerable<IMessage> returnMessages)
+                return returnMessages;
+
+            return Enumerable.Empty<IMessage>();
         }
     }
 }

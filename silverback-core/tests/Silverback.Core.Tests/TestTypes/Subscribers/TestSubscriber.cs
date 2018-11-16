@@ -6,14 +6,11 @@ using Silverback.Tests.TestTypes.Messages;
 
 namespace Silverback.Tests.TestTypes.Subscribers
 {
-    public class TestSubscriber : Subscriber<ITestMessage>
+    public class TestSubscriber : ISubscriber
     {
-        public TestSubscriber(ILogger<TestSubscriber> logger) : base(logger)
-        {
-        }
-
         public int ReceivedMessagesCount { get; private set; }
 
-        public override void Handle(ITestMessage message) => ReceivedMessagesCount++;
+        [Subscribe]
+        public void OnTestMessageReceived(ITestMessage message) => ReceivedMessagesCount++;
     }
 }

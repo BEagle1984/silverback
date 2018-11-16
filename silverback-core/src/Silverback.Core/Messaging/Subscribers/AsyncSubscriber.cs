@@ -1,29 +1,31 @@
-using System;
-using System.Threading.Tasks;
-using Silverback.Util;
-using Silverback.Messaging.Messages;
-using Microsoft.Extensions.Logging;
+// TODO: DELETE
 
-namespace Silverback.Messaging.Subscribers
-{
-    public abstract class AsyncSubscriber<TMessage> : SubscriberBase<TMessage>
-        where TMessage : IMessage
-    {
-        private readonly ILogger<AsyncSubscriber<TMessage>> _logger;
+//using System;
+//using System.Threading.Tasks;
+//using Silverback.Util;
+//using Silverback.Messaging.Messages;
+//using Microsoft.Extensions.Logging;
 
-        protected AsyncSubscriber(ILogger<AsyncSubscriber<TMessage>> logger) : base(logger)
-        {
-            _logger = logger;
-        }
+//namespace Silverback.Messaging.Subscribers
+//{
+//    public abstract class AsyncSubscriber<TMessage> : SubscriberBase<TMessage>
+//        where TMessage : IMessage
+//    {
+//        private readonly ILogger<AsyncSubscriber<TMessage>> _logger;
 
-        [Subscribe]
-        public Task OnMessageReceived(TMessage message)
-        {
-            _logger.LogTrace($"Asynchronously processing message of type '{typeof(TMessage).Name}'.");
+//        protected AsyncSubscriber(ILogger<AsyncSubscriber<TMessage>> logger) : base(logger)
+//        {
+//            _logger = logger;
+//        }
 
-            return MustHandle(message) ? HandleAsync(message) : Task.CompletedTask;
-        }
+//        [Subscribe]
+//        public Task OnMessageReceived(TMessage message)
+//        {
+//            _logger.LogTrace($"Asynchronously processing message of type '{typeof(TMessage).Name}'.");
 
-        public abstract Task HandleAsync(TMessage message);
-    }
-}
+//            return MustHandle(message) ? HandleAsync(message) : Task.CompletedTask;
+//        }
+
+//        public abstract Task HandleAsync(TMessage message);
+//    }
+//}
