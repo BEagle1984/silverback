@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Subscribers
         }
 
         [Subscribe]
-        public void OnNext(TMessage message)
+        public void OnMessageReceived(TMessage message)
         {
             _logger.LogTrace($"Synchronously processing message of type '{typeof(TMessage).Name}'.");
 

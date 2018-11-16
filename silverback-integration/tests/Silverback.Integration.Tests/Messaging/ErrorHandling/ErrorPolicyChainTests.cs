@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
-using Silverback.Messaging.Configuration;
 
 namespace Silverback.Tests.Messaging.ErrorHandling
 {
     [TestFixture]
     public class ErrorPolicyChainTests
     {
+        private readonly ErrorPolicyBuilder _errorPolicyBuilder = new ErrorPolicyBuilder(new ServiceCollection().BuildServiceProvider(), NullLoggerFactory.Instance);
+
         [Test]
         public void ChainingTest()
         {
@@ -25,9 +28,13 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 new TestErrorPolicy()
             };
 
-            var chain = ErrorPolicy.Chain(testPolicies);
-            chain.Init(new BusBuilder().Build());
-
+            var chain = _errorPolicyBuilder.Chain(
+                _ => testPolicies[0],
+                _ => testPolicies[1],
+                _ => testPolicies[2],
+                _ => testPolicies[3],
+                _ => testPolicies[4]);
+            
             chain.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
                 _ => throw new Exception("retry, please"));
@@ -40,14 +47,12 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         {
             var testPolicy = new TestErrorPolicy();
 
-            var chain = ErrorPolicy.Chain(
-                ErrorPolicy.Retry(1),
-                ErrorPolicy.Retry(1),
-                ErrorPolicy.Retry(1),
-                ErrorPolicy.Retry(1), 
-                testPolicy);
-
-            chain.Init(new BusBuilder().Build());
+            var chain = _errorPolicyBuilder.Chain(
+                builder => builder.Retry(1),
+                builder => builder.Retry(1),
+                builder => builder.Retry(1),
+                builder => builder.Retry(1),
+                _ => testPolicy);
 
             chain.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
@@ -62,8 +67,9 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var tryCount = 0;
 
             var testPolicy = new TestErrorPolicy();
-            var chain = ErrorPolicy.Chain(ErrorPolicy.Retry(3), testPolicy);
-            chain.Init(new BusBuilder().Build());
+            var chain = _errorPolicyBuilder.Chain(
+                builder => builder.Retry(3),
+                _ => testPolicy);
 
             chain.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
@@ -82,8 +88,9 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         {
             var tryCount = 0;
 
-            var chain = ErrorPolicy.Chain(ErrorPolicy.Retry(3), ErrorPolicy.Skip());
-            chain.Init(new BusBuilder().Build());
+            var chain = _errorPolicyBuilder.Chain(
+                builder => builder.Retry(3),
+                builder => builder.Skip());
 
             chain.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
@@ -101,8 +108,9 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         {
             var tryCount = 0;
 
-            var chain = ErrorPolicy.Chain(ErrorPolicy.Retry(3).ApplyTo<InvalidOperationException>(), ErrorPolicy.Skip());
-            chain.Init(new BusBuilder().Build());
+            var chain = _errorPolicyBuilder.Chain(
+                builder => builder.Retry(3).ApplyTo<InvalidOperationException>(),
+                builder => builder.Skip());
 
             chain.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),

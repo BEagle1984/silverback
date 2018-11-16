@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 

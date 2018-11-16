@@ -1,50 +1,43 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.ErrorHandling;
-using Silverback.Messaging.Integration.Repositories;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 
-namespace Silverback.Messaging.Integration
+namespace Silverback.Messaging.Connectors
 {
     /// <summary>
     /// Subscribes to a message broker and forwards the incoming integration messages to the internal bus.
     /// This implementation logs the incoming messages and prevents duplicated processing of the same message.
     /// </summary>
-    /// <seealso cref="InboundConnector" />
     public class LoggedInboundConnector : InboundConnector
     {
         private readonly IInboundLog _inboundLog;
         private ILogger _logger;
 
-        public LoggedInboundConnector(IInboundLog inboundLog)
+        public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider, IInboundLog inboundLog, ILoggerFactory loggerFactory)
+            : base(broker, serviceProvider, loggerFactory)
         {
             _inboundLog = inboundLog;
+            _logger = loggerFactory.CreateLogger<LoggedInboundConnector>();
         }
 
-        public override void Init(IBus bus, IEndpoint endpoint, IErrorPolicy errorPolicy = null)
+        protected override void RelayMessage(IIntegrationMessage message, IEndpoint sourceEndpoint)
         {
-            _logger = bus.GetLoggerFactory().CreateLogger<LoggedInboundConnector>();
-            base.Init(bus, endpoint, errorPolicy);
-        }
-
-        /// <summary>
-        /// Relays the message ensuring that it wasn't processed already by this microservice.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        protected override void RelayMessage(IIntegrationMessage message)
-        {
-            if (_inboundLog.Exists(message, Endpoint))
+            if (_inboundLog.Exists(message, sourceEndpoint))
             {
                 _logger.LogInformation($"Message '{message.Id}' is being skipped since it was already processed.");
                 return;
             }
 
-            _inboundLog.Add(message, Endpoint);
+            _inboundLog.Add(message, sourceEndpoint);
 
             try
             {
-                base.RelayMessage(message);
+                base.RelayMessage(message, sourceEndpoint);
                 _inboundLog.Commit();
             }
             catch (Exception)

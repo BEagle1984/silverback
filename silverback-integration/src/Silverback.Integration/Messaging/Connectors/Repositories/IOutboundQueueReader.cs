@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Silverback.Messaging.Integration.Repositories
+namespace Silverback.Messaging.Connectors.Repositories
 {
     public interface IOutboundQueueReader
     {

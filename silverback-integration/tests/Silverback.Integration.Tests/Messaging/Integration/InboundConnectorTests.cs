@@ -1,99 +1,91 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
-using Silverback.Messaging.ErrorHandling;
-using Silverback.Messaging.Integration;
-using Silverback.Messaging.Messages;
+using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using System;
+using Silverback.Messaging.Broker;
 
 namespace Silverback.Tests.Messaging.Integration
 {
     [TestFixture]
     public class InboundConnectorTests
     {
-        private IBus _bus;
+        private IServiceCollection _services;
+        private TestSubscriber _testSubscriber;
+        private IInboundConnector _connector;
+        private TestBroker _broker;
 
         [SetUp]
         public void Setup()
         {
-            _bus = new BusBuilder().Build()
-                .ConfigureBroker<TestBroker>(x => x
-                    .UseServer("server")
-                );
+            _services = new ServiceCollection();
+
+            _testSubscriber = new TestSubscriber();
+            _services.AddSingleton<ISubscriber>(_testSubscriber);
+
+            _services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
+            _services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            _services.AddSingleton<IPublisher, Publisher>();
+
+            _broker = new TestBroker(new JsonMessageSerializer());
+            _services.AddSingleton<IBroker>(_broker);
+
+            _connector = new InboundConnector(_broker, _services.BuildServiceProvider(), NullLoggerFactory.Instance);
         }
 
         [Test]
-        public void RelayMessageTest()
+        public void Bind_PushMessages_MessagesReceived()
         {
-            int count = 0;
-            _bus.Subscribe<IMessage>(m => count++);
+            _connector.Bind(TestEndpoint.Default);
+            _broker.Connect();
 
-            var connector = new InboundConnector();
-            connector.Init(_bus, BasicEndpoint.Create("test"));
+            var consumer = (TestConsumer)_broker.GetConsumer(TestEndpoint.Default);
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            _bus.ConnectBrokers();
-
-            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
-
-            var consumer = (TestConsumer)_bus.GetBroker().GetConsumer(BasicEndpoint.Create("test"));
-            consumer.TestPush(e1);
-            consumer.TestPush(e2);
-
-            Assert.That(count, Is.EqualTo(2));
+            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(5));
         }
 
         [Test]
-        public void ErrorPolicyTest()
+        public void Bind_WithRetryErrorPolicy_RetriedAndReceived()
         {
-            int count = 0;
-            _bus.Subscribe<IMessage>(m =>
-            {
-                count++;
-                if (count < 4)
-                    throw new Exception("Retry please");
-            });
+            _testSubscriber.MustFailCount = 3;
+            _connector.Bind(TestEndpoint.Default, policy => policy.Retry(3));
+            _broker.Connect();
 
-            var connector = new InboundConnector();
-            connector.Init(_bus, BasicEndpoint.Create("test"), new RetryErrorPolicy(5));
-
-            _bus.ConnectBrokers();
-
-            var consumer = (TestConsumer)_bus.GetBroker().GetConsumer(BasicEndpoint.Create("test"));
+            var consumer = (TestConsumer)_broker.GetConsumer(TestEndpoint.Default);
             consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(_testSubscriber.FailCount, Is.EqualTo(3));
+            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(1));
         }
 
         [Test]
-        public void ChainedErrorPolicyTest()
+        public void Bind_WithChainedErrorPolicy_RetriedAndMoved()
         {
-            int count = 0;
-            _bus.Subscribe<IMessage>(m =>
-            {
-                count++;
-                throw new Exception("Retry please");
-            });
+            _testSubscriber.MustFailCount = 3;
+            _connector.Bind(TestEndpoint.Default, policy => policy.Chain(
+                p => p.Retry(1),
+                p => p.Move(TestEndpoint.Create("bad"))));
+            _broker.Connect();
 
-            var connector = new InboundConnector();
-            connector.Init(
-                _bus,
-                BasicEndpoint.Create("test"),
-                ErrorPolicy.Chain(
-                    ErrorPolicy.Retry(1),
-                    ErrorPolicy.Move(BasicEndpoint.Create("bad"))));
-
-            _bus.ConnectBrokers();
-
-            var consumer = (TestConsumer)_bus.GetBroker().GetConsumer(BasicEndpoint.Create("test"));
+            var consumer = (TestConsumer)_broker.GetConsumer(TestEndpoint.Default);
             consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
 
-            var producer = (TestProducer)_bus.GetBroker().GetProducer(BasicEndpoint.Create("bad"));
+            var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Create("bad"));
 
-            Assert.That(count, Is.EqualTo(2));
+            Assert.That(_testSubscriber.FailCount, Is.EqualTo(2));
             Assert.That(producer.SentMessages.Count, Is.EqualTo(1));
+            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(0));
         }
     }
 }

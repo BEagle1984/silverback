@@ -1,6 +1,7 @@
 ﻿using System;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using Silverback.Messaging.Configuration;
+using NUnit.Framework.Internal;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
@@ -16,8 +17,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         [SetUp]
         public void Setup()
         {
-            _policy = new SkipMessageErrorPolicy();
-            _policy.Init(new BusBuilder().Build());
+            _policy = new SkipMessageErrorPolicy(new NullLogger<SkipMessageErrorPolicy>());
         }
 
         [Test]

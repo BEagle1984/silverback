@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
@@ -29,8 +28,6 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var policy = (TestErrorPolicy)new TestErrorPolicy()
                 .ApplyTo<ArgumentException>()
                 .ApplyTo<InvalidCastException>();
-
-            policy.Init(new BusBuilder().Build());
 
             var exceptionThrown = false;
 
@@ -67,8 +64,6 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var policy = (TestErrorPolicy)new TestErrorPolicy()
                 .Exclude<ArgumentException>()
                 .Exclude<InvalidCastException>();
-
-            policy.Init(new BusBuilder().Build());
 
             var exceptionThrown = false;
 
@@ -108,8 +103,6 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 .ApplyTo<ArgumentException>()
                 .Exclude<ArgumentOutOfRangeException>()
                 .ApplyTo<FormatException>();
-
-            policy.Init(new BusBuilder().Build());
 
             var exceptionThrown = false;
 

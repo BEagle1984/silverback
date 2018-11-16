@@ -28,8 +28,9 @@ This package enables communication between them in a flexible and abstracted way
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="Silverback.Core" Version="0.1.0.19" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Silverback.Core" Version="0.1.0.21" />
   </ItemGroup>
 
 </Project>

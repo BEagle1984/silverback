@@ -1,6 +1,7 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes.Domain;
@@ -15,8 +16,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         [SetUp]
         public void Setup()
         {
-            _policy = new RetryErrorPolicy(3);
-            _policy.Init(new BusBuilder().Build());
+            _policy = new RetryErrorPolicy(NullLoggerFactory.Instance.CreateLogger<RetryErrorPolicy>(), 3);
         }
 
         [Test]

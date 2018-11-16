@@ -2,7 +2,7 @@
 using System.Linq;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Integration.Repositories
+namespace Silverback.Messaging.Connectors.Repositories
 {
     public class InMemoryInboundLog : TransactionalList<InboundLogEntry>, IInboundLog
     {

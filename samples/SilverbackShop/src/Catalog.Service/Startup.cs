@@ -66,10 +66,12 @@ namespace SilverbackShop.Catalog.Service
                 .ConfigureBroker<FileSystemBroker>(c => c.OnPath(_configuration["Broker:Path"]))
                 .ConfigureUsing<CatalogDomainMessagingConfigurator>());
             services.AddSingleton(serviceProvider => serviceProvider.GetService<IBus>().GetEventPublisher<IEvent>());
+
+            services.BuildServiceProvider
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, CatalogDbContext catalogDbContext)
         {
             app.ReturnExceptionsAsJson();
             app.UseMvc();
@@ -80,18 +82,10 @@ namespace SilverbackShop.Catalog.Service
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Baskets API V1");
             });
 
-            InitializeDatabase(app);
+            catalogDbContext.Database.Migrate();
 
             // TODO: Create extension method app.ConnectBrokers();
             app.ApplicationServices.GetService<IBus>().ConnectBrokers();
-        }
-
-        private void InitializeDatabase(IApplicationBuilder app)
-        {
-            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                scope.ServiceProvider.GetRequiredService<CatalogDbContext>().Database.Migrate();
-            }
         }
     }
 }

@@ -2,45 +2,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.TestTypes
 {
     public class TestBroker : Broker
     {
-        public string ServerName { get; private set; }
-
-        public TestBroker UseServer(string name)
+        public TestBroker(IMessageSerializer serializer) : base(serializer, NullLoggerFactory.Instance)
         {
-            ServerName = name;
-            return this;
         }
 
-        public List<byte[]> SentMessages { get; } = new List<byte[]>();
+        public List<SentMessage> SentMessages { get; } = new List<SentMessage>();
 
-        public override Producer GetNewProducer(IEndpoint endpoint)
-            => new TestProducer(this, endpoint);
+        protected override Producer InstantiateProducer(IEndpoint endpoint) => new TestProducer(this, endpoint);
 
-        public override Consumer GetNewConsumer(IEndpoint endpoint)
-            => new TestConsumer(this, endpoint);
+        protected override Consumer InstantiateConsumer(IEndpoint endpoint) => new TestConsumer(this, endpoint);
 
         protected override void Connect(IEnumerable<IConsumer> consumers)
         {
             consumers.Cast<TestConsumer>().ToList().ForEach(c => c.IsReady = true);
         }
 
-        protected override void Connect(IEnumerable<IProducer> producers)
-        {
-        }
-
         protected override void Disconnect(IEnumerable<IConsumer> consumers)
         {
         }
 
-        protected override void Disconnect(IEnumerable<IProducer> producer)
+        public class SentMessage
         {
+            public SentMessage(byte[] message, IEndpoint endpoint)
+            {
+                Message = message;
+                Endpoint = endpoint;
+            }
+
+            public byte[] Message { get; }
+            public IEndpoint Endpoint { get; }
         }
     }
 }

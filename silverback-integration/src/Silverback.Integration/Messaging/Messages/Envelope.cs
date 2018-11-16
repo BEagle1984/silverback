@@ -10,23 +10,12 @@ namespace Silverback.Messaging.Messages
     /// <seealso cref="Silverback.Messaging.Messages.IEnvelope" />
     public class Envelope : IEnvelope
     {
-        private static readonly Lazy<string> SourceValue = new Lazy<string>(() =>
-        {
-            // TODO: Allow customization?
-            return Assembly.GetEntryAssembly().GetName().Name;
-        });
+        // TODO: Allow customization?
+        private static readonly Lazy<string> SourceValue =
+            new Lazy<string>(() => Assembly.GetEntryAssembly().GetName().Name);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Envelope"/> class.
-        /// </summary>
-        public Envelope()
-        {
-        }
+        public Envelope() { }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Envelope"/> class.
-        /// </summary>
-        /// <param name="message">The message.</param>
         public Envelope(IIntegrationMessage message)
         {
             Message = message;
@@ -41,18 +30,10 @@ namespace Silverback.Messaging.Messages
         /// </summary>
         public string Source { get; set; }
 
-        /// <summary>
-        /// Gets or sets the message.
-        /// </summary>
         public IIntegrationMessage Message { get; set; }
 
-        /// <summary>
-        /// Creates a new envelope enclosing the specified message.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <returns></returns>
         public static Envelope Create(IIntegrationMessage message)
-        { 
+        {
             return new Envelope(message) { Source = SourceValue.Value };
         }
     }

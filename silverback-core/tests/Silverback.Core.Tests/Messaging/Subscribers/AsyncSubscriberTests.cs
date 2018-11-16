@@ -21,7 +21,7 @@ namespace Silverback.Tests.Messaging.Subscribers
         [Test]
         public async Task BasicTest()
         {
-            await _subscriber.OnNextAsync(new TestCommandOne());
+            await _subscriber.OnMessageReceived(new TestCommandOne());
 
             Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(1));
         }
@@ -31,9 +31,9 @@ namespace Silverback.Tests.Messaging.Subscribers
         {
             _subscriber.Filter = m => m.Message == "yes";
 
-            await _subscriber.OnNextAsync(new TestCommandOne { Message = "no" });
-            await _subscriber.OnNextAsync(new TestCommandOne { Message = "yes" });
-            await _subscriber.OnNextAsync(new TestCommandOne { Message = "yes" });
+            await _subscriber.OnMessageReceived(new TestCommandOne { Message = "no" });
+            await _subscriber.OnMessageReceived(new TestCommandOne { Message = "yes" });
+            await _subscriber.OnMessageReceived(new TestCommandOne { Message = "yes" });
 
             Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(2));
         }

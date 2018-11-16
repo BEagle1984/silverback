@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Subscribers
         }
 
         [Subscribe]
-        public Task OnNextAsync(TMessage message)
+        public Task OnMessageReceived(TMessage message)
         {
             _logger.LogTrace($"Asynchronously processing message of type '{typeof(TMessage).Name}'.");
 

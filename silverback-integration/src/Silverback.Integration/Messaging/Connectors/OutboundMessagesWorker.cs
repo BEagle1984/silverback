@@ -1,4 +1,4 @@
-﻿namespace Silverback.Messaging.Integration
+﻿namespace Silverback.Messaging.Connectors
 {
     // TODO 2
 

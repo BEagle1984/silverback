@@ -21,7 +21,7 @@ namespace Silverback.Tests.Messaging.Subscribers
         [Test]
         public void BasicTest()
         {
-            _subscriber.OnNext(new TestCommandOne());
+            _subscriber.OnMessageReceived(new TestCommandOne());
 
             Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(1));
         }
@@ -29,9 +29,9 @@ namespace Silverback.Tests.Messaging.Subscribers
         [Test]
         public void TypeFilteringTest()
         {
-            _subscriber.OnNext(new TestCommandOne());
-            _subscriber.OnNext(new TestCommandTwo());
-            _subscriber.OnNext(new TestCommandOne());
+            _subscriber.OnMessageReceived(new TestCommandOne());
+            _subscriber.OnMessageReceived(new TestCommandTwo());
+            _subscriber.OnMessageReceived(new TestCommandOne());
 
             Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(3));
         }
@@ -41,9 +41,9 @@ namespace Silverback.Tests.Messaging.Subscribers
         {
             _subscriber.Filter = m => m.Message == "yes";
 
-            _subscriber.OnNext(new TestCommandOne { Message = "no" });
-            _subscriber.OnNext(new TestCommandOne { Message = "yes" });
-            _subscriber.OnNext(new TestCommandOne { Message = "yes" });
+            _subscriber.OnMessageReceived(new TestCommandOne { Message = "no" });
+            _subscriber.OnMessageReceived(new TestCommandOne { Message = "yes" });
+            _subscriber.OnMessageReceived(new TestCommandOne { Message = "yes" });
 
             Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(2));
         }

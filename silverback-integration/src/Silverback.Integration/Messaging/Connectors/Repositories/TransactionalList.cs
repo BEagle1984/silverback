@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Silverback.Messaging.Integration.Repositories
+namespace Silverback.Messaging.Connectors.Repositories
 {
     public class TransactionalList<T>
     {
-        protected static readonly List<T> Entries = new List<T>();
+        protected readonly List<T> Entries = new List<T>();
         private readonly List<T> _uncommittedEntries = new List<T>();
 
         public int Length => Entries.Count;
