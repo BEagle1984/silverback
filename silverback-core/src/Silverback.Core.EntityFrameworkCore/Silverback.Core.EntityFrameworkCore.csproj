@@ -8,7 +8,7 @@
     <Description>Build a data access layer to be used with the Silverback framework.</Description>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback-core</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/BEagle1984/silverback-core/blob/master/LICENSE</PackageLicenseUrl>
-    <Version>0.1.0.8</Version>
+    <Version>0.1.0.10</Version>
     <RootNamespace>Silverback.EntityFrameworkCore</RootNamespace>
   </PropertyGroup>
 
@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
-    <PackageReference Include="Silverback.Core" Version="1.0.18" />
+    <PackageReference Include="Silverback.Core" Version="0.1.0.23" />
   </ItemGroup>
 
 </Project>

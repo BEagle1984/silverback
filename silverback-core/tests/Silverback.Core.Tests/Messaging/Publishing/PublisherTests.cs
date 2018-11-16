@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -141,6 +143,24 @@ namespace Silverback.Tests.Messaging.Publishing
 
             Assert.That(service1.ReceivedMessagesCount, Is.EqualTo(expectedEventOne * 2));
             Assert.That(service2.ReceivedMessagesCount, Is.EqualTo(expectedEventTwo * 2));
+        }
+
+        [Test]
+        public void Publish_ExceptionInSubscriber_ExceptionReturned()
+        {
+            var publisher = new Publisher(new[] { new TestExceptionSubscriber() }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            Assert.Throws<AggregateException>(() => publisher.Publish(new TestEventOne()));
+            Assert.Throws<AggregateException>(() => publisher.Publish(new TestEventTwo()));
+        }
+
+        [Test]
+        public void PublishAsync_ExceptionInSubscriber_ExceptionReturned()
+        {
+            var publisher = new Publisher(new[] { new TestExceptionSubscriber() }, NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            Assert.ThrowsAsync<TargetInvocationException>(() => publisher.PublishAsync(new TestEventOne()));
+            Assert.ThrowsAsync<TargetInvocationException>(() => publisher.PublishAsync(new TestEventTwo()));
         }
     }
 }

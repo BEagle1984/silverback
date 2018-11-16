@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Util;
 
@@ -37,7 +38,6 @@ namespace Silverback.Tests.Util
             }
         }
 
-
         [Test]
         public void RunSynchronouslyWithArgumentTest()
         {
@@ -50,6 +50,30 @@ namespace Silverback.Tests.Util
             {
                 await Task.Delay(50);
                 result += arg;
+            }
+        }
+
+        [Test]
+        public void RunSynchronously_NoReturn_ThrowsException()
+        {
+            Assert.Throws<AggregateException>(() => AsyncHelper.RunSynchronously(AsyncMethod));
+
+            async Task AsyncMethod()
+            {
+                await Task.Delay(50);
+                throw new Exception("test");
+            }
+        }
+
+        [Test]
+        public void RunSynchronously_WithReturn_ThrowsException()
+        {
+            Assert.Throws<AggregateException>(() => AsyncHelper.RunSynchronously(AsyncMethod));
+
+            async Task<int> AsyncMethod()
+            {
+                await Task.Delay(50);
+                throw new Exception("test");
             }
         }
     }

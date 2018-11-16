@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -25,10 +26,8 @@ namespace Silverback.Messaging.Publishing
 
             _logger.LogTrace($"Publishing message of type '{message.GetType().FullName}'...");
 
-#pragma warning disable 4014
             _subscribedMethodsProvider.GetSubscribedMethods(message)
-                .ForEach(method => InvokeMethodAndRepublishResult(method, message, false));
-#pragma warning restore 4014
+                .ForEach(method => InvokeMethodAndRepublishResult(method, message, false).Wait());
         }
 
         public Task PublishAsync(IMessage message)
