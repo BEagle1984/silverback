@@ -18,10 +18,6 @@ namespace Silverback
         private List<string> _filesCache;
         private readonly CancellationTokenSource _cancellationToken;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PollingFolderWatcher"/> class.
-        /// </summary>
-        /// <param name="folderPath">The folder path.</param>
         public PollingFolderWatcher(string folderPath)
         {
             _directoryInfo = new DirectoryInfo(folderPath);
@@ -29,7 +25,7 @@ namespace Silverback
 
             _cancellationToken = new CancellationTokenSource();
 
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 while (!_cancellationToken.IsCancellationRequested)
                 {
@@ -38,14 +34,11 @@ namespace Silverback
                     if (_cancellationToken.IsCancellationRequested)
                         break;
 
-                    //await Task.Delay(100);
+                   await Task.Delay(10);
                 }
             }, _cancellationToken.Token);
         }
 
-        /// <summary>
-        /// Checks if new files have been created in the folder and fires the event.
-        /// </summary>
         private void CheckFolder()
         {
             var files = _directoryInfo.GetFiles("*.txt").Where(f => f.LastWriteTime >= _timestamp).OrderBy(f => f.LastWriteTime).ToArray();

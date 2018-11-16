@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Broker
 
         #region Producer / Consumer
 
-        public IProducer GetProducer(IEndpoint endpoint)
+        public virtual IProducer GetProducer(IEndpoint endpoint)
         {
             return _producersCache.GetOrAdd(endpoint, _ =>
             {
@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Broker
 
         protected abstract Producer InstantiateProducer(IEndpoint endpoint);
 
-        public IConsumer GetConsumer(IEndpoint endpoint)
+        public virtual IConsumer GetConsumer(IEndpoint endpoint)
         {
             if (!IsConnected)
             {
@@ -111,5 +111,35 @@ namespace Silverback.Messaging.Broker
         }
 
         #endregion
+    }
+
+    public abstract class Broker<TEndpoint> : Broker
+        where TEndpoint : class, IEndpoint
+    {
+        protected Broker(IMessageSerializer serializer, ILoggerFactory loggerFactory)
+            : base(serializer, loggerFactory)
+        {
+        }
+
+        public override IProducer GetProducer(IEndpoint endpoint)
+        {
+            ThrowIfWrongEndpointType(endpoint);
+
+            return base.GetProducer(endpoint);
+        }
+
+        public override IConsumer GetConsumer(IEndpoint endpoint)
+        {
+            ThrowIfWrongEndpointType(endpoint);
+
+            return base.GetConsumer(endpoint);
+        }
+
+        public static void ThrowIfWrongEndpointType(IEndpoint endpoint)
+        {
+            if (!(endpoint is TEndpoint))
+                throw new ArgumentException($"An endpoint of type {typeof(TEndpoint).Name} is expected.");
+        }
+
     }
 }

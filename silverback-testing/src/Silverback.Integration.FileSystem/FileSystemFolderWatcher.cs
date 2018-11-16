@@ -10,10 +10,6 @@ namespace Silverback
     {
         private FileSystemWatcher _watcher;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FileSystemFolderWatcher"/> class.
-        /// </summary>
-        /// <param name="folderPath">The folder path.</param>
         public FileSystemFolderWatcher(string folderPath)
         {
             _watcher = new FileSystemWatcher(folderPath)

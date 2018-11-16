@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Threading;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Integration.FileSystem.TestConsole
 {
     class Program
     {
+        private const string BasePath = @"D:\Temp\Broker";
+
         static void Main(string[] args)
         {
             new Program().Execute();
@@ -54,16 +58,12 @@ namespace Silverback.Integration.FileSystem.TestConsole
             }
         }
 
-        private FileSystemBroker GetBroker()
-        {
-            // TODO: An helper like Broker.Create<T>().OnPath would be nice
-            return new FileSystemBroker().OnPath(@"D:\Temp\Broker");
-        }
+        private FileSystemBroker GetBroker() => new FileSystemBroker(new JsonMessageSerializer(), NullLoggerFactory.Instance);
 
         private void Produce(string topicName, string messageContent)
         {
             var message = new TestMessage { Content = messageContent };
-            var endpoint = BasicEndpoint.Create(topicName);
+            var endpoint = FileSystemEndpoint.Create(topicName, BasePath);
 
             using (var broker = GetBroker())
             {
@@ -75,7 +75,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
 
         private void Consume(string topicName)
         {
-            var endpoint = BasicEndpoint.Create(topicName);
+            var endpoint = FileSystemEndpoint.Create(topicName, BasePath);
 
             using (var broker = GetBroker())
             {

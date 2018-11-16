@@ -29,4 +29,18 @@ namespace Silverback.Messaging.Broker
             Received(this, envelope);
         }
     }
+
+    public abstract class Consumer<TBroker, TEndpoint> : Consumer
+        where TBroker : class, IBroker
+        where TEndpoint : class, IEndpoint
+    {
+        protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger) 
+            : base(broker, endpoint, logger)
+        {
+        }
+
+        protected new TBroker Broker => (TBroker)base.Broker;
+
+        protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
+    }
 }

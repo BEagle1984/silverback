@@ -32,4 +32,18 @@ namespace Silverback.Messaging.Broker
 
         protected abstract Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage);
     }
+
+    public abstract class Producer<TBroker, TEndpoint> : Producer
+        where TBroker : class, IBroker
+        where TEndpoint : class, IEndpoint
+    {
+        protected Producer(IBroker broker, IEndpoint endpoint, ILogger<Producer> logger)
+            : base(broker, endpoint, logger)
+        {
+        }
+
+        protected new TBroker Broker => (TBroker)base.Broker;
+
+        protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
+    }
 }
