@@ -1,12 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Silverback.Messaging;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging.Integration.Repositories
+namespace Silverback.Tests.Messaging.Connectors.Repositories
 {
     [TestFixture]
     public class InMemoryOutboundQueueTests

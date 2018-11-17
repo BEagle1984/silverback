@@ -1,23 +1,22 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
-using System;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 
-namespace Silverback.Tests.Messaging.Integration
+namespace Silverback.Tests.Messaging.Connectors
 {
     [TestFixture]
     public class InboundConnectorTests
     {
-        private IServiceCollection _services;
         private TestSubscriber _testSubscriber;
         private IInboundConnector _connector;
         private TestBroker _broker;
@@ -26,19 +25,19 @@ namespace Silverback.Tests.Messaging.Integration
         [SetUp]
         public void Setup()
         {
-            _services = new ServiceCollection();
+            var services = new ServiceCollection();
 
             _testSubscriber = new TestSubscriber();
-            _services.AddSingleton<ISubscriber>(_testSubscriber);
+            services.AddSingleton<ISubscriber>(_testSubscriber);
 
-            _services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-            _services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-            _services.AddSingleton<IPublisher, Publisher>();
+            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
+            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            services.AddSingleton<IPublisher, Publisher>();
 
             _broker = new TestBroker(new JsonMessageSerializer());
-            _services.AddSingleton<IBroker>(_broker);
+            services.AddSingleton<IBroker>(_broker);
 
-            var serviceProvider = _services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider();
             _connector = new InboundConnector(_broker, serviceProvider, new NullLogger<InboundConnector>());
             _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
         }
@@ -88,7 +87,7 @@ namespace Silverback.Tests.Messaging.Integration
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Create("bad"));
 
             Assert.That(_testSubscriber.FailCount, Is.EqualTo(2));
-            Assert.That(producer.SentMessages.Count, Is.EqualTo(1));
+            Assert.That(producer.ProducedMessages.Count, Is.EqualTo(1));
             Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(0));
         }
     }

@@ -9,17 +9,17 @@ namespace Silverback.Tests.TestTypes
 {
     public class TestProducer : Producer
     {
-        public List<TestBroker.SentMessage> SentMessages { get; }
+        public List<TestBroker.ProducedMessage> ProducedMessages { get; }
 
         public TestProducer(TestBroker broker, IEndpoint endpoint)
             : base(broker, endpoint, new NullLogger<TestProducer>())
         {
-            SentMessages = broker.SentMessages;
+            ProducedMessages = broker.ProducedMessages;
         }
 
         protected override void Produce(IIntegrationMessage message, byte[] serializedMessage)
         {
-            SentMessages.Add(new TestBroker.SentMessage(serializedMessage, Endpoint));
+            ProducedMessages.Add(new TestBroker.ProducedMessage(serializedMessage, Endpoint));
         }
 
         protected override Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)

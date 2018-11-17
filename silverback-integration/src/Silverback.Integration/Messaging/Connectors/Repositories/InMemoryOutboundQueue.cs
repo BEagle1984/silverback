@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         #region Reader
 
-        public IEnumerable<QueuedMessage> Dequeue(int count) => Entries.Take(count);
+        public IEnumerable<QueuedMessage> Dequeue(int count) => Entries.Take(count).ToArray();
 
         public void Retry(QueuedMessage message)
         {
