@@ -8,7 +8,7 @@ namespace SilverbackShop.Common.Infrastructure.Data
     public abstract class Repository<TEntity> : IRepository<TEntity>
         where TEntity : ShopEntity, IAggregateRoot
     {
-        protected DbSet<TEntity> DbSet;
+        protected readonly DbSet<TEntity> DbSet;
 
         protected Repository(DbContext dbContext)
         {
@@ -16,30 +16,15 @@ namespace SilverbackShop.Common.Infrastructure.Data
             DbSet = dbContext.Set<TEntity>();
         }
 
-        /// <summary>
-        /// Adds the specified entity.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
         public TEntity Add(TEntity entity) =>
             entity.IsTransient()
                 ? DbSet.Add(entity).Entity
                 : entity;
 
-        /// <summary>
-        /// Updates the specified entity.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
         public TEntity Update(TEntity entity) => DbSet.Update(entity).Entity;
 
-        /// <summary>
-        /// Removes the specified entity.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
         public void Remove(TEntity entity) => DbSet.Remove(entity);
 
-        /// <summary>
-        /// Gets the unit of work instance.
-        /// </summary>
         public IUnitOfWork UnitOfWork { get; }
     }
 }

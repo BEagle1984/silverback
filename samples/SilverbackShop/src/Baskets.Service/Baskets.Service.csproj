@@ -24,10 +24,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.1916590" />
-    <PackageReference Include="Silverback.Core" Version="0.1.0.20" />
-    <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="0.1.0.7" />
-    <PackageReference Include="Silverback.Integration" Version="0.1.0.20" />
-    <PackageReference Include="Silverback.Integration.FileSystem" Version="0.1.0.5" />
+    <PackageReference Include="Silverback.Core" Version="0.1.0.26" />
+    <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="0.1.0.10" />
+    <PackageReference Include="Silverback.Integration" Version="0.1.0.27" />
+    <PackageReference Include="Silverback.Integration.FileSystem" Version="0.1.0.9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
 

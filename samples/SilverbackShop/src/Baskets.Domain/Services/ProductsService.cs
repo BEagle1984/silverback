@@ -8,7 +8,7 @@ using CatalogDto = SilverbackShop.Catalog.Integration.Dto;
 
 namespace SilverbackShop.Baskets.Domain.Services
 {
-    public class ProductsService : IDomainService
+    public class ProductsService : IDomainService, ISubscriber
     {
         private readonly IProductsRepository _repository;
 

@@ -16,11 +16,11 @@ namespace Silverback.Messaging.Broker
         protected override void Produce(IIntegrationMessage message, byte[] serializedMessage) =>
             File.WriteAllBytes(GetFilePath(message), serializedMessage);
 
-        protected override Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)
+        protected override async Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)
         {
             using (var stream = File.Open(GetFilePath(message), FileMode.Create))
             {
-                return stream.WriteAsync(serializedMessage, 0, serializedMessage.Length);
+                await stream.WriteAsync(serializedMessage, 0, serializedMessage.Length);
             }
         }
 

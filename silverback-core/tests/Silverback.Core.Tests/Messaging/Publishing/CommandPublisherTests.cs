@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
+using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Messages;
 using Silverback.Tests.TestTypes.Subscribers;
 
@@ -20,7 +21,7 @@ namespace Silverback.Tests.Messaging.Publishing
         public void Setup()
         {
             _subscriber = new TestSubscriber();
-            _publisher = new Publisher(new[] {_subscriber}, NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            _publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(_subscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
         }
 
         [Test]

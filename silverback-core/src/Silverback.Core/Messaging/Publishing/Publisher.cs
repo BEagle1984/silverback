@@ -14,9 +14,9 @@ namespace Silverback.Messaging.Publishing
         private readonly ILogger<Publisher> _logger;
         private readonly SubscribedMethodProvider _subscribedMethodsProvider;
 
-        public Publisher(IEnumerable<ISubscriber> subscribers, ILogger<Publisher> logger)
+        public Publisher(IServiceProvider serviceProvider, ILogger<Publisher> logger)
         {
-            _subscribedMethodsProvider = new SubscribedMethodProvider(subscribers);
+            _subscribedMethodsProvider = new SubscribedMethodProvider(serviceProvider);
             _logger = logger;
         }
 

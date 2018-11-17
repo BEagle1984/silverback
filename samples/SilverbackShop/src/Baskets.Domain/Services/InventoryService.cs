@@ -9,7 +9,7 @@ using SilverbackShop.Baskets.Domain.Repositories;
 
 namespace SilverbackShop.Baskets.Domain.Services
 {
-    public class InventoryService : IDomainService
+    public class InventoryService : IDomainService, ISubscriber
     {
         private readonly IInventoryItemsRepository _repository;
 

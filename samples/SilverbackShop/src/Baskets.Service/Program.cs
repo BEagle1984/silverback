@@ -13,6 +13,9 @@ namespace SilverbackShop.Baskets.Service
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .ConfigureLogging(logging =>
+                {
+                })
                 .Build();
     }
 }

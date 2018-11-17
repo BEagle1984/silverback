@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -10,16 +11,17 @@ namespace Silverback.Messaging.Subscribers
 {
     internal class SubscribedMethodProvider
     {
-        private readonly IEnumerable<ISubscriber> _subscribers;
+        private readonly IServiceProvider _serviceProvider;
         private static readonly ConcurrentDictionary<Type, SubscribedMethod[]> MethodsCache = new ConcurrentDictionary<Type, SubscribedMethod[]>();
 
-        public SubscribedMethodProvider(IEnumerable<ISubscriber> subscribers)
+        public SubscribedMethodProvider(IServiceProvider serviceProvider)
         {
-            _subscribers = subscribers;
+            _serviceProvider = serviceProvider;
         }
 
         public SubscribedMethod[] GetSubscribedMethods<TMessage>(TMessage message) =>
-            _subscribers
+            _serviceProvider
+                .GetServices<ISubscriber>()
                 .SelectMany(GetAnnotatedMethods)
                 .Where(method => method.SubscribedMessageType.IsInstanceOfType(message))
                 .ToArray();
