@@ -16,13 +16,13 @@ namespace Silverback.Messaging.Connectors
     public class LoggedInboundConnector : InboundConnector
     {
         private readonly IInboundLog _inboundLog;
-        private ILogger _logger;
+        private readonly ILogger<LoggedInboundConnector> _logger;
 
-        public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider, IInboundLog inboundLog, ILoggerFactory loggerFactory)
-            : base(broker, serviceProvider, loggerFactory)
+        public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider, IInboundLog inboundLog, ILogger<LoggedInboundConnector> logger)
+            : base(broker, serviceProvider, logger)
         {
             _inboundLog = inboundLog;
-            _logger = loggerFactory.CreateLogger<LoggedInboundConnector>();
+            _logger = logger;
         }
 
         protected override void RelayMessage(IIntegrationMessage message, IEndpoint sourceEndpoint)

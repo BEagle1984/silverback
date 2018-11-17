@@ -7,27 +7,24 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Configuration
 {
-    /// <summary>
-    /// Must be implemented 
-    /// </summary>
-    public class BrokerOptions
+    public class BrokerOptionsBuilder
     {
         private readonly IServiceCollection _services;
 
-        public BrokerOptions(IServiceCollection services)
+        public BrokerOptionsBuilder(IServiceCollection services)
         {
             _services = services;
         }
         
         #region Serializer
 
-        public BrokerOptions UseSerializer<T>() where T : class, IMessageSerializer
+        public BrokerOptionsBuilder UseSerializer<T>() where T : class, IMessageSerializer
         {
             _services.AddSingleton<IMessageSerializer, T>();
             return this;
         }
 
-        public BrokerOptions SerializeAsJson() => UseSerializer<JsonMessageSerializer>();
+        public BrokerOptionsBuilder SerializeAsJson() => UseSerializer<JsonMessageSerializer>();
 
         #endregion
 
@@ -36,7 +33,7 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
         /// </summary>
-        public BrokerOptions AddInboundConnector()
+        public BrokerOptionsBuilder AddInboundConnector()
         {
             _services.AddSingleton<IInboundConnector, InboundConnector>();
             return this;
@@ -46,20 +43,20 @@ namespace Silverback.Messaging.Configuration
         /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
         /// This implementation logs the incoming messages and prevents duplicated processing of the same message.
         /// </summary>
-        public BrokerOptions AddLoggedInboundConnector<TLog>() where TLog : class, IInboundLog
+        public BrokerOptionsBuilder AddLoggedInboundConnector<TLog>() where TLog : class, IInboundLog
         {
             _services.AddSingleton<IInboundConnector, LoggedInboundConnector>();
-            _services.AddSingleton<IInboundLog, TLog>();
+            _services.AddScoped<IInboundLog, TLog>(); // TODO: Check this (scoped vs. singleton)
             return this;
         }
-        
+
         /// <summary>
         /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
         /// </summary>
-        public BrokerOptions AddOutboundConnector()
+        public BrokerOptionsBuilder AddOutboundConnector()
         {
             _services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
-            _services.AddSingleton<ISubscriber, OutboundConnector>();
+            _services.AddScoped<ISubscriber, OutboundConnector>();
             return this;
         }
 
@@ -67,11 +64,11 @@ namespace Silverback.Messaging.Configuration
         /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
         /// This implementation logs the incoming messages and prevents duplicated processing of the same message.
         /// </summary>
-        public BrokerOptions AddDeferredOutboundConnector<TQueueWriter>() where TQueueWriter : class, IOutboundQueueWriter
+        public BrokerOptionsBuilder AddDeferredOutboundConnector<TQueueWriter>() where TQueueWriter : class, IOutboundQueueWriter
         {
             _services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
-            _services.AddSingleton<ISubscriber, DeferredOutboundConnector>();
-            _services.AddSingleton<IOutboundQueueWriter, TQueueWriter>();
+            _services.AddScoped<ISubscriber, DeferredOutboundConnector>();
+            _services.AddScoped<IOutboundQueueWriter, TQueueWriter>();
             return this;
         }
 
@@ -89,6 +86,12 @@ namespace Silverback.Messaging.Configuration
         {
             if (_services.All(s => s.ServiceType != typeof(IMessageSerializer)))
                 SerializeAsJson();
+
+            if (_services.All(s => s.ServiceType != typeof(IInboundConnector)))
+                AddInboundConnector();
+
+            if (_services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
+                AddOutboundConnector();
         }
 
         #endregion

@@ -39,7 +39,7 @@ namespace Silverback.Tests.Messaging.Integration
             _broker = new TestBroker(new JsonMessageSerializer());
             _inboundLog = new InMemoryInboundLog();
 
-            _connector = new LoggedInboundConnector(_broker, _services.BuildServiceProvider(), _inboundLog, NullLoggerFactory.Instance);
+            _connector = new LoggedInboundConnector(_broker, _services.BuildServiceProvider(), _inboundLog, new NullLogger<LoggedInboundConnector>());
         }
 
         [Test]

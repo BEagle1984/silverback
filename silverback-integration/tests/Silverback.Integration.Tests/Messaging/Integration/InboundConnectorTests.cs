@@ -10,6 +10,7 @@ using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 using System;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Tests.Messaging.Integration
 {
@@ -20,6 +21,7 @@ namespace Silverback.Tests.Messaging.Integration
         private TestSubscriber _testSubscriber;
         private IInboundConnector _connector;
         private TestBroker _broker;
+        private ErrorPolicyBuilder _errorPolicyBuilder;
 
         [SetUp]
         public void Setup()
@@ -36,7 +38,9 @@ namespace Silverback.Tests.Messaging.Integration
             _broker = new TestBroker(new JsonMessageSerializer());
             _services.AddSingleton<IBroker>(_broker);
 
-            _connector = new InboundConnector(_broker, _services.BuildServiceProvider(), NullLoggerFactory.Instance);
+            var serviceProvider = _services.BuildServiceProvider();
+            _connector = new InboundConnector(_broker, serviceProvider, new NullLogger<InboundConnector>());
+            _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
         }
 
         [Test]
@@ -59,7 +63,7 @@ namespace Silverback.Tests.Messaging.Integration
         public void Bind_WithRetryErrorPolicy_RetriedAndReceived()
         {
             _testSubscriber.MustFailCount = 3;
-            _connector.Bind(TestEndpoint.Default, policy => policy.Retry(3));
+            _connector.Bind(TestEndpoint.Default, _errorPolicyBuilder.Retry(3));
             _broker.Connect();
 
             var consumer = (TestConsumer)_broker.GetConsumer(TestEndpoint.Default);
@@ -73,7 +77,7 @@ namespace Silverback.Tests.Messaging.Integration
         public void Bind_WithChainedErrorPolicy_RetriedAndMoved()
         {
             _testSubscriber.MustFailCount = 3;
-            _connector.Bind(TestEndpoint.Default, policy => policy.Chain(
+            _connector.Bind(TestEndpoint.Default, _errorPolicyBuilder.Chain(
                 p => p.Retry(1),
                 p => p.Move(TestEndpoint.Create("bad"))));
             _broker.Connect();

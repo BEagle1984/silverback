@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.ErrorHandling;
 
-namespace Silverback.Messaging.ErrorHandling
+namespace Silverback.Messaging.Configuration
 {
-    public class ErrorPolicyBuilder
+    public class ErrorPolicyBuilder // TODO: Test
     {
         private readonly ILoggerFactory _loggerFactory;
         private readonly IServiceProvider _serviceProvider;

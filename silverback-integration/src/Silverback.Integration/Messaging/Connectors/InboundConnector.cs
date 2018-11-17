@@ -15,23 +15,20 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly IBroker _broker;
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<InboundConnector> _logger;
 
-        public InboundConnector(IBroker broker, IServiceProvider serviceProvider, ILoggerFactory loggerFactory)
+        public InboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<InboundConnector> logger)
         {
             _broker = broker ?? throw new ArgumentNullException(nameof(broker));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-
-            _logger = _loggerFactory.CreateLogger<InboundConnector>();
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public virtual IInboundConnector Bind(IEndpoint endpoint, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null)
+        public virtual IInboundConnector Bind(IEndpoint endpoint, IErrorPolicy errorPolicy = null)
         {
             _logger.LogTrace($"Connecting to inbound endpoint '{endpoint.Name}'...");
 
-            var errorPolicy = errorPolicyFactory?.Invoke(new ErrorPolicyBuilder(_serviceProvider, _loggerFactory)) ?? NoErrorPolicy.Instance;
+            errorPolicy = errorPolicy ?? NoErrorPolicy.Instance;
 
             // TODO: Carefully test with multiple endpoints!
             // TODO: Test if consumer gets properly disposed etc.

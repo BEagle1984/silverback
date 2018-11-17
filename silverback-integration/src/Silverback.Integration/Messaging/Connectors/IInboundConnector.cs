@@ -8,6 +8,6 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public interface IInboundConnector
     {
-        IInboundConnector Bind(IEndpoint endpoint, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null);
+        IInboundConnector Bind(IEndpoint endpoint, IErrorPolicy errorPolicy = null);
     }
 }
