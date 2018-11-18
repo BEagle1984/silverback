@@ -18,19 +18,21 @@ namespace Silverback.Messaging.Connectors
         private readonly IBroker _broker;
         private readonly ILogger<OutboundQueueWorker> _logger;
 
-        private const int DequeuePackageSize = 100; // TODO: Parameter?
-        private const bool PreserveOrdering = true; // TODO: Parameter?
+        private readonly int _readPackageSize;
+        private readonly bool _enforceMessageOrder;
 
-        public OutboundQueueWorker(IOutboundQueueConsumer queue, IBroker broker, ILogger<OutboundQueueWorker> logger)
+        public OutboundQueueWorker(IOutboundQueueConsumer queue, IBroker broker, ILogger<OutboundQueueWorker> logger, bool enforceMessageOrder, int readPackageSize)
         {
             _queue = queue;
             _broker = broker;
             _logger = logger;
+            _enforceMessageOrder = enforceMessageOrder;
+            _readPackageSize = readPackageSize;
         }
 
         public void ProcessQueue()
         {
-            foreach (var message in _queue.Dequeue(DequeuePackageSize))
+            foreach (var message in _queue.Dequeue(_readPackageSize))
             {
                 ProcessMessage(message);
             }
@@ -52,7 +54,7 @@ namespace Silverback.Messaging.Connectors
                 _queue.Retry(message);
 
                 // Rethrow if message order has to be preserved, otherwise go ahead with next message in the queue
-                if (PreserveOrdering)
+                if (_enforceMessageOrder)
                     throw;
             }
         }

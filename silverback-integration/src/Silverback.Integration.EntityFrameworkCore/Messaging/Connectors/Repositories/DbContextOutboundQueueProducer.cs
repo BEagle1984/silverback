@@ -16,8 +16,12 @@ namespace Silverback.Messaging.Connectors.Repositories
         public Task Enqueue(IIntegrationMessage message, IEndpoint endpoint) =>
             DbSet.AddAsync(CreateEntity(message, endpoint));
 
-        private OutboundMessage CreateEntity(IIntegrationMessage message, IEndpoint endpoint) =>
-            new OutboundMessage
+        private OutboundMessage CreateEntity(IIntegrationMessage message, IEndpoint endpoint)
+        {
+            if (message.Id == default)
+                message.Id = Guid.NewGuid();
+
+            return new OutboundMessage
             {
                 MessageId = message.Id,
                 Message = Serialize(message),
@@ -25,6 +29,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                 Endpoint = Serialize(endpoint),
                 Created = DateTime.Now
             };
+        }
 
         private string Serialize<T>(T obj) => JsonConvert.SerializeObject(obj, typeof(T), SerializerSettings);
         

@@ -1,12 +1,15 @@
-﻿using Common.Api;
+﻿using System;
+using Common.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using SilverbackShop.Catalog.Domain.Repositories;
@@ -15,6 +18,7 @@ using SilverbackShop.Catalog.Infrastructure;
 using SilverbackShop.Catalog.Infrastructure.Repositories;
 using SilverbackShop.Catalog.Service.Queries;
 using SilverbackShop.Common.Infrastructure;
+using SilverbackShop.Common.Infrastructure.Jobs;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SilverbackShop.Catalog.Service
@@ -36,8 +40,6 @@ namespace SilverbackShop.Catalog.Service
                 //o.UseSqlite($"Data Source={_configuration["DB:Path"]}Catalog.db");
             });
 
-            services.AddScoped<DbContext>(s => s.GetRequiredService<CatalogDbContext>());
-
             services.AddMvc();
             services.AddSwaggerGen(c =>
             {
@@ -58,10 +60,13 @@ namespace SilverbackShop.Catalog.Service
                 .AddScoped<ISubscriber, ProductEventsMapper>()
                 .AddBroker<FileSystemBroker>(options => options
                     .SerializeAsJson()
-                    .AddDbContextOutboundConnector());
+                    .AddDbOutboundConnector<CatalogDbContext>()
+                    .AddDbOutboundWorker<CatalogDbContext>());
+
+            services.AddSingleton<JobScheduler>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, CatalogDbContext catalogDbContext, IBrokerEndpointsConfigurationBuilder endpoints)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, CatalogDbContext catalogDbContext, IBrokerEndpointsConfigurationBuilder endpoints, JobScheduler jobScheduler)
         {
             ConfigureRequestPipeline(app);
 
@@ -71,6 +76,11 @@ namespace SilverbackShop.Catalog.Service
                 .AddOutbound<IIntegrationEvent>(
                     FileSystemEndpoint.Create("catalog-events", _configuration["Broker:Path"]))
                 .Connect();
+
+            jobScheduler.AddJob("outbound-queue-worker", TimeSpan.FromMilliseconds(100),
+                s => s.GetRequiredService<OutboundQueueWorker>().ProcessQueue());
+
+            // Configure outbound worker
         }
 
         private static void ConfigureRequestPipeline(IApplicationBuilder app)

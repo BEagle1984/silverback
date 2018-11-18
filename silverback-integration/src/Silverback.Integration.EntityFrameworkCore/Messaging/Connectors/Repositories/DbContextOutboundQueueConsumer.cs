@@ -11,10 +11,11 @@ namespace Silverback.Messaging.Connectors.Repositories
     // TODO: Test
     public class DbContextOutboundQueueConsumer : RepositoryBase<OutboundMessage>, IOutboundQueueConsumer
     {
-        private const bool RemoveProduced = false; // TODO: Parameter?
+        private readonly bool _removeProduced;
 
-        public DbContextOutboundQueueConsumer(DbContext dbContext) : base(dbContext)
+        public DbContextOutboundQueueConsumer(DbContext dbContext, bool removeProduced) : base(dbContext)
         {
+            _removeProduced = removeProduced;
         }
 
         public IEnumerable<QueuedMessage> Dequeue(int count) => DbSet
@@ -37,7 +38,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
             var entity = DbSet.Find(queuedMessage.Message.Id);
 
-            if (RemoveProduced)
+            if (_removeProduced)
                 DbSet.Remove(entity);
             else
                 entity.Produced = DateTime.Now;

@@ -31,9 +31,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.1.1" />
     <PackageReference Include="Silverback.Core" Version="0.1.0.26" />
     <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="0.1.0.10" />
-    <PackageReference Include="Silverback.Integration" Version="0.1.0.32" />
-    <PackageReference Include="Silverback.Integration.EntityFrameworkCore" Version="0.1.0.4" />
-    <PackageReference Include="Silverback.Integration.FileSystem" Version="0.1.0.9" />
+    <PackageReference Include="Silverback.Integration" Version="0.1.0.36" />
+    <PackageReference Include="Silverback.Integration.EntityFrameworkCore" Version="0.1.0.6" />
+    <PackageReference Include="Silverback.Integration.FileSystem" Version="0.1.0.12" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
 

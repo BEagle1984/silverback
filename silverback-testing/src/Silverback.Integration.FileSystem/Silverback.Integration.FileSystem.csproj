@@ -10,7 +10,7 @@ This package contains a file system based implementation of a rudimental message
     <PackageLicenseUrl>https://github.com/BEagle1984/silverback-testing/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback-testing</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.0.9</Version>
+    <Version>0.1.0.12</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
