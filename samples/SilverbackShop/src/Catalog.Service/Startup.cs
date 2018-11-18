@@ -4,15 +4,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Silverback.Domain;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
-using SilverbackShop.Catalog.Domain;
 using SilverbackShop.Catalog.Domain.Repositories;
 using SilverbackShop.Catalog.Domain.Services;
 using SilverbackShop.Catalog.Infrastructure;
@@ -40,6 +36,8 @@ namespace SilverbackShop.Catalog.Service
                 //o.UseSqlite($"Data Source={_configuration["DB:Path"]}Catalog.db");
             });
 
+            services.AddScoped<DbContext>(s => s.GetRequiredService<CatalogDbContext>());
+
             services.AddMvc();
             services.AddSwaggerGen(c =>
             {
@@ -60,7 +58,7 @@ namespace SilverbackShop.Catalog.Service
                 .AddScoped<ISubscriber, ProductEventsMapper>()
                 .AddBroker<FileSystemBroker>(options => options
                     .SerializeAsJson()
-                    .AddOutboundConnector());
+                    .AddDbContextOutboundConnector());
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, CatalogDbContext catalogDbContext, IBrokerEndpointsConfigurationBuilder endpoints)

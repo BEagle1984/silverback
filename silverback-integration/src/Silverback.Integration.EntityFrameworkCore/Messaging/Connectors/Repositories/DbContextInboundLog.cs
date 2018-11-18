@@ -5,9 +5,9 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public class DbInboundLog : RepositoryBase<InboundMessage>, IInboundLog
+    public class DbContextInboundLog : RepositoryBase<InboundMessage>, IInboundLog
     {
-        public DbInboundLog(DbContext dbContext) : base(dbContext)
+        public DbContextInboundLog(DbContext dbContext) : base(dbContext)
         {
         }
 

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.EntityFrameworkCore;
+using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
@@ -20,6 +21,19 @@ namespace SilverbackShop.Common.Infrastructure.Data
             : base(options)
         {
             _eventPublisher = eventPublisher;
+        }
+
+        public DbSet<OutboundMessage> OutboundMessages { get; set; }
+        public DbSet<InboundMessage> InboundMessages { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<OutboundMessage>()
+                .ToTable("Messaging_OutboundMessages");
+
+            modelBuilder.Entity<InboundMessage>()
+                .ToTable("Messaging_InboundMessages")
+                .HasKey(t => new { t.MessageId, t.EndpointName });
         }
 
         public override int SaveChanges()

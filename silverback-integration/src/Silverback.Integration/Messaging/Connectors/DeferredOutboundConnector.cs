@@ -12,22 +12,22 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public class DeferredOutboundConnector : OutboundConnectorBase
     {
-        private readonly IOutboundQueueProducer _queueWriter;
+        private readonly IOutboundQueueProducer _queueProducer;
 
-        public DeferredOutboundConnector(IOutboundQueueProducer queueWriter, IOutboundRoutingConfiguration routingConfiguration) : base(routingConfiguration)
+        public DeferredOutboundConnector(IOutboundQueueProducer queueProducer, IOutboundRoutingConfiguration routingConfiguration) : base(routingConfiguration)
         {
-            _queueWriter = queueWriter;
+            _queueProducer = queueProducer;
         }
 
         [Subscribe]
         public Task OnTransactionCommit(TransactionCommitEvent message)
-            => _queueWriter.Commit();
+            => _queueProducer.Commit();
 
         [Subscribe]
         public Task OnTransactionRollback(TransactionRollbackEvent message)
-            => _queueWriter.Rollback();
+            => _queueProducer.Rollback();
 
         protected override Task RelayMessage(IIntegrationMessage message, IEndpoint destinationEndpoint) =>
-            _queueWriter.Enqueue(message, destinationEndpoint);
+            _queueProducer.Enqueue(message, destinationEndpoint);
     }
 }

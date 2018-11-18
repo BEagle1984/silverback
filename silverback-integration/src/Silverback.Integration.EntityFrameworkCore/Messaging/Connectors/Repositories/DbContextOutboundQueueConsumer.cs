@@ -8,11 +8,12 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public class DbOutboundQueueConsumer : RepositoryBase<OutboundMessage>, IOutboundQueueConsumer
+    // TODO: Test
+    public class DbContextOutboundQueueConsumer : RepositoryBase<OutboundMessage>, IOutboundQueueConsumer
     {
         private const bool RemoveProduced = false; // TODO: Parameter?
 
-        public DbOutboundQueueConsumer(DbContext dbContext) : base(dbContext)
+        public DbContextOutboundQueueConsumer(DbContext dbContext) : base(dbContext)
         {
         }
 

@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
+        /// Adds a connector to publish the integration messages to the configured message broker.
         /// </summary>
         public BrokerOptionsBuilder AddOutboundConnector()
         {
@@ -61,14 +61,14 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
-        /// This implementation logs the incoming messages and prevents duplicated processing of the same message.
+        /// Adds a connector to publish the integration messages to the configured message broker.
+        /// This implementation stores the outbound messages into an intermediate queue.
         /// </summary>
-        public BrokerOptionsBuilder AddDeferredOutboundConnector<TQueueWriter>() where TQueueWriter : class, IOutboundQueueProducer
+        public BrokerOptionsBuilder AddDeferredOutboundConnector<TQueueProducer>() where TQueueProducer : class, IOutboundQueueProducer
         {
             _services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
             _services.AddScoped<ISubscriber, DeferredOutboundConnector>();
-            _services.AddScoped<IOutboundQueueProducer, TQueueWriter>();
+            _services.AddScoped<IOutboundQueueProducer, TQueueProducer>();
             return this;
         }
 

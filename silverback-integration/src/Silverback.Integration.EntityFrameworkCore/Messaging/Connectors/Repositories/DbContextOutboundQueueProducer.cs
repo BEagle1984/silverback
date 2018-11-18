@@ -7,9 +7,9 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public class DbOutboundQueueProducer : RepositoryBase<OutboundMessage>, IOutboundQueueProducer
+    public class DbContextOutboundQueueProducer : RepositoryBase<OutboundMessage>, IOutboundQueueProducer
     {
-        public DbOutboundQueueProducer(DbContext dbContext) : base(dbContext)
+        public DbContextOutboundQueueProducer(DbContext dbContext) : base(dbContext)
         {
         }
 

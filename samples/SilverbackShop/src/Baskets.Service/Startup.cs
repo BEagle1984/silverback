@@ -68,8 +68,8 @@ namespace SilverbackShop.Baskets.Service
                 .AddScoped<ISubscriber, BasketEventsMapper>()
                 .AddBroker<FileSystemBroker>(options => options
                     .SerializeAsJson()
-                    .AddOutboundConnector()
-                    .AddInboundConnector());
+                    .AddDbContextOutboundConnector()
+                    .AddDbContextInboundConnector());
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, BasketsDbContext basketsDbContext, IBrokerEndpointsConfigurationBuilder endpoints)
