@@ -36,7 +36,11 @@ namespace Silverback.Tests.Messaging.Connectors
             _broker = new TestBroker(new JsonMessageSerializer());
             _inboundLog = new InMemoryInboundLog();
 
-            _connector = new LoggedInboundConnector(_broker, services.BuildServiceProvider(), _inboundLog, new NullLogger<LoggedInboundConnector>());
+            services.AddSingleton<IInboundLog>(_inboundLog);
+
+            _connector = new LoggedInboundConnector(_broker, services.BuildServiceProvider(), new NullLogger<LoggedInboundConnector>());
+
+            InMemoryInboundLog.Clear();
         }
 
         [Test]

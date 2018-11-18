@@ -12,11 +12,12 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
     {
         private InMemoryInboundLog _log;
 
-         [SetUp]
-         public void Setup()
-         {
-             _log = new InMemoryInboundLog();
-         }
+        [SetUp]
+        public void Setup()
+        {
+            _log = new InMemoryInboundLog();
+            InMemoryInboundLog.Clear();
+        }
 
         [Test]
         public void AddTest()
@@ -76,26 +77,6 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
             var result = _log.Exists(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
 
             Assert.That(result, Is.False);
-        }
-
-        [Test]
-        public void CleanupTest()
-        {
-            _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            _log.Commit();
-
-            var threshold = DateTime.Now;
-            Thread.Sleep(100);
-
-            _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            _log.Commit();
-
-            _log.ClearOlderEntries(threshold);
-
-            Assert.That(_log.Length, Is.EqualTo(2));
         }
     }
 }

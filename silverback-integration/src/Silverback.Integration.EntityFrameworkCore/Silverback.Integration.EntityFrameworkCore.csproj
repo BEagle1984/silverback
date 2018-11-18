@@ -3,6 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <Version>0.1.0.1</Version>
+    <RootNamespace>Silverback</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Silverback.Core" Version="0.1.0.26" />
+    <PackageReference Include="Silverback.Integration" Version="0.1.0.31" />
+  </ItemGroup>
 
 </Project>

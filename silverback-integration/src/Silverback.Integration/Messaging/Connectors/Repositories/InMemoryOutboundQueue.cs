@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -9,9 +10,9 @@ namespace Silverback.Messaging.Connectors.Repositories
     /// An outbound queue persisted in memory. Note that writing in the queue is thread-safe but
     /// reading is not.
     /// </summary>
-    /// <seealso cref="IOutboundQueueWriter" />
-    /// <seealso cref="IOutboundQueueReader" />
-    public class InMemoryOutboundQueue : TransactionalList<QueuedMessage>, IOutboundQueueWriter, IOutboundQueueReader
+    /// <seealso cref="IOutboundQueueProducer" />
+    /// <seealso cref="IOutboundQueueConsumer" />
+    public class InMemoryOutboundQueue : TransactionalList<QueuedMessage>, IOutboundQueueProducer, IOutboundQueueConsumer
     {
         #region Writer
 
@@ -39,14 +40,14 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public IEnumerable<QueuedMessage> Dequeue(int count) => Entries.Take(count).ToArray();
 
-        public void Retry(QueuedMessage message)
+        public void Retry(QueuedMessage queuedMessage)
         {
             // Nothing to do in the current implementation
             // --> the messages just stay in the queue until acknowledged
             // --> that's why reading is not thread-safe
         }
 
-        public void Acknowledge(QueuedMessage message) => Remove(message);
+        public void Acknowledge(QueuedMessage queuedMessage) => Remove(queuedMessage);
 
         #endregion
     }

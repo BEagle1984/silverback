@@ -3,7 +3,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public interface IOutboundQueueWriter
+    public interface IOutboundQueueProducer
     {
         Task Enqueue(IIntegrationMessage message, IEndpoint endpoint);
 

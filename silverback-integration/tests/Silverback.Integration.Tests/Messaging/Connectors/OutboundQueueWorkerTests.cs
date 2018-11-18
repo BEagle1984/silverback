@@ -40,6 +40,8 @@ namespace Silverback.Tests.Messaging.Connectors
             _broker.Connect();
 
             _worker = new OutboundQueueWorker(_queue, _broker, new NullLogger<OutboundQueueWorker>());
+
+            InMemoryOutboundQueue.Clear();
         }
 
         [Test]

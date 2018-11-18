@@ -16,6 +16,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         public void Setup()
         {
             _queue = new InMemoryOutboundQueue();
+            InMemoryOutboundQueue.Clear();
         }
 
         [Test]

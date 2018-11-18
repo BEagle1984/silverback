@@ -15,34 +15,35 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public class LoggedInboundConnector : InboundConnector
     {
-        private readonly IInboundLog _inboundLog;
         private readonly ILogger<LoggedInboundConnector> _logger;
 
-        public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider, IInboundLog inboundLog, ILogger<LoggedInboundConnector> logger)
+        public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger)
             : base(broker, serviceProvider, logger)
         {
-            _inboundLog = inboundLog;
             _logger = logger;
         }
 
-        protected override void RelayMessage(IIntegrationMessage message, IEndpoint sourceEndpoint)
+        protected override void RelayMessage(IIntegrationMessage message, IEndpoint sourceEndpoint, IPublisher publisher, IServiceProvider serviceProvider)
         {
-            if (_inboundLog.Exists(message, sourceEndpoint))
+            var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
+
+            if (inboundLog.Exists(message, sourceEndpoint))
             {
                 _logger.LogInformation($"Message '{message.Id}' is being skipped since it was already processed.");
                 return;
             }
 
-            _inboundLog.Add(message, sourceEndpoint);
+            inboundLog.Add(message, sourceEndpoint);
 
             try
             {
-                base.RelayMessage(message, sourceEndpoint);
-                _inboundLog.Commit();
+                base.RelayMessage(message, sourceEndpoint, publisher, serviceProvider);
+                inboundLog.Commit();
             }
             catch (Exception)
             {
-                _inboundLog.Rollback();
+                // TODO: Test exception case
+                inboundLog.Rollback();
                 throw;
             }
         }

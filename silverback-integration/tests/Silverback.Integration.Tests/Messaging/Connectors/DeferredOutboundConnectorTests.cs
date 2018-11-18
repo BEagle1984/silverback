@@ -23,6 +23,8 @@ namespace Silverback.Tests.Messaging.Connectors
             _queue = new InMemoryOutboundQueue();
             _routingConfiguration = new OutboundRoutingConfiguration();
             _connector = new DeferredOutboundConnector(_queue, _routingConfiguration);
+
+            InMemoryOutboundQueue.Clear();
         }
 
         [Test]

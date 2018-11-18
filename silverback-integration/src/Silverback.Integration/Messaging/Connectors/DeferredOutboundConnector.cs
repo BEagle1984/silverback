@@ -12,9 +12,9 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public class DeferredOutboundConnector : OutboundConnectorBase
     {
-        private readonly IOutboundQueueWriter _queueWriter;
+        private readonly IOutboundQueueProducer _queueWriter;
 
-        public DeferredOutboundConnector(IOutboundQueueWriter queueWriter, IOutboundRoutingConfiguration routingConfiguration) : base(routingConfiguration)
+        public DeferredOutboundConnector(IOutboundQueueProducer queueWriter, IOutboundRoutingConfiguration routingConfiguration) : base(routingConfiguration)
         {
             _queueWriter = queueWriter;
         }

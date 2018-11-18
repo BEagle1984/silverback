@@ -32,7 +32,7 @@ namespace Silverback.Tests.Messaging.Configuration
         private IPublisher GetPublisher() => GetServiceProvider().GetService<IPublisher>();
 
         private IOutboundRoutingConfiguration GetOutboundRouting() => GetServiceProvider().GetService<IOutboundRoutingConfiguration>();
-        private InMemoryOutboundQueue GetOutboundQueue() => (InMemoryOutboundQueue)GetServiceProvider().GetService<IOutboundQueueWriter>();
+        private InMemoryOutboundQueue GetOutboundQueue() => (InMemoryOutboundQueue)GetServiceProvider().GetService<IOutboundQueueProducer>();
 
         private IInboundConnector GetInboundConnector() => GetServiceProvider().GetService<IInboundConnector>();
         private InMemoryInboundLog GetInboundLog() => (InMemoryInboundLog)GetServiceProvider().GetService<IInboundLog>();
@@ -51,6 +51,9 @@ namespace Silverback.Tests.Messaging.Configuration
             _services.AddSingleton<IPublisher, Publisher>();
 
             _serviceProvider = null; // Creation deferred to after AddBroker() has been called
+
+            InMemoryInboundLog.Clear();
+            InMemoryOutboundQueue.Clear();
         }
 
         [Test]

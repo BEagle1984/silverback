@@ -11,13 +11,5 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public bool Exists(IIntegrationMessage message, IEndpoint endpoint)
             => Entries.Any(e => e.MessageId == message.Id && e.EndpointName == endpoint.Name);
-
-        public void ClearOlderEntries(DateTime threshold)
-        {
-            lock (Entries)
-            {
-                Entries.RemoveAll(e => e.TimeStamp < threshold);
-            }
-        }
     }
 }
