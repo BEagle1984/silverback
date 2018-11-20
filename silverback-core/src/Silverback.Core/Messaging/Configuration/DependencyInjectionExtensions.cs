@@ -10,9 +10,10 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddBus(this IServiceCollection services) => services
             .AddScoped<IPublisher, Publisher>()
-            .AddScoped<IEventPublisher<IEvent>, EventPublisher<IEvent>>()
-            .AddScoped<ICommandPublisher<ICommand>, CommandPublisher<ICommand>>()
-            .AddScoped<IResponsePublisher<IResponse>, ResponsePublisher<IResponse>>();
+            .AddScoped(typeof(IEventPublisher<>), typeof(EventPublisher<>))
+            .AddScoped(typeof(ICommandPublisher<>), typeof(CommandPublisher<>))
+            .AddScoped(typeof(IRequestPublisher<,>), typeof(RequestPublisher<,>))
+            .AddScoped(typeof(IResponsePublisher<>), typeof(ResponsePublisher<>));
 
         public static IServiceCollection AddEventPublisher<TEvent>(this IServiceCollection services)
             where TEvent : IEvent 

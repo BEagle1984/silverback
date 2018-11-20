@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Broker
 
             var envelope = Serializer.Deserialize(buffer);
 
-            _logger.LogTrace($"Received message '{envelope.Message.Id}' on endpoint '{Endpoint.Name}' (source: '{envelope.Source}').");
+            _logger.LogTrace($"Received message '{envelope.Message.Id}' from endpoint '{Endpoint.Name}' (source: '{envelope.Source}').");
 
             Received(this, envelope);
         }
