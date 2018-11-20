@@ -27,11 +27,9 @@ namespace Silverback.Messaging.Connectors.Repositories
                 Message = Serialize(message),
                 EndpointName = endpoint.Name,
                 Endpoint = Serialize(endpoint),
-                Created = DateTime.Now
+                Created = DateTime.UtcNow
             };
         }
-
-        private string Serialize<T>(T obj) => JsonConvert.SerializeObject(obj, typeof(T), SerializerSettings);
         
         public Task Commit()
         {

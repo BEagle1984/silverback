@@ -38,10 +38,12 @@ namespace Silverback.Messaging.Connectors
         }
 
         private void OnMessageReceived(object sender, IEnvelope envelope, IEndpoint endpoint,
-            IErrorPolicy errorPolicy) =>
+            IErrorPolicy errorPolicy)
+        {
             errorPolicy.TryHandleMessage(
                 envelope,
                 e => ProcessMessage(e.Message, endpoint));
+        }
 
         private void ProcessMessage(IIntegrationMessage message, IEndpoint sourceEndpoint)
         {

@@ -26,7 +26,17 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogTrace($"Received message '{envelope.Message.Id}' from endpoint '{Endpoint.Name}' (source: '{envelope.Source}').");
 
-            Received(this, envelope);
+            try
+            {
+                Received(this, envelope);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex,
+                    $"An error has occurred processing the message '{envelope.Message.Id}' from endpoint '{Endpoint.Name}'.");
+
+                throw;
+            }
         }
     }
 

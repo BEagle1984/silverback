@@ -13,7 +13,7 @@ namespace Silverback.Examples.Main.Menu
             {
                 var categories = MenuItem.GetAll<UseCaseCategory>();
 
-                Console.WriteLine();
+                ShowSplash();
                 Console.WriteLine("Categories:");
                 for (var i = 0; i < categories.Length; i++)
                 {
@@ -31,11 +31,8 @@ namespace Silverback.Examples.Main.Menu
                 if (int.TryParse(input, out var categoryIndex)
                     && categoryIndex >= 1 && categoryIndex <= categories.Length)
                 {
-                    Console.Clear();
                     RenderUseCases(categories[categoryIndex - 1]);
                 }
-
-                Console.Clear();
             }
         }
 
@@ -45,6 +42,7 @@ namespace Silverback.Examples.Main.Menu
             {
                 var useCases = category.GetUseCases();
 
+                ShowSplash();
                 Console.WriteLine($"Use cases in category '{category.Name}':");
                 for (var i = 0; i < useCases.Length; i++)
                 {
@@ -69,9 +67,26 @@ namespace Silverback.Examples.Main.Menu
 
                     Console.ReadLine();
                 }
-
-                Console.Clear();
             }
+        }
+
+        private void ShowSplash()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
+            Console.WriteLine(@" _____ _ _                _                _      _____                          _");
+            Console.WriteLine(@"/  ___(_) |              | |              | |    |  ___|                        | |");
+            Console.WriteLine(@"\ `--. _| |_   _____ _ __| |__   __ _  ___| | __ | |____  ____ _ _ __ ___  _ __ | | ___  ___");
+            Console.WriteLine(@" `--. \ | \ \ / / _ \ '__| '_ \ / _` |/ __| |/ / |  __\ \/ / _` | '_ ` _ \| '_ \| |/ _ \/ __|");
+            Console.WriteLine(@"/\__/ / | |\ V /  __/ |  | |_) | (_| | (__|   < _| |___>  < (_| | | | | | | |_) | |  __/\__ \");
+            Console.WriteLine(@"\____/|_|_| \_/ \___|_|  |_.__/ \__,_|\___|_|\_(_)____/_/\_\__,_|_| |_| |_| .__/|_|\___||___/");
+            Console.WriteLine(@"                                                                          | |                ");
+            Console.WriteLine(@"                                                                          |_|                ");
+            Console.WriteLine();
+            Console.WriteLine();
+
+            Console.ResetColor();
         }
     }
 }

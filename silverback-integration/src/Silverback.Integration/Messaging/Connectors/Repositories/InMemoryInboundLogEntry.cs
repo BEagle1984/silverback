@@ -3,27 +3,27 @@ using System.Collections.Generic;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public class InboundLogEntry : IEquatable<InboundLogEntry>
+    public class InMemoryInboundLogEntry : IEquatable<InMemoryInboundLogEntry>
     {
-        public InboundLogEntry(Guid messageId, string endpointName)
+        public InMemoryInboundLogEntry(Guid messageId, string endpointName)
         {
             MessageId = messageId;
             EndpointName = endpointName;
-            TimeStamp = DateTime.Now;
+            Consumed = DateTime.UtcNow;
         }
 
         public Guid MessageId { get; }
 
         public string EndpointName { get; }
 
-        public DateTime TimeStamp { get; }
+        public DateTime Consumed { get; }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as InboundLogEntry);
+            return Equals(obj as InMemoryInboundLogEntry);
         }
 
-        public bool Equals(InboundLogEntry other)
+        public bool Equals(InMemoryInboundLogEntry other)
         {
             return other != null &&
                    MessageId.Equals(other.MessageId) &&

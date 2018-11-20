@@ -27,8 +27,6 @@ namespace Silverback.Messaging.Connectors.Repositories
                 Deserialize<IIntegrationMessage>(message.Message),
                 Deserialize<IEndpoint>(message.Endpoint)));
 
-        private T Deserialize<T>(string json) => JsonConvert.DeserializeObject<T>(json, SerializerSettings);
-
         public void Retry(QueuedMessage queuedMessage)
         {
             // Nothing to do, the message is retried if not marked as produced
@@ -41,7 +39,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             if (_removeProduced)
                 DbSet.Remove(entity);
             else
-                entity.Produced = DateTime.Now;
+                entity.Produced = DateTime.UtcNow;
 
             DbContext.SaveChanges();
         }

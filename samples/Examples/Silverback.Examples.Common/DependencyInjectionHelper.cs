@@ -10,9 +10,7 @@ namespace Silverback.Examples.Common
         public static IServiceCollection GetServiceCollection() => new ServiceCollection()
             .AddDbContext<ExamplesDbContext>(options => options
                 .UseSqlServer(Configuration.ConnectionString))
-            .AddLogging(logging => logging
-                .SetMinimumLevel(LogLevel.Trace)
-                .AddConsole())
+            .AddLogging(logging => logging.SetMinimumLevel(LogLevel.Trace))
             .AddSingleton<JobScheduler>();
     }
 }

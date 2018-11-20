@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Common.Messages;
@@ -26,6 +28,7 @@ namespace Silverback.Examples.Main.UseCases
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Executing use case '{Name}'");
             Console.WriteLine();
+            Console.ResetColor();
 
             var services = DependencyInjectionHelper.GetServiceCollection();
 
@@ -46,11 +49,20 @@ namespace Silverback.Examples.Main.UseCases
 
         private void CreateScopeAndConfigure(IServiceProvider serviceProvider)
         {
-            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>());
+            ConfigureNLog(serviceProvider);
 
             serviceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
 
+            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>());
+
             PreExecute(serviceProvider);
+        }
+
+        private static void ConfigureNLog(IServiceProvider serviceProvider)
+        {
+            serviceProvider.GetRequiredService<ILoggerFactory>()
+                .AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
+            NLog.LogManager.LoadConfiguration("nlog.config");
         }
 
         private void CreateScopeAndExecute(IServiceProvider serviceProvider)

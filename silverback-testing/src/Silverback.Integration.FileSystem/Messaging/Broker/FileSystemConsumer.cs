@@ -26,16 +26,30 @@ namespace Silverback.Messaging.Broker
 
             _watcher.FileCreated += (sender, path) =>
             {
-                //try
+                var acknowledged = false;
+
+                while (!acknowledged)
                 {
-                    var buffer = ReadFileWithRetry(path);
-                    HandleMessage(buffer);
-                }
-                //catch
-                {
-                    // TODO: Logging and stuff but...what do?
+                    acknowledged = TryHandleMessage(path);
+
+                    if (!acknowledged)
+                        Thread.Sleep(100); // Wait a bit before a retry.
                 }
             };
+        }
+
+        private bool TryHandleMessage(string path)
+        {
+            try
+            {
+                var buffer = ReadFileWithRetry(path);
+                HandleMessage(buffer);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         internal void Disconnect()

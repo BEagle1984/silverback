@@ -20,7 +20,7 @@ namespace Silverback.Examples.Common.Consumer
 
             var serviceProvider = services.BuildServiceProvider();
 
-            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>());
+            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>(), serviceProvider);
 
             while (true)
             {
@@ -31,6 +31,6 @@ namespace Silverback.Examples.Common.Consumer
 
         protected abstract void ConfigureServices(IServiceCollection services);
 
-        protected abstract void Configure(IBrokerEndpointsConfigurationBuilder endpoints);
+        protected abstract void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider);
     }
 }

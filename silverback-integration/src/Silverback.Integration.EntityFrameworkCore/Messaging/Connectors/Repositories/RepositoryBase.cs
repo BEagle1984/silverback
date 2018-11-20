@@ -26,5 +26,8 @@ namespace Silverback.Messaging.Connectors.Repositories
             DefaultValueHandling = DefaultValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto
         };
+        
+        protected string Serialize<T>(T obj) => JsonConvert.SerializeObject(obj, typeof(T), SerializerSettings);
+        protected T Deserialize<T>(string json) => JsonConvert.DeserializeObject<T>(json, SerializerSettings);
     }
 }

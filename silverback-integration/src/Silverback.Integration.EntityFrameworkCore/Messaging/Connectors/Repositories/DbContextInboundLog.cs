@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
@@ -13,18 +14,24 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public void Add(IIntegrationMessage message, IEndpoint endpoint)
         {
-            throw new System.NotImplementedException();
+            DbSet.Add(new InboundMessage
+            {
+                MessageId = message.Id,
+                Message = Serialize(message),
+                EndpointName = endpoint.Name,
+                Consumed = DateTime.UtcNow
+            });
         }
 
         public void Commit()
         {
-            // Call SaveChanges just in case (it is likely been called already by a subscriber)
+            // Call SaveChanges, in case it isn't called by a subscriber
             DbContext.SaveChanges();
         }
 
         public void Rollback()
         {
-            // Nothing to do, just not saving the 
+            // Nothing to do, just not saving the DbContext
         }
 
         public bool Exists(IIntegrationMessage message, IEndpoint endpoint) =>
