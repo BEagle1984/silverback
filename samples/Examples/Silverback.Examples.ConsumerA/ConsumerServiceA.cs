@@ -26,7 +26,9 @@ namespace Silverback.Examples.ConsumerA
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
             .AddInbound(CreateEndpoint("simple-events"))
             .AddInbound(CreateEndpoint("bad-events"), policy => policy
-            .Chain(policy.Retry(2, TimeSpan.FromMilliseconds(500)), policy.Move(CreateEndpoint("bad-events-error"))))
+                .Chain(
+                    policy.Retry(2, TimeSpan.FromMilliseconds(500)),
+                    policy.Move(CreateEndpoint("bad-events-error"))))
             .Connect();
 
         private static FileSystemEndpoint CreateEndpoint(string name) => FileSystemEndpoint.Create(name, Configuration.FileSystemBrokerBasePath);
