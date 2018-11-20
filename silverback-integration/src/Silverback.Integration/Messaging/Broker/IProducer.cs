@@ -5,8 +5,8 @@ namespace Silverback.Messaging.Broker
 {
     public interface IProducer
     {
-        void Produce(IEnvelope envelope);
+        void Produce(IMessage message);
 
-        Task ProduceAsync(IEnvelope envelope);
+        Task ProduceAsync(IMessage message);
     }
 }

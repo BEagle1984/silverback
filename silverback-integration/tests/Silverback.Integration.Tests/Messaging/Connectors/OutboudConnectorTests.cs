@@ -37,7 +37,9 @@ namespace Silverback.Tests.Messaging.Connectors
 
             Assert.That(_broker.ProducedMessages.Count, Is.EqualTo(1));
             Assert.That(_broker.ProducedMessages.First().Endpoint, Is.EqualTo(endpoint));
-            Assert.That(endpoint.Serializer.Deserialize(_broker.ProducedMessages.First().Message).Message.Id, Is.EqualTo(message.Id));
+
+            var producedMessage = endpoint.Serializer.Deserialize(_broker.ProducedMessages.First().Message) as TestEventOne;
+            Assert.That(producedMessage.Id, Is.EqualTo(message.Id));
         }
 
         public static IEnumerable<TestCaseData> OnMessageReceived_MultipleMessages_CorrectlyRouted_TestCases

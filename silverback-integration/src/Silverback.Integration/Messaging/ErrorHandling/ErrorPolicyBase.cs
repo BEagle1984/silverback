@@ -17,42 +17,42 @@ namespace Silverback.Messaging.ErrorHandling
             _logger = logger;
         }
 
-        public void TryHandleMessage(IEnvelope envelope, Action<IEnvelope> handler)
+        public void TryHandleMessage(IMessage message, Action<IMessage> messageHandler)
         {
-            if (envelope == null) throw new ArgumentNullException(nameof(envelope));
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
+            if (message == null) throw new ArgumentNullException(nameof(message));
+            if (messageHandler == null) throw new ArgumentNullException(nameof(messageHandler));
 
             try
             {
-                handler.Invoke(envelope);
+                messageHandler.Invoke(message);
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, $"An error occurred handling the message '{envelope.Message.Id}'. " +
+                _logger.LogWarning(ex, $"An error occurred handling the message {message.GetTraceString()}. " +
                                        $"The policy '{this}' will be applied.");
 
-                if (!ApplyPolicy(envelope, handler, ex))
+                if (!HandleException(message, messageHandler, ex))
                     throw;
             }
         }
 
-        public bool ApplyPolicy(IEnvelope envelope, Action<IEnvelope> handler, Exception exception)
+        public bool HandleException(IMessage message, Action<IMessage> messageHandler, Exception exception)
         {
             if (!MustHandle(exception))
                 return false;
 
             try
             {
-                ApplyPolicyImpl(envelope, handler, exception);
+                ApplyPolicy(message, messageHandler, exception);
 
                 return true;
             }
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, $"The policy was applied but the message " +
-                                       $"'{envelope.Message.Id}' still couldn't be successfully " +
+                                       $"{message.GetTraceString()} still couldn't be successfully " +
                                        $"processed. An exception will be thrown.");
-                throw new ErrorPolicyException($"Failed to process message '{envelope.Message.Id}'. See InnerException for details.", ex);
+                throw new ErrorPolicyException($"Failed to process message {message.GetTraceString()}. See InnerException for details.", ex);
             }
         }
 
@@ -77,7 +77,7 @@ namespace Silverback.Messaging.ErrorHandling
             return true;
         }
 
-        protected abstract void ApplyPolicyImpl(IEnvelope envelope, Action<IEnvelope> handler, Exception exception);
+        protected abstract void ApplyPolicy(IMessage message, Action<IMessage> messageHandler, Exception exception);
 
         public ErrorPolicyBase ApplyTo<T>() where T : Exception
         {

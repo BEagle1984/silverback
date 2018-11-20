@@ -34,7 +34,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             try
             {
                 policy.TryHandleMessage(
-                    Envelope.Create(new TestEventOne()),
+                    new TestEventOne(),
                     _ => throw exception);
             }
             catch
@@ -70,7 +70,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             try
             {
                 policy.TryHandleMessage(
-                    Envelope.Create(new TestEventOne()),
+                    new TestEventOne(),
                     _ => throw exception);
             }
             catch
@@ -109,7 +109,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             try
             {
                 policy.TryHandleMessage(
-                    Envelope.Create(new TestEventOne()),
+                    new TestEventOne(),
                     _ => throw exception);
             }
             catch

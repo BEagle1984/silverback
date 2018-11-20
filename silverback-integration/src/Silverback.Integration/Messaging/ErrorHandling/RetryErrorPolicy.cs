@@ -28,7 +28,7 @@ namespace Silverback.Messaging.ErrorHandling
             _delayIncreament = delayIncreament ?? TimeSpan.Zero;
         }
 
-        protected override void ApplyPolicyImpl(IEnvelope envelope, Action<IEnvelope> handler, Exception exception)
+        protected override void ApplyPolicy(IMessage message, Action<IMessage> messageHandler, Exception exception)
         {
             var delay = _initialDelay;
 
@@ -44,7 +44,7 @@ namespace Silverback.Messaging.ErrorHandling
 
                 try
                 {
-                    handler.Invoke(envelope);
+                    messageHandler.Invoke(message);
                     break;
                 }
                 catch (Exception ex)
@@ -53,7 +53,7 @@ namespace Silverback.Messaging.ErrorHandling
                         throw;
 
                     // TODO: Is this really to be a warning?
-                    _logger.LogWarning(ex, $"An error occurred retrying the message '{envelope.Message.Id}'. " +
+                    _logger.LogWarning(ex, $"An error occurred retrying the message {message.GetTraceString()}. " +
                                            $"Will try again.");
                 }
             }

@@ -23,13 +23,23 @@ namespace Silverback.Messaging.Connectors
             _logger = logger;
         }
 
-        protected override void RelayMessage(IIntegrationMessage message, IEndpoint sourceEndpoint, IPublisher publisher, IServiceProvider serviceProvider)
+        protected override void RelayMessage(IMessage message, IEndpoint sourceEndpoint, IPublisher publisher, IServiceProvider serviceProvider)
+        {
+            if (!(message is IIntegrationMessage integrationMessage))
+            {
+                throw new NotSupportedException("The LoggedInboundConnector currently supports only instances of IIntegrationMessage.");
+            }
+
+            RelayIntegrationMessage(integrationMessage, sourceEndpoint, publisher, serviceProvider);
+        }
+
+        protected void RelayIntegrationMessage(IIntegrationMessage message, IEndpoint sourceEndpoint, IPublisher publisher, IServiceProvider serviceProvider)
         {
             var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
 
             if (inboundLog.Exists(message, sourceEndpoint))
             {
-                _logger.LogInformation($"Message '{message.Id}' is being skipped since it was already processed.");
+                _logger.LogInformation($"Message {message.GetTraceString(sourceEndpoint)} is being skipped since it was already processed.");
                 return;
             }
 

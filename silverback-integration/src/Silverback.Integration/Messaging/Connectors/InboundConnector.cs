@@ -37,17 +37,16 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        private void OnMessageReceived(object sender, IEnvelope envelope, IEndpoint endpoint,
-            IErrorPolicy errorPolicy)
+        private void OnMessageReceived(object _, IMessage message, IEndpoint endpoint, IErrorPolicy errorPolicy)
         {
             errorPolicy.TryHandleMessage(
-                envelope,
-                e => ProcessMessage(e.Message, endpoint));
+                message,
+                msg => ProcessMessage(msg, endpoint));
         }
 
-        private void ProcessMessage(IIntegrationMessage message, IEndpoint sourceEndpoint)
+        private void ProcessMessage(IMessage message, IEndpoint sourceEndpoint)
         {
-            _logger.LogTrace($"Processing message '{message.Id}' ('{message.GetType().Name}') from endpoint '{sourceEndpoint.Name}'...");
+            _logger.LogTrace($"Processing message {message.GetTraceString(sourceEndpoint)}...");
 
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -55,7 +54,7 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        protected virtual void RelayMessage(IIntegrationMessage message, IEndpoint sourceEndpoint, IPublisher publisher,
+        protected virtual void RelayMessage(IMessage message, IEndpoint sourceEndpoint, IPublisher publisher,
             IServiceProvider serviceProvider) => publisher.Publish(message);
     }
 }

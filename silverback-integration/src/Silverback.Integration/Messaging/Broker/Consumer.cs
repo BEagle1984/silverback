@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker
     {
         private readonly ILogger<Consumer> _logger;
 
-        public event EventHandler<IEnvelope> Received;
+        public event EventHandler<IMessage> Received;
 
         protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger)
            : base(broker, endpoint)
@@ -22,24 +22,24 @@ namespace Silverback.Messaging.Broker
             if (Received == null)
                 throw new InvalidOperationException("A message was received but no handler is attached to the Received event.");
 
-            var envelope = DeserializeMessage(buffer);
+            var message = DeserializeMessage(buffer);
 
-            _logger.LogTrace($"Received message '{envelope.Message.Id}' from endpoint '{Endpoint.Name}' (source: '{envelope.Source}').");
+            _logger.LogTrace($"Received message {message.GetTraceString(Endpoint)}.");
 
             try
             {
-                Received(this, envelope);
+                Received(this, message);
             }
             catch (Exception ex)
             {
                 _logger.LogWarning(ex,
-                    $"Error occurred processing the message '{envelope.Message.Id}' from endpoint '{Endpoint.Name}'.");
+                    $"Error occurred processing the message {message.GetTraceString(Endpoint)}.");
 
                 throw;
             }
         }
 
-        private IEnvelope DeserializeMessage(byte[] buffer)
+        private IMessage DeserializeMessage(byte[] buffer)
         {
             try
             {
