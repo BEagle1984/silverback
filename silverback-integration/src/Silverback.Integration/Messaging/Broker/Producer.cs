@@ -19,13 +19,13 @@ namespace Silverback.Messaging.Broker
         public void Produce(IEnvelope envelope)
         {
             _logger.LogTrace($"Producing message '{envelope.Message.Id}' to endpoint '{Endpoint.Name}'.");
-            Produce(envelope.Message, Serializer.Serialize(envelope));
+            Produce(envelope.Message, Endpoint.Serializer.Serialize(envelope));
         }
 
         public async Task ProduceAsync(IEnvelope envelope)
         {
             _logger.LogTrace($"Producing message '{envelope.Message.Id}' to endpoint '{Endpoint.Name}'.");
-            await ProduceAsync(envelope.Message, Serializer.Serialize(envelope));
+            await ProduceAsync(envelope.Message, Endpoint.Serializer.Serialize(envelope));
         }
 
         protected abstract void Produce(IIntegrationMessage message, byte[] serializedMessage);

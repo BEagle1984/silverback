@@ -34,7 +34,7 @@ namespace Silverback.Tests.Messaging.Connectors
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             services.AddSingleton<IPublisher, Publisher>();
 
-            _broker = new TestBroker(new JsonMessageSerializer());
+            _broker = new TestBroker();
             services.AddSingleton<IBroker>(_broker);
 
             var serviceProvider = services.BuildServiceProvider();

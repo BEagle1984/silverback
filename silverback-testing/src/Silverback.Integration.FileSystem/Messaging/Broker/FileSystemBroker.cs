@@ -13,9 +13,7 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public class FileSystemBroker : Broker<FileSystemEndpoint>
     {
-
-        public FileSystemBroker(IMessageSerializer serializer, ILoggerFactory loggerFactory)
-            : base(serializer, loggerFactory)
+        public FileSystemBroker(ILoggerFactory loggerFactory) : base(loggerFactory)
         {
         }
 

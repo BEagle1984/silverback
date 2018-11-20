@@ -65,22 +65,6 @@ namespace Silverback.Tests.Messaging.Configuration
         }
 
         [Test]
-        public void DefaultSerializerTest()
-        {
-            _services.AddBroker<TestBroker>(options => { });
-
-            Assert.That(GetBroker().Serializer, Is.InstanceOf<JsonMessageSerializer>());
-        }
-
-        [Test]
-        public void UseSerializerTest()
-        {
-            _services.AddBroker<TestBroker>(options => options.UseSerializer<FakeSerializer>());
-
-            Assert.That(GetBroker().Serializer, Is.InstanceOf<FakeSerializer>());
-        }
-
-        [Test]
         public void AddOutboundTest()
         {
             _services.AddBroker<TestBroker>(options => options.AddOutboundConnector());

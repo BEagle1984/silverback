@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Broker
             if (Received == null)
                 throw new InvalidOperationException("A message was received but no handler is attached to the Received event.");
 
-            var envelope = Serializer.Deserialize(buffer);
+            var envelope = Endpoint.Serializer.Deserialize(buffer);
 
             _logger.LogTrace($"Received message '{envelope.Message.Id}' from endpoint '{Endpoint.Name}' (source: '{envelope.Source}').");
 

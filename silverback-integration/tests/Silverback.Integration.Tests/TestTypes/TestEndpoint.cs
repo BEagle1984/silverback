@@ -3,27 +3,22 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 using Silverback.Messaging;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.TestTypes
 {
     public sealed class TestEndpoint : IEndpoint, IEquatable<TestEndpoint>
     {
-        /// <summary>
-        /// Gets or sets the topic/queue name.
-        /// </summary>
-        public string Name { get; }
-
         [JsonConstructor]
         private TestEndpoint(string name)
         {
             Name = name;
         }
 
-        /// <summary>
-        /// Creates a new <see cref="BasicEndpoint" /> pointing to the specified topic/queue.
-        /// </summary>
-        /// <param name="name">The queue/topic name.</param>
-        /// <returns></returns>
+        public string Name { get; }
+
+        public IMessageSerializer Serializer { get; set; } = new JsonMessageSerializer();
+
         public static TestEndpoint Create(string name)
             => new TestEndpoint(name);
 

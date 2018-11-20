@@ -3,27 +3,34 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging
 {
     public class FileSystemEndpoint : IEndpoint, IEquatable<FileSystemEndpoint>
     {
         [JsonConstructor]
-        private FileSystemEndpoint(string name, string path, bool useFileSystemWatcher)
+        private FileSystemEndpoint(string name, string path)
         {
             Name = name;
             Path = path;
-            UseFileSystemWatcher = useFileSystemWatcher;
         }
 
-        public static FileSystemEndpoint Create(string name, string basePath, bool useFileSystemWatcher = false) =>
-            new FileSystemEndpoint(name, System.IO.Path.Combine(basePath, name), useFileSystemWatcher);
+        public static FileSystemEndpoint Create(string name, string basePath) =>
+            new FileSystemEndpoint(name, System.IO.Path.Combine(basePath, name));
 
         public string Name { get; }
 
         public string Path { get; }
 
-        public bool UseFileSystemWatcher { get; }
+        public IMessageSerializer Serializer { get; } = new JsonMessageSerializer();
+
+        /// <summary>
+        /// Gets or sets a value indicating whether a <see cref="FileSystemWatcher"/> is to be used 
+        /// to monitor the topic folder instead of polling it. (default=false)
+        /// </summary>
+        /// <remarks>The <see cref="FileSystemWatcher" /> doesn't seem to work from within docker (for windows) on a shared drive.</remarks>
+        public bool UseFileSystemWatcher { get; set; }
 
         internal void EnsurePathExists()
         {

@@ -13,7 +13,7 @@ namespace Silverback.Tests.Messaging.Broker
         [SetUp]
         public void Setup()
         {
-            _broker = new TestBroker(new JsonMessageSerializer());
+            _broker = new TestBroker();
         }
 
         [Test]

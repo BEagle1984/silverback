@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             DbSet = dbContext.Set<TEntity>() ?? throw new SilverbackException($"The DbContext doesn't contain a DbSet<{typeof(TEntity).Name}>.");
         }
 
-        protected static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
         {
             Formatting = Formatting.None,
             DateFormatHandling = DateFormatHandling.IsoDateFormat,

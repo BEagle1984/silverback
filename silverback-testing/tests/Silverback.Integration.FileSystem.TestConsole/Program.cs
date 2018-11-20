@@ -58,7 +58,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
             }
         }
 
-        private FileSystemBroker GetBroker() => new FileSystemBroker(new JsonMessageSerializer(), NullLoggerFactory.Instance);
+        private FileSystemBroker GetBroker() => new FileSystemBroker(NullLoggerFactory.Instance);
 
         private void Produce(string topicName, string messageContent)
         {

@@ -8,8 +8,6 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public interface IBroker
     {
-        IMessageSerializer Serializer { get; }
-
         IProducer GetProducer(IEndpoint endpoint);
 
         IConsumer GetConsumer(IEndpoint endpoint);
