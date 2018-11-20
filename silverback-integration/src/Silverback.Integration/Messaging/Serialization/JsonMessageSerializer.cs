@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 
@@ -24,7 +25,8 @@ namespace Silverback.Messaging.Serialization
             return JsonConvert.DeserializeObject<IEnvelope>(json, Settings);
         }
 
-        public MessageEncoding Encoding { get; } = MessageEncoding.UTF8;
+        [DefaultValue("UTF8")]
+        public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
 
         public JsonSerializerSettings Settings { get; } = new JsonSerializerSettings
         {

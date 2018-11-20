@@ -57,10 +57,10 @@ namespace Silverback.Tests.Messaging.Connectors
         [TestCaseSource(nameof(OnMessageReceived_MultipleMessages_CorrectlyRouted_TestCases))]
         public async Task OnMessageReceived_MultipleMessages_CorrectlyRouted(IIntegrationMessage message, string[] expectedEndpointNames)
         {
-            _routingConfiguration.Add<IIntegrationMessage>(TestEndpoint.Create("allMessages"));
-            _routingConfiguration.Add<IIntegrationEvent>(TestEndpoint.Create("allEvents"));
-            _routingConfiguration.Add<TestEventOne>(TestEndpoint.Create("eventOne"));
-            _routingConfiguration.Add<TestEventTwo>(TestEndpoint.Create("eventTwo"));
+            _routingConfiguration.Add<IIntegrationMessage>(new TestEndpoint("allMessages"));
+            _routingConfiguration.Add<IIntegrationEvent>(new TestEndpoint("allEvents"));
+            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"));
+            _routingConfiguration.Add<TestEventTwo>(new TestEndpoint("eventTwo"));
 
             await _connector.OnMessageReceived(message);
             await _queue.Commit();
@@ -85,7 +85,7 @@ namespace Silverback.Tests.Messaging.Connectors
         [Test]
         public void CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
-            _routingConfiguration.Add<IIntegrationMessage>(TestEndpoint.Create("allMessages"));
+            _routingConfiguration.Add<IIntegrationMessage>(new TestEndpoint("allMessages"));
 
             _connector.OnMessageReceived(new TestEventOne());
             _connector.OnTransactionCommit(new TransactionCommitEvent());

@@ -37,7 +37,7 @@ namespace Silverback.Tests.Messaging.Broker
         public void GetProducerForDifferentEndpointTest()
         {
             var producer = _broker.GetConsumer(TestEndpoint.Default);
-            var producer2 = _broker.GetConsumer(TestEndpoint.Create("test2"));
+            var producer2 = _broker.GetConsumer(new TestEndpoint("test2"));
 
             Assert.That(producer2, Is.Not.SameAs(producer));
         }
@@ -63,7 +63,7 @@ namespace Silverback.Tests.Messaging.Broker
         public void GetConsumerForDifferentEndpointTest()
         {
             var consumer = _broker.GetConsumer(TestEndpoint.Default);
-            var consumer2 = _broker.GetConsumer(TestEndpoint.Create("test2"));
+            var consumer2 = _broker.GetConsumer(new TestEndpoint("test2"));
 
             Assert.That(consumer2, Is.Not.SameAs(consumer));
         }

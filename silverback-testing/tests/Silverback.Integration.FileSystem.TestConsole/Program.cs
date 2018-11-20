@@ -63,7 +63,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
         private void Produce(string topicName, string messageContent)
         {
             var message = new TestMessage { Content = messageContent };
-            var endpoint = FileSystemEndpoint.Create(topicName, BasePath);
+            var endpoint = new FileSystemEndpoint(topicName, BasePath);
 
             using (var broker = GetBroker())
             {
@@ -75,7 +75,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
 
         private void Consume(string topicName)
         {
-            var endpoint = FileSystemEndpoint.Create(topicName, BasePath);
+            var endpoint = new FileSystemEndpoint(topicName, BasePath);
 
             using (var broker = GetBroker())
             {

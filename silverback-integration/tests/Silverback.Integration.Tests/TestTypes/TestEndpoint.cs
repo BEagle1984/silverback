@@ -9,8 +9,7 @@ namespace Silverback.Tests.TestTypes
 {
     public sealed class TestEndpoint : IEndpoint, IEquatable<TestEndpoint>
     {
-        [JsonConstructor]
-        private TestEndpoint(string name)
+        public TestEndpoint(string name)
         {
             Name = name;
         }
@@ -19,10 +18,7 @@ namespace Silverback.Tests.TestTypes
 
         public IMessageSerializer Serializer { get; set; } = new JsonMessageSerializer();
 
-        public static TestEndpoint Create(string name)
-            => new TestEndpoint(name);
-
-        public static TestEndpoint Default = Create("test");
+        public static TestEndpoint Default = new TestEndpoint("test");
 
         #region IEquatable
 

@@ -9,21 +9,21 @@ namespace Silverback.Messaging
 {
     public class FileSystemEndpoint : IEndpoint, IEquatable<FileSystemEndpoint>
     {
-        [JsonConstructor]
-        private FileSystemEndpoint(string name, string path)
+        public FileSystemEndpoint(string name, string basePath)
         {
             Name = name;
-            Path = path;
+            BasePath = basePath;
+            Path = System.IO.Path.Combine(BasePath, Name);
         }
-
-        public static FileSystemEndpoint Create(string name, string basePath) =>
-            new FileSystemEndpoint(name, System.IO.Path.Combine(basePath, name));
 
         public string Name { get; }
 
+        public string BasePath { get; }
+
+        [JsonIgnore]
         public string Path { get; }
 
-        public IMessageSerializer Serializer { get; } = new JsonMessageSerializer();
+        public IMessageSerializer Serializer { get; set; } = new JsonMessageSerializer();
 
         /// <summary>
         /// Gets or sets a value indicating whether a <see cref="FileSystemWatcher"/> is to be used 
