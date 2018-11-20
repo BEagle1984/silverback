@@ -1,16 +1,11 @@
 ﻿namespace Silverback.Domain
 {
-    /// <summary>
-    /// Represent an event published by an aggregate root or an entity.
-    /// </summary>
-    /// <typeparam name="T">The type of the source entity.</typeparam>
-    /// <seealso cref="IDomainEvent{T}" />
-    public abstract class DomainEvent<T> : IDomainEvent<T>
-        where T : IDomainEntity
+    public abstract class DomainEvent<TEntity> : IDomainEvent<TEntity>
+        where TEntity : IDomainEntity
     {
-        public T Source { get; set; }
+        public TEntity Source { get; set; }
 
-        protected DomainEvent(T source)
+        protected DomainEvent(TEntity source)
         {
             Source = source;
         }
@@ -22,7 +17,7 @@
         IDomainEntity IDomainEvent.Source
         {
             get => Source;
-            set => Source = (T) value;
+            set => Source = (TEntity) value;
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Silverback.Domain
     /// <summary>
     /// A sample implementation of <see cref="IDomainEntity"/>.
     /// </summary>
-    public abstract class Entity : IDomainEntity
+    public abstract class DomainEntity : IDomainEntity
     {
         private List<IDomainEvent<IDomainEntity>> _domainEvents;
 
@@ -31,6 +31,6 @@ namespace Silverback.Domain
             return evnt;
         }
 
-        protected void RemoveEvent(IDomainEvent<Entity> domainEvent) => _domainEvents?.Remove(domainEvent);
+        protected void RemoveEvent(IDomainEvent<DomainEntity> domainEvent) => _domainEvents?.Remove(domainEvent);
     }
 }

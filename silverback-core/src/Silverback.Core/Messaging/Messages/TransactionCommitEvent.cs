@@ -6,7 +6,6 @@
     /// and it is internally used (in Silverback.Integration) to trigger additional tasks related to the
     /// publishing of the domain events. 
     /// </summary>
-    /// <seealso cref="IEvent" />
     public class TransactionCommitEvent : IEvent
     {
     }
