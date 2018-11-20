@@ -17,8 +17,6 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// </summary>
         bool Exists(IIntegrationMessage message, IEndpoint endpoint);
 
-        void ClearOlderEntries(DateTime threshold);
-
         int Length { get; }
     }
 }

@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public interface IOutboundQueueReader
+    public interface IOutboundQueueConsumer
     {
         int Length { get; }
 
@@ -12,11 +13,11 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <summary>
         /// Re-enqueue the message to retry.
         /// </summary>
-        void Retry(QueuedMessage message);
+        void Retry(QueuedMessage queuedMessage);
 
         /// <summary>
         /// Acknowledges the specified message has been sent.
         /// </summary>
-        void Acknowledge(QueuedMessage message);
+        void Acknowledge(QueuedMessage queuedMessage);
     }
 }

@@ -5,7 +5,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public class TransactionalList<T>
     {
-        protected readonly List<T> Entries = new List<T>();
+        protected static readonly List<T> Entries = new List<T>();
         private readonly List<T> _uncommittedEntries = new List<T>();
 
         public int Length => Entries.Count;
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             }
         }
 
-        public void Clear()
+        public static void Clear()
         {
             lock (Entries)
             {

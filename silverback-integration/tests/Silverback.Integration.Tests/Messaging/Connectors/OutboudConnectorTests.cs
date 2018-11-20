@@ -2,14 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Silverback.Messaging;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging.Integration
+namespace Silverback.Tests.Messaging.Connectors
 {
     [TestFixture]
     public class OutboudConnectorTests
@@ -36,9 +35,9 @@ namespace Silverback.Tests.Messaging.Integration
 
             await _connector.OnMessageReceived(message);
 
-            Assert.That(_broker.SentMessages.Count, Is.EqualTo(1));
-            Assert.That(_broker.SentMessages.First().Endpoint, Is.EqualTo(endpoint));
-            Assert.That(_broker.Serializer.Deserialize(_broker.SentMessages.First().Message).Message.Id, Is.EqualTo(message.Id));
+            Assert.That(_broker.ProducedMessages.Count, Is.EqualTo(1));
+            Assert.That(_broker.ProducedMessages.First().Endpoint, Is.EqualTo(endpoint));
+            Assert.That(_broker.Serializer.Deserialize(_broker.ProducedMessages.First().Message).Message.Id, Is.EqualTo(message.Id));
         }
 
         public static IEnumerable<TestCaseData> OnMessageReceived_MultipleMessages_CorrectlyRouted_TestCases
@@ -63,7 +62,7 @@ namespace Silverback.Tests.Messaging.Integration
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
-                Assert.That(_broker.SentMessages.Count(x => x.Endpoint.Name == expectedEndpointName), Is.EqualTo(1));
+                Assert.That(_broker.ProducedMessages.Count(x => x.Endpoint.Name == expectedEndpointName), Is.EqualTo(1));
             }
 
             var notExpectedEndpointNames = _routingConfiguration
@@ -72,7 +71,7 @@ namespace Silverback.Tests.Messaging.Integration
 
             foreach (var notExpectedEndpointName in notExpectedEndpointNames)
             {
-                Assert.That(_broker.SentMessages.Count(x => x.Endpoint.Name == notExpectedEndpointName), Is.EqualTo(0));
+                Assert.That(_broker.ProducedMessages.Count(x => x.Endpoint.Name == notExpectedEndpointName), Is.EqualTo(0));
             }
         }
     }

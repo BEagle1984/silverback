@@ -54,7 +54,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
 
             Assert.That(executed, Is.True);
-            Assert.That(producer.SentMessages.Count, Is.EqualTo(0));
+            Assert.That(producer.ProducedMessages.Count, Is.EqualTo(0));
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
 
-            Assert.That(producer.SentMessages.Count, Is.EqualTo(1));
+            Assert.That(producer.ProducedMessages.Count, Is.EqualTo(1));
         }
     }
 }

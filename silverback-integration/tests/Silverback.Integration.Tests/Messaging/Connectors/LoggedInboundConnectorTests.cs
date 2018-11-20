@@ -3,23 +3,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using Silverback.Messaging;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging.Integration
+namespace Silverback.Tests.Messaging.Connectors
 {
     [TestFixture]
     public class LoggedInboundConnectorTests
     {
         private IInboundLog _inboundLog;
-        private IServiceCollection _services;
         private TestSubscriber _testSubscriber;
         private IInboundConnector _connector;
         private TestBroker _broker;
@@ -27,19 +24,23 @@ namespace Silverback.Tests.Messaging.Integration
         [SetUp]
         public void Setup()
         {
-            _services = new ServiceCollection();
+            var services = new ServiceCollection();
 
             _testSubscriber = new TestSubscriber();
-            _services.AddSingleton<ISubscriber>(_testSubscriber);
+            services.AddSingleton<ISubscriber>(_testSubscriber);
 
-            _services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-            _services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-            _services.AddSingleton<IPublisher, Publisher>();
+            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
+            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            services.AddSingleton<IPublisher, Publisher>();
 
             _broker = new TestBroker(new JsonMessageSerializer());
             _inboundLog = new InMemoryInboundLog();
 
-            _connector = new LoggedInboundConnector(_broker, _services.BuildServiceProvider(), _inboundLog, new NullLogger<LoggedInboundConnector>());
+            services.AddSingleton<IInboundLog>(_inboundLog);
+
+            _connector = new LoggedInboundConnector(_broker, services.BuildServiceProvider(), new NullLogger<LoggedInboundConnector>());
+
+            InMemoryInboundLog.Clear();
         }
 
         [Test]

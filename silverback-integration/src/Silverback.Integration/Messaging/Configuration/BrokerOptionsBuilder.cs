@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Serialization;
@@ -9,18 +12,18 @@ namespace Silverback.Messaging.Configuration
 {
     public class BrokerOptionsBuilder
     {
-        private readonly IServiceCollection _services;
+        internal readonly IServiceCollection Services;
 
         public BrokerOptionsBuilder(IServiceCollection services)
         {
-            _services = services;
+            Services = services;
         }
-        
+
         #region Serializer
 
         public BrokerOptionsBuilder UseSerializer<T>() where T : class, IMessageSerializer
         {
-            _services.AddSingleton<IMessageSerializer, T>();
+            Services.AddSingleton<IMessageSerializer, T>();
             return this;
         }
 
@@ -33,11 +36,16 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
         /// </summary>
-        public BrokerOptionsBuilder AddInboundConnector()
+        public BrokerOptionsBuilder AddInboundConnector<TConnector>() where TConnector : class, IInboundConnector
         {
-            _services.AddSingleton<IInboundConnector, InboundConnector>();
+            Services.AddSingleton<IInboundConnector, TConnector>();
             return this;
         }
+
+        /// <summary>
+        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
+        /// </summary>
+        public BrokerOptionsBuilder AddInboundConnector() => AddInboundConnector<InboundConnector>();
 
         /// <summary>
         /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
@@ -45,30 +53,60 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public BrokerOptionsBuilder AddLoggedInboundConnector<TLog>() where TLog : class, IInboundLog
         {
-            _services.AddSingleton<IInboundConnector, LoggedInboundConnector>();
-            _services.AddScoped<IInboundLog, TLog>(); // TODO: Check this (scoped vs. singleton)
+            AddInboundConnector<LoggedInboundConnector>();
+            Services.AddScoped<IInboundLog, TLog>(); // TODO: Check this (scoped vs. singleton)
             return this;
         }
 
         /// <summary>
-        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
+        /// Adds a connector to publish the integration messages to the configured message broker.
         /// </summary>
-        public BrokerOptionsBuilder AddOutboundConnector()
+        public BrokerOptionsBuilder AddOutboundConnector<TConnector>() where TConnector : class, ISubscriber
         {
-            _services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
-            _services.AddScoped<ISubscriber, OutboundConnector>();
+            Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
+            Services.AddScoped<ISubscriber, TConnector>();
             return this;
         }
 
         /// <summary>
-        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
-        /// This implementation logs the incoming messages and prevents duplicated processing of the same message.
+        /// Adds a connector to publish the integration messages to the configured message broker.
         /// </summary>
-        public BrokerOptionsBuilder AddDeferredOutboundConnector<TQueueWriter>() where TQueueWriter : class, IOutboundQueueWriter
+        public BrokerOptionsBuilder AddOutboundConnector() => AddOutboundConnector<OutboundConnector>();
+
+        /// <summary>
+        /// Adds a connector to publish the integration messages to the configured message broker.
+        /// This implementation stores the outbound messages into an intermediate queue.
+        /// </summary>
+        public BrokerOptionsBuilder AddDeferredOutboundConnector<TQueueProducer>() where TQueueProducer : class, IOutboundQueueProducer
         {
-            _services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
-            _services.AddScoped<ISubscriber, DeferredOutboundConnector>();
-            _services.AddScoped<IOutboundQueueWriter, TQueueWriter>();
+            AddOutboundConnector<DeferredOutboundConnector>();
+            Services.AddScoped<IOutboundQueueProducer, TQueueProducer>();
+
+            return this;
+        }
+
+        internal BrokerOptionsBuilder AddOutboundWorker(bool enforceMessageOrder, int readPackageSize)
+        {
+            Services.AddScoped<OutboundQueueWorker>(s => new OutboundQueueWorker(
+                s.GetRequiredService<IOutboundQueueConsumer>(), 
+                s.GetRequiredService<IBroker>(), 
+                s.GetRequiredService<ILogger<OutboundQueueWorker>>(),
+                enforceMessageOrder, readPackageSize));
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        /// </summary>
+        /// <param name="enforceMessageOrder">if set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
+        /// <param name="readPackageSize">The amount of messages to be loaded from the queue at once.</param>
+        // TODO: Test
+        public BrokerOptionsBuilder AddOutboundWorker<TQueueConsumer>(bool enforceMessageOrder = true, int readPackageSize = 100) where TQueueConsumer : class, IOutboundQueueConsumer
+        {
+            AddOutboundWorker(enforceMessageOrder, readPackageSize);
+            Services.AddScoped<IOutboundQueueConsumer, TQueueConsumer>();
+
             return this;
         }
 
@@ -84,13 +122,13 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         protected virtual void SetDefaults()
         {
-            if (_services.All(s => s.ServiceType != typeof(IMessageSerializer)))
+            if (Services.All(s => s.ServiceType != typeof(IMessageSerializer)))
                 SerializeAsJson();
 
-            if (_services.All(s => s.ServiceType != typeof(IInboundConnector)))
+            if (Services.All(s => s.ServiceType != typeof(IInboundConnector)))
                 AddInboundConnector();
 
-            if (_services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
+            if (Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
                 AddOutboundConnector();
         }
 

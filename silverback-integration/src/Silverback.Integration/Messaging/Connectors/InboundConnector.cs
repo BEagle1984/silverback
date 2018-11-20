@@ -37,20 +37,23 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        protected void OnMessageReceived(object sender, IEnvelope envelope, IEndpoint endpoint,
+        private void OnMessageReceived(object sender, IEnvelope envelope, IEndpoint endpoint,
             IErrorPolicy errorPolicy) =>
             errorPolicy.TryHandleMessage(
                 envelope,
-                e => RelayMessage(e.Message, endpoint));
+                e => ProcessMessage(e.Message, endpoint));
 
-        protected virtual void RelayMessage(IIntegrationMessage message, IEndpoint sourceEndpoint)
+        private void ProcessMessage(IIntegrationMessage message, IEndpoint sourceEndpoint)
         {
-            _logger.LogTrace($"Relaying message '{message.Id}' ('{message.GetType().Name}') to the internal bus...");
+            _logger.LogTrace($"Processing message '{message.Id}' ('{message.GetType().Name}') from endpoint '{sourceEndpoint.Name}'...");
 
             using (var scope = _serviceProvider.CreateScope())
             {
-                scope.ServiceProvider.GetRequiredService<IPublisher>().Publish(message);
+                RelayMessage(message, sourceEndpoint, scope.ServiceProvider.GetRequiredService<IPublisher>(), scope.ServiceProvider);
             }
         }
+
+        protected virtual void RelayMessage(IIntegrationMessage message, IEndpoint sourceEndpoint, IPublisher publisher,
+            IServiceProvider serviceProvider) => publisher.Publish(message);
     }
 }

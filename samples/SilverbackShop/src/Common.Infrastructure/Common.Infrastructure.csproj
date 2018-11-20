@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -12,8 +12,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.4" />
     <PackageReference Include="Silverback.Core" Version="0.1.0.26" />
     <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="0.1.0.10" />
+    <PackageReference Include="Silverback.Integration.EntityFrameworkCore" Version="0.1.0.6" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Messages
     /// <seealso cref="Silverback.Messaging.Messages.IEnvelope" />
     public class Envelope : IEnvelope
     {
-        // TODO: Allow customization?
+        // TODO: Introduce IEnvelopeFactory that allow customization of this stuff?
         private static readonly Lazy<string> SourceValue =
             new Lazy<string>(() => Assembly.GetEntryAssembly().GetName().Name);
 

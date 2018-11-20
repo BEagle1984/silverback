@@ -2,14 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Silverback.Messaging;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Messaging.Integration
+namespace Silverback.Tests.Messaging.Connectors
 {
     [TestFixture]
     public class DeferredOutboundConnectorTests
@@ -24,6 +23,8 @@ namespace Silverback.Tests.Messaging.Integration
             _queue = new InMemoryOutboundQueue();
             _routingConfiguration = new OutboundRoutingConfiguration();
             _connector = new DeferredOutboundConnector(_queue, _routingConfiguration);
+
+            InMemoryOutboundQueue.Clear();
         }
 
         [Test]

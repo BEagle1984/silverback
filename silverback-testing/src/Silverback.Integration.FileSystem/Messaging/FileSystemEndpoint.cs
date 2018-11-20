@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Silverback.Messaging
 {
     public class FileSystemEndpoint : IEndpoint, IEquatable<FileSystemEndpoint>
     {
-        private FileSystemEndpoint(string name, string basePath, bool useFileSystemWatcher)
+        [JsonConstructor]
+        private FileSystemEndpoint(string name, string path, bool useFileSystemWatcher)
         {
             Name = name;
+            Path = path;
             UseFileSystemWatcher = useFileSystemWatcher;
-            Path = System.IO.Path.Combine(basePath, name);
         }
 
         public static FileSystemEndpoint Create(string name, string basePath, bool useFileSystemWatcher = false) =>
-            new FileSystemEndpoint(name, basePath, useFileSystemWatcher);
+            new FileSystemEndpoint(name, System.IO.Path.Combine(basePath, name), useFileSystemWatcher);
 
         public string Name { get; }
 
@@ -43,7 +45,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((FileSystemEndpoint) obj);
+            return Equals((FileSystemEndpoint)obj);
         }
 
         public override int GetHashCode()

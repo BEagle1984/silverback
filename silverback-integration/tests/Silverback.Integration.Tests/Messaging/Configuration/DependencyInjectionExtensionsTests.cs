@@ -32,7 +32,7 @@ namespace Silverback.Tests.Messaging.Configuration
         private IPublisher GetPublisher() => GetServiceProvider().GetService<IPublisher>();
 
         private IOutboundRoutingConfiguration GetOutboundRouting() => GetServiceProvider().GetService<IOutboundRoutingConfiguration>();
-        private InMemoryOutboundQueue GetOutboundQueue() => (InMemoryOutboundQueue)GetServiceProvider().GetService<IOutboundQueueWriter>();
+        private InMemoryOutboundQueue GetOutboundQueue() => (InMemoryOutboundQueue)GetServiceProvider().GetService<IOutboundQueueProducer>();
 
         private IInboundConnector GetInboundConnector() => GetServiceProvider().GetService<IInboundConnector>();
         private InMemoryInboundLog GetInboundLog() => (InMemoryInboundLog)GetServiceProvider().GetService<IInboundLog>();
@@ -51,6 +51,9 @@ namespace Silverback.Tests.Messaging.Configuration
             _services.AddSingleton<IPublisher, Publisher>();
 
             _serviceProvider = null; // Creation deferred to after AddBroker() has been called
+
+            InMemoryInboundLog.Clear();
+            InMemoryOutboundQueue.Clear();
         }
 
         [Test]
@@ -89,7 +92,7 @@ namespace Silverback.Tests.Messaging.Configuration
             GetPublisher().Publish(new TestEventTwo());
             GetPublisher().Publish(new TestEventTwo());
 
-            Assert.That(GetBroker().SentMessages.Count, Is.EqualTo(5));
+            Assert.That(GetBroker().ProducedMessages.Count, Is.EqualTo(5));
         }
 
         [Test]
@@ -144,9 +147,9 @@ namespace Silverback.Tests.Messaging.Configuration
             // -> to nowhere
             GetPublisher().Publish(new TestInternalEventOne());
             
-            Assert.That(GetBroker().SentMessages.Count, Is.EqualTo(7));
-            Assert.That(GetBroker().SentMessages.Where(x => x.Endpoint.Name == "test1").Count, Is.EqualTo(2));
-            Assert.That(GetBroker().SentMessages.Where(x => x.Endpoint.Name == "test2").Count, Is.EqualTo(5));
+            Assert.That(GetBroker().ProducedMessages.Count, Is.EqualTo(7));
+            Assert.That(GetBroker().ProducedMessages.Where(x => x.Endpoint.Name == "test1").Count, Is.EqualTo(2));
+            Assert.That(GetBroker().ProducedMessages.Where(x => x.Endpoint.Name == "test2").Count, Is.EqualTo(5));
         }
 
         [Test]

@@ -16,7 +16,7 @@ namespace Silverback.Tests.TestTypes
         {
         }
 
-        public List<SentMessage> SentMessages { get; } = new List<SentMessage>();
+        public List<ProducedMessage> ProducedMessages { get; } = new List<ProducedMessage>();
 
         protected override Producer InstantiateProducer(IEndpoint endpoint) => new TestProducer(this, endpoint);
 
@@ -31,9 +31,9 @@ namespace Silverback.Tests.TestTypes
         {
         }
 
-        public class SentMessage
+        public class ProducedMessage
         {
-            public SentMessage(byte[] message, IEndpoint endpoint)
+            public ProducedMessage(byte[] message, IEndpoint endpoint)
             {
                 Message = message;
                 Endpoint = endpoint;
