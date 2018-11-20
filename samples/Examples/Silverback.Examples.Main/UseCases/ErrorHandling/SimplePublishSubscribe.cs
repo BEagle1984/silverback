@@ -13,14 +13,13 @@ namespace Silverback.Examples.Main.UseCases.ErrorHandling
 {
     public class RetryUseCase : UseCase
     {
-        public RetryUseCase() : base("Retry then move to bad mail", 100)
+        public RetryUseCase() : base("Retry then move to bad mail", 10)
         {
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus()
-            .AddBroker<FileSystemBroker>(options => options
-                .AddOutboundConnector());
+            .AddBroker<FileSystemBroker>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
             .AddOutbound<IIntegrationEvent>(FileSystemEndpoint.Create("bad-events", Configuration.FileSystemBrokerBasePath));

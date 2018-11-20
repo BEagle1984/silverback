@@ -14,14 +14,13 @@ namespace Silverback.Examples.Main.UseCases.Basic
 {
     public class TranslateUseCase : UseCase, ISubscriber
     {
-        public TranslateUseCase() : base("Translate outbound message", 200)
+        public TranslateUseCase() : base("Translate outbound message", 20)
         {
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus()
-            .AddBroker<FileSystemBroker>(options => options
-                .AddOutboundConnector())
+            .AddBroker<FileSystemBroker>()
             .AddScoped<ISubscriber, TranslateUseCase>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints

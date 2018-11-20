@@ -13,14 +13,13 @@ namespace Silverback.Examples.Main.UseCases.Basic
 {
     public class SimplePublishUseCase : UseCase
     {
-        public SimplePublishUseCase() : base("Simple publish", 100)
+        public SimplePublishUseCase() : base("Simple publish", 10)
         {
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus()
-            .AddBroker<FileSystemBroker>(options => options
-                .AddOutboundConnector());
+            .AddBroker<FileSystemBroker>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
             .AddOutbound<IIntegrationEvent>(FileSystemEndpoint.Create("simple-events", Configuration.FileSystemBrokerBasePath));
@@ -29,7 +28,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
         {
             var publisher = serviceProvider.GetService<IEventPublisher<SimpleIntegrationEvent>>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent {Content = DateTime.Now.ToString("HH:mm:ss.fff")});
+            await publisher.PublishAsync(new SimpleIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public class ErrorHandlingCategory : UseCaseCategory
     {
-        public ErrorHandlingCategory() : base("Error handling", 10)
+        public ErrorHandlingCategory() : base("Error handling", 20)
         {
         }
     }

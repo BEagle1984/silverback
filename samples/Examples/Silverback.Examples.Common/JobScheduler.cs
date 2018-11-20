@@ -1,11 +1,10 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace SilverbackShop.Common.Infrastructure.Jobs
+namespace Silverback.Examples.Common
 {
     public class JobScheduler : IDisposable
     {
@@ -62,12 +61,6 @@ namespace SilverbackShop.Common.Infrastructure.Jobs
             return false;
         }
 
-        public void RemoveJob(string name)
-        {
-            _timers[name].Dispose();
-            _timers.Remove(name);
-        }
-        
         public void Dispose()
         {
             if (_timers == null)

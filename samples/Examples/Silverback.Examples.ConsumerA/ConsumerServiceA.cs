@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Consumer;
+using Silverback.Examples.Common.Data;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -17,10 +18,11 @@ namespace Silverback.Examples.ConsumerA
         {
             new ConsumerServiceA().Init();
         }
+
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus()
             .AddBroker<FileSystemBroker>(options => options
-                .AddOutboundConnector())
+                .AddDbInboundConnector<ExamplesDbContext>())
             .AddScoped<ISubscriber, SubscriberService>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints

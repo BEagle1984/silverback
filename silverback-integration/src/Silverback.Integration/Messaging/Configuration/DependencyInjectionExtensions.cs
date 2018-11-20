@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DependencyInjectionExtensions
     {
-        public static IServiceCollection AddBroker<T>(this IServiceCollection services, Action<BrokerOptionsBuilder> optionsAction)
+        public static IServiceCollection AddBroker<T>(this IServiceCollection services, Action<BrokerOptionsBuilder> optionsAction = null)
             where T : class, IBroker
         {
             services

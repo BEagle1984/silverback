@@ -2,7 +2,7 @@
 {
     public class BasicCategory : UseCaseCategory
     {
-        public BasicCategory() : base("Basic", 1)
+        public BasicCategory() : base("Basic", 10)
         {
         }
     }

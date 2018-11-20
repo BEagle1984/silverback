@@ -2,9 +2,13 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common;
+using Silverback.Examples.Common.Data;
+using Silverback.Examples.Common.Messages;
 using Silverback.Examples.Main.Menu;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Examples.Main.UseCases
 {
@@ -27,17 +31,29 @@ namespace Silverback.Examples.Main.UseCases
 
             ConfigureServices(services);
 
-            var serviceProvider = services.BuildServiceProvider();
-
-            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>());
-
-            for (int i = 0; i < ExecutionsCount; i++)
+            using (var serviceProvider = services.BuildServiceProvider())
             {
-                CreateScopeAndExecute(serviceProvider);
+                CreateScopeAndConfigure(serviceProvider);
+
+                for (int i = 0; i < ExecutionsCount; i++)
+                {
+                    CreateScopeAndExecute(serviceProvider);
+                }
+
+                CreateScopeAndPostExecute(serviceProvider);
             }
         }
 
-        private void CreateScopeAndExecute(ServiceProvider serviceProvider)
+        private void CreateScopeAndConfigure(IServiceProvider serviceProvider)
+        {
+            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>());
+
+            serviceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
+
+            PreExecute(serviceProvider);
+        }
+
+        private void CreateScopeAndExecute(IServiceProvider serviceProvider)
         {
             using (var scope = serviceProvider.CreateScope())
             {
@@ -45,10 +61,19 @@ namespace Silverback.Examples.Main.UseCases
             }
         }
 
+        private void CreateScopeAndPostExecute(IServiceProvider serviceProvider)
+        {
+            PostExecute(serviceProvider);
+        }
+
         protected abstract void ConfigureServices(IServiceCollection services);
 
         protected abstract void Configure(IBrokerEndpointsConfigurationBuilder endpoints);
 
         protected abstract Task Execute(IServiceProvider serviceProvider);
+
+        protected virtual void PreExecute(IServiceProvider serviceProvider) { }
+
+        protected virtual void PostExecute(IServiceProvider serviceProvider) { }
     }
 }
