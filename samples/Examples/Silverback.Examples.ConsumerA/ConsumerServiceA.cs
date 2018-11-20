@@ -24,7 +24,11 @@ namespace Silverback.Examples.ConsumerA
             .AddScoped<ISubscriber, SubscriberService>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
-            .AddInbound(FileSystemEndpoint.Create("simple-events", Configuration.FileSystemBrokerBasePath))
+            .AddInbound(CreateEndpoint("simple-events"))
+            .AddInbound(CreateEndpoint("bad-events"), policy => policy
+            .Chain(policy.Retry(2, TimeSpan.FromMilliseconds(500)), policy.Move(CreateEndpoint("bad-events-error"))))
             .Connect();
+
+        private static FileSystemEndpoint CreateEndpoint(string name) => FileSystemEndpoint.Create(name, Configuration.FileSystemBrokerBasePath);
     }
 }

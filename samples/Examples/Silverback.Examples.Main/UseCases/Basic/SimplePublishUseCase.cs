@@ -11,9 +11,9 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Examples.Main.UseCases.Basic
 {
-    public class SimplePublishSubscribe : UseCase
+    public class SimplePublishUseCase : UseCase
     {
-        public SimplePublishSubscribe() : base("Simple publish subscribe", 100)
+        public SimplePublishUseCase() : base("Simple publish", 100)
         {
         }
 

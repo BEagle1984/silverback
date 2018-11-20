@@ -10,6 +10,8 @@ namespace Silverback.Examples.Main.UseCases
 {
     public abstract class UseCase : MenuItem
     {
+        private const int ExecutionsCount = 3;
+
         protected UseCase(string name, int sortIndex = 100)
             : base(name, sortIndex)
         {
@@ -29,6 +31,14 @@ namespace Silverback.Examples.Main.UseCases
 
             Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>());
 
+            for (int i = 0; i < ExecutionsCount; i++)
+            {
+                CreateScopeAndExecute(serviceProvider);
+            }
+        }
+
+        private void CreateScopeAndExecute(ServiceProvider serviceProvider)
+        {
             using (var scope = serviceProvider.CreateScope())
             {
                 Execute(scope.ServiceProvider).Wait();

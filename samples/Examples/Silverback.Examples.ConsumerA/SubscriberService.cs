@@ -18,5 +18,12 @@ namespace Silverback.Examples.ConsumerA
         {
             _logger.LogInformation($"Received message '{message.Content}'");
         }
+
+        [Subscribe]
+        void OnBadEventReceived(BadIntegrationEvent message)
+        {
+            _logger.LogInformation($"Received message '{message.Content}'...throwing!");
+            throw new System.Exception("Bad message!");
+        }
     }
 }

@@ -18,9 +18,8 @@ namespace Silverback.Messaging.Configuration
             _loggerFactory = loggerFactory;
         }
 
-        public ErrorPolicyChain Chain(params Func<ErrorPolicyBuilder, ErrorPolicyBase>[] policies) =>
-            new ErrorPolicyChain(_loggerFactory.CreateLogger<ErrorPolicyChain>(),
-                policies.Select(p => p.Invoke(this)).ToArray());
+        public ErrorPolicyChain Chain(params ErrorPolicyBase[] policies) =>
+            new ErrorPolicyChain(_loggerFactory.CreateLogger<ErrorPolicyChain>(), policies);
 
         public RetryErrorPolicy Retry(int retryCount, TimeSpan? initialDelay = null,
             TimeSpan? delayIncreament = null) => new RetryErrorPolicy(_loggerFactory.CreateLogger<RetryErrorPolicy>(), retryCount, initialDelay, delayIncreament);

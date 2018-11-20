@@ -78,8 +78,8 @@ namespace Silverback.Tests.Messaging.Integration
         {
             _testSubscriber.MustFailCount = 3;
             _connector.Bind(TestEndpoint.Default, _errorPolicyBuilder.Chain(
-                p => p.Retry(1),
-                p => p.Move(TestEndpoint.Create("bad"))));
+                _errorPolicyBuilder.Retry(1),
+                _errorPolicyBuilder.Move(TestEndpoint.Create("bad"))));
             _broker.Connect();
 
             var consumer = (TestConsumer)_broker.GetConsumer(TestEndpoint.Default);

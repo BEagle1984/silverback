@@ -30,11 +30,11 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             };
 
             var chain = _errorPolicyBuilder.Chain(
-                _ => testPolicies[0],
-                _ => testPolicies[1],
-                _ => testPolicies[2],
-                _ => testPolicies[3],
-                _ => testPolicies[4]);
+                testPolicies[0],
+                testPolicies[1],
+                testPolicies[2],
+                testPolicies[3],
+                testPolicies[4]);
             
             chain.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
@@ -49,11 +49,11 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var testPolicy = new TestErrorPolicy();
 
             var chain = _errorPolicyBuilder.Chain(
-                builder => builder.Retry(1),
-                builder => builder.Retry(1),
-                builder => builder.Retry(1),
-                builder => builder.Retry(1),
-                _ => testPolicy);
+                _errorPolicyBuilder.Retry(1),
+                _errorPolicyBuilder.Retry(1),
+                _errorPolicyBuilder.Retry(1),
+                _errorPolicyBuilder.Retry(1),
+                testPolicy);
 
             chain.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
@@ -69,8 +69,8 @@ namespace Silverback.Tests.Messaging.ErrorHandling
 
             var testPolicy = new TestErrorPolicy();
             var chain = _errorPolicyBuilder.Chain(
-                builder => builder.Retry(3),
-                _ => testPolicy);
+                _errorPolicyBuilder.Retry(3),
+                testPolicy);
 
             chain.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
@@ -90,8 +90,8 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var tryCount = 0;
 
             var chain = _errorPolicyBuilder.Chain(
-                builder => builder.Retry(3),
-                builder => builder.Skip());
+                _errorPolicyBuilder.Retry(3),
+                _errorPolicyBuilder.Skip());
 
             chain.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
@@ -110,8 +110,8 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var tryCount = 0;
 
             var chain = _errorPolicyBuilder.Chain(
-                builder => builder.Retry(3).ApplyTo<InvalidOperationException>(),
-                builder => builder.Skip());
+                _errorPolicyBuilder.Retry(3).ApplyTo<InvalidOperationException>(),
+                _errorPolicyBuilder.Skip());
 
             chain.TryHandleMessage(
                 Envelope.Create(new TestEventOne()),
