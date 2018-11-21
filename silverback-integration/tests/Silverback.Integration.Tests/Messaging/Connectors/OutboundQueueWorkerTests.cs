@@ -47,8 +47,8 @@ namespace Silverback.Tests.Messaging.Connectors
         [Test]
         public void ProcessQueue_SomeMessages_Produced()
         {
-            _queue.Enqueue(new TestEventOne { Content = "1" }, TestEndpoint.Create("topic1"));
-            _queue.Enqueue(new TestEventTwo { Content = "2" }, TestEndpoint.Create("topic2"));
+            _queue.Enqueue(new TestEventOne { Content = "1" }, new TestEndpoint("topic1"));
+            _queue.Enqueue(new TestEventTwo { Content = "2" }, new TestEndpoint("topic2"));
             _queue.Commit();
 
             _worker.ProcessQueue();
@@ -61,8 +61,8 @@ namespace Silverback.Tests.Messaging.Connectors
         [Test]
         public void ProcessQueue_RunTwice_ProducedOnce()
         {
-            _queue.Enqueue(new TestEventOne { Content = "1" }, TestEndpoint.Create("topic1"));
-            _queue.Enqueue(new TestEventTwo { Content = "2" }, TestEndpoint.Create("topic2"));
+            _queue.Enqueue(new TestEventOne { Content = "1" }, new TestEndpoint("topic1"));
+            _queue.Enqueue(new TestEventTwo { Content = "2" }, new TestEndpoint("topic2"));
             _queue.Commit();
 
             _worker.ProcessQueue();
@@ -74,13 +74,13 @@ namespace Silverback.Tests.Messaging.Connectors
         [Test]
         public void ProcessQueue_RunTwice_ProducedNewMessages()
         {
-            _queue.Enqueue(new TestEventOne { Content = "1" }, TestEndpoint.Create("topic1"));
-            _queue.Enqueue(new TestEventTwo { Content = "2" }, TestEndpoint.Create("topic2"));
+            _queue.Enqueue(new TestEventOne { Content = "1" }, new TestEndpoint("topic1"));
+            _queue.Enqueue(new TestEventTwo { Content = "2" }, new TestEndpoint("topic2"));
             _queue.Commit();
 
             _worker.ProcessQueue();
 
-            _queue.Enqueue(new TestEventTwo { Content = "3" }, TestEndpoint.Create("topic3"));
+            _queue.Enqueue(new TestEventTwo { Content = "3" }, new TestEndpoint("topic3"));
             _queue.Commit();
 
             _worker.ProcessQueue();

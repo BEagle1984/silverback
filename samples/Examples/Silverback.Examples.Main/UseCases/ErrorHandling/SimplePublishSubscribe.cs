@@ -22,7 +22,7 @@ namespace Silverback.Examples.Main.UseCases.ErrorHandling
             .AddBroker<FileSystemBroker>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
-            .AddOutbound<IIntegrationEvent>(FileSystemEndpoint.Create("bad-events", Configuration.FileSystemBrokerBasePath));
+            .AddOutbound<IIntegrationEvent>(new FileSystemEndpoint("bad-events", Configuration.FileSystemBrokerBasePath));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

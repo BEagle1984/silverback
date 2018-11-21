@@ -20,7 +20,7 @@ namespace Silverback.Tests.Messaging.Connectors
         [SetUp]
         public void Setup()
         {
-            _broker = new TestBroker(new JsonMessageSerializer());
+            _broker = new TestBroker();
             _routingConfiguration = new OutboundRoutingConfiguration();
             _connector = new OutboundConnector(_broker, _routingConfiguration);
         }
@@ -37,7 +37,9 @@ namespace Silverback.Tests.Messaging.Connectors
 
             Assert.That(_broker.ProducedMessages.Count, Is.EqualTo(1));
             Assert.That(_broker.ProducedMessages.First().Endpoint, Is.EqualTo(endpoint));
-            Assert.That(_broker.Serializer.Deserialize(_broker.ProducedMessages.First().Message).Message.Id, Is.EqualTo(message.Id));
+
+            var producedMessage = endpoint.Serializer.Deserialize(_broker.ProducedMessages.First().Message) as TestEventOne;
+            Assert.That(producedMessage.Id, Is.EqualTo(message.Id));
         }
 
         public static IEnumerable<TestCaseData> OnMessageReceived_MultipleMessages_CorrectlyRouted_TestCases
@@ -53,10 +55,10 @@ namespace Silverback.Tests.Messaging.Connectors
         [TestCaseSource(nameof(OnMessageReceived_MultipleMessages_CorrectlyRouted_TestCases))]
         public async Task OnMessageReceived_MultipleMessages_CorrectlyRouted(IIntegrationMessage message, string[] expectedEndpointNames)
         {
-            _routingConfiguration.Add<IIntegrationMessage>(TestEndpoint.Create("allMessages"));
-            _routingConfiguration.Add<IIntegrationEvent>(TestEndpoint.Create("allEvents"));
-            _routingConfiguration.Add<TestEventOne>(TestEndpoint.Create("eventOne"));
-            _routingConfiguration.Add<TestEventTwo>(TestEndpoint.Create("eventTwo"));
+            _routingConfiguration.Add<IIntegrationMessage>(new TestEndpoint("allMessages"));
+            _routingConfiguration.Add<IIntegrationEvent>(new TestEndpoint("allEvents"));
+            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"));
+            _routingConfiguration.Add<TestEventTwo>(new TestEndpoint("eventTwo"));
 
             await _connector.OnMessageReceived(message);
 

@@ -20,6 +20,6 @@ namespace Silverback.Messaging.Connectors
         }
 
         protected override Task RelayMessage(IIntegrationMessage message, IEndpoint destinationEndpoint) =>
-            _broker.GetProducer(destinationEndpoint).ProduceAsync(Envelope.Create(message));
+            _broker.GetProducer(destinationEndpoint).ProduceAsync(message);
     }
 }

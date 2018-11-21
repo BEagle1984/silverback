@@ -25,7 +25,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         {
             var executed = false;
             _policy.TryHandleMessage(
-                Envelope.Create(new TestEventOne()),
+                new TestEventOne(),
                 _ => executed = true);
 
             Assert.That(executed, Is.True);
@@ -35,7 +35,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         public void ErrorTest()
         {
             _policy.TryHandleMessage(
-                Envelope.Create(new TestEventOne()),
+                new TestEventOne(),
                 _ => throw new Exception("test"));
         }
     }

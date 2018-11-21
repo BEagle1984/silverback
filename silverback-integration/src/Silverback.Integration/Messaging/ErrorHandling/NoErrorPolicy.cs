@@ -12,6 +12,6 @@ namespace Silverback.Messaging.ErrorHandling
 
         public static NoErrorPolicy Instance => _instance ?? (_instance = new NoErrorPolicy());
 
-        public void TryHandleMessage(IEnvelope envelope, Action<IEnvelope> handler) => handler?.Invoke(envelope);
+        public void TryHandleMessage(IMessage message, Action<IMessage> messageHandler) => messageHandler?.Invoke(message);
     }
 }

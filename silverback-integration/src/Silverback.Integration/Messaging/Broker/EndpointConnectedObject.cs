@@ -18,7 +18,5 @@ namespace Silverback.Messaging.Broker
         public IBroker Broker { get; }
 
         public IEndpoint Endpoint { get; }
-
-        public IMessageSerializer Serializer => Broker?.Serializer;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -13,10 +14,10 @@ namespace Silverback.Messaging.Broker
             Endpoint.EnsurePathExists();
         }
 
-        protected override void Produce(IIntegrationMessage message, byte[] serializedMessage) =>
+        protected override void Produce(IMessage message, byte[] serializedMessage) =>
             File.WriteAllBytes(GetFilePath(message), serializedMessage);
 
-        protected override async Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)
+        protected override async Task ProduceAsync(IMessage message, byte[] serializedMessage)
         {
             using (var stream = File.Open(GetFilePath(message), FileMode.Create))
             {
@@ -24,6 +25,13 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private string GetFilePath(IIntegrationMessage message) => Path.Combine(Endpoint.Path, $"{message.Id}.txt");
+        private string GetFilePath(IMessage message)
+        {
+            var fileName = message is IIntegrationMessage integrationMessage
+                ? integrationMessage.Id.ToString()
+                : "legacy-" + Guid.NewGuid().ToString();
+
+            return Path.Combine(Endpoint.Path, $"{fileName}.txt");
+        }
     }
 }

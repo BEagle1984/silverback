@@ -10,7 +10,7 @@ namespace Silverback.Tests.TestTypes
     {
         public bool Applied { get; private set; }
 
-        protected override void ApplyPolicyImpl(IEnvelope envelope, Action<IEnvelope> handler, Exception exception)
+        protected override void ApplyPolicy(IMessage message, Action<IMessage> messageHandler, Exception exception)
         {
             Applied = true;
         }

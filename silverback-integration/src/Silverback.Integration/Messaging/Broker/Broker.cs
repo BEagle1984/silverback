@@ -17,15 +17,12 @@ namespace Silverback.Messaging.Broker
 
         protected readonly ILoggerFactory LoggerFactory;
 
-        protected Broker(IMessageSerializer serializer, ILoggerFactory loggerFactory)
+        protected Broker(ILoggerFactory loggerFactory)
         {
-            Serializer = serializer;
             LoggerFactory = loggerFactory;
 
             _logger = loggerFactory.CreateLogger<Broker>();
         }
-
-        public IMessageSerializer Serializer { get; }
 
         #region Producer / Consumer
 
@@ -116,8 +113,8 @@ namespace Silverback.Messaging.Broker
     public abstract class Broker<TEndpoint> : Broker
         where TEndpoint : class, IEndpoint
     {
-        protected Broker(IMessageSerializer serializer, ILoggerFactory loggerFactory)
-            : base(serializer, loggerFactory)
+        protected Broker(ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
         }
 
