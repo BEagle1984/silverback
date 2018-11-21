@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Messages
             if (message is IIntegrationMessage integrationMassage)
                 return $"{integrationMassage.Id} (endpoint={endpoint.Name}, type={message.GetType().Name})";
 
-            return $"? [endpoint={endpoint.Name}]";
+            return $"? (endpoint={endpoint.Name})";
         }
 
         public static string GetTraceString(this IMessage message)

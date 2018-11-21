@@ -7,7 +7,7 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public interface IMessageSerializer
     {
-        byte[] Serialize(IMessage envelope);
+        byte[] Serialize(IMessage message);
 
         IMessage Deserialize(byte[] message);
     }

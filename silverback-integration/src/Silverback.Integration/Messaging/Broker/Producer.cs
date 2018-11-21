@@ -18,14 +18,25 @@ namespace Silverback.Messaging.Broker
 
         public void Produce(IMessage message)
         {
-            _logger.LogTrace($"Producing message {message.GetTraceString(Endpoint)}.");
+            EnsureIdentifier(message);
+            Trace(message);
             Produce(message, Endpoint.Serializer.Serialize(message));
         }
 
         public async Task ProduceAsync(IMessage message)
         {
-            _logger.LogTrace($"Producing message {message.GetTraceString(Endpoint)}.");
+            EnsureIdentifier(message);
+            Trace(message);
             await ProduceAsync(message, Endpoint.Serializer.Serialize(message));
+        }
+
+        private void Trace(IMessage message) =>
+            _logger.LogTrace($"Producing message {message.GetTraceString(Endpoint)}.");
+
+        private void EnsureIdentifier(IMessage message)
+        {
+            if (message is IIntegrationMessage integrationMessage)
+                integrationMessage.Id = Guid.NewGuid();
         }
 
         protected abstract void Produce(IMessage message, byte[] serializedMessage);

@@ -7,11 +7,11 @@ namespace Silverback.Messaging.Serialization
 {
     public class JsonMessageSerializer : IMessageSerializer
     {
-        public byte[] Serialize(IMessage envelope)
+        public byte[] Serialize(IMessage message)
         {
-            if (envelope == null) throw new ArgumentNullException(nameof(envelope));
+            if (message == null) throw new ArgumentNullException(nameof(message));
 
-            var json = JsonConvert.SerializeObject(envelope, typeof(IMessage), Settings);
+            var json = JsonConvert.SerializeObject(message, typeof(IMessage), Settings);
 
             return GetEncoding().GetBytes(json);
         }

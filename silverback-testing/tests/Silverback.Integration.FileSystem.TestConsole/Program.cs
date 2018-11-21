@@ -67,7 +67,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
 
             using (var broker = GetBroker())
             {
-                broker.GetProducer(endpoint).Produce(Envelope.Create(message));
+                broker.GetProducer(endpoint).Produce(message);
             }
 
             WriteSuccess($"Successfully produced message {message.Id} to topic '{topicName}'.");
@@ -87,7 +87,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
 
                 consumer.Received += (_, e) =>
                 {
-                    var message = (TestMessage)e.Message;
+                    var message = (TestMessage)e;
                     WriteSuccess($"Received message {message.Id} from topic '{topicName}' with content '{message.Content}'.");
                 };
 

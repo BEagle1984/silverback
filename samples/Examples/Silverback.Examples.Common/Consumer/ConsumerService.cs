@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
+using System;
 
 namespace Silverback.Examples.Common.Consumer
 {
@@ -21,12 +17,6 @@ namespace Silverback.Examples.Common.Consumer
             var serviceProvider = services.BuildServiceProvider();
 
             Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>(), serviceProvider);
-
-            while (true)
-            {
-                Console.WriteLine(".");
-                Thread.Sleep(1000);
-            }
         }
 
         protected abstract void ConfigureServices(IServiceCollection services);

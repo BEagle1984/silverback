@@ -8,7 +8,7 @@ namespace Silverback.Tests.TestTypes
 {
     public class FakeSerializer : IMessageSerializer
     {
-        public byte[] Serialize(IMessage envelope)
+        public byte[] Serialize(IMessage message)
         {
             throw new NotImplementedException();
         }

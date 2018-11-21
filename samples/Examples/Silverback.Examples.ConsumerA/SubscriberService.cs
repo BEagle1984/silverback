@@ -31,5 +31,11 @@ namespace Silverback.Examples.ConsumerA
         {
             _logger.LogInformation($"Received message '{message.Content}'");
         }
+
+        [Subscribe]
+        void OnLegacyMessageReceived(LegacyMessage message)
+        {
+            _logger.LogInformation($"Received legacy message '{message.Content}'");
+        }
     }
 }

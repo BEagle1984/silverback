@@ -1,7 +1,10 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Threading.Tasks;
+using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.TestTypes;
+using Silverback.Tests.TestTypes.Domain;
 
 namespace Silverback.Tests.Messaging.Broker
 {
@@ -67,5 +70,30 @@ namespace Silverback.Tests.Messaging.Broker
 
             Assert.That(consumer2, Is.Not.SameAs(consumer));
         }
+
+        [Test]
+        public void Produce_IntegrationMessage_IdIsSet()
+        {
+            var producer = _broker.GetProducer(TestEndpoint.Default);
+
+            var message = new TestEventOne();
+
+            producer.Produce(message);
+
+            Assert.That(message.Id, Is.Not.EqualTo(Guid.Empty));
+        }
+
+        [Test]
+        public async Task ProduceAsync_IntegrationMessage_IdIsSet()
+        {
+            var producer = _broker.GetProducer(TestEndpoint.Default);
+
+            var message = new TestEventOne();
+
+            await producer.ProduceAsync(message);
+
+            Assert.That(message.Id, Is.Not.EqualTo(Guid.Empty));
+        }
+
     }
 }

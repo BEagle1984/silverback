@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Connectors
             // TODO: Carefully test with multiple endpoints!
             // TODO: Test if consumer gets properly disposed etc.
             var consumer = _broker.GetConsumer(endpoint);
-            consumer.Received += (sender, envelope) => OnMessageReceived(sender, envelope, endpoint, errorPolicy);
+            consumer.Received += (sender, message) => OnMessageReceived(sender, message, endpoint, errorPolicy);
             return this;
         }
 
