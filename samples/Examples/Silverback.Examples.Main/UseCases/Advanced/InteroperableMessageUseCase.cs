@@ -7,15 +7,12 @@ using Silverback.Examples.Common.Serialization;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Serialization;
 
-namespace Silverback.Examples.Main.UseCases.Basic
+namespace Silverback.Examples.Main.UseCases.Advanced
 {
     public class InteroperableMessageUseCase : UseCase
     {
-        public InteroperableMessageUseCase() : base("Interoperable incoming message (free schema, not published by Silberback)", 40)
+        public InteroperableMessageUseCase() : base("Interoperable incoming message (free schema, not published by Silberback)", 10)
         {
         }
 
