@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -11,8 +12,8 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public interface IOutboundRoutingConfiguration
     {
-        IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint) where TMessage : IIntegrationMessage;
+        IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null) where TMessage : IIntegrationMessage;
 
-        IEnumerable<IEndpoint> GetDestinations(IIntegrationMessage message);
+        IEnumerable<IOutboundRoute> GetRoutes(IIntegrationMessage message);
     }
 }

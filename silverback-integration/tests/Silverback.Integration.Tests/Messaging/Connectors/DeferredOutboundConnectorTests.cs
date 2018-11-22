@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Messaging.Connectors;
@@ -15,14 +14,12 @@ namespace Silverback.Tests.Messaging.Connectors
     {
         private InMemoryOutboundQueue _queue;
         private DeferredOutboundConnector _connector;
-        private OutboundRoutingConfiguration _routingConfiguration;
 
         [SetUp]
         public void Setup()
         {
             _queue = new InMemoryOutboundQueue();
-            _routingConfiguration = new OutboundRoutingConfiguration();
-            _connector = new DeferredOutboundConnector(_queue, _routingConfiguration);
+            _connector = new DeferredOutboundConnector(_queue);
 
             InMemoryOutboundQueue.Clear();
         }
@@ -32,10 +29,9 @@ namespace Silverback.Tests.Messaging.Connectors
         {
             var endpoint = TestEndpoint.Default;
 
-            _routingConfiguration.Add<IIntegrationMessage>(endpoint);
             var message = new TestEventOne { Content = "Test" };
 
-            await _connector.OnMessageReceived(message);
+            await _connector.RelayMessage(message, endpoint);
             await _queue.Commit();
 
             Assert.That(_queue.Length, Is.EqualTo(1));
@@ -44,52 +40,12 @@ namespace Silverback.Tests.Messaging.Connectors
             Assert.That(enqueued.Message.Id, Is.EqualTo(message.Id));
         }
 
-        public static IEnumerable<TestCaseData> OnMessageReceived_MultipleMessages_CorrectlyRouted_TestCases
-        {
-            get
-            {
-                yield return new TestCaseData(new TestEventOne(), new[] { "allMessages", "allEvents", "eventOne" });
-                yield return new TestCaseData(new TestEventTwo(), new[] { "allMessages", "allEvents", "eventTwo" });
-            }
-        }
-
-        [Test]
-        [TestCaseSource(nameof(OnMessageReceived_MultipleMessages_CorrectlyRouted_TestCases))]
-        public async Task OnMessageReceived_MultipleMessages_CorrectlyRouted(IIntegrationMessage message, string[] expectedEndpointNames)
-        {
-            _routingConfiguration.Add<IIntegrationMessage>(new TestEndpoint("allMessages"));
-            _routingConfiguration.Add<IIntegrationEvent>(new TestEndpoint("allEvents"));
-            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"));
-            _routingConfiguration.Add<TestEventTwo>(new TestEndpoint("eventTwo"));
-
-            await _connector.OnMessageReceived(message);
-            await _queue.Commit();
-
-            var enqueued = _queue.Dequeue(100);
-
-            foreach (var expectedEndpointName in expectedEndpointNames)
-            {
-                Assert.That(enqueued.Count(x => x.Endpoint.Name == expectedEndpointName), Is.EqualTo(1));
-            }
-
-            var notExpectedEndpointNames = _routingConfiguration
-                .Routes.Select(r => r.DestinationEndpoint.Name)
-                .Where(r => !expectedEndpointNames.Contains(r));
-
-            foreach (var notExpectedEndpointName in notExpectedEndpointNames)
-            {
-                Assert.That(enqueued.Count(x => x.Endpoint.Name == notExpectedEndpointName), Is.EqualTo(0));
-            }
-        }
-
         [Test]
         public void CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
-            _routingConfiguration.Add<IIntegrationMessage>(new TestEndpoint("allMessages"));
-
-            _connector.OnMessageReceived(new TestEventOne());
+            _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
             _connector.OnTransactionCommit(new TransactionCommitEvent());
-            _connector.OnMessageReceived(new TestEventOne());
+            _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
             _connector.OnTransactionRollback(new TransactionRollbackEvent());
 
             Assert.That(_queue.Length, Is.EqualTo(1));

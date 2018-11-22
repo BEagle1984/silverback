@@ -47,10 +47,16 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         /// Adds a connector to publish the integration messages to the configured message broker.
         /// </summary>
-        public BrokerOptionsBuilder AddOutboundConnector<TConnector>() where TConnector : class, ISubscriber
+        public BrokerOptionsBuilder AddOutboundConnector<TConnector>() where TConnector : class, IOutboundConnector
         {
-            Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
-            Services.AddScoped<ISubscriber, TConnector>();
+            if (Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
+            {
+                Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
+                Services.AddSingleton<ISubscriber, OutboundConnectorRouter>();
+            }
+
+            Services.AddScoped<IOutboundConnector, TConnector>();
+
             return this;
         }
 
@@ -66,6 +72,7 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddDeferredOutboundConnector<TQueueProducer>() where TQueueProducer : class, IOutboundQueueProducer
         {
             AddOutboundConnector<DeferredOutboundConnector>();
+            Services.AddScoped<ISubscriber, DeferredOutboundConnector>();
             Services.AddScoped<IOutboundQueueProducer, TQueueProducer>();
 
             return this;
@@ -73,7 +80,7 @@ namespace Silverback.Messaging.Configuration
 
         internal BrokerOptionsBuilder AddOutboundWorker(bool enforceMessageOrder, int readPackageSize)
         {
-            Services.AddScoped<OutboundQueueWorker>(s => new OutboundQueueWorker(
+            Services.AddScoped(s => new OutboundQueueWorker(
                 s.GetRequiredService<IOutboundQueueConsumer>(), 
                 s.GetRequiredService<IBroker>(), 
                 s.GetRequiredService<ILogger<OutboundQueueWorker>>(),

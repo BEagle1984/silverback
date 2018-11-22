@@ -5,6 +5,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -28,6 +29,22 @@ namespace Silverback.Messaging.Configuration
             _outboundRoutingConfiguration.Add<TMessage>(endpoint);
             return this;
         }
+
+        public IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IEndpoint endpoint) 
+            where TMessage : IIntegrationMessage
+            where TConnector : IOutboundConnector
+        {
+            AddOutbound<TMessage>(endpoint, typeof(TConnector));
+            return this;
+        }
+
+        public IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint, Type outboundConnectorType) where TMessage : IIntegrationMessage
+        {
+            _outboundRoutingConfiguration.Add<TMessage>(endpoint);
+            return this;
+        }
+
+
 
         public IBrokerEndpointsConfigurationBuilder AddInbound(IEndpoint endpoint, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null)
         {
