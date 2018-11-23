@@ -5,6 +5,6 @@ namespace Silverback.Messaging.Broker
 {
     public interface IConsumer
     {
-        event EventHandler<IEnvelope> Received;
+        event EventHandler<IMessage> Received;
     }
 }

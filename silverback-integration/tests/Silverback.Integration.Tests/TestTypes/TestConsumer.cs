@@ -28,8 +28,7 @@ namespace Silverback.Tests.TestTypes
             if (serializer == null)
                 serializer = new JsonMessageSerializer();
 
-            var envelope = Envelope.Create(message);
-            var buffer = serializer.Serialize(envelope);
+            var buffer = serializer.Serialize(message);
 
             HandleMessage(buffer);
         }

@@ -17,9 +17,9 @@ namespace Silverback.Messaging.ErrorHandling
             _logger = logger;
         }
 
-        protected override void ApplyPolicyImpl(IEnvelope envelope, Action<IEnvelope> handler, Exception exception)
+        protected override void ApplyPolicy(IMessage message, Action<IMessage> messageHandler, Exception exception)
             => _logger.LogWarning(
-                $"The message '{envelope.Message.Id}' couldn't be successfully " +
+                $"The message {message.GetTraceString()} couldn't be successfully " +
                 $"processed and will be skipped.");
     }
 }

@@ -8,6 +8,6 @@ namespace Silverback.Messaging.ErrorHandling
     /// </summary>
     public interface IErrorPolicy
     {
-        void TryHandleMessage(IEnvelope envelope, Action<IEnvelope> messageHandler);
+        void TryHandleMessage(IMessage message, Action<IMessage> messageHandler);
     }
 }

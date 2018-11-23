@@ -1,7 +1,10 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Threading.Tasks;
+using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.TestTypes;
+using Silverback.Tests.TestTypes.Domain;
 
 namespace Silverback.Tests.Messaging.Broker
 {
@@ -13,7 +16,7 @@ namespace Silverback.Tests.Messaging.Broker
         [SetUp]
         public void Setup()
         {
-            _broker = new TestBroker(new JsonMessageSerializer());
+            _broker = new TestBroker();
         }
 
         [Test]
@@ -37,7 +40,7 @@ namespace Silverback.Tests.Messaging.Broker
         public void GetProducerForDifferentEndpointTest()
         {
             var producer = _broker.GetConsumer(TestEndpoint.Default);
-            var producer2 = _broker.GetConsumer(TestEndpoint.Create("test2"));
+            var producer2 = _broker.GetConsumer(new TestEndpoint("test2"));
 
             Assert.That(producer2, Is.Not.SameAs(producer));
         }
@@ -63,9 +66,34 @@ namespace Silverback.Tests.Messaging.Broker
         public void GetConsumerForDifferentEndpointTest()
         {
             var consumer = _broker.GetConsumer(TestEndpoint.Default);
-            var consumer2 = _broker.GetConsumer(TestEndpoint.Create("test2"));
+            var consumer2 = _broker.GetConsumer(new TestEndpoint("test2"));
 
             Assert.That(consumer2, Is.Not.SameAs(consumer));
         }
+
+        [Test]
+        public void Produce_IntegrationMessage_IdIsSet()
+        {
+            var producer = _broker.GetProducer(TestEndpoint.Default);
+
+            var message = new TestEventOne();
+
+            producer.Produce(message);
+
+            Assert.That(message.Id, Is.Not.EqualTo(Guid.Empty));
+        }
+
+        [Test]
+        public async Task ProduceAsync_IntegrationMessage_IdIsSet()
+        {
+            var producer = _broker.GetProducer(TestEndpoint.Default);
+
+            var message = new TestEventOne();
+
+            await producer.ProduceAsync(message);
+
+            Assert.That(message.Id, Is.Not.EqualTo(Guid.Empty));
+        }
+
     }
 }

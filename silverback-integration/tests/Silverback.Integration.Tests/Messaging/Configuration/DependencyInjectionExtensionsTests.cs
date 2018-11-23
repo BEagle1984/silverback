@@ -65,22 +65,6 @@ namespace Silverback.Tests.Messaging.Configuration
         }
 
         [Test]
-        public void DefaultSerializerTest()
-        {
-            _services.AddBroker<TestBroker>(options => { });
-
-            Assert.That(GetBroker().Serializer, Is.InstanceOf<JsonMessageSerializer>());
-        }
-
-        [Test]
-        public void UseSerializerTest()
-        {
-            _services.AddBroker<TestBroker>(options => options.UseSerializer<FakeSerializer>());
-
-            Assert.That(GetBroker().Serializer, Is.InstanceOf<FakeSerializer>());
-        }
-
-        [Test]
         public void AddOutboundTest()
         {
             _services.AddBroker<TestBroker>(options => options.AddOutboundConnector());
@@ -134,8 +118,8 @@ namespace Silverback.Tests.Messaging.Configuration
             _services.AddBroker<TestBroker>(options => options.AddOutboundConnector());
 
             GetOutboundRouting()
-                .Add<TestEventOne>(TestEndpoint.Create("test1"))
-                .Add<IIntegrationEvent>(TestEndpoint.Create("test2"));
+                .Add<TestEventOne>(new TestEndpoint("test1"))
+                .Add<IIntegrationEvent>(new TestEndpoint("test2"));
 
             // -> to both endpoints
             GetPublisher().Publish(new TestEventOne());

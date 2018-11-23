@@ -24,7 +24,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
             .AddScoped<ISubscriber, TranslateUseCase>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
-            .AddOutbound<IIntegrationEvent>(FileSystemEndpoint.Create("simple-events", Configuration.FileSystemBrokerBasePath));
+            .AddOutbound<IIntegrationEvent>(new FileSystemEndpoint("simple-events", Configuration.FileSystemBrokerBasePath));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

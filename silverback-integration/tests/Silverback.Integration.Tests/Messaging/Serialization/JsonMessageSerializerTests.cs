@@ -12,16 +12,13 @@ namespace Silverback.Tests.Messaging.Serialization
         public void SerializeDeserializeTest()
         {
             var message = new TestEventOne {Content = "the message"};
-            var envelope = Envelope.Create(message);
 
             var serializer = new JsonMessageSerializer();
 
-            var serialized = serializer.Serialize(envelope);
+            var serialized = serializer.Serialize(message);
 
-            var envelope2 = serializer.Deserialize(serialized);
-            var message2 = envelope2?.Message as TestEventOne;
+            var message2 = serializer.Deserialize(serialized) as TestEventOne;
 
-            Assert.That(envelope2, Is.Not.Null);
             Assert.That(message2, Is.Not.Null);
             Assert.That(message2.Content, Is.EqualTo(message.Content));
         }

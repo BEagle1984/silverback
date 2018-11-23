@@ -58,16 +58,16 @@ namespace Silverback.Integration.FileSystem.TestConsole
             }
         }
 
-        private FileSystemBroker GetBroker() => new FileSystemBroker(new JsonMessageSerializer(), NullLoggerFactory.Instance);
+        private FileSystemBroker GetBroker() => new FileSystemBroker(NullLoggerFactory.Instance);
 
         private void Produce(string topicName, string messageContent)
         {
             var message = new TestMessage { Content = messageContent };
-            var endpoint = FileSystemEndpoint.Create(topicName, BasePath);
+            var endpoint = new FileSystemEndpoint(topicName, BasePath);
 
             using (var broker = GetBroker())
             {
-                broker.GetProducer(endpoint).Produce(Envelope.Create(message));
+                broker.GetProducer(endpoint).Produce(message);
             }
 
             WriteSuccess($"Successfully produced message {message.Id} to topic '{topicName}'.");
@@ -75,7 +75,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
 
         private void Consume(string topicName)
         {
-            var endpoint = FileSystemEndpoint.Create(topicName, BasePath);
+            var endpoint = new FileSystemEndpoint(topicName, BasePath);
 
             using (var broker = GetBroker())
             {
@@ -87,7 +87,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
 
                 consumer.Received += (_, e) =>
                 {
-                    var message = (TestMessage)e.Message;
+                    var message = (TestMessage)e;
                     WriteSuccess($"Received message {message.Id} from topic '{topicName}' with content '{message.Content}'.");
                 };
 

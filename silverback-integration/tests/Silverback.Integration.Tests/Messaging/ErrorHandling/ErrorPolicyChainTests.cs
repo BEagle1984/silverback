@@ -37,7 +37,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 testPolicies[4]);
             
             chain.TryHandleMessage(
-                Envelope.Create(new TestEventOne()),
+                new TestEventOne(),
                 _ => throw new Exception("retry, please"));
 
             Assert.That(testPolicies.Count(x => x.Applied), Is.EqualTo(1));
@@ -56,7 +56,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 testPolicy);
 
             chain.TryHandleMessage(
-                Envelope.Create(new TestEventOne()),
+                new TestEventOne(),
                 _ => throw new Exception("retry, please"));
 
             Assert.That(testPolicy.Applied);
@@ -73,7 +73,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 testPolicy);
 
             chain.TryHandleMessage(
-                Envelope.Create(new TestEventOne()),
+                new TestEventOne(),
                 _ =>
                 {
                     tryCount++;
@@ -94,7 +94,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 _errorPolicyBuilder.Skip());
 
             chain.TryHandleMessage(
-                Envelope.Create(new TestEventOne()),
+                new TestEventOne(),
                 _ =>
                 {
                     tryCount++;
@@ -114,7 +114,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 _errorPolicyBuilder.Skip());
 
             chain.TryHandleMessage(
-                Envelope.Create(new TestEventOne()),
+                new TestEventOne(),
                 _ =>
                 {
                     tryCount++;

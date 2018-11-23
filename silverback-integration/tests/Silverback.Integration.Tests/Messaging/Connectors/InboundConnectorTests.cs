@@ -34,7 +34,7 @@ namespace Silverback.Tests.Messaging.Connectors
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             services.AddSingleton<IPublisher, Publisher>();
 
-            _broker = new TestBroker(new JsonMessageSerializer());
+            _broker = new TestBroker();
             services.AddSingleton<IBroker>(_broker);
 
             var serviceProvider = services.BuildServiceProvider();
@@ -78,13 +78,13 @@ namespace Silverback.Tests.Messaging.Connectors
             _testSubscriber.MustFailCount = 3;
             _connector.Bind(TestEndpoint.Default, _errorPolicyBuilder.Chain(
                 _errorPolicyBuilder.Retry(1),
-                _errorPolicyBuilder.Move(TestEndpoint.Create("bad"))));
+                _errorPolicyBuilder.Move(new TestEndpoint("bad"))));
             _broker.Connect();
 
             var consumer = (TestConsumer)_broker.GetConsumer(TestEndpoint.Default);
             consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
 
-            var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Create("bad"));
+            var producer = (TestProducer)_broker.GetProducer(new TestEndpoint("bad"));
 
             Assert.That(_testSubscriber.FailCount, Is.EqualTo(2));
             Assert.That(producer.ProducedMessages.Count, Is.EqualTo(1));
