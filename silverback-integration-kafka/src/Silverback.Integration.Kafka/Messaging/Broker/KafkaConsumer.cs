@@ -1,42 +1,31 @@
-﻿using Common.Logging;
-using Confluent.Kafka;
+﻿using Confluent.Kafka;
 using Confluent.Kafka.Serialization;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <inheritdoc />
     public class KafkaConsumer : Consumer
     {
-        private bool _disconnected;
-        private readonly KafkaEndpoint _endpoint;
-        private Consumer<byte[], byte[]> _consumer;
-        private readonly ILog _log;
+        private Confluent.Kafka.Consumer<byte[], byte[]> _consumer;
+        private readonly ILogger<KafkaConsumer> _logger;
 
         /// <inheritdoc />
-        public KafkaConsumer(IBroker broker, KafkaEndpoint endpoint) :
-            base(broker,endpoint)
+        public KafkaConsumer(IBroker broker, KafkaEndpoint endpoint, ILogger<KafkaConsumer> logger) :
+            base(broker,endpoint, logger)
         {
-            _endpoint = endpoint;
-            _log = LogManager.GetLogger<KafkaConsumer>();
+            _logger = logger;
         }
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is autocommit enabled.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is autocommit enabled; otherwise, <c>false</c>.
-        /// </value>
-        private bool IsAutocommitEnabled =>
-            _endpoint.Configuration.ContainsKey("enable.auto.commit") && (bool)_endpoint.Configuration["enable.auto.commit"];
-
+        public new KafkaEndpoint Endpoint => (KafkaEndpoint) base.Endpoint;
 
         internal void Connect()
         {
-            if (_consumer != null) return;
+            if (_consumer != null)
+                return;
 
-            _consumer = new Consumer<byte[], byte[]>(_endpoint.Configuration,
+            _consumer = new Confluent.Kafka.Consumer<byte[], byte[]>(Endpoint.Configuration,
                 new ByteArrayDeserializer(),
                 new ByteArrayDeserializer());
 
@@ -82,7 +71,7 @@ namespace Silverback.Messaging.Broker
         /// <returns></returns>
         private async Task StartConsuming()
         {            
-            while (!_disconnected)
+            while (Broker.IsConnected)
             {
                 if (!_consumer.Consume(out var message, TimeSpan.FromMilliseconds(_endpoint.TimeoutPollBlock)))
                     continue;

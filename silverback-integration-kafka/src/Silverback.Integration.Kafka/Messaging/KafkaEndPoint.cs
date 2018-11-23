@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Serialization;
 
 
 namespace Silverback.Messaging
@@ -9,9 +10,6 @@ namespace Silverback.Messaging
     /// <inheritdoc cref="IEndpoint"/>
     public sealed class KafkaEndpoint : IEndpoint, IEquatable<KafkaEndpoint>
     {
-        /// <summary>
-        /// The hash code referer.
-        /// </summary>
         private readonly string _hashCodeReferer;
 
         /// <summary>
@@ -44,16 +42,19 @@ namespace Silverback.Messaging
         /// <param name="commitOffset">The commit offset.</param>
         /// <param name="brokerName">Name of the broker.</param>
         /// <returns></returns>
-        public static KafkaEndpoint Create(string name, Dictionary<string, object> configs, int pollTimeOut = 100, int commitOffset = 1, string brokerName = null)
+        public static KafkaEndpoint Create(string name, KafkaEndpointConfiguration configurationDictionary, int pollTimeOut = 100, int commitOffset = 1)
         {
-            return new KafkaEndpoint(name, configs, pollTimeOut, commitOffset, brokerName);
+            return new KafkaEndpoint(name, configurationDictionary, pollTimeOut, commitOffset, brokerName);
         }
 
         #region public properties
+
         /// <inheritdoc/>
         public string Name { get; set; }
-        
+
         /// <inheritdoc/>
+        public IMessageSerializer Serializer { get; set; }
+
         public string BrokerName { get; set; }
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace Silverback.Messaging
         /// <value>
         /// The configuration.
         /// </value>
-        public Dictionary<string, object> Configuration { get; set; }
+        public KafkaEndpointConfiguration Configuration { get; set; }
         
         /// <summary>
         /// Define the number of message processed before committing the offset to the server.

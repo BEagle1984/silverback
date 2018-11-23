@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Confluent.Kafka.Serialization;
 
 namespace Silverback.Messaging.Broker
 {
@@ -37,7 +38,7 @@ namespace Silverback.Messaging.Broker
         public KafkaProducer(IBroker broker, KafkaEndpoint endpoint) : base(broker, endpoint)
         {
             _endpoint = endpoint;
-            _producerFactory =  () => new KafkaSerializingProducer(_endpoint.Configuration);
+            _producerFactory =  () => new KafkaSerializingProducer(_endpoint.Configuration, new ByteArraySerializer(), new ByteArraySerializer());
         }
 
         /// <inheritdoc />
