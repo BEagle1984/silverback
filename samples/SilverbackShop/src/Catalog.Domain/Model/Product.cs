@@ -2,6 +2,7 @@
 using Common.Domain;
 using Silverback.Domain;
 using System.ComponentModel.DataAnnotations;
+using Common.Domain.Model;
 using SilverbackShop.Catalog.Domain.Events;
 
 namespace SilverbackShop.Catalog.Domain.Model
@@ -25,7 +26,6 @@ namespace SilverbackShop.Catalog.Domain.Model
         {
             return new Product
             {
-                Id = Guid.NewGuid(),
                 Status = ProductStatus.New,
                 SKU = sku,
                 DisplayName = displayName,

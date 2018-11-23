@@ -8,13 +8,14 @@
     <Description>Build a data access layer to be used with the Silverback framework.</Description>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback-core</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/BEagle1984/silverback-core/blob/master/LICENSE</PackageLicenseUrl>
-    <Version>1.0.5</Version>
+    <Version>0.1.0.11</Version>
     <RootNamespace>Silverback.EntityFrameworkCore</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Core.EntityFrameworkCore.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
+    <NoWarn>1701;1702;S125;CS1591;S1172</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -22,8 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
-    <PackageReference Include="Silverback.Core" Version="1.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
+    <PackageReference Include="Silverback.Core" Version="0.1.0.27" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -12,7 +13,7 @@ namespace Silverback.Tests.TestTypes
         public bool IsReady { get; set; }
 
         public TestConsumer(IBroker broker, IEndpoint endpoint) 
-            : base(broker, endpoint)
+            : base(broker, endpoint, new NullLogger<TestConsumer>())
         {
         }
 

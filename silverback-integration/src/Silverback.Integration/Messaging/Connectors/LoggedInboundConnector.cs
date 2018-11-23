@@ -1,0 +1,51 @@
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
+
+namespace Silverback.Messaging.Connectors
+{
+    /// <summary>
+    /// Subscribes to a message broker and forwards the incoming integration messages to the internal bus.
+    /// This implementation logs the incoming messages and prevents duplicated processing of the same message.
+    /// </summary>
+    public class LoggedInboundConnector : InboundConnector
+    {
+        private readonly ILogger<LoggedInboundConnector> _logger;
+
+        public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger)
+            : base(broker, serviceProvider, logger)
+        {
+            _logger = logger;
+        }
+
+        protected override void RelayMessage(IIntegrationMessage message, IEndpoint sourceEndpoint, IPublisher publisher, IServiceProvider serviceProvider)
+        {
+            var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
+
+            if (inboundLog.Exists(message, sourceEndpoint))
+            {
+                _logger.LogInformation($"Message '{message.Id}' is being skipped since it was already processed.");
+                return;
+            }
+
+            inboundLog.Add(message, sourceEndpoint);
+
+            try
+            {
+                base.RelayMessage(message, sourceEndpoint, publisher, serviceProvider);
+                inboundLog.Commit();
+            }
+            catch (Exception)
+            {
+                // TODO: Test exception case
+                inboundLog.Rollback();
+                throw;
+            }
+        }
+    }
+}

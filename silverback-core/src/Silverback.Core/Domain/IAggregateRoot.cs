@@ -1,7 +1,7 @@
 ﻿namespace Silverback.Domain
 {
     /// <summary>
-    /// Marks an aggregate root.
+    /// This empty interface has no other purpose than help recognizing the aggregate root.
     /// </summary>
     public interface IAggregateRoot
     {

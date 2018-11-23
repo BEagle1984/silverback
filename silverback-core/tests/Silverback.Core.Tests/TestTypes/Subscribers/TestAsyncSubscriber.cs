@@ -1,25 +1,21 @@
-﻿using System;
+﻿ using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
+using Silverback.Tests.TestTypes.Messages;
 
 namespace Silverback.Tests.TestTypes.Subscribers
 {
-    public class TestAsyncSubscriber : AsyncSubscriber<IMessage>, IDisposable
+    public class TestAsyncSubscriber : ISubscriber
     {
-        public int Handled { get; private set; }
+        public int ReceivedMessagesCount { get; private set; }
 
-        public bool Disposed { get; private set; }
-
-        public override async Task HandleAsync(IMessage message)
+        [Subscribe]
+        public async Task OnTestMessageReceivedAsync(ITestMessage message)
         {
             await Task.Delay(1);
-            Handled++;
-        }
-
-        public void Dispose()
-        {
-            Disposed = true;
+            ReceivedMessagesCount++;
         }
     }
 }

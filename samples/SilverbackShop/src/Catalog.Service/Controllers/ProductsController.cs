@@ -8,6 +8,7 @@ using SilverbackShop.Catalog.Domain.Model;
 using SilverbackShop.Catalog.Domain.Repositories;
 using SilverbackShop.Catalog.Infrastructure;
 using SilverbackShop.Catalog.Service.Dto;
+using SilverbackShop.Catalog.Service.Queries;
 
 namespace SilverbackShop.Catalog.Service.Controllers
 {
@@ -15,22 +16,24 @@ namespace SilverbackShop.Catalog.Service.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductsRepository _repository;
+        private readonly IProductsQueries _queries;
 
-        public ProductsController(IProductsRepository repository)
+        public ProductsController(IProductsRepository repository, IProductsQueries queries)
         {
             _repository = repository;
+            _queries = queries;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _repository.GetAllAsync());
+            return Ok(await _queries.GetAllAsync());
         }
 
         [HttpGet("discontinued")]
         public async Task<IActionResult> GetDiscontinued()
         {
-            return Ok(await _repository.GetAllDiscontinuedAsync());
+            return Ok(await _queries.GetAllDiscontinuedAsync());
         }
 
         [HttpGet("{sku}")]
@@ -40,9 +43,9 @@ namespace SilverbackShop.Catalog.Service.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]NewProductDto dto)
+        public async Task<IActionResult> Post([FromBody]NewProductRequest request)
         {
-            var product = Product.Create(dto.SKU, dto.DisplayName, dto.UnitPrice, dto.Description);
+            var product = Product.Create(request.SKU, request.DisplayName, request.UnitPrice, request.Description);
 
             _repository.Add(product);
 
@@ -52,11 +55,11 @@ namespace SilverbackShop.Catalog.Service.Controllers
         }
 
         [HttpPut("{sku}")]
-        public async Task<IActionResult> Put(string sku, [FromBody]UpdateProductDto dto)
+        public async Task<IActionResult> Put(string sku, [FromBody]UpdateProductRequest request)
         {
             var product = await _repository.FindBySkuAsync(sku);
 
-            product.Update(dto.DisplayName, dto.UnitPrice, dto.Description);
+            product.Update(request.DisplayName, request.UnitPrice, request.Description);
 
             await _repository.UnitOfWork.SaveChangesAsync();
 

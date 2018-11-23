@@ -3,7 +3,7 @@ using Silverback.Domain;
 
 namespace Silverback.Core.EntityFrameworkCore.Tests.TestTypes
 {
-    public class TestAggregateRoot : Entity, IAggregateRoot
+    public class TestAggregateRoot : DomainEntity, IAggregateRoot
     {
         [Key]
         public int Id { get; set; }

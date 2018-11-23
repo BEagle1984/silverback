@@ -1,4 +1,5 @@
-﻿using Silverback.Messaging.Broker;
+﻿using System;
+using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging
 {
@@ -11,11 +12,5 @@ namespace Silverback.Messaging
         /// Gets or sets the topic/queue name.
         /// </summary>
         string Name { get; }
-
-        /// <summary>
-        /// Gets or sets the name of the broker to be used.
-        /// If not set the default one will be used.
-        /// </summary>
-        string BrokerName { get; }
     }
 }

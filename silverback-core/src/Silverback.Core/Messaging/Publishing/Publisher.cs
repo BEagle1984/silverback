@@ -1,218 +1,68 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Messaging.Configuration;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Publishing
 {
-    /// <summary>
-    /// Publishes all kind of <see cref="IMessage"/> to the bus.
-    /// </summary>
-    /// <seealso cref="Silverback.Messaging.Publishing.IPublisher" />
     public class Publisher : IPublisher
     {
-        private readonly IBus _bus;
+        private readonly ILogger<Publisher> _logger;
+        private readonly SubscribedMethodProvider _subscribedMethodsProvider;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Publisher"/> class.
-        /// </summary>
-        /// <param name="bus">The bus.</param>
-        public Publisher(IBus bus)
+        public Publisher(IServiceProvider serviceProvider, ILogger<Publisher> logger)
         {
-            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
+            _subscribedMethodsProvider = new SubscribedMethodProvider(serviceProvider);
+            _logger = logger;
         }
 
-        #region Events
-
-        /// <summary>
-        /// Publishes the specified event to the bus.
-        /// </summary>
-        /// <typeparam name="TEvent"></typeparam>
-        /// <param name="message">The event to be published.</param>
-        public void Publish<TEvent>(TEvent message)
-            where TEvent : IEvent
+        public void Publish(IMessage message)
         {
-            _bus.Publish(message);
+            if (message == null) return;
+
+            _logger.LogTrace($"Publishing message of type '{message.GetType().FullName}'...");
+
+            _subscribedMethodsProvider.GetSubscribedMethods(message)
+                .ForEach(method => InvokeMethodAndRepublishResult(method, message, false).Wait());
         }
 
-        /// <summary>
-        /// Asynchronously publishes the specified event to the bus.
-        /// </summary>
-        /// <typeparam name="TEvent"></typeparam>
-        /// <param name="message">The event to be published.</param>
-        /// <returns></returns>
-        public Task PublishAsync<TEvent>(TEvent message)
-            where TEvent : IEvent
+        public Task PublishAsync(IMessage message)
         {
-            return _bus.PublishAsync(message);
+            if (message == null) return Task.CompletedTask;
+
+            _logger.LogTrace($"Publishing message of type '{message.GetType().FullName}'...");
+
+            return _subscribedMethodsProvider.GetSubscribedMethods(message)
+                .ForEachAsync(method => InvokeMethodAndRepublishResult(method, message, true));
         }
 
-        #endregion
-
-        #region Commands
-
-        /// <summary>
-        /// Sends the specified command to the bus.
-        /// </summary>
-        /// <typeparam name="TCommand">The type of the command.</typeparam>
-        /// <param name="message">The command to be sent.</param>
-        public void Send<TCommand>(TCommand message)
-            where TCommand : ICommand
+        private async Task InvokeMethodAndRepublishResult(SubscribedMethod method, IMessage message, bool executeAsync)
         {
-            _bus.Publish(message);
+            var resultMessages = await InvokeMethodAndGetResult(method, message, executeAsync);
+
+            if (executeAsync)
+                await resultMessages.ForEachAsync(PublishAsync);
+            else
+                resultMessages.ForEach(Publish);
         }
 
-        /// <summary>
-        /// Sends the specified command to the bus.
-        /// </summary>
-        /// <typeparam name="TCommand">The type of the command.</typeparam>
-        /// <param name="message">The command to be sent.</param>
-        /// <returns></returns>
-        public Task SendAsync<TCommand>(TCommand message)
-            where TCommand : ICommand
+        private async Task<IEnumerable<IMessage>> InvokeMethodAndGetResult(SubscribedMethod method, IMessage message, bool executeAsync)
         {
-            return _bus.PublishAsync(message);
+            _logger.LogTrace($"Invoking subscribed method {method.MethodInfo.DeclaringType.FullName}.{method.MethodInfo.Name}...");
+
+            var result = await SubscribedMethodInvoker.InvokeAndGetResult(method, message, executeAsync);
+
+            if (result is IMessage returnMessage)
+                return new[] { returnMessage };
+
+            if (result is IEnumerable<IMessage> returnMessages)
+                return returnMessages;
+
+            return Enumerable.Empty<IMessage>();
         }
-
-        #endregion
-
-        #region Requests
-
-        /// <summary>
-        /// Sends the specified request to the bus and wait for the response to be received.
-        /// </summary>
-        /// <typeparam name="TRequest">The type of the request.</typeparam>
-        /// <typeparam name="TResponse">The type of the response.</typeparam>
-        /// <param name="message">The request.</param>
-        /// <param name="timeout">The timeout. If not specified, the default timeout of 2 seconds will be used.</param>
-        /// <returns></returns>
-        public TResponse GetResponse<TRequest, TResponse>(TRequest message, TimeSpan? timeout = null)
-            where TRequest : IRequest
-            where TResponse : IResponse
-        {
-            return GetResponse<TRequest, TResponse>(_bus, message, timeout);
-        }
-
-        /// <summary>
-        /// Sends the specified request to the bus and wait for the response to be received.
-        /// </summary>
-        /// <typeparam name="TRequest">The type of the request.</typeparam>
-        /// <typeparam name="TResponse">The type of the response.</typeparam>
-        /// <param name="message">The request.</param>
-        /// <param name="timeout">The timeout. If not specified, the default timeout of 2 seconds will be used.</param>
-        /// <returns></returns>
-        public Task<TResponse> GetResponseAsync<TRequest, TResponse>(TRequest message, TimeSpan? timeout = null)
-            where TRequest : IRequest
-            where TResponse : IResponse
-        {
-            return GetResponseAsync<TRequest, TResponse>(_bus, message, timeout);
-        }
-
-        /// <summary>
-        /// Sends the specified request to the bus and wait for the response to be received on another bus.
-        /// </summary>
-        /// <typeparam name="TRequest">The type of the request.</typeparam>
-        /// <typeparam name="TResponse">The type of the response.</typeparam>
-        /// <param name="replyBus">The reply bus.</param>
-        /// <param name="message">The request.</param>
-        /// <param name="timeout">The timeout. If not specified, the default timeout of 2 seconds will be used.</param>
-        /// <returns></returns>
-        public TResponse GetResponse<TRequest, TResponse>(IBus replyBus, TRequest message, TimeSpan? timeout = null)
-            where TRequest : IRequest
-            where TResponse : IResponse
-        {
-            return GetResponseAsync<TRequest, TResponse>(replyBus, message, timeout).Result;
-        }
-
-        /// <summary>
-        /// Sends the specified request to the bus and wait for the response to be received on another bus.
-        /// </summary>
-        /// <typeparam name="TRequest">The type of the request.</typeparam>
-        /// <typeparam name="TResponse">The type of the response.</typeparam>
-        /// <param name="replyBus">The reply bus.</param>
-        /// <param name="message">The request.</param>
-        /// <param name="timeout">The timeout. If not specified, the default timeout of 2 seconds will be used.</param>
-        /// <returns></returns>
-        /// <exception cref="TimeoutException"></exception>
-        public async Task<TResponse> GetResponseAsync<TRequest, TResponse>(IBus replyBus, TRequest message, TimeSpan? timeout = null)
-            where TRequest : IRequest
-            where TResponse : IResponse
-        {
-            timeout = timeout ?? TimeSpan.FromSeconds(2);
-
-            CheckRequestMessage(message);
-
-            TResponse response = default;
-
-            var replySubscriber = replyBus.Subscribe(
-                new GenericSubscriber<TResponse>(
-                    m => response = m,
-                    m => m.RequestId == message.RequestId));
-
-            try
-            {
-                _bus.Publish(message);
-
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
-
-                while (response == null)
-                {
-                    if (stopwatch.Elapsed >= timeout)
-                        throw new TimeoutException($"The request with id {message.RequestId} was not replied in the allotted time.");
-
-                    await Task.Delay(50); // TODO: Check this
-                }
-
-                stopwatch.Stop();
-
-                return response;
-            }
-            finally
-            {
-                replyBus.Unsubscribe(replySubscriber);
-            }
-        }
-
-        /// <summary>
-        /// Checks the request message ensuring that the RequestId is set.
-        /// </summary>
-        /// <typeparam name="TRequest">The type of the request.</typeparam>
-        /// <param name="message">The message.</param>
-        /// <exception cref="ArgumentNullException">message</exception>
-        private void CheckRequestMessage<TRequest>(TRequest message) where TRequest : IRequest
-        {
-            if (message == null) throw new ArgumentNullException(nameof(message));
-
-            if (message.RequestId == Guid.Empty)
-                message.RequestId = Guid.NewGuid();
-        }
-
-        /// <summary>
-        /// Sends the specified response to the bus.
-        /// </summary>
-        /// <typeparam name="TResponse">The type of the response.</typeparam>
-        /// <param name="message">The response.</param>
-        public void Reply<TResponse>(TResponse message)
-            where TResponse : IResponse
-        {
-            _bus.Publish(message);
-        }
-
-        /// <summary>
-        /// Sends the specified response to the bus.
-        /// </summary>
-        /// <typeparam name="TResponse">The type of the response.</typeparam>
-        /// <param name="message">The response.</param>
-        /// <returns></returns>
-        public Task ReplyAsync<TResponse>(TResponse message)
-            where TResponse : IResponse
-        {
-            return _bus.PublishAsync(message);
-        }
-
-        #endregion
     }
 }

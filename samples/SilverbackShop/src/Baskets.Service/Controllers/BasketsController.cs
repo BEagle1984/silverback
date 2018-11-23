@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SilverbackShop.Baskets.Domain;
 using SilverbackShop.Baskets.Domain.Services;
 using SilverbackShop.Common.Data;
 
@@ -20,13 +21,13 @@ namespace SilverbackShop.Baskets.Service.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            return Ok(await _basketService.GetUserBasket(UserData.DefaultUserId));
+            return Ok(await _basketService.GetOrCreateBasket(UserData.DefaultUserId));
         }
 
         [HttpPost("checkout")]
         public async Task<ActionResult> Checkout()
         {
-            var basket = await _basketService.GetUserBasket(UserData.DefaultUserId);
+            var basket = await _basketService.GetOrCreateBasket(UserData.DefaultUserId);
 
             try
             {

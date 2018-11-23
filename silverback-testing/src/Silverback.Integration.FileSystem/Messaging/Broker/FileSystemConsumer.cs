@@ -1,58 +1,55 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <summary>
-    /// A file system based <see cref="IConsumer" /> implementation.
-    /// </summary>
-    /// <seealso cref="Silverback.Messaging.Broker.Consumer" />
-    /// <seealso cref="Silverback.Messaging.Broker.IConsumer" />
-    /// <seealso cref="System.IDisposable" />
-    public class FileSystemConsumer : Consumer
+    public class FileSystemConsumer : Consumer<FileSystemBroker, FileSystemEndpoint>, IDisposable
     {
-        private FileSystemWatcher _watcher;
+        private FolderWatcher _watcher;
 
-        /// <summary>
-        /// Gets the associated <see cref="T:Silverback.Messaging.Broker.IBroker" />.
-        /// </summary>
-        private new FileSystemBroker Broker => (FileSystemBroker)base.Broker;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FileSystemConsumer"/> class.
-        /// </summary>
-        /// <param name="broker">The broker.</param>
-        /// <param name="endpoint">The endpoint.</param>
-        public FileSystemConsumer(IBroker broker, IEndpoint endpoint) 
-            : base(broker, endpoint)
+        public FileSystemConsumer(IBroker broker, IEndpoint endpoint, ILogger<FileSystemConsumer> logger)
+            : base(broker, endpoint, logger)
         {
         }
-
+        
         internal void Connect()
         {
             if (_watcher != null) throw new InvalidOperationException("Already connected");
 
-            var topicPath = Broker.GetTopicPath(Endpoint.Name);
+            Endpoint.EnsurePathExists();
 
-            _watcher = new FileSystemWatcher(topicPath)
-            {
-                Filter = "*.txt",
-                EnableRaisingEvents = true
-            };
+            _watcher = Endpoint.UseFileSystemWatcher
+                ? (FolderWatcher) new FileSystemFolderWatcher(Endpoint.Path)
+                : (FolderWatcher) new PollingFolderWatcher(Endpoint.Path);
 
-            _watcher.Created += (sender, args) =>
+            _watcher.FileCreated += (sender, path) =>
             {
-                //try
+                var acknowledged = false;
+
+                while (!acknowledged)
                 {
-                    var buffer = ReadFile(args.FullPath);
-                    HandleMessage(buffer);
-                }
-                //catch
-                {
-                    // TODO: Logging and stuff but...what do?
+                    acknowledged = TryHandleMessage(path);
+
+                    if (!acknowledged)
+                        Thread.Sleep(100); // Wait a bit before a retry.
                 }
             };
+        }
+
+        private bool TryHandleMessage(string path)
+        {
+            try
+            {
+                var buffer = ReadFileWithRetry(path);
+                HandleMessage(buffer);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         internal void Disconnect()
@@ -61,12 +58,7 @@ namespace Silverback.Messaging.Broker
             _watcher = null;
         }
 
-        /// <summary>
-        /// Reads the file retrying 5 times (try to avoid concurrency issues).
-        /// </summary>
-        /// <param name="path">The path.</param>
-        /// <returns></returns>
-        private byte[] ReadFile(string path)
+        private byte[] ReadFileWithRetry(string path)
         {
             int retry = 5;
             while (true)
@@ -75,10 +67,10 @@ namespace Silverback.Messaging.Broker
                 {
                     return File.ReadAllBytes(path);
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
                     if (retry == 0)
-                        throw ex;
+                        throw;
                 }
 
                 Thread.Sleep(50);
@@ -86,18 +78,10 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected override void Dispose(bool disposing)
+        public void Dispose()
         {
-            if (disposing)
-            {
-                Disconnect();
-            }
-
-            base.Dispose(disposing);
+            _watcher?.Dispose();
+            _watcher = null;
         }
     }
 }

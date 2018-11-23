@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Domain.Services;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Baskets.Domain.Repositories;
 
 namespace SilverbackShop.Baskets.Domain.Services
 {
-    public class CheckoutService
+    public class CheckoutService : IDomainService
     {
         private readonly IBasketsRepository _repository;
         private readonly InventoryService _inventoryService;
 
-        public CheckoutService(IBasketsRepository repository, InventoryService inventoryService)
+        public CheckoutService(InventoryService inventoryService, IBasketsRepository repository)
         {
-            _repository = repository;
             _inventoryService = inventoryService;
+            _repository = repository;
         }
 
         public async Task Checkout(Basket basket)
@@ -35,9 +36,9 @@ namespace SilverbackShop.Baskets.Domain.Services
 
             foreach (var item in basket.Items)
             {
-                if (!await _inventoryService.CheckIsInStock(item.ProductId, item.Quantity))
+                if (!await _inventoryService.CheckIsInStock(item.SKU, item.Quantity))
                 {
-                    inventoryErrors.Add($"The product {item.ProductId} is not available in the desired quantity.");
+                    inventoryErrors.Add($"The product '{item.SKU}' is not available in the desired quantity.");
                 }
             }
 

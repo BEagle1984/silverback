@@ -14,7 +14,8 @@ $sources =
     ("Silverback.Core", "..\silverback-core\src\Silverback.Core\bin\Debug"),
     ("Silverback.Core.EntityFrameworkCore", "..\silverback-core\src\Silverback.Core.EntityFrameworkCore\bin\Debug"),
 	("Silverback.Integration", "..\silverback-integration\src\Silverback.Integration\bin\Debug"),
-	("Silverback.Integration.FileSystem", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\Debug")
+    ("Silverback.Integration.EntityFrameworkCore", "..\silverback-integration\src\Silverback.Integration.EntityFrameworkCore\bin\Debug"),
+    ("Silverback.Integration.FileSystem", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\Debug")
 
 function Check-Location()
 {
@@ -47,11 +48,11 @@ function Copy-All()
     foreach ($source in $sources)
     {
         $name = $source[0]
-        $sourcePath = $source[1]
+        $sourcePath = Join-Path $source[1] "\*"
 
         Write-Host "$name" -ForegroundColor Yellow
 
-        Copy-Package $name $sourcePath
+       Copy-Package $name $sourcePath
 
 		if ($clearCache)
 		{
@@ -66,9 +67,29 @@ function Copy-Package([string]$name, [string]$sourcePath)
 
     $destination = Join-Path $repositoryLocation $name
 
-    copy $sourcePath -Destination $destination -Recurse
+    Ensure-Folder-Exists $destination
+
+    Copy-Item $sourcePath -Destination $destination -Recurse
 
     Write-Host "OK" -ForegroundColor Green
+
+    Show-Versions $destination $name
+}
+
+function Ensure-Folder-Exists([string]$path)
+{
+    if(!(Test-Path $path))
+    {
+        New-Item -ItemType Directory -Force -Path $path | Out-Null
+    }
+}
+
+function Show-Versions([string]$path, [string]$packageName)
+{
+    Get-ChildItem $path -Recurse -Filter *.nupkg | 
+    Foreach-Object {
+        Write-Host `t $_.Name.Substring($packageName.Length + 1, $_.Name.Length - $packageName.Length - 7) -ForegroundColor DarkGray
+    }
 }
 
 function Delete-Cache([string]$name)

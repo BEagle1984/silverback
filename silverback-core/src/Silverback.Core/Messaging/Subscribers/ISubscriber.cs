@@ -1,23 +1,15 @@
 ﻿using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Subscribers
 {
     /// <summary>
-    /// Subscribes to the messages published in a bus.
+    /// This empty interface as to be implemented in all classes that contain one or more subscribed methods
+    /// (see <see cref="SubscribeAttribute"/>) and it's sole purpose is to allow dependency injection 
+    /// in the <see cref="IPublisher"/> implementation.
     /// </summary>
     public interface ISubscriber
     {
-        /// <summary>
-        /// Called when a message is published.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        void OnNext(IMessage message);
-
-        /// <summary>
-        /// Called when a message is published asynchronously.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        Task OnNextAsync(IMessage message);
     }
 }
