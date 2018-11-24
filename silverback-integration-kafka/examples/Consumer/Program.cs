@@ -1,26 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using Messages;
-using Silverback;
+﻿using Messages;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
+using System;
+using System.Collections.Generic;
 
 namespace Consumer
 {
     internal static class Program
     {
+        private static KafkaBroker _broker;
 
         private static void Main()
         {
+            Console.Clear();
+
             PrintHeader();
 
-            using (var bus = new Bus())
+            Connect();
+            Console.CancelKeyPress += (_, e) => { Disconnect(); };
+
+            while (true)
+                Console.ReadLine();
+        }
+
+        private static void Connect()
+        {
+            _broker = new KafkaBroker(GetLoggerFactory());
+
+            _broker.GetConsumer(new KafkaEndpoint("Topic1")
             {
-                var configurations = new Dictionary<string, object>
+                Configuration = new KafkaConfigurationDictionary
                 {
-                    {"bootstrap.servers", "PLAINTEXT://192.168.99.100:29092"},
+                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
                     {"client.id", "ClientTest"},
                     {"group.id", "advanced-silverback-consumer"},
                     {"enable.auto.commit", true},
@@ -32,24 +46,24 @@ namespace Consumer
                             {"auto.offset.reset", "smallest"}
                         }
                     }
-                };
+                }
+            })
+            .Received += OnMessageReceived;
 
-                bus.Subscribe(new Subscriber());
+            _broker.Connect();
+        }
+        private static void Disconnect()
+        {
+            _broker.Disconnect();
+            _broker.Dispose();
+        }
 
-                bus.Config()
-                    .ConfigureBroker<KafkaBroker>(x => { })
-                    .WithFactory(t => (IInboundAdapter) Activator.CreateInstance(t))
-                    .AddInbound(new SimpleInboundAdapter(), KafkaEndpoint.Create("Topic1", configurations))
-                    .ConnectBrokers();
-
-                Console.CancelKeyPress += (_, e) =>
-                {
-                    e.Cancel = true;
-                    bus.DisconnectBrokers();
-                };
-
-                Console.ReadLine();
-            }
+        private static void OnMessageReceived(object sender, IMessage message)
+        {
+            Console.WriteLine(
+                message is TestMessage testMessage
+                ? $"[{testMessage.Id}] {testMessage.Text}"
+                : "Received a weird message!");
         }
 
         private static void PrintHeader()
@@ -63,6 +77,15 @@ namespace Consumer
             Console.WriteLine(@" |_|\_\__,_|_| |_|\_\__,_|\_____\___/|_| |_|___/\__,_|_| |_| |_|\___|_|   ");
             Console.ResetColor();            
             Console.WriteLine("\nCtrl-C to quit.\n");
+        }
+
+        private static ILoggerFactory GetLoggerFactory()
+        {
+            var loggerFactory = new LoggerFactory()
+                .AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
+            NLog.LogManager.LoadConfiguration("nlog.config");
+
+            return loggerFactory;
         }
     }
 }

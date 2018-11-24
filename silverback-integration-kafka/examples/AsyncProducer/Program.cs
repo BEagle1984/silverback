@@ -1,85 +1,97 @@
-﻿using System;
+﻿using Messages;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using Silverback.Messaging;
+using Silverback.Messaging.Broker;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Messages;
-using Silverback;
-using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 
 namespace AsyncProducer
 {
     internal static class Program
     {
+        private static KafkaBroker _broker;
+        private static IProducer _producer;
+
         private static void Main()
         {
-            var configurations = new Dictionary<string, object>
+            Console.Clear();
+
+            Connect();
+            Console.CancelKeyPress += (_, e) => { Disconnect(); };
+
+            PrintUsage();
+            HandleInput(_producer);
+        }
+
+        private static void Connect()
+        {
+            _broker = new KafkaBroker(GetLoggerFactory());
+            _broker.Connect();
+
+            _producer = _broker.GetProducer(new KafkaEndpoint("Topic1")
             {
-                { "bootstrap.servers", "PLAINTEXT://192.168.99.100:29092" },
-                { "client.id", "ClientTest" },
-                { "retries", 0 },
-                { "batch.num.messages", 1 },
-                { "socket.blocking.max.ms", 1 },
-                { "socket.nagle.disable", true },
-                { "queue.buffering.max.ms", 0 },
+                Configuration = new KafkaConfigurationDictionary
                 {
-                    "default.topic.config", new Dictionary<string, object>
+                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
+                    {"client.id", "ClientTest"},
+                    {"retries", 0},
+                    {"batch.num.messages", 1},
+                    {"socket.blocking.max.ms", 1},
+                    {"socket.nagle.disable", true},
+                    {"queue.buffering.max.ms", 0},
                     {
-                        { "acks", 0 }
+                        "default.topic.config", new Dictionary<string, object>
+                        {
+                            {"acks", 0}
+                        }
                     }
                 }
-            };
+            });
+        }
 
-            using (var bus = new Bus())
+        private static void Disconnect()
+        {
+            _broker.Disconnect();
+            _broker.Dispose();
+        }
+
+        private static void HandleInput(IProducer producer)
+        {
+            while (true)
             {
-                bus.Subscribe(new SubscriberAsync());
+                Console.Write("> ");
 
-                bus.Config()
-                   .ConfigureBroker<KafkaBroker>(x => { })
-                   .WithFactory(t => (IOutboundAdapter)Activator.CreateInstance(t))
-                   .AddOutbound<TestMessage, SimpleOutboundAdapter>(KafkaEndpoint.Create("Topic1", configurations))
-                   .ConnectBrokers();
-
-                var cancelled = false;
-                Console.CancelKeyPress += (_, e) =>
+                string text;
+                try
                 {
-                    e.Cancel = true; // prevent the process from terminating.
-                    cancelled = true;
-                };
-
-                PrintUsage();
-
-                while (!cancelled)
-                {
-                    Console.Write("> ");
-
-                    string text;
-                    try
-                    {
-                        text = Console.ReadLine();
-                    }
-                    catch (IOException)
-                    {
-                        // IO exception is thrown when ConsoleCancelEventArgs.Cancel == true.
-                        break;
-                    }
-
-                    if (text == null)
-                    {
-                        break;
-                    }
-
-                    bus.PublishAsync(new TestMessage
-                    {
-                        Id = Guid.NewGuid(),
-                        Text = text,
-                        Type = "TestMessage"
-                    }).ConfigureAwait(false);
-                    Console.WriteLine("Message sent to broker");
+                    text = Console.ReadLine();
                 }
+                catch (IOException)
+                {
+                    // IO exception is thrown when ConsoleCancelEventArgs.Cancel == true.
+                    break;
+                }
+
+                if (text == null)
+                {
+                    continue;
+                }
+
+                Produce(producer, text);
             }
+        }
+
+        private static void Produce(IProducer producer, string text)
+        {
+            producer.ProduceAsync(new TestMessage
+            {
+                Id = Guid.NewGuid(),
+                Text = text,
+                Type = "TestMessage"
+            }).Wait();
         }
 
         private static void PrintUsage()
@@ -95,6 +107,15 @@ namespace AsyncProducer
             Console.WriteLine("\nTo post a message:");
             Console.WriteLine("> message<Enter>");
             Console.WriteLine("Ctrl-C to quit.\n");
+        }
+
+        private static ILoggerFactory GetLoggerFactory()
+        {
+            var loggerFactory = new LoggerFactory()
+                .AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
+            NLog.LogManager.LoadConfiguration("nlog.config");
+
+            return loggerFactory;
         }
     }
 }

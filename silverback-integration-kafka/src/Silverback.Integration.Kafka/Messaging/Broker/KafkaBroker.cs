@@ -10,28 +10,23 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public class KafkaBroker : Broker
     {
+        private readonly ILoggerFactory _loggerFactory;
+
         public KafkaBroker(ILoggerFactory loggerFactory) : base(loggerFactory)
         {
+            _loggerFactory = loggerFactory;
         }
 
         protected override Producer InstantiateProducer(IEndpoint endpoint) =>
-            new KafkaProducer(this, (KafkaEndpoint) endpoint);
+            new KafkaProducer(this, (KafkaEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaProducer>());
 
         protected override Consumer InstantiateConsumer(IEndpoint endpoint) =>
-            new KafkaConsumer(this, (KafkaEndpoint) endpoint);
+            new KafkaConsumer(this, (KafkaEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaConsumer>());
 
         protected override void Connect(IEnumerable<IConsumer> consumers) =>
             consumers.Cast<KafkaConsumer>().ToList().ForEach(c => c.Connect());
 
-        // TODO: Check this! Not implemented anymore in the base Broker
-        //protected override void Connect(IEnumerable<IProducer> producers)
-        //    => producers.Cast<KafkaProducer>().ToList().ForEach(c => c.Connect());
-
         protected override void Disconnect(IEnumerable<IConsumer> consumers) =>
             consumers.Cast<KafkaConsumer>().ToList().ForEach(c => c.Disconnect());
-
-        // TODO: Check this! Not implemented anymore in the base Broker
-        //protected override void Disconnect(IEnumerable<IProducer> producer)
-        //    => producer.Cast<KafkaProducer>().ToList().ForEach(c => c.Disconnect());
     }
 }

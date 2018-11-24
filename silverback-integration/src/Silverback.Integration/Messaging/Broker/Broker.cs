@@ -12,8 +12,8 @@ namespace Silverback.Messaging.Broker
     {
         private readonly ILogger<Broker> _logger;
 
-        private ConcurrentDictionary<IEndpoint, Producer> _producersCache = new ConcurrentDictionary<IEndpoint, Producer>();
-        private ConcurrentDictionary<IEndpoint, Consumer> _consumersCache = new ConcurrentDictionary<IEndpoint, Consumer>();
+        private ConcurrentDictionary<IEndpoint, Producer> _producers = new ConcurrentDictionary<IEndpoint, Producer>();
+        private ConcurrentDictionary<IEndpoint, Consumer> _consumers = new ConcurrentDictionary<IEndpoint, Consumer>();
 
         protected readonly ILoggerFactory LoggerFactory;
 
@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Broker
 
         public virtual IProducer GetProducer(IEndpoint endpoint)
         {
-            return _producersCache.GetOrAdd(endpoint, _ =>
+            return _producers.GetOrAdd(endpoint, _ =>
             {
                 _logger?.LogInformation($"Creating new producer for endpoint '{endpoint.Name}'");
                 return InstantiateProducer(endpoint);
@@ -41,14 +41,14 @@ namespace Silverback.Messaging.Broker
         {
             if (!IsConnected)
             {
-                return _consumersCache.GetOrAdd(endpoint, _ =>
+                return _consumers.GetOrAdd(endpoint, _ =>
                 {
                     _logger.LogInformation($"Creating new consumer for endpoint '{endpoint.Name}'");
                     return InstantiateConsumer(endpoint);
                 });
             }
 
-            if (!_consumersCache.TryGetValue(endpoint, out var consumer))
+            if (!_consumers.TryGetValue(endpoint, out var consumer))
                 throw new InvalidOperationException("The broker is already connected. Disconnect it to get a new consumer.");
 
             return consumer;
@@ -64,9 +64,12 @@ namespace Silverback.Messaging.Broker
 
         public void Connect()
         {
+            if (IsConnected)
+                return;
+
             _logger.LogTrace("Connecting to message broker...");
 
-            Connect(_consumersCache.Values);
+            Connect(_consumers.Values);
             IsConnected = true;
 
             _logger.LogTrace("Connected to message broker!");
@@ -76,9 +79,12 @@ namespace Silverback.Messaging.Broker
 
         public void Disconnect()
         {
+            if (!IsConnected)
+                return;
+
             _logger.LogTrace("Disconnecting from message broker...");
 
-            Disconnect(_consumersCache.Values);
+            Disconnect(_consumers.Values);
             IsConnected = false;
 
             _logger.LogTrace("Disconnected from message broker!");
@@ -94,11 +100,11 @@ namespace Silverback.Messaging.Broker
         {
             if (!disposing) return;
 
-            _consumersCache?.Values.OfType<IDisposable>().ForEach(o => o.Dispose());
-            _consumersCache = null;
+            _consumers?.Values.OfType<IDisposable>().ForEach(o => o.Dispose());
+            _consumers = null;
 
-            _producersCache?.Values.OfType<IDisposable>().ForEach(o => o.Dispose());
-            _producersCache = null;
+            _producers?.Values.OfType<IDisposable>().ForEach(o => o.Dispose());
+            _producers = null;
         }
 
         public void Dispose()

@@ -61,7 +61,6 @@ namespace Silverback.Messaging
             {
                 var hashCode = (Name != null ? Name.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Path != null ? Path.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ UseFileSystemWatcher.GetHashCode();
                 return hashCode;
             }
         }
