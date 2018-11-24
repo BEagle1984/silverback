@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common;
@@ -18,21 +19,26 @@ namespace Silverback.Examples.Main.UseCases.Advanced
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus()
-            .AddBroker<FileSystemBroker>();
+            .AddBroker<KafkaBroker>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) { }
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            await broker.GetProducer(CreateEndpoint("legacy-messages"))
+            await broker.GetProducer(CreateEndpoint("silverback-examples-legacy-messages"))
                 .ProduceAsync(new LegacyMessage { Content = "LEGACY - " + DateTime.Now.ToString("HH:mm:ss.fff") });
         }
 
         private IEndpoint CreateEndpoint(string name) =>
-            new FileSystemEndpoint(name, Configuration.FileSystemBrokerBasePath)
+            new KafkaEndpoint(name)
             {
-                Serializer = new LegacyMessageSerializer()
+                Serializer = new LegacyMessageSerializer(),
+                Configuration = new KafkaConfigurationDictionary
+                {
+                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
+                    {"client.id", GetType().FullName}
+                }
             };
     }
 }

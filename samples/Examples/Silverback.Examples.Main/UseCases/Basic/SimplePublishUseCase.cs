@@ -19,10 +19,17 @@ namespace Silverback.Examples.Main.UseCases.Basic
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus()
-            .AddBroker<FileSystemBroker>();
+            .AddBroker<KafkaBroker>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
-            .AddOutbound<IIntegrationEvent>(new FileSystemEndpoint("simple-events", Configuration.FileSystemBrokerBasePath));
+            .AddOutbound<IIntegrationEvent>(new KafkaEndpoint("silverback-examples-events")
+            {
+                Configuration = new KafkaConfigurationDictionary
+                {
+                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
+                    {"client.id", GetType().FullName}
+                }
+            });
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

@@ -42,10 +42,12 @@ namespace Silverback.Messaging.Broker
 
         public void Dispose()
         {
+            // Dispose only if still in cache to avoid ObjectDisposedException
+            if (!ProducersCache.TryRemove(Endpoint.Configuration, out var _))
+                return;
+
             _innerProducer?.Dispose();
             _innerProducer = null;
-
-            ProducersCache.TryRemove(Endpoint.Configuration, out var _);
         }
     }
 }
