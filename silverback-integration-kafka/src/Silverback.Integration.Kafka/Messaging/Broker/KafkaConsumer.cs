@@ -84,7 +84,8 @@ namespace Silverback.Messaging.Broker
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error occurred handling message: {topic} [{partition}] @{offset}. See inner exception for details.", message.Topic, message.Partition, message.Offset);
+                    _logger.LogCritical(ex, "Error occurred handling message: {topic} [{partition}] @{offset}. The consumer will be stopped. See inner exception for details.", message.Topic, message.Partition, message.Offset);
+                    break;
                 }
             }
         }
