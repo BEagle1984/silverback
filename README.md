@@ -1,1 +1,1 @@
-See [https://github.com/BEagle1984/silverback/wiki]
+See https://github.com/BEagle1984/silverback/wiki
