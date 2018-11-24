@@ -7,31 +7,31 @@ namespace Silverback.Messaging.Connectors
 {
     public class OutboundRoutingConfiguration : IOutboundRoutingConfiguration // TODO: Unit test this?
     {
-        private readonly List<Route> _routes = new List<Route>();
+        private readonly List<OutboundRoute> _routes = new List<OutboundRoute>();
 
-        public IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint) where TMessage : IIntegrationMessage
+        public IReadOnlyCollection<OutboundRoute> Routes => _routes.AsReadOnly();
+
+        public IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint, Type outboundConnectorType) where TMessage : IIntegrationMessage
         {
-            _routes.Add(new Route(typeof(TMessage), endpoint));
+            _routes.Add(new OutboundRoute(typeof(TMessage), endpoint, outboundConnectorType));
             return this;
         }
 
-        public IReadOnlyCollection<Route> Routes => _routes.AsReadOnly();
+        public IEnumerable<IOutboundRoute> GetRoutes(IIntegrationMessage message) =>
+            _routes.Where(r => r.MessageType.IsInstanceOfType(message)).ToArray();
 
-        public IEnumerable<IEndpoint> GetDestinations(IIntegrationMessage message) =>
-            _routes
-                .Where(r => r.MessageType.IsInstanceOfType(message))
-                .Select(r => r.DestinationEndpoint);
-
-        public class Route
+        public class OutboundRoute : IOutboundRoute
         {
-            public Route(Type messageType, IEndpoint destinationEndpoint)
+            public OutboundRoute(Type messageType, IEndpoint destinationEndpoint, Type outboundConnectorType)
             {
                 MessageType = messageType;
                 DestinationEndpoint = destinationEndpoint;
+                OutboundConnectorType = outboundConnectorType;
             }
 
             public Type MessageType { get; }
             public IEndpoint DestinationEndpoint { get; }
+            public Type OutboundConnectorType { get; }
         }
     }
 }
