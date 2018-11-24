@@ -48,10 +48,6 @@ namespace Silverback.Messaging.ErrorHandling
                     if (i == _policies.GetUpperBound(0))
                         throw;
 
-                    _logger.LogWarning(ex, $"The error policy has been applied but the message " +
-                                           $"{message.GetTraceString()} still couldn't be successfully " +
-                                           $"processed. Will continue applying the next policy. ");
-
                     exception = ex; // TODO: Correct to overwrite the exception?
                 }
             }

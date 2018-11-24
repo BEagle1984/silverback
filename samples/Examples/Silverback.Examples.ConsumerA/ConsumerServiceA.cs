@@ -12,7 +12,6 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Subscribers;
 
@@ -22,7 +21,7 @@ namespace Silverback.Examples.ConsumerA
     {
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus()
-            .AddBroker<FileSystemBroker>(options => options
+            .AddBroker<KafkaBroker>(options => options
                 .AddDbInboundConnector<ExamplesDbContext>()
                 .AddInboundConnector())
             .AddScoped<ISubscriber, SubscriberService>();
@@ -32,20 +31,28 @@ namespace Silverback.Examples.ConsumerA
             ConfigureNLog(serviceProvider);
 
             endpoints
-                .AddInbound(CreateEndpoint("simple-events"))
-                .AddInbound(CreateEndpoint("bad-events"), policy => policy
+                .AddInbound(CreateEndpoint("silverback-examples-events"))
+                .AddInbound(CreateEndpoint("silverback-examples-bad-events"), policy => policy
                     .Chain(
                         policy.Retry(2, TimeSpan.FromMilliseconds(500)),
-                        policy.Move(CreateEndpoint("bad-events-error"))))
-                .AddInbound(CreateEndpoint("custom-serializer-settings-events", GetCustomSerializer()))
+                        policy.Move(CreateEndpoint("silverback-examples-bad-events-error"))))
+                .AddInbound(CreateEndpoint("silverback-examples-custom-serializer", GetCustomSerializer()))
                 // Special inbounds (not logged)
-                .AddInbound<InboundConnector>(CreateEndpoint("legacy-messages", new LegacyMessageSerializer()))
+                .AddInbound<InboundConnector>(CreateEndpoint("silverback-examples-legacy-messages", new LegacyMessageSerializer()))
                 .Connect();
         }
 
-        private static FileSystemEndpoint CreateEndpoint(string name, IMessageSerializer messageSerializer = null)
+        private static KafkaEndpoint CreateEndpoint(string name, IMessageSerializer messageSerializer = null)
         {
-            var endpoint = new FileSystemEndpoint(name, Configuration.FileSystemBrokerBasePath);
+            var endpoint = new KafkaEndpoint(name)
+            {
+                Configuration = new KafkaConfigurationDictionary
+                {
+                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
+                    {"client.id", "consumer-service-a"},
+                    {"group.id", "silverback-examples" }
+                }
+            };
 
             if (messageSerializer != null)
                 endpoint.Serializer = messageSerializer;

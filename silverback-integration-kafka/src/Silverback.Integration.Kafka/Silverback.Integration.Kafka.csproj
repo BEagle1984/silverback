@@ -6,7 +6,7 @@
     <AssemblyVersion>1.0.1.0</AssemblyVersion>
     <FileVersion>1.0.1.0</FileVersion>
     <Company>Silverback</Company>
-    <Version>0.1.0.1</Version>
+    <Version>0.1.0.2</Version>
     <Authors>BEagle1984, ppx80</Authors>
     <PackageLicenseUrl>https://github.com/BEagle1984/silverback-integration/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback</PackageProjectUrl>

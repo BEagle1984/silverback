@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common;
@@ -20,10 +21,10 @@ namespace Silverback.Examples.Main.UseCases.Basic
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus()
-            .AddBroker<FileSystemBroker>();
+            .AddBroker<KafkaBroker>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
-            .AddOutbound<IIntegrationEvent>(CreateEndpoint("custom-serializer-settings-events"));
+            .AddOutbound<IIntegrationEvent>(CreateEndpoint("silverback-examples-custom-serializer-events"));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
@@ -33,9 +34,14 @@ namespace Silverback.Examples.Main.UseCases.Basic
         }
 
         private IEndpoint CreateEndpoint(string name) =>
-            new FileSystemEndpoint(name, Configuration.FileSystemBrokerBasePath)
+            new KafkaEndpoint(name)
             {
-                Serializer = GetSerializer()
+                Serializer = GetSerializer(),
+                Configuration = new KafkaConfigurationDictionary
+                {
+                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
+                    {"client.id", GetType().FullName}
+                }
             };
 
         private static JsonMessageSerializer GetSerializer()

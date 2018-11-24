@@ -37,8 +37,8 @@ namespace Consumer
                     {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
                     {"client.id", "ClientTest"},
                     {"group.id", "advanced-silverback-consumer"},
-                    {"enable.auto.commit", true},
-                    {"auto.commit.interval.ms", 5000},
+                    {"enable.auto.commit", false},
+                    {"auto.commit.interval.ms", 5000}, // No-auto commit at all!
                     {"statistics.interval.ms", 60000},
                     {
                         "default.topic.config", new Dictionary<string, object>()

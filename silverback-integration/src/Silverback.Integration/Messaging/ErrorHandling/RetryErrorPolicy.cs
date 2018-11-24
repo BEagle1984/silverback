@@ -10,20 +10,19 @@ namespace Silverback.Messaging.ErrorHandling
     /// An optional delay can be specified.
     /// </summary>
     /// TODO: Exponential backoff variant
+    /// TODO: Test maxRetries = -1
     public class RetryErrorPolicy : ErrorPolicyBase
     {
         private readonly ILogger<RetryErrorPolicy> _logger;
-        private readonly int _retryCount;
+        private readonly int _maxRetries;
         private readonly TimeSpan _initialDelay;
         private readonly TimeSpan _delayIncreament;
 
-        public RetryErrorPolicy(ILogger<RetryErrorPolicy> logger, int retryCount, TimeSpan? initialDelay = null, TimeSpan? delayIncreament = null)
+        public RetryErrorPolicy(ILogger<RetryErrorPolicy> logger, int maxRetries = -1, TimeSpan? initialDelay = null, TimeSpan? delayIncreament = null)
             : base(logger)
         {
-            if (retryCount <= 0) throw new ArgumentOutOfRangeException(nameof(retryCount), retryCount, "Specify a retry count greater than 0.");
-
             _logger = logger;
-            _retryCount = retryCount;
+            _maxRetries = maxRetries;
             _initialDelay = initialDelay ?? TimeSpan.Zero;
             _delayIncreament = delayIncreament ?? TimeSpan.Zero;
         }
@@ -32,7 +31,9 @@ namespace Silverback.Messaging.ErrorHandling
         {
             var delay = _initialDelay;
 
-            for (var i = 1; i <= _retryCount; i++)
+            var i = 0;
+
+            while (_maxRetries < 0 || i <= _maxRetries) 
             {
                 if (delay != TimeSpan.Zero)
                 {
@@ -49,13 +50,15 @@ namespace Silverback.Messaging.ErrorHandling
                 }
                 catch (Exception ex)
                 {
-                    if (i == _retryCount || !MustHandle(ex)) // TODO: Is it correct to reevaluate the exception type?
+                    if (i == _maxRetries || !MustHandle(ex)) // TODO: Is it correct to reevaluate the exception type?
                         throw;
 
                     // TODO: Is this really to be a warning?
                     _logger.LogWarning(ex, $"An error occurred retrying the message {message.GetTraceString()}. " +
                                            $"Will try again.");
                 }
+
+                i++;
             }
         }
     }

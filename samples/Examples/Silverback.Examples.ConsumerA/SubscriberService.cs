@@ -14,22 +14,16 @@ namespace Silverback.Examples.ConsumerA
         }
 
         [Subscribe]
-        void OnSimpleEvent(SimpleIntegrationEvent message)
+        void OnIntegrationEvent(IntegrationEvent message)
         {
-            _logger.LogInformation($"Received message '{message.Content}'");
+            _logger.LogInformation($"Received IntegrationEvent '{message.Content}'");
         }
 
         [Subscribe]
         void OnBadEvent(BadIntegrationEvent message)
         {
-            _logger.LogInformation($"Received message '{message.Content}'...throwing exception!");
+            _logger.LogInformation($"Message '{message.Content}' is BAD...throwing exception!");
             throw new System.Exception("Bad message!");
-        }
-
-        [Subscribe]
-        void OnCustomSerializedEvent(CustomSerializedIntegrationEvent message)
-        {
-            _logger.LogInformation($"Received message '{message.Content}'");
         }
 
         [Subscribe]

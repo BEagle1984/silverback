@@ -11,18 +11,25 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Examples.Main.UseCases.ErrorHandling
 {
-    public class RetryUseCase : UseCase
+    public class RetryAndMoveErrorPolicyUseCase : UseCase
     {
-        public RetryUseCase() : base("Retry then move to bad mail", 10)
+        public RetryAndMoveErrorPolicyUseCase() : base("Retry then move to bad mail", 10)
         {
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus()
-            .AddBroker<FileSystemBroker>();
+            .AddBroker<KafkaBroker>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
-            .AddOutbound<IIntegrationEvent>(new FileSystemEndpoint("bad-events", Configuration.FileSystemBrokerBasePath));
+            .AddOutbound<IIntegrationEvent>(new KafkaEndpoint("silverback-examples-bad-events")
+            {
+                Configuration = new KafkaConfigurationDictionary
+                {
+                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
+                    {"client.id", GetType().FullName}
+                }
+            });
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
