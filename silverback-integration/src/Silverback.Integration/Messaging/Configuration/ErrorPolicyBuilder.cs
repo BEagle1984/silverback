@@ -21,8 +21,8 @@ namespace Silverback.Messaging.Configuration
         public ErrorPolicyChain Chain(params ErrorPolicyBase[] policies) =>
             new ErrorPolicyChain(_loggerFactory.CreateLogger<ErrorPolicyChain>(), policies);
 
-        public RetryErrorPolicy Retry(int retryCount, TimeSpan? initialDelay = null,
-            TimeSpan? delayIncreament = null) => new RetryErrorPolicy(_loggerFactory.CreateLogger<RetryErrorPolicy>(), retryCount, initialDelay, delayIncreament);
+        public RetryErrorPolicy Retry(int maxRetries = -1, TimeSpan? initialDelay = null,
+            TimeSpan? delayIncreament = null) => new RetryErrorPolicy(_loggerFactory.CreateLogger<RetryErrorPolicy>(), maxRetries, initialDelay, delayIncreament);
 
         public SkipMessageErrorPolicy Skip() => new SkipMessageErrorPolicy(_loggerFactory.CreateLogger<SkipMessageErrorPolicy>());
 
