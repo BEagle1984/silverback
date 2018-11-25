@@ -1,18 +1,19 @@
-﻿using System;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Domain;
-using Silverback.Util;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 namespace Silverback.EntityFrameworkCore
 {
-    // TODO: Check async/sync implementation. Is this really better than duplicating? Can be cleaned up?
-
     /// <summary>
     /// Exposes some extension methods for the <see cref="DbContext"/> that handle domain events as part 
     /// of the SaveChanges transaction.

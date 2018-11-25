@@ -4,13 +4,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Silverback</RootNamespace>
     <Authors>BEagle1984</Authors>
-    <Company>Silverback</Company>
-    <Description>The Silverback framework enables fast and flexible development of resilient .NET microservices.
-This package contains a file system based implementation of a rudimental message broker. (just for testing)</Description>
-    <PackageLicenseUrl>https://github.com/BEagle1984/silverback-testing/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/BEagle1984/silverback-testing</PackageProjectUrl>
+    <Company></Company>
+    <Description>Silverback is a simple framework to build reactive, event-driven, microservices.  This package contains a test implementation of Silverback.Integration that using the file system to simulate a message broker. Absolutely not suitable for production!</Description>
+    <PackageLicenseUrl>https://github.com/BEagle1984/silverback/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.0.18</Version>
+    <Version>0.2.0.0</Version>
+    <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,7 +18,7 @@ This package contains a file system based implementation of a rudimental message
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Integration" Version="0.1.0.45" />
+    <PackageReference Include="Silverback.Integration" Version="0.2.0" />
   </ItemGroup>
 
 </Project>
