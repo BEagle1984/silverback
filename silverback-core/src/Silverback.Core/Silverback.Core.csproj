@@ -4,14 +4,19 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Silverback</RootNamespace>
     <Authors>BEagle1984</Authors>
-    <Company>Silverback</Company>
-    <Product>Silverback.Core</Product>
-    <Description>The Silverback framework enables fast and flexible development of resilient .NET microservices.</Description>
-    <PackageLicenseUrl>https://github.com/BEagle1984/silverback-core/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/BEagle1984/silverback-core</PackageProjectUrl>
-    <Copyright />
+    <Company></Company>
+    <Product></Product>
+    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This core package provides a very simple in-memory message bus.</Description>
+    <PackageLicenseUrl>https://github.com/BEagle1984/silverback/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
+    <Copyright></Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.0.28</Version>
+    <Version>0.2.0.0</Version>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryUrl></RepositoryUrl>
+    <RepositoryType></RepositoryType>
+    <PackageTags></PackageTags>
+    <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Silverback.Domain;
 using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
