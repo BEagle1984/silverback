@@ -166,5 +166,69 @@ namespace Silverback.Tests.Messaging.Publishing
             Assert.ThrowsAsync<TargetInvocationException>(() => publisher.PublishAsync(new TestEventOne()));
             Assert.ThrowsAsync<TargetInvocationException>(() => publisher.PublishAsync(new TestEventTwo()));
         }
+
+        [Test]
+        public void Publish_NewMessageReturnedBySubscriber_MessageRepublished()
+        {
+            var subscriber = new TestSubscriber();
+            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRepublisher(), subscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            publisher.Publish(new TestCommandOne());
+
+            Assert.That(subscriber.ReceivedMessagesCount, Is.EqualTo(2));
+        }
+
+        [Test]
+        public async Task PublishAsync_NewMessageReturnedBySubscriber_MessageRepublished()
+        {
+            var subscriber = new TestSubscriber();
+            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRepublisher(), subscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            await publisher.PublishAsync(new TestCommandOne());
+
+            Assert.That(subscriber.ReceivedMessagesCount, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Publish_NewMessagesReturnedBySubscriber_MessagesRepublished()
+        {
+            var subscriber = new TestSubscriber();
+            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRepublisher(), subscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            publisher.Publish(new TestCommandTwo());
+
+            Assert.That(subscriber.ReceivedMessagesCount, Is.EqualTo(3));
+        }
+
+        [Test]
+        public async Task PublishAsync_NewMessagesReturnedBySubscriber_MessagesRepublished()
+        {
+            var subscriber = new TestSubscriber();
+            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRepublisher(), subscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            await publisher.PublishAsync(new TestCommandTwo());
+
+            Assert.That(subscriber.ReceivedMessagesCount, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void Publish_HandlersReturnValue_ResultsReturned()
+        {
+            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRequestReplier()), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            var results = publisher.Publish<string>(new TestRequestOne());
+
+            Assert.That(results, Is.EqualTo(new[] { "response", "response2" }));
+        }
+
+        [Test]
+        public async Task PublishAsync_HandlersReturnValue_ResultsReturned()
+        {
+            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRequestReplier()), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+
+            var results = await publisher.PublishAsync<string>(new TestRequestOne());
+
+            Assert.That(results, Is.EqualTo(new[] { "response", "response2" }));
+        }
     }
 }

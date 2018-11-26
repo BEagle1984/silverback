@@ -6,10 +6,8 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.TestTypes.Messages
 {
-    public class TestRequestTwo : IRequest, ITestMessage
+    public class TestRequestTwo : IRequest<string>, ITestMessage
     {
-        public Guid RequestId { get; set; }
-
         public string Message { get; set; }
     }
 }

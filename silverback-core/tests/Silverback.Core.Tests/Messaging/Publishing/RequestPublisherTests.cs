@@ -1,7 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
-
-// TODO: Fix
+﻿// TODO: Fix
 
 //using System.Threading.Tasks;
 //using Microsoft.Extensions.Logging;
@@ -17,22 +14,22 @@
 //namespace Silverback.Tests.Messaging.Publishing
 //{
 //    [TestFixture]
-//    public class CommandPublisherTests
+//    public class RequestPublisherTests
 //    {
 //        private IPublisher _publisher;
-//        private TestSubscriber _subscriber;
+//        private TestRequestReplier _subscriber;
 
 //        [SetUp]
 //        public void Setup()
 //        {
-//            _subscriber = new TestSubscriber();
+//            _subscriber = new TestRequestReplier();
 //            _publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(_subscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
 //        }
 
 //        [Test]
 //        public void SendCommandTest()
 //        {
-//            var publisher = new CommandPublisher(_publisher);
+//            var publisher = new RequestPublisher<IRequest, string>(_publisher);
 
 //            publisher.Send(new TestCommandOne());
 //            publisher.Send(new TestCommandTwo());
@@ -41,9 +38,19 @@
 //        }
 
 //        [Test]
-//        public async Task SendCommandAsync()
+//        public void SendSpecificCommandTest()
 //        {
-//            var publisher = new CommandPublisher(_publisher);
+//            var publisher = new CommandPublisher<TestCommandOne>(_publisher);
+
+//            publisher.Send(new TestCommandOne());
+
+//            Assert.That(_subscriber.ReceivedMessagesCount, Is.EqualTo(1));
+//        }
+
+//        [Test]
+//        public async Task SendCommandAsyncTest()
+//        {
+//            var publisher = new CommandPublisher<ICommand>(_publisher);
 
 //            await publisher.SendAsync(new TestCommandOne());
 //            await publisher.SendAsync(new TestCommandTwo());
