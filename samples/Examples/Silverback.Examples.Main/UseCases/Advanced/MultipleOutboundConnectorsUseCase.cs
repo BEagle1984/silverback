@@ -45,8 +45,8 @@ namespace Silverback.Examples.Main.UseCases.Advanced
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
-            var publisherA = serviceProvider.GetService<IEventPublisher<IntegrationEventA>>();
-            var publisherB = serviceProvider.GetService<IEventPublisher<IntegrationEventB>>();
+            var publisherA = serviceProvider.GetService<IEventPublisher>();
+            var publisherB = serviceProvider.GetService<IEventPublisher>();
             var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
 
             await publisherA.PublishAsync(new IntegrationEventA { Content = "A->" + DateTime.Now.ToString("HH:mm:ss.fff") });

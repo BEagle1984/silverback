@@ -33,7 +33,7 @@ namespace Silverback.Examples.Main.UseCases.ErrorHandling
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
-            var publisher = serviceProvider.GetService<IEventPublisher<BadIntegrationEvent>>();
+            var publisher = serviceProvider.GetService<IEventPublisher>();
 
             await publisher.PublishAsync(new BadIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }
