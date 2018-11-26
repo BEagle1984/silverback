@@ -31,7 +31,7 @@ namespace Silverback.Messaging.ErrorHandling
         {
             var delay = _initialDelay;
 
-            var i = 0;
+            var i = 1;
 
             while (_maxRetries < 0 || i <= _maxRetries) 
             {
