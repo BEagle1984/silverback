@@ -20,6 +20,8 @@ namespace Silverback.Messaging.Broker
 
         public KafkaProducer(IBroker broker, KafkaEndpoint endpoint, ILogger<KafkaProducer> logger) : base(broker, endpoint, logger)
         {
+            if (endpoint.TopicNames.Length > 1)
+                throw new ArgumentException("Producing to multiple topics is not supported, specify only one topic name in the KafkaEndpoint");
         }
 
         public new KafkaEndpoint Endpoint => (KafkaEndpoint)base.Endpoint;
@@ -29,7 +31,7 @@ namespace Silverback.Messaging.Broker
 
         protected override async Task ProduceAsync(IMessage message, byte[] serializedMessage)
         {
-            var msg = await GetInnerProducer().ProduceAsync(Endpoint.Name, KeyHelper.GetMessageKey(message), serializedMessage);
+            var msg = await GetInnerProducer().ProduceAsync(Endpoint.TopicNames[0], KeyHelper.GetMessageKey(message), serializedMessage);
             if (msg.Error.HasError) throw new SilverbackException($"Failed to produce message: [{msg.Error.Code}] {msg.Error.Reason}");
         }
 

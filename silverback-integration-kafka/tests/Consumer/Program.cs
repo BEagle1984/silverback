@@ -60,10 +60,21 @@ namespace Consumer
 
         private static void OnMessageReceived(object sender, IMessage message)
         {
-            Console.WriteLine(
-                message is TestMessage testMessage
-                ? $"[{testMessage.Id}] {testMessage.Text}"
-                : "Received a weird message!");
+            var testMessage = message as TestMessage;
+
+            if (testMessage == null)
+            {
+                Console.WriteLine("Received a weird message!");
+                return;
+            }
+
+            Console.WriteLine($"[{testMessage.Id}] {testMessage.Text}");
+
+            if (testMessage.Text == "bad")
+            {
+                Console.WriteLine("--> Bad message, throwing exception!");
+                throw new Exception("Bad!");
+            }
         }
 
         private static void PrintHeader()

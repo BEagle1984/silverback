@@ -15,6 +15,8 @@ namespace Silverback.Messaging.Broker
         private Confluent.Kafka.Consumer<byte[], byte[]> _innerConsumer;
         private readonly ILogger<KafkaConsumer> _logger;
 
+        private int _failCount = 0;
+
         public KafkaConsumer(IBroker broker, KafkaEndpoint endpoint, ILogger<KafkaConsumer> logger) : base(broker, endpoint, logger)
         {
             _logger = logger;
@@ -65,7 +67,7 @@ namespace Silverback.Messaging.Broker
 
         private async Task Consume()
         {
-            _innerConsumer.Subscribe(Endpoint.Name);
+            _innerConsumer.Subscribe(Endpoint.TopicNames);
 
             _logger.LogTrace("Consuming topic '{topic}'...", Endpoint.Name);
 
@@ -76,18 +78,46 @@ namespace Silverback.Messaging.Broker
 
                 _logger.LogTrace("Consuming message: {topic} [{partition}] @{offset}", message.Topic, message.Partition, message.Offset);
 
-                try
-                {
-                    HandleMessage(message.Value);
-
-                    await CommitOffsetIfNeeded(message);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogCritical(ex, "Error occurred handling message: {topic} [{partition}] @{offset}. The consumer will be stopped. See inner exception for details.", message.Topic, message.Partition, message.Offset);
+                if (!await TryProcess(message))
                     break;
+            }
+        }
+
+        private async Task<bool> TryProcess(Message<byte[], byte[]> message)
+        {
+            try
+            {
+                HandleMessage(message.Value);
+
+                await CommitOffsetIfNeeded(message);
+
+                _failCount = 0;
+            }
+            catch (Exception ex)
+            {
+                _failCount++;
+
+                if (_failCount < Endpoint.ConsumerMaxTryCount)
+                {
+                    _logger.LogError(ex,
+                        "Failed {failCount} time(s) to consume the message: {topic} [{partition}] @{offset}. The same message will be retried. See inner exception for details.",
+                        _failCount, message.Topic, message.Partition, message.Offset);
+
+                    _innerConsumer.Seek(message.TopicPartitionOffset);
+
+                    await WaitDelay();
+                }
+                else
+                {
+                    _logger.LogCritical(ex,
+                        "Failed {failCount} time(s) to consume the message: {topic} [{partition}] @{offset}. The consumer will be stopped. See inner exception for details.",
+                        _failCount, message.Topic, message.Partition, message.Offset);
+
+                    return false;
                 }
             }
+
+            return true;
         }
 
         private async Task CommitOffsetIfNeeded(Message<byte[], byte[]> message)
@@ -96,6 +126,15 @@ namespace Silverback.Messaging.Broker
             if (message.Offset % Endpoint.CommitOffsetEach != 0) return;
             var committedOffsets = await _innerConsumer.CommitAsync(message);
             _logger.LogTrace("Committed offset: {offset}", committedOffsets);
+        }
+
+        private async Task WaitDelay()
+        {
+            var delay = Endpoint.ConsumerRetryDelay.Add(
+                TimeSpan.FromMilliseconds(_failCount * Endpoint.ConsumerRetryDelayIncrement.Milliseconds));
+
+            if (delay > TimeSpan.Zero)
+                await Task.Delay(delay);
         }
     }
 }
