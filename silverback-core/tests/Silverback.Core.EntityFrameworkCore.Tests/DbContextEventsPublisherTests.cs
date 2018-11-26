@@ -15,12 +15,12 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
     public class DbContextEventsPublisherTests
     {
         private TestDbContext _dbContext;
-        private IEventPublisher<IEvent> _eventPublisher;
+        private IEventPublisher _eventPublisher;
 
         [SetUp]
         public void Setup()
         {
-            _eventPublisher = Substitute.For<IEventPublisher<IEvent>>();
+            _eventPublisher = Substitute.For<IEventPublisher>();
 
             var dbOptions = new DbContextOptionsBuilder<TestDbContext>()
                 .UseInMemoryDatabase("TestDbContext")
