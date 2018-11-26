@@ -13,14 +13,14 @@ namespace Silverback.Examples.Common.Data
 {
     public class ExamplesDbContext : DbContext
     {
-        private readonly IEventPublisher<IEvent> _eventPublisher;
+        private readonly IEventPublisher _eventPublisher;
 
-        public ExamplesDbContext(IEventPublisher<IEvent> eventPublisher)
+        public ExamplesDbContext(IEventPublisher eventPublisher)
         {
             _eventPublisher = eventPublisher;
         }
 
-        public ExamplesDbContext(DbContextOptions options, IEventPublisher<IEvent> eventPublisher)
+        public ExamplesDbContext(DbContextOptions options, IEventPublisher eventPublisher)
             : base(options)
         {
             _eventPublisher = eventPublisher;

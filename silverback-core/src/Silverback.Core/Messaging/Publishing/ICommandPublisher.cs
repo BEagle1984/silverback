@@ -1,16 +1,20 @@
 // Copyright (c) 2018 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Publishing
 {
-    public interface ICommandPublisher<in TCommand>
-        where TCommand : ICommand
+    public interface ICommandPublisher
     {
-        void Send(TCommand commandMessage);
+        void Send(ICommand commandMessage);
 
-        Task SendAsync(TCommand commandMessage);
+        Task SendAsync(ICommand commandMessage);
+
+        IEnumerable<TResult> Execute<TResult>(ICommand<TResult> commandMessage);
+
+        Task<IEnumerable<TResult>> ExecuteAsync<TResult>(ICommand<TResult> commandMessage);
     }
 }

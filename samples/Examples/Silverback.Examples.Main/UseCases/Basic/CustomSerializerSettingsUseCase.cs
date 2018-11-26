@@ -28,7 +28,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
-            var publisher = serviceProvider.GetService<IEventPublisher<CustomSerializedIntegrationEvent>>();
+            var publisher = serviceProvider.GetService<IEventPublisher>();
 
             await publisher.PublishAsync(new CustomSerializedIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }

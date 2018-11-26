@@ -39,7 +39,7 @@ namespace Silverback.Examples.Main.UseCases.EfCore
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
-            var publisher = serviceProvider.GetService<IEventPublisher<SimpleIntegrationEvent>>();
+            var publisher = serviceProvider.GetService<IEventPublisher>();
             var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
 
             await publisher.PublishAsync(new SimpleIntegrationEvent {Content = DateTime.Now.ToString("HH:mm:ss.fff")});

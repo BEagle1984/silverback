@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Publishing
 {
@@ -23,49 +22,58 @@ namespace Silverback.Messaging.Publishing
             _logger = logger;
         }
 
-        public void Publish(IMessage message)
+        public void Publish(IMessage message) => Publish(message, false).Wait();
+
+        public Task PublishAsync(IMessage message) => Publish(message, true);
+
+        public IEnumerable<TResult> Publish<TResult>(IMessage message) => Publish(message, false).Result.Cast<TResult>();
+
+        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IMessage message) => (await Publish(message, true)).Cast<TResult>();
+
+        // TODO: Test recursion
+        private async Task<IEnumerable<object>> Publish(IMessage message, bool executeAsync)
         {
-            if (message == null) return;
+            if (message == null) return Enumerable.Empty<object>();
 
-            _logger.LogTrace($"Publishing message of type '{message.GetType().FullName}'...");
+            _logger.LogTrace("Publishing message of type '{messageType}'...", message.GetType().FullName);
 
-            _subscribedMethodsProvider.GetSubscribedMethods(message)
-                .ForEach(method => InvokeMethodAndRepublishResult(method, message, false).Wait());
+            var resultsCollection = new List<object>();
+
+            foreach (var method in _subscribedMethodsProvider.GetSubscribedMethods(message))
+            {
+                await InvokeSubscribedMethodAndCollectResult(method, message, executeAsync, resultsCollection);
+            }
+
+            return resultsCollection.Where(r => r != null);
         }
 
-        public Task PublishAsync(IMessage message)
+        private async Task InvokeSubscribedMethodAndCollectResult(SubscribedMethod method, IMessage message, bool executeAsync, List<object> resultsCollection)
         {
-            if (message == null) return Task.CompletedTask;
+            var methodResult = await SubscribedMethodInvoker.InvokeAndGetResult(method, message, executeAsync);
 
-            _logger.LogTrace($"Publishing message of type '{message.GetType().FullName}'...");
-
-            return _subscribedMethodsProvider.GetSubscribedMethods(message)
-                .ForEachAsync(method => InvokeMethodAndRepublishResult(method, message, true));
+            if (!await PublishReturnedMessages(methodResult, executeAsync, resultsCollection));
+            {
+                resultsCollection.Add(methodResult);
+            }
         }
 
-        private async Task InvokeMethodAndRepublishResult(SubscribedMethod method, IMessage message, bool executeAsync)
+        private async Task<bool> PublishReturnedMessages(object methodResult, bool executeAsync, List<object> resultsCollection)
         {
-            var resultMessages = await InvokeMethodAndGetResult(method, message, executeAsync);
+            if (methodResult is IMessage returnMessage)
+            {
+                resultsCollection.AddRange(await Publish(returnMessage, executeAsync));
 
-            if (executeAsync)
-                await resultMessages.ForEachAsync(PublishAsync);
-            else
-                resultMessages.ForEach(Publish);
-        }
+                return true;
+            }
+            else if (methodResult is IEnumerable<IMessage> returnMessages)
+            {
+                foreach (var returnMessage2 in returnMessages)
+                    resultsCollection.AddRange(await Publish(returnMessage2, executeAsync));
 
-        private async Task<IEnumerable<IMessage>> InvokeMethodAndGetResult(SubscribedMethod method, IMessage message, bool executeAsync)
-        {
-            _logger.LogTrace($"Invoking subscribed method {method.MethodInfo.DeclaringType.FullName}.{method.MethodInfo.Name}...");
+                return true;
+            }
 
-            var result = await SubscribedMethodInvoker.InvokeAndGetResult(method, message, executeAsync);
-
-            if (result is IMessage returnMessage)
-                return new[] { returnMessage };
-
-            if (result is IEnumerable<IMessage> returnMessages)
-                return returnMessages;
-
-            return Enumerable.Empty<IMessage>();
+            return false;
         }
     }
 }

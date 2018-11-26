@@ -5,22 +5,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.EntityFrameworkCore;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
 namespace Silverback.Core.EntityFrameworkCore.Tests.TestTypes
 {
     public class TestDbContext : DbContext
     {
-        private readonly IEventPublisher<IEvent> _eventPublisher;
+        private readonly IEventPublisher _eventPublisher;
         public DbSet<TestAggregateRoot> TestAggregates { get; set; }
 
-        public TestDbContext(IEventPublisher<IEvent> eventPublisher)
+        public TestDbContext(IEventPublisher eventPublisher)
         {
             _eventPublisher = eventPublisher;
         }
 
-        public TestDbContext(DbContextOptions options, IEventPublisher<IEvent> eventPublisher)
+        public TestDbContext(DbContextOptions options, IEventPublisher eventPublisher)
             : base(options)
         {
             _eventPublisher = eventPublisher;

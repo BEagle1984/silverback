@@ -5,4 +5,8 @@ namespace Silverback.Messaging.Messages
     public interface ICommand : IMessage
     {
     }
+
+    public interface ICommand<TResult> : ICommand, IRequest<TResult>
+    {
+    }
 }
