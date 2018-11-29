@@ -2,10 +2,8 @@
 
 namespace Silverback
 {
-
-    /// <inheritdoc/>
     /// <summary>
-    /// Compare two configurations for Kafka clients.
+    /// Compare two Kafka clients configurations.
     /// </summary>
     internal class ConfigurationComparer : IEqualityComparer<Dictionary<string, object>>
     {

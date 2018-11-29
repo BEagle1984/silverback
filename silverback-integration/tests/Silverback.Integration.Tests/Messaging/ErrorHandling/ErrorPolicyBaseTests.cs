@@ -25,25 +25,13 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         [TestCaseSource(nameof(ApplyToTestData))]
         public void ApplyToTest(Exception exception, bool mustApply)
         {
-            var policy = (TestErrorPolicy)new TestErrorPolicy()
+            var policy = new TestErrorPolicy()
                 .ApplyTo<ArgumentException>()
                 .ApplyTo<InvalidCastException>();
 
-            var exceptionThrown = false;
+            var canHandle = policy.CanHandle(new TestEventOne(), 99, exception);
 
-            try
-            {
-                policy.TryHandleMessage(
-                    new TestEventOne(),
-                    _ => throw exception);
-            }
-            catch
-            {
-                exceptionThrown = true;
-            }
-
-            Assert.That(policy.Applied, Is.EqualTo(mustApply));
-            Assert.That(exceptionThrown, Is.Not.EqualTo(mustApply));
+            Assert.That(canHandle, Is.EqualTo(mustApply));
         }
 
         public static IEnumerable<TestCaseData> ExcludeTestData
@@ -65,23 +53,10 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 .Exclude<ArgumentException>()
                 .Exclude<InvalidCastException>();
 
-            var exceptionThrown = false;
+            var canHandle = policy.CanHandle(new TestEventOne(), 99, exception);
 
-            try
-            {
-                policy.TryHandleMessage(
-                    new TestEventOne(),
-                    _ => throw exception);
-            }
-            catch
-            {
-                exceptionThrown = true;
-            }
-
-            Assert.That(policy.Applied, Is.EqualTo(mustApply));
-            Assert.That(exceptionThrown, Is.Not.EqualTo(mustApply));
+            Assert.That(canHandle, Is.EqualTo(mustApply));
         }
-
 
         public static IEnumerable<TestCaseData> ApplyToAndExcludeTestTestData
         {
@@ -104,21 +79,9 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 .Exclude<ArgumentOutOfRangeException>()
                 .ApplyTo<FormatException>();
 
-            var exceptionThrown = false;
+            var canHandle = policy.CanHandle(new TestEventOne(), 99, exception);
 
-            try
-            {
-                policy.TryHandleMessage(
-                    new TestEventOne(),
-                    _ => throw exception);
-            }
-            catch
-            {
-                exceptionThrown = true;
-            }
-
-            Assert.That(policy.Applied, Is.EqualTo(mustApply));
-            Assert.That(exceptionThrown, Is.Not.EqualTo(mustApply));
+            Assert.That(canHandle, Is.EqualTo(mustApply));
         }
     }
 }

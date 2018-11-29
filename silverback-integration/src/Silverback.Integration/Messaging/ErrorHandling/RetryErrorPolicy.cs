@@ -13,7 +13,6 @@ namespace Silverback.Messaging.ErrorHandling
     /// TODO: Test maxRetries = -1
     public class RetryErrorPolicy : ErrorPolicyBase
     {
-        private readonly ILogger<RetryErrorPolicy> _logger;
         private readonly int _maxRetries;
         private readonly TimeSpan _initialDelay;
         private readonly TimeSpan _delayIncreament;
@@ -21,45 +20,26 @@ namespace Silverback.Messaging.ErrorHandling
         public RetryErrorPolicy(ILogger<RetryErrorPolicy> logger, int maxRetries = -1, TimeSpan? initialDelay = null, TimeSpan? delayIncreament = null)
             : base(logger)
         {
-            _logger = logger;
             _maxRetries = maxRetries;
             _initialDelay = initialDelay ?? TimeSpan.Zero;
             _delayIncreament = delayIncreament ?? TimeSpan.Zero;
         }
 
-        protected override void ApplyPolicy(IMessage message, Action<IMessage> messageHandler, Exception exception)
+        public override bool CanHandle(IMessage failedMessage, int retryCount, Exception exception) =>
+            base.CanHandle(failedMessage, retryCount, exception) && retryCount < _maxRetries;
+
+        public override ErrorAction HandleError(IMessage failedMessage, int retryCount, Exception exception)
         {
-            var delay = _initialDelay;
+            ApplyDelay(retryCount);
 
-            var i = 1;
+            return ErrorAction.RetryMessage;
+        }
 
-            while (_maxRetries < 0 || i <= _maxRetries) 
-            {
-                if (delay != TimeSpan.Zero)
-                {
-                    Thread.Sleep(delay);
+        private void ApplyDelay(int retryCount)
+        {
+            var delay = _initialDelay.Milliseconds + retryCount * _delayIncreament.Milliseconds;
 
-                    if (_delayIncreament != TimeSpan.Zero)
-                        delay = delay + _delayIncreament;
-                }
-
-                try
-                {
-                    messageHandler.Invoke(message);
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    if (i == _maxRetries || !MustHandle(ex)) // TODO: Is it correct to reevaluate the exception type?
-                        throw;
-
-                    // TODO: Is this really to be a warning?
-                    _logger.LogWarning(ex, $"An error occurred retrying the message {message.GetTraceString()}. " +
-                                           $"Will try again.");
-                }
-
-                i++;
-            }
+            if (delay > 0) Thread.Sleep(delay);
         }
     }
 }

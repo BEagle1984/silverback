@@ -7,7 +7,7 @@ namespace Silverback.Messaging
     public interface IEndpoint
     {
         /// <summary>
-        /// Gets the endpoint name.
+        /// Gets the topic/queue name.
         /// </summary>
         string Name { get; }
 

@@ -20,7 +20,11 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         // TODO: Should be async? All way to ErrorPolicyBase.TryHandleMessage() or nothing...
-        protected override void ApplyPolicy(IMessage message, Action<IMessage> messageHandler, Exception exception) =>
-            _producer.Produce(message);
+        public override ErrorAction HandleError(IMessage failedMessage, int retryCount, Exception exception)
+        {
+             _producer.Produce(failedMessage);
+
+            return ErrorAction.SkipMessage;
+        }
     }
 }

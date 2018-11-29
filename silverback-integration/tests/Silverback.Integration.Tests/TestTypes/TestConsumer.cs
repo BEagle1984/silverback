@@ -30,7 +30,7 @@ namespace Silverback.Tests.TestTypes
 
             var buffer = serializer.Serialize(message);
 
-            HandleMessage(buffer);
+            HandleMessage(buffer, 0);
         }
     }
 }

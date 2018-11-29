@@ -9,17 +9,12 @@ namespace Silverback.Messaging.ErrorHandling
     /// </summary>
     public class SkipMessageErrorPolicy : ErrorPolicyBase
     {
-        private readonly ILogger<SkipMessageErrorPolicy> _logger;
-
         public SkipMessageErrorPolicy(ILogger<SkipMessageErrorPolicy> logger)
             : base(logger)
         {
-            _logger = logger;
         }
 
-        protected override void ApplyPolicy(IMessage message, Action<IMessage> messageHandler, Exception exception)
-            => _logger.LogWarning(
-                $"The message {message.GetTraceString()} couldn't be successfully " +
-                $"processed and will be skipped.");
+        public override ErrorAction HandleError(IMessage failedMessage, int retryCount, Exception exception) =>
+            ErrorAction.SkipMessage;
     }
 }

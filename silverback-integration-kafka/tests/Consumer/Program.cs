@@ -6,6 +6,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using System;
 using System.Collections.Generic;
+using Silverback.Messaging.ErrorHandling;
 
 namespace Consumer
 {
@@ -30,25 +31,27 @@ namespace Consumer
         {
             _broker = new KafkaBroker(GetLoggerFactory());
 
-            _broker.GetConsumer(new KafkaEndpoint("Topic1")
+            var consumer = _broker.GetConsumer(new KafkaEndpoint("Topic1")
             {
                 Configuration = new KafkaConfigurationDictionary
-                {
-                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
-                    {"client.id", "ClientTest"},
-                    {"group.id", "advanced-silverback-consumer"},
-                    {"enable.auto.commit", false},
-                    {"auto.commit.interval.ms", 5000}, // No-auto commit at all!
-                    {"statistics.interval.ms", 60000},
                     {
-                        "default.topic.config", new Dictionary<string, object>()
+                        {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
+                        {"client.id", "ClientTest"},
+                        {"group.id", "advanced-silverback-consumer"},
+                        {"enable.auto.commit", false},
+                        {"auto.commit.interval.ms", 5000}, // No-auto commit at all!
+                        {"statistics.interval.ms", 60000},
                         {
-                            {"auto.offset.reset", "smallest"}
+                            "default.topic.config", new Dictionary<string, object>()
+                            {
+                                {"auto.offset.reset", "smallest"}
+                            }
                         }
                     }
-                }
-            })
-            .Received += OnMessageReceived;
+            });
+
+            consumer.Received += OnMessageReceived;
+            consumer.Error += OnError;
 
             _broker.Connect();
         }
@@ -65,7 +68,6 @@ namespace Consumer
             if (testMessage == null)
             {
                 Console.WriteLine("Received a weird message!");
-                return;
             }
 
             Console.WriteLine($"[{testMessage.Id}] {testMessage.Text}");
@@ -77,6 +79,11 @@ namespace Consumer
             }
         }
 
+        private static void OnError(object sender, ErrorHandlerEventArgs args)
+        {
+            args.Action = ErrorAction.SkipMessage;
+        }
+
         private static void PrintHeader()
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
@@ -86,7 +93,7 @@ namespace Consumer
             Console.WriteLine(@" |  < / _` |  _| |/ / _` | |    / _ \| '_ \/ __| | | | '_ ` _ \ / _ \ '__|");
             Console.WriteLine(@" | . \ (_| | | |   < (_| | |___| (_) | | | \__ \ |_| | | | | | |  __/ |   ");
             Console.WriteLine(@" |_|\_\__,_|_| |_|\_\__,_|\_____\___/|_| |_|___/\__,_|_| |_| |_|\___|_|   ");
-            Console.ResetColor();            
+            Console.ResetColor();
             Console.WriteLine("\nCtrl-C to quit.\n");
         }
 

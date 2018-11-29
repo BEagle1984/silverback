@@ -8,22 +8,15 @@ namespace Silverback.Messaging
 {
     public sealed class KafkaEndpoint : IEndpoint, IEquatable<KafkaEndpoint>
     {
-        public KafkaEndpoint(params string[] topicNames)
+        public KafkaEndpoint(string name)
         {
-            TopicNames = topicNames;
-            Name = string.Join(",", topicNames);
+            Name = name;
         }
 
         /// <summary>
-        /// Gets or sets the topic name.
+        /// Gets the topic name.
         /// </summary>
         public string Name { get; }
-
-        /// <summary>
-        /// The topic names.
-        /// </summary>
-        // TODO: Test with multiple topics
-        public string[] TopicNames { get; }
 
         public IMessageSerializer Serializer { get; set; } = new JsonMessageSerializer();
 
@@ -39,22 +32,6 @@ namespace Silverback.Messaging
         /// The maximum time (in milliseconds, -1 to block indefinitely) within which the poll remain blocked.
         /// </summary>
         public int PollTimeout { get; } = 100;
-
-        /// <summary>
-        /// The maximum amount of times the same message is to be consumed before stopping.
-        /// </summary>
-        public int ConsumerMaxTryCount { get; set; } = 10;
-
-        /// <summary>
-        /// The time to wait before each retry.
-        /// </summary>
-        public TimeSpan ConsumerRetryDelay { get; set; } = TimeSpan.FromMilliseconds(500);
-
-        /// <summary>
-        /// Set this value to increment the delay at each retry.
-        /// </summary>
-        // TODO: Test
-        public TimeSpan ConsumerRetryDelayIncrement { get; set; } = TimeSpan.Zero;
 
         #region IEquatable
 

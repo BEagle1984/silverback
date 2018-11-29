@@ -1,10 +1,12 @@
 ﻿using Confluent.Kafka;
 using Confluent.Kafka.Serialization;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.ErrorHandling;
 
 namespace Silverback.Messaging.Broker
 {
@@ -12,10 +14,12 @@ namespace Silverback.Messaging.Broker
     {
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-        private Confluent.Kafka.Consumer<byte[], byte[]> _innerConsumer;
         private readonly ILogger<KafkaConsumer> _logger;
 
-        private int _failCount = 0;
+        private Confluent.Kafka.Consumer<byte[], byte[]> _innerConsumer;
+
+        private static readonly ConcurrentDictionary<Dictionary<string, object>, Confluent.Kafka.Consumer<byte[], byte[]>> ConsumersCache =
+            new ConcurrentDictionary<Dictionary<string, object>, Confluent.Kafka.Consumer<byte[], byte[]>>(new ConfigurationComparer());
 
         public KafkaConsumer(IBroker broker, KafkaEndpoint endpoint, ILogger<KafkaConsumer> logger) : base(broker, endpoint, logger)
         {
@@ -29,9 +33,10 @@ namespace Silverback.Messaging.Broker
             if (_innerConsumer != null)
                 return;
 
-            _innerConsumer = new Confluent.Kafka.Consumer<byte[], byte[]>(Endpoint.Configuration,
-                new ByteArrayDeserializer(),
-                new ByteArrayDeserializer());
+            _innerConsumer = ConsumersCache.GetOrAdd(Endpoint.Configuration, CreateInnerConsumer());
+
+            if (!_innerConsumer.Subscription.Contains(Endpoint.Name))
+                _innerConsumer.Subscribe(Endpoint.Name);
 
             _innerConsumer.OnPartitionsAssigned += (_, partitions) =>
             {
@@ -48,8 +53,15 @@ namespace Silverback.Messaging.Broker
             Task.Run(Consume, _cancellationTokenSource.Token);
         }
 
+        private Confluent.Kafka.Consumer<byte[], byte[]> CreateInnerConsumer() =>
+            new Confluent.Kafka.Consumer<byte[], byte[]>(Endpoint.Configuration, new ByteArrayDeserializer(), new ByteArrayDeserializer());
+
         internal void Disconnect()
         {
+            // Dispose only if still in cache to avoid ObjectDisposedException
+            if (!ConsumersCache.TryRemove(Endpoint.Configuration, out var _))
+                return;
+
             _cancellationTokenSource.Cancel();
 
             _innerConsumer?.Unassign();
@@ -67,9 +79,11 @@ namespace Silverback.Messaging.Broker
 
         private async Task Consume()
         {
-            _innerConsumer.Subscribe(Endpoint.TopicNames);
+            _innerConsumer.Subscribe(Endpoint.Name);
 
             _logger.LogTrace("Consuming topic '{topic}'...", Endpoint.Name);
+
+            var retryCount = 0;
 
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
@@ -78,47 +92,35 @@ namespace Silverback.Messaging.Broker
 
                 _logger.LogTrace("Consuming message: {topic} [{partition}] @{offset}", message.Topic, message.Partition, message.Offset);
 
-                if (!await TryProcess(message))
-                    break;
+                var result = await TryProcess(message, retryCount);
+
+                if (!result.IsSuccessful)
+                    retryCount = HandleError(result.Action ?? ErrorAction.StopConsuming, message, retryCount);
             }
         }
 
-        private async Task<bool> TryProcess(Message<byte[], byte[]> message)
+        private async Task<MessageHandlerResult> TryProcess(Message<byte[], byte[]> message, int retryCount)
         {
             try
             {
-                HandleMessage(message.Value);
+                var result = HandleMessage(message.Value, retryCount);
 
-                await CommitOffsetIfNeeded(message);
+                if (result.IsSuccessful)
+                    await CommitOffsetIfNeeded(message);
 
-                _failCount = 0;
+                return result;
             }
             catch (Exception ex)
             {
-                _failCount++;
+                _logger.LogCritical(ex,
+                    "Fatal error occurred consuming the message: {topic} [{partition}] @{offset}. " +
+                    "The consumer will be stopped. See inner exception for details.",
+                    message.Topic, message.Partition, message.Offset);
 
-                if (_failCount < Endpoint.ConsumerMaxTryCount)
-                {
-                    _logger.LogError(ex,
-                        "Failed {failCount} time(s) to consume the message: {topic} [{partition}] @{offset}. The same message will be retried. See inner exception for details.",
-                        _failCount, message.Topic, message.Partition, message.Offset);
-
-                    _innerConsumer.Seek(message.TopicPartitionOffset);
-
-                    await WaitDelay();
-                }
-                else
-                {
-                    _logger.LogCritical(ex,
-                        "Failed {failCount} time(s) to consume the message: {topic} [{partition}] @{offset}. The consumer will be stopped. See inner exception for details.",
-                        _failCount, message.Topic, message.Partition, message.Offset);
-
-                    return false;
-                }
+                return MessageHandlerResult.Error(ErrorAction.StopConsuming);
             }
-
-            return true;
         }
+
 
         private async Task CommitOffsetIfNeeded(Message<byte[], byte[]> message)
         {
@@ -128,13 +130,37 @@ namespace Silverback.Messaging.Broker
             _logger.LogTrace("Committed offset: {offset}", committedOffsets);
         }
 
-        private async Task WaitDelay()
+        private int HandleError(ErrorAction action, Message<byte[], byte[]> message, int retryCount)
         {
-            var delay = Endpoint.ConsumerRetryDelay.Add(
-                TimeSpan.FromMilliseconds(_failCount * Endpoint.ConsumerRetryDelayIncrement.Milliseconds));
+            string actionDescription = null;
+            switch (action)
+            {
+                case ErrorAction.SkipMessage:
+                    actionDescription = "This message will be skipped.";
+                    retryCount = 0;
+                    break;
+                case ErrorAction.RetryMessage:
+                    actionDescription = "This message will be retried.";
+                    retryCount++;
 
-            if (delay > TimeSpan.Zero)
-                await Task.Delay(delay);
+                    // Revert offset to consume the same message again
+                    _innerConsumer.Seek(message.TopicPartitionOffset);
+
+                    break;
+                case ErrorAction.StopConsuming:
+                    actionDescription = "The consumer will be stopped.";
+                    _cancellationTokenSource.Cancel();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(action), action, null);
+            }
+
+            _logger.LogTrace(
+                "Error occurred consuming message (retry={retryCount}): {topic} [{partition}] @{offset}. " +
+                actionDescription,
+                retryCount, message.Topic, message.Partition, message.Offset);
+
+            return retryCount;
         }
     }
 }

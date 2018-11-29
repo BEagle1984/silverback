@@ -8,6 +8,8 @@ namespace Silverback.Messaging.ErrorHandling
     /// </summary>
     public interface IErrorPolicy
     {
-        void TryHandleMessage(IMessage message, Action<IMessage> messageHandler);
+        bool CanHandle(IMessage failedMessage, int retryCount, Exception exception);
+
+        ErrorAction HandleError(IMessage failedMessage, int retryCount, Exception exception);
     }
 }

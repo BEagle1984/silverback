@@ -20,51 +20,15 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         }
 
         [Test]
-        public void SuccessTest()
+        [TestCase(0, true)]
+        [TestCase(1, true)]
+        [TestCase(3, false)]
+        [TestCase(4, false)]
+        public void CanHandleTest(int retryCount, bool expectedResult)
         {
-            var executed = false;
-            _policy.TryHandleMessage(
-                new TestEventOne(),
-                _ => executed = true);
+            var canHandle = _policy.CanHandle(new TestEventOne(), retryCount, new Exception("test"));
 
-            Assert.That(executed, Is.True);
-        }
-
-        [Test]
-        public void SuccessAfterRetryTest()
-        {
-            var tryCount = 0;
-            var success = false;
-
-            _policy.TryHandleMessage(
-                new TestEventOne(),
-                _ =>
-                {
-                    if (++tryCount < 3)
-                        throw new Exception("retry, please");
-
-                    success = true;
-                });
-
-            Assert.That(success, Is.True);
-            Assert.That(tryCount, Is.EqualTo(3));
-        }
-
-        [Test]
-        public void ErrorTest()
-        {
-            var tryCount = 0;
-
-            Assert.Throws<ErrorPolicyException>(() =>
-                _policy.TryHandleMessage(
-                    new TestEventOne(),
-                    _ =>
-                    {
-                        tryCount++;
-                        throw new Exception("retry, please");
-                    }));
-
-            Assert.That(tryCount, Is.EqualTo(4));
+            Assert.That(canHandle, Is.EqualTo(expectedResult));
         }
     }
 }
