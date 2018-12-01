@@ -5,7 +5,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.TestTypes.Messages
 {
-    public class TestRequestOne : IRequest<string>, ITestMessage
+    public class TestRequestCommandOne : ICommand<string>, ITestMessage
     {
         public string Message { get; set; }
     }

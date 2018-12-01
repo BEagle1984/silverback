@@ -216,7 +216,7 @@ namespace Silverback.Tests.Messaging.Publishing
         {
             var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRequestReplier()), NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
-            var results = publisher.Publish<string>(new TestRequestOne());
+            var results = publisher.Publish<string>(new TestRequestCommandOne());
 
             Assert.That(results, Is.EqualTo(new[] { "response", "response2" }));
         }
@@ -226,7 +226,7 @@ namespace Silverback.Tests.Messaging.Publishing
         {
             var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRequestReplier()), NullLoggerFactory.Instance.CreateLogger<Publisher>());
 
-            var results = await publisher.PublishAsync<string>(new TestRequestOne());
+            var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
 
             Assert.That(results, Is.EqualTo(new[] { "response", "response2" }));
         }
