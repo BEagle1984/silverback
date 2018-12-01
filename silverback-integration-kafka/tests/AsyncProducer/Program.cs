@@ -31,7 +31,7 @@ namespace AsyncProducer
             _broker = new KafkaBroker(GetLoggerFactory());
             _broker.Connect();
 
-            _producer = _broker.GetProducer(new KafkaEndpoint("Topic1")
+            _producer = _broker.GetProducer(new KafkaProducerEndpoint("Topic1")
             {
                 Configuration = new KafkaConfigurationDictionary
                 {

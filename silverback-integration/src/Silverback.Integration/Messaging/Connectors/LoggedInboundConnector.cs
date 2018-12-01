@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Connectors
 
             if (inboundLog.Exists(message, sourceEndpoint))
             {
-                _logger.LogInformation($"Message {message.GetTraceString(sourceEndpoint)} is being skipped since it was already processed.");
+                _logger.LogTrace($"Message is being skipped since it was already processed.", message, sourceEndpoint);
                 return;
             }
 

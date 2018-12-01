@@ -42,29 +42,11 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         }
 
         [Test]
-        public void TryHandleMessage_Successful_NotMoved()
-        {
-            var executed = false;
-            var policy = _errorPolicyBuilder.Move(TestEndpoint.Default);
-
-            policy.TryHandleMessage(
-                new TestEventOne(),
-                _ => executed = true);
-
-            var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
-
-            Assert.That(executed, Is.True);
-            Assert.That(producer.ProducedMessages.Count, Is.EqualTo(0));
-        }
-
-        [Test]
         public void TryHandleMessage_Failed_MessageMoved()
         {
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default);
 
-            policy.TryHandleMessage(
-                new TestEventOne(),
-                _ => throw new Exception("test"));
+            policy.HandleError(new TestEventOne(), 0, new Exception("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
 

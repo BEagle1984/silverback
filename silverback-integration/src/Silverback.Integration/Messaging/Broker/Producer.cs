@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Broker
         }
 
         private void Trace(IMessage message) =>
-            _logger.LogTrace($"Producing message {message.GetTraceString(Endpoint)}.");
+            _logger.LogTrace("Producing message.", message, Endpoint);
 
         private void EnsureIdentifier(IMessage message)
         {

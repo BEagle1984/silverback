@@ -34,7 +34,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             ;
 
         private KafkaEndpoint CreateEndpoint() =>
-            new KafkaEndpoint("silverback-examples-events")
+            new KafkaProducerEndpoint("silverback-examples-events")
             {
                 Configuration = new KafkaConfigurationDictionary
                 {

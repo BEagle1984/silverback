@@ -6,36 +6,38 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging
 {
-    public sealed class KafkaEndpoint : IEndpoint, IEquatable<KafkaEndpoint>
+    public class KafkaConsumerEndpoint : KafkaEndpoint, IEquatable<KafkaConsumerEndpoint>
     {
-        public KafkaEndpoint(string name)
+        public KafkaConsumerEndpoint(string name) : base(name)
         {
-            Name = name;
         }
-
-        /// <summary>
-        /// Gets or sets the topic name.
-        /// </summary>
-        public string Name { get; }
-
-        public IMessageSerializer Serializer { get; set; } = new JsonMessageSerializer();
-
-        public KafkaConfigurationDictionary Configuration { get; set; }
 
         /// <summary>
         /// Define the number of message processed before committing the offset to the server.
         /// The most reliable level is 1 but it reduces throughput.
         /// </summary>
-        public int CommitOffsetEach { get; } = 1;
+        public int CommitOffsetEach { get; set; } = 1;
 
         /// <summary>
         /// The maximum time (in milliseconds, -1 to block indefinitely) within which the poll remain blocked.
         /// </summary>
-        public int PollTimeout { get; } = 100;
+        public int PollTimeout { get; set; } = 100;
+
+        /// <summary>
+        /// If set to <c>true</c> it will resuse an instance of <see cref="Confluent.Kafka.Consumer"/> with 
+        /// the same settings when possible, actually using the same consumer to subscribe to multiple topics.
+        /// Default is <c>false</c>.
+        /// </summary>
+        public bool ReuseConsumer { get; set; } = false;
+
+        /// <summary>
+        /// The amount of threads to be started to consumer the endpoint. The default is 1.
+        /// </summary>
+        public int ConsumerThreads { get; set; } = 1;
 
         #region IEquatable
 
-        public bool Equals(KafkaEndpoint other)
+        public bool Equals(KafkaConsumerEndpoint other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -46,11 +48,28 @@ namespace Silverback.Messaging
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj is KafkaEndpoint && Equals((KafkaEndpoint)obj);
+            return obj is KafkaConsumerEndpoint && Equals((KafkaConsumerEndpoint)obj);
         }
 
         public override int GetHashCode() => Name?.GetHashCode() ?? 0;
 
         #endregion
+    }
+
+        public abstract class KafkaEndpoint : IEndpoint
+    {
+        protected KafkaEndpoint(string name)
+        {
+            Name = name;
+        }
+
+        /// <summary>
+        /// Gets the topic name.
+        /// </summary>
+        public string Name { get; }
+
+        public IMessageSerializer Serializer { get; set; } = new JsonMessageSerializer();
+
+        public KafkaConfigurationDictionary Configuration { get; set; }
     }
 }

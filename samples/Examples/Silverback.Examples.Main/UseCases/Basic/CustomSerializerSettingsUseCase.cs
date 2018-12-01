@@ -34,7 +34,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
         }
 
         private IEndpoint CreateEndpoint(string name) =>
-            new KafkaEndpoint(name)
+            new KafkaProducerEndpoint(name)
             {
                 Serializer = GetSerializer(),
                 Configuration = new KafkaConfigurationDictionary

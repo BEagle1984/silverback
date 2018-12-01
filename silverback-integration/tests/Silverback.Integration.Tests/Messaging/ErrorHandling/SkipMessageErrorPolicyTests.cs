@@ -21,22 +21,14 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         }
 
         [Test]
-        public void SuccessTest()
+        [TestCase(0, ErrorAction.SkipMessage)]
+        [TestCase(1, ErrorAction.SkipMessage)]
+        [TestCase(333, ErrorAction.SkipMessage)]
+        public void SkipTest(int retryCount, ErrorAction expectedAction)
         {
-            var executed = false;
-            _policy.TryHandleMessage(
-                new TestEventOne(),
-                _ => executed = true);
+            var action = _policy.HandleError(new TestEventOne(), retryCount, new Exception("test"));
 
-            Assert.That(executed, Is.True);
-        }
-
-        [Test]
-        public void ErrorTest()
-        {
-            _policy.TryHandleMessage(
-                new TestEventOne(),
-                _ => throw new Exception("test"));
+            Assert.That(action, Is.EqualTo(expectedAction));
         }
     }
 }

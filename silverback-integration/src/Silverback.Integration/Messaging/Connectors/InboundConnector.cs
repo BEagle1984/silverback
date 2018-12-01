@@ -28,25 +28,17 @@ namespace Silverback.Messaging.Connectors
         {
             _logger.LogTrace($"Connecting to inbound endpoint '{endpoint.Name}'...");
 
-            errorPolicy = errorPolicy ?? NoErrorPolicy.Instance;
-
             // TODO: Carefully test with multiple endpoints!
             // TODO: Test if consumer gets properly disposed etc.
             var consumer = _broker.GetConsumer(endpoint);
-            consumer.Received += (sender, message) => OnMessageReceived(sender, message, endpoint, errorPolicy);
+            consumer.Received += (_, message) => OnMessageReceived(message, endpoint);
+            consumer.Error += (_, args) => OnError(args, errorPolicy);
             return this;
         }
 
-        private void OnMessageReceived(object _, IMessage message, IEndpoint endpoint, IErrorPolicy errorPolicy)
+        private void OnMessageReceived(IMessage message, IEndpoint sourceEndpoint)
         {
-            errorPolicy.TryHandleMessage(
-                message,
-                msg => ProcessMessage(msg, endpoint));
-        }
-
-        private void ProcessMessage(IMessage message, IEndpoint sourceEndpoint)
-        {
-            _logger.LogTrace($"Processing message {message.GetTraceString(sourceEndpoint)}...");
+            _logger.LogTrace("Processing message.", message, sourceEndpoint);
 
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -56,5 +48,13 @@ namespace Silverback.Messaging.Connectors
 
         protected virtual void RelayMessage(IMessage message, IEndpoint sourceEndpoint, IPublisher publisher,
             IServiceProvider serviceProvider) => publisher.Publish(message);
+
+        private void OnError(ErrorHandlerEventArgs args, IErrorPolicy errorPolicy)
+        {
+            if (errorPolicy == null)
+                return;
+
+            args.Action = errorPolicy.HandleError(args.Message, args.RetryCount, args.Exception);
+        }
     }
 }

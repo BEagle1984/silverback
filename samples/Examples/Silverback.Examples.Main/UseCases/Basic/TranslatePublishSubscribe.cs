@@ -24,7 +24,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
             .AddScoped<ISubscriber, TranslateUseCase>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
-            .AddOutbound<IIntegrationEvent>(new KafkaEndpoint("silverback-examples-events")
+            .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
             {
                 Configuration = new KafkaConfigurationDictionary
                 {

@@ -31,20 +31,28 @@ namespace Silverback.Examples.ConsumerA
             ConfigureNLog(serviceProvider);
 
             endpoints
-                .AddInbound(CreateEndpoint("silverback-examples-events"))
-                .AddInbound(CreateEndpoint("silverback-examples-bad-events"), policy => policy
+                .AddInbound(CreateConsumerEndpoint("silverback-examples-events"))
+                .AddInbound(CreateConsumerEndpoint("silverback-examples-bad-events"), policy => policy
                     .Chain(
                         policy.Retry(2, TimeSpan.FromMilliseconds(500)),
-                        policy.Move(CreateEndpoint("silverback-examples-bad-events-error"))))
-                .AddInbound(CreateEndpoint("silverback-examples-custom-serializer", GetCustomSerializer()))
+                        policy.Move(new KafkaProducerEndpoint("silverback-examples-bad-events-error")
+                        {
+                            Configuration = new KafkaConfigurationDictionary
+                            {
+                                {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
+                                {"client.id", "consumer-service-a"},
+                                {"group.id", "silverback-examples" }
+                            }
+                        })))
+                .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer", GetCustomSerializer()))
                 // Special inbounds (not logged)
-                .AddInbound<InboundConnector>(CreateEndpoint("silverback-examples-legacy-messages", new LegacyMessageSerializer()))
+                .AddInbound<InboundConnector>(CreateConsumerEndpoint("silverback-examples-legacy-messages", new LegacyMessageSerializer()))
                 .Connect();
         }
 
-        private static KafkaEndpoint CreateEndpoint(string name, IMessageSerializer messageSerializer = null)
+        private static KafkaConsumerEndpoint CreateConsumerEndpoint(string name, IMessageSerializer messageSerializer = null)
         {
-            var endpoint = new KafkaEndpoint(name)
+            var endpoint = new KafkaConsumerEndpoint(name)
             {
                 Configuration = new KafkaConfigurationDictionary
                 {
