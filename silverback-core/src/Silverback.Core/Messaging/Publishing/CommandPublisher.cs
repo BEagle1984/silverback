@@ -17,9 +17,9 @@ namespace Silverback.Messaging.Publishing
             _publisher = publisher;
         }
 
-        public void Send(ICommand commandMessage) => _publisher.Publish(commandMessage);
+        public void Execute(ICommand commandMessage) => _publisher.Publish(commandMessage);
 
-        public Task SendAsync(ICommand commandMessage) => _publisher.PublishAsync(commandMessage);
+        public Task ExecuteAsync(ICommand commandMessage) => _publisher.PublishAsync(commandMessage);
 
         public IEnumerable<TResult> Execute<TResult>(ICommand<TResult> commandMessage) => 
             _publisher.Publish<TResult>(commandMessage);

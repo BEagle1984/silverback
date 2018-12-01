@@ -9,9 +9,9 @@ namespace Silverback.Messaging.Publishing
 {
     public interface ICommandPublisher
     {
-        void Send(ICommand commandMessage);
+        void Execute(ICommand commandMessage);
 
-        Task SendAsync(ICommand commandMessage);
+        Task ExecuteAsync(ICommand commandMessage);
 
         IEnumerable<TResult> Execute<TResult>(ICommand<TResult> commandMessage);
 
