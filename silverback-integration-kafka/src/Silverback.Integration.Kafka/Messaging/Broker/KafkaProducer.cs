@@ -8,18 +8,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Silverback.Messaging.Broker
 {
-    public class KafkaProducer : Producer, IDisposable
+    public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
+        private readonly ILogger _logger;
         private Confluent.Kafka.Producer<byte[], byte[]> _innerProducer;
 
         private static readonly ConcurrentDictionary<Dictionary<string, object>, Confluent.Kafka.Producer<byte[], byte[]>> ProducersCache =
-            new ConcurrentDictionary<Dictionary<string, object>, Confluent.Kafka.Producer<byte[], byte[]>>(new ConfigurationComparer());
+            new ConcurrentDictionary<Dictionary<string, object>, Confluent.Kafka.Producer<byte[], byte[]>>(new KafkaConfigurationComparer());
 
-        public KafkaProducer(IBroker broker, KafkaEndpoint endpoint, ILogger<KafkaProducer> logger) : base(broker, endpoint, logger)
+        public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, ILogger<KafkaProducer> logger) : base(broker, endpoint, logger)
         {
+            _logger = logger;
         }
-
-        public new KafkaEndpoint Endpoint => (KafkaEndpoint)base.Endpoint;
 
         protected override void Produce(IMessage message, byte[] serializedMessage)
             => Task.Run(() => ProduceAsync(message, serializedMessage)).Wait();
@@ -34,8 +34,13 @@ namespace Silverback.Messaging.Broker
             _innerProducer ?? (_innerProducer =
                 ProducersCache.GetOrAdd(Endpoint.Configuration, CreateInnerProducer()));
 
-        private Confluent.Kafka.Producer<byte[], byte[]> CreateInnerProducer() =>
-            new Confluent.Kafka.Producer<byte[], byte[]>(Endpoint.Configuration, new ByteArraySerializer(), new ByteArraySerializer());
+        private Confluent.Kafka.Producer<byte[], byte[]> CreateInnerProducer()
+        {
+            _logger.LogTrace("Creating Confluent.Kafka.Producer...");
+
+            return new Confluent.Kafka.Producer<byte[], byte[]>(Endpoint.Configuration, new ByteArraySerializer(),
+                new ByteArraySerializer());
+        }
 
         public void Dispose()
         {

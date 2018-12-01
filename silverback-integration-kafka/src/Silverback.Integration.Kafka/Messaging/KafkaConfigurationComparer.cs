@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Silverback
+namespace Silverback.Messaging
 {
-    /// <summary>
-    /// Compare two Kafka clients configurations.
-    /// </summary>
-    internal class ConfigurationComparer : IEqualityComparer<Dictionary<string, object>>
+    internal class KafkaConfigurationComparer : IEqualityComparer<Dictionary<string, object>>
     {
         public bool Equals(Dictionary<string, object> x, Dictionary<string, object> y)
         {

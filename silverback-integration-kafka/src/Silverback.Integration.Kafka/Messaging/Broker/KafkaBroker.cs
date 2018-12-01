@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
@@ -8,7 +10,7 @@ namespace Silverback.Messaging.Broker
     /// <summary>
     /// A <see cref="Broker"/> implementation for Apache Kafka.
     /// </summary>
-    public class KafkaBroker : Broker
+    public class KafkaBroker : Broker<KafkaEndpoint>
     {
         private readonly ILoggerFactory _loggerFactory;
 
@@ -18,10 +20,10 @@ namespace Silverback.Messaging.Broker
         }
 
         protected override Producer InstantiateProducer(IEndpoint endpoint) =>
-            new KafkaProducer(this, (KafkaEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaProducer>());
+            new KafkaProducer(this, (KafkaProducerEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaProducer>());
 
         protected override Consumer InstantiateConsumer(IEndpoint endpoint) =>
-            new KafkaConsumer(this, (KafkaEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaConsumer>());
+            new KafkaConsumer(this, (KafkaConsumerEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaConsumer>());
 
         protected override void Connect(IEnumerable<IConsumer> consumers) =>
             consumers.Cast<KafkaConsumer>().ToList().ForEach(c => c.Connect());

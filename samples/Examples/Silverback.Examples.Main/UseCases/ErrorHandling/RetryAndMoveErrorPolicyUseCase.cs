@@ -22,7 +22,7 @@ namespace Silverback.Examples.Main.UseCases.ErrorHandling
             .AddBroker<KafkaBroker>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
-            .AddOutbound<IIntegrationEvent>(new KafkaEndpoint("silverback-examples-bad-events")
+            .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-bad-events")
             {
                 Configuration = new KafkaConfigurationDictionary
                 {

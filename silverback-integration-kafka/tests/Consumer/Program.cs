@@ -31,8 +31,9 @@ namespace Consumer
         {
             _broker = new KafkaBroker(GetLoggerFactory());
 
-            var consumer = _broker.GetConsumer(new KafkaEndpoint("Topic1")
+            var consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
             {
+                ConsumerThreads = 3,
                 Configuration = new KafkaConfigurationDictionary
                     {
                         {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
