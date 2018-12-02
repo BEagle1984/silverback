@@ -96,6 +96,13 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogTrace("Consuming cancelled.");
                 }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical(ex,
+                        "Fatal error occurred consuming a message." +
+                        "The consumer will be stopped. See inner exception for details.");
+                    break;
+                }
             }
         }
 
@@ -108,7 +115,7 @@ namespace Silverback.Messaging.Broker
             }
 
             int retryCount;
-            if (_lastOffsetDictionary.ContainsKey(tpo.TopicPartition))
+            if (_retryCountDictionary.ContainsKey(tpo.TopicPartition))
                 retryCount = _retryCountDictionary[tpo.TopicPartition] + 1;
             else
                 retryCount = 1;

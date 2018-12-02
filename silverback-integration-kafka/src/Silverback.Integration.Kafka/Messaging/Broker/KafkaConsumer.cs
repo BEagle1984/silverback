@@ -176,9 +176,9 @@ namespace Silverback.Messaging.Broker
             }
 
             _logger.LogTrace(
-                "Error occurred consuming message: {topic} [{partition}] @{offset}. (retry={retryCount})" +
+                "Error occurred consuming message (retry={retryCount}): {topic} [{partition}] @{offset}. " +
                 actionDescription,
-                tpo.Topic, tpo.Partition, tpo.Offset, retryCount);
+                retryCount, tpo.Topic, tpo.Partition, tpo.Offset);
         }
     }
 }

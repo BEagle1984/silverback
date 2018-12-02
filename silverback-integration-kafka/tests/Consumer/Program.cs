@@ -70,7 +70,7 @@ namespace Consumer
 
             Console.WriteLine($"[{testMessage.Id}] {testMessage.Text}");
 
-            if (testMessage.Text == "bad")
+            if (testMessage.Text == "bad" || testMessage.Text == "retry")
             {
                 Console.WriteLine("--> Bad message, throwing exception!");
                 throw new Exception("Bad!");
@@ -79,7 +79,14 @@ namespace Consumer
 
         private static void OnError(object sender, ErrorHandlerEventArgs args)
         {
-            args.Action = ErrorAction.SkipMessage;
+            if (args.Message is TestMessage testMessage && testMessage.Text == "retry" && args.RetryCount <= 1)
+            {
+                args.Action = ErrorAction.RetryMessage;
+            }
+            else
+            {
+                args.Action = ErrorAction.SkipMessage;
+            }
         }
 
         private static void PrintHeader()
