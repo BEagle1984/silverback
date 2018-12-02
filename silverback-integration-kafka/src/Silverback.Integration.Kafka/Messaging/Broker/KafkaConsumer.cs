@@ -6,8 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Confluent.Kafka;
-using Confluent.Kafka.Serialization;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.ErrorHandling;
 
@@ -20,8 +18,8 @@ namespace Silverback.Messaging.Broker
 
         private InnerConsumerWrapper[] _innerConsumerWrapper;
 
-        private static readonly ConcurrentDictionary<Dictionary<string, object>, InnerConsumerWrapper> ConsumerWrappersCache =
-            new ConcurrentDictionary<Dictionary<string, object>, InnerConsumerWrapper>(new KafkaConfigurationComparer());
+        private static readonly ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper> ConsumerWrappersCache =
+            new ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper>(new KafkaClientConfigComparer());
 
         public KafkaConsumer(KafkaBroker broker, KafkaConsumerEndpoint endpoint, ILogger<KafkaConsumer> logger) : base(broker, endpoint, logger)
         {
@@ -38,7 +36,7 @@ namespace Silverback.Messaging.Broker
 
             if (Endpoint.ReuseConsumer)
             {
-                _innerConsumerWrapper =  new[] { ConsumerWrappersCache.GetOrAdd(Endpoint.Configuration, CreateInnerConsumerWrapper()) };
+                _innerConsumerWrapper = new[] { ConsumerWrappersCache.GetOrAdd(Endpoint.Configuration, _ => CreateInnerConsumerWrapper()) };
             }
             else
             {
@@ -51,32 +49,9 @@ namespace Silverback.Messaging.Broker
             foreach (var consumerWrapper in _innerConsumerWrapper)
             {
                 consumerWrapper.Subscribe(Endpoint);
-                consumerWrapper.Received += (message, retryCount) => OnMessageReceived(message, retryCount, consumerWrapper);
+                consumerWrapper.Received += (message, tpo, retryCount) => OnMessageReceived(message, tpo, retryCount, consumerWrapper);
                 consumerWrapper.StartConsuming();
             }
-        }
-
-        private InnerConsumerWrapper CreateInnerConsumerWrapper(int threadIndex = 1)
-        {
-            _logger.LogTrace("Creating Confluent.Kafka.Consumer...");
-
-            Dictionary<string, object> configuration;
-
-            if (Endpoint.ConsumerThreads > 1)
-            {
-                configuration = Endpoint.Configuration.ToDictionary(d => d.Key, d => d.Value);
-                configuration["client.id"] = $"{configuration["client.id"]}[{threadIndex}]";
-            }
-            else
-            {
-                configuration = Endpoint.Configuration;
-            }
-
-            return new InnerConsumerWrapper(
-                new Confluent.Kafka.Consumer<byte[], byte[]>(
-                    configuration, new ByteArrayDeserializer(), new ByteArrayDeserializer()),
-                _cancellationTokenSource.Token,
-                _logger);
         }
 
         internal void Disconnect()
@@ -103,25 +78,59 @@ namespace Silverback.Messaging.Broker
             Disconnect();
         }
 
-        private void OnMessageReceived(Message<byte[], byte[]> message, int retryCount, InnerConsumerWrapper innerConsumer)
+        private InnerConsumerWrapper CreateInnerConsumerWrapper(int threadIndex = 1)
         {
-            if (!message.Topic.Equals(Endpoint.Name, StringComparison.InvariantCultureIgnoreCase))
-                return;
+            _logger.LogTrace("Creating Confluent.Kafka.Consumer...");
 
-            var result = TryHandleMessage(message, retryCount, innerConsumer);
+            var configuration = GetCurrentThreadConfiguration(threadIndex);
 
-            if (!result.IsSuccessful)
-                HandleError(result.Action ?? ErrorAction.StopConsuming, message, retryCount, innerConsumer);
+            return new InnerConsumerWrapper(
+                new Confluent.Kafka.Consumer<byte[], byte[]>(configuration),
+                _cancellationTokenSource.Token,
+                _logger);
         }
 
-        private MessageHandlerResult TryHandleMessage(Message<byte[], byte[]> message, int retryCount, InnerConsumerWrapper innerConsumer)
+        private IEnumerable<KeyValuePair<string, string>> GetCurrentThreadConfiguration(int threadIndex)
+        {
+            IEnumerable<KeyValuePair<string, string>> configuration;
+
+            if (Endpoint.ConsumerThreads > 1)
+            {
+                var dict = Endpoint.Configuration.ToDictionary(d => d.Key, d => d.Value);
+                dict["client.id"] = $"{dict["client.id"]}[{threadIndex}]";
+                configuration = dict;
+            }
+            else
+            {
+                configuration = Endpoint.Configuration;
+            }
+
+            return configuration;
+        }
+
+        private void OnMessageReceived(Confluent.Kafka.Message<byte[], byte[]> message,
+            Confluent.Kafka.TopicPartitionOffset tpo,
+            int retryCount, InnerConsumerWrapper innerConsumer)
+        {
+            if (!tpo.Topic.Equals(Endpoint.Name, StringComparison.InvariantCultureIgnoreCase))
+                return;
+
+            var result = TryHandleMessage(message, tpo, retryCount, innerConsumer);
+
+            if (!result.IsSuccessful)
+                HandleError(result.Action ?? ErrorAction.StopConsuming, tpo, retryCount, innerConsumer);
+        }
+
+        private MessageHandlerResult TryHandleMessage(Confluent.Kafka.Message<byte[], byte[]> message,
+            Confluent.Kafka.TopicPartitionOffset tpo,
+            int retryCount, InnerConsumerWrapper innerConsumer)
         {
             try
             {
                 var result = HandleMessage(message.Value, retryCount);
 
                 if (result.IsSuccessful)
-                    CommitOffsetIfNeeded(message, innerConsumer);
+                    CommitOffsetIfNeeded(tpo, innerConsumer);
 
                 return result;
             }
@@ -130,20 +139,20 @@ namespace Silverback.Messaging.Broker
                 _logger.LogCritical(ex,
                     "Fatal error occurred consuming the message: {topic} [{partition}] @{offset}. " +
                     "The consumer will be stopped. See inner exception for details.",
-                    message.Topic, message.Partition, message.Offset);
+                    tpo.Topic, tpo.Partition, tpo.Offset);
 
                 return MessageHandlerResult.Error(ErrorAction.StopConsuming);
             }
         }
 
-        private void CommitOffsetIfNeeded(Message<byte[], byte[]> message, InnerConsumerWrapper innerConsumer)
+        private void CommitOffsetIfNeeded(Confluent.Kafka.TopicPartitionOffset tpo, InnerConsumerWrapper innerConsumer)
         {
-            if (Endpoint.Configuration.IsAutocommitEnabled) return;
-            if (message.Offset % Endpoint.CommitOffsetEach != 0) return;
-            innerConsumer.Commit(message).Wait();
+            if (Endpoint.Configuration.EnableAutoCommit ?? true) return;
+            if (tpo.Offset % Endpoint.CommitOffsetEach != 0) return;
+            innerConsumer.Commit(tpo);
         }
 
-        private void HandleError(ErrorAction action, Message<byte[], byte[]> message, int retryCount, InnerConsumerWrapper innerConsumer)
+        private void HandleError(ErrorAction action, Confluent.Kafka.TopicPartitionOffset tpo, int retryCount, InnerConsumerWrapper innerConsumer)
         {
             string actionDescription = null;
             switch (action)
@@ -155,7 +164,7 @@ namespace Silverback.Messaging.Broker
                     actionDescription = "This message will be retried.";
 
                     // Revert offset to consume the same message again
-                    innerConsumer.Seek(message.TopicPartitionOffset);
+                    innerConsumer.Seek(tpo);
 
                     break;
                 case ErrorAction.StopConsuming:
@@ -167,9 +176,9 @@ namespace Silverback.Messaging.Broker
             }
 
             _logger.LogTrace(
-                "Error occurred consuming message: {topic} [{partition}] @{offset}. (retry={retryCount})" +
+                "Error occurred consuming message (retry={retryCount}): {topic} [{partition}] @{offset}. " +
                 actionDescription,
-                retryCount, message.Topic, message.Partition, message.Offset);
+                retryCount, tpo.Topic, tpo.Partition, tpo.Offset);
         }
     }
 }

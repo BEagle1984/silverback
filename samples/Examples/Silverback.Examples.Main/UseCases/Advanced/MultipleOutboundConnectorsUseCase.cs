@@ -1,3 +1,6 @@
+// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +12,6 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
 namespace Silverback.Examples.Main.UseCases.Advanced
@@ -36,10 +38,10 @@ namespace Silverback.Examples.Main.UseCases.Advanced
         private KafkaEndpoint CreateEndpoint() =>
             new KafkaProducerEndpoint("silverback-examples-events")
             {
-                Configuration = new KafkaConfigurationDictionary
+                Configuration = new Confluent.Kafka.ProducerConfig
                 {
-                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
-                    {"client.id", GetType().FullName}
+                    BootstrapServers = "PLAINTEXT://kafka:9092",
+                    ClientId = GetType().FullName
                 }
             };
 

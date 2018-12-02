@@ -1,7 +1,9 @@
-﻿using System;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
 

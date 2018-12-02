@@ -11,13 +11,15 @@ namespace Silverback.Messaging
         {
         }
 
+        public Confluent.Kafka.ProducerConfig Configuration { get; set; } = new Confluent.Kafka.ProducerConfig();
+
         #region IEquatable
 
         public bool Equals(KafkaProducerEndpoint other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(Name, other.Name) && Equals(Serializer, other.Serializer) && Equals(Configuration, other.Configuration);
+            return string.Equals(Name, other.Name) && Equals(Serializer, other.Serializer) && KafkaClientConfigComparer.Compare(Configuration, other.Configuration);
         }
 
         public override bool Equals(object obj)

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -7,7 +10,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;

@@ -1,12 +1,14 @@
-﻿using Messages;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using Messages;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Messages;
-using System;
-using System.Collections.Generic;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Messages;
 
 namespace Consumer
 {
@@ -17,7 +19,7 @@ namespace Consumer
         private static void Main()
         {
             Console.Clear();
-
+            
             PrintHeader();
 
             Connect();
@@ -34,21 +36,16 @@ namespace Consumer
             var consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
             {
                 ConsumerThreads = 3,
-                Configuration = new KafkaConfigurationDictionary
-                    {
-                        {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
-                        {"client.id", "ClientTest"},
-                        {"group.id", "advanced-silverback-consumer"},
-                        {"enable.auto.commit", false},
-                        {"auto.commit.interval.ms", 5000}, // No-auto commit at all!
-                        {"statistics.interval.ms", 60000},
-                        {
-                            "default.topic.config", new Dictionary<string, object>()
-                            {
-                                {"auto.offset.reset", "smallest"}
-                            }
-                        }
-                    }
+                Configuration = new Confluent.Kafka.ConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://kafka:9092",
+                    ClientId = "ClientTest",
+                    GroupId = "advanced-silverback-consumer",
+                    EnableAutoCommit = false,
+                    AutoCommitIntervalMs = 5000,
+                    StatisticsIntervalMs = 60000,
+                    AutoOffsetReset = Confluent.Kafka.AutoOffsetResetType.Earliest
+                }
             });
 
             consumer.Received += OnMessageReceived;
@@ -73,7 +70,7 @@ namespace Consumer
 
             Console.WriteLine($"[{testMessage.Id}] {testMessage.Text}");
 
-            if (testMessage.Text == "bad")
+            if (testMessage.Text == "bad" || testMessage.Text == "retry")
             {
                 Console.WriteLine("--> Bad message, throwing exception!");
                 throw new Exception("Bad!");
@@ -82,7 +79,14 @@ namespace Consumer
 
         private static void OnError(object sender, ErrorHandlerEventArgs args)
         {
-            args.Action = ErrorAction.SkipMessage;
+            if (args.Message is TestMessage testMessage && testMessage.Text == "retry" && args.RetryCount <= 1)
+            {
+                args.Action = ErrorAction.RetryMessage;
+            }
+            else
+            {
+                args.Action = ErrorAction.SkipMessage;
+            }
         }
 
         private static void PrintHeader()

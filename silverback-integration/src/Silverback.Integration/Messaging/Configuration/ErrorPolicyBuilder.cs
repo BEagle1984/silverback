@@ -1,7 +1,9 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Extensions.Logging;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.ErrorHandling;
 

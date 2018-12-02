@@ -1,12 +1,13 @@
-﻿using Messages;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.IO;
+using Messages;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace AsyncProducer
 {
@@ -33,21 +34,16 @@ namespace AsyncProducer
 
             _producer = _broker.GetProducer(new KafkaProducerEndpoint("Topic1")
             {
-                Configuration = new KafkaConfigurationDictionary
+                Configuration = new Confluent.Kafka.ProducerConfig
                 {
-                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
-                    {"client.id", "ClientTest"},
-                    {"retries", 0},
-                    {"batch.num.messages", 1},
-                    {"socket.blocking.max.ms", 1},
-                    {"socket.nagle.disable", true},
-                    {"queue.buffering.max.ms", 0},
-                    {
-                        "default.topic.config", new Dictionary<string, object>
-                        {
-                            {"acks", 0}
-                        }
-                    }
+                    BootstrapServers = "PLAINTEXT://kafka:9092",
+                    ClientId = "ClientTest",
+                    MessageSendMaxRetries = 0,
+                    BatchNumMessages = 1,
+                    SocketBlockingMaxMs = 1,
+                    SocketNagleDisable = true,
+                    QueueBufferingMaxMessages = 0,
+                    Acks = 0
                 }
             });
         }
