@@ -1,12 +1,14 @@
-﻿using Messages;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using Messages;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Messages;
-using System;
-using System.Collections.Generic;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Messages;
 
 namespace Consumer
 {

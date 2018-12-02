@@ -1,9 +1,11 @@
-﻿using Silverback.Messaging.Messages;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
