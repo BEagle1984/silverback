@@ -3,7 +3,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Confluent.Kafka.Serialization;
 using Microsoft.Extensions.Logging;
 
 namespace Silverback.Messaging.Broker
@@ -13,8 +12,8 @@ namespace Silverback.Messaging.Broker
         private readonly ILogger _logger;
         private Confluent.Kafka.Producer<byte[], byte[]> _innerProducer;
 
-        private static readonly ConcurrentDictionary<Dictionary<string, object>, Confluent.Kafka.Producer<byte[], byte[]>> ProducersCache =
-            new ConcurrentDictionary<Dictionary<string, object>, Confluent.Kafka.Producer<byte[], byte[]>>(new KafkaConfigurationComparer());
+        private static readonly ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.Producer<byte[], byte[]>> ProducersCache =
+            new ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.Producer<byte[], byte[]>>(new KafkaClientConfigComparer());
 
         public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, ILogger<KafkaProducer> logger) : base(broker, endpoint, logger)
         {
@@ -26,8 +25,16 @@ namespace Silverback.Messaging.Broker
 
         protected override async Task ProduceAsync(IMessage message, byte[] serializedMessage)
         {
-            var msg = await GetInnerProducer().ProduceAsync(Endpoint.Name, KeyHelper.GetMessageKey(message), serializedMessage);
-            if (msg.Error.HasError) throw new SilverbackException($"Failed to produce message: [{msg.Error.Code}] {msg.Error.Reason}");
+            var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
+            {
+                Key = KeyHelper.GetMessageKey(message),
+                Value = serializedMessage
+            };
+
+            var deliveryReport = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage);
+            _logger.LogTrace(
+                "Successfully produced: {topic} [{partition}] @{offset}.",
+                deliveryReport.Topic, deliveryReport.Partition, deliveryReport.Offset);
         }
 
         private Confluent.Kafka.Producer<byte[], byte[]> GetInnerProducer() =>
@@ -38,8 +45,7 @@ namespace Silverback.Messaging.Broker
         {
             _logger.LogTrace("Creating Confluent.Kafka.Producer...");
 
-            return new Confluent.Kafka.Producer<byte[], byte[]>(Endpoint.Configuration, new ByteArraySerializer(),
-                new ByteArraySerializer());
+            return new Confluent.Kafka.Producer<byte[], byte[]>(Endpoint.Configuration);
         }
 
         public void Dispose()

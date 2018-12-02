@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace Silverback.Messaging.Broker
 {
-    internal delegate void MessageReceivedHandler(Confluent.Kafka.Message<byte[], byte[]> message, int retryCount);
-
     internal class InnerConsumerWrapper : IDisposable
     {
         private readonly List<KafkaConsumerEndpoint> _endpoints = new List<KafkaConsumerEndpoint>();
@@ -22,7 +18,6 @@ namespace Silverback.Messaging.Broker
         private Confluent.Kafka.Consumer<byte[], byte[]> _innerConsumer;
 
         private bool _started;
-        private bool _disposing;
 
         public InnerConsumerWrapper(Confluent.Kafka.Consumer<byte[], byte[]> innerConsumer, CancellationToken cancellationToken, ILogger logger)
         {
@@ -41,49 +36,63 @@ namespace Silverback.Messaging.Broker
                 _innerConsumer.Subscribe(endpoint.Name);
         }
 
-        public async Task Commit(Confluent.Kafka.Message<byte[], byte[]> message)
+        public void Commit(Confluent.Kafka.TopicPartitionOffset tpo)
         {
-            var committedOffsets = await _innerConsumer.CommitAsync(message);
-            _logger.LogTrace("Committed offset: {offset}", committedOffsets);
+            _innerConsumer.Commit(new []{ tpo }, _cancellationToken);
+            _logger.LogTrace("Committed offset: {offset}", tpo);
         }
 
-        public void Seek(Confluent.Kafka.TopicPartitionOffset topicPartitionOffset) => _innerConsumer.Seek(topicPartitionOffset);
+        public void Seek(Confluent.Kafka.TopicPartitionOffset tpo) => _innerConsumer.Seek(tpo);
 
         public void StartConsuming()
         {
             if (_started)
                 return;
 
-            _innerConsumer.OnPartitionsAssigned += (_, partitions) =>
-            {
-                _logger.LogTrace("Assigned partitions '{partitions}' to member with name '{name}' and id '{memberId}'",
-                    string.Join(", ", partitions), _innerConsumer.Name, _innerConsumer.MemberId);
-                _innerConsumer.Assign(partitions);
-            };
-
-            _innerConsumer.OnPartitionsRevoked += (_, partitions) =>
-            {
-                _logger.LogTrace("Revoked '{partitions}' from member with name '{name}' and id '{memberId}'",
-                    string.Join(", ", partitions), _innerConsumer.Name, _innerConsumer.MemberId);
-
-                if (!_disposing) _innerConsumer?.Unassign();
-            };
+            AttachEventHandlers();
 
             Task.Run(() => Consume(), _cancellationToken);
 
             _started = true;
         }
 
+        private void AttachEventHandlers()
+        {
+            _innerConsumer.OnPartitionsAssigned += (_, partitions) =>
+                _logger.LogTrace("Assigned partitions: [{partitions}], member id: {memberId}",
+                    string.Join(", ", partitions), _innerConsumer.MemberId);
+
+            _innerConsumer.OnPartitionsRevoked += (_, partitions) =>
+                _logger.LogTrace("Revoked partitions: [{partitions}]", string.Join(", ", partitions));
+
+            _innerConsumer.OnPartitionEOF += (_, tpo) =>
+                _logger.LogTrace(
+                    "Reached end of topic {topic} partition {partition}, next message will be at offset {offset}.",
+                    tpo.Topic, tpo.Partition, tpo.Offset);
+
+            _innerConsumer.OnError += (_, e) =>
+                _logger.Log(e.IsFatal ? LogLevel.Critical : LogLevel.Warning, "Error in Kafka consumer: {reason}.",
+                    e.Reason);
+
+            _innerConsumer.OnStatistics += (_, json) => _logger.LogInformation($"Statistics: {json}");
+        }
+
         private void Consume()
         {
             while (!_cancellationToken.IsCancellationRequested)
             {
-                if (!_innerConsumer.Consume(out var message, TimeSpan.FromMilliseconds(_endpoints.Min(e => e.PollTimeout))))
-                    continue;
+                try
+                {
+                    var result = _innerConsumer.Consume(_cancellationToken);
 
-                _logger.LogTrace("Consuming message: {topic} [{partition}] @{offset}", message.Topic, message.Partition, message.Offset);
+                    _logger.LogTrace("Consuming message: {topic} [{partition}] @{offset}", result.Topic, result.Partition, result.Offset);
 
-                Received?.Invoke(message, GetRetryCount(message.TopicPartitionOffset));
+                    Received?.Invoke(result.Message, result.TopicPartitionOffset, GetRetryCount(result.TopicPartitionOffset));
+                }
+                catch (OperationCanceledException)
+                {
+                    _logger.LogTrace("Consuming cancelled.");
+                }
             }
         }
 
@@ -116,10 +125,7 @@ namespace Silverback.Messaging.Broker
 
         public void Dispose()
         {
-            _disposing = true;
-
-            _innerConsumer?.Unassign();
-            _innerConsumer?.Unsubscribe();
+            _innerConsumer?.Close();
             _innerConsumer?.Dispose();
 
             _innerConsumer = null;

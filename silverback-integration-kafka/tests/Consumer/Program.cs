@@ -34,21 +34,16 @@ namespace Consumer
             var consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
             {
                 ConsumerThreads = 3,
-                Configuration = new KafkaConfigurationDictionary
-                    {
-                        {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
-                        {"client.id", "ClientTest"},
-                        {"group.id", "advanced-silverback-consumer"},
-                        {"enable.auto.commit", false},
-                        {"auto.commit.interval.ms", 5000}, // No-auto commit at all!
-                        {"statistics.interval.ms", 60000},
-                        {
-                            "default.topic.config", new Dictionary<string, object>()
-                            {
-                                {"auto.offset.reset", "smallest"}
-                            }
-                        }
-                    }
+                Configuration = new Confluent.Kafka.ConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://kafka:9092",
+                    ClientId = "ClientTest",
+                    GroupId = "advanced-silverback-consumer",
+                    EnableAutoCommit = false,
+                    AutoCommitIntervalMs = 5000,
+                    StatisticsIntervalMs = 60000,
+                    AutoOffsetReset = Confluent.Kafka.AutoOffsetResetType.Earliest
+                }
             });
 
             consumer.Received += OnMessageReceived;
