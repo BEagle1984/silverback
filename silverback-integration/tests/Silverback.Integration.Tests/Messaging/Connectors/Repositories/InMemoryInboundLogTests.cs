@@ -1,5 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using NUnit.Framework;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Tests.TestTypes;

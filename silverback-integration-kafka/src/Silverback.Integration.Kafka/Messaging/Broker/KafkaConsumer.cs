@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker
 
             if (Endpoint.ReuseConsumer)
             {
-                _innerConsumerWrapper = new[] { ConsumerWrappersCache.GetOrAdd(Endpoint.Configuration, CreateInnerConsumerWrapper()) };
+                _innerConsumerWrapper = new[] { ConsumerWrappersCache.GetOrAdd(Endpoint.Configuration, _ => CreateInnerConsumerWrapper()) };
             }
             else
             {

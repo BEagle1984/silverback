@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Serialization;
 using NLog.Extensions.Logging;
-using Silverback.Examples.Common;
 using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Common.Serialization;
@@ -37,11 +37,11 @@ namespace Silverback.Examples.ConsumerA
                         policy.Retry(2, TimeSpan.FromMilliseconds(500)),
                         policy.Move(new KafkaProducerEndpoint("silverback-examples-bad-events-error")
                         {
-                            Configuration = new KafkaConfigurationDictionary
+                            Configuration = new Confluent.Kafka.ProducerConfig
                             {
-                                {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
-                                {"client.id", "consumer-service-a"},
-                                {"group.id", "silverback-examples" }
+                                BootstrapServers = "PLAINTEXT://kafka:9092",
+                                ClientId = "consumer-service-a",
+                                GroupId = "silverback-examples"
                             }
                         })))
                 .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer", GetCustomSerializer()))
@@ -54,11 +54,12 @@ namespace Silverback.Examples.ConsumerA
         {
             var endpoint = new KafkaConsumerEndpoint(name)
             {
-                Configuration = new KafkaConfigurationDictionary
+                ReuseConsumer = true,
+                Configuration = new Confluent.Kafka.ConsumerConfig
                 {
-                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
-                    {"client.id", "consumer-service-a"},
-                    {"group.id", "silverback-examples" }
+                    BootstrapServers = "PLAINTEXT://kafka:9092",
+                    ClientId = "consumer-service-a",
+                    GroupId = "silverback-examples"
                 }
             };
 

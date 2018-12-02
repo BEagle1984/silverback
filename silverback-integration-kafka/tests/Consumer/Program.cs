@@ -19,7 +19,7 @@ namespace Consumer
         private static void Main()
         {
             Console.Clear();
-
+            
             PrintHeader();
 
             Connect();

@@ -1,6 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Serialization;
-
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
 namespace Silverback.Messaging.Broker
 {
     /// <summary>

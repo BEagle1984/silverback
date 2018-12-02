@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -35,8 +36,7 @@ namespace Silverback.Messaging.Broker
         {
             _endpoints.Add(endpoint);
 
-            if (!_innerConsumer.Subscription.Contains(endpoint.Name))
-                _innerConsumer.Subscribe(endpoint.Name);
+            _innerConsumer.Subscribe(_endpoints.Select(e => e.Name));
         }
 
         public void Commit(Confluent.Kafka.TopicPartitionOffset tpo)

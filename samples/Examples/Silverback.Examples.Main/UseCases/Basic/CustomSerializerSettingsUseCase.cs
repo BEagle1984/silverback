@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Examples.Common;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -37,10 +38,10 @@ namespace Silverback.Examples.Main.UseCases.Basic
             new KafkaProducerEndpoint(name)
             {
                 Serializer = GetSerializer(),
-                Configuration = new KafkaConfigurationDictionary
+                Configuration = new Confluent.Kafka.ProducerConfig
                 {
-                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
-                    {"client.id", GetType().FullName}
+                    BootstrapServers = "PLAINTEXT://kafka:9092",
+                    ClientId = GetType().FullName
                 }
             };
 

@@ -16,8 +16,7 @@ namespace Silverback.Messaging
 
         public int GetHashCode(Confluent.Kafka.ClientConfig obj)
         {
-            var serverAddress = obj.FirstOrDefault(kvp => kvp.Key == "bootstrap.servers");
-            var hashCodeReferer = $"{obj.Count()}-{serverAddress}";
+            var hashCodeReferer = $"{obj.Count()}-{obj.BootstrapServers}";
 
             unchecked
             {

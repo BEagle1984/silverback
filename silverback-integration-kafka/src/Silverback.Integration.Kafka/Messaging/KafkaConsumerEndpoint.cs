@@ -14,13 +14,13 @@ namespace Silverback.Messaging
         public Confluent.Kafka.ConsumerConfig Configuration { get; set; } = new Confluent.Kafka.ConsumerConfig();
 
         /// <summary>
-        /// Define the number of message processed before committing the offset to the server.
+        /// Defines the number of message processed before committing the offset to the server.
         /// The most reliable level is 1 but it reduces throughput.
         /// </summary>
         public int CommitOffsetEach { get; set; } = 1;
 
         /// <summary>
-        /// If set to <c>true</c> it will resuse an instance of <see cref="Confluent.Kafka.Consumer{TKey, TValue}"/> with 
+        /// If set to <c>true</c> it will reuse an instance of <see cref="Confluent.Kafka.Consumer{TKey, TValue}"/> with 
         /// the same settings when possible, actually using the same consumer to subscribe to multiple topics.
         /// The default value is <c>false</c>.
         /// </summary>

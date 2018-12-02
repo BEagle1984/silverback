@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging.Subscribers;
 

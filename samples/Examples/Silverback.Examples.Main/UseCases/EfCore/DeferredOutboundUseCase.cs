@@ -1,7 +1,9 @@
-﻿using System;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Data;
@@ -30,10 +32,10 @@ namespace Silverback.Examples.Main.UseCases.EfCore
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
             .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
             {
-                Configuration = new KafkaConfigurationDictionary
+                Configuration = new Confluent.Kafka.ProducerConfig
                 {
-                    {"bootstrap.servers", "PLAINTEXT://kafka:9092"},
-                    {"client.id", GetType().FullName}
+                    BootstrapServers = "PLAINTEXT://kafka:9092",
+                    ClientId = GetType().FullName
                 }
             });
 
