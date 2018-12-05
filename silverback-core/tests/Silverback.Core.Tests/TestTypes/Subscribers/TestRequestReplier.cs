@@ -1,7 +1,10 @@
-﻿using Silverback.Messaging.Messages;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
-namespace Silverback.Tests.TestTypes.Subscribers
+namespace Silverback.Core.Tests.TestTypes.Subscribers
 {
     public class TestRequestReplier : ISubscriber
     {

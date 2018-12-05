@@ -3,7 +3,7 @@
 
 using Silverback.Messaging.Subscribers;
 
-namespace Silverback.Tests.TestTypes.Subscribers
+namespace Silverback.Core.Tests.TestTypes.Subscribers
 {
     public interface IService : ISubscriber
     {

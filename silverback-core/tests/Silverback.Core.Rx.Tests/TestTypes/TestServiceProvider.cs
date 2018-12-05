@@ -4,7 +4,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Silverback.Core.Tests.TestTypes
+namespace Silverback.Core.Rx.Tests.TestTypes
 {
     public class TestServiceProvider
     {

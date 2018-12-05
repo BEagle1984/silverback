@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Silverback.Util;
 
-namespace Silverback.Tests.Util
+namespace Silverback.Core.Tests.Util
 {
     [TestFixture]
     public class EnumerableExtensionsTests

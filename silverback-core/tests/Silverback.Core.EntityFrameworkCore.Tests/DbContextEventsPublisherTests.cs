@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using NUnit.Framework;
 using Silverback.Core.EntityFrameworkCore.Tests.TestTypes;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
 namespace Silverback.Core.EntityFrameworkCore.Tests

@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using Silverback.Core.Tests.TestTypes;
+using Silverback.Core.Tests.TestTypes.Messages;
+using Silverback.Core.Tests.TestTypes.Subscribers;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
-using Silverback.Tests.TestTypes;
-using Silverback.Tests.TestTypes.Messages;
-using Silverback.Tests.TestTypes.Subscribers;
 
-namespace Silverback.Tests.Messaging.Publishing
+namespace Silverback.Core.Tests.Messaging.Publishing
 {
     [TestFixture]
     public class PublisherTests

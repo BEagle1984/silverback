@@ -3,9 +3,9 @@
 
 using System.Linq;
 using NUnit.Framework;
-using Silverback.Tests.TestTypes.Domain;
+using Silverback.Core.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.Domain
+namespace Silverback.Core.Tests.Domain
 {
     [TestFixture]
     public class EntityTests
