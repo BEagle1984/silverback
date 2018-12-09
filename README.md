@@ -10,6 +10,7 @@ Package | Version
 :--- | ---
 Silverback.Core  | [![NuGet](http://img.shields.io/nuget/v/Silverback.Core.svg)](https://www.nuget.org/packages/Silverback.Core/)
 Silverback.Core.EntityFrameworkCore | [![NuGet](http://img.shields.io/nuget/v/Silverback.Core.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore/)
+Silverback.Core.Rx | [![NuGet](http://img.shields.io/nuget/v/Silverback.Core.Rx.svg)](https://www.nuget.org/packages/Silverback.Core.Rx/)
 Silverback.Integration | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.svg)](https://www.nuget.org/packages/Silverback.Integration/)
 Silverback.Integration.EntityFrameworkCore | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Integration.EntityFrameworkCore/)
 Silverback.Integration.Kafka | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Kafka.svg)](https://www.nuget.org/packages/Silverback.Integration.Kafka/)
