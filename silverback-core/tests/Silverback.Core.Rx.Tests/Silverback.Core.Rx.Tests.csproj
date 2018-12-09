@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Silverback.Core.Rx\Silverback.Core.Rx.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Core.Rx\Silverback.Core.Rx.csproj" />
   </ItemGroup>
 
 </Project>

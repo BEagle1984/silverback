@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Connectors
         }
 
         public IEnumerable<IOutboundRoute> GetRoutes(IIntegrationMessage message) =>
-            _routes.Where(r => r.MessageType.IsInstanceOfType(message)).ToArray();
+            _routes.Where(r => r.MessageType.IsInstanceOfType(message)).ToList();
 
         public class OutboundRoute : IOutboundRoute
         {

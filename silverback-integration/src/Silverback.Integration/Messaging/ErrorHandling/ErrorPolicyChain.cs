@@ -15,7 +15,7 @@ namespace Silverback.Messaging.ErrorHandling
     public class ErrorPolicyChain : ErrorPolicyBase
     {
         private readonly ILogger<ErrorPolicyChain> _logger;
-        private readonly ErrorPolicyBase[] _policies;
+        private readonly IEnumerable<ErrorPolicyBase> _policies;
 
         public ErrorPolicyChain(ILogger<ErrorPolicyChain> logger, params ErrorPolicyBase[] policies)
             : this (policies.AsEnumerable(), logger)
@@ -27,8 +27,7 @@ namespace Silverback.Messaging.ErrorHandling
         {
             _logger = logger;
 
-            if (policies == null) throw new ArgumentNullException(nameof(policies));
-            _policies = policies.ToArray();
+            _policies = policies ?? throw new ArgumentNullException(nameof(policies));
 
             if (_policies.Any(p => p == null)) throw new ArgumentNullException(nameof(policies), "One or more policies in the chain have a null value.");
         }
