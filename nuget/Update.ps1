@@ -13,6 +13,7 @@ foreach ($arg in $args)
 $sources =
     ("Silverback.Core", "..\silverback-core\src\Silverback.Core\bin\Debug"),
     ("Silverback.Core.EntityFrameworkCore", "..\silverback-core\src\Silverback.Core.EntityFrameworkCore\bin\Debug"),
+    ("Silverback.Core.Rx", "..\silverback-core\src\Silverback.Core.Rx\bin\Debug"),
 	("Silverback.Integration", "..\silverback-integration\src\Silverback.Integration\bin\Debug"),
     ("Silverback.Integration.EntityFrameworkCore", "..\silverback-integration\src\Silverback.Integration.EntityFrameworkCore\bin\Debug"),
     ("Silverback.Integration.FileSystem", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\Debug"),

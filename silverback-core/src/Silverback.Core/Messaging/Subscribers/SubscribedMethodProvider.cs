@@ -15,19 +15,19 @@ namespace Silverback.Messaging.Subscribers
     internal class SubscribedMethodProvider
     {
         private readonly IServiceProvider _serviceProvider;
-        private static readonly ConcurrentDictionary<Type, SubscribedMethod[]> MethodsCache = new ConcurrentDictionary<Type, SubscribedMethod[]>();
+        private static readonly ConcurrentDictionary<Type, IEnumerable<SubscribedMethod>> MethodsCache = new ConcurrentDictionary<Type, IEnumerable<SubscribedMethod>>();
 
         public SubscribedMethodProvider(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
 
-        public SubscribedMethod[] GetSubscribedMethods<TMessage>(TMessage message) =>
+        public IEnumerable<SubscribedMethod> GetSubscribedMethods<TMessage>(TMessage message) =>
             _serviceProvider
                 .GetServices<ISubscriber>()
                 .SelectMany(GetAnnotatedMethods)
                 .Where(method => method.SubscribedMessageType.IsInstanceOfType(message))
-                .ToArray();
+                .ToList();
 
         private IEnumerable<SubscribedMethod> GetAnnotatedMethods(ISubscriber subscriber) =>
             GetAnnotatedMethods(subscriber.GetType())
@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Subscribers
                     return method;
                 });
 
-        private SubscribedMethod[] GetAnnotatedMethods(Type type)
+        private IEnumerable<SubscribedMethod> GetAnnotatedMethods(Type type)
             => MethodsCache.GetOrAdd(type, t =>
                 t.GetAnnotatedMethods<SubscribeAttribute>()
                     .Select(methodInfo =>
@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Subscribers
                             SubscribedMessageType = GetMessageParameterType(methodInfo, parameters)
                         };
                     })
-                    .ToArray());
+                    .ToList());
 
         private Type GetMessageParameterType(MethodInfo methodInfo, ParameterInfo[] parameters)
         {
