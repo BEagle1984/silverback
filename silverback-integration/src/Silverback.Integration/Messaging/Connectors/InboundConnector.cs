@@ -57,7 +57,7 @@ namespace Silverback.Messaging.Connectors
             if (errorPolicy == null)
                 return;
 
-            args.Action = errorPolicy.HandleError(args.Message, args.Exception);
+            args.Action = errorPolicy.HandleError(args.FailedMessage, args.Exception);
         }
     }
 }

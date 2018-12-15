@@ -11,12 +11,12 @@ namespace Silverback.Messaging.ErrorHandling
         public ErrorHandlerEventArgs(Exception exception, FailedMessage message)
         {
             Exception = exception;
-            Message = message;
+            FailedMessage = message;
             Action = ErrorAction.StopConsuming;
         }
 
         public Exception Exception { get; }
-        public FailedMessage Message { get; }
+        public FailedMessage FailedMessage { get; }
         public ErrorAction Action { get; set; }
     }
 }

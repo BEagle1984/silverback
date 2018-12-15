@@ -105,6 +105,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                     false);
             }
         }
+
         [Test]
         [TestCaseSource(nameof(ApplyWhenTestData))]
         public void ApplyWhenTest(FailedMessage message, Exception exception, bool mustApply)
