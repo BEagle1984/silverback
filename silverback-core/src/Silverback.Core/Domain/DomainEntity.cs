@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace Silverback.Domain
 {
@@ -12,14 +14,15 @@ namespace Silverback.Domain
     {
         private List<IDomainEvent<IDomainEntity>> _domainEvents;
 
-        public IEnumerable<IDomainEvent<IDomainEntity>> GetDomainEvents() => _domainEvents?.AsReadOnly();
+        [NotMapped]
+        public IEnumerable<IDomainEvent<IDomainEntity>> DomainEvents =>
+            _domainEvents?.AsReadOnly() ?? Enumerable.Empty<IDomainEvent<IDomainEntity>>();
 
         public void ClearEvents() => _domainEvents?.Clear();
 
         protected void AddEvent(IDomainEvent<IDomainEntity> domainEvent)
         {
-            if (_domainEvents == null)
-                _domainEvents = new List<IDomainEvent<IDomainEntity>>();
+            _domainEvents = _domainEvents ?? new List<IDomainEvent<IDomainEntity>>();
 
             ((IDomainEvent)domainEvent).Source = this;
 

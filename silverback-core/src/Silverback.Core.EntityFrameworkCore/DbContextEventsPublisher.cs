@@ -75,8 +75,7 @@ namespace Silverback.EntityFrameworkCore
         private static List<IDomainEvent<IDomainEntity>> GetDomainEvents(DbContext dbContext)
         {
             var events = dbContext.ChangeTracker.Entries<IDomainEntity>()
-                .Where(e => e.Entity.GetDomainEvents() != null)
-                .SelectMany(e => e.Entity.GetDomainEvents())
+                .SelectMany(e => e.Entity.DomainEvents)
                 .ToList();
 
             // Clear all events to avoid firing the same event multiple times during the recursion

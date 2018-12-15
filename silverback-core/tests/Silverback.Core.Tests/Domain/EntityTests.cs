@@ -19,10 +19,9 @@ namespace Silverback.Core.Tests.Domain
             entity.AddEvent(new TestDomainEventTwo());
             entity.AddEvent(new TestDomainEventOne());
 
-            var events = entity.GetDomainEvents();
-            Assert.That(events, Is.Not.Null);
-            Assert.That(events.Count(), Is.EqualTo(3));
-            Assert.That(events.All(e => e.Source == entity));
+            Assert.That(entity.DomainEvents, Is.Not.Null);
+            Assert.That(entity.DomainEvents.Count(), Is.EqualTo(3));
+            Assert.That(entity.DomainEvents.All(e => e.Source == entity));
         }
 
         [Test]
@@ -34,10 +33,9 @@ namespace Silverback.Core.Tests.Domain
             entity.AddEvent<TestDomainEventTwo>();
             entity.AddEvent<TestDomainEventOne>();
 
-            var events = entity.GetDomainEvents();
-            Assert.That(events, Is.Not.Null);
-            Assert.That(events.Count(), Is.EqualTo(3));
-            Assert.That(events.All(e => e.Source == entity));
+            Assert.That(entity.DomainEvents, Is.Not.Null);
+            Assert.That(entity.DomainEvents.Count(), Is.EqualTo(3));
+            Assert.That(entity.DomainEvents.All(e => e.Source == entity));
         }
 
         [Test]
@@ -50,7 +48,7 @@ namespace Silverback.Core.Tests.Domain
             entity.AddEvent<TestDomainEventOne>();
             entity.ClearEvents();
 
-            Assert.That(entity.GetDomainEvents().Count(), Is.EqualTo(0));
+            Assert.That(entity.DomainEvents.Count(), Is.EqualTo(0));
         }
     }
 }

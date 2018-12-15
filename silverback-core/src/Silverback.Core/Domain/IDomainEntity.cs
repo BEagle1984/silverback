@@ -12,7 +12,7 @@ namespace Silverback.Domain
     /// </summary>
     public interface IDomainEntity
     {
-        IEnumerable<IDomainEvent<IDomainEntity>> GetDomainEvents();
+        IEnumerable<IDomainEvent<IDomainEntity>> DomainEvents { get; }
 
         void ClearEvents();
     }
