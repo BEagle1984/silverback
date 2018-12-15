@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes.Domain;
 
 namespace Silverback.Tests.Messaging.ErrorHandling
@@ -21,12 +22,11 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         }
 
         [Test]
-        [TestCase(0, ErrorAction.SkipMessage)]
         [TestCase(1, ErrorAction.SkipMessage)]
         [TestCase(333, ErrorAction.SkipMessage)]
-        public void SkipTest(int retryCount, ErrorAction expectedAction)
+        public void SkipTest(int failedAttempts, ErrorAction expectedAction)
         {
-            var action = _policy.HandleError(new TestEventOne(), retryCount, new Exception("test"));
+            var action = _policy.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
 
             Assert.That(action, Is.EqualTo(expectedAction));
         }

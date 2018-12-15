@@ -42,6 +42,7 @@ namespace Consumer
                     ClientId = "ClientTest",
                     GroupId = "advanced-silverback-consumer",
                     EnableAutoCommit = false,
+                    EnableAutoOffsetStore = true,
                     AutoCommitIntervalMs = 5000,
                     StatisticsIntervalMs = 60000,
                     AutoOffsetReset = Confluent.Kafka.AutoOffsetResetType.Earliest
@@ -79,7 +80,7 @@ namespace Consumer
 
         private static void OnError(object sender, ErrorHandlerEventArgs args)
         {
-            if (args.Message is TestMessage testMessage && testMessage.Text == "retry" && args.RetryCount <= 1)
+            if (args.FailedMessage.Message is TestMessage testMessage && testMessage.Text == "retry" && args.FailedMessage.FailedAttempts <= 1)
             {
                 args.Action = ErrorAction.RetryMessage;
             }

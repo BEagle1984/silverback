@@ -21,6 +21,8 @@ namespace Silverback.Messaging.Broker
         
         private Confluent.Kafka.Consumer<byte[], byte[]> _innerConsumer;
 
+        private bool _consumed = false;
+
         private bool _started;
 
         public InnerConsumerWrapper(Confluent.Kafka.Consumer<byte[], byte[]> innerConsumer, CancellationToken cancellationToken, ILogger logger)
@@ -43,6 +45,18 @@ namespace Silverback.Messaging.Broker
         {
             _innerConsumer.Commit(new []{ tpo }, _cancellationToken);
             _logger.LogTrace("Committed offset: {offset}", tpo);
+        }
+
+        public void CommitAll(CancellationToken cancellationToken = default)
+        {
+            if (!_consumed) return;
+            
+            var committedTpo = _innerConsumer.Commit(cancellationToken);
+
+            foreach (var tpo in committedTpo)
+            {
+                _logger.LogTrace("Committed offset: {offset}", tpo);
+            }
         }
 
         public void Seek(Confluent.Kafka.TopicPartitionOffset tpo) => _innerConsumer.Seek(tpo);
@@ -87,6 +101,8 @@ namespace Silverback.Messaging.Broker
                 try
                 {
                     var result = _innerConsumer.Consume(_cancellationToken);
+
+                    _consumed = true;
 
                     _logger.LogTrace("Consuming message: {topic} [{partition}] @{offset}", result.Topic, result.Partition, result.Offset);
 

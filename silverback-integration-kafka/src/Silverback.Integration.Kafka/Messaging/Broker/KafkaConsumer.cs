@@ -13,6 +13,7 @@ namespace Silverback.Messaging.Broker
 {
     public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint>, IDisposable
     {
+        private const bool KafkaDefaultAutoCommitEnabled = true;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly ILogger<KafkaConsumer> _logger;
 
@@ -60,13 +61,16 @@ namespace Silverback.Messaging.Broker
                 return;
 
             // Remove from cache but take in account that it may have been removed already by another 
-            // consumer sharing the same intance.
+            // consumer sharing the same instance.
             ConsumerWrappersCache.TryRemove(Endpoint.Configuration, out var _);
 
             _cancellationTokenSource.Cancel();
 
             foreach (var consumerWrapper in _innerConsumerWrapper)
             {
+                if (!(Endpoint.Configuration.EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled))
+                    consumerWrapper.CommitAll();
+
                 consumerWrapper.Dispose();
             }
 
@@ -112,6 +116,8 @@ namespace Silverback.Messaging.Broker
             Confluent.Kafka.TopicPartitionOffset tpo,
             int retryCount, InnerConsumerWrapper innerConsumer)
         {
+            // Checking if the message was sent to the subscribed topic is necessary
+            // when reusing the same consumer for multiple topics.
             if (!tpo.Topic.Equals(Endpoint.Name, StringComparison.InvariantCultureIgnoreCase))
                 return;
 
@@ -147,7 +153,7 @@ namespace Silverback.Messaging.Broker
 
         private void CommitOffsetIfNeeded(Confluent.Kafka.TopicPartitionOffset tpo, InnerConsumerWrapper innerConsumer)
         {
-            if (Endpoint.Configuration.EnableAutoCommit ?? true) return;
+            if (Endpoint.Configuration.EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled) return;
             if (tpo.Offset % Endpoint.CommitOffsetEach != 0) return;
             innerConsumer.Commit(tpo);
         }

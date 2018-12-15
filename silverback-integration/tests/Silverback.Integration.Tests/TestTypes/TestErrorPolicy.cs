@@ -17,7 +17,7 @@ namespace Silverback.Tests.TestTypes
         {
         }
 
-        public override ErrorAction HandleError(IMessage failedMessage, int retryCount, Exception exception)
+        public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
         {
             Applied = true;
             return ErrorAction.SkipMessage;

@@ -16,31 +16,31 @@ namespace Silverback.Messaging.ErrorHandling
     /// TODO: Test maxRetries = -1
     public class RetryErrorPolicy : ErrorPolicyBase
     {
-        private readonly int _maxRetries;
+        private readonly int _maxFailedAttempts;
         private readonly TimeSpan _initialDelay;
-        private readonly TimeSpan _delayIncreament;
+        private readonly TimeSpan _delayIncrement;
 
-        public RetryErrorPolicy(ILogger<RetryErrorPolicy> logger, int maxRetries = -1, TimeSpan? initialDelay = null, TimeSpan? delayIncreament = null)
+        public RetryErrorPolicy(ILogger<RetryErrorPolicy> logger, int maxFailedAttempts = -1, TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)
             : base(logger)
         {
-            _maxRetries = maxRetries;
+            _maxFailedAttempts = maxFailedAttempts;
             _initialDelay = initialDelay ?? TimeSpan.Zero;
-            _delayIncreament = delayIncreament ?? TimeSpan.Zero;
+            _delayIncrement = delayIncrement ?? TimeSpan.Zero;
         }
 
-        public override bool CanHandle(IMessage failedMessage, int retryCount, Exception exception) =>
-            base.CanHandle(failedMessage, retryCount, exception) && retryCount < _maxRetries;
+        public override bool CanHandle(FailedMessage failedMessage, Exception exception) =>
+            base.CanHandle(failedMessage, exception) && failedMessage.FailedAttempts < _maxFailedAttempts;
 
-        public override ErrorAction HandleError(IMessage failedMessage, int retryCount, Exception exception)
+        public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
         {
-            ApplyDelay(retryCount);
+            ApplyDelay(failedMessage.FailedAttempts);
 
             return ErrorAction.RetryMessage;
         }
 
-        private void ApplyDelay(int retryCount)
+        private void ApplyDelay(int failedAttempts)
         {
-            var delay = _initialDelay.Milliseconds + retryCount * _delayIncreament.Milliseconds;
+            var delay = _initialDelay.Milliseconds + failedAttempts * _delayIncrement.Milliseconds;
 
             if (delay > 0) Thread.Sleep(delay);
         }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
@@ -18,10 +19,10 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         private readonly ErrorPolicyBuilder _errorPolicyBuilder = new ErrorPolicyBuilder(new ServiceCollection().BuildServiceProvider(), NullLoggerFactory.Instance);
 
         [Test]
-        [TestCase(0)]
+        [TestCase(1)]
         [TestCase(3)]
         [TestCase(4)]
-        public void ChainingTest(int retryCount)
+        public void ChainingTest(int failedAttempts)
         {
             var testPolicy = new TestErrorPolicy();
 
@@ -29,23 +30,23 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 _errorPolicyBuilder.Retry(3),
                 testPolicy);
 
-            chain.HandleError(new TestEventOne(), retryCount, new Exception("test"));
+            chain.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
 
-            Assert.That(testPolicy.Applied, Is.EqualTo(retryCount >= 3));
+            Assert.That(testPolicy.Applied, Is.EqualTo(failedAttempts >= 3));
         }
 
         [Test]
-        [TestCase(0, ErrorAction.RetryMessage)]
         [TestCase(1, ErrorAction.RetryMessage)]
+        [TestCase(2, ErrorAction.RetryMessage)]
         [TestCase(3, ErrorAction.SkipMessage)]
         [TestCase(4, ErrorAction.SkipMessage)]
-        public void ChainingTest2(int retryCount, ErrorAction expectedAction)
+        public void ChainingTest2(int failedAttempts, ErrorAction expectedAction)
         {
             var chain = _errorPolicyBuilder.Chain(
                 _errorPolicyBuilder.Retry(3),
                 _errorPolicyBuilder.Skip());
 
-            var action = chain.HandleError(new TestEventOne(), retryCount, new Exception("test"));
+            var action = chain.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
 
             Assert.That(action, Is.EqualTo(expectedAction));
         }

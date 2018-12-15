@@ -14,6 +14,7 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly ILogger<ErrorPolicyBase> _logger;
         private readonly List<Type> _excludedExceptions = new List<Type>();
         private readonly List<Type> _includedExceptions = new List<Type>();
+        private Func<FailedMessage, Exception, bool> _applyRule;
 
         protected ErrorPolicyBase(ILogger<ErrorPolicyBase> logger)
         {
@@ -32,7 +33,13 @@ namespace Silverback.Messaging.ErrorHandling
             return this;
         }
 
-        public virtual bool CanHandle(IMessage failedMessage, int retryCount, Exception exception)
+        public ErrorPolicyBase ApplyWhen(Func<FailedMessage, Exception, bool> applyRule)
+        {
+            _applyRule = applyRule;
+            return this;
+        }
+
+        public virtual bool CanHandle(FailedMessage failedMessage, Exception exception)
         {
             if (failedMessage == null)
             {
@@ -56,9 +63,16 @@ namespace Silverback.Messaging.ErrorHandling
                 return false;
             }
 
+            if (_applyRule != null && !_applyRule.Invoke(failedMessage, exception))
+            {
+                _logger.LogTrace($"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
+                                 $"evaluated and returned false.");
+                return false;
+            }
+
             return true;
         }
 
-        public abstract ErrorAction HandleError(IMessage failedMessage, int retryCount, Exception exception);
+        public abstract ErrorAction HandleError(FailedMessage failedMessage, Exception exception);
     }
 }

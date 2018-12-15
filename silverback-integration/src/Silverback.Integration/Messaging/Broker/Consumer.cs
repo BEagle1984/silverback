@@ -21,6 +21,10 @@ namespace Silverback.Messaging.Broker
         public event EventHandler<IMessage> Received;
         public event EventHandler<ErrorHandlerEventArgs> Error;
 
+        /// <summary>Handles the received message.</summary>
+        /// <param name="buffer">The byte array containing the serialized message.</param>
+        /// <param name="retryCount">The retry count represent the amount of retries of the very same message (same Kafka
+        /// offset).</param>
         protected MessageHandlerResult HandleMessage(byte[] buffer, int retryCount)
         {
             if (Received == null)
@@ -32,9 +36,12 @@ namespace Silverback.Messaging.Broker
             {
                 message = DeserializeMessage(buffer);
 
+                if (retryCount > 0)
+                    message = IncrementFailedAttempts(message, retryCount);
+
                 _logger.LogTrace("Message received.", message, Endpoint);
 
-                Received.Invoke(this, message);
+                RaiseReceivedEvent(message);
 
                 return MessageHandlerResult.Success;
             }
@@ -42,7 +49,7 @@ namespace Silverback.Messaging.Broker
             {
                 _logger.LogWarning(ex, "Error occurred processing the message.", message, Endpoint);
 
-                var errorArgs = new ErrorHandlerEventArgs(ex, message, retryCount);
+                var errorArgs = new ErrorHandlerEventArgs(ex, IncrementFailedAttempts(message));
                 Error?.Invoke(this, errorArgs);
 
                 return MessageHandlerResult.Error(errorArgs.Action);
@@ -50,6 +57,29 @@ namespace Silverback.Messaging.Broker
         }
 
         private IMessage DeserializeMessage(byte[] buffer) => Endpoint.Serializer.Deserialize(buffer);
+
+        private static FailedMessage IncrementFailedAttempts(IMessage message, int increment = 1)
+        {
+            if (message is FailedMessage failedMessage)
+            {
+                failedMessage.FailedAttempts += increment;
+                return failedMessage;
+            }
+
+            return new FailedMessage(message, increment);
+        }
+
+        private void RaiseReceivedEvent(IMessage message)
+        {
+            if (message is FailedMessage failedMessage)
+            {
+                Received.Invoke(this, failedMessage.Message);
+            }
+            else
+            {
+                Received.Invoke(this, message);
+            }
+        }
     }
 
     public abstract class Consumer<TBroker, TEndpoint> : Consumer
