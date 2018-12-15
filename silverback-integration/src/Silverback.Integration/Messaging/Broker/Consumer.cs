@@ -34,7 +34,7 @@ namespace Silverback.Messaging.Broker
 
                 _logger.LogTrace("Message received.", message, Endpoint);
 
-                Received.Invoke(this, message);
+                RaiseReceivedEvent(message);
 
                 return MessageHandlerResult.Success;
             }
@@ -42,14 +42,37 @@ namespace Silverback.Messaging.Broker
             {
                 _logger.LogWarning(ex, "Error occurred processing the message.", message, Endpoint);
 
-                var errorArgs = new ErrorHandlerEventArgs(ex, message, retryCount);
+                var errorArgs = new ErrorHandlerEventArgs(ex, GetFailedMessage(message));
                 Error?.Invoke(this, errorArgs);
 
                 return MessageHandlerResult.Error(errorArgs.Action);
             }
         }
-
         private IMessage DeserializeMessage(byte[] buffer) => Endpoint.Serializer.Deserialize(buffer);
+
+        private void RaiseReceivedEvent(IMessage message)
+        {
+            if (message is FailedMessage failedMessage)
+            {
+                Received.Invoke(this, failedMessage.Message);
+            }
+            else
+            {
+                Received.Invoke(this, message);
+            }
+        }
+
+        private FailedMessage GetFailedMessage(IMessage message)
+        {
+            if (message is FailedMessage failedMessage)
+            {
+                failedMessage.FailedAttempts++;
+                return failedMessage;
+            }
+
+            return new FailedMessage(message);
+        }
+
     }
 
     public abstract class Consumer<TBroker, TEndpoint> : Consumer

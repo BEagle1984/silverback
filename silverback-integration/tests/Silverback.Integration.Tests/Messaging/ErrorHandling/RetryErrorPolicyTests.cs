@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes.Domain;
 
 namespace Silverback.Tests.Messaging.ErrorHandling
@@ -22,13 +23,12 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         }
 
         [Test]
-        [TestCase(0, true)]
         [TestCase(1, true)]
         [TestCase(3, false)]
         [TestCase(4, false)]
-        public void CanHandleTest(int retryCount, bool expectedResult)
+        public void CanHandleTest(int failedAttempts, bool expectedResult)
         {
-            var canHandle = _policy.CanHandle(new TestEventOne(), retryCount, new Exception("test"));
+            var canHandle = _policy.CanHandle(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
 
             Assert.That(canHandle, Is.EqualTo(expectedResult));
         }

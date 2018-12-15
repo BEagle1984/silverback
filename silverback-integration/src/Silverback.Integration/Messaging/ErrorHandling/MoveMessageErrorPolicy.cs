@@ -9,11 +9,12 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.ErrorHandling
 {
     /// <summary>
-    /// This policy moves the failed messages to the configured endpoing (retry or bad mail queue).
+    /// This policy moves the failed messages to the configured endpoint.
     /// </summary>
     public class MoveMessageErrorPolicy : ErrorPolicyBase
     {
         private readonly IProducer _producer;
+        private Func<FailedMessage, Exception, IMessage> _transformationFunction;
 
         public MoveMessageErrorPolicy(IBroker broker, IEndpoint endpoint, ILogger<MoveMessageErrorPolicy> logger) 
             : base(logger)
@@ -21,10 +22,15 @@ namespace Silverback.Messaging.ErrorHandling
             _producer = broker.GetProducer(endpoint);
         }
 
-        // TODO: Should be async? All way to ErrorPolicyBase.TryHandleMessage() or nothing...
-        public override ErrorAction HandleError(IMessage failedMessage, int retryCount, Exception exception)
+        public MoveMessageErrorPolicy Transform(Func<FailedMessage, Exception, IMessage> transformationFunction)
         {
-             _producer.Produce(failedMessage);
+            _transformationFunction = transformationFunction;
+            return this;
+        }
+
+        public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
+        {
+            _producer.Produce(_transformationFunction?.Invoke(failedMessage, exception) ?? failedMessage);
 
             return ErrorAction.SkipMessage;
         }

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace Silverback.Messaging.Messages
 {
     // TODO: Review and test
-    public static class MessageTraceExtensions
+    public static class MessageLoggerExtensions
     {
         public static void LogTrace(this ILogger logger, string logMessage, IMessage message, IEndpoint endpoint = null) => 
             Log(logger, LogLevel.Trace, null, logMessage, message, endpoint);
@@ -20,8 +20,9 @@ namespace Silverback.Messaging.Messages
 
         public static void Log(this ILogger logger, LogLevel logLevel, Exception exception, string logMessage, IMessage message, IEndpoint endpoint = null)
         {
-            var integrationMassage =  message as IIntegrationMessage;
-            logger.Log(logLevel, exception, logMessage + " {{id=\"{messageId}\", endpoint=\"{endpointName}\", type=\"{messageType}\"}}", integrationMassage?.Id, endpoint?.Name, message?.GetType().Name);
+            var failedMessage = message as FailedMessage;
+            var integrationMassage = (failedMessage?.Message ?? message) as IIntegrationMessage;
+            logger.Log(logLevel, exception, logMessage + " {{id=\"{messageId}\", endpoint=\"{endpointName}\", type=\"{messageType}\", failedAttempts=\"{failedAttempts}\"}}", integrationMassage?.Id, endpoint?.Name, message?.GetType().Name, failedMessage?.FailedAttempts ?? 0);
         }
     }
 }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 
@@ -31,7 +32,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 .ApplyTo<ArgumentException>()
                 .ApplyTo<InvalidCastException>();
 
-            var canHandle = policy.CanHandle(new TestEventOne(), 99, exception);
+            var canHandle = policy.CanHandle(new FailedMessage(new TestEventOne(), 99), exception);
 
             Assert.That(canHandle, Is.EqualTo(mustApply));
         }
@@ -55,7 +56,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 .Exclude<ArgumentException>()
                 .Exclude<InvalidCastException>();
 
-            var canHandle = policy.CanHandle(new TestEventOne(), 99, exception);
+            var canHandle = policy.CanHandle(new FailedMessage(new TestEventOne(), 99), exception);
 
             Assert.That(canHandle, Is.EqualTo(mustApply));
         }
@@ -81,7 +82,37 @@ namespace Silverback.Tests.Messaging.ErrorHandling
                 .Exclude<ArgumentOutOfRangeException>()
                 .ApplyTo<FormatException>();
 
-            var canHandle = policy.CanHandle(new TestEventOne(), 99, exception);
+            var canHandle = policy.CanHandle(new FailedMessage(new TestEventOne(), 99), exception);
+
+            Assert.That(canHandle, Is.EqualTo(mustApply));
+        }
+
+        public static IEnumerable<TestCaseData> ApplyWhenTestData
+        {
+            get
+            {
+                yield return new TestCaseData(
+                    new FailedMessage(new TestEventOne(), 3),
+                    new ArgumentException(),
+                    true);
+                yield return new TestCaseData(
+                    new FailedMessage(new TestEventOne(), 6),
+                    new ArgumentException(),
+                    false);
+                yield return new TestCaseData(
+                    new FailedMessage(new TestEventOne(), 3),
+                    new ArgumentException("no"),
+                    false);
+            }
+        }
+        [Test]
+        [TestCaseSource(nameof(ApplyWhenTestData))]
+        public void ApplyWhenTest(FailedMessage message, Exception exception, bool mustApply)
+        {
+            var policy = (TestErrorPolicy)new TestErrorPolicy()
+                .ApplyWhen((msg, ex) => msg.FailedAttempts <= 5 && ex.Message != "no");
+
+            var canHandle = policy.CanHandle(message, exception);
 
             Assert.That(canHandle, Is.EqualTo(mustApply));
         }

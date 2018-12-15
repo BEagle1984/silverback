@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
@@ -45,11 +46,24 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         {
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default);
 
-            policy.HandleError(new TestEventOne(), 0, new Exception("test"));
+            policy.HandleError(new FailedMessage(new TestEventOne()), new Exception("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
 
             Assert.That(producer.ProducedMessages.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Transform_Failed_MessageTranslated()
+        {
+            var policy = _errorPolicyBuilder.Move(TestEndpoint.Default)
+                .Transform((msg, ex) => new TestEventTwo());
+
+            policy.HandleError(new FailedMessage(new TestEventOne()), new Exception("test"));
+
+            var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
+            var producedMessage = producer.Endpoint.Serializer.Deserialize(producer.ProducedMessages[0].Message);
+            Assert.That(producedMessage, Is.InstanceOf<TestEventTwo>());
         }
     }
 }
