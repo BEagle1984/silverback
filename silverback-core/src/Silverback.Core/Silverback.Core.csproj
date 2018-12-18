@@ -23,7 +23,7 @@
     <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Core.xml</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <LangVersion>latest</LangVersion>
-    <NoWarn>1701;1702;S125;CS1591;S1172</NoWarn>
+    <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
