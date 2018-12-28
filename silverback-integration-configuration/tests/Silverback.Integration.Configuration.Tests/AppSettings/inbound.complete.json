@@ -1,0 +1,17 @@
+{
+  "Silverback": {
+    "Using": [ "Silverback.Integration.Kafka" ],
+    "Inbound": [
+      {
+        "Endpoint": {
+          "Type": "KafkaConsumerEndpoint",
+          "Name": "inbound-endpoint",
+          "CommitOffsetEach": 1234,
+          "Configuration": {
+            "AutoOffsetReset": "Earliest"
+          } 
+        }
+      }
+    ]
+  }
+}
