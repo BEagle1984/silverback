@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using Silverback.Messaging.Configuration.Common;
 
 namespace Silverback.Messaging.Configuration.Reflection
 {

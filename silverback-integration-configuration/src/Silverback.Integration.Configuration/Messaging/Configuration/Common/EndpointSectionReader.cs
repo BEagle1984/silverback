@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Silverback.Messaging.Configuration.Reflection;
 using Silverback.Messaging.Serialization;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration.Common
 {
     public class EndpointSectionReader
     {

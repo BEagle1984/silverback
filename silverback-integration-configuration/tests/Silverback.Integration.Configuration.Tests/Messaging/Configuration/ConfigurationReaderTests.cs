@@ -14,6 +14,7 @@ using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Connectors;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -44,7 +45,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.simplest", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.simplest"));
 
             Assert.AreEqual(2, reader.Inbound.Count);
             Assert.IsNotNull(reader.Inbound.First().Endpoint);
@@ -55,7 +56,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.simplest", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.simplest"));
 
             var endpoint = reader.Inbound.First().Endpoint;
             Assert.IsInstanceOf<KafkaConsumerEndpoint>(endpoint);
@@ -66,7 +67,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.simplest", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.simplest"));
 
             var endpoint = reader.Inbound.Skip(1).First().Endpoint;
             Assert.AreEqual("inbound-endpoint2", endpoint.Name);
@@ -77,7 +78,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.simplest", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.simplest"));
 
             var endpoint = reader.Inbound.First().Endpoint;
             Assert.IsNotNull(endpoint.Serializer);
@@ -88,7 +89,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var serializer = (JsonMessageSerializer)reader.Inbound.Skip(1).First().Endpoint.Serializer;
             Assert.AreEqual(MessageEncoding.Unicode, serializer.Encoding);
@@ -100,7 +101,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var endpoint = (KafkaConsumerEndpoint) reader.Inbound.First().Endpoint;
             Assert.AreEqual(1234, endpoint.CommitOffsetEach);
@@ -111,7 +112,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var endpoint = (KafkaConsumerEndpoint)reader.Inbound.First().Endpoint;
 
@@ -127,7 +128,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var endpoint = reader.Inbound.First().Endpoint;
             Assert.IsInstanceOf<FakeSerializer>(endpoint.Serializer);
@@ -138,7 +139,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var serializer = (FakeSerializer) reader.Inbound.First().Endpoint.Serializer;
             Assert.AreEqual(4, serializer.Settings.Mode);
@@ -149,7 +150,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             Assert.AreEqual(2, reader.Inbound.First().ErrorPolicies.Count());
         }
@@ -159,7 +160,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
             Assert.IsTrue(policy.CanHandle(new FailedMessage(null, 3), new ArgumentException()));
@@ -171,7 +172,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = (RetryErrorPolicy) reader.Inbound.First().ErrorPolicies.First();
             Assert.AreEqual(TimeSpan.FromMinutes(5), (TimeSpan)policy.GetType().GetField("_delayIncrement", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(policy));
@@ -182,7 +183,7 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
             Assert.IsTrue(policy.CanHandle(new FailedMessage(), new ArgumentException()));
@@ -195,13 +196,147 @@ namespace Silverback.Tests.Messaging.Configuration
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
-                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
             Assert.IsTrue(policy.CanHandle(new FailedMessage(), new ArgumentException()));
             Assert.IsFalse(policy.CanHandle(new FailedMessage(), new ArgumentNullException()));
         }
 
+        [Test]
+        public void Read_CompleteInbound_ConnectorTypeSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
+
+            Assert.AreEqual(typeof(LoggedInboundConnector), reader.Inbound.Skip(1).First().ConnectorType);
+        }
+
         #endregion
+
+        #region Read - Outbound
+
+        [Test]
+        public void Read_SimplestOutbound_EndpointAdded()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.simplest"));
+
+            Assert.AreEqual(1, reader.Outbound.Count);
+            Assert.IsNotNull(reader.Outbound.First().Endpoint);
+        }
+
+        [Test]
+        public void Read_SimplestOutbound_CorrectEndpointType()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.simplest"));
+
+            var endpoint = reader.Outbound.First().Endpoint;
+            Assert.IsInstanceOf<KafkaProducerEndpoint>(endpoint);
+        }
+
+        [Test]
+        public void Read_SimplestOutbound_EndpointNameSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.simplest"));
+
+            var endpoint = reader.Outbound.First().Endpoint;
+            Assert.AreEqual("outbound-endpoint1", endpoint.Name);
+        }
+
+        [Test]
+        public void Read_SimplestOutbound_DefaultSerializer()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.simplest"));
+
+            var endpoint = reader.Outbound.First().Endpoint;
+            Assert.IsNotNull(endpoint.Serializer);
+        }
+
+        [Test]
+        public void Read_SimpleOutbound_DefaultMessageType()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.simplest"));
+
+            Assert.AreEqual(typeof(IIntegrationMessage), reader.Outbound.First().MessageType);
+        }
+        [Test]
+        public void Read_CompleteOutbound_DefaultSerializerPropertiesSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
+
+            var serializer = (JsonMessageSerializer)reader.Outbound.Skip(1).First().Endpoint.Serializer;
+            Assert.AreEqual(MessageEncoding.Unicode, serializer.Encoding);
+            Assert.AreEqual(Formatting.Indented, serializer.Settings.Formatting);
+        }
+
+        [Test]
+        public void Read_CompleteOutbound_EndpointSubPropertySet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
+
+            var endpoint = (KafkaProducerEndpoint)reader.Outbound.First().Endpoint;
+
+            Assert.AreEqual(false, endpoint.Configuration.EnableBackgroundPoll);
+        }
+
+        [Test]
+        public void Read_CompleteOutbound_CustomSerializerSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
+
+            var endpoint = reader.Outbound.First().Endpoint;
+            Assert.IsInstanceOf<FakeSerializer>(endpoint.Serializer);
+        }
+
+        [Test]
+        public void Read_CompleteOutbound_CustomSerializerPropertySet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
+
+            var serializer = (FakeSerializer)reader.Outbound.First().Endpoint.Serializer;
+            Assert.AreEqual(4, serializer.Settings.Mode);
+        }
+        
+        [Test]
+        public void Read_CompleteOutbound_ConnectorTypeSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
+
+            Assert.AreEqual(typeof(DeferredOutboundConnector), reader.Outbound.Skip(1).First().ConnectorType);
+        }
+
+        [Test]
+        public void Read_CompleteOutbound_MessageTypeSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
+
+            Assert.AreEqual(typeof(IIntegrationEvent), reader.Outbound.First().MessageType);
+        }
+
+        #endregion
+
     }
 }

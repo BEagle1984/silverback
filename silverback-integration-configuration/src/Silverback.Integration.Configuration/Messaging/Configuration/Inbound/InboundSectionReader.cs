@@ -5,21 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using Silverback.Messaging.Configuration.Common;
 using Silverback.Messaging.Configuration.Reflection;
 using Silverback.Messaging.ErrorHandling;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration.Inbound
 {
-    public class InboundSectionReader
+    public class InboundSectionReader : InboundOutboundSectionBase
     {
-        private readonly TypeFinder _typeFinder;
-        private readonly EndpointSectionReader _endpointSectionReader;
         private readonly ErrorPoliciesSectionReader _errorPoliciesSectionReader;
 
         public InboundSectionReader(TypeFinder typeFinder, EndpointSectionReader endpointSectionReader, ErrorPoliciesSectionReader errorPoliciesSectionReader)
+            : base(typeFinder, endpointSectionReader)
         {
-            _typeFinder = typeFinder;
-            _endpointSectionReader = endpointSectionReader;
             _errorPoliciesSectionReader = errorPoliciesSectionReader;
         }
 
@@ -39,26 +37,6 @@ namespace Silverback.Messaging.Configuration
             {
                 throw new SilverbackConfigurationException("Error in Inbound configuration section. See inner exception for details.", ex);
             }
-        }
-
-        private Type GetConnectorType(IConfigurationSection configSection)
-        {
-            var typeName = configSection.GetSection("ConnectorType").Value;
-
-            if (typeName == null)
-                return null;
-
-            return _typeFinder.FindClass(typeName);
-        }
-
-        private IEndpoint GetEndpoint(IConfigurationSection configSection)
-        {
-            var endpointConfig = configSection.GetSection("Endpoint");
-
-            if (!endpointConfig.Exists())
-                throw new InvalidOperationException($"Missing Endpoint in section {configSection.Path}.");
-
-            return _endpointSectionReader.GetEndpoint(endpointConfig);
         }
 
         private IEnumerable<ErrorPolicyBase> GetErrorPolicies(IConfigurationSection configSection) =>

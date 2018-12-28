@@ -14,6 +14,8 @@ namespace Silverback.Messaging.Connectors
     {
         IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null) where TMessage : IIntegrationMessage;
 
+        IOutboundRoutingConfiguration Add(Type messageType, IEndpoint endpoint, Type outboundConnectorType = null);
+
         IEnumerable<IOutboundRoute> GetRoutes(IIntegrationMessage message);
     }
 }

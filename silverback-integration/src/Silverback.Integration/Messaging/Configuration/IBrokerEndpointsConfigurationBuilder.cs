@@ -13,13 +13,15 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public interface IBrokerEndpointsConfigurationBuilder
     {
-        IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint) where TMessage : IIntegrationMessage;
-
         IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IEndpoint endpoint) 
             where TMessage : IIntegrationMessage
             where TConnector : IOutboundConnector;
 
-        IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint, Type outboundConnectorType) where TMessage : IIntegrationMessage;
+        IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null) where TMessage : IIntegrationMessage;
+
+        IBrokerEndpointsConfigurationBuilder AddOutbound(IEndpoint endpoint, Type outboundConnectorType = null);
+
+        IBrokerEndpointsConfigurationBuilder AddOutbound(Type messageType, IEndpoint endpoint, Type outboundConnectorType);
 
         IBrokerEndpointsConfigurationBuilder AddInbound(IEndpoint endpoint, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null);
 

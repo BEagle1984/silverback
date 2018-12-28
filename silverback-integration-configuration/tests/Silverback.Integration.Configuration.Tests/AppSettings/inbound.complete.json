@@ -35,6 +35,7 @@
         ]
       },
       {
+        "ConnectorType": "LoggedInboundConnector",
         "Endpoint": {
           "Type": "KafkaConsumerEndpoint",
           "Name": "inbound-endpoint",

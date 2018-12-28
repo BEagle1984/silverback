@@ -1,11 +1,15 @@
-﻿using System;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using Silverback.Messaging.Configuration.Common;
 using Silverback.Messaging.Configuration.Reflection;
 using Silverback.Messaging.ErrorHandling;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration.Inbound
 {
     public class ErrorPoliciesSectionReader
     {

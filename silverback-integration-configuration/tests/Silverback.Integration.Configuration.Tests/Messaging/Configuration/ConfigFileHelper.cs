@@ -13,7 +13,7 @@ namespace Silverback.Tests.Messaging.Configuration
             .AddJsonFile(Path.Combine("AppSettings", fileName + ".json"))
             .Build();
 
-        public static IConfigurationSection GetConfigSection(string fileName, string sectionName) =>
+        public static IConfigurationSection GetConfigSection(string fileName, string sectionName = "Silverback") =>
             GetConfiguration(fileName).GetSection(sectionName);
     }
 }

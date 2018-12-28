@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Silverback.Messaging.ErrorHandling;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration.Inbound
 {
     public class ConfiguredInbound
     {
