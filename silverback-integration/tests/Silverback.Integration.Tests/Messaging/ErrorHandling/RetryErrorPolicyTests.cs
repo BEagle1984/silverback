@@ -19,13 +19,15 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         [SetUp]
         public void Setup()
         {
-            _policy = new RetryErrorPolicy(NullLoggerFactory.Instance.CreateLogger<RetryErrorPolicy>(), 3);
+            _policy = new RetryErrorPolicy(NullLoggerFactory.Instance.CreateLogger<RetryErrorPolicy>());
+            _policy.MaxFailedAttempts(3);
         }
 
         [Test]
         [TestCase(1, true)]
-        [TestCase(3, false)]
+        [TestCase(3, true)]
         [TestCase(4, false)]
+        [TestCase(7, false)]
         public void CanHandleTest(int failedAttempts, bool expectedResult)
         {
             var canHandle = _policy.CanHandle(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));

@@ -25,6 +25,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
+        // TODO: Test
         public static IServiceCollection AddSecondaryBroker<T>(this IServiceCollection services, Action<BrokerOptionsBuilder> optionsAction = null)
             where T : class, IBroker
         {

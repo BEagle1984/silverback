@@ -13,23 +13,17 @@ namespace Silverback.Messaging.ErrorHandling
     /// An optional delay can be specified.
     /// </summary>
     /// TODO: Exponential backoff variant
-    /// TODO: Test maxRetries = -1
     public class RetryErrorPolicy : ErrorPolicyBase
     {
-        private readonly int _maxFailedAttempts;
         private readonly TimeSpan _initialDelay;
         private readonly TimeSpan _delayIncrement;
 
-        public RetryErrorPolicy(ILogger<RetryErrorPolicy> logger, int maxFailedAttempts = -1, TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)
+        public RetryErrorPolicy(ILogger<RetryErrorPolicy> logger, TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)
             : base(logger)
         {
-            _maxFailedAttempts = maxFailedAttempts;
             _initialDelay = initialDelay ?? TimeSpan.Zero;
             _delayIncrement = delayIncrement ?? TimeSpan.Zero;
         }
-
-        public override bool CanHandle(FailedMessage failedMessage, Exception exception) =>
-            base.CanHandle(failedMessage, exception) && failedMessage.FailedAttempts < _maxFailedAttempts;
 
         public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
         {

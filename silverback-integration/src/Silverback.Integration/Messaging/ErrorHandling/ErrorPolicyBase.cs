@@ -15,6 +15,7 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly List<Type> _excludedExceptions = new List<Type>();
         private readonly List<Type> _includedExceptions = new List<Type>();
         private Func<FailedMessage, Exception, bool> _applyRule;
+        private int _maxFailedAttempts = -1;
 
         protected ErrorPolicyBase(ILogger<ErrorPolicyBase> logger)
         {
@@ -39,11 +40,26 @@ namespace Silverback.Messaging.ErrorHandling
             return this;
         }
 
+        public ErrorPolicyBase MaxFailedAttempts(int maxFailedAttempts)
+        {
+            _maxFailedAttempts = maxFailedAttempts;
+            return this;
+        }
+
         public virtual bool CanHandle(FailedMessage failedMessage, Exception exception)
         {
             if (failedMessage == null)
             {
                 _logger.LogTrace($"The policy '{GetType().Name}' cannot be applied because the message is null.");
+                return false;
+            }
+
+            if (_maxFailedAttempts >= 0 && failedMessage.FailedAttempts > _maxFailedAttempts)
+            {
+                _logger.LogTrace($"The policy '{GetType().Name}' will be skipped because the current failed attempts " +
+                                 $"({failedMessage.FailedAttempts}) exceeds the configured maximum attempts " +
+                                 $"({_maxFailedAttempts}).");
+
                 return false;
             }
 
