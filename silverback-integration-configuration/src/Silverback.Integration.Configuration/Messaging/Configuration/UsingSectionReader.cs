@@ -12,20 +12,13 @@ namespace Silverback.Messaging.Configuration
 {
     public class UsingSectionReader
     {
-        private readonly IConfigurationSection _configSection;
-
-        public UsingSectionReader(IConfigurationSection configSection)
-        {
-            _configSection = configSection;
-        }
-
-        public IEnumerable<Assembly> GetAssemblies()
+        public IEnumerable<Assembly> GetAssemblies(IConfigurationSection configSection)
         {
             var assemblies = new Dictionary<string, Assembly>();
 
             try
             {
-                AddAssembliesFromUsingSection(assemblies);
+                AddAssembliesFromUsingSection(configSection, assemblies);
 
                 // Scan Silverback.Integration per default
                 AddAssemblyContaining(typeof(IBroker), assemblies);
@@ -45,9 +38,9 @@ namespace Silverback.Messaging.Configuration
                 assemblies.Add(assembly.FullName, assembly);
         }
 
-        private void AddAssembliesFromUsingSection(IDictionary<string, Assembly> assemblies)
+        private void AddAssembliesFromUsingSection(IConfigurationSection configSection, IDictionary<string, Assembly> assemblies)
         {
-            foreach (var assemblyName in _configSection.GetChildren().Select(c => c.Value))
+            foreach (var assemblyName in configSection.GetChildren().Select(c => c.Value))
             {
                 var assembly = Assembly.Load(new AssemblyName(assemblyName));
                 if (!assemblies.ContainsKey(assembly.FullName))

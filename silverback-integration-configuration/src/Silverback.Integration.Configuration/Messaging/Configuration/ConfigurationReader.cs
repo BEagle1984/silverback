@@ -22,14 +22,17 @@ namespace Silverback.Messaging.Configuration
 
         public ConfigurationReader Read(IConfigurationSection configSection)
         {
-            var typeFinder = new TypeFinder(new UsingSectionReader(configSection.GetSection("Using")).GetAssemblies());
+            var assemblies = new UsingSectionReader().GetAssemblies(configSection.GetSection("Using"));
+            var typeFinder = new TypeFinder(assemblies);
             var customActivator = new CustomActivator(_serviceProvider, typeFinder);
-            var endpointSectionReader = new EndpointSectionReader(customActivator);
 
-            Inbound =
-                new InboundSectionReader(configSection.GetSection("Inbound"), typeFinder, endpointSectionReader)
-                    .GetConfiguredInbound()
-                    .ToList();
+            var endpointSectionReader = new EndpointSectionReader(customActivator);
+            var errorPoliciesSectionReader = new ErrorPoliciesSectionReader(typeFinder, customActivator, endpointSectionReader);
+            var inboundSectionReader = new InboundSectionReader(typeFinder, endpointSectionReader, errorPoliciesSectionReader);
+
+            Inbound = inboundSectionReader
+                .GetConfiguredInbound(configSection.GetSection("Inbound"))
+                .ToList();
 
             return this;
         }

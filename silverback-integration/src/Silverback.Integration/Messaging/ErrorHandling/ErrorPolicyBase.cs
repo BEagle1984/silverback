@@ -24,13 +24,25 @@ namespace Silverback.Messaging.ErrorHandling
 
         public ErrorPolicyBase ApplyTo<T>() where T : Exception
         {
-            _includedExceptions.Add(typeof(T));
+            ApplyTo(typeof(T));
+            return this;
+        }
+
+        public ErrorPolicyBase ApplyTo(Type exceptionType)
+        {
+            _includedExceptions.Add(exceptionType);
             return this;
         }
 
         public ErrorPolicyBase Exclude<T>() where T : Exception
         {
-            _excludedExceptions.Add(typeof(T));
+            Exclude(typeof(T));
+            return this;
+        }
+
+        public ErrorPolicyBase Exclude(Type exceptionType)
+        {
+            _excludedExceptions.Add(exceptionType);
             return this;
         }
 

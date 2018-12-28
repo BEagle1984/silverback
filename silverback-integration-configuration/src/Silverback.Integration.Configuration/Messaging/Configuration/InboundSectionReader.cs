@@ -12,28 +12,28 @@ namespace Silverback.Messaging.Configuration
 {
     public class InboundSectionReader
     {
-        private readonly IConfigurationSection _configSection;
         private readonly TypeFinder _typeFinder;
         private readonly EndpointSectionReader _endpointSectionReader;
+        private readonly ErrorPoliciesSectionReader _errorPoliciesSectionReader;
 
-        public InboundSectionReader(IConfigurationSection configSection, TypeFinder typeFinder, EndpointSectionReader endpointSectionReader)
+        public InboundSectionReader(TypeFinder typeFinder, EndpointSectionReader endpointSectionReader, ErrorPoliciesSectionReader errorPoliciesSectionReader)
         {
-            _configSection = configSection;
             _typeFinder = typeFinder;
             _endpointSectionReader = endpointSectionReader;
+            _errorPoliciesSectionReader = errorPoliciesSectionReader;
         }
 
-        public IEnumerable<ConfiguredInbound> GetConfiguredInbound() =>
-            _configSection.GetChildren().Select(GetConfiguredInbound).ToList();
+        public IEnumerable<ConfiguredInbound> GetConfiguredInbound(IConfigurationSection configSection) =>
+            configSection.GetChildren().Select(GetConfiguredInboundItem).ToList();
 
-        public ConfiguredInbound GetConfiguredInbound(IConfigurationSection itemConfigSection)
+        private ConfiguredInbound GetConfiguredInboundItem(IConfigurationSection configSection)
         {
             try
             {
                 return new ConfiguredInbound(
-                    GetConnectorType(itemConfigSection),
-                    GetEndpoint(itemConfigSection),
-                    GetErrorPolicies(itemConfigSection));
+                    GetConnectorType(configSection),
+                    GetEndpoint(configSection),
+                    GetErrorPolicies(configSection));
             }
             catch (Exception ex)
             {
@@ -41,9 +41,9 @@ namespace Silverback.Messaging.Configuration
             }
         }
 
-        private Type GetConnectorType(IConfigurationSection itemConfigSection)
+        private Type GetConnectorType(IConfigurationSection configSection)
         {
-            var typeName = itemConfigSection.GetSection("ConnectorType").Value;
+            var typeName = configSection.GetSection("ConnectorType").Value;
 
             if (typeName == null)
                 return null;
@@ -51,20 +51,17 @@ namespace Silverback.Messaging.Configuration
             return _typeFinder.FindClass(typeName);
         }
 
-        private IEndpoint GetEndpoint(IConfigurationSection itemConfigSection)
+        private IEndpoint GetEndpoint(IConfigurationSection configSection)
         {
-            var endpointConfig = itemConfigSection.GetSection("Endpoint");
+            var endpointConfig = configSection.GetSection("Endpoint");
 
             if (!endpointConfig.Exists())
-                throw new InvalidOperationException($"Missing Endpoint in section {itemConfigSection.Path}.");
+                throw new InvalidOperationException($"Missing Endpoint in section {configSection.Path}.");
 
             return _endpointSectionReader.GetEndpoint(endpointConfig);
         }
 
-        private IEnumerable<ErrorPolicyBase> GetErrorPolicies(IConfigurationSection itemConfigSection)
-        {
-            // TODO: Implement
-            return Enumerable.Empty<ErrorPolicyBase>();
-        }
+        private IEnumerable<ErrorPolicyBase> GetErrorPolicies(IConfigurationSection configSection) =>
+            _errorPoliciesSectionReader.GetErrorPolicies(configSection.GetSection("ErrorPolicies"));
     }
 }

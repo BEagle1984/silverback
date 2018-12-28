@@ -17,16 +17,18 @@ namespace Silverback.Messaging.Configuration.Reflection
             _assemblies = assemblies;
         }
 
-        public Type FindClass(string className)
+        public Type FindClass(string className) => FindClass(new [] {className});
+
+        public Type FindClass(params string[] classNames)
         {
             var type = _assemblies
                 .SelectMany(a => a.GetTypes())
                 .FirstOrDefault(t =>
                     t.IsClass && t.IsPublic &&
-                    (t.FullName == className || t.FullName.EndsWith("." + className)));
+                    classNames.Any(name => t.FullName == name || t.FullName.EndsWith("." + name)));
 
             if (type == null)
-                throw new SilverbackConfigurationException($"Couldn't find a public class {className}. Maybe an assembly is missing in the Using configuration section.");
+                throw new SilverbackConfigurationException($"Couldn't find a public class named {string.Join(" or ", classNames)}. Maybe an assembly is missing in the Using configuration section.");
 
             return type;
         }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
@@ -12,16 +13,22 @@ namespace Silverback.Messaging.Configuration.Reflection
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly TypeFinder _typeFinder;
+        private readonly EndpointSectionReader _endpointSectionReader;
 
         public CustomActivator(IServiceProvider serviceProvider, TypeFinder typeFinder)
         {
             _serviceProvider = serviceProvider;
             _typeFinder = typeFinder;
+
+            _endpointSectionReader = new EndpointSectionReader(this);
         }
 
-        public T Activate<T>(string typeName, IConfigurationSection configSection)
+        public T Activate<T>(string typeName, IConfigurationSection configSection) =>
+            Activate<T>(configSection, new[] { typeName });
+
+        public T Activate<T>(IConfigurationSection configSection, params string[] typeNames)
         {
-            var type = _typeFinder.FindClass(typeName);
+            var type = _typeFinder.FindClass(typeNames);
 
             var constructorArgs = type
                 .GetConstructors().First()
@@ -29,7 +36,7 @@ namespace Silverback.Messaging.Configuration.Reflection
                 .Select(p => GetParameterValue(p, configSection, type))
                 .ToArray();
 
-            return (T) Activator.CreateInstance(type, constructorArgs);
+            return (T)Activator.CreateInstance(type, constructorArgs);
         }
 
         private object GetParameterValue(ParameterInfo parameter, IConfigurationSection configSection, Type type)
@@ -38,6 +45,9 @@ namespace Silverback.Messaging.Configuration.Reflection
 
             if (value == null)
             {
+                if (parameter.HasDefaultValue)
+                    return null;
+
                 throw new SilverbackConfigurationException(
                     $"Couldn't activate type {type.FullName}: " +
                     $"unable to find a value for the constructor parameter '{parameter.Name}' " +
@@ -49,12 +59,23 @@ namespace Silverback.Messaging.Configuration.Reflection
 
         private object GetParameterValueFromConfig(ParameterInfo parameter, IConfigurationSection configSection)
         {
+            if (parameter.Name.ToLowerInvariant() == "endpoint")
+            {
+                return _endpointSectionReader.GetEndpoint(configSection.GetSection("Endpoint"));
+            }
+
             var configValue = configSection.GetSection(parameter.Name).Value;
 
             if (string.IsNullOrEmpty(configValue))
                 return null;
 
-            return Convert.ChangeType(configValue, parameter.ParameterType);
+            return Convert(configValue, parameter.ParameterType);
+        }
+
+        private object Convert(object value, Type targetType)
+        {
+            var converter = TypeDescriptor.GetConverter(targetType);
+            return converter.ConvertFrom(value);
         }
     }
 }

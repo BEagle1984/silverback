@@ -3,12 +3,19 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
+using NSubstitute;
 using NUnit.Framework;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
 
@@ -23,6 +30,10 @@ namespace Silverback.Tests.Messaging.Configuration
         public void Setup()
         {
             var services = new ServiceCollection();
+
+            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            services.AddSingleton(Substitute.For<IBroker>());
+
             _serviceProvider = services.BuildServiceProvider();
         }
 
@@ -131,6 +142,64 @@ namespace Silverback.Tests.Messaging.Configuration
 
             var serializer = (FakeSerializer) reader.Inbound.First().Endpoint.Serializer;
             Assert.AreEqual(4, serializer.Settings.Mode);
+        }
+
+        [Test]
+        public void Read_CompleteInbound_ErrorPoliciesAdded()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+
+            Assert.AreEqual(2, reader.Inbound.First().ErrorPolicies.Count());
+        }
+
+        [Test]
+        public void Read_CompleteInbound_ErrorPolicyMaxFailedAttemptsSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+
+            var policy = reader.Inbound.First().ErrorPolicies.First();
+            Assert.IsTrue(policy.CanHandle(new FailedMessage(null, 3), new ArgumentException()));
+            Assert.IsFalse(policy.CanHandle(new FailedMessage(null, 6), new ArgumentException()));
+        }
+        
+        [Test]
+        public void Read_CompleteInbound_ErrorPolicyConstructorParameterSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+
+            var policy = (RetryErrorPolicy) reader.Inbound.First().ErrorPolicies.First();
+            Assert.AreEqual(TimeSpan.FromMinutes(5), (TimeSpan)policy.GetType().GetField("_delayIncrement", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(policy));
+        }
+
+        [Test]
+        public void Read_CompleteInbound_ErrorPolicyApplyToSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+
+            var policy = reader.Inbound.First().ErrorPolicies.First();
+            Assert.IsTrue(policy.CanHandle(new FailedMessage(), new ArgumentException()));
+            Assert.IsTrue(policy.CanHandle(new FailedMessage(), new InvalidOperationException()));
+            Assert.IsFalse(policy.CanHandle(new FailedMessage(), new FormatException()));
+        }
+
+        [Test]
+        public void Read_CompleteInbound_ErrorPolicyExcludeSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+
+            var policy = reader.Inbound.First().ErrorPolicies.First();
+            Assert.IsTrue(policy.CanHandle(new FailedMessage(), new ArgumentException()));
+            Assert.IsFalse(policy.CanHandle(new FailedMessage(), new ArgumentNullException()));
         }
 
         #endregion

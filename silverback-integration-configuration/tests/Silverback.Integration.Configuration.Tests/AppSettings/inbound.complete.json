@@ -16,7 +16,23 @@
               "Mode": 4
             }
           }
-        }
+        },
+        "ErrorPolicies": [
+          {
+            "Type": "Retry",
+            "MaxFailedAttempts": 5,
+            "DelayIncrement": "00:05:00",
+            "ApplyTo": [ "System.ArgumentException", "System.InvalidOperationException" ],
+            "Exclude": [ "System.ArgumentNullException" ]
+          },
+          {
+            "Type": "Move",
+            "Endpoint": {
+              "Type": "KafkaProducerEndpoint",
+              "Name": "producer-endpoint"
+            }
+          }
+        ]
       },
       {
         "Endpoint": {
