@@ -5,7 +5,13 @@
       {
         "Endpoint": {
           "Type": "KafkaConsumerEndpoint",
-          "Name": "inbound-endpoint"
+          "Name": "inbound-endpoint1"
+        }
+      },
+      {
+        "Endpoint": {
+          "Type": "KafkaConsumerEndpoint",
+          "Name": "inbound-endpoint2"
         }
       }
     ]

@@ -5,9 +5,12 @@ using System;
 using System.Linq;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Serialization;
+using Silverback.Tests.Types;
 
 namespace Silverback.Tests.Messaging.Configuration
 {
@@ -32,7 +35,7 @@ namespace Silverback.Tests.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("inbound.simplest", "Silverback"));
 
-            Assert.AreEqual(1, reader.Inbound.Count);
+            Assert.AreEqual(2, reader.Inbound.Count);
             Assert.IsNotNull(reader.Inbound.First().Endpoint);
         }
 
@@ -54,8 +57,8 @@ namespace Silverback.Tests.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("inbound.simplest", "Silverback"));
 
-            var endpoint = reader.Inbound.First().Endpoint;
-            Assert.AreEqual("inbound-endpoint", endpoint.Name);
+            var endpoint = reader.Inbound.Skip(1).First().Endpoint;
+            Assert.AreEqual("inbound-endpoint2", endpoint.Name);
         }
 
         [Test]
@@ -67,6 +70,18 @@ namespace Silverback.Tests.Messaging.Configuration
 
             var endpoint = reader.Inbound.First().Endpoint;
             Assert.IsNotNull(endpoint.Serializer);
+        }
+
+        [Test]
+        public void Read_CompleteInbound_DefaultSerializerPropertiesSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+
+            var serializer = (JsonMessageSerializer)reader.Inbound.Skip(1).First().Endpoint.Serializer;
+            Assert.AreEqual(MessageEncoding.Unicode, serializer.Encoding);
+            Assert.AreEqual(Formatting.Indented, serializer.Settings.Formatting);
         }
 
         [Test]
@@ -94,6 +109,28 @@ namespace Silverback.Tests.Messaging.Configuration
             Assert.Throws<ArgumentException>(
                 () => Assert.AreEqual(AutoOffsetResetType.Earliest, endpoint.Configuration.AutoOffsetReset),
                 "Requested value 'earliest' was not found.");
+        }
+
+        [Test]
+        public void Read_CompleteInbound_CustomSerializerSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+
+            var endpoint = reader.Inbound.First().Endpoint;
+            Assert.IsInstanceOf<FakeSerializer>(endpoint.Serializer);
+        }
+
+        [Test]
+        public void Read_CompleteInbound_CustomSerializerPropertySet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete", "Silverback"));
+
+            var serializer = (FakeSerializer) reader.Inbound.First().Endpoint.Serializer;
+            Assert.AreEqual(4, serializer.Settings.Mode);
         }
 
         #endregion

@@ -1,15 +1,33 @@
 {
   "Silverback": {
-    "Using": [ "Silverback.Integration.Kafka" ],
+    "Using": [ "Silverback.Integration.Kafka", "Silverback.Integration.Configuration.Tests" ],
     "Inbound": [
       {
         "Endpoint": {
           "Type": "KafkaConsumerEndpoint",
-          "Name": "inbound-endpoint",
+          "Name": "inbound-endpoint1",
           "CommitOffsetEach": 1234,
           "Configuration": {
             "AutoOffsetReset": "Earliest"
-          } 
+          },
+          "Serializer": {
+            "Type": "FakeSerializer",
+            "Settings": {
+              "Mode": 4
+            }
+          }
+        }
+      },
+      {
+        "Endpoint": {
+          "Type": "KafkaConsumerEndpoint",
+          "Name": "inbound-endpoint",
+          "Serializer": {
+            "Encoding": "Unicode",
+            "Settings": {
+              "Formatting": "Indented"
+            }
+          }
         }
       }
     ]
