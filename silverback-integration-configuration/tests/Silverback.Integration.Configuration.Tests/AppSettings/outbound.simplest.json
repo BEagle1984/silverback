@@ -1,0 +1,13 @@
+{
+  "Silverback": {
+    "Using": [ "Silverback.Integration.Kafka" ],
+    "Outbound": [
+      {
+        "Endpoint": {
+          "Type": "KafkaProducerEndpoint",
+          "Name": "outbound-endpoint1"
+        }
+      }
+    ]
+  }
+}

@@ -25,12 +25,6 @@ namespace Silverback.Messaging.Configuration
             _broker = broker;
         }
 
-        public IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint) where TMessage : IIntegrationMessage
-        {
-            AddOutbound<TMessage>(endpoint, null);
-            return this;
-        }
-
         public IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IEndpoint endpoint) 
             where TMessage : IIntegrationMessage
             where TConnector : IOutboundConnector
@@ -39,12 +33,24 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        public IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint, Type outboundConnectorType) where TMessage : IIntegrationMessage
+        public IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null) where TMessage : IIntegrationMessage
         {
-            _outboundRoutingConfiguration.Add<TMessage>(endpoint);
+            AddOutbound(typeof(TMessage), endpoint, outboundConnectorType);
             return this;
         }
         
+        public IBrokerEndpointsConfigurationBuilder AddOutbound(IEndpoint endpoint, Type outboundConnectorType = null)
+        {
+            AddOutbound(typeof(IIntegrationMessage), endpoint, outboundConnectorType);
+            return this;
+        }
+
+        public IBrokerEndpointsConfigurationBuilder AddOutbound(Type messageType, IEndpoint endpoint, Type outboundConnectorType)
+        {
+            _outboundRoutingConfiguration.Add(messageType, endpoint, outboundConnectorType);
+            return this;
+        }
+
         public IBrokerEndpointsConfigurationBuilder AddInbound(IEndpoint endpoint, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null)
         {
             AddInbound(endpoint, null, errorPolicyFactory);

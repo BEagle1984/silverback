@@ -27,12 +27,12 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             var testPolicy = new TestErrorPolicy();
 
             var chain = _errorPolicyBuilder.Chain(
-                _errorPolicyBuilder.Retry(3),
+                _errorPolicyBuilder.Retry().MaxFailedAttempts(3),
                 testPolicy);
 
             chain.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
 
-            Assert.That(testPolicy.Applied, Is.EqualTo(failedAttempts >= 3));
+            Assert.That(testPolicy.Applied, Is.EqualTo(failedAttempts > 3));
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         public void ChainingTest2(int failedAttempts, ErrorAction expectedAction)
         {
             var chain = _errorPolicyBuilder.Chain(
-                _errorPolicyBuilder.Retry(3),
+                _errorPolicyBuilder.Retry().MaxFailedAttempts(2),
                 _errorPolicyBuilder.Skip());
 
             var action = chain.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
