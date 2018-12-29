@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Silverback.Messaging.Configuration.Common;
-using Silverback.Messaging.Configuration.Inbound;
 using Silverback.Messaging.Configuration.Reflection;
 using Silverback.Messaging.Messages;
 
