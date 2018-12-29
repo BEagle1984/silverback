@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
@@ -11,33 +13,33 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
-namespace Silverback.Examples.Main.UseCases.ErrorHandling
+namespace Silverback.Examples.Main.UseCases.Basic
 {
-    public class RetryAndMoveErrorPolicyUseCase : UseCase
+    public class ExternalConfigUseCase : UseCase
     {
-        public RetryAndMoveErrorPolicyUseCase() : base("Retry then move to dead letter", 10)
+        public ExternalConfigUseCase() : base("External configuration", 1000)
         {
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
         }
+
+        public IConfiguration Configuration { get; }
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus()
             .AddBroker<KafkaBroker>();
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider) => endpoints
-            .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-bad-events")
-            {
-                Configuration = new Confluent.Kafka.ProducerConfig
-                {
-                    BootstrapServers = "PLAINTEXT://kafka:9092",
-                    ClientId = GetType().FullName
-                }
-            });
+            .ReadConfig(Configuration, serviceProvider)
+            .Connect();
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new BadIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new SimpleIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }
     }
 }

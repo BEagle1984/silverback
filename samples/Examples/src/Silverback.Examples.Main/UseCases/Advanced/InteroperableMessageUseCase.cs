@@ -22,7 +22,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             .AddBus()
             .AddBroker<KafkaBroker>();
 
-        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) { }
+        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider) { }
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

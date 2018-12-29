@@ -21,7 +21,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
             throw new NotImplementedException();
         }
 
-        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints)
+        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider)
         {
             throw new NotImplementedException();
         }

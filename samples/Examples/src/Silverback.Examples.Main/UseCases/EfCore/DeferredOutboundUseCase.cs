@@ -29,7 +29,7 @@ namespace Silverback.Examples.Main.UseCases.EfCore
                 .AddDbOutboundConnector<ExamplesDbContext>()
                 .AddDbOutboundWorker<ExamplesDbContext>());
 
-        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
+        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider) => endpoints
             .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
             {
                 Configuration = new Confluent.Kafka.ProducerConfig

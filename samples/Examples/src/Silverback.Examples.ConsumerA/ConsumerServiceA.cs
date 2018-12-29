@@ -34,7 +34,7 @@ namespace Silverback.Examples.ConsumerA
                 .AddInbound(CreateConsumerEndpoint("silverback-examples-events"))
                 .AddInbound(CreateConsumerEndpoint("silverback-examples-bad-events"), policy => policy
                     .Chain(
-                        policy.Retry(2, TimeSpan.FromMilliseconds(500)),
+                        policy.Retry(TimeSpan.FromMilliseconds(500)).MaxFailedAttempts(2),
                         policy.Move(new KafkaProducerEndpoint("silverback-examples-bad-events-error")
                         {
                             Configuration = new Confluent.Kafka.ProducerConfig
@@ -45,7 +45,7 @@ namespace Silverback.Examples.ConsumerA
                             }
                         })))
                 .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer", GetCustomSerializer()))
-                // Special inbounds (not logged)
+                // Special inbound (not logged)
                 .AddInbound<InboundConnector>(CreateConsumerEndpoint("silverback-examples-legacy-messages", new LegacyMessageSerializer()))
                 .Connect();
         }

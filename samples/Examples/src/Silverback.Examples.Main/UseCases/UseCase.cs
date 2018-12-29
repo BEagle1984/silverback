@@ -52,7 +52,7 @@ namespace Silverback.Examples.Main.UseCases
 
             serviceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
 
-            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>());
+            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>(), serviceProvider);
 
             PreExecute(serviceProvider);
         }
@@ -79,7 +79,7 @@ namespace Silverback.Examples.Main.UseCases
 
         protected abstract void ConfigureServices(IServiceCollection services);
 
-        protected abstract void Configure(IBrokerEndpointsConfigurationBuilder endpoints);
+        protected abstract void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider);
 
         protected abstract Task Execute(IServiceProvider serviceProvider);
 

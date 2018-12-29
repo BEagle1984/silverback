@@ -30,7 +30,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
                 .AddDbOutboundConnector<ExamplesDbContext>()
                 .AddDbOutboundWorker<ExamplesDbContext>());
 
-        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
+        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider) => endpoints
             .AddOutbound<IntegrationEventA>(CreateEndpoint())
             .AddOutbound<IntegrationEventB, DeferredOutboundConnector>(CreateEndpoint())
             ;

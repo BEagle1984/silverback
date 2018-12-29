@@ -25,7 +25,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
             .AddBroker<KafkaBroker>()
             .AddScoped<ISubscriber, TranslateUseCase>();
 
-        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints) => endpoints
+        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider) => endpoints
             .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
             {
                 Configuration = new Confluent.Kafka.ProducerConfig
