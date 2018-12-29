@@ -10,14 +10,17 @@ foreach ($arg in $args)
 	}
 }
 
+$buildConfiguration = "Debug"
+
 $sources =
-    ("Silverback.Core", "..\silverback-core\src\Silverback.Core\bin\Debug"),
-    ("Silverback.Core.EntityFrameworkCore", "..\silverback-core\src\Silverback.Core.EntityFrameworkCore\bin\Debug"),
-    ("Silverback.Core.Rx", "..\silverback-core\src\Silverback.Core.Rx\bin\Debug"),
-	("Silverback.Integration", "..\silverback-integration\src\Silverback.Integration\bin\Debug"),
-    ("Silverback.Integration.EntityFrameworkCore", "..\silverback-integration\src\Silverback.Integration.EntityFrameworkCore\bin\Debug"),
-    ("Silverback.Integration.FileSystem", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\Debug"),
-    ("Silverback.Integration.Kafka", "..\silverback-integration-kafka\src\Silverback.Integration.Kafka\bin\Debug")
+    ("Silverback.Core", "..\silverback-core\src\Silverback.Core\bin\" + $buildConfiguration),
+    ("Silverback.Core.EntityFrameworkCore", "..\silverback-core\src\Silverback.Core.EntityFrameworkCore\bin\" + $buildConfiguration),
+    ("Silverback.Core.Rx", "..\silverback-core\src\Silverback.Core.Rx\bin\" + $buildConfiguration),
+	("Silverback.Integration", "..\silverback-integration\src\Silverback.Integration\bin\" + $buildConfiguration),
+    ("Silverback.Integration.EntityFrameworkCore", "..\silverback-integration\src\Silverback.Integration.EntityFrameworkCore\bin\" + $buildConfiguration),
+    ("Silverback.Integration.FileSystem", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\" + $buildConfiguration),
+    ("Silverback.Integration.Kafka", "..\silverback-integration-kafka\src\Silverback.Integration.Kafka\bin\" + $buildConfiguration),
+    ("Silverback.Integration.Configuration", "..\silverback-integration-configuration\src\Silverback.Integration.Configuration\bin\" + $buildConfiguration)
 
 function Check-Location()
 {

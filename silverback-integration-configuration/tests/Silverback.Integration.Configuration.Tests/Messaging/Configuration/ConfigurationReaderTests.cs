@@ -26,6 +26,7 @@ namespace Silverback.Tests.Messaging.Configuration
     public class ConfigurationReaderTests
     {
         private IServiceProvider _serviceProvider;
+        private IBrokerEndpointsConfigurationBuilder _builder;
 
         [SetUp]
         public void Setup()
@@ -36,6 +37,8 @@ namespace Silverback.Tests.Messaging.Configuration
             services.AddSingleton(Substitute.For<IBroker>());
 
             _serviceProvider = services.BuildServiceProvider();
+
+            _builder = Substitute.For<IBrokerEndpointsConfigurationBuilder>();
         }
 
         #region Read - Inbound
@@ -338,5 +341,62 @@ namespace Silverback.Tests.Messaging.Configuration
 
         #endregion
 
+        #region Read and Apply
+
+        [Test]
+        public void ReadAndApply_SimpleInbound_AddInboundCalled()
+        {
+            new ConfigurationReader(_serviceProvider)
+                .Read(ConfigFileHelper.GetConfigSection("inbound.simplest"))
+                .Apply(_builder);
+
+            _builder.ReceivedWithAnyArgs(2).AddInbound(null, null, null);
+        }
+
+        [Test]
+        public void ReadAndApply_CompleteInbound_AddInboundWithCorrectTypes()
+        {
+            new ConfigurationReader(_serviceProvider)
+                .Read(ConfigFileHelper.GetConfigSection("inbound.complete"))
+                .Apply(_builder);
+
+            // TODO: Should check policies in first call
+            _builder.Received(1).AddInbound(
+                Arg.Any<KafkaConsumerEndpoint>(),
+                null,
+                Arg.Any<Func<ErrorPolicyBuilder, IErrorPolicy>>());
+            _builder.Received(1).AddInbound(
+                Arg.Any<KafkaConsumerEndpoint>(),
+                typeof(LoggedInboundConnector),
+                Arg.Is<Func<ErrorPolicyBuilder, IErrorPolicy>>(f => f.Invoke(null) == null));
+        }
+
+        [Test]
+        public void ReadAndApply_SimpleOutbound_OutboundAdded()
+        {
+            new ConfigurationReader(_serviceProvider)
+                .Read(ConfigFileHelper.GetConfigSection("outbound.simplest"))
+                .Apply(_builder);
+
+            _builder.ReceivedWithAnyArgs(1).AddOutbound(null, null, null);
+        }
+
+        [Test]
+        public void ReadAndApply_CompleteOutbound_AddOutboundWithCorrectTypes()
+        {
+            new ConfigurationReader(_serviceProvider)
+                .Read(ConfigFileHelper.GetConfigSection("outbound.complete"))
+                .Apply(_builder);
+
+            _builder.Received(1).AddOutbound(
+                typeof(IIntegrationEvent),
+                Arg.Any<KafkaProducerEndpoint>(),
+                null);
+            _builder.Received(1).AddOutbound(
+                typeof(IIntegrationCommand),
+                Arg.Any<KafkaProducerEndpoint>(),
+                typeof(DeferredOutboundConnector));
+        }
+        #endregion
     }
 }

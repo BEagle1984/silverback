@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Configuration.Inbound
             var errorPolicy = _customActivator.Activate<ErrorPolicyBase>(
                 configSection,
                 policyType,
-                policyType + "Policy", 
+                policyType + "Policy",
                 policyType + "ErrorPolicy",
                 policyType + "MessageErrorPolicy");
 

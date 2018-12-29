@@ -46,11 +46,16 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
         
-        public void Configure(IBrokerEndpointsConfigurationBuilder builder)
+        public void Apply(IBrokerEndpointsConfigurationBuilder builder)
         {
             foreach (var inbound in Inbound)
             {
-                builder.AddInbound(inbound.Endpoint, inbound.ConnectorType, b => inbound.ErrorPolicies != null ? b.Chain(inbound.ErrorPolicies) : null);
+                builder.AddInbound(inbound.Endpoint, inbound.ConnectorType, b => inbound.ErrorPolicies.Any() ? b.Chain(inbound.ErrorPolicies) : null);
+            }
+
+            foreach (var outbound in Outbound)
+            {
+                builder.AddOutbound(outbound.MessageType, outbound.Endpoint, outbound.ConnectorType);
             }
         }
     }

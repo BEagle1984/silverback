@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Configuration.Inbound
         {
             ConnectorType = connectorType;
             Endpoint = endpoint;
-            ErrorPolicies = errorPolicies?.ToArray();
+            ErrorPolicies = errorPolicies.ToArray();
         }
 
         public Type ConnectorType { get; }
