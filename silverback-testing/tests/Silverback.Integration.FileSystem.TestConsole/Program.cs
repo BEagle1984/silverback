@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Integration.FileSystem.TestConsole
 {
     class Program
     {
+        private const string BasePath = @"D:\Temp\Broker";
+
         static void Main(string[] args)
         {
             new Program().Execute();
-        }
-
-        public Program()
-        {
         }
 
         private void Execute()
@@ -35,6 +32,9 @@ namespace Silverback.Integration.FileSystem.TestConsole
                 Console.Write("? ");
 
                 var command = Console.ReadLine().Split(' ', 3, StringSplitOptions.RemoveEmptyEntries);
+
+                if (command.Length == 0)
+                    continue;
 
                 try
                 {
@@ -58,20 +58,16 @@ namespace Silverback.Integration.FileSystem.TestConsole
             }
         }
 
-        private FileSystemBroker GetBroker()
-        {
-            // TODO: An helper like Broker.Create<T>().OnPath would be nice
-            return new FileSystemBroker().OnPath(@"D:\Temp\Broker");
-        }
+        private FileSystemBroker GetBroker() => new FileSystemBroker(NullLoggerFactory.Instance);
 
         private void Produce(string topicName, string messageContent)
         {
             var message = new TestMessage { Content = messageContent };
-            var endpoint = BasicEndpoint.Create(topicName);
+            var endpoint = new FileSystemEndpoint(topicName, BasePath);
 
             using (var broker = GetBroker())
             {
-                broker.GetProducer(endpoint).Produce(Envelope.Create(message));
+                broker.GetProducer(endpoint).Produce(message);
             }
 
             WriteSuccess($"Successfully produced message {message.Id} to topic '{topicName}'.");
@@ -79,7 +75,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
 
         private void Consume(string topicName)
         {
-            var endpoint = BasicEndpoint.Create(topicName);
+            var endpoint = new FileSystemEndpoint(topicName, BasePath);
 
             using (var broker = GetBroker())
             {
@@ -87,10 +83,12 @@ namespace Silverback.Integration.FileSystem.TestConsole
 
                 broker.Connect();
 
+                WriteSuccess($"Connected to topic '{topicName}'...");
+
                 consumer.Received += (_, e) =>
                 {
-                    var message = (TestMessage)e.Message;
-                    WriteLine($"Received message {message.Id} from topic '{topicName}' with content '{message.Content}'.", ConsoleColor.Yellow);
+                    var message = (TestMessage)e;
+                    WriteSuccess($"Received message {message.Id} from topic '{topicName}' with content '{message.Content}'.");
                 };
 
                 while (Console.ReadKey(true).Key != ConsoleKey.Q)
@@ -112,6 +110,7 @@ namespace Silverback.Integration.FileSystem.TestConsole
             Console.WriteLine(message);
             Console.ResetColor();
         }
+
         private void PrintLogo()
         {
             Console.Clear();

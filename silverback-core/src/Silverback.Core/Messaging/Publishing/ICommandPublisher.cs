@@ -1,25 +1,20 @@
+// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Publishing
 {
-    /// <summary>
-    /// Publishes the <see cref="ICommand"/> to the bus.
-    /// </summary>
-    public interface ICommandPublisher<in TCommand>
-        where TCommand : ICommand
+    public interface ICommandPublisher
     {
-        /// <summary>
-        /// Sends the specified command to the bus.
-        /// </summary>
-        /// <param name="message">The command to be sent.</param>
-        void Send(TCommand message);
+        void Execute(ICommand commandMessage);
 
-        /// <summary>
-        /// Sends the specified command to the bus.
-        /// </summary>
-        /// <param name="message">The command to be sent.</param>
-        /// <returns></returns>
-        Task SendAsync(TCommand message);
+        Task ExecuteAsync(ICommand commandMessage);
+
+        IEnumerable<TResult> Execute<TResult>(ICommand<TResult> commandMessage);
+
+        Task<IEnumerable<TResult>> ExecuteAsync<TResult>(ICommand<TResult> commandMessage);
     }
 }

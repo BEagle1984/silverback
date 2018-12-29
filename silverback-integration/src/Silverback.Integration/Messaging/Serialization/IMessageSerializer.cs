@@ -1,4 +1,7 @@
-﻿using Silverback.Messaging.Messages;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Serialization
 {
@@ -7,18 +10,8 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public interface IMessageSerializer
     {
-        /// <summary>
-        /// Serializes the specified message into a byte array.
-        /// </summary>
-        /// <param name="envelope">The envelope containing the message.</param>
-        /// <returns></returns>
-        byte[] Serialize(IEnvelope envelope);
+        byte[] Serialize(IMessage message);
 
-        /// <summary>
-        /// Deserializes the specified message from a byte array.
-        /// </summary>
-        /// <param name="message">The serialized message.</param>
-        /// <returns></returns>
-        IEnvelope Deserialize(byte[] message);
+        IMessage Deserialize(byte[] message);
     }
 }

@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -8,20 +12,20 @@ namespace Silverback.Tests.TestTypes
 {
     public class TestProducer : Producer
     {
-        public List<byte[]> SentMessages { get; }
+        public List<TestBroker.ProducedMessage> ProducedMessages { get; }
 
         public TestProducer(TestBroker broker, IEndpoint endpoint)
-            : base(broker, endpoint)
+            : base(broker, endpoint, new NullLogger<TestProducer>())
         {
-            SentMessages = broker.SentMessages;
+            ProducedMessages = broker.ProducedMessages;
         }
 
-        protected override void Produce(IIntegrationMessage message, byte[] serializedMessage)
+        protected override void Produce(IMessage message, byte[] serializedMessage)
         {
-            SentMessages.Add(serializedMessage);
+            ProducedMessages.Add(new TestBroker.ProducedMessage(serializedMessage, Endpoint));
         }
 
-        protected override Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage)
+        protected override Task ProduceAsync(IMessage message, byte[] serializedMessage)
         {
             Produce(message, serializedMessage);
             return Task.CompletedTask;

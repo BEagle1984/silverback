@@ -1,65 +1,29 @@
-﻿using NUnit.Framework;
-using Silverback.Messaging;
-using Silverback.Messaging.Serialization;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.Threading.Tasks;
+using NUnit.Framework;
 using Silverback.Tests.TestTypes;
+using Silverback.Tests.TestTypes.Domain;
 
 namespace Silverback.Tests.Messaging.Broker
 {
     [TestFixture]
     public class BrokerTest
     {
-        [Test]
-        public void GetDefaultSerializerTest()
+        private TestBroker _broker;
+
+        [SetUp]
+        public void Setup()
         {
-            var serializer = new TestBroker().GetSerializer();
-
-            Assert.That(serializer, Is.InstanceOf<JsonMessageSerializer>());
-        }
-
-        [Test]
-        public void GetSerializerTest()
-        {
-            var broker = new TestBroker();
-            broker.SerializeUsing<FakeSerializer>();
-            var serializer = broker.GetSerializer();
-
-            Assert.That(serializer, Is.InstanceOf<FakeSerializer>());
-        }
-
-        [Test]
-        public void GetCachedSerializerTest()
-        {
-            var broker = new TestBroker();
-            broker.SerializeUsing<FakeSerializer>();
-            var serializer = broker.GetSerializer();
-            var serializer2 = broker.GetSerializer();
-            Assert.That(serializer, Is.SameAs(serializer2));
-        }
-
-        [Test]
-        public void WithNameTest()
-        {
-            var broker = new TestBroker().WithName("TestBroker");
-
-            Assert.That(broker.Name, Is.EqualTo("TestBroker"));
-        }
-
-        [Test]
-        public void AsDefaultTest()
-        {
-            var broker = new TestBroker();
-            Assert.That(broker.IsDefault, Is.False);
-
-            broker.AsDefault();
-
-            Assert.That(broker.IsDefault, Is.True);
+            _broker = new TestBroker();
         }
 
         [Test]
         public void GetProducerTest()
         {
-            var broker = new TestBroker();
-            var producer = broker.GetProducer(BasicEndpoint.Create("test"));
+            var producer = _broker.GetProducer(TestEndpoint.Default);
 
             Assert.That(producer, Is.Not.Null);
         }
@@ -67,30 +31,70 @@ namespace Silverback.Tests.Messaging.Broker
         [Test]
         public void GetCachedProducerTest()
         {
-            var broker = new TestBroker();
-            var producer = broker.GetProducer(BasicEndpoint.Create("test"));
-            var producer2 = broker.GetProducer(BasicEndpoint.Create("test"));
+            var producer = _broker.GetProducer(TestEndpoint.Default);
+            var producer2 = _broker.GetProducer(TestEndpoint.Default);
 
             Assert.That(producer2, Is.SameAs(producer));
+        }
+
+        [Test]
+        public void GetProducerForDifferentEndpointTest()
+        {
+            var producer = _broker.GetConsumer(TestEndpoint.Default);
+            var producer2 = _broker.GetConsumer(new TestEndpoint("test2"));
+
+            Assert.That(producer2, Is.Not.SameAs(producer));
         }
 
         [Test]
         public void GetConsumerTest()
         {
-            var broker = new TestBroker();
-            var producer = broker.GetConsumer(BasicEndpoint.Create("test"));
+            var consumer = _broker.GetConsumer(TestEndpoint.Default);
 
-            Assert.That(producer, Is.Not.Null);
+            Assert.That(consumer, Is.Not.Null);
         }
 
         [Test]
         public void GetCachedConsumerTest()
         {
-            var broker = new TestBroker();
-            var producer = broker.GetConsumer(BasicEndpoint.Create("test"));
-            var producer2 = broker.GetConsumer(BasicEndpoint.Create("test"));
+            var consumer = _broker.GetConsumer(TestEndpoint.Default);
+            var consumer2 = _broker.GetConsumer(TestEndpoint.Default);
 
-            Assert.That(producer2, Is.SameAs(producer));
+            Assert.That(consumer2, Is.SameAs(consumer));
         }
+
+        [Test]
+        public void GetConsumerForDifferentEndpointTest()
+        {
+            var consumer = _broker.GetConsumer(TestEndpoint.Default);
+            var consumer2 = _broker.GetConsumer(new TestEndpoint("test2"));
+
+            Assert.That(consumer2, Is.Not.SameAs(consumer));
+        }
+
+        [Test]
+        public void Produce_IntegrationMessage_IdIsSet()
+        {
+            var producer = _broker.GetProducer(TestEndpoint.Default);
+
+            var message = new TestEventOne();
+
+            producer.Produce(message);
+
+            Assert.That(message.Id, Is.Not.EqualTo(Guid.Empty));
+        }
+
+        [Test]
+        public async Task ProduceAsync_IntegrationMessage_IdIsSet()
+        {
+            var producer = _broker.GetProducer(TestEndpoint.Default);
+
+            var message = new TestEventOne();
+
+            await producer.ProduceAsync(message);
+
+            Assert.That(message.Id, Is.Not.EqualTo(Guid.Empty));
+        }
+
     }
 }

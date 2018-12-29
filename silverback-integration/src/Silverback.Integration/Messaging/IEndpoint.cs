@@ -1,21 +1,17 @@
-﻿using Silverback.Messaging.Broker;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging
 {
-    /// <summary>
-    /// Contains information to identify the endpoint on the message broker (server address, topic, queue name, ...).
-    /// </summary>
     public interface IEndpoint
     {
         /// <summary>
-        /// Gets or sets the topic/queue name.
+        /// Gets the topic/queue name.
         /// </summary>
         string Name { get; }
 
-        /// <summary>
-        /// Gets or sets the name of the broker to be used.
-        /// If not set the default one will be used.
-        /// </summary>
-        string BrokerName { get; }
+        IMessageSerializer Serializer { get; }
     }
 }

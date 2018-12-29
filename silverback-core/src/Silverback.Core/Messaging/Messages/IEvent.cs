@@ -1,9 +1,7 @@
-﻿namespace Silverback.Messaging.Messages
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+namespace Silverback.Messaging.Messages
 {
-    /// <summary>
-    /// Represent an event message.
-    /// </summary>
-    /// <seealso cref="IMessage" />
     public interface IEvent : IMessage
     {
     }

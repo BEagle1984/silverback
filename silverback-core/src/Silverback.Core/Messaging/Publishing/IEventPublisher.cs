@@ -1,25 +1,15 @@
+// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Publishing
 {
-    /// <summary>
-    /// Publishes the <see cref="IEvent"/> to the bus.
-    /// </summary>
-    public interface IEventPublisher<in TEvent>
-        where TEvent : IEvent
+    public interface IEventPublisher
     {
-        /// <summary>
-        /// Publishes the specified event to the bus.
-        /// </summary>
-        /// <param name="message">The event to be published.</param>
-        void Publish(TEvent message);
+        void Publish(IEvent eventMessage);
 
-        /// <summary>
-        /// Asynchronously publishes the specified event to the bus.
-        /// </summary>
-        /// <param name="message">The event to be published.</param>
-        /// <returns></returns>
-        Task PublishAsync(TEvent message);
+        Task PublishAsync(IEvent eventMessage);
     }
 }

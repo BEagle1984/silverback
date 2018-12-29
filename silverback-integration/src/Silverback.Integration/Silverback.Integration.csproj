@@ -5,21 +5,22 @@
     <RootNamespace>Silverback</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>BEagle1984</Authors>
-    <Company>Silverback</Company>
-    <Description>The Silverback framework enables fast and flexible development of resilient .NET microservices.
-This package enables communication between them in a flexible and abstracted way.</Description>
-    <PackageLicenseUrl>https://github.com/BEagle1984/silverback-integration/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/BEagle1984/silverback-integration</PackageProjectUrl>
+    <Company></Company>
+    <Description>Silverback is a simple framework to build reactive, event-driven, microservices.  This package contains the message broker and connectors abstractions.</Description>
+    <PackageLicenseUrl>https://github.com/BEagle1984/silverback/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType />
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.0.19</Version>
+    <Version>0.4.0.6</Version>
 	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+	<PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
+    <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -27,8 +28,9 @@ This package enables communication between them in a flexible and abstracted way
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="Silverback.Core" Version="1.0.13" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Silverback.Core" Version="0.3.1" />
   </ItemGroup>
 
 </Project>

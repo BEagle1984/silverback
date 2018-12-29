@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Silverback.Messaging.Messages;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using Silverback.Core.Tests.TestTypes.Messages;
 using Silverback.Messaging.Subscribers;
-using Silverback.Tests.TestTypes.Domain;
 
-namespace Silverback.Tests.TestTypes.Subscribers
+namespace Silverback.Core.Tests.TestTypes.Subscribers
 {
-    public class TestSubscriber : Subscriber<IMessage>, IDisposable
+    public class TestSubscriber : ISubscriber
     {
-        public int Handled { get; private set; }
-        public bool Disposed { get; private set; }
+        public int ReceivedMessagesCount { get; private set; }
 
-        public override void Handle(IMessage message)
-        {
-            Handled++;
-        }
-
-        public void Dispose()
-        {
-            Disposed = true;
-        }
+        [Subscribe]
+        public void OnTestMessageReceived(ITestMessage message) => ReceivedMessagesCount++;
     }
 }

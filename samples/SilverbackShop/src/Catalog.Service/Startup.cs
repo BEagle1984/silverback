@@ -1,34 +1,44 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Common.Api;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Domain;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging;
-using Silverback.Messaging.Adapters;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using SilverbackShop.Catalog.Domain;
+using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 using SilverbackShop.Catalog.Domain.Repositories;
+using SilverbackShop.Catalog.Domain.Services;
 using SilverbackShop.Catalog.Infrastructure;
-using SilverbackShop.Common.Data;
+using SilverbackShop.Catalog.Infrastructure.Repositories;
+using SilverbackShop.Catalog.Service.Queries;
+using SilverbackShop.Common.Infrastructure;
+using SilverbackShop.Common.Infrastructure.Jobs;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SilverbackShop.Catalog.Service
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CatalogContext>(o => o.UseSqlite(@"Data Source=Data\Catalog.db"));
+            services.AddDbContext<CatalogDbContext>(o =>
+            {
+                o.UseSqlServer(_configuration.GetConnectionString("CatalogDbContext").SetServerName());
+                //o.UseSqlite($"Data Source={_configuration["DB:Path"]}Catalog.db");
+            });
 
             services.AddMvc();
             services.AddSwaggerGen(c =>
@@ -40,26 +50,42 @@ namespace SilverbackShop.Catalog.Service
                 });
             });
 
-            services.AddScoped<ICatalogUnitOfWork, CatalogUnitOfWork>();
-            services.AddTransient(s => s.GetService<ICatalogUnitOfWork>().Products);
+            // Repositories & Query Objects
+            services.AddScoped<IProductsRepository, ProductsRepository>();
+            services.AddScoped<IProductsQueries, ProductsQueries>();
 
-            // TODO: Can get rid of this?
-            services.AddSingleton<SimpleOutboundAdapter>();
+            // Configure bus
+            services
+                .AddBus()
+                .AddScoped<ISubscriber, ProductEventsMapper>()
+                .AddBroker<FileSystemBroker>(options => options
+                    .SerializeAsJson()
+                    .AddDbOutboundConnector<CatalogDbContext>()
+                    .AddDbOutboundWorker<CatalogDbContext>());
 
-            // TODO: Create extension method services.AddBus() in Silverback.AspNetCore
-            var bus = new Bus();
-            services.AddSingleton<IBus>(bus);
-            services.AddSingleton(bus.GetEventPublisher<IDomainEvent<IDomainEntity>>());
+            services.AddSingleton<JobScheduler>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, CatalogDbContext catalogDbContext, IBrokerEndpointsConfigurationBuilder endpoints, JobScheduler jobScheduler)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            ConfigureRequestPipeline(app);
 
+            catalogDbContext.Database.Migrate();
+
+            endpoints
+                .AddOutbound<IIntegrationEvent>(
+                    FileSystemEndpoint.Create("catalog-events", _configuration["Broker:Path"]))
+                .Connect();
+
+            jobScheduler.AddJob("outbound-queue-worker", TimeSpan.FromMilliseconds(100),
+                s => s.GetRequiredService<OutboundQueueWorker>().ProcessQueue());
+
+            // Configure outbound worker
+        }
+
+        private static void ConfigureRequestPipeline(IApplicationBuilder app)
+        {
+            app.ReturnExceptionsAsJson();
             app.UseMvc();
 
             app.UseSwagger();
@@ -67,13 +93,6 @@ namespace SilverbackShop.Catalog.Service
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Baskets API V1");
             });
-
-            // TODO: Create extension method app.UseBus() in Silverback.AspNetCore
-            var bus = app.ApplicationServices.GetService<IBus>();
-            bus.Config()
-                .ConfigureBroker<FileSystemBroker>(c => c.OnPath(@"D:\Temp\Broker\SilverbackShop"))
-                .WithFactory(t => app.ApplicationServices.GetService(t))
-                .ConfigureUsing<CatalogDomainMessagingConfigurator>();
         }
     }
 }

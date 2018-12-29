@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
@@ -8,12 +9,12 @@ namespace Silverback.Tests.TestTypes
 {
     public class FakeSerializer : IMessageSerializer
     {
-        public byte[] Serialize(IEnvelope envelope)
+        public byte[] Serialize(IMessage message)
         {
             throw new NotImplementedException();
         }
 
-        public IEnvelope Deserialize(byte[] message)
+        public IMessage Deserialize(byte[] message)
         {
             throw new NotImplementedException();
         }

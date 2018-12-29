@@ -1,53 +1,62 @@
-﻿using System;
-using System.Text;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Serialization
 {
-    /// <summary>
-    /// Serializes the message as JSON and then converts them to a UTF8 encoded byte array. 
-    /// </summary>
-    /// <seealso cref="Silverback.Messaging.Serialization.IMessageSerializer" />
     public class JsonMessageSerializer : IMessageSerializer
     {
-        /// <summary>
-        /// Serializes the specified message into a byte array.
-        /// </summary>
-        /// <param name="envelope">The envelope containing the message.</param>
-        /// <returns></returns>
-        public byte[] Serialize(IEnvelope envelope)
-        {
-            if (envelope == null) throw new ArgumentNullException(nameof(envelope));
-
-            var json = JsonConvert.SerializeObject(envelope, typeof(IEnvelope), GetSerializerSettings());
-
-            return Encoding.UTF8.GetBytes(json);
-        }
-
-        /// <summary>
-        /// Deserializes the specified message from a byte array.
-        /// </summary>
-        /// <param name="message">The serialized message.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">message</exception>
-        public IEnvelope Deserialize(byte[] message)
+        public byte[] Serialize(IMessage message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
-            var json = Encoding.UTF8.GetString(message);
+            var json = JsonConvert.SerializeObject(message, typeof(IMessage), Settings);
 
-            return JsonConvert.DeserializeObject<IEnvelope>(json, GetSerializerSettings());
+            return GetEncoding().GetBytes(json);
         }
 
-        private JsonSerializerSettings GetSerializerSettings()
-            => new JsonSerializerSettings
+        public IMessage Deserialize(byte[] message)
+        {
+            if (message == null) throw new ArgumentNullException(nameof(message));
+
+            var json = GetEncoding().GetString(message);
+
+            return JsonConvert.DeserializeObject<IMessage>(json, Settings);
+        }
+
+        [DefaultValue("UTF8")]
+        public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
+
+        public JsonSerializerSettings Settings { get; } = new JsonSerializerSettings
+        {
+            Formatting = Formatting.None,
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.Auto
+        };
+
+        private System.Text.Encoding GetEncoding()
+        {
+            switch (Encoding)
             {
-                Formatting = Formatting.None,
-                DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto
-            };
+                case MessageEncoding.Default:
+                    return System.Text.Encoding.Default;
+                case MessageEncoding.ASCII:
+                    return System.Text.Encoding.ASCII;
+                case MessageEncoding.UTF8:
+                    return System.Text.Encoding.UTF8;
+                case MessageEncoding.UTF32:
+                    return System.Text.Encoding.UTF32;
+                case MessageEncoding.Unicode:
+                    return System.Text.Encoding.Unicode;
+                default:
+                    throw new InvalidOperationException("Unhandled encoding.");
+            }
+        }
     }
 }

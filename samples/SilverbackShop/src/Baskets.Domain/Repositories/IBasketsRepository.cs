@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Common.Domain;
+using Common.Domain.Repositories;
 using SilverbackShop.Baskets.Domain.Model;
 using SilverbackShop.Common.Infrastructure;
 
