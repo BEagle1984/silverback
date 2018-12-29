@@ -102,6 +102,8 @@ namespace Silverback.Messaging.Broker
         {
             if (!disposing) return;
 
+            Disconnect();
+
             _consumers?.Values.OfType<IDisposable>().ForEach(o => o.Dispose());
             _consumers = null;
 

@@ -13,14 +13,14 @@ foreach ($arg in $args)
 $buildConfiguration = "Debug"
 
 $sources =
-    ("Silverback.Core", "..\silverback-core\src\Silverback.Core\bin\" + $buildConfiguration),
-    ("Silverback.Core.EntityFrameworkCore", "..\silverback-core\src\Silverback.Core.EntityFrameworkCore\bin\" + $buildConfiguration),
-    ("Silverback.Core.Rx", "..\silverback-core\src\Silverback.Core.Rx\bin\" + $buildConfiguration),
-	("Silverback.Integration", "..\silverback-integration\src\Silverback.Integration\bin\" + $buildConfiguration),
-    ("Silverback.Integration.EntityFrameworkCore", "..\silverback-integration\src\Silverback.Integration.EntityFrameworkCore\bin\" + $buildConfiguration),
-    ("Silverback.Integration.FileSystem", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\" + $buildConfiguration),
-    ("Silverback.Integration.Kafka", "..\silverback-integration-kafka\src\Silverback.Integration.Kafka\bin\" + $buildConfiguration),
-    ("Silverback.Integration.Configuration", "..\silverback-integration-configuration\src\Silverback.Integration.Configuration\bin\" + $buildConfiguration)
+    ("Silverback.Core", "..\silverback-core\src\Silverback.Core\bin\$buildConfiguration"),
+    ("Silverback.Core.EntityFrameworkCore", "..\silverback-core\src\Silverback.Core.EntityFrameworkCore\bin\$buildConfiguration"),
+    ("Silverback.Core.Rx", "..\silverback-core\src\Silverback.Core.Rx\bin\$buildConfiguration"),
+	("Silverback.Integration", "..\silverback-integration\src\Silverback.Integration\bin\$buildConfiguration"),
+    ("Silverback.Integration.EntityFrameworkCore", "..\silverback-integration\src\Silverback.Integration.EntityFrameworkCore\bin\$buildConfiguration"),
+    ("Silverback.Integration.FileSystem", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\$buildConfiguration"),
+    ("Silverback.Integration.Kafka", "..\silverback-integration-kafka\src\Silverback.Integration.Kafka\bin\$buildConfiguration"),
+    ("Silverback.Integration.Configuration", "..\silverback-integration-configuration\src\Silverback.Integration.Configuration\bin\$buildConfiguration")
 
 function Check-Location()
 {
@@ -39,7 +39,7 @@ function Check-Location()
 
 function Delete-All()
 {
-    Write-Host "Deleting everything in target folder..." -NoNewline
+    Write-Host "Deleting everything in target folder..." -ForegroundColor Yellow -NoNewline
 
     Get-ChildItem -exclude Update.ps1 |
     Remove-Item -Force -Recurse |
@@ -50,35 +50,37 @@ function Delete-All()
 
 function Copy-All()
 {
+    Write-Host "Copying packages..." -ForegroundColor Yellow
+
     foreach ($source in $sources)
     {
         $name = $source[0]
-        $sourcePath = Join-Path $source[1] "\*"
+        $sourcePath = Join-Path $source[1] "*.nupkg"
 
-        Write-Host "$name" -ForegroundColor Yellow
-
-       Copy-Package $name $sourcePath
+        Copy-Package $name $sourcePath
 
 		if ($clearCache)
 		{
         	Delete-Cache $name
 		}
     }
+
+    Write-Host "`nAvailable packages:" -ForegroundColor Yellow
+    
+    Show-Files $destination
 }
 
 function Copy-Package([string]$name, [string]$sourcePath)
 {
-    Write-Host "`tCopying..." -NoNewline
+    Write-Host "`t$name..." -NoNewline
 
-    $destination = Join-Path $repositoryLocation $name
+    $destination = $repositoryLocation
 
     Ensure-Folder-Exists $destination
 
     Copy-Item $sourcePath -Destination $destination -Recurse
 
     Write-Host "OK" -ForegroundColor Green
-
-    Show-Versions $destination $name
 }
 
 function Ensure-Folder-Exists([string]$path)
@@ -89,11 +91,12 @@ function Ensure-Folder-Exists([string]$path)
     }
 }
 
-function Show-Versions([string]$path, [string]$packageName)
+function Show-Files([string]$path)
 {
     Get-ChildItem $path -Recurse -Filter *.nupkg | 
     Foreach-Object {
-        Write-Host `t $_.Name.Substring($packageName.Length + 1, $_.Name.Length - $packageName.Length - 7) -ForegroundColor DarkGray
+        Write-Host "`t" -NoNewline
+        Write-Host $_.Name.Substring(0, $_.Name.Length - ".nupkg".Length)
     }
 }
 

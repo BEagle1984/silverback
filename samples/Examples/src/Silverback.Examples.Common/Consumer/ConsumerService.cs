@@ -9,17 +9,18 @@ namespace Silverback.Examples.Common.Consumer
 {
     public abstract class ConsumerService
     {
+        private IServiceProvider _serviceProvider;
+
         public void Init()
         {
             Console.WriteLine($"Initializing {GetType().Name}...");
 
             var services = DependencyInjectionHelper.GetServiceCollection();
-
             ConfigureServices(services);
 
-            var serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider();
 
-            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>(), serviceProvider);
+            Configure(_serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>(), _serviceProvider);
         }
 
         protected abstract void ConfigureServices(IServiceCollection services);

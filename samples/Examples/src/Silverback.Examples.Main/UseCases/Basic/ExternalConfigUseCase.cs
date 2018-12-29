@@ -33,7 +33,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
 
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider) => endpoints
             .ReadConfig(Configuration, serviceProvider)
-            .Connect();
+            .Broker.Connect();
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

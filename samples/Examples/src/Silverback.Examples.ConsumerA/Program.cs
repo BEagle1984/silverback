@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Silverback.Examples.ConsumerA
 {
-public    class Program
+    public class Program
     {
         static void Main(string[] args)
         {

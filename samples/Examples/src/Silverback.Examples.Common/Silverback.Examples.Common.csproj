@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -15,7 +15,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="Silverback.Core" Version="0.3.2.1" />
     <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="0.3.0.3" />
-    <PackageReference Include="Silverback.Integration" Version="0.4.0.2" />
+    <PackageReference Include="Silverback.Integration" Version="0.4.0.6" />
     <PackageReference Include="Silverback.Integration.EntityFrameworkCore" Version="0.3.0" />
     <PackageReference Include="Silverback.Integration.Kafka" Version="0.3.6.2" />
   </ItemGroup>

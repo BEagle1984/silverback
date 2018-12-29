@@ -15,15 +15,16 @@ namespace Silverback.Messaging.Configuration
         private readonly IOutboundRoutingConfiguration _outboundRoutingConfiguration;
         private readonly IEnumerable<IInboundConnector> _inboundConnectors;
         private readonly ErrorPolicyBuilder _errorPolicyBuilder;
-        private readonly IBroker _broker;
 
         public BrokerEndpointsConfigurationBuilder(IOutboundRoutingConfiguration outboundRoutingConfiguration, IEnumerable<IInboundConnector> inboundConnectors, ErrorPolicyBuilder errorPolicyBuilder, IBroker broker)
         {
             _outboundRoutingConfiguration = outboundRoutingConfiguration;
             _inboundConnectors = inboundConnectors;
             _errorPolicyBuilder = errorPolicyBuilder;
-            _broker = broker;
+            Broker = broker;
         }
+
+        public IBroker Broker { get; }
 
         public IBrokerEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IEndpoint endpoint) 
             where TMessage : IIntegrationMessage
@@ -69,7 +70,5 @@ namespace Silverback.Messaging.Configuration
             _inboundConnectors.GetConnectorInstance(inboundConnectorType).Bind(endpoint, errorPolicyFactory?.Invoke(_errorPolicyBuilder));
             return this;
         }
-
-        public void Connect() => _broker.Connect();
     }
 }

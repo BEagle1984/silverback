@@ -47,7 +47,12 @@ namespace Silverback.Examples.ConsumerA
                 .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer", GetCustomSerializer()))
                 // Special inbound (not logged)
                 .AddInbound<InboundConnector>(CreateConsumerEndpoint("silverback-examples-legacy-messages", new LegacyMessageSerializer()))
-                .Connect();
+                .Broker.Connect();
+
+            Console.CancelKeyPress += (_, __) =>
+            {
+                endpoints.Broker.Disconnect();
+            };
         }
 
         private static KafkaConsumerEndpoint CreateConsumerEndpoint(string name, IMessageSerializer messageSerializer = null)

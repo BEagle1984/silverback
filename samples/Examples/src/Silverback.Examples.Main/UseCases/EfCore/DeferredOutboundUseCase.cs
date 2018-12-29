@@ -37,7 +37,8 @@ namespace Silverback.Examples.Main.UseCases.EfCore
                     BootstrapServers = "PLAINTEXT://kafka:9092",
                     ClientId = GetType().FullName
                 }
-            });
+            })
+            .Broker.Connect();
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

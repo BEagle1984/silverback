@@ -33,7 +33,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider) => endpoints
             .AddOutbound<IntegrationEventA>(CreateEndpoint())
             .AddOutbound<IntegrationEventB, DeferredOutboundConnector>(CreateEndpoint())
-            ;
+            .Broker.Connect();
 
         private KafkaEndpoint CreateEndpoint() =>
             new KafkaProducerEndpoint("silverback-examples-events")
