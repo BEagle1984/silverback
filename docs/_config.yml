@@ -1,4 +1,4 @@
 theme: jekyll-theme-architect
 
 title: Silverback
-description: "Silverback is awesome!"
+description: "a simple framework to build reactive, event-driven, microservices with .net core"
