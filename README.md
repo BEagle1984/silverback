@@ -2,6 +2,16 @@
 
 Silverback is a simple framework to build reactive, event-driven, microservices.
 
+It includes an in-memory message bus that can be easily connected to a message broker to integrate with other microservices. At the moment only [Apache Kafka](https://kafka.apache.org/) is supported but other message brokers could be added without much effort.
+
+Its main features are:
+* Simple yet powerful message bus
+* Abstracted and configurative integration with a message broker
+* Apache Kafka integration
+* DDD, Domain Events and Transactional Messaging
+* Built-in error handling policies for consumers
+* Configuration through fluent API or external configuration (`Microsoft.Extensions.Configuration`)
+
 ## Installation
 
 Silverback is split into multiple nuget packages available on nuget.org.
