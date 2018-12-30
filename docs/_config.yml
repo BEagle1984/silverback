@@ -1,4 +1,4 @@
-remote_theme: jekyll-theme-architect
+theme: jekyll-theme-architect
 
 title: Silverback
 description: "Reactive, event-driven, microservices with .net core!"
