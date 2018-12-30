@@ -1,8 +1,8 @@
 ---
 title: Silverback
-layout: page
+layout: post
 ---
 
 # Silverback
 
-Silverback is amazing!
+Silverback is really amazing!
