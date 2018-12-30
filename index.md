@@ -1,6 +1,6 @@
 ---
-title: Silverback
-layout: post
+title: Home
+layout: page
 ---
 
 # Silverback
