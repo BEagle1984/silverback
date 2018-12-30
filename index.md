@@ -1,3 +1,3 @@
 # Silverback
 
-Silverback is amazing!!
+Silverback is amazing!
