@@ -1,4 +1,6 @@
 theme: jekyll-theme-architect
 
 title: Silverback
-description: "a simple framework to build reactive, event-driven, microservices with .net core"
+description: "Reactive, event-driven, microservices with .net core!"
+
+paginate: 5
