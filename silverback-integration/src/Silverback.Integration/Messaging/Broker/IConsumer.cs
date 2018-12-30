@@ -1,16 +1,15 @@
-﻿using System;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <summary>
-    /// Exposes the methods to receive messages through the message broker.
-    /// </summary>
     public interface IConsumer
     {
-        /// <summary>
-        /// Occurs when a message is received.
-        /// </summary>
-        event EventHandler<IEnvelope> Received;
+        event EventHandler<IMessage> Received;
+        event EventHandler<ErrorHandlerEventArgs> Error;
     }
 }

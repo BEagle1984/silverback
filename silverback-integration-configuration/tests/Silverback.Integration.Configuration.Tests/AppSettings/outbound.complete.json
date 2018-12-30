@@ -1,0 +1,37 @@
+{
+  "Silverback": {
+    "Using": [ "Silverback.Integration.Kafka", "Silverback.Integration.Configuration.Tests" ],
+    "Outbound": [
+      {
+        "MessageType": "IIntegrationEvent",
+        "Endpoint": {
+          "Type": "KafkaProducerEndpoint",
+          "Name": "outbound-endpoint1",
+          "Configuration": {
+            "EnableBackgroundPoll": false
+          },
+          "Serializer": {
+            "Type": "FakeSerializer",
+            "Settings": {
+              "Mode": 4
+            }
+          }
+        }
+      },
+      {
+        "MessageType": "IIntegrationCommand",
+        "ConnectorType": "DeferredOutboundConnector",
+        "Endpoint": {
+          "Type": "KafkaProducerEndpoint",
+          "Name": "outbound-endpoint2",
+          "Serializer": {
+            "Encoding": "Unicode",
+            "Settings": {
+              "Formatting": "Indented"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

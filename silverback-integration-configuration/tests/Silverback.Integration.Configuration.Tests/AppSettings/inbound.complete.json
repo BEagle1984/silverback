@@ -1,0 +1,52 @@
+{
+  "Silverback": {
+    "Using": [ "Silverback.Integration.Kafka", "Silverback.Integration.Configuration.Tests" ],
+    "Inbound": [
+      {
+        "Endpoint": {
+          "Type": "KafkaConsumerEndpoint",
+          "Name": "inbound-endpoint1",
+          "CommitOffsetEach": 1234,
+          "Configuration": {
+            "AutoOffsetReset": "Earliest"
+          },
+          "Serializer": {
+            "Type": "FakeSerializer",
+            "Settings": {
+              "Mode": 4
+            }
+          }
+        },
+        "ErrorPolicies": [
+          {
+            "Type": "Retry",
+            "MaxFailedAttempts": 5,
+            "DelayIncrement": "00:05:00",
+            "ApplyTo": [ "System.ArgumentException", "System.InvalidOperationException" ],
+            "Exclude": [ "System.ArgumentNullException" ]
+          },
+          {
+            "Type": "Move",
+            "Endpoint": {
+              "Type": "KafkaProducerEndpoint",
+              "Name": "producer-endpoint"
+            }
+          }
+        ]
+      },
+      {
+        "ConnectorType": "LoggedInboundConnector",
+        "Endpoint": {
+          "Type": "KafkaConsumerEndpoint",
+          "Name": "inbound-endpoint",
+          "Serializer": {
+            "Encoding": "Unicode",
+            "Settings": {
+              "Formatting": "Indented"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

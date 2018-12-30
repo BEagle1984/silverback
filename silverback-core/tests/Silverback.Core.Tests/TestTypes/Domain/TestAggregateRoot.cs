@@ -1,8 +1,11 @@
-﻿using Silverback.Domain;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Tests.TestTypes.Domain
+using Silverback.Domain;
+
+namespace Silverback.Core.Tests.TestTypes.Domain
 {
-    public class TestAggregateRoot : Entity, IAggregateRoot
+    public class TestAggregateRoot : DomainEntity, IAggregateRoot
     {
         public new void AddEvent(IDomainEvent<IDomainEntity> domainEvent)
             => base.AddEvent(domainEvent);

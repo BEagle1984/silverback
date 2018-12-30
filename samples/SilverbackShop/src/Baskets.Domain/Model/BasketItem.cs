@@ -1,10 +1,11 @@
 using Common.Domain;
+using Common.Domain.Model;
 
 namespace SilverbackShop.Baskets.Domain.Model
 {
     public class BasketItem : ShopEntity
     {
-        public string ProductId { get; set; }
+        public string SKU { get; set; }
 
         public string Name { get; set; }
 

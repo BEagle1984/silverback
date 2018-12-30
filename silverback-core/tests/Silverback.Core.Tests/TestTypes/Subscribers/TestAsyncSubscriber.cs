@@ -1,25 +1,21 @@
-﻿using System;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System.Threading.Tasks;
-using Silverback.Messaging.Messages;
+using Silverback.Core.Tests.TestTypes.Messages;
 using Silverback.Messaging.Subscribers;
 
-namespace Silverback.Tests.TestTypes.Subscribers
+namespace Silverback.Core.Tests.TestTypes.Subscribers
 {
-    public class TestAsyncSubscriber : AsyncSubscriber<IMessage>, IDisposable
+    public class TestAsyncSubscriber : ISubscriber
     {
-        public int Handled { get; private set; }
+        public int ReceivedMessagesCount { get; private set; }
 
-        public bool Disposed { get; private set; }
-
-        public override async Task HandleAsync(IMessage message)
+        [Subscribe]
+        public async Task OnTestMessageReceivedAsync(ITestMessage message)
         {
             await Task.Delay(1);
-            Handled++;
-        }
-
-        public void Dispose()
-        {
-            Disposed = true;
+            ReceivedMessagesCount++;
         }
     }
 }

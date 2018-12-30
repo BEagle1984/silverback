@@ -1,16 +1,9 @@
-using System;
+// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
 
 namespace Silverback.Messaging.Messages
 {
-    /// <summary>
-    /// Reprensent a request message awaiting a response (see <see cref="IResponse"/>).
-    /// </summary>
-    /// <seealso cref="IMessage" />
-    public interface IRequest : IMessage
+    public interface IRequest<out TResponse> : IMessage
     {
-        /// <summary>
-        /// Gets or sets the request identifier.
-        /// </summary>
-        Guid RequestId { get; set; }
     }
 }

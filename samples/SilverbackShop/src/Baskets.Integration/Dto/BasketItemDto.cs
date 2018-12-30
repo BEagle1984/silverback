@@ -2,7 +2,7 @@
 {
     public class BasketItemDto
     {
-        public string ProductId { get; set; }
+        public string SKU { get; set; }
 
         public string Name { get; set; }
 

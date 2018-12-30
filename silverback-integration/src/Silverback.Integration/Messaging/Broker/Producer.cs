@@ -1,56 +1,62 @@
-﻿using System;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <summary>
-    /// The default <see cref="IProducer" /> implementation.
-    /// </summary>
-    /// <seealso cref="Silverback.Messaging.Broker.EndpointConnectedObject" />
-    /// <seealso cref="Silverback.Messaging.Broker.IProducer" />
     public abstract class Producer : EndpointConnectedObject, IProducer
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Consumer" /> class.
-        /// </summary>
-        /// <param name="broker">The broker.</param>
-        /// <param name="endpoint">The endpoint.</param>
-        protected Producer(IBroker broker, IEndpoint endpoint)
+        private readonly ILogger<Producer> _logger;
+
+        protected Producer(IBroker broker, IEndpoint endpoint, ILogger<Producer> logger)
             : base(broker, endpoint)
+        {
+            _logger = logger;
+        }
+
+        public void Produce(IMessage message)
+        {
+            EnsureIdentifier(message);
+            Trace(message);
+            Produce(message, Endpoint.Serializer.Serialize(message));
+        }
+
+        public async Task ProduceAsync(IMessage message)
+        {
+            EnsureIdentifier(message);
+            Trace(message);
+            await ProduceAsync(message, Endpoint.Serializer.Serialize(message));
+        }
+
+        private void Trace(IMessage message) =>
+            _logger.LogTrace("Producing message.", message, Endpoint);
+
+        private void EnsureIdentifier(IMessage message)
+        {
+            if (message is IIntegrationMessage integrationMessage)
+                integrationMessage.Id = Guid.NewGuid();
+        }
+
+        protected abstract void Produce(IMessage message, byte[] serializedMessage);
+
+        protected abstract Task ProduceAsync(IMessage message, byte[] serializedMessage);
+    }
+
+    public abstract class Producer<TBroker, TEndpoint> : Producer
+        where TBroker : class, IBroker
+        where TEndpoint : class, IEndpoint
+    {
+        protected Producer(IBroker broker, IEndpoint endpoint, ILogger<Producer> logger)
+            : base(broker, endpoint, logger)
         {
         }
 
-        /// <summary>
-        /// Sends the specified message through the message broker.
-        /// </summary>
-        /// <param name="envelope">The envelope containing the message to be sent.</param>
-        public void Produce(IEnvelope envelope)
-            => Produce(envelope.Message, Serializer.Serialize(envelope));
+        protected new TBroker Broker => (TBroker)base.Broker;
 
-        /// <summary>
-        /// Sends the specified message through the message broker.
-        /// </summary>
-        /// <param name="envelope">The envelope containing the message to be sent.</param>
-        /// <returns></returns>
-        public Task ProduceAsync(IEnvelope envelope)
-            => ProduceAsync(envelope.Message, Serializer.Serialize(envelope));
-
-        /// <summary>
-        /// Sends the specified message through the message broker.
-        /// </summary>
-        /// <param name="message">The original message.</param>
-        /// <param name="serializedMessage">The serialized <see cref="IEnvelope"/> including the <see cref="IIntegrationMessage"/>.
-        /// This is what is supposed to be sent through the broker.</param>
-        protected abstract void Produce(IIntegrationMessage message, byte[] serializedMessage);
-
-        /// <summary>
-        /// Sends the specified message through the message broker.
-        /// </summary>
-        /// <param name="message">The original message.</param>
-        /// <param name="serializedMessage">The serialized <see cref="IEnvelope"/> including the <see cref="IIntegrationMessage"/>.
-        /// This is what is supposed to be sent through the broker.</param>
-        protected abstract Task ProduceAsync(IIntegrationMessage message, byte[] serializedMessage);
+        protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
     }
 }
