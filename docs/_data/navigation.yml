@@ -1,0 +1,18 @@
+main:
+  - title: Features
+    url: /docs/features
+  - title: Blog
+    url: /blog
+  - title: Documentation
+    url: /docs
+blog:
+    - title: Blog
+      children:
+        - title: Recent posts
+          url: /blog
+        - title: Archive
+          url: /blog/archive
+        - title: Posts by category
+          url: /blog/categories
+        - title: Posts by tag
+          url: /blog/tags
