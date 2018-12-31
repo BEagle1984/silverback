@@ -1,6 +1,64 @@
-theme: jekyll-theme-architect
+repository: beagle1984/silverback
 
 title: Silverback
-description: "Reactive, event-driven, microservices with .net core!"
+description: "A framework to build reactive, event-driven, microservices with .net core"
+
+name: &name "BEagle1984"
+author: *name
+
+remote_theme: "mmistakes/minimal-mistakes@4.14.1"
+#minimal_mistakes_skin: "air"
 
 paginate: 5
+paginate_path: /_blog/page:num/
+
+search: true
+search_full_content: true
+
+include: ["_pages", "_docs", "_blog"]
+
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:path/
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
+      pager: true
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+  - scope:
+      path: ""
+      type: docs
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+  - scope:
+      path: ""
+      type: blog
+    values:
+      layout: single
+      author_profile: true
+
+category_archive:
+  type: liquid
+  path: /categories/
+tag_archive:
+  type: liquid
+  path: /tags/
+
+plugins:
+  - jekyll-include-cache

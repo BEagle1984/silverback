@@ -1,11 +1,12 @@
 ---
-layout: post
 title: Silverback.Integration.Configuration released!
+category: Release
+tags: Features Release
 ---
 
 The first usable version of the new `Silverback.Integration.Configuration` package has been released. It allows to externalize the endpoints configuration loading it via `Microsoft.Extensions.Configuration`.
 
-```c#
+```javascript
 {
   "Silverback": {
     "Using": [ "Silverback.Integration.Kafka" ],

@@ -1,6 +1,7 @@
 ---
-layout: post
 title:  First "beta" release
+category: Release
+tags: Release
 ---
 
 The first release of the Core and Integration packages have been uploaded to [nuget.org](https://www.nuget.org/packages?q=Silverback).
