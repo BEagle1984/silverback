@@ -2,10 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker

@@ -3,8 +3,6 @@
 
 using System;
 using Silverback.Messaging;
-using Silverback.Messaging.Batch;
-using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.TestTypes
 {
