@@ -12,52 +12,38 @@ using Silverback.Messaging.Publishing;
 namespace Silverback.Messaging.Connectors
 {
     /// <summary>
-    /// Subscribes to a message broker and forwards the incoming integration messages to the internal bus.
-    /// This implementation logs the incoming messages and prevents duplicated processing of the same message.
+    /// Uses <see cref="IInboundLog"/> to keep track of each processed message and guarantee
+    /// that each one is processed only once.
     /// </summary>
-    public class LoggedInboundConnector : InboundConnector
+    /// <seealso cref="Silverback.Messaging.Connectors.ExactlyOnceInboundConnector" />
+    public class LoggedInboundConnector : ExactlyOnceInboundConnector
     {
-        private readonly ILogger<LoggedInboundConnector> _logger;
-
         public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger)
             : base(broker, serviceProvider, logger)
         {
-            _logger = logger;
         }
 
-        protected override void RelayMessage(IMessage message, IEndpoint sourceEndpoint, IPublisher publisher, IServiceProvider serviceProvider)
+
+        protected override bool MustProcess(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
             if (!(message is IIntegrationMessage integrationMessage))
             {
                 throw new NotSupportedException("The LoggedInboundConnector currently supports only instances of IIntegrationMessage.");
             }
 
-            RelayIntegrationMessage(integrationMessage, sourceEndpoint, publisher, serviceProvider);
-        }
-
-        protected void RelayIntegrationMessage(IIntegrationMessage message, IEndpoint sourceEndpoint, IPublisher publisher, IServiceProvider serviceProvider)
-        {
             var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
 
-            if (inboundLog.Exists(message, sourceEndpoint))
-            {
-                _logger.LogTrace($"Message is being skipped since it was already processed.", message, sourceEndpoint);
-                return;
-            }
+            if (inboundLog.Exists(integrationMessage, sourceEndpoint))
+                return false;
 
-            inboundLog.Add(message, sourceEndpoint);
-
-            try
-            {
-                base.RelayMessage(message, sourceEndpoint, publisher, serviceProvider);
-                inboundLog.Commit();
-            }
-            catch (Exception)
-            {
-                // TODO: Test exception case
-                inboundLog.Rollback();
-                throw;
-            }
+            inboundLog.Add(integrationMessage, sourceEndpoint);
+            return true;
         }
+
+        protected override void CommitBatch(IServiceProvider serviceProvider) =>
+            serviceProvider.GetRequiredService<IInboundLog>().Commit();
+
+        protected override void RollbackBatch(IServiceProvider serviceProvider) =>
+            serviceProvider.GetRequiredService<IInboundLog>().Rollback();
     }
 }

@@ -22,6 +22,8 @@ namespace Silverback.Messaging.Connectors
             if (!typeof(IIntegrationMessage).IsAssignableFrom(messageType))
                 throw new ArgumentException("The message must be an IIntegrationMessage to be configured for outbound routing.");
 
+            endpoint.Validate();
+
             _routes.Add(new OutboundRoute(messageType, endpoint, outboundConnectorType));
             return this;
         }

@@ -22,8 +22,8 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         }
 
         [Test]
-        [TestCase(1, ErrorAction.SkipMessage)]
-        [TestCase(333, ErrorAction.SkipMessage)]
+        [TestCase(1, ErrorAction.Skip)]
+        [TestCase(333, ErrorAction.Skip)]
         public void SkipTest(int failedAttempts, ErrorAction expectedAction)
         {
             var action = _policy.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));

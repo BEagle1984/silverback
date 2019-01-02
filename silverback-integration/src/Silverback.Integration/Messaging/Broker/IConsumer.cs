@@ -10,6 +10,5 @@ namespace Silverback.Messaging.Broker
     public interface IConsumer
     {
         event EventHandler<IMessage> Received;
-        event EventHandler<ErrorHandlerEventArgs> Error;
     }
 }

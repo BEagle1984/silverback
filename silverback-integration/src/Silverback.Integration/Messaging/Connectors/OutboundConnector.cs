@@ -7,9 +7,6 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
 {
-    /// <summary>
-    /// The basic outbound connector that sends the messages directly through the message broker.
-    /// </summary>
     public class OutboundConnector : IOutboundConnector
     {
         private readonly IBroker _broker;

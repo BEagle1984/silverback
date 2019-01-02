@@ -94,7 +94,7 @@ namespace Silverback.Messaging.Configuration
         /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <param name="enforceMessageOrder">if set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
-        /// <param name="readPackageSize">The amount of messages to be loaded from the queue at once.</param>
+        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
         // TODO: Test
         public BrokerOptionsBuilder AddOutboundWorker<TQueueConsumer>(bool enforceMessageOrder = true, int readPackageSize = 100) where TQueueConsumer : class, IOutboundQueueConsumer
         {

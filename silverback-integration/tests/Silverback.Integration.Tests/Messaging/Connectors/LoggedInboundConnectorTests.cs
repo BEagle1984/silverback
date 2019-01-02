@@ -93,6 +93,43 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(e2);
             consumer.TestPush(e1);
 
+            Assert.That(_inboundLog.Length, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Bind_PushMessagesInBatch_EachIsConsumedOnce()
+        {
+            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
+            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+
+            _connector.Bind(TestEndpoint.DefaultWithBatch);
+            _broker.Connect();
+
+            var consumer = (TestConsumer)_broker.GetConsumer(TestEndpoint.DefaultWithBatch);
+            consumer.TestPush(e1);
+            consumer.TestPush(e2);
+            consumer.TestPush(e1);
+            consumer.TestPush(e2);
+            consumer.TestPush(e1);
+
+            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(4));
+        }
+
+        [Test]
+        public void AddToBind_PushMessagesInBatch_WrittenToLog()
+        {
+            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
+            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+
+            _connector.Bind(TestEndpoint.DefaultWithBatch);
+            _broker.Connect();
+
+            var consumer = (TestConsumer)_broker.GetConsumer(TestEndpoint.DefaultWithBatch);
+            consumer.TestPush(e1);
+            consumer.TestPush(e2);
+            consumer.TestPush(e1);
+            consumer.TestPush(e2);
+            consumer.TestPush(e1);
 
             Assert.That(_inboundLog.Length, Is.EqualTo(2));
         }

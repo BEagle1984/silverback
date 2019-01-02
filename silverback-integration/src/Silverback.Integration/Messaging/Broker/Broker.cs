@@ -32,6 +32,8 @@ namespace Silverback.Messaging.Broker
         {
             return _producers.GetOrAdd(endpoint, _ =>
             {
+                endpoint.Validate();
+
                 _logger?.LogInformation($"Creating new producer for endpoint '{endpoint.Name}'");
                 return InstantiateProducer(endpoint);
             });
@@ -45,6 +47,8 @@ namespace Silverback.Messaging.Broker
             {
                 return _consumers.GetOrAdd(endpoint, _ =>
                 {
+                    endpoint.Validate();
+
                     _logger.LogInformation($"Creating new consumer for endpoint '{endpoint.Name}'");
                     return InstantiateConsumer(endpoint);
                 });

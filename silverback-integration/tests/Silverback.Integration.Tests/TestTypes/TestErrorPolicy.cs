@@ -20,7 +20,7 @@ namespace Silverback.Tests.TestTypes
         public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
         {
             Applied = true;
-            return ErrorAction.SkipMessage;
+            return ErrorAction.Skip;
         }
     }
 }

@@ -30,9 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where T : class, IBroker
         {
             services
-                .AddSingleton<IBroker, T>()
-                .AddSingleton<IBrokerEndpointsConfigurationBuilder, BrokerEndpointsConfigurationBuilder>()
-                .AddSingleton<ErrorPolicyBuilder>();
+                .AddSingleton<IBroker, T>();
 
             var options = new BrokerOptionsBuilder(services);
             optionsAction?.Invoke(options);
