@@ -89,6 +89,9 @@ namespace Silverback.Messaging.Broker
             {
                 foreach (var offset in offsets.Offsets)
                 {
+                    if (offset.Offset == Confluent.Kafka.Offset.Invalid)
+                        continue;
+
                     if (offset.Error != null && offset.Error.Code != Confluent.Kafka.ErrorCode.NoError)
                     {
                         _logger.LogError("Error occurred committing the offset {topic} {partition} @{offset}: {errorCode} - {errorReason} ",

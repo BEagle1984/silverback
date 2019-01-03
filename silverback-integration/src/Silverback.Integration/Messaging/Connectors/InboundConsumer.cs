@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Batch;
@@ -105,10 +106,10 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        private void Commit(IEnumerable<object> offset, IServiceProvider serviceProvider)
+        private void Commit(IEnumerable<object> offsets, IServiceProvider serviceProvider)
         {
             _commitHandler?.Invoke(serviceProvider);
-            _consumer.Acknowledge(offset);
+            _consumer.Acknowledge(offsets);
         }
 
         private void Rollback(IServiceProvider serviceProvider)

@@ -9,6 +9,8 @@ namespace Silverback.Messaging.Broker
     {
         event ReceivedEventHandler Received;
 
+        void Acknowledge(object offset);
+
         void Acknowledge(IEnumerable<object> offsets);
     }
 }

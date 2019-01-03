@@ -14,7 +14,7 @@ namespace Silverback.Tests.TestTypes
 {
     public class TestConsumer : Consumer
     {
-        public TestConsumer(IBroker broker, IEndpoint endpoint) 
+        public TestConsumer(IBroker broker, IEndpoint endpoint)
             : base(broker, endpoint, new NullLogger<TestConsumer>())
         {
         }
@@ -39,6 +39,7 @@ namespace Silverback.Tests.TestTypes
             HandleMessage(buffer, null);
         }
 
-        public override void Acknowledge(IEnumerable<object> offsets) => AcknowledgeCount = AcknowledgeCount + offsets.Count();
+        public override void Acknowledge(IEnumerable<object> offsets) =>
+            AcknowledgeCount = AcknowledgeCount + offsets.Count();
     }
 }
