@@ -11,9 +11,5 @@ namespace Silverback.Messaging
         string Name { get; }
 
         IMessageSerializer Serializer { get; }
-
-        BatchSettings Batch { get; }
-
-        void Validate();
     }
 }

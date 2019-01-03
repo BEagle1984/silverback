@@ -5,6 +5,7 @@ using System;
 
 namespace Silverback.Messaging
 {
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class KafkaProducerEndpoint : KafkaEndpoint, IEquatable<KafkaProducerEndpoint>
     {
         public KafkaProducerEndpoint(string name) : base(name)
@@ -17,20 +18,16 @@ namespace Silverback.Messaging
 
         public bool Equals(KafkaProducerEndpoint other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return string.Equals(Name, other.Name) && Equals(Serializer, other.Serializer) && KafkaClientConfigComparer.Compare(Configuration, other.Configuration);
+            return base.Equals(other) && KafkaClientConfigComparer.Compare(Configuration, other.Configuration);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj is KafkaProducerEndpoint && Equals((KafkaProducerEndpoint)obj);
+            return base.Equals(obj) &&
+                   obj is KafkaProducerEndpoint endpoint && Equals(endpoint);
         }
-
-        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
 
         #endregion
     }
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

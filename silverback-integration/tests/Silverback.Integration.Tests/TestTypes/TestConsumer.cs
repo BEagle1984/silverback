@@ -12,12 +12,14 @@ namespace Silverback.Tests.TestTypes
 {
     public class TestConsumer : Consumer
     {
-        public bool IsReady { get; set; }
-
         public TestConsumer(IBroker broker, IEndpoint endpoint) 
             : base(broker, endpoint, new NullLogger<TestConsumer>())
         {
         }
+
+        public bool IsReady { get; set; }
+
+        public int AcknowledgeCount { get; set; }
 
         public void TestPush(IIntegrationMessage message, IMessageSerializer serializer = null)
         {
@@ -32,7 +34,9 @@ namespace Silverback.Tests.TestTypes
 
             var buffer = serializer.Serialize(message);
 
-            HandleMessage(buffer);
+            HandleMessage(buffer, null);
         }
+
+        public override void Acknowledge(object offset) => AcknowledgeCount++;
     }
 }

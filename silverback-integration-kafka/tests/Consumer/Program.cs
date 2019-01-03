@@ -2,12 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using Messages;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 
 namespace Consumer
@@ -41,16 +41,20 @@ namespace Consumer
                     BootstrapServers = "PLAINTEXT://kafka:9092",
                     ClientId = "ClientTest",
                     GroupId = "advanced-silverback-consumer",
-                    EnableAutoCommit = false,
-                    EnableAutoOffsetStore = true,
+                    EnableAutoCommit = true,
                     AutoCommitIntervalMs = 5000,
-                    StatisticsIntervalMs = 60000,
+                    StatisticsIntervalMs = 0,
                     AutoOffsetReset = Confluent.Kafka.AutoOffsetResetType.Earliest
+                },
+                Batch = new Silverback.Messaging.Batch.BatchSettings
+                {
+                    Size = 5,
+                    MaxDegreeOfParallelism = 2,
+                    MaxWaitTime = TimeSpan.FromSeconds(10)
                 }
             });
 
             consumer.Received += OnMessageReceived;
-            consumer.Error += OnError;
 
             _broker.Connect();
         }
@@ -67,27 +71,26 @@ namespace Consumer
             if (testMessage == null)
             {
                 Console.WriteLine("Received a weird message!");
+                return;
             }
 
             Console.WriteLine($"[{testMessage.Id}] {testMessage.Text}");
 
-            if (testMessage.Text == "bad" || testMessage.Text == "retry")
+            var text = testMessage.Text.ToLower().Trim();
+            if (text == "bad")
             {
                 Console.WriteLine("--> Bad message, throwing exception!");
                 throw new Exception("Bad!");
             }
-        }
+            else if (text.StartsWith("delay"))
+            {
+                if (int.TryParse(text.Substring(5), out int delay) && delay > 0)
+                {
+                    Console.WriteLine($"--> Delaying execution of {delay} seconds!");
+                    Thread.Sleep(delay * 1000);
+                }
+            }
 
-        private static void OnError(object sender, ErrorHandlerEventArgs args)
-        {
-            if (args.FailedMessage.Message is TestMessage testMessage && testMessage.Text == "retry" && args.FailedMessage.FailedAttempts <= 1)
-            {
-                args.Action = ErrorAction.RetryMessage;
-            }
-            else
-            {
-                args.Action = ErrorAction.SkipMessage;
-            }
         }
 
         private static void PrintHeader()

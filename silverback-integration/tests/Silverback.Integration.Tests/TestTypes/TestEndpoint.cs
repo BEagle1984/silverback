@@ -3,24 +3,22 @@
 
 using System;
 using Silverback.Messaging;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.TestTypes
 {
-    public sealed class TestEndpoint : Endpoint, IEquatable<TestEndpoint>
+    public sealed class TestEndpoint : IEndpoint, IEquatable<TestEndpoint>
     {
-        public TestEndpoint(string name) : base(name)
+        public TestEndpoint(string name)
         {
+            Name = name;
         }
 
-        public static TestEndpoint Default = new TestEndpoint("test");
+        public string Name { get; }
 
-        public static TestEndpoint DefaultWithBatch = new TestEndpoint("test")
-        {
-            Batch = new Silverback.Messaging.Batch.BatchSettings
-            {
-                Size = 5
-            }
-        };
+        public IMessageSerializer Serializer { get; set; } = new JsonMessageSerializer();
+
+        public static TestEndpoint Default = new TestEndpoint("test");
 
         #region IEquatable
 

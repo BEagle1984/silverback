@@ -12,7 +12,7 @@
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType />
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>0.4.1.0</Version>
+    <Version>0.4.1.1</Version>
 	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
 	<PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
   </PropertyGroup>

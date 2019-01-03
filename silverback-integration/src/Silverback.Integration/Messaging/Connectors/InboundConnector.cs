@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
@@ -20,8 +19,8 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly IBroker _broker;
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<InboundConnector> _logger;
-        private readonly Dictionary<IEndpoint, MessageBatch> _batches = new Dictionary<IEndpoint, MessageBatch>();
+        private readonly ILogger _logger;
+        private readonly List<InboundConsumer> _inboundConsumers = new List<InboundConsumer>();
 
         public InboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<InboundConnector> logger)
         {
@@ -30,68 +29,26 @@ namespace Silverback.Messaging.Connectors
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public virtual IInboundConnector Bind(IEndpoint endpoint, IErrorPolicy errorPolicy = null)
+        public virtual IInboundConnector Bind(IEndpoint endpoint, IErrorPolicy errorPolicy = null, InboundConnectorSettings settings = null)
         {
-            endpoint.Validate();
+            settings = settings ?? new InboundConnectorSettings();
 
-            _logger.LogTrace($"Connecting to inbound endpoint '{endpoint.Name}'...");
-
-            if (endpoint.Batch.Size > 1)
+            for (int i = 0; i < settings.Consumers; i++)
             {
-                _batches.Add(endpoint, new MessageBatch(
+                _inboundConsumers.Add(new InboundConsumer(
+                    _broker,
                     endpoint,
+                    settings, 
                     RelayMessage,
-                    CommitBatch,
-                    RollbackBatch,
-                    errorPolicy,
-                    _serviceProvider,
-                    _serviceProvider.GetRequiredService<ILogger<MessageBatch>>()));
+                    Commit,
+                    Rollback,
+                    errorPolicy, 
+                    _serviceProvider));
             }
 
             // TODO: Carefully test with multiple endpoints!
             // TODO: Test if consumer gets properly disposed etc.
-            var consumer = _broker.GetConsumer(endpoint);
-            consumer.Received += (_, message) => OnMessageReceived(message, endpoint, errorPolicy);
             return this;
-        }
-
-        private void OnMessageReceived(IMessage message, IEndpoint sourceEndpoint, IErrorPolicy errorPolicy)
-        {
-            if (sourceEndpoint.Batch.Size > 1)
-            {
-                _batches[sourceEndpoint].AddMessage(message);
-            }
-            else
-            {
-                ProcessSingleMessage(message, sourceEndpoint, errorPolicy);
-            }
-        }
-
-        private void ProcessSingleMessage(IMessage message, IEndpoint sourceEndpoint, IErrorPolicy errorPolicy)
-        {
-            _logger.LogTrace("Processing message.", message, sourceEndpoint);
-
-            errorPolicy.TryProcess(message, _ =>
-            {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    RelayAndCommitSingleMessage(message, sourceEndpoint, scope.ServiceProvider);
-                }
-            });
-        }
-
-        private void RelayAndCommitSingleMessage(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
-        {
-            try
-            {
-                RelayMessage(message, sourceEndpoint, serviceProvider);
-                CommitBatch(serviceProvider);
-            }
-            catch (Exception)
-            {
-                RollbackBatch(serviceProvider);
-                throw;
-            }
         }
 
         protected virtual void RelayMessage(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
@@ -110,10 +67,10 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        protected virtual void CommitBatch(IServiceProvider serviceProvider)
+        protected virtual void Commit(IServiceProvider serviceProvider)
         { }
 
-        protected virtual void RollbackBatch(IServiceProvider serviceProvider)
+        protected virtual void Rollback(IServiceProvider serviceProvider)
         { }
     }
 }

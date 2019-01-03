@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Broker
 
             var deliveryReport = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage);
             _logger.LogTrace(
-                "Successfully produced: {topic} [{partition}] @{offset}.",
+                "Successfully produced: {topic} {partition} @{offset}.",
                 deliveryReport.Topic, deliveryReport.Partition, deliveryReport.Offset);
         }
 

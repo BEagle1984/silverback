@@ -16,13 +16,9 @@ namespace Silverback.Messaging.Broker
         private readonly ILogger _logger;
         private readonly CancellationToken _cancellationToken;
 
-        private readonly Dictionary<Confluent.Kafka.TopicPartition, int> _retryCountDictionary = new Dictionary<Confluent.Kafka.TopicPartition, int>();
-        private readonly Dictionary<Confluent.Kafka.TopicPartition, long> _lastOffsetDictionary = new Dictionary<Confluent.Kafka.TopicPartition, long>();
-        
         private Confluent.Kafka.Consumer<byte[], byte[]> _innerConsumer;
 
-        private bool _consumed = false;
-
+        private bool _consumed;
         private bool _started;
 
         public InnerConsumerWrapper(Confluent.Kafka.Consumer<byte[], byte[]> innerConsumer, CancellationToken cancellationToken, ILogger logger)
@@ -41,22 +37,21 @@ namespace Silverback.Messaging.Broker
             _innerConsumer.Subscribe(_endpoints.Select(e => e.Name));
         }
 
-        public void Commit(Confluent.Kafka.TopicPartitionOffset tpo)
+        public void Commit(params Confluent.Kafka.TopicPartitionOffset[] tpo)
         {
-            _innerConsumer.Commit(new []{ tpo }, _cancellationToken);
-            _logger.LogTrace("Committed offset: {offset}", tpo);
+            _innerConsumer.Commit(tpo, _cancellationToken);
+        }
+
+        public void StoreOffset(params Confluent.Kafka.TopicPartitionOffset[] tpo)
+        {
+            _innerConsumer.StoreOffsets(tpo);
         }
 
         public void CommitAll(CancellationToken cancellationToken = default)
         {
             if (!_consumed) return;
             
-            var committedTpo = _innerConsumer.Commit(cancellationToken);
-
-            foreach (var tpo in committedTpo)
-            {
-                _logger.LogTrace("Committed offset: {offset}", tpo);
-            }
+            _innerConsumer.Commit(cancellationToken);
         }
 
         public void Seek(Confluent.Kafka.TopicPartitionOffset tpo) => _innerConsumer.Seek(tpo);
@@ -68,7 +63,7 @@ namespace Silverback.Messaging.Broker
 
             AttachEventHandlers();
 
-            Task.Run(() => Consume(), _cancellationToken);
+            Task.Run(Consume, _cancellationToken);
 
             _started = true;
         }
@@ -76,16 +71,36 @@ namespace Silverback.Messaging.Broker
         private void AttachEventHandlers()
         {
             _innerConsumer.OnPartitionsAssigned += (_, partitions) =>
-                _logger.LogTrace("Assigned partitions: [{partitions}], member id: {memberId}",
-                    string.Join(", ", partitions), _innerConsumer.MemberId);
+                partitions.ForEach(partition =>
+                    _logger.LogTrace("Assigned topic {topic} partition {partition}, member id: {memberId}",
+                        partition.Topic, partition.Partition, _innerConsumer.MemberId));
 
             _innerConsumer.OnPartitionsRevoked += (_, partitions) =>
-                _logger.LogTrace("Revoked partitions: [{partitions}]", string.Join(", ", partitions));
+                partitions.ForEach(partition =>
+                    _logger.LogTrace("Revoked topic {topic} partition {partition}, member id: {memberId}",
+                        partition.Topic, partition.Partition, _innerConsumer.MemberId));
 
             _innerConsumer.OnPartitionEOF += (_, tpo) =>
                 _logger.LogTrace(
                     "Reached end of topic {topic} partition {partition}, next message will be at offset {offset}.",
                     tpo.Topic, tpo.Partition, tpo.Offset);
+
+            _innerConsumer.OnOffsetsCommitted += (_, offsets) =>
+            {
+                foreach (var offset in offsets.Offsets)
+                {
+                    if (offset.Error != null && offset.Error.Code != Confluent.Kafka.ErrorCode.NoError)
+                    {
+                        _logger.LogError("Error occurred committing the offset {topic} {partition} @{offset}: {errorCode} - {errorReason} ",
+                            offset.Topic, offset.Partition, offset.Offset, offset.Error.Code, offset.Error.Reason);
+                    }
+                    else
+                    {
+                        _logger.LogTrace("Successfully committed offset {topic} {partition} @{offset}.",
+                            offset.Topic, offset.Partition, offset.Offset);
+                    }
+                }
+            };
 
             _innerConsumer.OnError += (_, e) =>
                 _logger.Log(e.IsFatal ? LogLevel.Critical : LogLevel.Warning, "Error in Kafka consumer: {reason}.",
@@ -104,9 +119,9 @@ namespace Silverback.Messaging.Broker
 
                     _consumed = true;
 
-                    _logger.LogTrace("Consuming message: {topic} [{partition}] @{offset}", result.Topic, result.Partition, result.Offset);
+                    _logger.LogTrace("Consuming message: {topic} {partition} @{offset}", result.Topic, result.Partition, result.Offset);
 
-                    Received?.Invoke(result.Message, result.TopicPartitionOffset, GetRetryCount(result.TopicPartitionOffset));
+                    Received?.Invoke(result.Message, result.TopicPartitionOffset);
                 }
                 catch (OperationCanceledException)
                 {
@@ -121,34 +136,7 @@ namespace Silverback.Messaging.Broker
                 }
             }
         }
-
-        private int GetRetryCount(Confluent.Kafka.TopicPartitionOffset tpo)
-        {
-            if (!IsRetry(tpo))
-            {
-                _lastOffsetDictionary[tpo.TopicPartition] = tpo.Offset;
-                return 0;
-            }
-
-            int retryCount;
-            if (_retryCountDictionary.ContainsKey(tpo.TopicPartition))
-                retryCount = _retryCountDictionary[tpo.TopicPartition] + 1;
-            else
-                retryCount = 1;
-
-            _retryCountDictionary[tpo.TopicPartition] = retryCount;
-
-            return retryCount;
-        }
-
-        private bool IsRetry(Confluent.Kafka.TopicPartitionOffset tpo)
-        {
-            if (!_lastOffsetDictionary.ContainsKey(tpo.TopicPartition))
-                return false;
-
-            return tpo.Offset == _lastOffsetDictionary[tpo.TopicPartition];
-        }
-
+        
         public void Dispose()
         {
             _innerConsumer?.Close();

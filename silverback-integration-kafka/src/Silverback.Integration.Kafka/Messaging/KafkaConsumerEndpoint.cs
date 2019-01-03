@@ -5,8 +5,11 @@ using System;
 
 namespace Silverback.Messaging
 {
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class KafkaConsumerEndpoint : KafkaEndpoint, IEquatable<KafkaConsumerEndpoint>
     {
+        private const bool KafkaDefaultAutoCommitEnabled = true;
+
         public KafkaConsumerEndpoint(string name) : base(name)
         {
         }
@@ -27,28 +30,58 @@ namespace Silverback.Messaging
         public bool ReuseConsumer { get; set; } = false;
 
         /// <summary>
-        /// The amount of threads to be started to consumer the endpoint. The default is 1.
+        /// The number of threads to be started to consumer the endpoint. The default is 1.
         /// </summary>
         public int ConsumerThreads { get; set; } = 1;
 
+        /// <summary>
+        /// Gets a boo loan value indicating whether autocommit is enabled according to the explicit configuration and
+        /// Kafka defaults.
+        /// </summary>
+        public bool IsAutoCommitEnabled => Configuration?.EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled;
+
+        public override void Validate()
+        {
+            base.Validate();
+
+            if (CommitOffsetEach < 1)
+                throw new EndpointConfigurationException("CommitOffSetEach must be greater or equal to 1.");
+
+            if (ConsumerThreads < 1)
+                throw new EndpointConfigurationException("ConsumerThreads must be greater or equal to 1.");
+
+            if (ReuseConsumer && ConsumerThreads > 1)
+                throw new EndpointConfigurationException(
+                    "It is not allowed to set ReuseConsumer = true with multiple threads.");
+
+            if (!IsAutoCommitEnabled && CommitOffsetEach % Batch.Size != 0)
+                throw new EndpointConfigurationException(
+                    "CommitOffsetEach must be a multiple of BatchSize if EnableAutoCommit is false.");
+
+            if (Configuration.EnableAutoOffsetStore == true)
+                throw new EndpointConfigurationException("EnableAutoOffsetStore is not supported. Silverback must have control of the offset storing to work properly.");
+
+            Configuration.EnableAutoOffsetStore = false;
+        }
+
         #region IEquatable
+
+        #endregion
 
         public bool Equals(KafkaConsumerEndpoint other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return string.Equals(Name, other.Name) && Equals(Serializer, other.Serializer) && KafkaClientConfigComparer.Compare(Configuration, other.Configuration) && CommitOffsetEach == other.CommitOffsetEach;
+            return base.Equals(other) &&
+                   Equals(Configuration, other.Configuration) && 
+                   CommitOffsetEach == other.CommitOffsetEach && 
+                   ReuseConsumer == other.ReuseConsumer && 
+                   ConsumerThreads == other.ConsumerThreads;
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj is KafkaConsumerEndpoint && Equals((KafkaConsumerEndpoint)obj);
+            return base.Equals(obj) &&
+                   obj is KafkaConsumerEndpoint endpoint && Equals(endpoint);
         }
-
-        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
-
-        #endregion
     }
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

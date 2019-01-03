@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Producer", "tests\Producer\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncProducer", "tests\AsyncProducer\AsyncProducer.csproj", "{723E03D3-8B81-4063-98A2-7C84FA4650D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Kafka.Tests", "tests\Silverback.Integration.Kafka.Tests\Silverback.Integration.Kafka.Tests.csproj", "{D3959271-8A3C-4F21-9F1F-DB4A07FAEDDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Kafka.Tests", "tests\Silverback.Integration.Kafka.Tests\Silverback.Integration.Kafka.Tests.csproj", "{D3959271-8A3C-4F21-9F1F-DB4A07FAEDDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -14,14 +14,12 @@ namespace Silverback.Messaging.Connectors
     /// Uses <see cref="IInboundLog"/> to keep track of each processed message and guarantee
     /// that each one is processed only once.
     /// </summary>
-    /// <seealso cref="Silverback.Messaging.Connectors.ExactlyOnceInboundConnector" />
     public class LoggedInboundConnector : ExactlyOnceInboundConnector
     {
         public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger)
             : base(broker, serviceProvider, logger)
         {
         }
-
 
         protected override bool MustProcess(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
@@ -39,10 +37,10 @@ namespace Silverback.Messaging.Connectors
             return true;
         }
 
-        protected override void CommitBatch(IServiceProvider serviceProvider) =>
+        protected override void Commit(IServiceProvider serviceProvider) =>
             serviceProvider.GetRequiredService<IInboundLog>().Commit();
 
-        protected override void RollbackBatch(IServiceProvider serviceProvider) =>
+        protected override void Rollback(IServiceProvider serviceProvider) =>
             serviceProvider.GetRequiredService<IInboundLog>().Rollback();
     }
 }
