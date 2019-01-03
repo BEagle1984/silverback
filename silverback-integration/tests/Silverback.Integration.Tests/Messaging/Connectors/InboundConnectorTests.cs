@@ -226,7 +226,7 @@ namespace Silverback.Tests.Messaging.Connectors
 
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(1));
+            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(5));
         }
 
         [Test]
@@ -251,13 +251,13 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(1));
+            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(5));
 
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
 
-            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(2));
+            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(10));
         }
 
         [Test]
@@ -313,16 +313,14 @@ namespace Silverback.Tests.Messaging.Connectors
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             }
 
-            Assert.That(_broker.Consumers.Sum(c => c.AcknowledgeCount), Is.EqualTo(3));
-
-            _testSubscriber.ReceivedMessages.Clear();
+            Assert.That(_broker.Consumers.Sum(c => c.AcknowledgeCount), Is.EqualTo(15));
 
             foreach (var consumer in _broker.Consumers.Skip(3))
             {
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             }
 
-            Assert.That(_broker.Consumers.Sum(c => c.AcknowledgeCount), Is.EqualTo(5));
+            Assert.That(_broker.Consumers.Sum(c => c.AcknowledgeCount), Is.EqualTo(25));
         }
 
         #endregion

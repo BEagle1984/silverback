@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Batch
         private readonly IErrorPolicy _errorPolicy;
 
         private readonly Action<IMessage, IEndpoint, IServiceProvider> _messageHandler;
-        private readonly Action<object, IServiceProvider> _commitHandler;
+        private readonly Action<IEnumerable<object>, IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
         private readonly IServiceProvider _serviceProvider;
@@ -30,15 +30,15 @@ namespace Silverback.Messaging.Batch
         private readonly ILogger _logger;
 
         private readonly List<IMessage> _messages;
+        private readonly List<object> _offsets;
         private readonly Timer _waitTimer;
 
-        private object _lastOffset;
         private Exception _processingException;
 
         public MessageBatch(IEndpoint endpoint,
             BatchSettings settings,
             Action<IMessage, IEndpoint, IServiceProvider> messageHandler,
-            Action<object, IServiceProvider> commitHandler,
+            Action<IEnumerable<object>, IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy, 
             IServiceProvider serviceProvider)
@@ -55,6 +55,7 @@ namespace Silverback.Messaging.Batch
             _settings = settings;
 
             _messages = new List<IMessage>(_settings.Size);
+            _offsets = new List<object>(_settings.Size);
 
             if (_settings.MaxWaitTime < TimeSpan.MaxValue)
             {
@@ -78,7 +79,7 @@ namespace Silverback.Messaging.Batch
             lock (_messages)
             {
                 _messages.Add(message);
-                _lastOffset = offset;
+                _offsets.Add(offset);
 
                 _logger.LogTrace("Message added to batch.", message, _endpoint, this);
 
@@ -117,6 +118,7 @@ namespace Silverback.Messaging.Batch
                     _ => ProcessEachMessageAndPublishEvents());
 
                 _messages.Clear();
+                _offsets.Clear();
             }
             catch (Exception ex)
             {
@@ -142,7 +144,7 @@ namespace Silverback.Messaging.Batch
 
                     _publisher.Publish(new BatchProcessedEvent(CurrentBatchId, _messages));
 
-                    _commitHandler?.Invoke(_lastOffset, scope.ServiceProvider);
+                    _commitHandler?.Invoke(_offsets, scope.ServiceProvider);
                 }
                 catch (Exception)
                 {

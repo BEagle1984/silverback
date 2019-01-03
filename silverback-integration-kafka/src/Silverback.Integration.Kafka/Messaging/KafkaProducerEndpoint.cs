@@ -12,20 +12,15 @@ namespace Silverback.Messaging
         {
         }
 
-        public Confluent.Kafka.ProducerConfig Configuration { get; set; } = new Confluent.Kafka.ProducerConfig();
+        public KafkaProducerConfig Configuration { get; set; } = new KafkaProducerConfig();
 
         #region IEquatable
 
-        public bool Equals(KafkaProducerEndpoint other)
-        {
-            return base.Equals(other) && KafkaClientConfigComparer.Compare(Configuration, other.Configuration);
-        }
+        public bool Equals(KafkaProducerEndpoint other) => 
+            base.Equals(other) && Equals(Configuration, other?.Configuration);
 
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj) &&
-                   obj is KafkaProducerEndpoint endpoint && Equals(endpoint);
-        }
+        public override bool Equals(object obj) => 
+            base.Equals(obj) &&obj is KafkaProducerEndpoint endpoint && Equals(endpoint);
 
         #endregion
     }

@@ -37,14 +37,14 @@ namespace Silverback.Messaging.Broker
             _innerConsumer.Subscribe(_endpoints.Select(e => e.Name));
         }
 
-        public void Commit(params Confluent.Kafka.TopicPartitionOffset[] tpo)
+        public void Commit(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets)
         {
-            _innerConsumer.Commit(tpo, _cancellationToken);
+            _innerConsumer.Commit(offsets, _cancellationToken);
         }
 
-        public void StoreOffset(params Confluent.Kafka.TopicPartitionOffset[] tpo)
+        public void StoreOffset(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets)
         {
-            _innerConsumer.StoreOffsets(tpo);
+            _innerConsumer.StoreOffsets(offsets);
         }
 
         public void CommitAll(CancellationToken cancellationToken = default)

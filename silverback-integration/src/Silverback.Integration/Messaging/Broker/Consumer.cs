@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 
@@ -19,7 +20,7 @@ namespace Silverback.Messaging.Broker
 
         public event ReceivedEventHandler Received;
 
-        public abstract void Acknowledge(object offset);
+        public abstract void Acknowledge(IEnumerable<object> offsets);
 
         protected void HandleMessage(byte[] buffer, object offset)
         {

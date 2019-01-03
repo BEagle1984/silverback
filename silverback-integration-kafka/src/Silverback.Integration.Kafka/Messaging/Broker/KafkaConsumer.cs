@@ -17,11 +17,7 @@ namespace Silverback.Messaging.Broker
 
         private InnerConsumerWrapper _innerConsumer;
         private int _messagesSinceCommit = 0;
-        private int _currentBatchSize = 0;
         private Dictionary<Confluent.Kafka.TopicPartition, Confluent.Kafka.Offset> _pendingOffsets = new Dictionary<Confluent.Kafka.TopicPartition, Confluent.Kafka.Offset>();
-
-        private static readonly ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper> ConsumerWrappersCache =
-            new ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper>(new KafkaClientConfigComparer());
 
         public KafkaConsumer(KafkaBroker broker, KafkaConsumerEndpoint endpoint, ILogger<KafkaConsumer> logger) : base(broker, endpoint, logger)
         {
@@ -35,12 +31,13 @@ namespace Silverback.Messaging.Broker
 
             Endpoint.Validate();
 
-            _innerConsumer = Endpoint.ReuseConsumer 
-                ? ConsumerWrappersCache.GetOrAdd(Endpoint.Configuration, _ => CreateInnerConsumerWrapper()) 
-                : CreateInnerConsumerWrapper();
+            _innerConsumer = new InnerConsumerWrapper(
+                new Confluent.Kafka.Consumer<byte[], byte[]>(Endpoint.Configuration),
+                _cancellationTokenSource.Token,
+                _logger);
 
             _innerConsumer.Subscribe(Endpoint);
-            _innerConsumer.Received += (message, tpo) => OnMessageReceived(message, tpo, _innerConsumer);
+            _innerConsumer.Received += OnMessageReceived;
             _innerConsumer.StartConsuming();
 
             _logger.LogTrace("Connected consumer to topic {topic}. (BootstrapServers=\"{bootstrapServers}\")", Endpoint.Name, Endpoint.Configuration.BootstrapServers);
@@ -51,13 +48,9 @@ namespace Silverback.Messaging.Broker
             if (_innerConsumer == null)
                 return;
 
-            // Remove from cache but take in account that it may have been removed already by another 
-            // consumer sharing the same instance.
-            ConsumerWrappersCache.TryRemove(Endpoint.Configuration, out var _);
-
             _cancellationTokenSource.Cancel();
 
-            if (!Endpoint.IsAutoCommitEnabled)
+            if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 _innerConsumer.CommitAll();
 
             _innerConsumer.Dispose();
@@ -69,36 +62,6 @@ namespace Silverback.Messaging.Broker
         public void Dispose()
         {
             Disconnect();
-        }
-
-        private InnerConsumerWrapper CreateInnerConsumerWrapper(int threadIndex = 1)
-        {
-            _logger.LogTrace("Creating Confluent.Kafka.Consumer...");
-
-            var configuration = GetCurrentThreadConfiguration(threadIndex);
-
-            return new InnerConsumerWrapper(
-                new Confluent.Kafka.Consumer<byte[], byte[]>(configuration),
-                _cancellationTokenSource.Token,
-                _logger);
-        }
-
-        private IEnumerable<KeyValuePair<string, string>> GetCurrentThreadConfiguration(int threadIndex)
-        {
-            IEnumerable<KeyValuePair<string, string>> configuration;
-
-            if (Endpoint.ConsumerThreads > 1)
-            {
-                var dict = Endpoint.Configuration.ToDictionary(d => d.Key, d => d.Value);
-                dict["client.id"] = $"{dict["client.id"]}[{threadIndex}]";
-                configuration = dict;
-            }
-            else
-            {
-                configuration = Endpoint.Configuration;
-            }
-
-            return configuration;
         }
 
         private void OnMessageReceived(Confluent.Kafka.Message<byte[], byte[]> message, Confluent.Kafka.TopicPartitionOffset tpo)
@@ -115,9 +78,8 @@ namespace Silverback.Messaging.Broker
         {
             try
             {
-                HandleMessage(message.Value);
-
-                StoreOffset(tpo);
+                _messagesSinceCommit++;
+                HandleMessage(message.Value, tpo);
             }
             catch (Exception ex)
             {
@@ -130,31 +92,26 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private void StoreOffset(Confluent.Kafka.TopicPartitionOffset tpo)
+        public override void Acknowledge(IEnumerable<object> offsets)
         {
-            _pendingOffsets[tpo.TopicPartition] = tpo.Offset;
+            var lastOffsets = offsets.Cast<Confluent.Kafka.TopicPartitionOffset>()
+                .GroupBy(o => o.TopicPartition)
+                .Select(g => g.OrderByDescending(o => o.Offset.Value).First())
+                .ToList();
 
-            // Store offset in inner consumer only if batch is completely processed
-            if (Endpoint.Batch.Size > 1 && ++_currentBatchSize < Endpoint.Batch.Size)
-                return;
-
-            _innerConsumer.StoreOffset(_pendingOffsets
-                .Select(o => new Confluent.Kafka.TopicPartitionOffset(o.Key, o.Value + 1))
+            _innerConsumer.StoreOffset(lastOffsets
+                .Select(o => new Confluent.Kafka.TopicPartitionOffset(o.TopicPartition, o.Offset + 1))
                 .ToArray());
 
-            _currentBatchSize = 0;
-
-            CommitOffsets();
+            if (!Endpoint.Configuration.IsAutoCommitEnabled)
+                CommitOffsets(lastOffsets);
         }
 
-        private void CommitOffsets()
+        private void CommitOffsets(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets)
         {
-            if (Endpoint.IsAutoCommitEnabled) return;
-            if (++_messagesSinceCommit % Endpoint.CommitOffsetEach != 0) return;
+            if (++_messagesSinceCommit < Endpoint.Configuration.CommitOffsetEach) return;
 
-            _innerConsumer.Commit(_pendingOffsets
-                .Select(o => new Confluent.Kafka.TopicPartitionOffset(o.Key, o.Value))
-                .ToArray());
+            _innerConsumer.Commit(offsets);
 
             _messagesSinceCommit = 0;
         }

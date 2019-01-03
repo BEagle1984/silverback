@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Batch;
@@ -56,6 +57,8 @@ namespace Silverback.Messaging.Connectors
         {
             _logger.LogTrace($"Connecting to inbound endpoint '{_endpoint.Name}'...");
 
+            _settings.Validate();
+
             if (_settings.Batch.Size > 1)
             {
                 var batch = new MessageBatch(
@@ -93,7 +96,7 @@ namespace Silverback.Messaging.Connectors
             try
             {
                 _messageHandler(message, _endpoint, serviceProvider);
-                Commit(offset, serviceProvider);
+                Commit(new[] {offset}, serviceProvider);
             }
             catch (Exception)
             {
@@ -102,7 +105,7 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        private void Commit(object offset, IServiceProvider serviceProvider)
+        private void Commit(IEnumerable<object> offset, IServiceProvider serviceProvider)
         {
             _commitHandler?.Invoke(serviceProvider);
             _consumer.Acknowledge(offset);
