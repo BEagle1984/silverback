@@ -14,7 +14,7 @@ In the following chapters you will find an overview of the different message typ
 
 # Internal Messages
 
-This messages can be used internally to the microservice bus but cannot be relayed to the message broker. (See [Translating Message]({{ site.baseurl }}docs/quickstart/translating) for a convenient way to map the internal message to an `IIntegrationMessage`.)
+This messages can be used internally to the microservice bus but cannot be relayed to the message broker. (See [Translating Message]({{ site.baseurl }}/docs/quickstart/translating) for a convenient way to map the internal message to an `IIntegrationMessage`.)
 
 ## Events
 
@@ -82,10 +82,10 @@ Only two derived types exists: events and commands.
 
 `IIntegrationEvent` can be used to export events to other microservices or, more generally, other systems.
 
-`IEventPublisher` can be used to publish these events and they will automatically be routed to the message broker if an outbound connector was properly configured. See [Connecting to a Message Broker]({{ site.baseurl }}docs/quickstart/message-broker) for details.
+`IEventPublisher` can be used to publish these events and they will automatically be routed to the message broker if an outbound connector was properly configured. See [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker) for details.
 
 ## Integration Command
 
 `IIntegrationCommand` is used to trigger an action on another microservices (or systems).
 
-`ICommandPublisher` can be used to publish these messages and they will automatically be routed to the message broker if an outbound connector was properly configured. See [Connecting to a Message Broker]({{ site.baseurl }}docs/quickstart/message-broker) for details.
+`ICommandPublisher` can be used to publish these messages and they will automatically be routed to the message broker if an outbound connector was properly configured. See [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker) for details.
