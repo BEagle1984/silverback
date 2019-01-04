@@ -17,7 +17,7 @@ public void ConfigureServices(IServiceCollection services)
 
 # Creating the Message model
 
-First of all we need to create a message class. All you need to do is to implement the empty `IMessage` interface (or derived interfaces, more about this in the [Message Types]({{ site.baseurl }}docs/quickstart/message-types) page).
+First of all we need to create a message class. All you need to do is to implement the empty `IMessage` interface (or derived interfaces, more about this in the [Message Types]({{ site.baseurl }}/docs/quickstart/message-types) page).
 
 ```c#
 using Silverback.Messaging.Messages;
