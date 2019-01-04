@@ -20,6 +20,8 @@ namespace Silverback.Messaging.Broker
         public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, ILogger<KafkaProducer> logger) : base(broker, endpoint, logger)
         {
             _logger = logger;
+
+            Endpoint.Validate();
         }
 
         protected override void Produce(IMessage message, byte[] serializedMessage)
@@ -53,7 +55,7 @@ namespace Silverback.Messaging.Broker
         public void Dispose()
         {
             // Dispose only if still in cache to avoid ObjectDisposedException
-            if (!ProducersCache.TryRemove(Endpoint.Configuration, out var _))
+            if (!ProducersCache.TryRemove(Endpoint.Configuration, out _))
                 return;
 
             _innerProducer?.Flush(TimeSpan.FromSeconds(10));

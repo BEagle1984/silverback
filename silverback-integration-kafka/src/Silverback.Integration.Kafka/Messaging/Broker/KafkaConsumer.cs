@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -22,14 +21,14 @@ namespace Silverback.Messaging.Broker
         public KafkaConsumer(KafkaBroker broker, KafkaConsumerEndpoint endpoint, ILogger<KafkaConsumer> logger) : base(broker, endpoint, logger)
         {
             _logger = logger;
+
+            Endpoint.Validate();
         }
 
         internal void Connect()
         {
             if (_innerConsumer != null)
                 return;
-
-            Endpoint.Validate();
 
             _innerConsumer = new InnerConsumerWrapper(
                 new Confluent.Kafka.Consumer<byte[], byte[]>(Endpoint.Configuration),

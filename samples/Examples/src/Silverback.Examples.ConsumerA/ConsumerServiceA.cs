@@ -32,12 +32,21 @@ namespace Silverback.Examples.ConsumerA
 
             endpoints
                 .AddInbound(CreateConsumerEndpoint("silverback-examples-events"))
+                .AddInbound(CreateConsumerEndpoint("silverback-examples-batch"), settings: new InboundConnectorSettings
+                {
+                    Batch = new Messaging.Batch.BatchSettings
+                    {
+                        Size = 5,
+                        MaxDegreeOfParallelism = 2
+                    },
+                    Consumers = 2
+                })
                 .AddInbound(CreateConsumerEndpoint("silverback-examples-bad-events"), policy => policy
                     .Chain(
                         policy.Retry(TimeSpan.FromMilliseconds(500)).MaxFailedAttempts(2),
                         policy.Move(new KafkaProducerEndpoint("silverback-examples-bad-events-error")
                         {
-                            Configuration = new Confluent.Kafka.ProducerConfig
+                            Configuration = new KafkaProducerConfig
                             {
                                 BootstrapServers = "PLAINTEXT://kafka:9092",
                                 ClientId = "consumer-service-a",
@@ -59,8 +68,7 @@ namespace Silverback.Examples.ConsumerA
         {
             var endpoint = new KafkaConsumerEndpoint(name)
             {
-                ReuseConsumer = true,
-                Configuration = new Confluent.Kafka.ConsumerConfig
+                Configuration = new KafkaConsumerConfig
                 {
                     BootstrapServers = "PLAINTEXT://kafka:9092",
                     ClientId = "consumer-service-a",

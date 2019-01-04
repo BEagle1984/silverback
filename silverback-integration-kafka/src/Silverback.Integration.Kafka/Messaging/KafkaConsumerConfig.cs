@@ -6,7 +6,7 @@ using System;
 namespace Silverback.Messaging
 {
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-    public class KafkaConsumerConfig : Confluent.Kafka.ConsumerConfig, IEquatable<KafkaConsumerConfig>
+    public sealed class KafkaConsumerConfig : Confluent.Kafka.ConsumerConfig, IEquatable<KafkaConsumerConfig>
     {
         private const bool KafkaDefaultAutoCommitEnabled = true;
 

@@ -14,7 +14,8 @@ namespace Consumer
 {
     internal static class Program
     {
-        private static KafkaBroker _broker;
+        private static IBroker _broker;
+        private static IConsumer _consumer;
 
         private static void Main()
         {
@@ -33,38 +34,26 @@ namespace Consumer
         {
             _broker = new KafkaBroker(GetLoggerFactory());
 
-            var consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
+            _consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
             {
-                ConsumerThreads = 3,
-                Configuration = new Confluent.Kafka.ConsumerConfig
+                Configuration = new KafkaConsumerConfig
                 {
                     BootstrapServers = "PLAINTEXT://kafka:9092",
-                    ClientId = "ClientTest",
-                    GroupId = "advanced-silverback-consumer",
-                    EnableAutoCommit = true,
-                    AutoCommitIntervalMs = 5000,
-                    StatisticsIntervalMs = 0,
+                    GroupId = "silverback-consumer",
                     AutoOffsetReset = Confluent.Kafka.AutoOffsetResetType.Earliest
-                },
-                Batch = new Silverback.Messaging.Batch.BatchSettings
-                {
-                    Size = 5,
-                    MaxDegreeOfParallelism = 2,
-                    MaxWaitTime = TimeSpan.FromSeconds(10)
                 }
             });
 
-            consumer.Received += OnMessageReceived;
+            _consumer.Received += OnMessageReceived;
 
             _broker.Connect();
         }
         private static void Disconnect()
         {
             _broker.Disconnect();
-            _broker.Dispose();
         }
 
-        private static void OnMessageReceived(object sender, IMessage message)
+        private static void OnMessageReceived(object sender, IMessage message, object offset)
         {
             var testMessage = message as TestMessage;
 
@@ -91,6 +80,7 @@ namespace Consumer
                 }
             }
 
+            _consumer.Acknowledge(offset);
         }
 
         private static void PrintHeader()

@@ -6,7 +6,7 @@ using System;
 namespace Silverback.Messaging
 {
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-    public class KafkaConsumerEndpoint : KafkaEndpoint, IEquatable<KafkaConsumerEndpoint>
+    public sealed class KafkaConsumerEndpoint : KafkaEndpoint, IEquatable<KafkaConsumerEndpoint>
     {
         public KafkaConsumerEndpoint(params string[] names) : base(string.Join(",", names))
         {

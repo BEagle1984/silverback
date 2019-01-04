@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (c) 2018 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 
 namespace Silverback.Messaging
 {
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-    public class KafkaProducerConfig : Confluent.Kafka.ProducerConfig, IEquatable<KafkaProducerConfig>
+    public sealed class KafkaProducerConfig : Confluent.Kafka.ProducerConfig, IEquatable<KafkaProducerConfig>
     {
         #region IEquatable
 
@@ -21,7 +22,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((KafkaConsumerConfig)obj);
+            return Equals((KafkaProducerConfig)obj);
         }
 
         #endregion
