@@ -8,36 +8,36 @@ namespace Silverback.Messaging.Connectors.Repositories
     public class TransactionalList<T>
     {
         protected static readonly List<T> Entries = new List<T>();
-        private readonly List<T> _uncommittedEntries = new List<T>();
+        protected readonly List<T> UncommittedEntries = new List<T>();
 
         public int Length => Entries.Count;
 
         protected void Add(T entry)
         {
-            lock (_uncommittedEntries)
+            lock (UncommittedEntries)
             {
-                _uncommittedEntries.Add(entry);
+                UncommittedEntries.Add(entry);
             }
         }
 
         public void Commit()
         {
-            lock (_uncommittedEntries)
+            lock (UncommittedEntries)
             {
                 lock (Entries)
                 {
-                    Entries.AddRange(_uncommittedEntries);
+                    Entries.AddRange(UncommittedEntries);
                 }
 
-                _uncommittedEntries.Clear();
+                UncommittedEntries.Clear();
             }
         }
 
         public void Rollback()
         {
-            lock (_uncommittedEntries)
+            lock (UncommittedEntries)
             {
-                _uncommittedEntries.Clear();
+                UncommittedEntries.Clear();
             }
         }
 

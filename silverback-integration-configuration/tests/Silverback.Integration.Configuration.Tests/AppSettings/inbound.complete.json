@@ -3,10 +3,17 @@
     "Using": [ "Silverback.Integration.Kafka", "Silverback.Integration.Configuration.Tests" ],
     "Inbound": [
       {
+        "Settings": {
+          "Consumers": 3,
+          "Batch": {
+            "Size": 5,
+            "MaxDegreeOfParallelism":  2, 
+            "MaxWaitTime": "00:00:02.500"
+          }
+        },
         "Endpoint": {
           "Type": "KafkaConsumerEndpoint",
           "Name": "inbound-endpoint1",
-          "CommitOffsetEach": 1234,
           "Configuration": {
             "AutoOffsetReset": "Earliest"
           },
@@ -38,7 +45,7 @@
         "ConnectorType": "LoggedInboundConnector",
         "Endpoint": {
           "Type": "KafkaConsumerEndpoint",
-          "Name": "inbound-endpoint",
+          "Names": [ "inbound-endpoint1", "inbound-endpoint2" ],
           "Serializer": {
             "Encoding": "Unicode",
             "Settings": {

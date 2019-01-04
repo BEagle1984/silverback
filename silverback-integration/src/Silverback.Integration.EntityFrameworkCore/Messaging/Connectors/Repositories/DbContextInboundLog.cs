@@ -11,25 +11,33 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public class DbContextInboundLog : RepositoryBase<InboundMessage>, IInboundLog
     {
+        private object _lock = new object();
+
         public DbContextInboundLog(DbContext dbContext) : base(dbContext)
         {
         }
 
         public void Add(IIntegrationMessage message, IEndpoint endpoint)
         {
-            DbSet.Add(new InboundMessage
+            lock (_lock)
             {
-                MessageId = message.Id,
-                Message = Serialize(message),
-                EndpointName = endpoint.Name,
-                Consumed = DateTime.UtcNow
-            });
+                DbSet.Add(new InboundMessage
+                {
+                    MessageId = message.Id,
+                    Message = Serialize(message),
+                    EndpointName = endpoint.Name,
+                    Consumed = DateTime.UtcNow
+                });
+            }
         }
 
         public void Commit()
         {
-            // Call SaveChanges, in case it isn't called by a subscriber
-            DbContext.SaveChanges();
+            lock (_lock)
+            {
+                // Call SaveChanges, in case it isn't called by a subscriber
+                DbContext.SaveChanges();
+            }
         }
 
         public void Rollback()
@@ -37,8 +45,13 @@ namespace Silverback.Messaging.Connectors.Repositories
             // Nothing to do, just not saving the DbContext
         }
 
-        public bool Exists(IIntegrationMessage message, IEndpoint endpoint) =>
-            DbSet.Any(m => m.MessageId == message.Id && m.EndpointName == endpoint.Name);
+        public bool Exists(IIntegrationMessage message, IEndpoint endpoint)
+        {
+            lock (_lock)
+            {
+               return DbSet.Any(m => m.MessageId == message.Id && m.EndpointName == endpoint.Name);
+            }
+        }
 
         public int Length => DbSet.Count();
     }

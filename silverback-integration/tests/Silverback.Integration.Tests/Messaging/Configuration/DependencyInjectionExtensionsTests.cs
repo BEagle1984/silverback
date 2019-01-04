@@ -143,7 +143,7 @@ namespace Silverback.Tests.Messaging.Configuration
             GetInboundConnector().Bind(TestEndpoint.Default);
             GetBroker().Connect();
 
-            var consumer = (TestConsumer)GetBroker().GetConsumer(TestEndpoint.Default);
+            var consumer = GetBroker().Consumers.First();
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
@@ -161,7 +161,7 @@ namespace Silverback.Tests.Messaging.Configuration
             GetInboundConnector().Bind(TestEndpoint.Default);
             GetBroker().Connect();
 
-            var consumer = (TestConsumer)GetBroker().GetConsumer(TestEndpoint.Default);
+            var consumer = GetBroker().Consumers.First();
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
