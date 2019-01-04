@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Silverback.Messaging.Configuration.Common;
 using Silverback.Messaging.Configuration.Reflection;
+using Silverback.Messaging.Connectors;
 using Silverback.Messaging.ErrorHandling;
 
 namespace Silverback.Messaging.Configuration.Inbound
@@ -14,11 +15,13 @@ namespace Silverback.Messaging.Configuration.Inbound
     public class InboundSectionReader : InboundOutboundSectionBase
     {
         private readonly ErrorPoliciesSectionReader _errorPoliciesSectionReader;
+        private readonly InboundSettingsSectionReader _inboundSettingsSectionReader;
 
-        public InboundSectionReader(TypeFinder typeFinder, EndpointSectionReader endpointSectionReader, ErrorPoliciesSectionReader errorPoliciesSectionReader)
+        public InboundSectionReader(TypeFinder typeFinder, EndpointSectionReader endpointSectionReader, ErrorPoliciesSectionReader errorPoliciesSectionReader, InboundSettingsSectionReader inboundSettingsSectionReader)
             : base(typeFinder, endpointSectionReader)
         {
             _errorPoliciesSectionReader = errorPoliciesSectionReader;
+            _inboundSettingsSectionReader = inboundSettingsSectionReader;
         }
 
         public IEnumerable<ConfiguredInbound> GetConfiguredInbound(IConfigurationSection configSection) =>
@@ -31,7 +34,8 @@ namespace Silverback.Messaging.Configuration.Inbound
                 return new ConfiguredInbound(
                     GetConnectorType(configSection),
                     GetEndpoint(configSection),
-                    GetErrorPolicies(configSection));
+                    GetErrorPolicies(configSection),
+                    GetSettings(configSection));
             }
             catch (Exception ex)
             {
@@ -41,5 +45,8 @@ namespace Silverback.Messaging.Configuration.Inbound
 
         private IEnumerable<ErrorPolicyBase> GetErrorPolicies(IConfigurationSection configSection) =>
             _errorPoliciesSectionReader.GetErrorPolicies(configSection.GetSection("ErrorPolicies"));
+
+        private InboundConnectorSettings GetSettings(IConfigurationSection configSection) =>
+            _inboundSettingsSectionReader.GetSettings(configSection.GetSection("Settings"));
     }
 }

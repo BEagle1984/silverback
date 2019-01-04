@@ -42,7 +42,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 22; i++)
             {
                 await publisher.PublishAsync(new SampleBatchProcessedEvent
                 {

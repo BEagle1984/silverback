@@ -100,14 +100,49 @@ namespace Silverback.Tests.Messaging.Configuration
         }
 
         [Test]
-        public void Read_CompleteInbound_EndpointPropertySet()
+        public void Read_CompleteInbound_SettingsSet()
         {
             var reader =
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
-            var endpoint = (KafkaConsumerEndpoint) reader.Inbound.First().Endpoint;
-            Assert.AreEqual(1234, endpoint.CommitOffsetEach);
+            var settings = reader.Inbound.First().Settings;
+            Assert.IsNotNull(settings);
+        }
+
+        [Test]
+        public void Read_CompleteInbound_SettingsBatchSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
+
+            var batchSettings = reader.Inbound.First().Settings.Batch;
+            Assert.IsNotNull(batchSettings);
+        }
+
+        [Test]
+        public void Read_CompleteInbound_SettingsConsumersSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
+
+            var settings = reader.Inbound.First().Settings;
+            Assert.AreEqual(3, settings.Consumers);
+        }
+
+        [Test]
+        public void Read_CompleteInbound_SettingsBatchPropertiesSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
+
+            var batchSettings = reader.Inbound.First().Settings.Batch;
+            Assert.AreEqual(5, batchSettings.Size);
+            Assert.AreEqual(2, batchSettings.MaxDegreeOfParallelism);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(2500), batchSettings.MaxWaitTime);
         }
 
         [Test]
@@ -124,6 +159,30 @@ namespace Silverback.Tests.Messaging.Configuration
             Assert.Throws<ArgumentException>(
                 () => Assert.AreEqual(AutoOffsetResetType.Earliest, endpoint.Configuration.AutoOffsetReset),
                 "Requested value 'earliest' was not found.");
+        }
+
+        [Test]
+        public void Read_CompleteInbound_EndpointNameSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
+
+            var endpoint = (KafkaConsumerEndpoint)reader.Inbound.First().Endpoint;
+
+            Assert.AreEqual(new[] {"inbound-endpoint1"}, endpoint.Names);
+        }
+
+        [Test]
+        public void Read_CompleteInbound_EndpointNamesSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
+
+            var endpoint = (KafkaConsumerEndpoint)reader.Inbound.Skip(1).First().Endpoint;
+
+            Assert.AreEqual(new[] { "inbound-endpoint1", "inbound-endpoint2" }, endpoint.Names);
         }
 
         [Test]
@@ -350,7 +409,7 @@ namespace Silverback.Tests.Messaging.Configuration
                 .Read(ConfigFileHelper.GetConfigSection("inbound.simplest"))
                 .Apply(_builder);
 
-            _builder.ReceivedWithAnyArgs(2).AddInbound(null, null, null);
+            _builder.ReceivedWithAnyArgs(2).AddInbound(null, null, null, null);
         }
 
         [Test]
@@ -364,11 +423,13 @@ namespace Silverback.Tests.Messaging.Configuration
             _builder.Received(1).AddInbound(
                 Arg.Any<KafkaConsumerEndpoint>(),
                 null,
-                Arg.Any<Func<ErrorPolicyBuilder, IErrorPolicy>>());
+                Arg.Any<Func<ErrorPolicyBuilder, IErrorPolicy>>(),
+                Arg.Any<InboundConnectorSettings>());
             _builder.Received(1).AddInbound(
                 Arg.Any<KafkaConsumerEndpoint>(),
                 typeof(LoggedInboundConnector),
-                Arg.Is<Func<ErrorPolicyBuilder, IErrorPolicy>>(f => f.Invoke(null) == null));
+                Arg.Is<Func<ErrorPolicyBuilder, IErrorPolicy>>(f => f.Invoke(null) == null),
+                null);
         }
 
         [Test]

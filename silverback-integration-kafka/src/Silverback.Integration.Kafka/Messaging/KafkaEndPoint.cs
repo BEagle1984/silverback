@@ -16,7 +16,7 @@ namespace Silverback.Messaging
         /// <summary>
         /// Gets the topic name(s).
         /// </summary>
-        public string Name { get; }
+        public string Name { get; protected set; }
 
         public IMessageSerializer Serializer { get; set; } = DefaultSerializer;
 

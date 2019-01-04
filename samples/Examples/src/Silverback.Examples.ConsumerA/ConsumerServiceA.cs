@@ -37,7 +37,8 @@ namespace Silverback.Examples.ConsumerA
                     Batch = new Messaging.Batch.BatchSettings
                     {
                         Size = 5,
-                        MaxDegreeOfParallelism = 2
+                        MaxDegreeOfParallelism = 2,
+                        MaxWaitTime = TimeSpan.FromSeconds(5)
                     },
                     Consumers = 2
                 })
