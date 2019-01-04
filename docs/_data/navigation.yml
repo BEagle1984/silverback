@@ -1,18 +1,56 @@
 main:
+  - title: Documentation
+    url: /docs
   - title: Features
     url: /docs/features
   - title: Blog
     url: /blog
-  - title: Documentation
-    url: /docs
 blog:
-    - title: Blog
-      children:
-        - title: Recent posts
-          url: /blog
-        - title: Archive
-          url: /blog/archive
-        - title: Posts by category
-          url: /blog/categories
-        - title: Posts by tag
-          url: /blog/tags
+  - title: Blog
+    children:
+      - title: Recent posts
+        url: /blog
+      - title: Archive
+        url: /blog/archive
+      - title: Posts by category
+        url: /blog/categories
+      - title: Posts by tag
+        url: /blog/tags
+docs:
+  - title: Quickstart
+    children:
+      - title: Key Concepts
+        url: /docs/quickstart/key-concepts
+      - title: Using the Bus
+        url: /docs/quickstart/bus
+      - title: Message Types
+        url: /docs/quickstart/message-types
+      - title: DDD and Domain Events
+        url: /docs/quickstart/domain-events
+      - title: Connecting a Message Broker (Kafka)
+        url: /docs/quickstart/message-broker
+      - title: Translating Messages
+        url: /docs/quickstart/translating
+      - title: Rx.NET
+        url: /docs/quickstart/rx
+  - title: Broker Configuration Explained
+    children:
+      - title: Endpoint
+        url: /docs/configuration/endpoint
+      - title: Outbound Connector
+        url: /docs/configuration/outbound
+      - title: Inbound Connector
+        url: /docs/configuration/inbound
+      - title: Multiple Configurations
+        url: /docs/configuration/multiple
+      - title: External Configurations
+        url: /docs/configuration/external
+      - title: Kafka Partitioning
+        url: /docs/configuration/partitioning
+  - title: Extra
+    children:
+      - title: Samples
+        url: /docs/extra/samples
+      - title: Source Code
+        url: /docs/extra/source
+
