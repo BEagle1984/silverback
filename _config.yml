@@ -44,14 +44,20 @@ defaults:
       type: docs
     values:
       layout: single
-      author_profile: true
+      author_profile: false
       read_time: true
+      share: true
+      toc: true
+      toc_label: Contents
+      toc_icon: book
+      sidebar:
+        nav: "docs"
   - scope:
       path: ""
       type: blog
     values:
       layout: single
-      author_profile: true
+      author_profile: false
 
 category_archive:
   type: liquid
