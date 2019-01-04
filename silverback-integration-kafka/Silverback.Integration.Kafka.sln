@@ -13,9 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messages", "tests\Messages\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Producer", "tests\Producer\Producer.csproj", "{3A96E46D-FCC4-455B-9D1B-664C1C1C81A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncProducer", "tests\AsyncProducer\AsyncProducer.csproj", "{723E03D3-8B81-4063-98A2-7C84FA4650D9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Kafka.Tests", "tests\Silverback.Integration.Kafka.Tests\Silverback.Integration.Kafka.Tests.csproj", "{D3959271-8A3C-4F21-9F1F-DB4A07FAEDDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Kafka.Tests", "tests\Silverback.Integration.Kafka.Tests\Silverback.Integration.Kafka.Tests.csproj", "{D3959271-8A3C-4F21-9F1F-DB4A07FAEDDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +37,6 @@ Global
 		{3A96E46D-FCC4-455B-9D1B-664C1C1C81A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A96E46D-FCC4-455B-9D1B-664C1C1C81A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A96E46D-FCC4-455B-9D1B-664C1C1C81A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{723E03D3-8B81-4063-98A2-7C84FA4650D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{723E03D3-8B81-4063-98A2-7C84FA4650D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{723E03D3-8B81-4063-98A2-7C84FA4650D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{723E03D3-8B81-4063-98A2-7C84FA4650D9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D3959271-8A3C-4F21-9F1F-DB4A07FAEDDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D3959271-8A3C-4F21-9F1F-DB4A07FAEDDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3959271-8A3C-4F21-9F1F-DB4A07FAEDDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -55,7 +49,6 @@ Global
 		{BF8546B2-E305-47EC-A97F-9A6768343DB9} = {41241C4B-4938-47A6-AACB-ED0EA06173A4}
 		{C5FDBFA2-35E1-41A1-9C9C-F621922719C4} = {41241C4B-4938-47A6-AACB-ED0EA06173A4}
 		{3A96E46D-FCC4-455B-9D1B-664C1C1C81A6} = {41241C4B-4938-47A6-AACB-ED0EA06173A4}
-		{723E03D3-8B81-4063-98A2-7C84FA4650D9} = {41241C4B-4938-47A6-AACB-ED0EA06173A4}
 		{D3959271-8A3C-4F21-9F1F-DB4A07FAEDDC} = {41241C4B-4938-47A6-AACB-ED0EA06173A4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

@@ -53,16 +53,7 @@ namespace Silverback.Tests.Messaging.Broker
 
             Assert.That(consumer, Is.Not.Null);
         }
-
-        [Test]
-        public void GetCachedConsumerTest()
-        {
-            var consumer = _broker.GetConsumer(TestEndpoint.Default);
-            var consumer2 = _broker.GetConsumer(TestEndpoint.Default);
-
-            Assert.That(consumer2, Is.SameAs(consumer));
-        }
-
+        
         [Test]
         public void GetConsumerForDifferentEndpointTest()
         {

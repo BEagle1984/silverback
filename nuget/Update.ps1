@@ -67,7 +67,8 @@ function Copy-All()
 
     Write-Host "`nAvailable packages:" -ForegroundColor Yellow
     
-    Show-Files $destination
+    # Show-Files $destination
+    Show-Summary $destination
 }
 
 function Copy-Package([string]$name, [string]$sourcePath)
@@ -85,7 +86,7 @@ function Copy-Package([string]$name, [string]$sourcePath)
 
 function Ensure-Folder-Exists([string]$path)
 {
-    if(!(Test-Path $path))
+    if (!(Test-Path $path))
     {
         New-Item -ItemType Directory -Force -Path $path | Out-Null
     }
@@ -97,6 +98,96 @@ function Show-Files([string]$path)
     Foreach-Object {
         Write-Host "`t" -NoNewline
         Write-Host $_.Name.Substring(0, $_.Name.Length - ".nupkg".Length)
+    }
+}
+
+function Show-Summary([string]$path)
+{
+    $hashtable = @{}
+
+    $files = Get-ChildItem $path -Recurse -Filter *.nupkg
+
+    foreach ($file in $files)
+    {
+        Add-Version $file $hashtable
+    }
+
+    foreach ($source in $sources)
+    {
+        $key = $source[0]
+        
+        Write-Host "`t[" -NoNewline
+        Write-Host "$($hashtable[$key].major).$($hashtable[$key].minor).$($hashtable[$key].revision).$($hashtable[$key].patch)" -NoNewline -ForegroundColor Green
+        Write-Host "] $($key)"
+    }
+}
+
+function Add-Version([string]$path, [hashtable]$hashtable)
+{
+    $name = ""
+    $major = 0
+    $minor = 0
+    $revision = 0
+    $patch = 0
+    $versionTokenIndex = 0
+
+    foreach ($token in $path.Split("."))
+    {
+        if ($token -match "^\d+$")
+        {
+            if ($versionTokenIndex -eq 0)
+            {
+                $major = [int]$token
+            }
+            elseif ($versionTokenIndex -eq 1)
+            {
+                $minor = [int]$token
+            }
+            elseif ($versionTokenIndex -eq 2)
+            {
+                $revision = [int]$token
+            }
+            elseif ($versionTokenIndex -eq 3)
+            {
+                $patch = [int]$token
+            }
+
+            $versionTokenIndex++;
+        }
+        else
+        {
+            if ($versionTokenIndex -gt 0)
+            {
+                break;
+            }
+
+            if ($name.Length -gt 0)
+            {
+                $name += "."
+            }
+
+            $name += $token
+        }
+    }
+
+    if ($hashtable.ContainsKey($name))
+    {
+        $previousVersion = $hashtable[$name];
+
+        if ($previousVersion.major -gt $major -Or 
+            ($previousVersion.major -eq $major -And $previousVersion.minor -gt $minor) -Or
+            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.revision -gt $revision) -Or
+            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.revision -eq $revision -And $previousVersion.patch -gt $patch))
+        {
+            return;
+        }
+    }
+
+    $hashtable[$name] = @{ 
+        major = $major
+        minor = $minor
+        revision = $revision
+        patch = $patch
     }
 }
 

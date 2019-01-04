@@ -2,19 +2,20 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using Messages;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 
 namespace Consumer
 {
     internal static class Program
     {
-        private static KafkaBroker _broker;
+        private static IBroker _broker;
+        private static IConsumer _consumer;
 
         private static void Main()
         {
@@ -33,61 +34,53 @@ namespace Consumer
         {
             _broker = new KafkaBroker(GetLoggerFactory());
 
-            var consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
+            _consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
             {
-                ConsumerThreads = 3,
-                Configuration = new Confluent.Kafka.ConsumerConfig
+                Configuration = new KafkaConsumerConfig
                 {
                     BootstrapServers = "PLAINTEXT://kafka:9092",
-                    ClientId = "ClientTest",
-                    GroupId = "advanced-silverback-consumer",
-                    EnableAutoCommit = false,
-                    EnableAutoOffsetStore = true,
-                    AutoCommitIntervalMs = 5000,
-                    StatisticsIntervalMs = 60000,
+                    GroupId = "silverback-consumer",
                     AutoOffsetReset = Confluent.Kafka.AutoOffsetResetType.Earliest
                 }
             });
 
-            consumer.Received += OnMessageReceived;
-            consumer.Error += OnError;
+            _consumer.Received += OnMessageReceived;
 
             _broker.Connect();
         }
         private static void Disconnect()
         {
             _broker.Disconnect();
-            _broker.Dispose();
         }
 
-        private static void OnMessageReceived(object sender, IMessage message)
+        private static void OnMessageReceived(object sender, IMessage message, object offset)
         {
             var testMessage = message as TestMessage;
 
             if (testMessage == null)
             {
                 Console.WriteLine("Received a weird message!");
+                return;
             }
 
             Console.WriteLine($"[{testMessage.Id}] {testMessage.Text}");
 
-            if (testMessage.Text == "bad" || testMessage.Text == "retry")
+            var text = testMessage.Text.ToLower().Trim();
+            if (text == "bad")
             {
                 Console.WriteLine("--> Bad message, throwing exception!");
                 throw new Exception("Bad!");
             }
-        }
+            else if (text.StartsWith("delay"))
+            {
+                if (int.TryParse(text.Substring(5), out int delay) && delay > 0)
+                {
+                    Console.WriteLine($"--> Delaying execution of {delay} seconds!");
+                    Thread.Sleep(delay * 1000);
+                }
+            }
 
-        private static void OnError(object sender, ErrorHandlerEventArgs args)
-        {
-            if (args.FailedMessage.Message is TestMessage testMessage && testMessage.Text == "retry" && args.FailedMessage.FailedAttempts <= 1)
-            {
-                args.Action = ErrorAction.RetryMessage;
-            }
-            else
-            {
-                args.Action = ErrorAction.SkipMessage;
-            }
+            _consumer.Acknowledge(offset);
         }
 
         private static void PrintHeader()

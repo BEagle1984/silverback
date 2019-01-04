@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -12,12 +14,14 @@ namespace Silverback.Tests.TestTypes
 {
     public class TestConsumer : Consumer
     {
-        public bool IsReady { get; set; }
-
-        public TestConsumer(IBroker broker, IEndpoint endpoint) 
+        public TestConsumer(IBroker broker, IEndpoint endpoint)
             : base(broker, endpoint, new NullLogger<TestConsumer>())
         {
         }
+
+        public bool IsReady { get; set; }
+
+        public int AcknowledgeCount { get; set; }
 
         public void TestPush(IIntegrationMessage message, IMessageSerializer serializer = null)
         {
@@ -32,7 +36,10 @@ namespace Silverback.Tests.TestTypes
 
             var buffer = serializer.Serialize(message);
 
-            HandleMessage(buffer, 0);
+            HandleMessage(buffer, null);
         }
+
+        public override void Acknowledge(IEnumerable<object> offsets) =>
+            AcknowledgeCount = AcknowledgeCount + offsets.Count();
     }
 }

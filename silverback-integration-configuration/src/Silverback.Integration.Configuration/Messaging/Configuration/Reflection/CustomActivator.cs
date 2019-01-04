@@ -60,9 +60,12 @@ namespace Silverback.Messaging.Configuration.Reflection
 
         private object GetParameterValueFromConfig(ParameterInfo parameter, IConfigurationSection configSection)
         {
-            if (parameter.Name.ToLowerInvariant() == "endpoint")
+            switch (parameter.Name.ToLowerInvariant())
             {
-                return _endpointSectionReader.GetEndpoint(configSection.GetSection("Endpoint"));
+                case "endpoint":
+                    return _endpointSectionReader.GetEndpoint(configSection.GetSection("Endpoint"));
+                case "names":
+                    return GetNames(configSection);
             }
 
             var configValue = configSection.GetSection(parameter.Name).Value;
@@ -71,6 +74,18 @@ namespace Silverback.Messaging.Configuration.Reflection
                 return null;
 
             return Convert(configValue, parameter.ParameterType);
+        }
+
+        private object GetNames(IConfigurationSection configSection)
+        {
+            var namesSection = configSection.GetSection("Names");
+
+            if (namesSection.Exists())
+            {
+                return namesSection.GetChildren().Select(c => c.Value).ToArray();
+            }
+
+            return configSection.GetSection("Name").Value;
         }
 
         private object Convert(object value, Type targetType)

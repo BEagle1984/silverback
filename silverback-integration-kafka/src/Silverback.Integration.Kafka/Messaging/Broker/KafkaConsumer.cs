@@ -2,79 +2,60 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.ErrorHandling;
 
 namespace Silverback.Messaging.Broker
 {
     public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint>, IDisposable
     {
-        private const bool KafkaDefaultAutoCommitEnabled = true;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly ILogger<KafkaConsumer> _logger;
 
-        private InnerConsumerWrapper[] _innerConsumerWrapper;
-
-        private static readonly ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper> ConsumerWrappersCache =
-            new ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper>(new KafkaClientConfigComparer());
+        private InnerConsumerWrapper _innerConsumer;
+        private int _messagesSinceCommit = 0;
+        private Dictionary<Confluent.Kafka.TopicPartition, Confluent.Kafka.Offset> _pendingOffsets = new Dictionary<Confluent.Kafka.TopicPartition, Confluent.Kafka.Offset>();
 
         public KafkaConsumer(KafkaBroker broker, KafkaConsumerEndpoint endpoint, ILogger<KafkaConsumer> logger) : base(broker, endpoint, logger)
         {
             _logger = logger;
+
+            Endpoint.Validate();
         }
 
         internal void Connect()
         {
-            if (_innerConsumerWrapper != null)
+            if (_innerConsumer != null)
                 return;
 
-            if (Endpoint.ReuseConsumer && Endpoint.ConsumerThreads > 1)
-                throw new SilverbackException("Invalid endpoint configuration. It is not allowed to set ReuseConsumer to true with multiple threads.");
+            _innerConsumer = new InnerConsumerWrapper(
+                new Confluent.Kafka.Consumer<byte[], byte[]>(Endpoint.Configuration),
+                _cancellationTokenSource.Token,
+                _logger);
 
-            if (Endpoint.ReuseConsumer)
-            {
-                _innerConsumerWrapper = new[] { ConsumerWrappersCache.GetOrAdd(Endpoint.Configuration, _ => CreateInnerConsumerWrapper()) };
-            }
-            else
-            {
-                _innerConsumerWrapper =
-                    Enumerable.Range(1, Endpoint.ConsumerThreads)
-                        .Select(CreateInnerConsumerWrapper)
-                        .ToArray();
-            }
+            _innerConsumer.Subscribe(Endpoint);
+            _innerConsumer.Received += OnMessageReceived;
+            _innerConsumer.StartConsuming();
 
-            foreach (var consumerWrapper in _innerConsumerWrapper)
-            {
-                consumerWrapper.Subscribe(Endpoint);
-                consumerWrapper.Received += (message, tpo, retryCount) => OnMessageReceived(message, tpo, retryCount, consumerWrapper);
-                consumerWrapper.StartConsuming();
-            }
+            _logger.LogTrace("Connected consumer to topic {topic}. (BootstrapServers=\"{bootstrapServers}\")", Endpoint.Name, Endpoint.Configuration.BootstrapServers);
         }
 
         internal void Disconnect()
         {
-            if (_innerConsumerWrapper == null)
+            if (_innerConsumer == null)
                 return;
-
-            // Remove from cache but take in account that it may have been removed already by another 
-            // consumer sharing the same instance.
-            ConsumerWrappersCache.TryRemove(Endpoint.Configuration, out var _);
 
             _cancellationTokenSource.Cancel();
 
-            foreach (var consumerWrapper in _innerConsumerWrapper)
-            {
-                if (!(Endpoint.Configuration.EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled))
-                    consumerWrapper.CommitAll();
+            if (!Endpoint.Configuration.IsAutoCommitEnabled)
+                _innerConsumer.CommitAll();
 
-                consumerWrapper.Dispose();
-            }
+            _innerConsumer.Dispose();
+            _innerConsumer = null;
 
-            _innerConsumerWrapper = null;
+            _logger.LogTrace("Disconnected consumer from topic {topic}. (BootstrapServers=\"{bootstrapServers}\")", Endpoint.Name, Endpoint.Configuration.BootstrapServers);
         }
 
         public void Dispose()
@@ -82,109 +63,56 @@ namespace Silverback.Messaging.Broker
             Disconnect();
         }
 
-        private InnerConsumerWrapper CreateInnerConsumerWrapper(int threadIndex = 1)
-        {
-            _logger.LogTrace("Creating Confluent.Kafka.Consumer...");
-
-            var configuration = GetCurrentThreadConfiguration(threadIndex);
-
-            return new InnerConsumerWrapper(
-                new Confluent.Kafka.Consumer<byte[], byte[]>(configuration),
-                _cancellationTokenSource.Token,
-                _logger);
-        }
-
-        private IEnumerable<KeyValuePair<string, string>> GetCurrentThreadConfiguration(int threadIndex)
-        {
-            IEnumerable<KeyValuePair<string, string>> configuration;
-
-            if (Endpoint.ConsumerThreads > 1)
-            {
-                var dict = Endpoint.Configuration.ToDictionary(d => d.Key, d => d.Value);
-                dict["client.id"] = $"{dict["client.id"]}[{threadIndex}]";
-                configuration = dict;
-            }
-            else
-            {
-                configuration = Endpoint.Configuration;
-            }
-
-            return configuration;
-        }
-
-        private void OnMessageReceived(Confluent.Kafka.Message<byte[], byte[]> message,
-            Confluent.Kafka.TopicPartitionOffset tpo,
-            int retryCount, InnerConsumerWrapper innerConsumer)
+        private void OnMessageReceived(Confluent.Kafka.Message<byte[], byte[]> message, Confluent.Kafka.TopicPartitionOffset tpo)
         {
             // Checking if the message was sent to the subscribed topic is necessary
             // when reusing the same consumer for multiple topics.
             if (!tpo.Topic.Equals(Endpoint.Name, StringComparison.InvariantCultureIgnoreCase))
                 return;
 
-            var result = TryHandleMessage(message, tpo, retryCount, innerConsumer);
-
-            if (!result.IsSuccessful)
-                HandleError(result.Action ?? ErrorAction.StopConsuming, tpo, retryCount, innerConsumer);
+            TryHandleMessage(message, tpo);
         }
 
-        private MessageHandlerResult TryHandleMessage(Confluent.Kafka.Message<byte[], byte[]> message,
-            Confluent.Kafka.TopicPartitionOffset tpo,
-            int retryCount, InnerConsumerWrapper innerConsumer)
+        private void TryHandleMessage(Confluent.Kafka.Message<byte[], byte[]> message, Confluent.Kafka.TopicPartitionOffset tpo)
         {
             try
             {
-                var result = HandleMessage(message.Value, retryCount);
-
-                if (result.IsSuccessful)
-                    CommitOffsetIfNeeded(tpo, innerConsumer);
-
-                return result;
+                _messagesSinceCommit++;
+                HandleMessage(message.Value, tpo);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex,
-                    "Fatal error occurred consuming the message: {topic} [{partition}] @{offset}. " +
-                    "The consumer will be stopped. See inner exception for details.",
+                    "Fatal error occurred consuming the message: {topic} {partition} @{offset}. " +
+                    "The consumer will be stopped.",
                     tpo.Topic, tpo.Partition, tpo.Offset);
 
-                return MessageHandlerResult.Error(ErrorAction.StopConsuming);
+                _cancellationTokenSource.Cancel();
             }
         }
 
-        private void CommitOffsetIfNeeded(Confluent.Kafka.TopicPartitionOffset tpo, InnerConsumerWrapper innerConsumer)
+        public override void Acknowledge(IEnumerable<object> offsets)
         {
-            if (Endpoint.Configuration.EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled) return;
-            if (tpo.Offset % Endpoint.CommitOffsetEach != 0) return;
-            innerConsumer.Commit(tpo);
+            var lastOffsets = offsets.Cast<Confluent.Kafka.TopicPartitionOffset>()
+                .GroupBy(o => o.TopicPartition)
+                .Select(g => g.OrderByDescending(o => o.Offset.Value).First())
+                .ToList();
+
+            _innerConsumer.StoreOffset(lastOffsets
+                .Select(o => new Confluent.Kafka.TopicPartitionOffset(o.TopicPartition, o.Offset + 1))
+                .ToArray());
+
+            if (!Endpoint.Configuration.IsAutoCommitEnabled)
+                CommitOffsets(lastOffsets);
         }
 
-        private void HandleError(ErrorAction action, Confluent.Kafka.TopicPartitionOffset tpo, int retryCount, InnerConsumerWrapper innerConsumer)
+        private void CommitOffsets(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets)
         {
-            string actionDescription = null;
-            switch (action)
-            {
-                case ErrorAction.SkipMessage:
-                    actionDescription = "This message will be skipped.";
-                    break;
-                case ErrorAction.RetryMessage:
-                    actionDescription = "This message will be retried.";
+            if (++_messagesSinceCommit < Endpoint.Configuration.CommitOffsetEach) return;
 
-                    // Revert offset to consume the same message again
-                    innerConsumer.Seek(tpo);
+            _innerConsumer.Commit(offsets);
 
-                    break;
-                case ErrorAction.StopConsuming:
-                    actionDescription = "The consumer will be stopped.";
-                    _cancellationTokenSource.Cancel();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(action), action, null);
-            }
-
-            _logger.LogTrace(
-                "Error occurred consuming message (retry={retryCount}): {topic} [{partition}] @{offset}. " +
-                actionDescription,
-                retryCount, tpo.Topic, tpo.Partition, tpo.Offset);
+            _messagesSinceCommit = 0;
         }
     }
 }

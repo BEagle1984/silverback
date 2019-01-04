@@ -34,10 +34,9 @@ namespace Producer
 
             _producer = _broker.GetProducer(new KafkaProducerEndpoint("Topic1")
             {
-                Configuration = new Confluent.Kafka.ProducerConfig
+                Configuration = new KafkaProducerConfig
                 {
-                    BootstrapServers = "PLAINTEXT://kafka:9092",
-                    ClientId = "ClientTest"
+                    BootstrapServers = "PLAINTEXT://kafka:9092"
                 }
             });
         }
