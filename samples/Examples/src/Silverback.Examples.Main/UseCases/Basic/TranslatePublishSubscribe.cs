@@ -28,7 +28,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
         protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider) => endpoints
             .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
             {
-                Configuration = new Confluent.Kafka.ProducerConfig
+                Configuration = new KafkaProducerConfig
                 {
                     BootstrapServers = "PLAINTEXT://kafka:9092",
                     ClientId = GetType().FullName

@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Configuration
         /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <param name="enforceMessageOrder">if set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
-        /// <param name="readPackageSize">The amount of messages to be loaded from the queue at once.</param>
+        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
         /// <param name="removeProduced">if set to <c>true</c> the messages will be removed from the database immediately after being produced.</param>
         public static BrokerOptionsBuilder AddDbOutboundWorker<TDbContext>(this BrokerOptionsBuilder builder, bool enforceMessageOrder = true, int readPackageSize = 100, bool removeProduced = false) where TDbContext : DbContext
         {

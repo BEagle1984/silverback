@@ -2,9 +2,19 @@
 
 Silverback is a simple framework to build reactive, event-driven, microservices.
 
-Have a look at the [Wiki](https://github.com/BEagle1984/silverback/wiki) for some details, snippets and examples.
+It includes an in-memory message bus that can be easily connected to a message broker to integrate with other microservices. At the moment only [Apache Kafka](https://kafka.apache.org/) is supported but other message brokers could be added without much effort.
 
-## Nuget Packages
+Its main features are:
+* Simple yet powerful message bus
+* Abstracted and configurative integration with a message broker
+* Apache Kafka integration
+* DDD, Domain Events and Transactional Messaging
+* Built-in error handling policies for consumers
+* Configuration through fluent API or external configuration (`Microsoft.Extensions.Configuration`)
+
+## Installation
+
+Silverback is split into multiple nuget packages available on nuget.org.
 
 Package | Version
 :--- | ---
@@ -15,3 +25,11 @@ Silverback.Integration | [![NuGet](http://img.shields.io/nuget/v/Silverback.Inte
 Silverback.Integration.EntityFrameworkCore | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Integration.EntityFrameworkCore/)
 Silverback.Integration.Kafka | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Kafka.svg)](https://www.nuget.org/packages/Silverback.Integration.Kafka/)
 Silverback.Integration.Configuration | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Configuration.svg)](https://www.nuget.org/packages/Silverback.Integration.Configuration/)
+
+## Usage
+
+Have a look at the [project's website](https://beagle1984.github.io/silverback/docs) for usage details, snippets and examples.
+
+## License
+
+[MIT](https://github.com/BEagle1984/silverback/blob/master/LICENSE)

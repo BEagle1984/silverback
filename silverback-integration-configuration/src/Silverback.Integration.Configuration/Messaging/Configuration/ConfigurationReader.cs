@@ -32,7 +32,8 @@ namespace Silverback.Messaging.Configuration
 
             var endpointSectionReader = new EndpointSectionReader(customActivator);
             var errorPoliciesSectionReader = new ErrorPoliciesSectionReader(typeFinder, customActivator, endpointSectionReader);
-            var inboundSectionReader = new InboundSectionReader(typeFinder, endpointSectionReader, errorPoliciesSectionReader);
+            var inboundSettingsSectionReader = new InboundSettingsSectionReader();
+            var inboundSectionReader = new InboundSectionReader(typeFinder, endpointSectionReader, errorPoliciesSectionReader, inboundSettingsSectionReader);
             var outboundSectionReader = new OutboundSectionReader(typeFinder, endpointSectionReader);
 
             Inbound = inboundSectionReader

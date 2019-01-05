@@ -12,6 +12,6 @@ namespace Silverback.Messaging.Connectors.Repositories
             => Add(new InMemoryInboundLogEntry(message.Id, endpoint.Name));
 
         public bool Exists(IIntegrationMessage message, IEndpoint endpoint)
-            => Entries.Any(e => e.MessageId == message.Id && e.EndpointName == endpoint.Name);
+            => Entries.Union(UncommittedEntries).Any(e => e.MessageId == message.Id && e.EndpointName == endpoint.Name);
     }
 }

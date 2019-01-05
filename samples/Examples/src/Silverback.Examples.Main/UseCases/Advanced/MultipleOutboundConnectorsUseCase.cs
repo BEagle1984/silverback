@@ -16,7 +16,6 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Examples.Main.UseCases.Advanced
 {
-    // TODO: Implement
     public class MultipleOutboundConnectorsUseCase : UseCase
     {
         public MultipleOutboundConnectorsUseCase() : base("Multiple outbound connectors", 20)
@@ -38,7 +37,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
         private KafkaEndpoint CreateEndpoint() =>
             new KafkaProducerEndpoint("silverback-examples-events")
             {
-                Configuration = new Confluent.Kafka.ProducerConfig
+                Configuration = new KafkaProducerConfig
                 {
                     BootstrapServers = "PLAINTEXT://kafka:9092",
                     ClientId = GetType().FullName

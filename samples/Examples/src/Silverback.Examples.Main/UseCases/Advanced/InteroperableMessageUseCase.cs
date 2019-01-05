@@ -35,7 +35,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             new KafkaProducerEndpoint(name)
             {
                 Serializer = new LegacyMessageSerializer(),
-                Configuration = new Confluent.Kafka.ProducerConfig
+                Configuration = new KafkaProducerConfig
                 {
                     BootstrapServers = "PLAINTEXT://kafka:9092",
                     ClientId = GetType().FullName

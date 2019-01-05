@@ -15,11 +15,18 @@ namespace Silverback.Tests.TestTypes
         {
         }
 
+        public List<TestConsumer> Consumers { get; } = new List<TestConsumer>();
+
         public List<ProducedMessage> ProducedMessages { get; } = new List<ProducedMessage>();
 
         protected override Producer InstantiateProducer(IEndpoint endpoint) => new TestProducer(this, endpoint);
 
-        protected override Consumer InstantiateConsumer(IEndpoint endpoint) => new TestConsumer(this, endpoint);
+        protected override Consumer InstantiateConsumer(IEndpoint endpoint)
+        {
+            var consumer = new TestConsumer(this, endpoint);
+            Consumers.Add(consumer);
+            return consumer;
+        }
 
         protected override void Connect(IEnumerable<IConsumer> consumers)
         {

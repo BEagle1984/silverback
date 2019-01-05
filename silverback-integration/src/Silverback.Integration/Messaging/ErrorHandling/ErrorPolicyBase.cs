@@ -70,7 +70,7 @@ namespace Silverback.Messaging.ErrorHandling
             {
                 _logger.LogTrace($"The policy '{GetType().Name}' will be skipped because the current failed attempts " +
                                  $"({failedMessage.FailedAttempts}) exceeds the configured maximum attempts " +
-                                 $"({_maxFailedAttempts}).");
+                                 $"({_maxFailedAttempts}).", failedMessage);
 
                 return false;
             }
@@ -78,7 +78,7 @@ namespace Silverback.Messaging.ErrorHandling
             if (_includedExceptions.Any() && _includedExceptions.All(e => !e.IsInstanceOfType(exception)))
             {
                 _logger.LogTrace($"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
-                                 $"is not in the list of handled exceptions.");
+                                 $"is not in the list of handled exceptions.", failedMessage);
 
                 return false;
             }
@@ -86,7 +86,7 @@ namespace Silverback.Messaging.ErrorHandling
             if (_excludedExceptions.Any(e => e.IsInstanceOfType(exception)))
             {
                 _logger.LogTrace($"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
-                                 $"is in the list of excluded exceptions.");
+                                 $"is in the list of excluded exceptions.", failedMessage);
 
                 return false;
             }
@@ -94,7 +94,7 @@ namespace Silverback.Messaging.ErrorHandling
             if (_applyRule != null && !_applyRule.Invoke(failedMessage, exception))
             {
                 _logger.LogTrace($"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
-                                 $"evaluated and returned false.");
+                                 $"evaluated and returned false.", failedMessage);
                 return false;
             }
 

@@ -36,10 +36,10 @@ namespace Silverback.Tests.Messaging.ErrorHandling
         }
 
         [Test]
-        [TestCase(1, ErrorAction.RetryMessage)]
-        [TestCase(2, ErrorAction.RetryMessage)]
-        [TestCase(3, ErrorAction.SkipMessage)]
-        [TestCase(4, ErrorAction.SkipMessage)]
+        [TestCase(1, ErrorAction.Retry)]
+        [TestCase(2, ErrorAction.Retry)]
+        [TestCase(3, ErrorAction.Skip)]
+        [TestCase(4, ErrorAction.Skip)]
         public void ChainingTest2(int failedAttempts, ErrorAction expectedAction)
         {
             var chain = _errorPolicyBuilder.Chain(
