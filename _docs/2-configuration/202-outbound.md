@@ -5,9 +5,11 @@ permalink: /docs/configuration/outbound
 
 The outbound connector is used to automatically relay the integration messages (published to the internal bus) to the message broker. Multiple outbound endpoints can be configured and Silverback will route the messages according to their type (based on the `TMessage` parameter passed to the `AddOutbound<TMessage>` method.
 
+# Implementations
+
 Multiple implementations of the connector are available, offering a variable degree of reliability.
 
-# Basic
+## Basic
 
 The basic `OutboundConnector` is very simple and relays the messages synchronously. This is the easiest, better performing and most lightweight option but it doesn't allow for any transactionality (once the message is fired, is fired) nor resiliency to the message broker failure.
 
@@ -34,7 +36,7 @@ public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
         .Broker.Connect();
 ```
 
-# Deferred
+## Deferred
 
 The `DeferredOutboundConnector` will store the outbound messages into a database table and produce them asynchronously. This allows to take advantage of database transactions, preventing inconsistencies. And in addition allows the system to retry indefinitely if the message broker is not available.
 

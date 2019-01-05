@@ -1,10 +1,10 @@
 main:
   - title: Documentation
-    url: /docs
-  - title: Features
-    url: /docs/features
+    url: /docs/architecture
   - title: Blog
     url: /blog
+  - title: About
+    url: /about
 blog:
   - title: Blog
     children:
@@ -17,6 +17,12 @@ blog:
       - title: Posts by tag
         url: /blog/tags
 docs:
+  - title: Introduction
+    children:
+      - title: Architecture
+        url: /docs/architecture
+      - title: Features
+        url: /docs/features
   - title: Quickstart
     children:
       - title: Key Concepts

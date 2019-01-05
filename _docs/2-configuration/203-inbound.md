@@ -5,7 +5,7 @@ permalink: /docs/configuration/inbound
 
 The inbound connector is used to automatically consume a topic/queue and relay the messages to the internal bus.
 
-# Types
+# Implementations
 
 Multiple implementations are available, offering a variable degree of reliability.
 
@@ -136,7 +136,7 @@ public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
         .Broker.Connect();
 ```
 
-**Important**: The batch is consider a unit of work: it will be processed in the same DI scope, it will be atomically committed and the error policies will be applied to the batch as a whole.
+**Important*! The batch is consider a unit of work: it will be processed in the same DI scope, it will be atomically committed and the error policies will be applied to the batch as a whole.{: .notice--info}
 
 Two additional events are published to the internal bus when batch processing:
 

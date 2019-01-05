@@ -46,6 +46,7 @@ defaults:
       type: docs
     values:
       layout: single
+      pager: true
       author_profile: false
       read_time: true
       share: true
@@ -53,7 +54,7 @@ defaults:
       toc_label: Contents
       toc_icon: book
       sidebar:
-        nav: "docs"
+        nav: docs
   - scope:
       path: ""
       type: blog
