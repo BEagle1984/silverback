@@ -18,7 +18,7 @@ features:
     btn_class: "btn--primary"
   - title: "Flexible and Extensible"
     excerpt: "It is designed to be highly configurable and extensible to cover as many use cases as possible."
-    url: "/docs"
+    url: "/docs/architecture"
     btn_label: "View Documentation"
     btn_class: "btn--primary"
   - title: "Open Source"
