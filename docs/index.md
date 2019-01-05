@@ -17,7 +17,7 @@ features:
     btn_label: "View Features"
     btn_class: "btn--primary"
   - title: "Flexible and Extensible"
-    excerpt: "It is designed to be highly configurable and extensible to cover as much use cases as possible."
+    excerpt: "It is designed to be highly configurable and extensible to cover as many use cases as possible."
     url: "/docs"
     btn_label: "View Documentation"
     btn_class: "btn--primary"
