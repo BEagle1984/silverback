@@ -15,18 +15,24 @@ features:
     excerpt: "A very simple and not too invasive framework with just enough features to cover most of the real world use cases when it comes to messaging and microservices integration."
     url: "/docs/features"
     btn_label: "View Features"
-    btn_class: "btn--inverse"
+    btn_class: "btn--primary"
   - title: "Flexible and Extensible"
     excerpt: "It is designed to be highly configurable and extensible to cover as much use cases as possible."
     url: "/docs"
     btn_label: "View Documentation"
-    btn_class: "btn--inverse"
+    btn_class: "btn--primary"
   - title: "Open Source"
     excerpt: "Silverback is released under MIT license and is completely free and opensource."
     url: "https://github.com/BEagle1984/silverback/"
     btn_label: "View Source Code"
-    btn_class: "btn--inverse"
+    btn_class: "btn--primary"
 ---
 
 {% include feature_row id="intro" type="center" %}
 {% include feature_row id="features" %}
+
+# Latest Posts
+
+{% for post in site.posts limit:3 %}
+  {% include archive-single.html %}
+{% endfor %}

@@ -1,5 +1,6 @@
 ---
 title: Features
+permalink: /docs/features
 
 excerpt: Silverback is a simple framework to build reactive, event-driven, microservices.
 
@@ -49,7 +50,3 @@ The message broker connected endpoints can be configured through a fluent API or
 # Modularity
 
 Silverback is splitted into multiple packages to allow you to depend only on the parts you plan to use.
-
-# Discover more
-
-To discover more features and further details visit the [Wiki on GitHub](https://github.com/BEagle1984/silverback/wiki).

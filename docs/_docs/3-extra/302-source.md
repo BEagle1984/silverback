@@ -10,7 +10,7 @@ github:
     excerpt: "The full source code is of course available on GitHub."
     url: "https://github.com/BEagle1984/silverback/"
     btn_label: "<i class='fab fa-github'></i> View on GitHub"
-    btn_class: "btn--inverse"
+    btn_class: "btn--primary"
 ---
 
 {% include feature_row id="github" type="left" %}

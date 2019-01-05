@@ -1,7 +1,7 @@
 ---
 title: External Configuration
 permalink: /docs/configuration/external
-
+toc: false
 ---
 
 Alternatively the package _Silverback.Integration.Configuration_ can be used to setup the endpoints from the `IConfiguration` provided by `Microsoft.Extensions.Configuration` (configuration usually coming either from the appsettings.json and/or the environment variables).
