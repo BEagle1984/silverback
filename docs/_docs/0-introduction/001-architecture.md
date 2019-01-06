@@ -1,5 +1,5 @@
 ---
-title:  Architecture Intro
+title:  Architecture
 permalink: /docs/architecture
 ---
 
