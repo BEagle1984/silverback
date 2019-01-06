@@ -5,6 +5,8 @@ permalink: /docs/configuration/inbound
 
 The inbound connector is used to automatically consume a topic/queue and relay the messages to the internal bus.
 
+**Note:** The inbound connector abstracts the message broker completely and the messages are automatically acknowledged if the subscribers complete without throwing an exception (unless error handling policies are defined and unless batch processing). {: .notice--note}
+
 # Implementations
 
 Multiple implementations are available, offering a variable degree of reliability.
@@ -105,6 +107,8 @@ policy.Move(new KafkaProducerEndpoint("same-endpoint") { ... })
     .ApplyWhen((msg, ex) => msg.FailedAttempts < 10)
 ```
 
+**Important!** If the last applied policy still fails the inbound connector will return the exception to the consumer, causing it to stop. A _Retry_ alone is therefore not recommendend and it should be combined with _Skip_ or _Move_. {: .notice--note}
+
 # Batch Processing
 
 The inbound connector can be configured to process the messages in batches.
@@ -136,7 +140,7 @@ public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
         .Broker.Connect();
 ```
 
-**Important*! The batch is consider a unit of work: it will be processed in the same DI scope, it will be atomically committed and the error policies will be applied to the batch as a whole.{: .notice--info}
+**Important!** The batch is consider a unit of work: it will be processed in the same DI scope, it will be atomically committed, the error policies will be applied to the batch as a whole and all messages will be acknowledged at once when the batch is successfully processed. {: .notice--note}
 
 Two additional events are published to the internal bus when batch processing:
 

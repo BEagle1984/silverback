@@ -23,3 +23,13 @@ Its main features are:
 # License
 
 The code is licensed under MIT license (see [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE) file for details)
+
+# Credits
+
+Silverback uses the following libraries under the hood:
+* [Rx.Net](https://github.com/dotnet/reactive)
+* [Confluent's .NET Client for Apache Kafka](https://github.com/confluentinc/confluent-kafka-dotnet)
+
+# Special Thanks
+
+A very big thank you to my friend and colleague [Fabio](https://github.com/ppx80) for the help with Kafka.
