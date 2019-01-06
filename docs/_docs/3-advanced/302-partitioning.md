@@ -1,6 +1,7 @@
 ---
 title: Kafka Partitioning
 permalink: /docs/advanced/partitioning
+toc: false
 ---
 
 Kafka can guarantee ordering only inside the same partition and it is therefore important to be able to route correlated messages into the same partition.
