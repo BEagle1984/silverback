@@ -71,15 +71,15 @@ namespace Silverback.Messaging.Connectors
                     _errorPolicy,
                     _serviceProvider);
 
-                _consumer.Received += (_, message, offset) => batch.AddMessage(message, offset);
+                _consumer.Received += (_, args) => batch.AddMessage(args.Message, args.Offset);
             }
             else
             {
-                _consumer.Received += (_, message, offset) => OnSingleMessageReceived(message, offset);
+                _consumer.Received += (_, args) => OnSingleMessageReceived(args.Message, args.Offset);
             }
         }
 
-        private void OnSingleMessageReceived(IMessage message, object offset)
+        private void OnSingleMessageReceived(IMessage message, IOffset offset)
         {
             _logger.LogTrace("Processing message.", message, _endpoint);
 
@@ -92,7 +92,7 @@ namespace Silverback.Messaging.Connectors
             });
         }
 
-        private void RelayAndCommitSingleMessage(IMessage message, object offset, IServiceProvider serviceProvider)
+        private void RelayAndCommitSingleMessage(IMessage message, IOffset offset, IServiceProvider serviceProvider)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        private void Commit(IEnumerable<object> offsets, IServiceProvider serviceProvider)
+        private void Commit(IEnumerable<IOffset> offsets, IServiceProvider serviceProvider)
         {
             _commitHandler?.Invoke(serviceProvider);
             _consumer.Acknowledge(offsets);

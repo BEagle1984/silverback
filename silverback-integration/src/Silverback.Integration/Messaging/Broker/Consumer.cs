@@ -18,22 +18,22 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
-        public event ReceivedEventHandler Received;
+        public event EventHandler<MessageReceivedEventArgs> Received;
 
-        public void Acknowledge(object offset) => Acknowledge(new[] {offset});
+        public void Acknowledge(IOffset offset) => Acknowledge(new[] {offset});
 
-        public abstract void Acknowledge(IEnumerable<object> offsets);
+        public abstract void Acknowledge(IEnumerable<IOffset> offsets);
 
-        protected void HandleMessage(byte[] buffer, object offset)
+        protected void HandleMessage(byte[] message, IOffset offset)
         {
             if (Received == null)
                 throw new InvalidOperationException("A message was received but no handler is configured, please attach to the Received event.");
 
-            var message = Endpoint.Serializer.Deserialize(buffer);
+            var deserializedMessage = Endpoint.Serializer.Deserialize(message);
 
-            _logger.LogTrace("Message received.", message, Endpoint);
+            _logger.LogTrace("Message received.", deserializedMessage, Endpoint);
 
-            Received.Invoke(this, message, offset);
+            Received.Invoke(this, new MessageReceivedEventArgs(deserializedMessage, offset));
         }
     }
 

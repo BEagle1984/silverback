@@ -78,7 +78,7 @@ namespace Silverback.Messaging.Broker
             try
             {
                 _messagesSinceCommit++;
-                HandleMessage(message.Value, tpo);
+                HandleMessage(message.Value, new KafkaOffset(tpo));
             }
             catch (Exception ex)
             {
@@ -91,11 +91,14 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        public override void Acknowledge(IEnumerable<object> offsets)
+        public override void Acknowledge(IEnumerable<IOffset> offsets)
         {
-            var lastOffsets = offsets.Cast<Confluent.Kafka.TopicPartitionOffset>()
-                .GroupBy(o => o.TopicPartition)
-                .Select(g => g.OrderByDescending(o => o.Offset.Value).First())
+            var lastOffsets = offsets.OfType<KafkaOffset>()
+                .GroupBy(o => o.Key)
+                .Select(g => g
+                    .OrderByDescending(o => o.TopicPartitionOffset.Offset.Value)
+                    .First()
+                    .TopicPartitionOffset)
                 .ToList();
 
             _innerConsumer.StoreOffset(lastOffsets

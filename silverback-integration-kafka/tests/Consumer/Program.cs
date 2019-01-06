@@ -53,9 +53,9 @@ namespace Consumer
             _broker.Disconnect();
         }
 
-        private static void OnMessageReceived(object sender, IMessage message, object offset)
+        private static void OnMessageReceived(object sender, MessageReceivedEventArgs args)
         {
-            var testMessage = message as TestMessage;
+            var testMessage = args.Message as TestMessage;
 
             if (testMessage == null)
             {
@@ -80,7 +80,7 @@ namespace Consumer
                 }
             }
 
-            _consumer.Acknowledge(offset);
+            _consumer.Acknowledge(args.Offset);
         }
 
         private static void PrintHeader()

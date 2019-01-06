@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Core" Version="0.3.2" />
+    <PackageReference Include="Silverback.Core" Version="0.3.2.1" />
     <PackageReference Include="System.Reactive" Version="4.1.2" />
   </ItemGroup>
 

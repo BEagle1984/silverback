@@ -1,16 +1,17 @@
 ﻿// Copyright (c) 2018 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 
 namespace Silverback.Messaging.Broker
 {
     public interface IConsumer
     {
-        event ReceivedEventHandler Received;
+        event EventHandler<MessageReceivedEventArgs> Received;
 
-        void Acknowledge(object offset);
+        void Acknowledge(IOffset offset);
 
-        void Acknowledge(IEnumerable<object> offsets);
+        void Acknowledge(IEnumerable<IOffset> offsets);
     }
 }

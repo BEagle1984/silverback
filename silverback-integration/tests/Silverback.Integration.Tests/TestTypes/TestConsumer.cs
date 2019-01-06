@@ -39,7 +39,7 @@ namespace Silverback.Tests.TestTypes
             HandleMessage(buffer, null);
         }
 
-        public override void Acknowledge(IEnumerable<object> offsets) =>
+        public override void Acknowledge(IEnumerable<IOffset> offsets) =>
             AcknowledgeCount = AcknowledgeCount + offsets.Count();
     }
 }

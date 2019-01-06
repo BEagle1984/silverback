@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -22,7 +23,7 @@ namespace Silverback.Messaging.Batch
         private readonly IErrorPolicy _errorPolicy;
 
         private readonly Action<IMessage, IEndpoint, IServiceProvider> _messageHandler;
-        private readonly Action<IEnumerable<object>, IServiceProvider> _commitHandler;
+        private readonly Action<IEnumerable<IOffset>, IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
         private readonly IServiceProvider _serviceProvider;
@@ -30,7 +31,7 @@ namespace Silverback.Messaging.Batch
         private readonly ILogger _logger;
 
         private readonly List<IMessage> _messages;
-        private readonly List<object> _offsets;
+        private readonly List<IOffset> _offsets;
         private readonly Timer _waitTimer;
 
         private Exception _processingException;
@@ -38,7 +39,7 @@ namespace Silverback.Messaging.Batch
         public MessageBatch(IEndpoint endpoint,
             BatchSettings settings,
             Action<IMessage, IEndpoint, IServiceProvider> messageHandler,
-            Action<IEnumerable<object>, IServiceProvider> commitHandler,
+            Action<IEnumerable<IOffset>, IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy, 
             IServiceProvider serviceProvider)
@@ -55,7 +56,7 @@ namespace Silverback.Messaging.Batch
             _settings = settings;
 
             _messages = new List<IMessage>(_settings.Size);
-            _offsets = new List<object>(_settings.Size);
+            _offsets = new List<IOffset>(_settings.Size);
 
             if (_settings.MaxWaitTime < TimeSpan.MaxValue)
             {
@@ -71,7 +72,7 @@ namespace Silverback.Messaging.Batch
 
         public int CurrentSize => _messages.Count;
 
-        public void AddMessage(IMessage message, object offset)
+        public void AddMessage(IMessage message, IOffset offset)
         {
             if (_processingException != null)
                 throw new SilverbackException("Cannot add to the batch because the processing of the previous batch failed. See inner exception for details.", _processingException);
