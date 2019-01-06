@@ -52,7 +52,7 @@ public class MyCustomMessageProcessor
 }
 ```
 
-**Note:** A single call to the `Connect` method is required for each broker and `GetConsumer` must be called before `Connect`. {: .notice--note}
+**Note:** A single call to the `Connect` method is required for each broker and `GetConsumer` must be called before `Connect`. {: .notice--info}
 
 ## Wrapping with an Observable
 
@@ -71,7 +71,7 @@ Observable.FromEventPattern<MessageReceivedEventArgs>(
 });
 ```
 
-**Note:** The `Achknowledge` method can be used to commit one or more messages at once. {: .notice--note}
+**Note:** The `Achknowledge` method can be used to commit one or more messages at once. {: .notice--info}
 
 # Producer
 
@@ -89,4 +89,4 @@ var producer = _broker.GetProducer(new KafkaProducerEndpoint("topic-name")
 producer.Produce(myMessage);
 ```
 
-**Note:** `GetProducer` (unlike `GetConsumer`) can be called at any time, even after `Connect` as been called. {: .notice--note}
+**Note:** `GetProducer` (unlike `GetConsumer`) can be called at any time, even after `Connect` as been called. {: .notice--info}

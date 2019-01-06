@@ -11,7 +11,9 @@ Combining those two fundamental pieces allows to build reactive and resilient mi
 
 The following diagram shows the Silverback's main components and how they interact in a typical use case.
 
-![Architecture Overview]({{ site.baseurl }}/assets/images/arch-overview.png)
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/arch-overview.png"><img src="{{ site.baseurl }}/assets/images/arch-overview.png"></a>
+</figure>
 
 \# | Description
 -- | :--
