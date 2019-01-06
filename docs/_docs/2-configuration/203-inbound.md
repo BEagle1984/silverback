@@ -18,13 +18,10 @@ The basic `InboundConnector` is very simple and just forwards the consumed messa
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
-    ...
-
     services
         .AddBus()
         .AddBroker<KafkaBroker>(options => options
             .AddInboundConnector());
-    ...
 }
 
 public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
@@ -47,13 +44,10 @@ The `DbContext` must include a `DbSet<InboundMessage>`.
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
-    ...
-
     services
         .AddBus()
         .AddBroker<KafkaBroker>(options => options
             .AddDbInboundConnector<MyDbContext>());
-    ...
 }
 
 public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
