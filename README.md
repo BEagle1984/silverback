@@ -32,4 +32,4 @@ Have a look at the [project's website](https://beagle1984.github.io/silverback/d
 
 ## License
 
-[MIT](https://github.com/BEagle1984/silverback/blob/master/LICENSE)
+This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE) file for details)
