@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Util;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
@@ -39,41 +40,56 @@ namespace Silverback.Messaging.Publishing
 
             var resultsCollection = new List<object>();
 
-            foreach (var method in _subscribedMethodsProvider.GetSubscribedMethods(message))
-            {
-                await InvokeSubscribedMethodAndCollectResult(method, message, executeAsync, resultsCollection);
-            }
+            var subscribers = _subscribedMethodsProvider.GetSubscribedMethods(message);
+
+            await InvokeParallelSubscribersAndCollectResults(message, executeAsync, subscribers, resultsCollection);
+            await InvokeSequentialSubscribersAndCollectResults(message, executeAsync, subscribers, resultsCollection);
 
             return resultsCollection.Where(r => r != null);
         }
+
+        // TODO: Test parallel subscriber!
+        private Task InvokeParallelSubscribersAndCollectResults(IMessage message, bool executeAsync, IEnumerable<SubscribedMethod> subscribers, List<object> resultsCollection) =>
+            Task.WhenAll(subscribers.Where(s => s.Parallel).Select(method =>
+                InvokeSubscribedMethodAndCollectResult(method, message, executeAsync, resultsCollection)));
+
+        private async Task InvokeSequentialSubscribersAndCollectResults(IMessage message, bool executeAsync, IEnumerable<SubscribedMethod> subscribers, List<object> resultsCollection) =>
+            await subscribers.Where(s => !s.Parallel).ForEachAsync(method =>
+                InvokeSubscribedMethodAndCollectResult(method, message, executeAsync, resultsCollection));
 
         private async Task InvokeSubscribedMethodAndCollectResult(SubscribedMethod method, IMessage message, bool executeAsync, List<object> resultsCollection)
         {
             var methodResult = await SubscribedMethodInvoker.InvokeAndGetResult(method, message, executeAsync);
 
-            if (!await PublishReturnedMessages(methodResult, executeAsync, resultsCollection));
+            if (!await PublishReturnedMessages(methodResult, executeAsync, resultsCollection))
             {
-                resultsCollection.Add(methodResult);
+                lock (resultsCollection)
+                {
+                    resultsCollection.Add(methodResult);
+                }
             }
         }
 
         private async Task<bool> PublishReturnedMessages(object methodResult, bool executeAsync, List<object> resultsCollection)
         {
-            if (methodResult is IMessage returnMessage)
+            switch (methodResult)
             {
-                resultsCollection.AddRange(await Publish(returnMessage, executeAsync));
+                case IMessage returnMessage:
+                {
+                    resultsCollection.AddRange(await Publish(returnMessage, executeAsync));
 
-                return true;
+                    return true;
+                }
+                case IEnumerable<IMessage> returnMessages:
+                {
+                    foreach (var returnMessage2 in returnMessages)
+                        resultsCollection.AddRange(await Publish(returnMessage2, executeAsync));
+
+                    return true;
+                }
+                default:
+                    return false;
             }
-            else if (methodResult is IEnumerable<IMessage> returnMessages)
-            {
-                foreach (var returnMessage2 in returnMessages)
-                    resultsCollection.AddRange(await Publish(returnMessage2, executeAsync));
-
-                return true;
-            }
-
-            return false;
         }
     }
 }

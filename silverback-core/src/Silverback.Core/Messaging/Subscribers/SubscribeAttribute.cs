@@ -14,5 +14,6 @@ namespace Silverback.Messaging.Subscribers
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class SubscribeAttribute : Attribute
     {
+        public bool Parallel { get; set; }
     }
 }

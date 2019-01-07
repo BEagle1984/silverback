@@ -47,7 +47,8 @@ namespace Silverback.Messaging.Subscribers
                         {
                             MethodInfo = methodInfo,
                             Parameters = parameters,
-                            SubscribedMessageType = GetMessageParameterType(methodInfo, parameters)
+                            SubscribedMessageType = GetMessageParameterType(methodInfo, parameters),
+                            Parallel = methodInfo.GetCustomAttribute<SubscribeAttribute>().Parallel
                         };
                     })
                     .ToList());

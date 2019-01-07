@@ -12,5 +12,6 @@ namespace Silverback.Messaging.Subscribers
         public MethodInfo MethodInfo { get; set; }
         public ParameterInfo[] Parameters { get; set; }
         public Type SubscribedMessageType { get; set; }
+        public bool Parallel { get; set; }
     }
 }
