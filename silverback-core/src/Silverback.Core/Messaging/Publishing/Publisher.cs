@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Publishing
         {
             var methodResult = await SubscribedMethodInvoker.InvokeAndGetResult(method, message, executeAsync);
 
-            if (!await PublishReturnedMessages(methodResult, executeAsync, resultsCollection));
+            if (!await PublishReturnedMessages(methodResult, executeAsync, resultsCollection))
             {
                 resultsCollection.Add(methodResult);
             }
