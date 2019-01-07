@@ -36,14 +36,14 @@ namespace Silverback.Core.Rx.Tests.Messaging
         public IPublisher Publisher;
 
         [Subscribe]
-        public async void OnMessageReceived(InMessage message)
+        public async Task OnMessageReceived(InMessage message)
         {
             await Observable
                 .Return(message)
                 .SelectMany(this.process)
-                .SelectMany(async x => { await Publisher.PublishAsync(x); return 0;})
-                .DefaultIfEmpty(0)
-                .GetAwaiter();          
+                .SelectMany(async x => {
+                    await Publisher.PublishAsync(x); return true;
+                });        
         }
 
         public abstract IObservable<OutMessage> process(InMessage message); 
@@ -55,6 +55,7 @@ namespace Silverback.Core.Rx.Tests.Messaging
         {
             return Observable
                 .Range(1,2)
+                .Delay(TimeSpan.FromMilliseconds(500))
                 .Select(x => new TestEventTwo());                
         }
     }
