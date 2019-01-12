@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Messages;
 
 namespace Consumer
 {
