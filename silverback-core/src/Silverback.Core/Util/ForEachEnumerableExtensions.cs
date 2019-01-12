@@ -2,12 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Silverback.Util
 {
-    internal static class EnumerableExtensions
+    // TODO: Test
+    internal static class EnumerableForEachExtensions
     {
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
@@ -24,5 +26,16 @@ namespace Silverback.Util
                 await action(element);
             }
         }
+
+        public static void ParallelForEach<T>(this IEnumerable<T> source, Action<T> action, int? maxDegreeOfParallelism = null) =>
+            Parallel.ForEach(source, action);
+
+        // http://blog.briandrupieski.com/throttling-asynchronous-methods-in-csharp
+        public static Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> action, int? maxDegreeOfParallelism = null) =>
+            source.ParallelSelectAsync(async s =>
+            {
+                await action(s);
+                return 0;
+            }, maxDegreeOfParallelism);
     }
 }

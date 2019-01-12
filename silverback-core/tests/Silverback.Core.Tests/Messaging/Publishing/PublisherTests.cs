@@ -5,15 +5,18 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Silverback.Core.Tests.TestTypes;
 using Silverback.Core.Tests.TestTypes.Messages;
 using Silverback.Core.Tests.TestTypes.Subscribers;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Subscribers.ArgumentResolvers;
 
 namespace Silverback.Core.Tests.Messaging.Publishing
 {
@@ -22,6 +25,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
     {
         private TestSubscriber _syncSubscriber;
         private TestAsyncSubscriber _asyncSubscriber;
+        private IPublisher _publisher;
 
         [SetUp]
         public void Setup()
@@ -30,10 +34,26 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             _asyncSubscriber = new TestAsyncSubscriber();
         }
 
+        private IPublisher GetPublisher(params ISubscriber[] subscribers)
+        {
+            var services = new ServiceCollection();
+            services.AddBus();
+
+            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
+            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+
+            foreach (var sub in subscribers)
+                services.AddSingleton<ISubscriber>(sub);
+            
+            var serviceProvider = services.BuildServiceProvider();
+
+            return serviceProvider.GetRequiredService<IPublisher>();
+        }
+
         [Test]
         public void Publish_SomeMessages_Received()
         {
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(_syncSubscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(_syncSubscriber);
 
             publisher.Publish(new TestCommandOne());
             publisher.Publish(new TestCommandTwo());
@@ -44,7 +64,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Test]
         public async Task PublishAsync_SomeMessages_Received()
         {
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(_syncSubscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(_syncSubscriber);
 
             await publisher.PublishAsync(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandTwo());
@@ -55,7 +75,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Test]
         public void Publish_SomeMessages_ReceivedByAllSubscribers()
         {
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(_syncSubscriber, _asyncSubscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
 
             publisher.Publish(new TestCommandOne());
             publisher.Publish(new TestCommandTwo());
@@ -70,7 +90,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Test]
         public async Task PublishAsync_SomeMessages_ReceivedByAllSubscribers()
         {
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(_syncSubscriber, _asyncSubscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
 
             await publisher.PublishAsync(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandTwo());
@@ -85,7 +105,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Test]
         public async Task PublishSyncAndAsync_SomeMessages_ReceivedByAllSubscribers()
         {
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(_syncSubscriber, _asyncSubscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
 
             await publisher.PublishAsync(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandTwo());
@@ -102,7 +122,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         {
             var service1 = new TestServiceOne();
             var service2 = new TestServiceTwo();
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(service1, service2), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(service1, service2);
 
             await publisher.PublishAsync(new TestCommandOne());         // service1 +2
             await publisher.PublishAsync(new TestCommandTwo());         // service2 +2
@@ -128,7 +148,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         {
             var service1 = new TestServiceOne();
             var service2 = new TestServiceTwo();
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new RepublishMessagesTestService(), service1, service2), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(service1, service2);
 
             publisher.Publish(message);
 
@@ -141,7 +161,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         {
             var service1 = new TestServiceOne();
             var service2 = new TestServiceTwo();
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new RepublishMessagesTestService(), service1, service2), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(service1, service2);
 
             await publisher.PublishAsync(message);
 
@@ -152,7 +172,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Test]
         public void Publish_ExceptionInSubscriber_ExceptionReturned()
         {
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestExceptionSubscriber()), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(new TestExceptionSubscriber());
 
             Assert.Throws<AggregateException>(() => publisher.Publish(new TestEventOne()));
             Assert.Throws<AggregateException>(() => publisher.Publish(new TestEventTwo()));
@@ -161,7 +181,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Test]
         public void PublishAsync_ExceptionInSubscriber_ExceptionReturned()
         {
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestExceptionSubscriber()), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(new TestExceptionSubscriber());
 
             Assert.ThrowsAsync<TargetInvocationException>(() => publisher.PublishAsync(new TestEventOne()));
             Assert.ThrowsAsync<TargetInvocationException>(() => publisher.PublishAsync(new TestEventTwo()));
@@ -171,7 +191,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         public void Publish_NewMessageReturnedBySubscriber_MessageRepublished()
         {
             var subscriber = new TestSubscriber();
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRepublisher(), subscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(new TestRepublisher(), subscriber);
 
             publisher.Publish(new TestCommandOne());
 
@@ -182,7 +202,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         public async Task PublishAsync_NewMessageReturnedBySubscriber_MessageRepublished()
         {
             var subscriber = new TestSubscriber();
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRepublisher(), subscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(new TestRepublisher(), subscriber);
 
             await publisher.PublishAsync(new TestCommandOne());
 
@@ -193,7 +213,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         public void Publish_NewMessagesReturnedBySubscriber_MessagesRepublished()
         {
             var subscriber = new TestSubscriber();
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRepublisher(), subscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(new TestRepublisher(), subscriber);
 
             publisher.Publish(new TestCommandTwo());
 
@@ -204,7 +224,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         public async Task PublishAsync_NewMessagesReturnedBySubscriber_MessagesRepublished()
         {
             var subscriber = new TestSubscriber();
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRepublisher(), subscriber), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(new TestRepublisher(), subscriber);
 
             await publisher.PublishAsync(new TestCommandTwo());
 
@@ -214,7 +234,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Test]
         public void Publish_HandlersReturnValue_ResultsReturned()
         {
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRequestReplier()), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(new TestRepublisher());
 
             var results = publisher.Publish<string>(new TestRequestCommandOne());
 
@@ -224,11 +244,13 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Test]
         public async Task PublishAsync_HandlersReturnValue_ResultsReturned()
         {
-            var publisher = new Publisher(TestServiceProvider.Create<ISubscriber>(new TestRequestReplier()), NullLoggerFactory.Instance.CreateLogger<Publisher>());
+            var publisher = GetPublisher(new TestRepublisher());
 
             var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
 
             Assert.That(results, Is.EqualTo(new[] { "response", "response2" }));
         }
+
+        // TODO: Test new cases (parallel etc.)
     }
 }

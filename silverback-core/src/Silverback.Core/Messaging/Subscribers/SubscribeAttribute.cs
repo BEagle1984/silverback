@@ -14,6 +14,38 @@ namespace Silverback.Messaging.Subscribers
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class SubscribeAttribute : Attribute
     {
-        public bool Parallel { get; set; }
+        private int? _maxDegreeOfParallelism = 1;
+
+        /// <summary>
+        /// A value indicating whether the method can be executed concurrently to other
+        /// methods handling the <b>same message</b>.
+        /// The default value is <c>true</c> (the method will be executed sequentially
+        /// to other subscribers).
+        /// </summary>
+        public bool Exclusive { get; set; } = true;
+
+        /// <summary>
+        /// A value indicating whether the method can be executed concurrently to 
+        /// process the messages in the same <b>batch</b>.
+        /// The default value is <c>false</c> (the messages are processed sequentially).
+        /// </summary>
+        public bool Parallel { get; set; } = false;
+
+        /// <summary>
+        /// Limit the number of messages in a <b>batch</b> that are processed concurrently.
+        /// Used only together with Parallel = true.
+        /// The default value is null.
+        /// </summary>
+        public int? MaxDegreeOfParallelism
+        {
+            get => _maxDegreeOfParallelism;
+            set
+            {
+                if (value != null && value <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "MaxDegreeOfParallelism must be greater or equal to 1 (or null).");
+
+                _maxDegreeOfParallelism = value; 
+            }
+        }
     }
 }
