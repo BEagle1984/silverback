@@ -145,7 +145,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         {
             var service1 = new TestServiceOne();
             var service2 = new TestServiceTwo();
-            var publisher = GetPublisher(service1, service2);
+            var publisher = GetPublisher(new RepublishMessagesTestService(), service1, service2);
 
             publisher.Publish(message);
 
@@ -158,7 +158,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         {
             var service1 = new TestServiceOne();
             var service2 = new TestServiceTwo();
-            var publisher = GetPublisher(service1, service2);
+            var publisher = GetPublisher(new RepublishMessagesTestService(), service1, service2);
 
             await publisher.PublishAsync(message);
 
@@ -231,7 +231,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Test]
         public void Publish_HandlersReturnValue_ResultsReturned()
         {
-            var publisher = GetPublisher(new TestRepublisher());
+            var publisher = GetPublisher(new TestRequestReplier());
 
             var results = publisher.Publish<string>(new TestRequestCommandOne());
 
@@ -241,7 +241,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Test]
         public async Task PublishAsync_HandlersReturnValue_ResultsReturned()
         {
-            var publisher = GetPublisher(new TestRepublisher());
+            var publisher = GetPublisher(new TestRequestReplier());
 
             var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
 

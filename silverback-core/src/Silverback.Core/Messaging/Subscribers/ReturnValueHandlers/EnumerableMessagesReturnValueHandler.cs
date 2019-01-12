@@ -32,6 +32,6 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
             _publisher.Publish<object>((IEnumerable<object>)returnValue);
 
         public Task<IEnumerable<object>> HandleAsync(object returnValue) =>
-            _publisher.PublishAsync<object>(returnValue);
+            _publisher.PublishAsync<object>((IEnumerable<object>)returnValue);
     }
 }

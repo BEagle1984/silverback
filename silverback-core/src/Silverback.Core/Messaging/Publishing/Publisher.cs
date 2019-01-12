@@ -50,10 +50,10 @@ namespace Silverback.Messaging.Publishing
             Publish(messages, true);
 
         public IEnumerable<TResult> Publish<TResult>(IEnumerable<object> messages) => 
-            Publish(messages, false).Result.Cast<TResult>();
+            Publish(messages, false).Result.Cast<TResult>().ToList();
 
         public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) => 
-            (await Publish(messages, true)).Cast<TResult>();
+            (await Publish(messages, true)).Cast<TResult>().ToList();
 
         // TODO: Test recursion
         private async Task<IEnumerable<object>> Publish(IEnumerable<object> messages, bool executeAsync)
