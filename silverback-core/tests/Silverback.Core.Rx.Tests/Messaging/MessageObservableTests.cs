@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
@@ -13,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Core.Messaging;
-using Silverback.Core.Rx.Tests.TestTypes;
 using Silverback.Core.Rx.Tests.TestTypes.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -9,14 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using Silverback.Core.Tests.TestTypes;
 using Silverback.Core.Tests.TestTypes.Messages;
 using Silverback.Core.Tests.TestTypes.Subscribers;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
-using Silverback.Messaging.Subscribers.ArgumentResolvers;
 
 namespace Silverback.Core.Tests.Messaging.Publishing
 {

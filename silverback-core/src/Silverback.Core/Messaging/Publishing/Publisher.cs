@@ -1,19 +1,15 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
-using Silverback.Util;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
-using Silverback.Messaging.Subscribers.ReturnValueHandlers;
-using Silverback.Messaging.Subscribers.Subscriptions;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Publishing
 {

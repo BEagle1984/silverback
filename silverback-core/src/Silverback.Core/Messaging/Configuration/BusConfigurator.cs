@@ -1,14 +1,9 @@
-﻿using System;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Silverback.Messaging;
-using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.Subscriptions;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {

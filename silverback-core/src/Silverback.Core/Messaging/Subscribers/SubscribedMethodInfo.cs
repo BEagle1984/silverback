@@ -4,7 +4,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 
 namespace Silverback.Messaging.Subscribers
 {

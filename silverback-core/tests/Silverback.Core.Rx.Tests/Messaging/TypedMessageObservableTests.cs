@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Core.Messaging;
-using Silverback.Core.Rx.Tests.TestTypes;
 using Silverback.Core.Rx.Tests.TestTypes.Messages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
