@@ -25,16 +25,17 @@ namespace Silverback.Messaging.Subscribers
         public bool Exclusive { get; set; } = true;
 
         /// <summary>
-        /// A value indicating whether the method can be executed concurrently to 
-        /// process the messages in the same <b>batch</b>.
+        /// A value indicating whether the method can be executed concurrently when
+        /// multiple messages are fired at the same time (e.g. in a batch).
         /// The default value is <c>false</c> (the messages are processed sequentially).
         /// </summary>
         public bool Parallel { get; set; } = false;
 
         /// <summary>
-        /// Limit the number of messages in a <b>batch</b> that are processed concurrently.
+        /// Limit the number of messages that are processed concurrently.
         /// Used only together with Parallel = true.
-        /// The default value is null.
+        /// The default value is null and means that there is no limit to the
+        /// degree of parallelism.
         /// </summary>
         public int? MaxDegreeOfParallelism
         {

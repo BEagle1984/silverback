@@ -124,8 +124,8 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             await publisher.PublishAsync(new TestCommandOne());         // service1 +2
             await publisher.PublishAsync(new TestCommandTwo());         // service2 +2
             publisher.Publish(new TestCommandOne());                    // service1 +2
-            await publisher.PublishAsync(new TransactionCommitEvent()); // service1/2 +1
-            publisher.Publish(new TransactionRollbackEvent());          // service1/2 +1
+            await publisher.PublishAsync(new TransactionCompleteEvent()); // service1/2 +1
+            publisher.Publish(new TransactionAbortedEvent());          // service1/2 +1
 
             Assert.That(service1.ReceivedMessagesCount, Is.EqualTo(6));
             Assert.That(service2.ReceivedMessagesCount, Is.EqualTo(4));
@@ -248,6 +248,6 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             Assert.That(results, Is.EqualTo(new[] { "response", "response2" }));
         }
 
-        // TODO: Test new cases (parallel etc.)
+        // TODO: Test new cases (parallel, exclusive, batch, etc.)
     }
 }

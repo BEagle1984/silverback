@@ -89,15 +89,13 @@ namespace Silverback.EntityFrameworkCore
             ? dbContext.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)
             : Task.FromResult(dbContext.SaveChanges(acceptAllChangesOnSuccess));
 
-        private static Task PublishEvent<TEvent>(IEventPublisher eventPublisher, bool async)
+        private static async Task PublishEvent<TEvent>(IEventPublisher eventPublisher, bool async)
             where TEvent : IEvent, new()
         {
             if (async)
-                return eventPublisher.PublishAsync(new TEvent());
-
-            eventPublisher.Publish(new TEvent());
-
-            return Task.CompletedTask;
+                await eventPublisher.PublishAsync(new TEvent());
+            else
+                eventPublisher.Publish(new TEvent());
         }
     }
 }

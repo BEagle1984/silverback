@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
@@ -60,14 +61,12 @@ namespace Silverback.Messaging.Publishing
         {
             var messagesList = messages?.ToList();
 
-            if (messagesList == null ||!messagesList.Any())
+            if (messagesList == null || !messagesList.Any())
                 return Enumerable.Empty<object>();
 
-            if (messagesList.Count > 1)
-                _logger.LogTrace("Publishing batch of {batchSize} messages...", messagesList.Count);
-
             return (await InvokeExclusiveMethods(messagesList, executeAsync))
-                .Union(await InvokeNonExclusiveMethods(messagesList, executeAsync));
+                .Union(await InvokeNonExclusiveMethods(messagesList, executeAsync))
+                .ToList();
         }
 
         private Task<IEnumerable<object>> InvokeExclusiveMethods(IEnumerable<object> messages, bool executeAsync) =>

@@ -24,10 +24,10 @@ namespace Silverback.Core.Tests.TestTypes.Subscribers
             });
 
         [Subscribe]
-        public void OnCommit(TransactionCommitEvent message) => ReceivedMessagesCount++;
+        public void OnCommit(TransactionAbortedEvent message) => ReceivedMessagesCount++;
 
         [Subscribe]
-        public async Task OnRollback(TransactionRollbackEvent message) =>
+        public async Task OnRollback(TransactionAbortedEvent message) =>
             await Task.Run(async () =>
             {
                 await Task.Delay(10);
