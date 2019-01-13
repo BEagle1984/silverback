@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Silverback.Util
@@ -9,11 +10,13 @@ namespace Silverback.Util
     {
         public static async Task<object> GetReturnValue(this Task task)
         {
-            if (task is Task<object> taskWithReturnValue)
-                return await taskWithReturnValue;
-
             await task;
-            return null;
+
+            var resultProperty = task.GetType().GetProperty("Result");
+
+            return resultProperty != null
+                ? resultProperty.GetValue(task)
+                : null;
         }
     }
 }

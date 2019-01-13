@@ -2,15 +2,16 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Core.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Core.Tests.Domain
 {
-    [TestFixture]
+    [Collection("Core.Domain")]
     public class EntityTests
     {
-        [Test]
+        [Fact]
         public void AddEventTest()
         {
             var entity = new TestAggregateRoot();
@@ -19,12 +20,12 @@ namespace Silverback.Core.Tests.Domain
             entity.AddEvent(new TestDomainEventTwo());
             entity.AddEvent(new TestDomainEventOne());
 
-            Assert.That(entity.DomainEvents, Is.Not.Null);
-            Assert.That(entity.DomainEvents.Count(), Is.EqualTo(3));
-            Assert.That(entity.DomainEvents.All(e => e.Source == entity));
+            entity.DomainEvents.Should().NotBeNull();
+            entity.DomainEvents.Count().Should().Be(3);
+            entity.DomainEvents.Should().OnlyContain(e => e.Source == entity);
         }
 
-        [Test]
+        [Fact]
         public void AddEventGenericTest()
         {
             var entity = new TestAggregateRoot();
@@ -33,12 +34,12 @@ namespace Silverback.Core.Tests.Domain
             entity.AddEvent<TestDomainEventTwo>();
             entity.AddEvent<TestDomainEventOne>();
 
-            Assert.That(entity.DomainEvents, Is.Not.Null);
-            Assert.That(entity.DomainEvents.Count(), Is.EqualTo(3));
-            Assert.That(entity.DomainEvents.All(e => e.Source == entity));
+            entity.DomainEvents.Should().NotBeNull();
+            entity.DomainEvents.Count().Should().Be(3);
+            entity.DomainEvents.Should().OnlyContain(e => e.Source == entity);
         }
 
-        [Test]
+        [Fact]
         public void ClearEventsTest()
         {
             var entity = new TestAggregateRoot();
@@ -48,7 +49,8 @@ namespace Silverback.Core.Tests.Domain
             entity.AddEvent<TestDomainEventOne>();
             entity.ClearEvents();
 
-            Assert.That(entity.DomainEvents.Count(), Is.EqualTo(0));
+            entity.DomainEvents.Should().NotBeNull();
+            entity.DomainEvents.Should().BeEmpty();
         }
     }
 }

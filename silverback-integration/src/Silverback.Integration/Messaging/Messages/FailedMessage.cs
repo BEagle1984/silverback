@@ -5,12 +5,12 @@ using System;
 
 namespace Silverback.Messaging.Messages
 {
-    public class FailedMessage : IMessage
+    public class FailedMessage
     {
         public FailedMessage()
         { }
 
-        public FailedMessage(IMessage message, int failedAttempts = 1)
+        public FailedMessage(object message, int failedAttempts = 1)
         {
             if (failedAttempts < 1) throw new ArgumentOutOfRangeException(nameof(failedAttempts), failedAttempts, "failedAttempts must be >= 1");
 
@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Messages
             FailedAttempts = failedAttempts;
         }
 
-        public IMessage Message { get; set; }
+        public object Message { get; set; }
 
         public int FailedAttempts { get; set; }
     }

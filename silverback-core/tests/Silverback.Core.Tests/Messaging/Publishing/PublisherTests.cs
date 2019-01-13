@@ -2,30 +2,31 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
 using Silverback.Core.Tests.TestTypes.Messages;
 using Silverback.Core.Tests.TestTypes.Subscribers;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
+using Xunit;
 
 namespace Silverback.Core.Tests.Messaging.Publishing
 {
-    [TestFixture]
+    [Collection("Core.Messaging")]
     public class PublisherTests
     {
-        private TestSubscriber _syncSubscriber;
-        private TestAsyncSubscriber _asyncSubscriber;
+        private readonly TestSubscriber _syncSubscriber;
+        private readonly TestAsyncSubscriber _asyncSubscriber;
         private IPublisher _publisher;
 
-        [SetUp]
-        public void Setup()
+        public PublisherTests()
         {
             _syncSubscriber = new TestSubscriber();
             _asyncSubscriber = new TestAsyncSubscriber();
@@ -41,13 +42,13 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
             foreach (var sub in subscribers)
                 services.AddSingleton<ISubscriber>(sub);
-            
+
             var serviceProvider = services.BuildServiceProvider();
 
             return serviceProvider.GetRequiredService<IPublisher>();
         }
 
-        [Test]
+        [Fact]
         public void Publish_SomeMessages_Received()
         {
             var publisher = GetPublisher(_syncSubscriber);
@@ -55,10 +56,10 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             publisher.Publish(new TestCommandOne());
             publisher.Publish(new TestCommandTwo());
 
-            Assert.That(_syncSubscriber.ReceivedMessagesCount, Is.EqualTo(2));
+            _syncSubscriber.ReceivedMessagesCount.Should().Be(2, "2 messages have been published");
         }
 
-        [Test]
+        [Fact]
         public async Task PublishAsync_SomeMessages_Received()
         {
             var publisher = GetPublisher(_syncSubscriber);
@@ -66,10 +67,10 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             await publisher.PublishAsync(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandTwo());
 
-            Assert.That(_syncSubscriber.ReceivedMessagesCount, Is.EqualTo(2));
+            _syncSubscriber.ReceivedMessagesCount.Should().Be(2, "2 messages have been published");
         }
 
-        [Test]
+        [Fact]
         public void Publish_SomeMessages_ReceivedByAllSubscribers()
         {
             var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
@@ -80,11 +81,11 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             publisher.Publish(new TestCommandTwo());
             publisher.Publish(new TestCommandTwo());
 
-            Assert.That(_syncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
-            Assert.That(_asyncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
+            _syncSubscriber.ReceivedMessagesCount.Should().Be(5, "5 messages have been published");
+            _asyncSubscriber.ReceivedMessagesCount.Should().Be(5, "5 messages have been published");
         }
 
-        [Test]
+        [Fact]
         public async Task PublishAsync_SomeMessages_ReceivedByAllSubscribers()
         {
             var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
@@ -95,11 +96,11 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             await publisher.PublishAsync(new TestCommandTwo());
             await publisher.PublishAsync(new TestCommandTwo());
 
-            Assert.That(_syncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
-            Assert.That(_asyncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
+            _syncSubscriber.ReceivedMessagesCount.Should().Be(5, "5 messages have been published");
+            _asyncSubscriber.ReceivedMessagesCount.Should().Be(5, "5 messages have been published");
         }
 
-        [Test]
+        [Fact]
         public async Task PublishSyncAndAsync_SomeMessages_ReceivedByAllSubscribers()
         {
             var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
@@ -110,11 +111,11 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             await publisher.PublishAsync(new TestCommandTwo());
             publisher.Publish(new TestCommandTwo());
 
-            Assert.That(_syncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
-            Assert.That(_asyncSubscriber.ReceivedMessagesCount, Is.EqualTo(5));
+            _syncSubscriber.ReceivedMessagesCount.Should().Be(5, "5 messages have been published");
+            _asyncSubscriber.ReceivedMessagesCount.Should().Be(5, "5 messages have been published");
         }
 
-        [Test]
+        [Fact]
         public async Task Publish_SomeMessages_ReceivedByAllSubscribedMethods()
         {
             var service1 = new TestServiceOne();
@@ -127,20 +128,11 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             await publisher.PublishAsync(new TransactionCompleteEvent()); // service1/2 +1
             publisher.Publish(new TransactionAbortedEvent());          // service1/2 +1
 
-            Assert.That(service1.ReceivedMessagesCount, Is.EqualTo(6));
-            Assert.That(service2.ReceivedMessagesCount, Is.EqualTo(4));
+            service1.ReceivedMessagesCount.Should().Be(6);
+            service2.ReceivedMessagesCount.Should().Be(4);
         }
 
-        public static IEnumerable<TestCaseData> Publish_SubscribedMessage_ReceivedRepublishedMessages_TestCases
-        {
-            get
-            {
-                yield return new TestCaseData(new TestEventOne(), 1, 0);
-                yield return new TestCaseData(new TestEventTwo(), 1, 1);
-            }
-        }
-
-        [Test, TestCaseSource(nameof(Publish_SubscribedMessage_ReceivedRepublishedMessages_TestCases))]
+        [Theory, ClassData(typeof(Publish_SubscribedMessage_ReceivedRepublishedMessages_TestData))]
         public void Publish_SubscribedMessage_ReceivedRepublishedMessages(IEvent message, int expectedEventOne, int expectedEventTwo)
         {
             var service1 = new TestServiceOne();
@@ -149,11 +141,11 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
             publisher.Publish(message);
 
-            Assert.That(service1.ReceivedMessagesCount, Is.EqualTo(expectedEventOne * 2));
-            Assert.That(service2.ReceivedMessagesCount, Is.EqualTo(expectedEventTwo * 2));
+            service1.ReceivedMessagesCount.Should().Be(expectedEventOne * 2);
+            service2.ReceivedMessagesCount.Should().Be(expectedEventTwo * 2);
         }
 
-        [Test, TestCaseSource(nameof(Publish_SubscribedMessage_ReceivedRepublishedMessages_TestCases))]
+        [Theory, ClassData(typeof(Publish_SubscribedMessage_ReceivedRepublishedMessages_TestData))]
         public async Task PublishAsync_SubscribedMessage_ReceivedRepublishedMessages(IEvent message, int expectedEventOne, int expectedEventTwo)
         {
             var service1 = new TestServiceOne();
@@ -162,29 +154,32 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
             await publisher.PublishAsync(message);
 
-            Assert.That(service1.ReceivedMessagesCount, Is.EqualTo(expectedEventOne * 2));
-            Assert.That(service2.ReceivedMessagesCount, Is.EqualTo(expectedEventTwo * 2));
+            service1.ReceivedMessagesCount.Should().Be(expectedEventOne * 2);
+            service2.ReceivedMessagesCount.Should().Be(expectedEventTwo * 2);
         }
 
-        [Test]
+        [Fact]
         public void Publish_ExceptionInSubscriber_ExceptionReturned()
         {
             var publisher = GetPublisher(new TestExceptionSubscriber());
 
-            Assert.Throws<AggregateException>(() => publisher.Publish(new TestEventOne()));
-            Assert.Throws<AggregateException>(() => publisher.Publish(new TestEventTwo()));
+            publisher.Invoking(x => x.Publish(new TestEventOne())).Should().Throw<AggregateException>();
+            publisher.Invoking(x => x.Publish(new TestEventTwo())).Should().Throw<AggregateException>();
         }
 
-        [Test]
+        [Fact]
         public void PublishAsync_ExceptionInSubscriber_ExceptionReturned()
         {
             var publisher = GetPublisher(new TestExceptionSubscriber());
 
-            Assert.ThrowsAsync<TargetInvocationException>(() => publisher.PublishAsync(new TestEventOne()));
-            Assert.ThrowsAsync<TargetInvocationException>(() => publisher.PublishAsync(new TestEventTwo()));
+            Func<Task> act1 = async () => await publisher.PublishAsync(new TestEventOne());
+            Func<Task> act2 = async () => await publisher.PublishAsync(new TestEventTwo());
+
+            act1.Should().Throw<AggregateException>();
+            act2.Should().Throw<AggregateException>();
         }
 
-        [Test]
+        [Fact]
         public void Publish_NewMessageReturnedBySubscriber_MessageRepublished()
         {
             var subscriber = new TestSubscriber();
@@ -192,10 +187,10 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
             publisher.Publish(new TestCommandOne());
 
-            Assert.That(subscriber.ReceivedMessagesCount, Is.EqualTo(2));
+            subscriber.ReceivedMessagesCount.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public async Task PublishAsync_NewMessageReturnedBySubscriber_MessageRepublished()
         {
             var subscriber = new TestSubscriber();
@@ -203,10 +198,10 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
             await publisher.PublishAsync(new TestCommandOne());
 
-            Assert.That(subscriber.ReceivedMessagesCount, Is.EqualTo(2));
+            subscriber.ReceivedMessagesCount.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void Publish_NewMessagesReturnedBySubscriber_MessagesRepublished()
         {
             var subscriber = new TestSubscriber();
@@ -214,10 +209,10 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
             publisher.Publish(new TestCommandTwo());
 
-            Assert.That(subscriber.ReceivedMessagesCount, Is.EqualTo(3));
+            subscriber.ReceivedMessagesCount.Should().Be(3);
         }
 
-        [Test]
+        [Fact]
         public async Task PublishAsync_NewMessagesReturnedBySubscriber_MessagesRepublished()
         {
             var subscriber = new TestSubscriber();
@@ -225,29 +220,39 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
             await publisher.PublishAsync(new TestCommandTwo());
 
-            Assert.That(subscriber.ReceivedMessagesCount, Is.EqualTo(3));
+            subscriber.ReceivedMessagesCount.Should().Be(3);
         }
 
-        [Test]
+        [Fact]
         public void Publish_HandlersReturnValue_ResultsReturned()
         {
             var publisher = GetPublisher(new TestRequestReplier());
 
             var results = publisher.Publish<string>(new TestRequestCommandOne());
 
-            Assert.That(results, Is.EqualTo(new[] { "response", "response2" }));
+            results.Should().Equal("response", "response2");
         }
 
-        [Test]
+        [Fact]
         public async Task PublishAsync_HandlersReturnValue_ResultsReturned()
         {
             var publisher = GetPublisher(new TestRequestReplier());
 
             var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
 
-            Assert.That(results, Is.EqualTo(new[] { "response", "response2" }));
+            results.Should().Equal("response", "response2");
         }
 
-        // TODO: Test new cases (parallel, exclusive, batch, etc.)
+        //public void Publish_
+
+
+        /* TODO: Implement following tests:
+         * - Subscriber with ienumerable as input
+         * - Publish in batch
+         * - Parallel
+         * - Exclusive
+         * - Parallel and Exclusive
+         * - Static subscriber
+         * - Additional arguments */
     }
 }

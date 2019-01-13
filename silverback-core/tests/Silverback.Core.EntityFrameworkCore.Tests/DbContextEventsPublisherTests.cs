@@ -4,20 +4,19 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using NUnit.Framework;
 using Silverback.Core.EntityFrameworkCore.Tests.TestTypes;
 using Silverback.Messaging.Publishing;
+using Xunit;
 
 namespace Silverback.Core.EntityFrameworkCore.Tests
 {
-    [TestFixture]
+    [Collection("Core.EntityFrameworkCore")]
     public class DbContextEventsPublisherTests
     {
-        private TestDbContext _dbContext;
-        private IEventPublisher _eventPublisher;
+        private readonly TestDbContext _dbContext;
+        private readonly IEventPublisher _eventPublisher;
 
-        [SetUp]
-        public void Setup()
+        public DbContextEventsPublisherTests()
         {
             _eventPublisher = Substitute.For<IEventPublisher>();
 
@@ -28,8 +27,8 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
             _dbContext = new TestDbContext(dbOptions, _eventPublisher);
         }
 
-        [Test]
-        public void EventsPublishingTest()
+        [Fact]
+        public void SaveChanges_SomeEventsAdded_PublishCalled()
         {
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
@@ -45,8 +44,8 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
             _eventPublisher.Received(2).Publish(Arg.Any<TestDomainEventTwo>());
         }
 
-        [Test]
-        public async Task AsyncEventsPublishingTest()
+        [Fact]
+        public async Task SaveChangesAsync_SomeEventsAdded_PublishCalled()
         {
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
@@ -62,8 +61,8 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
             await _eventPublisher.Received(2).PublishAsync(Arg.Any<TestDomainEventTwo>());
         }
 
-        [Test]
-        public void EventsPublishingChainTest()
+        [Fact]
+        public void SaveChanges_SomeEventsAdded_PublishingChainCalled()
         {
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
@@ -79,8 +78,8 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
             _eventPublisher.Received(1).Publish(Arg.Any<TestDomainEventTwo>());
         }
 
-        [Test]
-        public async Task AsyncEventsPublishingChainTest()
+        [Fact]
+        public async Task SaveChangesAsync_SomeEventsAdded_PublishingChainCalled()
         {
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 

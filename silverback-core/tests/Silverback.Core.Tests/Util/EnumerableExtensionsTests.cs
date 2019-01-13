@@ -3,15 +3,16 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Util;
+using Xunit;
 
 namespace Silverback.Core.Tests.Util
 {
-    [TestFixture]
-    public class EnumerableExtensionsTests
+    [Collection("Core.Util")]
+    public class EnumerableForEachExtensions
     {
-        [Test]
+        [Fact]
         public void ForEachTest()
         {
             var array = (IEnumerable<int>) new[] {1, 2, 3, 4, 5};
@@ -19,10 +20,10 @@ namespace Silverback.Core.Tests.Util
             var total = 0;
             array.ForEach(i => total += i);
 
-            Assert.That(total, Is.EqualTo(15));
+            total.Should().Be(15);
         }
 
-        [Test]
+        [Fact]
         public async Task ForEachAsyncTest()
         {
             var array = (IEnumerable<int>)new[] { 1, 2, 3, 4, 5 };
@@ -34,7 +35,7 @@ namespace Silverback.Core.Tests.Util
                 total += i;
             });
 
-            Assert.That(total, Is.EqualTo(15));
+            total.Should().Be(15);
         }
     }
 }

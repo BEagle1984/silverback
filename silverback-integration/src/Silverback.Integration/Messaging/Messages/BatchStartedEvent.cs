@@ -7,11 +7,11 @@ using System.Collections.Generic;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    /// The event fired when all the messages in a batch have been successfully processed.
+    /// The event fired just before the first message in a new batch is published.
     /// </summary>
-    public class BatchProcessedEvent : BatchEvent
+    public class BatchStartedEvent : BatchEvent
     {
-        public BatchProcessedEvent(Guid batchId, IEnumerable<object> messages) : base(batchId, messages)
+        public BatchStartedEvent(Guid batchId) : base(batchId, null)
         {
         }
     }

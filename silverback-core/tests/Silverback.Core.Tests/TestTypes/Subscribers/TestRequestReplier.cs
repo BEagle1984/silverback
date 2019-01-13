@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
@@ -19,8 +20,9 @@ namespace Silverback.Core.Tests.TestTypes.Subscribers
         }
 
         [Subscribe]
-        public string OnRequestReceived2(IRequest<string> message)
+        public async Task<string> OnRequestReceived2(IRequest<string> message)
         {
+            await Task.Delay(1);
             ReceivedMessagesCount++;
 
             return "response2";

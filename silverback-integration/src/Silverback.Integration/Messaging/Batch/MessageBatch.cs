@@ -113,9 +113,8 @@ namespace Silverback.Messaging.Batch
             {
                 _logger.LogTrace("Processing batch '{batchId}' containing {batchSize}.", CurrentBatchId, _messages.Count);
 
-                var batchReadyEvent = new BatchProcessingMessage(CurrentBatchId, _messages);
                 _errorPolicy.TryProcess(
-                    batchReadyEvent,
+                    new BatchCompleteEvent(CurrentBatchId, _messages),
                     _ => ProcessEachMessageAndPublishEvents());
 
                 _messages.Clear();
@@ -136,7 +135,7 @@ namespace Silverback.Messaging.Batch
             {
                 try
                 {
-                    _publisher.Publish(new BatchReadyEvent(CurrentBatchId, _messages));
+                    _publisher.Publish(new BatchCompleteEvent(CurrentBatchId, _messages));
 
                     Parallel.ForEach(
                         _messages,
@@ -150,6 +149,9 @@ namespace Silverback.Messaging.Batch
                 catch (Exception)
                 {
                     _rollbackHandler?.Invoke(scope.ServiceProvider);
+
+                    _publisher.Publish(new BatchAbortedEvent(CurrentBatchId, _messages));
+
                     throw;
                 }
             }

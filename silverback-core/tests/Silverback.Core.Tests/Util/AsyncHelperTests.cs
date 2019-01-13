@@ -3,22 +3,23 @@
 
 using System;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Util;
+using Xunit;
 
 namespace Silverback.Core.Tests.Util
 {
-    [TestFixture]
+    [Collection("Core.Util")]
     public class AsyncHelperTests
     {
-        [Test]
-        public void RunSynchronouslyTest()
+        [Fact]
+        public void RunSynchronously_VoidMethod_Executed()
         {
             var done = false;
 
             AsyncHelper.RunSynchronously(AsyncMethod);
 
-            Assert.IsTrue(done);
+            done.Should().BeTrue();
 
             async Task AsyncMethod()
             {
@@ -27,12 +28,12 @@ namespace Silverback.Core.Tests.Util
             }
         }
 
-        [Test]
-        public void RunSynchronouslyWithResultTest()
+        [Fact]
+        public void RunSynchronously_MethodWithResult_Executed()
         {
             var result = AsyncHelper.RunSynchronously(AsyncMethod);
 
-            Assert.AreEqual(3, result);
+            result.Should().Be(3);
 
             async Task<int> AsyncMethod()
             {
@@ -41,13 +42,13 @@ namespace Silverback.Core.Tests.Util
             }
         }
 
-        [Test]
-        public void RunSynchronouslyWithArgumentTest()
+        [Fact]
+        public void RunSynchronously_MethodWithArgument_Executed()
         {
             int result = 1;
             AsyncHelper.RunSynchronously(() => AsyncMethod(2));
 
-            Assert.AreEqual(3, result);
+            result.Should().Be(3);
 
             async Task AsyncMethod(int arg)
             {
@@ -56,10 +57,12 @@ namespace Silverback.Core.Tests.Util
             }
         }
 
-        [Test]
+        [Fact]
         public void RunSynchronously_NoReturn_ThrowsException()
         {
-            Assert.Throws<AggregateException>(() => AsyncHelper.RunSynchronously(AsyncMethod));
+            Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+
+            act.Should().Throw<AggregateException>();
 
             async Task AsyncMethod()
             {
@@ -68,10 +71,12 @@ namespace Silverback.Core.Tests.Util
             }
         }
 
-        [Test]
+        [Fact]
         public void RunSynchronously_WithReturn_ThrowsException()
         {
-            Assert.Throws<AggregateException>(() => AsyncHelper.RunSynchronously(AsyncMethod));
+            Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+
+            act.Should().Throw<AggregateException>();
 
             async Task<int> AsyncMethod()
             {
