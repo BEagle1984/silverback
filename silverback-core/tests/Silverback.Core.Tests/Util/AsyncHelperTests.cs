@@ -9,7 +9,6 @@ using Xunit;
 
 namespace Silverback.Core.Tests.Util
 {
-    [Collection("Core.Util")]
     public class AsyncHelperTests
     {
         [Fact]

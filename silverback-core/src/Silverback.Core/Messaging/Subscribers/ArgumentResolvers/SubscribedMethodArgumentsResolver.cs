@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 
         public (IMessageArgumentResolver resolver, Type messageType) GetMessageArgumentResolver(SubscribedMethod method)
         {
-            var resolver =GetMessageArgumentResolver(method.Info.Parameters[0], method.Info.MethodInfo);
+            var resolver = GetMessageArgumentResolver(method.Info.Parameters[0], method.Info.MethodInfo);
 
             return (resolver, resolver.GetMessageType(method.Info.Parameters[0].ParameterType));
         }
@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
                     GetAdditionalArgumentResolver(parameterInfo, method.Info.MethodInfo)
                         .GetValue(parameterInfo.ParameterType))
                 .ToArray();
-        
+
         private IMessageArgumentResolver GetMessageArgumentResolver(ParameterInfo parameterInfo, MethodInfo methodInfo) =>
             GetArgumentResolver<IMessageArgumentResolver>(parameterInfo, methodInfo);
 

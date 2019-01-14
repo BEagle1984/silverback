@@ -19,17 +19,21 @@ using Xunit;
 
 namespace Silverback.Core.Tests.Messaging.Publishing
 {
-    [Collection("Core.Messaging")]
     public class PublisherTests
     {
         private readonly TestSubscriber _syncSubscriber;
         private readonly TestAsyncSubscriber _asyncSubscriber;
+        private readonly TestEnumerableSubscriber _syncEnumerableSubscriber;
+        private readonly TestAsyncEnumerableSubscriber _asyncEnumerableSubscriber;
+
         private IPublisher _publisher;
 
         public PublisherTests()
         {
             _syncSubscriber = new TestSubscriber();
             _asyncSubscriber = new TestAsyncSubscriber();
+            _syncEnumerableSubscriber = new TestEnumerableSubscriber();
+            _asyncEnumerableSubscriber = new TestAsyncEnumerableSubscriber();
         }
 
         private IPublisher GetPublisher(params ISubscriber[] subscribers)
@@ -243,12 +247,87 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             results.Should().Equal("response", "response2");
         }
 
-        //public void Publish_
 
+        [Fact]
+        public void Publish_SomeMessages_ReceivedAsEnumerable()
+        {
+            var publisher = GetPublisher(_syncEnumerableSubscriber, _asyncEnumerableSubscriber);
+
+            publisher.Publish(new TestCommandOne());
+            publisher.Publish(new TestCommandTwo());
+
+            _syncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(2);
+            _syncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(2);
+            _asyncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(2);
+            _asyncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task PublishAsync_SomeMessages_ReceivedAsEnumerable()
+        {
+            var publisher = GetPublisher(_syncEnumerableSubscriber, _asyncEnumerableSubscriber);
+
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+
+            _syncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(2);
+            _syncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(2);
+            _asyncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(2);
+            _asyncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(2);
+        }
+
+        [Fact]
+        public void Publish_MessagesBatch_EachMessageReceived()
+        {
+            var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
+
+            publisher.Publish(new ICommand[]{ new TestCommandOne(), new TestCommandTwo(), new TestCommandOne()});
+
+            _syncSubscriber.ReceivedMessagesCount.Should().Be(3);
+            _asyncSubscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+        
+        [Fact]
+        public async Task PublishAsync_MessagesBatch_EachMessageReceived()
+        {
+            var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
+
+            await publisher.PublishAsync(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+
+            _syncSubscriber.ReceivedMessagesCount.Should().Be(3);
+            _asyncSubscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
+
+        [Fact]
+        public void Publish_MessagesBatch_BatchReceived()
+        {
+            var publisher = GetPublisher(_syncEnumerableSubscriber, _asyncEnumerableSubscriber);
+
+            publisher.Publish(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+
+            _syncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(1);
+            _syncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(3);
+            _asyncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(1);
+            _asyncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task PublishAsync_MessagesBatch_BatchReceived()
+        {
+            var publisher = GetPublisher(_syncEnumerableSubscriber, _asyncEnumerableSubscriber);
+
+            await publisher.PublishAsync(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+
+            _syncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(1);
+            _syncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(3);
+            _asyncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(1);
+            _asyncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(3);
+        }
 
         /* TODO: Implement following tests:
          * - Subscriber with ienumerable as input
-         * - Publish in batch
+         * - Publish in batch -> OK
          * - Parallel
          * - Exclusive
          * - Parallel and Exclusive

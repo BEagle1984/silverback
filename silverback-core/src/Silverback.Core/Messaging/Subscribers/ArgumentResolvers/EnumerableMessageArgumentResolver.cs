@@ -11,14 +11,11 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
     public class EnumerableMessageArgumentResolver : IEnumerableMessageArgumentResolver
     {
         public bool CanResolve(Type parameterType) =>
-            typeof(IEnumerable<object>).IsAssignableFrom(parameterType);
+            parameterType.IsGenericType &&
+            parameterType.GetGenericTypeDefinition() == typeof(IEnumerable<>);
 
         public Type GetMessageType(Type parameterType) =>
-            parameterType.GetInterfaces()
-                .First(i =>
-                    i.IsGenericType &&
-                    i.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                .GetGenericArguments()[0];
+            parameterType.GetGenericArguments()[0];
 
         public object GetValue(IEnumerable<object> messages, Type targetMessageType) =>
             messages.OfType(targetMessageType);

@@ -19,7 +19,7 @@ using Xunit;
 
 namespace Silverback.Core.Rx.Tests.Messaging
 {
-    [Collection("Core.Rx")]
+    [Collection("MessageObservable")]
     public class MessageObservableTests
     {
         private readonly IPublisher _publisher;

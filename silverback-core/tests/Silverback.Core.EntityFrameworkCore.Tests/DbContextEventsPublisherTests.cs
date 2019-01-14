@@ -10,7 +10,6 @@ using Xunit;
 
 namespace Silverback.Core.EntityFrameworkCore.Tests
 {
-    [Collection("Core.EntityFrameworkCore")]
     public class DbContextEventsPublisherTests
     {
         private readonly TestDbContext _dbContext;

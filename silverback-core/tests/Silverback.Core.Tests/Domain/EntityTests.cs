@@ -8,7 +8,6 @@ using Xunit;
 
 namespace Silverback.Core.Tests.Domain
 {
-    [Collection("Core.Domain")]
     public class EntityTests
     {
         [Fact]
