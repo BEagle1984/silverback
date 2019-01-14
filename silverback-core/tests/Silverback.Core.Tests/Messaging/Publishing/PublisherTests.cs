@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Core.Tests.TestTypes.Messages;
 using Silverback.Core.Tests.TestTypes.Subscribers;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
@@ -26,8 +28,6 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         private readonly TestEnumerableSubscriber _syncEnumerableSubscriber;
         private readonly TestAsyncEnumerableSubscriber _asyncEnumerableSubscriber;
 
-        private IPublisher _publisher;
-
         public PublisherTests()
         {
             _syncSubscriber = new TestSubscriber();
@@ -36,7 +36,9 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             _asyncEnumerableSubscriber = new TestAsyncEnumerableSubscriber();
         }
 
-        private IPublisher GetPublisher(params ISubscriber[] subscribers)
+        private IPublisher GetPublisher(params ISubscriber[] subscribers) => GetPublisher(null, subscribers);
+
+        private IPublisher GetPublisher(Action<BusConfigurator> configAction, params ISubscriber[] subscribers)
         {
             var services = new ServiceCollection();
             services.AddBus();
@@ -48,6 +50,8 @@ namespace Silverback.Core.Tests.Messaging.Publishing
                 services.AddSingleton<ISubscriber>(sub);
 
             var serviceProvider = services.BuildServiceProvider();
+
+            configAction?.Invoke(serviceProvider.GetRequiredService<BusConfigurator>());
 
             return serviceProvider.GetRequiredService<IPublisher>();
         }
@@ -281,12 +285,12 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         {
             var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
 
-            publisher.Publish(new ICommand[]{ new TestCommandOne(), new TestCommandTwo(), new TestCommandOne()});
+            publisher.Publish(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
 
             _syncSubscriber.ReceivedMessagesCount.Should().Be(3);
             _asyncSubscriber.ReceivedMessagesCount.Should().Be(3);
         }
-        
+
         [Fact]
         public async Task PublishAsync_MessagesBatch_EachMessageReceived()
         {
@@ -297,7 +301,6 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             _syncSubscriber.ReceivedMessagesCount.Should().Be(3);
             _asyncSubscriber.ReceivedMessagesCount.Should().Be(3);
         }
-
 
         [Fact]
         public void Publish_MessagesBatch_BatchReceived()
@@ -325,13 +328,110 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             _asyncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(3);
         }
 
+        [Fact]
+        public void Publish_MessagesBatch_EachMessageReceivedByStaticSubscriber()
+        {
+            int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
+
+            var publisher = GetPublisher(config =>
+                config
+                    .Subscribe<ITestMessage>((ITestMessage msg) => receivedMessagesCount++)
+                    .Subscribe<ITestMessage>(async (ITestMessage msg) =>
+                    {
+                        await Task.Delay(1);
+                        asyncReceivedMessagesCount++;
+                    }));
+
+            publisher.Publish(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+
+            receivedMessagesCount.Should().Be(3);
+            asyncReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task PublishAsync_MessagesBatch_EachMessageReceivedByStaticSubscriber()
+        {
+            int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
+
+            var publisher = GetPublisher(config =>
+                config
+                    .Subscribe<ITestMessage>((ITestMessage msg) => receivedMessagesCount++)
+                    .Subscribe<ITestMessage>(async (ITestMessage msg) =>
+                    {
+                        await Task.Delay(1);
+                        asyncReceivedMessagesCount++;
+                    }));
+
+            await publisher.PublishAsync(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+
+            receivedMessagesCount.Should().Be(3);
+            asyncReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        public void Publish_MessagesBatch_BatchReceivedByStaticSubscriber()
+        {
+            int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
+
+            var publisher = GetPublisher(config =>
+                config
+                    .Subscribe<ITestMessage>((IEnumerable<ITestMessage> msg) => receivedMessagesCount += msg.Count())
+                    .Subscribe<ITestMessage>(async (IEnumerable<ITestMessage> msg) =>
+                    {
+                        await Task.Delay(1);
+                        asyncReceivedMessagesCount += msg.Count();
+                    }));
+
+            publisher.Publish(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+
+            receivedMessagesCount.Should().Be(3);
+            asyncReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task PublishAsync_MessagesBatch_BatchReceivedByStaticSubscriber()
+        {
+            int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
+
+            var publisher = GetPublisher(config =>
+                config
+                    .Subscribe<ITestMessage>((IEnumerable<ITestMessage> msg) => receivedMessagesCount += msg.Count())
+                    .Subscribe<ITestMessage>(async (IEnumerable<ITestMessage> msg) =>
+                    {
+                        await Task.Delay(1);
+                        asyncReceivedMessagesCount += msg.Count();
+                    }));
+
+            await publisher.PublishAsync(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+
+            receivedMessagesCount.Should().Be(3);
+            asyncReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        public void Publish_NewMessagesReturnedByStaticSubscriber_MessagesRepublished()
+        {
+            var subscriber = new TestSubscriber();
+            var publisher = GetPublisher(config =>
+                    config
+                        .Subscribe<TestCommandTwo>((TestCommandTwo msg) => new TestCommandOne())
+                        .Subscribe<TestCommandTwo>(async (TestCommandTwo msg) =>
+                        {
+                            await Task.Delay(1);
+                            return new TestCommandOne();
+                        }),
+                subscriber);
+
+            publisher.Publish(new TestCommandTwo());
+
+            subscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
         /* TODO: Implement following tests:
-         * - Subscriber with ienumerable as input
-         * - Publish in batch -> OK
          * - Parallel
          * - Exclusive
          * - Parallel and Exclusive
-         * - Static subscriber
-         * - Additional arguments */
+         * - Additional arguments
+         * - Republish messages not implementing IMessage */
     }
 }

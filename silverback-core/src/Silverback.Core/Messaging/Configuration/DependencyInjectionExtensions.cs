@@ -20,8 +20,8 @@ namespace Microsoft.Extensions.DependencyInjection
             optionsAction?.Invoke(pluginOptions);
 
             return services
-                .AddScoped<IPublisher, Publisher>()
                 .AddSingleton<BusOptions>()
+                .AddSingleton<BusConfigurator>()
                 .AddSingleton<SubscribedMethodInvoker>()
                 .AddSingleton<SubscribedMethodArgumentsResolver>()
                 .AddSingleton<IArgumentResolver, EnumerableMessageArgumentResolver>()
@@ -30,6 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<ReturnValueHandler>()
                 .AddSingleton<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
                 .AddSingleton<IReturnValueHandler, SingleMessageReturnValueHandler>()
+                .AddScoped<IPublisher, Publisher>()
                 // TODO: Move to another package
                 .AddScoped<IEventPublisher, EventPublisher>()
                 .AddScoped<ICommandPublisher, CommandPublisher>()

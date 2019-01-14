@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers.Subscriptions;
 
 namespace Silverback.Messaging.Configuration
@@ -10,7 +11,12 @@ namespace Silverback.Messaging.Configuration
     // TODO: Test
     public class BusConfigurator
     {
-       private readonly BusOptions _busOptions = new BusOptions();
+        private readonly BusOptions _busOptions;
+
+        public BusConfigurator(BusOptions busOptions)
+        {
+            _busOptions = busOptions;
+        }
 
         #region HandleMessagesOfType
 
@@ -41,7 +47,19 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        public BusConfigurator Subscribe<TMessage>(Func<TMessage, Task> handler)
+        {
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            return this;
+        }
+
         public BusConfigurator Subscribe<TMessage>(Func<TMessage, object> handler)
+        {
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            return this;
+        }
+
+        public BusConfigurator Subscribe<TMessage>(Func<TMessage, Task<object>> handler)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
             return this;
@@ -52,8 +70,19 @@ namespace Silverback.Messaging.Configuration
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
             return this;
         }
+        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, Task> handler)
+        {
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            return this;
+        }
 
         public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, object> handler)
+        {
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            return this;
+        }
+
+        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, Task<object>> handler)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
             return this;
@@ -101,7 +130,5 @@ namespace Silverback.Messaging.Configuration
         }
 
         #endregion
-
-        internal BusOptions GetBusOptions() => _busOptions;
     }
 }
