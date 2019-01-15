@@ -10,11 +10,11 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
     {
         private readonly SubscribedMethod _method;
 
-        public DelegateSubscription(Delegate handler)
+        public DelegateSubscription(Delegate handler, SubscriptionOptions options)
         {
             if (handler == null) throw new ArgumentNullException(nameof(handler));
 
-            _method = new SubscribedMethod(handler.Target, new SubscribedMethodInfo(handler.Method));
+            _method = new SubscribedMethod(handler.Target, new SubscribedMethodInfo(handler.Method, options?.Exclusive, options?.Parallel, options?.MaxDegreeOfParallelism));
         }
 
         public IEnumerable<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>

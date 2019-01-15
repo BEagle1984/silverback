@@ -67,10 +67,10 @@ namespace Silverback.Messaging.Subscribers
                     _argumentsResolver.GetAdditionalParameterValues(method))
                 .ToArray();
         
-        private async Task<object> Invoke(SubscribedMethod method, object[] parameters, bool executeAsync) =>
-            executeAsync
-                ? await InvokeAsync(method, parameters)
-                : InvokeSync(method, parameters);
+        private Task<object> Invoke(SubscribedMethod method, object[] parameters, bool executeAsync) =>
+            executeAsync 
+                ? InvokeAsync(method, parameters) 
+                : Task.FromResult(InvokeSync(method, parameters));
 
         private object InvokeSync(SubscribedMethod method, object[] parameters)
         {
@@ -84,13 +84,13 @@ namespace Silverback.Messaging.Subscribers
             });
         }
 
-        private async Task<object> InvokeAsync(SubscribedMethod method, object[] parameters)
+        private Task<object> InvokeAsync(SubscribedMethod method, object[] parameters)
         {
-            var result = method.Info.MethodInfo.Invoke(method.Target, parameters);
+            if (!method.Info.MethodInfo.IsAsync())
+                return Task.Run(() => method.Info.MethodInfo.Invoke(method.Target, parameters));
 
-            return method.Info.MethodInfo.IsAsync()
-                ? await ((Task)result).GetReturnValue()
-                : result;
+            var result = method.Info.MethodInfo.Invoke(method.Target, parameters);
+            return ((Task) result).GetReturnValue();
         }
     }
 }

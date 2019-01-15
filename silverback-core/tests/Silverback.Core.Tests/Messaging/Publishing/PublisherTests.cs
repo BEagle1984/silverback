@@ -3,9 +3,11 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -425,6 +427,96 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             publisher.Publish(new TestCommandTwo());
 
             subscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        public void Publish_ExclusiveSubscribers_SequentiallyInvoked()
+        {
+            var subscriber = new ExclusiveSubscriberTestService();
+            var publisher = GetPublisher(subscriber);
+
+            publisher.Publish(new TestCommandOne());
+
+            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(20));
+        }
+
+        [Fact]
+        public void Publish_NonExclusiveSubscribers_InvokedInParallel()
+        {
+            var subscriber = new NonExclusiveSubscriberTestService();
+            var publisher = GetPublisher(subscriber);
+
+            publisher.Publish(new TestCommandOne());
+
+            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(20));
+        }
+
+        [Fact]
+        public async Task PublishAsync_ExclusiveSubscribers_SequentiallyInvoked()
+        {
+            var subscriber = new ExclusiveSubscriberTestService();
+            var publisher = GetPublisher(subscriber);
+
+            await publisher.PublishAsync(new TestCommandOne());
+
+            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(20));
+        }
+
+        [Fact]
+        public async Task PublishAsync_NonExclusiveSubscribers_InvokedInParallel()
+        {
+            var subscriber = new NonExclusiveSubscriberTestService();
+            var publisher = GetPublisher(subscriber);
+
+            await publisher.PublishAsync(new TestCommandOne());
+
+            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(20));
+        }
+
+        [Fact]
+        public void Publish_ExclusiveStaticSubscribers_SequentiallyInvoked()
+        {
+            var timestamps = new ConcurrentBag<DateTime>();
+
+            var publisher = GetPublisher(config =>
+                config
+                    .Subscribe<ICommand>((ICommand _) =>
+                    {
+                        Thread.Sleep(20);
+                        timestamps.Add(DateTime.Now);
+                    })
+                    .Subscribe<ICommand>(async (ICommand _) =>
+                    {
+                        await Task.Delay(20);
+                        timestamps.Add(DateTime.Now);
+                    }, new SubscriptionOptions {Exclusive = true}));
+
+            publisher.Publish(new TestCommandOne());
+
+            timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(20));
+        }
+
+        [Fact]
+        public void Publish_NonExclusiveStaticSubscribers_InvokedInParallel()
+        {
+            var timestamps = new ConcurrentBag<DateTime>();
+
+            var publisher = GetPublisher(config =>
+                config
+                    .Subscribe<ICommand>((ICommand _) =>
+                    {
+                        Thread.Sleep(20);
+                        timestamps.Add(DateTime.Now);
+                    }, new SubscriptionOptions { Exclusive = false })
+                    .Subscribe<ICommand>(async (ICommand _) =>
+                    {
+                        await Task.Delay(20);
+                        timestamps.Add(DateTime.Now);
+                    }, new SubscriptionOptions { Exclusive = false }));
+
+            publisher.Publish(new TestCommandOne());
+
+            timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(20));
         }
 
         /* TODO: Implement following tests:

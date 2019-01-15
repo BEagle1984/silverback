@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Subscribers
     public class SubscribedMethodInfo
     {
         // TODO: Overload to pass exclusive and parallel for non attribute based registrations
-        public SubscribedMethodInfo(MethodInfo methodInfo)
+        public SubscribedMethodInfo(MethodInfo methodInfo, bool? exclusive = null, bool? parallel = null, int? maxDegreeOfParallelism = null)
         {
             MethodInfo = methodInfo ?? throw new ArgumentNullException(nameof(methodInfo));
             Parameters = methodInfo.GetParameters();
@@ -20,9 +20,9 @@ namespace Silverback.Messaging.Subscribers
 
             var subscribeAttribute = methodInfo.GetCustomAttribute<SubscribeAttribute>();
 
-            IsExclusive = subscribeAttribute?.Exclusive ?? true;
-            IsParallel = subscribeAttribute?.Parallel ?? false;
-            MaxDegreeOfParallelism = subscribeAttribute?.MaxDegreeOfParallelism;
+            IsExclusive = subscribeAttribute?.Exclusive ?? exclusive ?? true;
+            IsParallel = subscribeAttribute?.Parallel ?? parallel ?? false;
+            MaxDegreeOfParallelism = subscribeAttribute?.MaxDegreeOfParallelism ?? maxDegreeOfParallelism;
         }
 
         public MethodInfo MethodInfo { get; }

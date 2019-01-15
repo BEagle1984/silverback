@@ -65,7 +65,7 @@ namespace Silverback.Messaging.Publishing
                 return Enumerable.Empty<object>();
 
             return (await InvokeExclusiveMethods(messagesList, executeAsync))
-                .Union(await InvokeNonExclusiveMethods(messagesList, executeAsync))
+                .Union(await InvokeNonExclusiveMethods(messagesList))
                 .ToList();
         }
 
@@ -74,10 +74,10 @@ namespace Silverback.Messaging.Publishing
                 .Where(method => method.Info.IsExclusive)
                 .SelectManyAsync(method => GetMethodInvoker().Invoke(method, messages, executeAsync));
 
-        private Task<IEnumerable<object>> InvokeNonExclusiveMethods(IEnumerable<object> messagesList, bool executeAsync) =>
+        private Task<IEnumerable<object>> InvokeNonExclusiveMethods(IEnumerable<object> messagesList) =>
             GetSubscribedMethods()
                 .Where(method => !method.Info.IsExclusive)
-                .ParallelSelectManyAsync(method => GetMethodInvoker().Invoke(method, messagesList, executeAsync));
+                .ParallelSelectManyAsync(method => GetMethodInvoker().Invoke(method, messagesList, true));
 
         private IEnumerable<SubscribedMethod> GetSubscribedMethods() =>
             _subscribedMethods ?? (_subscribedMethods = _options

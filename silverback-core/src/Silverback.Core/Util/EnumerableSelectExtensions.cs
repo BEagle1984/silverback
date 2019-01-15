@@ -27,7 +27,7 @@ namespace Silverback.Util
         {
             if (maxDegreeOfParallelism == null)
                 return await Task.WhenAll(source.Select(selector));
-
+ 
             if (maxDegreeOfParallelism == 1)
                 return await source.SelectAsync(selector);
 

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.Subscriptions;
 
 namespace Silverback.Messaging.Configuration
@@ -35,56 +36,56 @@ namespace Silverback.Messaging.Configuration
 
         #region Subscribe (delegate)
 
-        public BusConfigurator Subscribe(Delegate handler)
+        public BusConfigurator Subscribe(Delegate handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
-        public BusConfigurator Subscribe<TMessage>(Action<TMessage> handler)
+        public BusConfigurator Subscribe<TMessage>(Action<TMessage> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
-        public BusConfigurator Subscribe<TMessage>(Func<TMessage, Task> handler)
+        public BusConfigurator Subscribe<TMessage>(Func<TMessage, Task> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
-        public BusConfigurator Subscribe<TMessage>(Func<TMessage, object> handler)
+        public BusConfigurator Subscribe<TMessage>(Func<TMessage, object> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
-        public BusConfigurator Subscribe<TMessage>(Func<TMessage, Task<object>> handler)
+        public BusConfigurator Subscribe<TMessage>(Func<TMessage, Task<object>> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
-        public BusConfigurator Subscribe<TMessage>(Action<IEnumerable<TMessage>> handler)
+        public BusConfigurator Subscribe<TMessage>(Action<IEnumerable<TMessage>> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
-        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, Task> handler)
+        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, Task> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
-            return this;
-        }
-
-        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, object> handler)
-        {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
-        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, Task<object>> handler)
+        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, object> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
+            return this;
+        }
+
+        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, Task<object>> handler, SubscriptionOptions options = null)
+        {
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
@@ -92,27 +93,27 @@ namespace Silverback.Messaging.Configuration
 
         #region Subscribe (delegate w/ service provider)
 
-        public BusConfigurator Subscribe<TMessage>(Action<TMessage, IServiceProvider> handler)
+        public BusConfigurator Subscribe<TMessage>(Action<TMessage, IServiceProvider> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
-        public BusConfigurator Subscribe<TMessage>(Func<TMessage, IServiceProvider, object> handler)
+        public BusConfigurator Subscribe<TMessage>(Func<TMessage, IServiceProvider, object> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
-        public BusConfigurator Subscribe<TMessage>(Action<IEnumerable<TMessage>, IServiceProvider> handler)
+        public BusConfigurator Subscribe<TMessage>(Action<IEnumerable<TMessage>, IServiceProvider> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
-        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, IServiceProvider, object> handler)
+        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, IServiceProvider, object> handler, SubscriptionOptions options = null)
         {
-            _busOptions.Subscriptions.Add(new DelegateSubscription(handler));
+            _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
