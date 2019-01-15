@@ -3,11 +3,11 @@
 
 using System;
 
-namespace Silverback.Messaging.Subscribers
+namespace Silverback.Messaging.Subscribers.Subscriptions
 {
     public class SubscriptionOptions
     {
-        private int? _maxDegreeOfParallelism = 1;
+        private int? _maxDegreeOfParallelism;
 
         /// <summary>
         /// A value indicating whether the method can be executed concurrently to other

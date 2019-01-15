@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Subscribers
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class SubscribeAttribute : Attribute
     {
-        private int? _maxDegreeOfParallelism = 1;
+        private int? _maxDegreeOfParallelism;
 
         /// <summary>
         /// A value indicating whether the method can be executed concurrently to other

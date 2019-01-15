@@ -26,7 +26,7 @@ namespace Silverback.Util
             Func<T, Task<TResult>> selector, int? maxDegreeOfParallelism = null)
         {
             if (maxDegreeOfParallelism == null)
-                return await Task.WhenAll(source.Select(selector));
+                return await Task.WhenAll(source.ParallelSelect(selector));
  
             if (maxDegreeOfParallelism == 1)
                 return await source.SelectAsync(selector);
