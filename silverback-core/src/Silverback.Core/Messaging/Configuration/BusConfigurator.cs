@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.Subscriptions;
 
 namespace Silverback.Messaging.Configuration

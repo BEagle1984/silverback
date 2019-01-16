@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 

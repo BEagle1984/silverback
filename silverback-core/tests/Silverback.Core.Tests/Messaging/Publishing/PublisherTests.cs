@@ -2,11 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -762,7 +760,6 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
         /* TODO: Implement following tests:
          * - Parallel and Exclusive
-         * - Additional arguments
          * - Republish messages not implementing IMessage */
     }
 }
