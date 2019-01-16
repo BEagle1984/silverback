@@ -82,6 +82,58 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         }
 
         [Fact]
+        public void Publish_SomeMessages_ReceivedByDelegateSubscription()
+        {
+            int count = 0;
+            var publisher = GetPublisher(config => config
+                .Subscribe((object _) => count++));
+
+            publisher.Publish(new TestCommandOne());
+            publisher.Publish(new TestCommandTwo());
+
+            count.Should().Be(2, "2 messages have been published");
+        }
+
+        [Fact]
+        public async Task PublishAsync_SomeMessages_ReceivedByDelegateSubscription()
+        {
+            int count = 0;
+            var publisher = GetPublisher(config => config
+                .Subscribe((object _) => count++));
+
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+
+            count.Should().Be(2, "2 messages have been published");
+        }
+
+        [Fact]
+        public void Publish_SomeMessages_ReceivedByDelegateSubscriptionWithAdditionalParameters()
+        {
+            int count = 0;
+            var publisher = GetPublisher(config => config
+                .Subscribe<object>((msg, sp) => sp != null ? count++ : count = 0));
+
+            publisher.Publish(new TestCommandOne());
+            publisher.Publish(new TestCommandTwo());
+
+            count.Should().Be(2, "2 messages have been published");
+        }
+
+        [Fact]
+        public async Task PublishAsync_SomeMessages_ReceivedByDelegateSubscriptionWithAdditionalParameters()
+        {
+            int count = 0;
+            var publisher = GetPublisher(config => config
+                .Subscribe<object>((msg, sp) => sp != null ? count++ : count = 0));
+
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+
+            count.Should().Be(2, "2 messages have been published");
+        }
+
+        [Fact]
         public void Publish_SomeMessages_ReceivedByAllSubscribers()
         {
             var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
@@ -330,9 +382,9 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             _asyncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(1);
             _asyncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(3);
         }
-
+        
         [Fact]
-        public void Publish_MessagesBatch_EachMessageReceivedByStaticSubscriber()
+        public void Publish_MessagesBatch_EachMessageReceivedByDelegateSubscription()
         {
             int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
 
@@ -352,7 +404,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         }
 
         [Fact]
-        public async Task PublishAsync_MessagesBatch_EachMessageReceivedByStaticSubscriber()
+        public async Task PublishAsync_MessagesBatch_EachMessageReceivedByDelegateSubscription()
         {
             int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
 
@@ -372,7 +424,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         }
 
         [Fact]
-        public void Publish_MessagesBatch_BatchReceivedByStaticSubscriber()
+        public void Publish_MessagesBatch_BatchReceivedByDelegateSubscription()
         {
             int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
 
@@ -392,7 +444,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         }
 
         [Fact]
-        public async Task PublishAsync_MessagesBatch_BatchReceivedByStaticSubscriber()
+        public async Task PublishAsync_MessagesBatch_BatchReceivedByDelegateSubscription()
         {
             int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
 
@@ -412,7 +464,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         }
 
         [Fact]
-        public void Publish_NewMessagesReturnedByStaticSubscriber_MessagesRepublished()
+        public void Publish_NewMessagesReturnedByDelegateSubscription_MessagesRepublished()
         {
             var subscriber = new TestSubscriber();
             var publisher = GetPublisher(config =>
