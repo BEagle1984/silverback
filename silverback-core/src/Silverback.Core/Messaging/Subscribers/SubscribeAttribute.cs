@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Subscribers
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class SubscribeAttribute : Attribute
     {
-        private int? _maxDegreeOfParallelism;
+        private int _maxDegreeOfParallelism = int.MaxValue;
 
         /// <summary>
         /// A value indicating whether the method can be executed concurrently to other
@@ -34,19 +34,23 @@ namespace Silverback.Messaging.Subscribers
         /// <summary>
         /// Limit the number of messages that are processed concurrently.
         /// Used only together with Parallel = true.
-        /// The default value is null and means that there is no limit to the
+        /// The default value is Int32.Max and means that there is no limit to the
         /// degree of parallelism.
         /// </summary>
-        public int? MaxDegreeOfParallelism
+        public int MaxDegreeOfParallelism
         {
             get => _maxDegreeOfParallelism;
             set
             {
-                if (value != null && value <= 0)
-                    throw new ArgumentOutOfRangeException(nameof(value), value, "MaxDegreeOfParallelism must be greater or equal to 1 (or null).");
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), value,
+                        "MaxDegreeOfParallelism must be greater or equal to 1.");
 
-                _maxDegreeOfParallelism = value; 
+                _maxDegreeOfParallelism = value;
             }
         }
+
+        public int? GetMaxDegreeOfParallelism() =>
+            _maxDegreeOfParallelism != int.MaxValue ? _maxDegreeOfParallelism : (int?)null;
     }
 }

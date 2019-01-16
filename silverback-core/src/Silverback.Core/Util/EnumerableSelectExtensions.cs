@@ -33,7 +33,7 @@ namespace Silverback.Util
 
             using (var semaphore = new SemaphoreSlim(maxDegreeOfParallelism.Value))
             {
-                var tasks = source.Select(async s =>
+                var tasks = source.ParallelSelect(async s =>
                 {
                     await semaphore.WaitAsync();
                     try

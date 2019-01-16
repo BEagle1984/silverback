@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Subscribers
 
             IsExclusive = subscribeAttribute?.Exclusive ?? exclusive ?? true;
             IsParallel = subscribeAttribute?.Parallel ?? parallel ?? false;
-            MaxDegreeOfParallelism = subscribeAttribute?.MaxDegreeOfParallelism ?? maxDegreeOfParallelism;
+            MaxDegreeOfParallelism = subscribeAttribute?.GetMaxDegreeOfParallelism() ?? maxDegreeOfParallelism;
         }
 
         public MethodInfo MethodInfo { get; }
