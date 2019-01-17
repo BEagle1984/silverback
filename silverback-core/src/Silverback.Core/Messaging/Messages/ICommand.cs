@@ -6,7 +6,7 @@ namespace Silverback.Messaging.Messages
     {
     }
 
-    public interface ICommand<TResult> : ICommand, IRequest<TResult>
+    public interface ICommand<out TResult> : ICommand, IRequest<TResult>
     {
     }
 }

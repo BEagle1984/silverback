@@ -3,28 +3,27 @@
 
 using System.Linq;
 using Silverback.Core.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Subscribers.ArgumentResolvers;
+using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class DependencyInjectionExtensions
+    public static class BusPluginOptionsExtensions
     {
-        public static IServiceCollection AddRxBusExtensions(this IServiceCollection services)
+        public static BusPluginOptions Observable(this BusPluginOptions options)
         {
-            if (services.All(s => s.ServiceType != typeof(IPublisher)))
-                services.AddBus();
-
-            /*services
-                .AddSingleton<ISubscribedMethodInvoker, Subsc>*/
-
-            services
+            options.Services
+                .AddSingleton<IArgumentResolver, ObservableMessageArgumentResolver>()
+                .AddSingleton<IReturnValueHandler, ObservableMessagesReturnValueHandler>()
                 .AddSingleton<MessageObservable, MessageObservable>()
                 .AddSingleton<ISubscriber, MessageObservable>()
                 .AddSingleton(typeof(IMessageObservable<>), typeof(MessageObservable<>));
 
-            return services;
+            return options;
         }
     }
 }

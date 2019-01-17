@@ -11,30 +11,30 @@ namespace Silverback.Core.EntityFrameworkCore.Tests.TestTypes
 {
     public class TestDbContext : DbContext
     {
-        private readonly IEventPublisher _eventPublisher;
+        private readonly IPublisher _publisher;
         public DbSet<TestAggregateRoot> TestAggregates { get; set; }
 
-        public TestDbContext(IEventPublisher eventPublisher)
+        public TestDbContext(IPublisher eventPublisher)
         {
-            _eventPublisher = eventPublisher;
+            _publisher = eventPublisher;
         }
 
-        public TestDbContext(DbContextOptions options, IEventPublisher eventPublisher)
+        public TestDbContext(DbContextOptions options, IPublisher publisher)
             : base(options)
         {
-            _eventPublisher = eventPublisher;
+            _publisher = publisher;
         }
 
         public override int SaveChanges()
             => SaveChanges(true);
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
-            => DbContextEventsPublisher.ExecuteSaveTransaction(this, () => base.SaveChanges(acceptAllChangesOnSuccess), _eventPublisher);
+            => DbContextEventsPublisher.ExecuteSaveTransaction(this, () => base.SaveChanges(acceptAllChangesOnSuccess), _publisher);
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => SaveChangesAsync(true, cancellationToken);
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-            => DbContextEventsPublisher.ExecuteSaveTransactionAsync(this, () => base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken), _eventPublisher);
+            => DbContextEventsPublisher.ExecuteSaveTransactionAsync(this, () => base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken), _publisher);
     }
 }

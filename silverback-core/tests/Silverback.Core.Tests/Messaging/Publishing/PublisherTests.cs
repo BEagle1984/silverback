@@ -304,7 +304,6 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             results.Should().Equal("response", "response2");
         }
 
-
         [Fact]
         public void Publish_SomeMessages_ReceivedAsEnumerable()
         {

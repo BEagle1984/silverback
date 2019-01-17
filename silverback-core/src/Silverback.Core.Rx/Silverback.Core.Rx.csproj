@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Silverback</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.0.0</Version>
+    <Version>0.5.0.0</Version>
     <Authors>BEagle1984</Authors>
     <Company>BEagle1984</Company>
     <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package adds the ability to create an Observable from the internal bus messages stream.</Description>
@@ -14,11 +14,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Silverback.Core" Version="0.5.0" />
     <PackageReference Include="System.Reactive" Version="4.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
   </ItemGroup>
 
 </Project>

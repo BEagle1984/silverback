@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
-    <PackageReference Include="Silverback.Core" Version="0.3.2.1" />
+    <PackageReference Include="Silverback.Core" Version="0.5.0" />
   </ItemGroup>
 
 </Project>
