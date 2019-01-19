@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {

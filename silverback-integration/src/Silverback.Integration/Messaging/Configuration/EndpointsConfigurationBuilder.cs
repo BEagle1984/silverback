@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.ErrorHandling;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Configuration
 {

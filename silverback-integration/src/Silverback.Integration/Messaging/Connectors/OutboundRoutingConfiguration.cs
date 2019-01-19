@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
 {

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 using Xunit;
