@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Silverback</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.5.0.2</Version>
+    <Authors>BEagle1984</Authors>
+    <Company>BEagle1984</Company>
+    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package contains the default messages interfaces and domain entity implementation.</Description>
+    <PackageLicenseUrl>https://github.com/BEagle1984/silverback/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Silverback.Core" Version="0.5.0.3" />
+  </ItemGroup>
+
+</Project>

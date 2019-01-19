@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -32,7 +32,8 @@ namespace Consumer
 
         private static void Connect()
         {
-            _broker = new KafkaBroker(GetLoggerFactory());
+            var messageKeyProvider = new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()});
+            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger(messageKeyProvider));
 
             _consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
             {

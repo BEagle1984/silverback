@@ -1,34 +1,33 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.Connectors
 {
-    [TestFixture]
+    [Collection("StaticInMemory")]
     public class DeferredOutboundConnectorTests
     {
-        private InMemoryOutboundQueue _queue;
-        private DeferredOutboundConnector _connector;
+        private readonly InMemoryOutboundQueue _queue;
+        private readonly DeferredOutboundConnector _connector;
 
-        [SetUp]
-        public void Setup()
+        public DeferredOutboundConnectorTests()
         {
             _queue = new InMemoryOutboundQueue();
             _connector = new DeferredOutboundConnector(_queue);
-
             InMemoryOutboundQueue.Clear();
         }
 
-        [Test]
-        public async Task OnMessageReceived_SingleMessage_Enqueued()
+        [Fact]
+        public async Task OnMessageReceived_SingleMessage_Queued()
         {
             var endpoint = TestEndpoint.Default;
 
@@ -37,21 +36,21 @@ namespace Silverback.Tests.Messaging.Connectors
             await _connector.RelayMessage(message, endpoint);
             await _queue.Commit();
 
-            Assert.That(_queue.Length, Is.EqualTo(1));
-            var enqueued = _queue.Dequeue(1).First();
-            Assert.That(enqueued.Endpoint, Is.EqualTo(endpoint));
-            Assert.That(enqueued.Message.Id, Is.EqualTo(message.Id));
+            _queue.Length.Should().Be(1);
+            var queued = _queue.Dequeue(1).First();
+            queued.Endpoint.Should().Be(endpoint);
+            ((IIntegrationMessage)queued.Message).Id.Should().Be(message.Id);
         }
 
-        [Test]
+        [Fact]
         public void CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
             _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
-            _connector.OnTransactionCommit(new TransactionCommitEvent());
+            _connector.OnTransactionCompleted(new TransactionCompletedEvent());
             _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
-            _connector.OnTransactionRollback(new TransactionRollbackEvent());
+            _connector.OnTransactionAborted(new TransactionAbortedEvent());
 
-            Assert.That(_queue.Length, Is.EqualTo(1));
+            _queue.Length.Should().Be(1);
         }
     }
 }

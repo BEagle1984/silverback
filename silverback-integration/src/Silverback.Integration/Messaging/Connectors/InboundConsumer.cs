@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Batch;
@@ -20,19 +19,20 @@ namespace Silverback.Messaging.Connectors
         private readonly InboundConnectorSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
 
-        private readonly Action<IMessage, IEndpoint, IServiceProvider> _messageHandler;
+        private readonly Action<IEnumerable<object>, IEndpoint, IServiceProvider> _messagesHandler;
         private readonly Action<IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
+        private readonly MessageLogger _messageLogger;
 
         private readonly IConsumer _consumer;
 
         public InboundConsumer(IBroker broker,
             IEndpoint endpoint,
             InboundConnectorSettings settings,
-            Action<IMessage, IEndpoint, IServiceProvider> messageHandler,
+            Action<IEnumerable<object>, IEndpoint, IServiceProvider> messagesHandler,
             Action<IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy,
@@ -42,12 +42,13 @@ namespace Silverback.Messaging.Connectors
             _settings = settings;
             _errorPolicy = errorPolicy;
 
-            _messageHandler = messageHandler;
+            _messagesHandler = messagesHandler;
             _commitHandler = commitHandler;
             _rollbackHandler = rollbackHandler;
 
             _serviceProvider = serviceProvider;
             _logger = serviceProvider.GetRequiredService<ILogger<InboundConsumer>>();
+            _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
 
             _consumer = broker.GetConsumer(_endpoint);
 
@@ -65,7 +66,7 @@ namespace Silverback.Messaging.Connectors
                 var batch = new MessageBatch(
                     _endpoint,
                     _settings.Batch,
-                    _messageHandler,
+                    _messagesHandler,
                     Commit,
                     _rollbackHandler,
                     _errorPolicy,
@@ -79,9 +80,9 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        private void OnSingleMessageReceived(IMessage message, IOffset offset)
+        private void OnSingleMessageReceived(object message, IOffset offset)
         {
-            _logger.LogTrace("Processing message.", message, _endpoint);
+            _messageLogger.LogTrace(_logger, "Processing message.", message, _endpoint);
 
             _errorPolicy.TryProcess(message, _ =>
             {
@@ -92,15 +93,16 @@ namespace Silverback.Messaging.Connectors
             });
         }
 
-        private void RelayAndCommitSingleMessage(IMessage message, IOffset offset, IServiceProvider serviceProvider)
+        private void RelayAndCommitSingleMessage(object message, IOffset offset, IServiceProvider serviceProvider)
         {
             try
             {
-                _messageHandler(message, _endpoint, serviceProvider);
+                _messagesHandler(new[] {message}, _endpoint, serviceProvider);
                 Commit(new[] {offset}, serviceProvider);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message.", message, _endpoint);
                 Rollback(serviceProvider);
                 throw;
             }

@@ -1,95 +1,90 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Silverback.Util;
-using Silverback.Messaging.Messages;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Subscribers;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Publishing
 {
     public class Publisher : IPublisher
     {
-        private readonly ILogger<Publisher> _logger;
-        private readonly SubscribedMethodProvider _subscribedMethodsProvider;
+        private readonly ILogger _logger;
 
-        public Publisher(IServiceProvider serviceProvider, ILogger<Publisher> logger)
+        private readonly BusOptions _options;
+        private readonly IServiceProvider _serviceProvider;
+
+        private IEnumerable<SubscribedMethod> _subscribedMethods;
+        private SubscribedMethodInvoker _methodInvoker;
+
+        public Publisher(BusOptions options, IServiceProvider serviceProvider, ILogger<Publisher> logger)
         {
-            _subscribedMethodsProvider = new SubscribedMethodProvider(serviceProvider);
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+
             _logger = logger;
         }
 
-        public void Publish(IMessage message) => Publish(message, false).Wait();
+        public void Publish(object message) => 
+            Publish(new[] { message });
 
-        public Task PublishAsync(IMessage message) => Publish(message, true);
+        public Task PublishAsync(object message) => 
+            PublishAsync(new[] { message });
 
-        public IEnumerable<TResult> Publish<TResult>(IMessage message) => Publish(message, false).Result.Cast<TResult>();
+        public IEnumerable<TResult> Publish<TResult>(object message) => 
+            Publish<TResult>(new[] { message });
 
-        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IMessage message) => (await Publish(message, true)).Cast<TResult>();
+        public Task<IEnumerable<TResult>> PublishAsync<TResult>(object message) => 
+            PublishAsync<TResult>(new[] { message });
+
+        public void Publish(IEnumerable<object> messages) => 
+            Publish(messages, false).Wait();
+
+        public Task PublishAsync(IEnumerable<object> messages) => 
+            Publish(messages, true);
+
+        public IEnumerable<TResult> Publish<TResult>(IEnumerable<object> messages) => 
+            Publish(messages, false).Result.Cast<TResult>().ToList();
+
+        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) => 
+            (await Publish(messages, true)).Cast<TResult>().ToList();
 
         // TODO: Test recursion
-        private async Task<IEnumerable<object>> Publish(IMessage message, bool executeAsync)
+        private async Task<IEnumerable<object>> Publish(IEnumerable<object> messages, bool executeAsync)
         {
-            if (message == null) return Enumerable.Empty<object>();
+            var messagesList = messages?.ToList();
 
-            _logger.LogTrace("Publishing message of type '{messageType}'...", message.GetType().FullName);
+            if (messagesList == null || !messagesList.Any())
+                return Enumerable.Empty<object>();
 
-            var resultsCollection = new List<object>();
-
-            var subscribers = _subscribedMethodsProvider.GetSubscribedMethods(message);
-
-            await InvokeParallelSubscribersAndCollectResults(message, executeAsync, subscribers, resultsCollection);
-            await InvokeSequentialSubscribersAndCollectResults(message, executeAsync, subscribers, resultsCollection);
-
-            return resultsCollection.Where(r => r != null);
+            return (await InvokeExclusiveMethods(messagesList, executeAsync))
+                .Union(await InvokeNonExclusiveMethods(messagesList))
+                .ToList();
         }
 
-        // TODO: Test parallel subscriber!
-        private Task InvokeParallelSubscribersAndCollectResults(IMessage message, bool executeAsync, IEnumerable<SubscribedMethod> subscribers, List<object> resultsCollection) =>
-            Task.WhenAll(subscribers.Where(s => s.Parallel).Select(method =>
-                InvokeSubscribedMethodAndCollectResult(method, message, executeAsync, resultsCollection)));
+        private Task<IEnumerable<object>> InvokeExclusiveMethods(IEnumerable<object> messages, bool executeAsync) =>
+            GetSubscribedMethods()
+                .Where(method => method.Info.IsExclusive)
+                .SelectManyAsync(method => GetMethodInvoker().Invoke(method, messages, executeAsync));
 
-        private async Task InvokeSequentialSubscribersAndCollectResults(IMessage message, bool executeAsync, IEnumerable<SubscribedMethod> subscribers, List<object> resultsCollection) =>
-            await subscribers.Where(s => !s.Parallel).ForEachAsync(method =>
-                InvokeSubscribedMethodAndCollectResult(method, message, executeAsync, resultsCollection));
+        private Task<IEnumerable<object>> InvokeNonExclusiveMethods(IEnumerable<object> messagesList) =>
+            GetSubscribedMethods()
+                .Where(method => !method.Info.IsExclusive)
+                .ParallelSelectManyAsync(method => GetMethodInvoker().Invoke(method, messagesList, true));
 
-        private async Task InvokeSubscribedMethodAndCollectResult(SubscribedMethod method, IMessage message, bool executeAsync, List<object> resultsCollection)
-        {
-            var methodResult = await SubscribedMethodInvoker.InvokeAndGetResult(method, message, executeAsync);
+        private IEnumerable<SubscribedMethod> GetSubscribedMethods() =>
+            _subscribedMethods ?? (_subscribedMethods = _options
+                .Subscriptions
+                .SelectMany(s => s.GetSubscribedMethods(_serviceProvider))
+                .ToList());
 
-            if (!await PublishReturnedMessages(methodResult, executeAsync, resultsCollection))
-            {
-                lock (resultsCollection)
-                {
-                    resultsCollection.Add(methodResult);
-                }
-            }
-        }
-
-        private async Task<bool> PublishReturnedMessages(object methodResult, bool executeAsync, List<object> resultsCollection)
-        {
-            switch (methodResult)
-            {
-                case IMessage returnMessage:
-                {
-                    resultsCollection.AddRange(await Publish(returnMessage, executeAsync));
-
-                    return true;
-                }
-                case IEnumerable<IMessage> returnMessages:
-                {
-                    foreach (var returnMessage2 in returnMessages)
-                        resultsCollection.AddRange(await Publish(returnMessage2, executeAsync));
-
-                    return true;
-                }
-                default:
-                    return false;
-            }
-        }
+        private SubscribedMethodInvoker GetMethodInvoker() =>
+            _methodInvoker ?? (_methodInvoker = _serviceProvider.GetRequiredService<SubscribedMethodInvoker>());
     }
 }

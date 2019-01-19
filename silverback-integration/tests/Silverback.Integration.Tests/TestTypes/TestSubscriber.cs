@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -27,13 +27,14 @@ namespace Silverback.Tests.TestTypes
             if (Delay > TimeSpan.Zero)
                 Thread.Sleep(Delay);
 
-            if (MustFailCount > FailCount || (FailCondition?.Invoke(message) ?? false))
+            ReceivedMessages.Add(message);
+
+            if (!(message is ISilverbackEvent) &&
+                MustFailCount > FailCount || (FailCondition?.Invoke(message) ?? false))
             {
                 FailCount++;
                 throw new Exception("Test failure");
             }
-
-            ReceivedMessages.Add(message);
         }
     }
 }

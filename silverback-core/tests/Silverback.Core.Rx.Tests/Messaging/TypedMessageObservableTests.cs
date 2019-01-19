@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -8,18 +8,18 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silverback.Core.Messaging;
-using Silverback.Core.Rx.Tests.TestTypes;
 using Silverback.Core.Rx.Tests.TestTypes.Messages;
-using Silverback.Messaging.Messages;
+using Silverback.Core.Rx.Tests.TestTypes.Messages.Base;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
 using Xunit;
 
 namespace Silverback.Core.Rx.Tests.Messaging
 {
-    [Collection("Rx")]
+    [Collection("MessageObservable")]
     public class TypedMessageObservableTests
     {
         private readonly IPublisher _publisher;
@@ -29,7 +29,18 @@ namespace Silverback.Core.Rx.Tests.Messaging
         {
             var observable = new MessageObservable();
             _messageObservable = new MessageObservable<IEvent>(observable);
-            _publisher = new Publisher(TestServiceProvider.Create((ISubscriber)observable), new NullLogger<Publisher>());
+
+            var services = new ServiceCollection();
+            services.AddBus();
+
+            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
+            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+
+            services.AddSingleton<ISubscriber>(observable);
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            _publisher = serviceProvider.GetRequiredService<IPublisher>();
         }
 
         [Fact]

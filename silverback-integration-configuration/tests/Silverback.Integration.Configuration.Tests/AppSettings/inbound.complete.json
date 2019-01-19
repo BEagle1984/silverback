@@ -7,7 +7,6 @@
           "Consumers": 3,
           "Batch": {
             "Size": 5,
-            "MaxDegreeOfParallelism":  2, 
             "MaxWaitTime": "00:00:02.500"
           }
         },

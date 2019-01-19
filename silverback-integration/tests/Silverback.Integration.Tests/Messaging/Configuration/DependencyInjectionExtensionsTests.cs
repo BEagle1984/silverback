@@ -1,13 +1,14 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
@@ -15,14 +16,15 @@ using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.Configuration
 {
-    [TestFixture]
+    [Collection("StaticInMemory")]
     public class DependencyInjectionExtensionsTests
     {
-        private IServiceCollection _services;
-        private TestSubscriber _testSubscriber;
+        private readonly IServiceCollection _services;
+        private readonly TestSubscriber _testSubscriber;
         private IServiceProvider _serviceProvider;
 
         private IServiceProvider GetServiceProvider() => _serviceProvider ?? (_serviceProvider = _services.BuildServiceProvider());
@@ -30,16 +32,17 @@ namespace Silverback.Tests.Messaging.Configuration
         private TestBroker GetBroker() => (TestBroker) GetServiceProvider().GetService<IBroker>();
         private IPublisher GetPublisher() => GetServiceProvider().GetService<IPublisher>();
 
-        private IOutboundRoutingConfiguration GetOutboundRouting() => GetServiceProvider().GetService<IOutboundRoutingConfiguration>();
+        private BusConfigurator GetBusConfigurator() => GetServiceProvider().GetService<BusConfigurator>();
         private InMemoryOutboundQueue GetOutboundQueue() => (InMemoryOutboundQueue)GetServiceProvider().GetService<IOutboundQueueProducer>();
 
         private IInboundConnector GetInboundConnector() => GetServiceProvider().GetService<IInboundConnector>();
         private InMemoryInboundLog GetInboundLog() => (InMemoryInboundLog)GetServiceProvider().GetService<IInboundLog>();
 
-        [SetUp]
-        public void Setup()
+        public DependencyInjectionExtensionsTests()
         {
             _services = new ServiceCollection();
+
+            _services.AddBus();
 
             _testSubscriber = new TestSubscriber();
             _services.AddSingleton<ISubscriber>(_testSubscriber);
@@ -55,19 +58,20 @@ namespace Silverback.Tests.Messaging.Configuration
             InMemoryOutboundQueue.Clear();
         }
 
-        [Test]
-        public void AddBrokerTest()
+        [Fact]
+        public void AddBroker_BrokerRegisteredForDI()
         {
             _services.AddBroker<TestBroker>(options => { });
 
-            Assert.That(GetBroker(), Is.Not.Null);
+            GetServiceProvider().GetService<IBroker>().Should().NotBeNull();
         }
 
-        [Test]
-        public void AddOutboundTest()
+        [Fact]
+        public void AddOutboundConnector_PublishMessages_MessagesProduced()
         {
             _services.AddBroker<TestBroker>(options => options.AddOutboundConnector());
-            GetOutboundRouting().Add<IIntegrationMessage>(TestEndpoint.Default);
+            GetBusConfigurator().Connect(endpoints =>
+                endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.Default));
 
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventTwo());
@@ -75,50 +79,53 @@ namespace Silverback.Tests.Messaging.Configuration
             GetPublisher().Publish(new TestEventTwo());
             GetPublisher().Publish(new TestEventTwo());
 
-            Assert.That(GetBroker().ProducedMessages.Count, Is.EqualTo(5));
+            GetBroker().ProducedMessages.Count.Should().Be(5);
         }
 
-        [Test]
-        public void AddDeferredOutboundTest()
+        [Fact]
+        public void AddDeferredOutboundConnector_PublishMessages_MessagesQueued()
         {
             _services.AddBroker<TestBroker>(options => options.AddDeferredOutboundConnector<InMemoryOutboundQueue>());
-            GetOutboundRouting().Add<IIntegrationMessage>(TestEndpoint.Default);
+            GetBusConfigurator().Connect(endpoints => 
+                endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.Default));
 
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventTwo());
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventTwo());
             GetPublisher().Publish(new TestEventTwo());
-            GetPublisher().Publish(new TransactionCommitEvent());
+            GetPublisher().Publish(new TransactionCompletedEvent());
 
-            Assert.That(GetOutboundQueue().Length, Is.EqualTo(5));
+            GetOutboundQueue().Length.Should().Be(5);
         }
 
-        [Test]
-        public void AddDeferredOutboundRollbackTest()
+        [Fact]
+        public void AddDeferredOutboundConnector_Rollback_MessagesNotQueued()
         {
             _services.AddBroker<TestBroker>(options => options.AddDeferredOutboundConnector<InMemoryOutboundQueue>());
-            GetOutboundRouting().Add<IIntegrationMessage>(TestEndpoint.Default);
+            GetBusConfigurator().Connect(endpoints =>
+                endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.Default));
 
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventTwo());
-            GetPublisher().Publish(new TransactionCommitEvent());
+            GetPublisher().Publish(new TransactionCompletedEvent());
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventTwo());
             GetPublisher().Publish(new TestEventTwo());
-            GetPublisher().Publish(new TransactionRollbackEvent());
+            GetPublisher().Publish(new TransactionAbortedEvent());
 
-            Assert.That(GetOutboundQueue().Length, Is.EqualTo(2));
+            GetOutboundQueue().Length.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void AddOutboundRoutingTest()
         {
             _services.AddBroker<TestBroker>(options => options.AddOutboundConnector());
 
-            GetOutboundRouting()
-                .Add<TestEventOne>(new TestEndpoint("test1"))
-                .Add<IIntegrationEvent>(new TestEndpoint("test2"));
+            GetBusConfigurator().Connect(endpoints =>
+                endpoints
+                    .AddOutbound<TestEventOne>(new TestEndpoint("test1"))
+                    .AddOutbound<IIntegrationEvent>(new TestEndpoint("test2")));
 
             // -> to both endpoints
             GetPublisher().Publish(new TestEventOne());
@@ -129,19 +136,19 @@ namespace Silverback.Tests.Messaging.Configuration
             GetPublisher().Publish(new TestEventTwo());
             // -> to nowhere
             GetPublisher().Publish(new TestInternalEventOne());
-            
-            Assert.That(GetBroker().ProducedMessages.Count, Is.EqualTo(7));
-            Assert.That(GetBroker().ProducedMessages.Where(x => x.Endpoint.Name == "test1").Count, Is.EqualTo(2));
-            Assert.That(GetBroker().ProducedMessages.Where(x => x.Endpoint.Name == "test2").Count, Is.EqualTo(5));
+
+            GetBroker().ProducedMessages.Count.Should().Be(7);
+            GetBroker().ProducedMessages.Count(x => x.Endpoint.Name == "test1").Should().Be(2);
+            GetBroker().ProducedMessages.Count(x => x.Endpoint.Name == "test2").Should().Be(5);
         }
 
-        [Test]
+        [Fact]
         public void AddInboundConnector_PushMessages_MessagesReceived()
         {
             _services.AddBroker<TestBroker>(options => options.AddInboundConnector());
-
-            GetInboundConnector().Bind(TestEndpoint.Default);
-            GetBroker().Connect();
+            GetBusConfigurator().Connect(endpoints =>
+                endpoints
+                    .AddInbound(TestEndpoint.Default));
 
             var consumer = GetBroker().Consumers.First();
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
@@ -150,16 +157,16 @@ namespace Silverback.Tests.Messaging.Configuration
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(5));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(5);
         }
 
-        [Test]
+        [Fact]
         public void AddLoggedInboundConnector_PushMessages_MessagesReceived()
         {
             _services.AddBroker<TestBroker>(options => options.AddLoggedInboundConnector<InMemoryInboundLog>());
-
-            GetInboundConnector().Bind(TestEndpoint.Default);
-            GetBroker().Connect();
+            GetBusConfigurator().Connect(endpoints =>
+                endpoints
+                    .AddInbound(TestEndpoint.Default));
 
             var consumer = GetBroker().Consumers.First();
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
@@ -168,7 +175,7 @@ namespace Silverback.Tests.Messaging.Configuration
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(GetInboundLog().Length, Is.EqualTo(5));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(5);
         }
     }
 }

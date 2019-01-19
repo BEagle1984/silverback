@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -16,24 +16,19 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public class LoggedInboundConnector : ExactlyOnceInboundConnector
     {
-        public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger)
-            : base(broker, serviceProvider, logger)
+        public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger, MessageLogger messageLogger)
+            : base(broker, serviceProvider, logger, messageLogger)
         {
         }
 
-        protected override bool MustProcess(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected override bool MustProcess(object message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
-            if (!(message is IIntegrationMessage integrationMessage))
-            {
-                throw new NotSupportedException("The LoggedInboundConnector currently supports only instances of IIntegrationMessage.");
-            }
-
             var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
 
-            if (inboundLog.Exists(integrationMessage, sourceEndpoint))
+            if (inboundLog.Exists(message, sourceEndpoint))
                 return false;
 
-            inboundLog.Add(integrationMessage, sourceEndpoint);
+            inboundLog.Add(message, sourceEndpoint);
             return true;
         }
 

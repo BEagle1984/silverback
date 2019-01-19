@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
@@ -8,10 +8,17 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public class InMemoryInboundLog : TransactionalList<InMemoryInboundLogEntry>, IInboundLog
     {
-        public void Add(IIntegrationMessage message, IEndpoint endpoint)
-            => Add(new InMemoryInboundLogEntry(message.Id, endpoint.Name));
+        private readonly MessageKeyProvider _messageKeyProvider;
 
-        public bool Exists(IIntegrationMessage message, IEndpoint endpoint)
-            => Entries.Union(UncommittedEntries).Any(e => e.MessageId == message.Id && e.EndpointName == endpoint.Name);
+        public InMemoryInboundLog(MessageKeyProvider messageKeyProvider)
+        {
+            _messageKeyProvider = messageKeyProvider;
+        }
+
+        public void Add(object message, IEndpoint endpoint)
+            => Add(new InMemoryInboundLogEntry(_messageKeyProvider.GetKey(message), endpoint.Name));
+
+        public bool Exists(object message, IEndpoint endpoint)
+            => Entries.Union(UncommittedEntries).Any(e => e.MessageId == _messageKeyProvider.GetKey(message) && e.EndpointName == endpoint.Name);
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,11 +11,13 @@ namespace Silverback.Messaging.Broker
     public abstract class Consumer : EndpointConnectedObject, IConsumer
     {
         private readonly ILogger<Consumer> _logger;
+        private readonly MessageLogger _messageLogger;
 
-        protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger)
+        protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger, MessageLogger messageLogger)
            : base(broker, endpoint)
         {
             _logger = logger;
+            _messageLogger = messageLogger;
         }
 
         public event EventHandler<MessageReceivedEventArgs> Received;
@@ -31,7 +33,7 @@ namespace Silverback.Messaging.Broker
 
             var deserializedMessage = Endpoint.Serializer.Deserialize(message);
 
-            _logger.LogTrace("Message received.", deserializedMessage, Endpoint);
+            _messageLogger.LogTrace(_logger, "Message received.", deserializedMessage, Endpoint);
 
             Received.Invoke(this, new MessageReceivedEventArgs(deserializedMessage, offset));
         }
@@ -41,8 +43,8 @@ namespace Silverback.Messaging.Broker
         where TBroker : class, IBroker
         where TEndpoint : class, IEndpoint
     {
-        protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger) 
-            : base(broker, endpoint, logger)
+        protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger, MessageLogger messageLogger) 
+            : base(broker, endpoint, logger, messageLogger)
         {
         }
 

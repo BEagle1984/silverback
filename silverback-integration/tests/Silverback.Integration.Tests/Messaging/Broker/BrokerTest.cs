@@ -1,69 +1,71 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.Broker
 {
-    [TestFixture]
     public class BrokerTest
     {
-        private TestBroker _broker;
+        private readonly TestBroker _broker = new TestBroker();
 
-        [SetUp]
-        public void Setup()
-        {
-            _broker = new TestBroker();
-        }
-
-        [Test]
-        public void GetProducerTest()
+        [Fact]
+        public void GetProducer_ReturnInstance()
         {
             var producer = _broker.GetProducer(TestEndpoint.Default);
 
-            Assert.That(producer, Is.Not.Null);
+            producer.Should().NotBeNull();
         }
 
-        [Test]
-        public void GetCachedProducerTest()
+        [Fact]
+        public void GetProducer_SameEndpoint_ReturnCachedInstance()
         {
             var producer = _broker.GetProducer(TestEndpoint.Default);
             var producer2 = _broker.GetProducer(TestEndpoint.Default);
 
-            Assert.That(producer2, Is.SameAs(producer));
+            producer2.Should().BeSameAs(producer);
         }
 
-        [Test]
-        public void GetProducerForDifferentEndpointTest()
+        [Fact]
+        public void GetProducer_DifferentEndpoint_ReturnNewInstance()
         {
-            var producer = _broker.GetConsumer(TestEndpoint.Default);
-            var producer2 = _broker.GetConsumer(new TestEndpoint("test2"));
+            var producer = _broker.GetProducer(TestEndpoint.Default);
+            var producer2 = _broker.GetProducer(new TestEndpoint("test2"));
 
-            Assert.That(producer2, Is.Not.SameAs(producer));
+            producer2.Should().NotBeSameAs(producer);
         }
 
-        [Test]
-        public void GetConsumerTest()
+        [Fact]
+        public void GetConsumer_ReturnInstance()
         {
             var consumer = _broker.GetConsumer(TestEndpoint.Default);
 
-            Assert.That(consumer, Is.Not.Null);
+            consumer.Should().NotBeNull();
         }
-        
-        [Test]
-        public void GetConsumerForDifferentEndpointTest()
+
+        [Fact]
+        public void GetConsumer_SameEndpoint_ReturnCachedInstance()
         {
             var consumer = _broker.GetConsumer(TestEndpoint.Default);
             var consumer2 = _broker.GetConsumer(new TestEndpoint("test2"));
 
-            Assert.That(consumer2, Is.Not.SameAs(consumer));
+            consumer2.Should().NotBeSameAs(consumer);
         }
 
-        [Test]
+        [Fact]
+        public void GetConsumer_DifferentEndpoint_ReturnNewInstance()
+        {
+            var consumer = _broker.GetConsumer(TestEndpoint.Default);
+            var consumer2 = _broker.GetConsumer(new TestEndpoint("test2"));
+
+            consumer2.Should().NotBeSameAs(consumer);
+        }
+
+        [Fact]
         public void Produce_IntegrationMessage_IdIsSet()
         {
             var producer = _broker.GetProducer(TestEndpoint.Default);
@@ -72,10 +74,10 @@ namespace Silverback.Tests.Messaging.Broker
 
             producer.Produce(message);
 
-            Assert.That(message.Id, Is.Not.EqualTo(Guid.Empty));
+            message.Id.Should().NotBeEmpty();
         }
 
-        [Test]
+        [Fact]
         public async Task ProduceAsync_IntegrationMessage_IdIsSet()
         {
             var producer = _broker.GetProducer(TestEndpoint.Default);
@@ -84,8 +86,7 @@ namespace Silverback.Tests.Messaging.Broker
 
             await producer.ProduceAsync(message);
 
-            Assert.That(message.Id, Is.Not.EqualTo(Guid.Empty));
+            message.Id.Should().NotBeEmpty();
         }
-
     }
 }

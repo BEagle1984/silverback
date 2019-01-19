@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -8,14 +8,14 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public class InMemoryInboundLogEntry : IEquatable<InMemoryInboundLogEntry>
     {
-        public InMemoryInboundLogEntry(Guid messageId, string endpointName)
+        public InMemoryInboundLogEntry(string messageId, string endpointName)
         {
             MessageId = messageId;
             EndpointName = endpointName;
             Consumed = DateTime.UtcNow;
         }
 
-        public Guid MessageId { get; }
+        public string MessageId { get; }
 
         public string EndpointName { get; }
 
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         public override int GetHashCode()
         {
             var hashCode = -115078072;
-            hashCode = hashCode * -1521134295 + EqualityComparer<Guid>.Default.GetHashCode(MessageId);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(MessageId);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(EndpointName);
             return hashCode;
         }

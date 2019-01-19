@@ -1,28 +1,27 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.ErrorHandling
 {
-    [TestFixture]
     public class MoveMessageErrorPolicyTests
     {
-        private ErrorPolicyBuilder _errorPolicyBuilder;
-        private IBroker _broker;
+        private readonly ErrorPolicyBuilder _errorPolicyBuilder;
+        private readonly IBroker _broker;
 
-        [SetUp]
-        public void Setup()
+        public MoveMessageErrorPolicyTests()
         {
             var services = new ServiceCollection();
 
@@ -41,7 +40,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
             _broker.Connect();
         }
 
-        [Test]
+        [Fact]
         public void TryHandleMessage_Failed_MessageMoved()
         {
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default);
@@ -50,10 +49,10 @@ namespace Silverback.Tests.Messaging.ErrorHandling
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
 
-            Assert.That(producer.ProducedMessages.Count, Is.EqualTo(1));
+            producer.ProducedMessages.Count.Should().Be(1);
         }
 
-        [Test]
+        [Fact]
         public void Transform_Failed_MessageTranslated()
         {
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default)
@@ -63,7 +62,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
             var producedMessage = producer.Endpoint.Serializer.Deserialize(producer.ProducedMessages[0].Message);
-            Assert.That(producedMessage, Is.InstanceOf<TestEventTwo>());
+            producedMessage.Should().BeOfType<TestEventTwo>();
         }
     }
 }

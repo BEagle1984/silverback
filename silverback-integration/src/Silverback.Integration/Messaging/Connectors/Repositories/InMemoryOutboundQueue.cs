@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -18,7 +17,7 @@ namespace Silverback.Messaging.Connectors.Repositories
     {
         #region Writer
 
-        public Task Enqueue(IIntegrationMessage message, IEndpoint endpoint)
+        public Task Enqueue(object message, IEndpoint endpoint)
         {
             Add(new QueuedMessage(message, endpoint));
             return Task.CompletedTask;

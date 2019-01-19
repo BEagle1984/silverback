@@ -1,7 +1,8 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -13,25 +14,39 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public abstract class ExactlyOnceInboundConnector : InboundConnector
     {
-        protected ILogger<LoggedInboundConnector> _logger;
+        protected ILogger<LoggedInboundConnector> Logger;
+        private readonly MessageLogger _messageLogger;
 
-        protected ExactlyOnceInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger)
+        protected ExactlyOnceInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger, MessageLogger messageLogger)
             : base(broker, serviceProvider, logger)
         {
-            _logger = logger;
+            Logger = logger;
+            _messageLogger = messageLogger;
         }
 
-        protected override void RelayMessage(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected override void RelayMessages(IEnumerable<object> messages, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
-            if (!MustProcess(message, sourceEndpoint, serviceProvider))
-            {
-                _logger.LogTrace("Message is being skipped since it was already processed.", message, sourceEndpoint);
-                return;
-            }
+            messages = EnsureExactlyOnce(messages, sourceEndpoint, serviceProvider);
 
-            base.RelayMessage(message, sourceEndpoint, serviceProvider);
+            base.RelayMessages(messages, sourceEndpoint, serviceProvider);
         }
 
-        protected abstract bool MustProcess(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider);
+        private IEnumerable<object> EnsureExactlyOnce(IEnumerable<object> messages, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        {
+            foreach (var message in messages)
+            {
+                if (MustProcess(message, sourceEndpoint, serviceProvider))
+                {
+                    yield return message;
+                }
+                else
+                {
+                    _messageLogger.LogTrace(Logger, "Message is being skipped since it was already processed.", message,
+                        sourceEndpoint);
+                }
+            }
+        }
+
+        protected abstract bool MustProcess(object message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider);
     }
 }

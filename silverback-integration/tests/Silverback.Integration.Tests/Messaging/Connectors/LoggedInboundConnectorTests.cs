@@ -1,32 +1,33 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.Connectors
 {
-    [TestFixture]
+    [Collection("StaticInMemory")]
     public class LoggedInboundConnectorTests
     {
-        private TestSubscriber _testSubscriber;
-        private IInboundConnector _connector;
-        private TestBroker _broker;
-        private IServiceProvider _serviceProvider;
+        private readonly TestSubscriber _testSubscriber;
+        private readonly IInboundConnector _connector;
+        private readonly TestBroker _broker;
+        private readonly IServiceProvider _serviceProvider;
 
-        [SetUp]
-        public void Setup()
+        public LoggedInboundConnectorTests()
         {
             var services = new ServiceCollection();
 
@@ -35,19 +36,21 @@ namespace Silverback.Tests.Messaging.Connectors
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-            services.AddSingleton<IPublisher, Publisher>();
+            services.AddBus();
 
-            _broker = new TestBroker();
+            services.AddBroker<TestBroker>();
 
             services.AddScoped<IInboundLog, InMemoryInboundLog>();
 
             _serviceProvider = services.BuildServiceProvider();
-            _connector = new LoggedInboundConnector(_broker, _serviceProvider, new NullLogger<LoggedInboundConnector>());
+            _broker = (TestBroker)_serviceProvider.GetService<IBroker>();
+            _connector = new LoggedInboundConnector(_broker, _serviceProvider, new NullLogger<LoggedInboundConnector>(),
+                new MessageLogger(new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()})));
 
             InMemoryInboundLog.Clear();
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessages_MessagesReceived()
         {
             _connector.Bind(TestEndpoint.Default);
@@ -57,10 +60,10 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(2));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessages_EachIsConsumedOnce()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
@@ -76,10 +79,10 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(e2);
             consumer.TestPush(e1);
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(2));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessages_WrittenToLog()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
@@ -95,10 +98,10 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(e2);
             consumer.TestPush(e1);
 
-            Assert.That(_serviceProvider.GetRequiredService<IInboundLog>().Length, Is.EqualTo(2));
+            _serviceProvider.GetRequiredService<IInboundLog>().Length.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesInBatch_EachIsConsumedOnce()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
@@ -120,10 +123,10 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(e2);
             consumer.TestPush(e1);
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(6));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(6);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesInBatch_WrittenToLog()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
@@ -145,10 +148,10 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(e2);
             consumer.TestPush(e1);
 
-            Assert.That(_serviceProvider.GetRequiredService<IInboundLog>().Length, Is.EqualTo(2));
+            _serviceProvider.GetRequiredService<IInboundLog>().Length.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesInBatch_OnlyCommittedBatchWrittenToLog()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
@@ -169,10 +172,10 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(e1);
             consumer.TestPush(e1);
 
-            Assert.That(_serviceProvider.GetRequiredService<IInboundLog>().Length, Is.EqualTo(1));
+            _serviceProvider.GetRequiredService<IInboundLog>().Length.Should().Be(1);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesInBatchToMultipleConsumers_OnlyCommittedBatchWrittenToLog()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
@@ -216,7 +219,7 @@ namespace Silverback.Tests.Messaging.Connectors
 
             Task.WaitAll(tasks);
 
-            Assert.That(_serviceProvider.GetRequiredService<IInboundLog>().Length, Is.EqualTo(2));
+            _serviceProvider.GetRequiredService<IInboundLog>().Length.Should().Be(2);
         }
     }
 }

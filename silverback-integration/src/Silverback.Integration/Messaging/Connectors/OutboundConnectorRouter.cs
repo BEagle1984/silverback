@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
@@ -21,7 +20,7 @@ namespace Silverback.Messaging.Connectors
         }
 
         [Subscribe]
-        public Task OnMessageReceived(IIntegrationMessage message) =>
+        public Task OnMessageReceived(object message) =>
             _routing.GetRoutes(message)
                 .ForEachAsync(route =>
                     _outboundConnectors.GetConnectorInstance(route.OutboundConnectorType)

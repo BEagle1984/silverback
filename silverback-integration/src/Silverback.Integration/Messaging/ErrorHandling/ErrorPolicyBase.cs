@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,14 +12,16 @@ namespace Silverback.Messaging.ErrorHandling
     public abstract class ErrorPolicyBase : IErrorPolicy
     {
         private readonly ILogger<ErrorPolicyBase> _logger;
+        private readonly MessageLogger _messageLogger;
         private readonly List<Type> _excludedExceptions = new List<Type>();
         private readonly List<Type> _includedExceptions = new List<Type>();
         private Func<FailedMessage, Exception, bool> _applyRule;
         private int _maxFailedAttempts = -1;
 
-        protected ErrorPolicyBase(ILogger<ErrorPolicyBase> logger)
+        protected ErrorPolicyBase(ILogger<ErrorPolicyBase> logger, MessageLogger messageLogger)
         {
             _logger = logger;
+            _messageLogger = messageLogger;
         }
 
         public ErrorPolicyBase ApplyTo<T>() where T : Exception
@@ -68,7 +70,7 @@ namespace Silverback.Messaging.ErrorHandling
 
             if (_maxFailedAttempts >= 0 && failedMessage.FailedAttempts > _maxFailedAttempts)
             {
-                _logger.LogTrace($"The policy '{GetType().Name}' will be skipped because the current failed attempts " +
+                _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the current failed attempts " +
                                  $"({failedMessage.FailedAttempts}) exceeds the configured maximum attempts " +
                                  $"({_maxFailedAttempts}).", failedMessage);
 
@@ -77,7 +79,7 @@ namespace Silverback.Messaging.ErrorHandling
 
             if (_includedExceptions.Any() && _includedExceptions.All(e => !e.IsInstanceOfType(exception)))
             {
-                _logger.LogTrace($"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
+                _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
                                  $"is not in the list of handled exceptions.", failedMessage);
 
                 return false;
@@ -85,7 +87,7 @@ namespace Silverback.Messaging.ErrorHandling
 
             if (_excludedExceptions.Any(e => e.IsInstanceOfType(exception)))
             {
-                _logger.LogTrace($"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
+                _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
                                  $"is in the list of excluded exceptions.", failedMessage);
 
                 return false;
@@ -93,7 +95,7 @@ namespace Silverback.Messaging.ErrorHandling
 
             if (_applyRule != null && !_applyRule.Invoke(failedMessage, exception))
             {
-                _logger.LogTrace($"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
+                _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
                                  $"evaluated and returned false.", failedMessage);
                 return false;
             }

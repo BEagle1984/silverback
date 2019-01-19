@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -16,7 +15,7 @@ namespace Silverback.Messaging.Connectors
             _broker = broker;
         }
 
-        public Task RelayMessage(IIntegrationMessage message, IEndpoint destinationEndpoint) =>
+        public Task RelayMessage(object message, IEndpoint destinationEndpoint) =>
             _broker.GetProducer(destinationEndpoint).ProduceAsync(message);
     }
 }

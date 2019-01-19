@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -13,16 +13,18 @@ namespace Silverback.Messaging.ErrorHandling
     public class SkipMessageErrorPolicy : ErrorPolicyBase
     {
         private readonly ILogger _logger;
-
-        public SkipMessageErrorPolicy(ILogger<SkipMessageErrorPolicy> logger)
-            : base(logger)
+        private readonly MessageLogger _messageLogger;
+        
+        public SkipMessageErrorPolicy(ILogger<SkipMessageErrorPolicy> logger, MessageLogger messageLogger)
+            : base(logger, messageLogger)
         {
             _logger = logger;
+            _messageLogger = messageLogger;
         }
 
         public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
         {
-            _logger.LogTrace("The message will be skipped.", failedMessage);
+            _messageLogger.LogTrace(_logger, "The message will be skipped.", failedMessage);
 
             return ErrorAction.Skip;
         }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,19 +11,21 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public class DbContextInboundLog : RepositoryBase<InboundMessage>, IInboundLog
     {
-        private object _lock = new object();
+        private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly object _lock = new object();
 
-        public DbContextInboundLog(DbContext dbContext) : base(dbContext)
+        public DbContextInboundLog(DbContext dbContext, MessageKeyProvider messageKeyProvider) : base(dbContext)
         {
+            _messageKeyProvider = messageKeyProvider;
         }
 
-        public void Add(IIntegrationMessage message, IEndpoint endpoint)
+        public void Add(object message, IEndpoint endpoint)
         {
             lock (_lock)
             {
                 DbSet.Add(new InboundMessage
                 {
-                    MessageId = message.Id,
+                    MessageId = _messageKeyProvider.GetKey(message),
                     Message = Serialize(message),
                     EndpointName = endpoint.Name,
                     Consumed = DateTime.UtcNow
@@ -45,11 +47,12 @@ namespace Silverback.Messaging.Connectors.Repositories
             // Nothing to do, just not saving the DbContext
         }
 
-        public bool Exists(IIntegrationMessage message, IEndpoint endpoint)
+        public bool Exists(object message, IEndpoint endpoint)
         {
             lock (_lock)
             {
-               return DbSet.Any(m => m.MessageId == message.Id && m.EndpointName == endpoint.Name);
+                var key = _messageKeyProvider.GetKey(message);
+               return DbSet.Any(m => m.MessageId == key && m.EndpointName == endpoint.Name);
             }
         }
 

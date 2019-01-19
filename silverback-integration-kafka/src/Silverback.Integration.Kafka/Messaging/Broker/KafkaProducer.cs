@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -17,17 +17,19 @@ namespace Silverback.Messaging.Broker
         private static readonly ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.Producer<byte[], byte[]>> ProducersCache =
             new ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.Producer<byte[], byte[]>>(new KafkaClientConfigComparer());
 
-        public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, ILogger<KafkaProducer> logger) : base(broker, endpoint, logger)
+        public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, MessageKeyProvider messageKeyProvider,
+            ILogger<KafkaProducer> logger, MessageLogger messageLogger)
+            : base(broker, endpoint, messageKeyProvider, logger, messageLogger)
         {
             _logger = logger;
 
             Endpoint.Validate();
         }
 
-        protected override void Produce(IMessage message, byte[] serializedMessage)
+        protected override void Produce(object message, byte[] serializedMessage)
             => Task.Run(() => ProduceAsync(message, serializedMessage)).Wait();
 
-        protected override async Task ProduceAsync(IMessage message, byte[] serializedMessage)
+        protected override async Task ProduceAsync(object message, byte[] serializedMessage)
         {
             var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
             {

@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
@@ -39,7 +40,7 @@ namespace Silverback.Messaging.Connectors
                     _broker,
                     endpoint,
                     settings, 
-                    RelayMessage,
+                    RelayMessages,
                     Commit,
                     Rollback,
                     errorPolicy, 
@@ -51,20 +52,14 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        protected virtual void RelayMessage(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected virtual void RelayMessages(IEnumerable<object> messages, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
-            try
-            {
-                if (message is FailedMessage failedMessage)
-                    message = failedMessage.Message;
+            messages = messages.Select(msg =>
+                msg is FailedMessage failedMessage
+                    ? failedMessage.Message
+                    : msg);
 
-                serviceProvider.GetRequiredService<IPublisher>().Publish(message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Error occurred processing the message.", message, sourceEndpoint);
-                throw;
-            }
+            serviceProvider.GetRequiredService<IPublisher>().Publish(messages);
         }
 
         protected virtual void Commit(IServiceProvider serviceProvider)

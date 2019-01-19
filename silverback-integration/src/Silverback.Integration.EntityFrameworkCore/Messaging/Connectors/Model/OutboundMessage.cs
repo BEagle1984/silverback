@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,11 +11,12 @@ namespace Silverback.Messaging.Connectors.Model
     /// </summary>
     public class OutboundMessage
     {
-        [Key]
-        public Guid MessageId { get; set; }
+        [Key, MaxLength(300)]
+        public string MessageId { get; set; }
 
         public string Message { get; set; }
 
+        [MaxLength(300)]
         public string EndpointName { get; set; }
 
         public string Endpoint { get; set; }

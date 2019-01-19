@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -15,8 +16,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services
                 .AddSingleton<IBroker, T>()
-                .AddSingleton<IBrokerEndpointsConfigurationBuilder, BrokerEndpointsConfigurationBuilder>()
-                .AddSingleton<ErrorPolicyBuilder>();
+                .AddSingleton<ErrorPolicyBuilder>()
+                .AddSingleton<IMessageKeyProvider, DefaultPropertiesMessageKeyProvider>()
+                .AddSingleton<MessageKeyProvider>()
+                .AddSingleton<MessageLogger>();
 
             var options = new BrokerOptionsBuilder(services);
             optionsAction?.Invoke(options);
@@ -25,18 +28,18 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        // TODO: Test
-        public static IServiceCollection AddSecondaryBroker<T>(this IServiceCollection services, Action<BrokerOptionsBuilder> optionsAction = null)
-            where T : class, IBroker
-        {
-            services
-                .AddSingleton<IBroker, T>();
+        // TODO: Support & Test
+        //public static IServiceCollection AddSecondaryBroker<T>(this IServiceCollection services, Action<BrokerOptionsBuilder> optionsAction = null)
+        //    where T : class, IBroker
+        //{
+        //    services
+        //        .AddSingleton<IBroker, T>();
 
-            var options = new BrokerOptionsBuilder(services);
-            optionsAction?.Invoke(options);
-            options.CompleteWithDefaults();
+        //    var options = new BrokerOptionsBuilder(services);
+        //    optionsAction?.Invoke(options);
+        //    options.CompleteWithDefaults();
 
-            return services;
-        }
+        //    return services;
+        //}
     }
 }

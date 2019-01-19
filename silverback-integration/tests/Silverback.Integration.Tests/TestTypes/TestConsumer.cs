@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -9,13 +9,14 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.TestTypes.Domain;
 
 namespace Silverback.Tests.TestTypes
 {
     public class TestConsumer : Consumer
     {
         public TestConsumer(IBroker broker, IEndpoint endpoint)
-            : base(broker, endpoint, new NullLogger<TestConsumer>())
+            : base(broker, endpoint, new NullLogger<TestConsumer>(), new MessageLogger(new MessageKeyProvider(Enumerable.Empty<IMessageKeyProvider>())))
         {
         }
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -19,11 +19,6 @@ namespace Silverback.Messaging.Batch
         /// </summary>
         public TimeSpan MaxWaitTime { get; set; } = TimeSpan.MaxValue;
 
-        /// <summary>
-        /// The maximum number of parallel threads used to process the messages in the batch.
-        /// </summary>
-        public int MaxDegreeOfParallelism { get; set; } = 1;
-
         #region IEquatable
 
         public bool Equals(BatchSettings other)
@@ -31,8 +26,7 @@ namespace Silverback.Messaging.Batch
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Size == other.Size &&
-                   MaxWaitTime.Equals(other.MaxWaitTime) && 
-                   MaxDegreeOfParallelism == other.MaxDegreeOfParallelism;
+                   MaxWaitTime.Equals(other.MaxWaitTime);
         }
 
         public override bool Equals(object obj)

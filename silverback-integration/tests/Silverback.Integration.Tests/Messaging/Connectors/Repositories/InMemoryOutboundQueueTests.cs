@@ -1,28 +1,28 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.Connectors.Repositories
 {
-    [TestFixture]
+    [Collection("StaticInMemory")]
     public class InMemoryOutboundQueueTests
     {
-        private InMemoryOutboundQueue _queue;
+        private readonly InMemoryOutboundQueue _queue;
 
-        [SetUp]
-        public void Setup()
+        public InMemoryOutboundQueueTests()
         {
             _queue = new InMemoryOutboundQueue();
             InMemoryOutboundQueue.Clear();
         }
 
-        [Test]
+        [Fact]
         public void EnqueueTest()
         {
             Parallel.For(0, 3, _ =>
@@ -30,10 +30,10 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
                 _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
             });
 
-            Assert.That(_queue.Length, Is.EqualTo(0));
+            _queue.Length.Should().Be(0);
         }
 
-        [Test]
+        [Fact]
         public void EnqueueCommitTest()
         {
             Parallel.For(0, 3, _ =>
@@ -43,10 +43,10 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
 
             _queue.Commit();
 
-            Assert.That(_queue.Length, Is.EqualTo(3));
+            _queue.Length.Should().Be(3);
         }
 
-        [Test]
+        [Fact]
         public void EnqueueRollbackTest()
         {
             Parallel.For(0, 3, _ =>
@@ -56,10 +56,10 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
 
             _queue.Rollback();
 
-            Assert.That(_queue.Length, Is.EqualTo(0));
+            _queue.Length.Should().Be(0);
         }
 
-        [Test]
+        [Fact]
         public void EnqueueCommitRollbackCommitTest()
         {
             _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
@@ -69,13 +69,13 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
             _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
             _queue.Commit();
 
-            Assert.That(_queue.Length, Is.EqualTo(2));
+            _queue.Length.Should().Be(2);
         }
 
-        [Test]
-        [TestCase(3, 3)]
-        [TestCase(5, 5)]
-        [TestCase(10, 5)]
+        [Theory]
+        [InlineData(3, 3)]
+        [InlineData(5, 5)]
+        [InlineData(10, 5)]
         public void DequeueTest(int count, int expected)
         {
             for (var i = 0; i < 5; i++)
@@ -87,10 +87,10 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
 
             var result = _queue.Dequeue(count);
 
-            Assert.That(result.Count(), Is.EqualTo(expected));
+            result.Count().Should().Be(expected);
         }
 
-        [Test]
+        [Fact]
         public void AcknowledgeRetryTest()
         {
             for (var i = 0; i < 5; i++)
@@ -108,7 +108,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
             _queue.Retry(result[3]);
             _queue.Acknowledge(result[4]);
 
-            Assert.That(_queue.Length, Is.EqualTo(2));
+            _queue.Length.Should().Be(2);
         }
     }
 }

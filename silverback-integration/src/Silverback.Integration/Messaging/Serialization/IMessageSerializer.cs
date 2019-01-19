@@ -1,8 +1,5 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
-
-using Silverback.Messaging.Messages;
-
 namespace Silverback.Messaging.Serialization
 {
     /// <summary>
@@ -10,8 +7,8 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public interface IMessageSerializer
     {
-        byte[] Serialize(IMessage message);
+        byte[] Serialize(object message);
 
-        IMessage Deserialize(byte[] message);
+        object Deserialize(byte[] message);
     }
 }
