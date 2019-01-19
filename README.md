@@ -28,7 +28,7 @@ Silverback.Integration.Configuration | [![NuGet](http://img.shields.io/nuget/v/S
 
 ## Usage
 
-Have a look at the [project's website](https://beagle1984.github.io/silverback/docs) for usage details, snippets and examples.
+Have a look at the [project's website](https://beagle1984.github.io/silverback/docs/architecture) for usage details, snippets and examples.
 
 ## License
 
