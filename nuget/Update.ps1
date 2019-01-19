@@ -18,7 +18,6 @@ $sources =
     ("Silverback.Core.Rx", "..\silverback-core\src\Silverback.Core.Rx\bin\$buildConfiguration"),
 	("Silverback.Integration", "..\silverback-integration\src\Silverback.Integration\bin\$buildConfiguration"),
     ("Silverback.Integration.EntityFrameworkCore", "..\silverback-integration\src\Silverback.Integration.EntityFrameworkCore\bin\$buildConfiguration"),
-    ("Silverback.Integration.FileSystem", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\$buildConfiguration"),
     ("Silverback.Integration.Kafka", "..\silverback-integration-kafka\src\Silverback.Integration.Kafka\bin\$buildConfiguration"),
     ("Silverback.Integration.Configuration", "..\silverback-integration-configuration\src\Silverback.Integration.Configuration\bin\$buildConfiguration")
 
