@@ -1,25 +1,24 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Concurrent;
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Xunit;
 
 namespace Silverback.Integration.Kafka.Tests.Messaging
 {
-    [TestFixture]
     public class KafkaClientConfigComparerTests
     {
         private ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper> _dictionary;
 
-        [SetUp]
-        public void Setup()
+        public KafkaClientConfigComparerTests()
         {
             _dictionary = new ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper>(new KafkaClientConfigComparer());
         }
 
-        [Test]
+        [Fact]
         public void Compare_SameInstance_ReturnsTrue()
         {
             var config1 = new Confluent.Kafka.ConsumerConfig
@@ -32,10 +31,10 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
 
             _dictionary.TryAdd(config1, null);
 
-            Assert.IsTrue(_dictionary.ContainsKey(config2));
+           _dictionary.Should().ContainKey(config2);
         }
 
-        [Test]
+        [Fact]
         public void Compare_SameParameters_ReturnsTrue()
         {
             var config1 = new Confluent.Kafka.ConsumerConfig
@@ -53,10 +52,10 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
 
             _dictionary.TryAdd(config1, null);
 
-            Assert.IsTrue(_dictionary.ContainsKey(config2));
+            _dictionary.Should().ContainKey(config2);
         }
 
-        [Test]
+        [Fact]
         public void Compare_SameParametersDifferentValues_ReturnsFalse()
         {
             var config1 = new Confluent.Kafka.ConsumerConfig
@@ -74,10 +73,10 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
 
             _dictionary.TryAdd(config1, null);
 
-            Assert.IsFalse(_dictionary.ContainsKey(config2));
+            _dictionary.Should().NotContainKey(config2);
         }
 
-        [Test]
+        [Fact]
         public void Compare_DifferentParameters_ReturnsFalse()
         {
             var config1 = new Confluent.Kafka.ConsumerConfig
@@ -94,7 +93,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
 
             _dictionary.TryAdd(config1, null);
 
-            Assert.IsFalse(_dictionary.ContainsKey(config2));
+            _dictionary.Should().NotContainKey(config2);
         }
     }
 }

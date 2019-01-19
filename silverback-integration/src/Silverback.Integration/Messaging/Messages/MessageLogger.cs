@@ -64,7 +64,7 @@ namespace Silverback.Messaging.Messages
 
                 logger.Log(
                         logLevel, exception,
-                        logMessage + " {{" + string.Join(", ", properties.Select(p => $"\"{p.Item1}\"={{{p.Item2}}}")) + "}}",
+                        logMessage + " {{" + string.Join(", ", properties.Select(p => $"{p.Item1}={{{p.Item2}}}")) + "}}",
                         properties.Select(p => p.Item3).ToArray());
         }
     }

@@ -1,17 +1,17 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Integration.Kafka.Tests.TestTypes.Messages;
 using Silverback.Messaging.Messages;
+using Xunit;
 
 namespace Silverback.Integration.Kafka.Tests.Messaging.Messages
 {
-    [TestFixture]
     public class KeyHelperTests
     {
-        [Test]
+        [Fact]
         public void GetMessageKey_NoKeyMembersMessage_KeyIsEmpty()
         {
             var message = new NoKeyMembersMessage
@@ -24,10 +24,10 @@ namespace Silverback.Integration.Kafka.Tests.Messaging.Messages
 
             var key = KeyHelper.GetMessageKey(message);
 
-            Assert.That(key, Is.Null);
+            key.Should().BeNull();
         }
 
-        [Test]
+        [Fact]
         public void GetMessageKey_SingleKeyMemberMessagesWithSameKey_KeyIsEqual()
         {
             var message1 = new SingleKeyMemberMessage
@@ -48,10 +48,10 @@ namespace Silverback.Integration.Kafka.Tests.Messaging.Messages
             var key1 = KeyHelper.GetMessageKey(message1);
             var key2 = KeyHelper.GetMessageKey(message2);
 
-            Assert.That(key2, Is.EqualTo(key1));
+            key2.Should().BeEquivalentTo(key1);
         }
 
-        [Test]
+        [Fact]
         public void GetMessageKey_SingleKeyMemberMessagesWithDifferentKey_KeyIsNotEqual()
         {
             var message1 = new SingleKeyMemberMessage
@@ -72,10 +72,10 @@ namespace Silverback.Integration.Kafka.Tests.Messaging.Messages
             var key1 = KeyHelper.GetMessageKey(message1);
             var key2 = KeyHelper.GetMessageKey(message2);
 
-            Assert.That(key2, Is.Not.EqualTo(key1));
+            key2.Should().NotBeEquivalentTo(key1);
         }
 
-        [Test]
+        [Fact]
         public void GetMessageKey_MultipleKeyMembersMessagesWithSameKey_KeyIsEqual()
         {
             var message1 = new MultipleKeyMembersMessage
@@ -96,10 +96,10 @@ namespace Silverback.Integration.Kafka.Tests.Messaging.Messages
             var key1 = KeyHelper.GetMessageKey(message1);
             var key2 = KeyHelper.GetMessageKey(message2);
 
-            Assert.That(key2, Is.EqualTo(key1));
+            key2.Should().BeEquivalentTo(key1);
         }
 
-        [Test]
+        [Fact]
         public void GetMessageKey_MultipleKeyMembersMessagesWithDifferentKey_KeyIsNotEqual()
         {
             var message1 = new MultipleKeyMembersMessage
@@ -120,7 +120,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging.Messages
             var key1 = KeyHelper.GetMessageKey(message1);
             var key2 = KeyHelper.GetMessageKey(message2);
 
-            Assert.That(key2, Is.Not.EqualTo(key1));
+            key2.Should().NotBeEquivalentTo(key1);
         }
     }
 }

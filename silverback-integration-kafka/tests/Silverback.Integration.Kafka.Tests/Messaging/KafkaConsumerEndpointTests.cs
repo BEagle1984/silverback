@@ -1,15 +1,15 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Messaging;
+using Xunit;
 
 namespace Silverback.Integration.Kafka.Tests.Messaging
 {
-    [TestFixture]
     public class KafkaConsumerEndpointTests
     {
-        [Test]
+        [Fact]
         public void Equals_SameEndpointInstance_IsTrue()
         {
             var endpoint = new KafkaConsumerEndpoint("endpoint")
@@ -20,11 +20,10 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
                 }
             };
 
-            var equals = endpoint.Equals(endpoint);
-            Assert.That(equals, Is.True);
+            endpoint.Equals(endpoint).Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void Equals_SameConfiguration_IsTrue()
         {
             var endpoint1 = new KafkaConsumerEndpoint("endpoint")
@@ -43,11 +42,10 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
                 }
             };
 
-            var equals = endpoint1.Equals(endpoint2);
-            Assert.That(equals, Is.True);
+            endpoint1.Equals(endpoint2).Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void Equals_DifferentName_IsFalse()
         {
             var endpoint1 = new KafkaConsumerEndpoint("endpoint")
@@ -66,11 +64,10 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
                 }
             };
 
-            var equals = endpoint1.Equals(endpoint2);
-            Assert.That(equals, Is.False);
+            endpoint1.Equals(endpoint2).Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Equals_DifferentConfiguration_IsFalse()
         {
             var endpoint1 = new KafkaConsumerEndpoint("endpoint")
@@ -89,8 +86,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
                 }
             };
 
-            var equals = endpoint1.Equals(endpoint2);
-            Assert.That(equals, Is.False);
+            endpoint1.Equals(endpoint2).Should().BeFalse();
         }
     }
 }
