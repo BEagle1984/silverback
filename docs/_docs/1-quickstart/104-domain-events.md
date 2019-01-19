@@ -4,7 +4,9 @@ permalink: /docs/quickstart/domain-events
 toc: false
 ---
 
-To allow publishing the domain events through Silberback, the domain entities have to implement the `IDomainEntity` interface. Alternatively you can just extend the `Silverback.Domain.Entity` class.
+One of the core features of Silverback is the ability to publish the domain events as part of the `DbContext` save changes transaction in order to guarantee consistency.
+
+The _Silverback.Core.Model_ package contains a sample implementation of a `DomainEntity` but you can also implement you own type.
 
 ```c#
 using Silverback.Domain;
@@ -48,34 +50,44 @@ namespace Sample
 
 The `AddEvent<TEvent>()` method adds the domain event to the `IDomainEntity` events collection, to be published by the when the entity is saved.
 
-To enable this mechanism we just need to override the various `SaveChanges` methods to plug-in the `DbContextEventsPublisher`.
+To enable this mechanism we just need to override the various `SaveChanges` methods to plug-in the `DbContextEventsPublisher` contained in the _Silverback.Core.EntityFrameworkCore_ package.
 
 ```c#
 public class MyDbContext : DbContext
 {
-    private readonly IEventPublisher<IEvent> _eventPublisher;
+    private DbContextEventsPublisher<DomainEntity> _eventsPublisher;
 
-    public ShopDbContext(IEventPublisher<IEvent> eventPublisher)
+    public ShopDbContext(IPublisher publisher)
     {
-        _eventPublisher = eventPublisher;
+        InitEventsPublisher(publisher);
     }
 
-    public ShopDbContext(DbContextOptions options, IEventPublisher<IEvent> eventPublisher) : base(options)
+    public ShopDbContext(DbContextOptions options, IPublisher publisher)
+        : base(options)
     {
-        _eventPublisher = eventPublisher;
+        InitEventsPublisher(publisher);
     }
 
-    public override int SaveChanges() => SaveChanges(true);
+    private void InitEventsPublisher(IPublisher publisher)
+    {
+        _eventsPublisher = new DbContextEventsPublisher<DomainEntity>(
+            DomainEntityEventsAccessor.EventsSelector,
+            DomainEntityEventsAccessor.ClearEventsAction,
+            publisher,
+            this);
+    }
 
-    public override int SaveChanges(bool acceptAllChangesOnSuccess) =>
-        DbContextEventsPublisher.ExecuteSaveTransaction(this, () => base.SaveChanges(acceptAllChangesOnSuccess), _eventPublisher);
+    public override int SaveChanges()
+        => SaveChanges(true);
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        SaveChangesAsync(true, cancellationToken);
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        => _eventsPublisher.ExecuteSaveTransaction(() => base.SaveChanges(acceptAllChangesOnSuccess));
 
-    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default) =>
-        DbContextEventsPublisher.ExecuteSaveTransactionAsync(this, () => base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken), _eventPublisher);
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        => SaveChangesAsync(true, cancellationToken);
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        => _eventsPublisher.ExecuteSaveTransactionAsync(() =>
+            base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
 }
 ```
-
-For this use case you need of course **Silverback.Core.EntityFrameworkCore**.

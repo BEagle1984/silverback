@@ -7,9 +7,9 @@ It may be useful to use the lower level `IBroker` and related `IConsumer` and `I
 
 Using `IBroker` directly you get full control over message acknowledgement and you can implement your fully customized logics, taking advantage of Rx.NET if you wish.
 
-# Configuration
+## Configuration
 
-The only required service is the broker so you could avoid registering everything else.
+The only required service is the broker.
 
 ```c#
 public void ConfigureServices(IServiceCollection services)
@@ -18,7 +18,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-# Consumer
+## Consumer
 
 Retrieving an `IConsumer` and start consuming messages is just a matter of a few lines of code.
 
@@ -55,7 +55,7 @@ public class MyCustomMessageProcessor
 **Note:** A single call to the `Connect` method is required for each broker and `GetConsumer` must be called before `Connect`.
 {: .notice--info}
 
-## Wrapping with an Observable
+### Wrapping with an Observable
 
 You can of course very easily wrap the `Received` event with an `Observable` and enjoy the uncountable possibilities of [Rx.net](https://github.com/dotnet/reactive).
 
@@ -75,7 +75,7 @@ Observable.FromEventPattern<MessageReceivedEventArgs>(
 **Note:** The `Achknowledge` method can be used to commit one or more messages at once.
 {: .notice--info}
 
-# Producer
+## Producer
 
 The producer works exactly the same as the consumer.
 
