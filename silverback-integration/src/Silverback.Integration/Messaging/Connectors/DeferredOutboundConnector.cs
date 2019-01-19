@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Connectors
         public Task OnTransactionAborted(TransactionAbortedEvent message)
             => _queueProducer.Rollback();
 
-        public Task RelayMessage(IIntegrationMessage message, IEndpoint destinationEndpoint) =>
+        public Task RelayMessage(object message, IEndpoint destinationEndpoint) =>
             _queueProducer.Enqueue(message, destinationEndpoint);
     }
 }

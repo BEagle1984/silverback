@@ -10,18 +10,28 @@ using Silverback.Messaging.Batch;
 namespace Silverback.Messaging.Messages
 {
     // TODO: Review and test
-    public static class MessageLoggerExtensions
+    public class MessageLogger
     {
-        public static void LogMessageTrace(this ILogger logger, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null) =>
-            LogMessage(logger, LogLevel.Trace, null, logMessage, message, endpoint, batch);
+        private readonly MessageKeyProvider _messageKeyProvider;
 
-        public static void LogMessageWarning(this ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null) =>
-            LogMessage(logger, LogLevel.Warning, exception, logMessage, message, endpoint, batch);
+        public MessageLogger(MessageKeyProvider messageKeyProvider)
+        {
+            _messageKeyProvider = messageKeyProvider;
+        }
 
-        public static void LogMessageCritical(this ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null) =>
-            LogMessage(logger, LogLevel.Critical, exception, logMessage, message, endpoint, batch);
+        public void LogTrace(ILogger logger, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null) =>
+            Log(logger, LogLevel.Trace, null, logMessage, message, endpoint, batch);
 
-        public static void LogMessage(this ILogger logger, LogLevel logLevel, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null)
+        public void LogWarning(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null) =>
+            Log(logger, LogLevel.Warning, exception, logMessage, message, endpoint, batch);
+
+        public void LogError(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null) =>
+            Log(logger, LogLevel.Error, exception, logMessage, message, endpoint, batch);
+
+        public void LogCritical(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null) =>
+            Log(logger, LogLevel.Critical, exception, logMessage, message, endpoint, batch);
+
+        public void Log(ILogger logger, LogLevel logLevel, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null)
         {
             var failedMessage = message as FailedMessage;
 
@@ -29,8 +39,9 @@ namespace Silverback.Messaging.Messages
 
             var properties = new List<(string, string, object)>();
 
-            if (innerMessage is IIntegrationMessage integrationMessage)
-                properties.Add(("id", "messageId", integrationMessage.Id));
+            var key = _messageKeyProvider.GetKey(message, false);
+            if (key != null)
+                properties.Add(("id", "messageId", key));
 
             if (endpoint != null)
                 properties.Add(("endpoint", "endpointName", endpoint.Name));

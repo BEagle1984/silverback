@@ -18,7 +18,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
 
         public RetryErrorPolicyTests()
         {
-            _policy = new RetryErrorPolicy(NullLoggerFactory.Instance.CreateLogger<RetryErrorPolicy>());
+            _policy = new RetryErrorPolicy(NullLoggerFactory.Instance.CreateLogger<RetryErrorPolicy>(), new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })));
             _policy.MaxFailedAttempts(3);
         }
 

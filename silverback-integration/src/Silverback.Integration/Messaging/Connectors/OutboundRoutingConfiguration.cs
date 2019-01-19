@@ -14,19 +14,16 @@ namespace Silverback.Messaging.Connectors
 
         public IReadOnlyCollection<OutboundRoute> Routes => _routes.AsReadOnly();
 
-        public IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint, Type outboundConnectorType) where TMessage : IIntegrationMessage =>
+        public IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint, Type outboundConnectorType) =>
             Add(typeof(TMessage), endpoint, outboundConnectorType);
 
         public IOutboundRoutingConfiguration Add(Type messageType, IEndpoint endpoint, Type outboundConnectorType)
         {
-            if (!typeof(IIntegrationMessage).IsAssignableFrom(messageType))
-                throw new ArgumentException("The message must be an IIntegrationMessage to be configured for outbound routing.");
-
             _routes.Add(new OutboundRoute(messageType, endpoint, outboundConnectorType));
             return this;
         }
 
-        public IEnumerable<IOutboundRoute> GetRoutes(IIntegrationMessage message) =>
+        public IEnumerable<IOutboundRoute> GetRoutes(object message) =>
             _routes.Where(r => r.MessageType.IsInstanceOfType(message)).ToList();
 
         public class OutboundRoute : IOutboundRoute

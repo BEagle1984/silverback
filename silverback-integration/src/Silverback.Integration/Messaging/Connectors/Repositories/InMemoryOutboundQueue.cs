@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Connectors.Repositories
     {
         #region Writer
 
-        public Task Enqueue(IIntegrationMessage message, IEndpoint endpoint)
+        public Task Enqueue(object message, IEndpoint endpoint)
         {
             Add(new QueuedMessage(message, endpoint));
             return Task.CompletedTask;

@@ -18,20 +18,22 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly TimeSpan _initialDelay;
         private readonly TimeSpan _delayIncrement;
         private readonly ILogger _logger;
+        private readonly MessageLogger _messageLogger;
 
-        public RetryErrorPolicy(ILogger<RetryErrorPolicy> logger, TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)
-            : base(logger)
+        public RetryErrorPolicy(ILogger<RetryErrorPolicy> logger, MessageLogger messageLogger, TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)
+            : base(logger, messageLogger)
         {
             _initialDelay = initialDelay ?? TimeSpan.Zero;
             _delayIncrement = delayIncrement ?? TimeSpan.Zero;
             _logger = logger;
+            _messageLogger = messageLogger;
         }
 
         public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
         {
             ApplyDelay(failedMessage);
 
-            _logger.LogMessageTrace("The message will be processed again.", failedMessage);
+            _messageLogger.LogTrace(_logger, "The message will be processed again.", failedMessage);
 
             return ErrorAction.Retry;
         }
@@ -43,7 +45,7 @@ namespace Silverback.Messaging.ErrorHandling
             if (delay <= 0)
                 return;
 
-            _logger.LogMessageTrace($"Waiting {delay} milliseconds before retrying the message.", failedMessage);
+            _messageLogger.LogTrace(_logger, $"Waiting {delay} milliseconds before retrying the message.", failedMessage);
             Thread.Sleep(delay);
         }
     }

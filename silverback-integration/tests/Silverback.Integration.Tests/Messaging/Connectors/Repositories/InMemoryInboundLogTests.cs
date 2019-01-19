@@ -4,6 +4,7 @@
 using System;
 using FluentAssertions;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 using Xunit;
@@ -17,7 +18,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
 
         public InMemoryInboundLogTests()
         {
-            _log = new InMemoryInboundLog();
+            _log = new InMemoryInboundLog(new MessageKeyProvider(new []{new DefaultPropertiesMessageKeyProvider()}));
             InMemoryInboundLog.Clear();
         }
 

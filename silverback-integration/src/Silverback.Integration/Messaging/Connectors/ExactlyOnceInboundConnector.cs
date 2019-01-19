@@ -14,12 +14,14 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public abstract class ExactlyOnceInboundConnector : InboundConnector
     {
-        protected ILogger<LoggedInboundConnector> _logger;
+        protected ILogger<LoggedInboundConnector> Logger;
+        private readonly MessageLogger _messageLogger;
 
-        protected ExactlyOnceInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger)
+        protected ExactlyOnceInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger, MessageLogger messageLogger)
             : base(broker, serviceProvider, logger)
         {
-            _logger = logger;
+            Logger = logger;
+            _messageLogger = messageLogger;
         }
 
         protected override void RelayMessages(IEnumerable<object> messages, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
@@ -39,7 +41,7 @@ namespace Silverback.Messaging.Connectors
                 }
                 else
                 {
-                    _logger.LogMessageTrace("Message is being skipped since it was already processed.", message,
+                    _messageLogger.LogTrace(Logger, "Message is being skipped since it was already processed.", message,
                         sourceEndpoint);
                 }
             }

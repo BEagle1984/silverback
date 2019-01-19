@@ -10,36 +10,35 @@ namespace Silverback.Messaging.Broker
 {
     public abstract class Producer : EndpointConnectedObject, IProducer
     {
+        private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly MessageLogger _messageLogger;
         private readonly ILogger<Producer> _logger;
 
-        protected Producer(IBroker broker, IEndpoint endpoint, ILogger<Producer> logger)
+        protected Producer(IBroker broker, IEndpoint endpoint, MessageKeyProvider messageKeyProvider,
+            ILogger<Producer> logger, MessageLogger messageLogger)
             : base(broker, endpoint)
         {
+            _messageKeyProvider = messageKeyProvider;
             _logger = logger;
+            _messageLogger = messageLogger;
         }
 
         public void Produce(object message)
         {
-            EnsureIdentifier(message);
+            _messageKeyProvider.EnsureKeyIsInitialized(message);
             Trace(message);
             Produce(message, Endpoint.Serializer.Serialize(message));
         }
 
         public async Task ProduceAsync(object message)
         {
-            EnsureIdentifier(message);
+            _messageKeyProvider.EnsureKeyIsInitialized(message);
             Trace(message);
             await ProduceAsync(message, Endpoint.Serializer.Serialize(message));
         }
 
         private void Trace(object message) =>
-            _logger.LogMessageTrace("Producing message.", message, Endpoint);
-
-        private void EnsureIdentifier(object message)
-        {
-            if (message is IIntegrationMessage integrationMessage)
-                integrationMessage.Id = Guid.NewGuid();
-        }
+            _messageLogger.LogTrace(_logger, "Producing message.", message, Endpoint);
 
         protected abstract void Produce(object message, byte[] serializedMessage);
 
@@ -50,8 +49,9 @@ namespace Silverback.Messaging.Broker
         where TBroker : class, IBroker
         where TEndpoint : class, IEndpoint
     {
-        protected Producer(IBroker broker, IEndpoint endpoint, ILogger<Producer> logger)
-            : base(broker, endpoint, logger)
+        protected Producer(IBroker broker, IEndpoint endpoint, MessageKeyProvider messageKeyProvider,
+            ILogger<Producer> logger, MessageLogger messageLogger) 
+            : base(broker, endpoint, messageKeyProvider, logger, messageLogger)
         {
         }
 

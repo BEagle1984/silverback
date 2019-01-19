@@ -8,8 +8,10 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
@@ -36,12 +38,14 @@ namespace Silverback.Tests.Messaging.Connectors
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             services.AddBus();
 
-            _broker = new TestBroker();
+            services.AddBroker<TestBroker>();
 
             services.AddScoped<IInboundLog, InMemoryInboundLog>();
 
             _serviceProvider = services.BuildServiceProvider();
-            _connector = new LoggedInboundConnector(_broker, _serviceProvider, new NullLogger<LoggedInboundConnector>());
+            _broker = (TestBroker)_serviceProvider.GetService<IBroker>();
+            _connector = new LoggedInboundConnector(_broker, _serviceProvider, new NullLogger<LoggedInboundConnector>(),
+                new MessageLogger(new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()})));
 
             InMemoryInboundLog.Clear();
         }

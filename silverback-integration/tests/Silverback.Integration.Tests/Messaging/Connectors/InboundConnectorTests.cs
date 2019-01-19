@@ -37,10 +37,10 @@ namespace Silverback.Tests.Messaging.Connectors
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             services.AddBus();
 
-            _broker = new TestBroker();
-            services.AddSingleton<IBroker>(_broker);
+            services.AddBroker<TestBroker>();
 
             var serviceProvider = services.BuildServiceProvider();
+            _broker = (TestBroker)serviceProvider.GetService<IBroker>();
             _connector = new InboundConnector(_broker, serviceProvider, new NullLogger<InboundConnector>());
             _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
         }

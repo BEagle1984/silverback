@@ -11,21 +11,23 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public class DbContextOutboundQueueProducer : RepositoryBase<OutboundMessage>, IOutboundQueueProducer
     {
-        public DbContextOutboundQueueProducer(DbContext dbContext) : base(dbContext)
+        private readonly MessageKeyProvider _messageKeyProvider;
+
+        public DbContextOutboundQueueProducer(DbContext dbContext, MessageKeyProvider messageKeyProvider) : base(dbContext)
         {
+            _messageKeyProvider = messageKeyProvider;
         }
 
-        public Task Enqueue(IIntegrationMessage message, IEndpoint endpoint) =>
+        public Task Enqueue(object message, IEndpoint endpoint) =>
             DbSet.AddAsync(CreateEntity(message, endpoint));
 
-        private OutboundMessage CreateEntity(IIntegrationMessage message, IEndpoint endpoint)
+        private OutboundMessage CreateEntity(object message, IEndpoint endpoint)
         {
-            if (message.Id == default)
-                message.Id = Guid.NewGuid();
-
+            _messageKeyProvider.EnsureKeyIsInitialized(message);
+            
             return new OutboundMessage
             {
-                MessageId = message.Id,
+                MessageId = _messageKeyProvider.GetKey(message),
                 Message = Serialize(message),
                 EndpointName = endpoint.Name,
                 Endpoint = Serialize(endpoint),

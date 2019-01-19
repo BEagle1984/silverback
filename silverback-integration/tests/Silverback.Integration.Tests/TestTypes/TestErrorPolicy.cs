@@ -13,7 +13,7 @@ namespace Silverback.Tests.TestTypes
     {
         public bool Applied { get; private set; }
 
-        public TestErrorPolicy() : base(NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>())
+        public TestErrorPolicy() : base(NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>(), new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })))
         {
         }
 

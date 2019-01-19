@@ -16,15 +16,18 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly IOutboundQueueConsumer _queue;
         private readonly IBroker _broker;
+        private readonly MessageLogger _messageLogger;
         private readonly ILogger<OutboundQueueWorker> _logger;
 
         private readonly int _readPackageSize;
         private readonly bool _enforceMessageOrder;
 
-        public OutboundQueueWorker(IOutboundQueueConsumer queue, IBroker broker, ILogger<OutboundQueueWorker> logger, bool enforceMessageOrder, int readPackageSize)
+        public OutboundQueueWorker(IOutboundQueueConsumer queue, IBroker broker, ILogger<OutboundQueueWorker> logger,
+            MessageLogger messageLogger, bool enforceMessageOrder, int readPackageSize)
         {
             _queue = queue;
             _broker = broker;
+            _messageLogger = messageLogger;
             _logger = logger;
             _enforceMessageOrder = enforceMessageOrder;
             _readPackageSize = readPackageSize;
@@ -48,8 +51,7 @@ namespace Silverback.Messaging.Connectors
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
-                    $"Failed to publish queued message '{message?.Message?.Id}' to the endpoint '{message?.Endpoint?.Name}'.");
+                _messageLogger.LogError(_logger, ex, "Failed to publish queued message.", message?.Message, message?.Endpoint);
 
                 _queue.Retry(message);
 
@@ -59,7 +61,7 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        protected virtual void ProduceMessage(IIntegrationMessage message, IEndpoint endpoint)
+        protected virtual void ProduceMessage(object message, IEndpoint endpoint)
             => _broker.GetProducer(endpoint).Produce(message);
     }
 }

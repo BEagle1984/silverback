@@ -28,6 +28,7 @@ namespace Silverback.Messaging.Batch
         private readonly IServiceProvider _serviceProvider;
         private readonly IPublisher _publisher;
         private readonly ILogger _logger;
+        private readonly MessageLogger _messageLogger;
 
         private readonly List<object> _messages;
         private readonly List<IOffset> _offsets;
@@ -65,6 +66,7 @@ namespace Silverback.Messaging.Batch
 
             _publisher = serviceProvider.GetRequiredService<IPublisher>();
             _logger = serviceProvider.GetRequiredService<ILogger<MessageBatch>>();
+            _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
         }
 
         public Guid CurrentBatchId { get; private set; }
@@ -81,7 +83,7 @@ namespace Silverback.Messaging.Batch
                 _messages.Add(message);
                 _offsets.Add(offset);
 
-                _logger.LogMessageTrace("Message added to batch.", message, _endpoint, this);
+                _messageLogger.LogTrace(_logger, "Message added to batch.", message, _endpoint, this);
 
                 if (_messages.Count == 1)
                 {

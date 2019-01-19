@@ -16,7 +16,16 @@ namespace Silverback.Tests.Messaging.ErrorHandling
 {
     public class ErrorPolicyChainTests
     {
-        private readonly ErrorPolicyBuilder _errorPolicyBuilder = new ErrorPolicyBuilder(new ServiceCollection().BuildServiceProvider(), NullLoggerFactory.Instance);
+        private readonly ErrorPolicyBuilder _errorPolicyBuilder;
+
+        public ErrorPolicyChainTests()
+        {
+            var services = new ServiceCollection();
+
+            services.AddBus().AddBroker<TestBroker>();
+
+            _errorPolicyBuilder = new ErrorPolicyBuilder(services.BuildServiceProvider(), NullLoggerFactory.Instance);
+        }
 
         [Theory]
         [InlineData(1)]

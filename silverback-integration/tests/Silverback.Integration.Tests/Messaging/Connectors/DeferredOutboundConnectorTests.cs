@@ -39,7 +39,7 @@ namespace Silverback.Tests.Messaging.Connectors
             _queue.Length.Should().Be(1);
             var queued = _queue.Dequeue(1).First();
             queued.Endpoint.Should().Be(endpoint);
-            queued.Message.Id.Should().Be(message.Id);
+            ((IIntegrationMessage)queued.Message).Id.Should().Be(message.Id);
         }
 
         [Fact]

@@ -23,22 +23,15 @@ namespace Silverback.Messaging.Configuration
         }
 
         public EndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IEndpoint endpoint)
-            where TMessage : IIntegrationMessage
             where TConnector : IOutboundConnector
         {
             AddOutbound<TMessage>(endpoint, typeof(TConnector));
             return this;
         }
 
-        public EndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null) where TMessage : IIntegrationMessage
+        public EndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null)
         {
             AddOutbound(typeof(TMessage), endpoint, outboundConnectorType);
-            return this;
-        }
-
-        public EndpointsConfigurationBuilder AddOutbound(IEndpoint endpoint, Type outboundConnectorType = null)
-        {
-            AddOutbound(typeof(IIntegrationMessage), endpoint, outboundConnectorType);
             return this;
         }
 

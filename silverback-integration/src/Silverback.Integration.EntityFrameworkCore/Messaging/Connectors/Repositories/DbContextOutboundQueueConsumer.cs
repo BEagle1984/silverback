@@ -13,11 +13,14 @@ namespace Silverback.Messaging.Connectors.Repositories
     // TODO: Test
     public class DbContextOutboundQueueConsumer : RepositoryBase<OutboundMessage>, IOutboundQueueConsumer
     {
+        private readonly MessageKeyProvider _messageKeyProvider;
         private readonly bool _removeProduced;
 
-        public DbContextOutboundQueueConsumer(DbContext dbContext, bool removeProduced) : base(dbContext)
+        public DbContextOutboundQueueConsumer(DbContext dbContext, MessageKeyProvider messageKeyProvider,
+            bool removeProduced) : base(dbContext)
         {
             _removeProduced = removeProduced;
+            _messageKeyProvider = messageKeyProvider;
         }
 
         public IEnumerable<QueuedMessage> Dequeue(int count) => DbSet
@@ -26,7 +29,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             .Take(count)
             .ToList()
             .Select(message => new QueuedMessage(
-                Deserialize<IIntegrationMessage>(message.Message),
+                Deserialize<object>(message.Message),
                 Deserialize<IEndpoint>(message.Endpoint)));
 
         public void Retry(QueuedMessage queuedMessage)
@@ -36,7 +39,8 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public void Acknowledge(QueuedMessage queuedMessage)
         {
-            var entity = DbSet.Find(queuedMessage.Message.Id);
+            var key = _messageKeyProvider.GetKey(queuedMessage.Message);
+            var entity = DbSet.Find(key);
 
             if (_removeProduced)
                 DbSet.Remove(entity);

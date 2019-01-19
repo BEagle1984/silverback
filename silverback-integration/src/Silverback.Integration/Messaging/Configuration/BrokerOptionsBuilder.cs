@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Configuration
@@ -85,6 +86,7 @@ namespace Silverback.Messaging.Configuration
                 s.GetRequiredService<IOutboundQueueConsumer>(), 
                 s.GetRequiredService<IBroker>(), 
                 s.GetRequiredService<ILogger<OutboundQueueWorker>>(),
+                s.GetRequiredService<MessageLogger>(),
                 enforceMessageOrder, readPackageSize));
 
             return this;

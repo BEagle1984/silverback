@@ -25,6 +25,7 @@ namespace Silverback.Messaging.Connectors
 
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
+        private readonly MessageLogger _messageLogger;
 
         private readonly IConsumer _consumer;
 
@@ -47,6 +48,7 @@ namespace Silverback.Messaging.Connectors
 
             _serviceProvider = serviceProvider;
             _logger = serviceProvider.GetRequiredService<ILogger<InboundConsumer>>();
+            _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
 
             _consumer = broker.GetConsumer(_endpoint);
 
@@ -80,7 +82,7 @@ namespace Silverback.Messaging.Connectors
 
         private void OnSingleMessageReceived(object message, IOffset offset)
         {
-            _logger.LogMessageTrace("Processing message.", message, _endpoint);
+            _messageLogger.LogTrace(_logger, "Processing message.", message, _endpoint);
 
             _errorPolicy.TryProcess(message, _ =>
             {
@@ -100,7 +102,7 @@ namespace Silverback.Messaging.Connectors
             }
             catch (Exception ex)
             {
-                _logger.LogMessageWarning(ex, "Error occurred processing the message.", message, _endpoint);
+                _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message.", message, _endpoint);
                 Rollback(serviceProvider);
                 throw;
             }

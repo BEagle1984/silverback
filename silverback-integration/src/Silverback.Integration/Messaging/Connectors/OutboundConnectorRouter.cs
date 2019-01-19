@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Connectors
         }
 
         [Subscribe]
-        public Task OnMessageReceived(IIntegrationMessage message) =>
+        public Task OnMessageReceived(object message) =>
             _routing.GetRoutes(message)
                 .ForEachAsync(route =>
                     _outboundConnectors.GetConnectorInstance(route.OutboundConnectorType)

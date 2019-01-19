@@ -12,10 +12,10 @@ namespace Silverback.Messaging.Connectors.Model
 
     public class InboundMessage
     {
-        [Key]
-        public Guid MessageId { get; set; }
+        [Key, MaxLength(300)]
+        public string MessageId { get; set; }
 
-        [Key]
+        [Key, MaxLength(300)]
         public string EndpointName { get; set; }
 
         public string Message { get; set; }

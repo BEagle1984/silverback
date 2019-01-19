@@ -15,17 +15,19 @@ namespace Silverback.Messaging.ErrorHandling
     public class ErrorPolicyChain : ErrorPolicyBase
     {
         private readonly ILogger<ErrorPolicyChain> _logger;
+        private readonly MessageLogger _messageLogger;
         private readonly IEnumerable<ErrorPolicyBase> _policies;
 
-        public ErrorPolicyChain(ILogger<ErrorPolicyChain> logger, params ErrorPolicyBase[] policies)
-            : this (policies.AsEnumerable(), logger)
+        public ErrorPolicyChain(ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger, params ErrorPolicyBase[] policies)
+            : this (policies.AsEnumerable(), logger, messageLogger)
         {
         }
 
-        public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies, ILogger<ErrorPolicyChain> logger)
-            : base(logger)
+        public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies, ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger)
+            : base(logger, messageLogger)
         {
             _logger = logger;
+            _messageLogger = messageLogger;
 
             _policies = policies ?? throw new ArgumentNullException(nameof(policies));
 
@@ -40,7 +42,7 @@ namespace Silverback.Messaging.ErrorHandling
                     return policy.HandleError(failedMessage, exception);
             }
 
-            _logger.LogMessageTrace("All policies have been applied but the message still couldn't be successfully processed. The consumer will be stopped.", failedMessage);
+            _messageLogger.LogTrace(_logger, "All policies have been applied but the message still couldn't be successfully processed. The consumer will be stopped.", failedMessage);
             return ErrorAction.StopConsuming;
         }
     }

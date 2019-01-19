@@ -16,14 +16,17 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly IProducer _producer;
         private readonly IEndpoint _endpoint;
         private readonly ILogger _logger;
+        private readonly MessageLogger _messageLogger;
+
         private Func<object, Exception, object> _transformationFunction;
 
-        public MoveMessageErrorPolicy(IBroker broker, IEndpoint endpoint, ILogger<MoveMessageErrorPolicy> logger) 
-            : base(logger)
+        public MoveMessageErrorPolicy(IBroker broker, IEndpoint endpoint, ILogger<MoveMessageErrorPolicy> logger, MessageLogger messageLogger) 
+            : base(logger, messageLogger)
         {
             _producer = broker.GetProducer(endpoint);
             _endpoint = endpoint;
             _logger = logger;
+            _messageLogger = messageLogger;
         }
 
         public MoveMessageErrorPolicy Transform(Func<object, Exception, object> transformationFunction)
@@ -46,7 +49,7 @@ namespace Silverback.Messaging.ErrorHandling
                 PublishToNewEndpoint(failedMessage, exception);
             }
 
-            _logger.LogMessageTrace("The failed message has been moved and will be skipped.", failedMessage, _endpoint);
+            _messageLogger.LogTrace(_logger, "The failed message has been moved and will be skipped.", failedMessage, _endpoint);
 
             return ErrorAction.Skip;
         }

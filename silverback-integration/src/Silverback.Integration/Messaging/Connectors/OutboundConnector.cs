@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Connectors
             _broker = broker;
         }
 
-        public Task RelayMessage(IIntegrationMessage message, IEndpoint destinationEndpoint) =>
+        public Task RelayMessage(object message, IEndpoint destinationEndpoint) =>
             _broker.GetProducer(destinationEndpoint).ProduceAsync(message);
     }
 }
