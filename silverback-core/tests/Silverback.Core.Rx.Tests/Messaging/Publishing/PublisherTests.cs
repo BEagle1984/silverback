@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Reactive.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silverback.Configuration;
 using Silverback.Core.Rx.Tests.TestTypes.Messages;
+using Silverback.Core.Rx.Tests.TestTypes.Messages.Base;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
-using Silverback.Messaging.Subscribers.Subscriptions;
 using Xunit;
 
 namespace Silverback.Core.Rx.Tests.Messaging.Publishing
@@ -41,7 +40,7 @@ namespace Silverback.Core.Rx.Tests.Messaging.Publishing
             return serviceProvider.GetRequiredService<IPublisher>();
         }
 
-       [Fact]
+        [Fact]
         public void Publish_SomeMessages_ReceivedAsObservable()
         {
             int count = 0;
@@ -111,7 +110,7 @@ namespace Silverback.Core.Rx.Tests.Messaging.Publishing
             int count = 0;
             var publisher = GetPublisher(config =>
                     config
-                        .Subscribe<TestCommandOne>((TestCommandOne msg) => new [] {new TestCommandTwo(), new TestCommandTwo()}.ToObservable())
+                        .Subscribe<TestCommandOne>((TestCommandOne msg) => new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
                         .Subscribe<TestCommandTwo>((TestCommandTwo _) => count++));
 
             publisher.Publish(new TestCommandOne());

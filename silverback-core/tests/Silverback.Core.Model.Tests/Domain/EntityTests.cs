@@ -3,10 +3,10 @@
 
 using System.Linq;
 using FluentAssertions;
-using Silverback.Core.Tests.TestTypes.Domain;
+using Silverback.Core.Model.Tests.TestTypes.Domain;
 using Xunit;
 
-namespace Silverback.Core.Tests.Domain
+namespace Silverback.Core.Model.Tests.Domain
 {
     public class EntityTests
     {

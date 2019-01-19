@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Core.Tests.TestTypes.Messages;
+using Silverback.Core.Tests.TestTypes.Messages.Base;
 using Silverback.Core.Tests.TestTypes.Subscribers;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;

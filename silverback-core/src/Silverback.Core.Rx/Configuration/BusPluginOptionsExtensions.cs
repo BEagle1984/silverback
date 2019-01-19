@@ -1,16 +1,14 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Linq;
-using Silverback.Core.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Extensions.DependencyInjection
+namespace Silverback.Configuration
 {
     public static class BusPluginOptionsExtensions
     {

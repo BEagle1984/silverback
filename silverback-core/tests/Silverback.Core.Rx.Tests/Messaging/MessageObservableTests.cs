@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silverback.Core.Messaging;
 using Silverback.Core.Rx.Tests.TestTypes.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;

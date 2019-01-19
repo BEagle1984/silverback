@@ -30,12 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<ReturnValueHandler>()
                 .AddSingleton<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
                 .AddSingleton<IReturnValueHandler, SingleMessageReturnValueHandler>()
-                .AddScoped<IPublisher, Publisher>()
-                // TODO: Move to another package
-                .AddScoped<IEventPublisher, EventPublisher>()
-                .AddScoped<ICommandPublisher, CommandPublisher>()
-                .AddScoped<IRequestPublisher, RequestPublisher>()
-                .AddScoped<IQueryPublisher, QueryPublisher>();
+                .AddScoped<IPublisher, Publisher>();
         }
     }
 }

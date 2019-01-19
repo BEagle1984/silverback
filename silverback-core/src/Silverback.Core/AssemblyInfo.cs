@@ -3,5 +3,9 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Silverback.Integration")]
+[assembly: InternalsVisibleTo("Silverback.Core.EntityFrameworkCore")]
+[assembly: InternalsVisibleTo("Silverback.Core.Model")]
 [assembly: InternalsVisibleTo("Silverback.Core.Rx")]
+[assembly: InternalsVisibleTo("Silverback.Integration")]
+[assembly: InternalsVisibleTo("Silverback.Integration.EntityFrameworkCore")]
+[assembly: InternalsVisibleTo("Silverback.Integration.Kafka")]

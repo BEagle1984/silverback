@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using Silverback.Core.Tests.TestTypes.Messages;
-using Silverback.Messaging.Messages;
+using Silverback.Core.Tests.TestTypes.Messages.Base;
 using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Core.Tests.TestTypes.Subscribers

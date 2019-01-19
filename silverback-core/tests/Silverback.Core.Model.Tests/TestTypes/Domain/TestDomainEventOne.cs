@@ -3,9 +3,9 @@
 
 using Silverback.Domain;
 
-namespace Silverback.Core.Tests.TestTypes.Domain
+namespace Silverback.Core.Model.Tests.TestTypes.Domain
 {
-    public class TestDomainEventTwo : DomainEvent<TestAggregateRoot>
+    public class TestDomainEventOne : DomainEvent<TestAggregateRoot>
     {
         public string Message { get; set; }
     }

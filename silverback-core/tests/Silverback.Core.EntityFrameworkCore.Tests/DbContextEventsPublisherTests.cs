@@ -13,17 +13,17 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
     public class DbContextEventsPublisherTests
     {
         private readonly TestDbContext _dbContext;
-        private readonly IEventPublisher _eventPublisher;
+        private readonly IPublisher _publisher;
 
         public DbContextEventsPublisherTests()
         {
-            _eventPublisher = Substitute.For<IEventPublisher>();
+            _publisher = Substitute.For<IPublisher>();
 
             var dbOptions = new DbContextOptionsBuilder<TestDbContext>()
                 .UseInMemoryDatabase("TestDbContext")
                 .Options;
 
-            _dbContext = new TestDbContext(dbOptions, _eventPublisher);
+            _dbContext = new TestDbContext(dbOptions, _publisher);
         }
 
         [Fact]
@@ -39,8 +39,8 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
 
             _dbContext.SaveChanges();
 
-            _eventPublisher.Received(3).Publish(Arg.Any<TestDomainEventOne>());
-            _eventPublisher.Received(2).Publish(Arg.Any<TestDomainEventTwo>());
+            _publisher.Received(3).Publish(Arg.Any<TestDomainEventOne>());
+            _publisher.Received(2).Publish(Arg.Any<TestDomainEventTwo>());
         }
 
         [Fact]
@@ -56,8 +56,8 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
 
             await _dbContext.SaveChangesAsync();
 
-            await _eventPublisher.Received(3).PublishAsync(Arg.Any<TestDomainEventOne>());
-            await _eventPublisher.Received(2).PublishAsync(Arg.Any<TestDomainEventTwo>());
+            await _publisher.Received(3).PublishAsync(Arg.Any<TestDomainEventOne>());
+            await _publisher.Received(2).PublishAsync(Arg.Any<TestDomainEventTwo>());
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
         {
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
-            _eventPublisher
+            _publisher
                 .When(x => x.Publish(Arg.Any<TestDomainEventOne>()))
                 .Do(x => entity.Entity.AddEvent<TestDomainEventTwo>());
 
@@ -73,8 +73,8 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
 
             _dbContext.SaveChanges();
 
-            _eventPublisher.Received(1).Publish(Arg.Any<TestDomainEventOne>());
-            _eventPublisher.Received(1).Publish(Arg.Any<TestDomainEventTwo>());
+            _publisher.Received(1).Publish(Arg.Any<TestDomainEventOne>());
+            _publisher.Received(1).Publish(Arg.Any<TestDomainEventTwo>());
         }
 
         [Fact]
@@ -82,7 +82,7 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
         {
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
-            _eventPublisher
+            _publisher
                 .When(x => x.PublishAsync(Arg.Any<TestDomainEventOne>()))
                 .Do(x => entity.Entity.AddEvent<TestDomainEventTwo>());
 
@@ -90,8 +90,8 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
 
             await _dbContext.SaveChangesAsync();
 
-            await _eventPublisher.Received(1).PublishAsync(Arg.Any<TestDomainEventOne>());
-            await _eventPublisher.Received(1).PublishAsync(Arg.Any<TestDomainEventTwo>());
+            await _publisher.Received(1).PublishAsync(Arg.Any<TestDomainEventOne>());
+            await _publisher.Received(1).PublishAsync(Arg.Any<TestDomainEventTwo>());
         }
     }
 }
