@@ -31,7 +31,7 @@ namespace Silverback.Messaging.ErrorHandling
         {
             ApplyDelay(failedMessage);
 
-            _logger.LogTrace("The message will be processed again.", failedMessage);
+            _logger.LogMessageTrace("The message will be processed again.", failedMessage);
 
             return ErrorAction.Retry;
         }
@@ -43,7 +43,7 @@ namespace Silverback.Messaging.ErrorHandling
             if (delay <= 0)
                 return;
 
-            _logger.LogTrace($"Waiting {delay} milliseconds before retrying the message.", failedMessage);
+            _logger.LogMessageTrace($"Waiting {delay} milliseconds before retrying the message.", failedMessage);
             Thread.Sleep(delay);
         }
     }

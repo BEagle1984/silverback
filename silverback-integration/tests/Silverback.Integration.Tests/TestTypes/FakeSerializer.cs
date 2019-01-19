@@ -9,12 +9,12 @@ namespace Silverback.Tests.TestTypes
 {
     public class FakeSerializer : IMessageSerializer
     {
-        public byte[] Serialize(IMessage message)
+        public byte[] Serialize(object message)
         {
             throw new NotImplementedException();
         }
 
-        public IMessage Deserialize(byte[] message)
+        public object Deserialize(byte[] message)
         {
             throw new NotImplementedException();
         }

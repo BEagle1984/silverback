@@ -3,27 +3,26 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Messaging.Connectors;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.Connectors
 {
-    [TestFixture]
-    public class OutboudConnectorTests
+    public class OutboundConnectorTests
     {
         private OutboundConnector _connector;
         private TestBroker _broker;
 
-        [SetUp]
-        public void Setup()
+        public OutboundConnectorTests()
         {
             _broker = new TestBroker();
             _connector = new OutboundConnector(_broker);
         }
 
-        [Test]
+        [Fact]
         public async Task OnMessageReceived_SingleMessage_Relayed()
         {
             var endpoint = TestEndpoint.Default;
@@ -32,11 +31,11 @@ namespace Silverback.Tests.Messaging.Connectors
 
             await _connector.RelayMessage(message, endpoint);
 
-            Assert.That(_broker.ProducedMessages.Count, Is.EqualTo(1));
-            Assert.That(_broker.ProducedMessages.First().Endpoint, Is.EqualTo(endpoint));
+            _broker.ProducedMessages.Count.Should().Be(1);
+            _broker.ProducedMessages.First().Endpoint.Should().Be(endpoint);
 
             var producedMessage = endpoint.Serializer.Deserialize(_broker.ProducedMessages.First().Message) as TestEventOne;
-            Assert.That(producedMessage.Id, Is.EqualTo(message.Id));
+            producedMessage.Id.Should().Be(message.Id);
         }
     }
 }

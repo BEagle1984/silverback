@@ -13,10 +13,13 @@ namespace Silverback.Messaging.Configuration
     {
         private readonly BusOptions _busOptions;
 
-        public BusConfigurator(BusOptions busOptions)
+        public BusConfigurator(BusOptions busOptions, IServiceProvider serviceProvider)
         {
             _busOptions = busOptions;
+            ServiceProvider = serviceProvider;
         }
+
+        internal IServiceProvider ServiceProvider { get; }
 
         #region HandleMessagesOfType
 

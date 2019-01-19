@@ -22,7 +22,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
         {
-            _logger.LogTrace("The message will be skipped.", failedMessage);
+            _logger.LogMessageTrace("The message will be skipped.", failedMessage);
 
             return ErrorAction.Skip;
         }

@@ -12,16 +12,16 @@ namespace Silverback.Messaging.Messages
     // TODO: Review and test
     public static class MessageLoggerExtensions
     {
-        public static void LogTrace(this ILogger logger, string logMessage, IMessage message, IEndpoint endpoint = null, MessageBatch batch = null) =>
-            Log(logger, LogLevel.Trace, null, logMessage, message, endpoint, batch);
+        public static void LogMessageTrace(this ILogger logger, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null) =>
+            LogMessage(logger, LogLevel.Trace, null, logMessage, message, endpoint, batch);
 
-        public static void LogWarning(this ILogger logger, Exception exception, string logMessage, IMessage message, IEndpoint endpoint = null, MessageBatch batch = null) =>
-            Log(logger, LogLevel.Warning, exception, logMessage, message, endpoint, batch);
+        public static void LogMessageWarning(this ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null) =>
+            LogMessage(logger, LogLevel.Warning, exception, logMessage, message, endpoint, batch);
 
-        public static void LogCritical(this ILogger logger, Exception exception, string logMessage, IMessage message, IEndpoint endpoint = null, MessageBatch batch = null) =>
-            Log(logger, LogLevel.Critical, exception, logMessage, message, endpoint, batch);
+        public static void LogMessageCritical(this ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null) =>
+            LogMessage(logger, LogLevel.Critical, exception, logMessage, message, endpoint, batch);
 
-        public static void Log(this ILogger logger, LogLevel logLevel, Exception exception, string logMessage, IMessage message, IEndpoint endpoint = null, MessageBatch batch = null)
+        public static void LogMessage(this ILogger logger, LogLevel logLevel, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null)
         {
             var failedMessage = message as FailedMessage;
 
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Messages
                 properties.Add(("batchId", "batchId", batch.CurrentBatchId));
                 properties.Add(("batchSize", "batchSize", batch.CurrentSize));
             }
-            else if (message is BatchMessage batchMessage)
+            else if (message is BatchEvent batchMessage)
             {
                 properties.Add(("batchId", "batchId", batchMessage.BatchId));
                 properties.Add(("batchSize", "batchSize", batchMessage.BatchSize));

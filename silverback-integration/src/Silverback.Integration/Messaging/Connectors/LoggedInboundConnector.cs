@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        protected override bool MustProcess(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected override bool MustProcess(object message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
             if (!(message is IIntegrationMessage integrationMessage))
             {

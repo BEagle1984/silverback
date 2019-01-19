@@ -15,7 +15,6 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services
                 .AddSingleton<IBroker, T>()
-                .AddSingleton<IBrokerEndpointsConfigurationBuilder, BrokerEndpointsConfigurationBuilder>()
                 .AddSingleton<ErrorPolicyBuilder>();
 
             var options = new BrokerOptionsBuilder(services);
@@ -25,18 +24,18 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        // TODO: Test
-        public static IServiceCollection AddSecondaryBroker<T>(this IServiceCollection services, Action<BrokerOptionsBuilder> optionsAction = null)
-            where T : class, IBroker
-        {
-            services
-                .AddSingleton<IBroker, T>();
+        // TODO: Support & Test
+        //public static IServiceCollection AddSecondaryBroker<T>(this IServiceCollection services, Action<BrokerOptionsBuilder> optionsAction = null)
+        //    where T : class, IBroker
+        //{
+        //    services
+        //        .AddSingleton<IBroker, T>();
 
-            var options = new BrokerOptionsBuilder(services);
-            optionsAction?.Invoke(options);
-            options.CompleteWithDefaults();
+        //    var options = new BrokerOptionsBuilder(services);
+        //    optionsAction?.Invoke(options);
+        //    options.CompleteWithDefaults();
 
-            return services;
-        }
+        //    return services;
+        //}
     }
 }

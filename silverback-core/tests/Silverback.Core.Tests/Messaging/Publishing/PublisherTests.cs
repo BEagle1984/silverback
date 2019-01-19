@@ -187,7 +187,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             await publisher.PublishAsync(new TestCommandOne());         // service1 +2
             await publisher.PublishAsync(new TestCommandTwo());         // service2 +2
             publisher.Publish(new TestCommandOne());                    // service1 +2
-            await publisher.PublishAsync(new TransactionCompleteEvent()); // service1/2 +1
+            await publisher.PublishAsync(new TransactionCompletedEvent()); // service1/2 +1
             publisher.Publish(new TransactionAbortedEvent());          // service1/2 +1
 
             service1.ReceivedMessagesCount.Should().Be(6);
@@ -601,7 +601,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
                 new TestCommandTwo()
             });
 
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(50));
+            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(70));
         }
         
         [Fact]

@@ -20,12 +20,12 @@ namespace Silverback.Tests.TestTypes
             ProducedMessages = broker.ProducedMessages;
         }
 
-        protected override void Produce(IMessage message, byte[] serializedMessage)
+        protected override void Produce(object message, byte[] serializedMessage)
         {
             ProducedMessages.Add(new TestBroker.ProducedMessage(serializedMessage, Endpoint));
         }
 
-        protected override Task ProduceAsync(IMessage message, byte[] serializedMessage)
+        protected override Task ProduceAsync(object message, byte[] serializedMessage)
         {
             Produce(message, serializedMessage);
             return Task.CompletedTask;

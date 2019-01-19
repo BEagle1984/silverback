@@ -8,8 +8,8 @@ namespace Silverback.Messaging.Broker
 {
     public interface IProducer
     {
-        void Produce(IMessage message);
+        void Produce(object message);
 
-        Task ProduceAsync(IMessage message);
+        Task ProduceAsync(object message);
     }
 }

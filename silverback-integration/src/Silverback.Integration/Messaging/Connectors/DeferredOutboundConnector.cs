@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Connectors
 {
     // TODO: Test?
     /// <summary>
-    /// Stores the <see cref="IMessage" /> into a queue to be forwarded to the message broker later on.
+    /// Stores the message into a queue to be forwarded to the message broker later on.
     /// </summary>
     public class DeferredOutboundConnector : IOutboundConnector, ISubscriber
     {
@@ -22,11 +22,11 @@ namespace Silverback.Messaging.Connectors
         }
 
         [Subscribe]
-        public Task OnTransactionCommit(TransactionCommitEvent message)
+        public Task OnTransactionCompleted(TransactionCompletedEvent message)
             => _queueProducer.Commit();
 
         [Subscribe]
-        public Task OnTransactionRollback(TransactionRollbackEvent message)
+        public Task OnTransactionAborted(TransactionAbortedEvent message)
             => _queueProducer.Rollback();
 
         public Task RelayMessage(IIntegrationMessage message, IEndpoint destinationEndpoint) =>

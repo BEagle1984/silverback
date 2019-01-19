@@ -8,13 +8,13 @@ namespace Silverback.Messaging.Broker
 {
     public class MessageReceivedEventArgs : EventArgs
     {
-        public MessageReceivedEventArgs(IMessage message, IOffset offset)
+        public MessageReceivedEventArgs(object message, IOffset offset)
         {
             Message = message;
             Offset = offset;
         }
 
-        public IMessage Message { get; set; }
+        public object Message { get; set; }
 
         public IOffset Offset { get; set; }
     }

@@ -2,33 +2,32 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.ErrorHandling
 {
-    [TestFixture]
     public class SkipMessageErrorPolicyTests
     {
-        private SkipMessageErrorPolicy _policy;
+        private readonly SkipMessageErrorPolicy _policy;
 
-        [SetUp]
-        public void Setup()
+        public SkipMessageErrorPolicyTests()
         {
             _policy = new SkipMessageErrorPolicy(new NullLogger<SkipMessageErrorPolicy>());
         }
 
-        [Test]
-        [TestCase(1, ErrorAction.Skip)]
-        [TestCase(333, ErrorAction.Skip)]
+        [Theory]
+        [InlineData(1, ErrorAction.Skip)]
+        [InlineData(333, ErrorAction.Skip)]
         public void SkipTest(int failedAttempts, ErrorAction expectedAction)
         {
             var action = _policy.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
 
-            Assert.That(action, Is.EqualTo(expectedAction));
+            action.Should().Be(expectedAction);
         }
     }
 }

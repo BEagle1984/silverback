@@ -55,7 +55,7 @@ namespace Silverback.EntityFrameworkCore
 
                 saved = true;
 
-                await PublishEvent<TransactionCompleteEvent>(async);
+                await PublishEvent<TransactionCompletedEvent>(async);
 
                 return result;
             }

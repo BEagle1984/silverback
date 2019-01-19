@@ -12,20 +12,20 @@ namespace Silverback.Messaging.ErrorHandling
     {
         public static void TryProcess<TMessage>(this IErrorPolicy errorPolicy, TMessage message, Action<TMessage> messageHandler)
         {
-            int retryCount = 0;
+            int attempts = 1;
 
             while (true)
             {
-                var result = HandleMessage(message, messageHandler, retryCount, errorPolicy);
+                var result = HandleMessage(message, messageHandler, attempts, errorPolicy);
 
                 if (result.IsSuccessful || result.Action == ErrorAction.Skip)
                     return;
 
-                retryCount++;
+                attempts++;
             }
         }
 
-        private static MessageHandlerResult HandleMessage<TMessage>(TMessage message, Action<TMessage> messageHandler, int retryCount,
+        private static MessageHandlerResult HandleMessage<TMessage>(TMessage message, Action<TMessage> messageHandler, int failedAttempts,
             IErrorPolicy errorPolicy)
         {
             try
@@ -39,7 +39,7 @@ namespace Silverback.Messaging.ErrorHandling
                 if (errorPolicy == null)
                     throw;
 
-                var failedMessage = new FailedMessage(message, retryCount);
+                var failedMessage = new FailedMessage(message, failedAttempts);
 
                 if (!errorPolicy.CanHandle(failedMessage, ex))
                     throw;

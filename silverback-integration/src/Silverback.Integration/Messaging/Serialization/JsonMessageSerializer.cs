@@ -10,22 +10,22 @@ namespace Silverback.Messaging.Serialization
 {
     public class JsonMessageSerializer : IMessageSerializer
     {
-        public byte[] Serialize(IMessage message)
+        public byte[] Serialize(object message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
-            var json = JsonConvert.SerializeObject(message, typeof(IMessage), Settings);
+            var json = JsonConvert.SerializeObject(message, typeof(object), Settings);
 
             return GetEncoding().GetBytes(json);
         }
 
-        public IMessage Deserialize(byte[] message)
+        public object Deserialize(byte[] message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
             var json = GetEncoding().GetString(message);
 
-            return JsonConvert.DeserializeObject<IMessage>(json, Settings);
+            return JsonConvert.DeserializeObject(json, Settings);
         }
 
         [DefaultValue("UTF8")]

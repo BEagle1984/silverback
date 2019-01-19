@@ -2,26 +2,26 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.ErrorHandling
 {
-    [TestFixture]
     public class ErrorPolicyChainTests
     {
         private readonly ErrorPolicyBuilder _errorPolicyBuilder = new ErrorPolicyBuilder(new ServiceCollection().BuildServiceProvider(), NullLoggerFactory.Instance);
 
-        [Test]
-        [TestCase(1)]
-        [TestCase(3)]
-        [TestCase(4)]
+        [Theory]
+        [InlineData(1)]
+        [InlineData(3)]
+        [InlineData(4)]
         public void ChainingTest(int failedAttempts)
         {
             var testPolicy = new TestErrorPolicy();
@@ -32,14 +32,14 @@ namespace Silverback.Tests.Messaging.ErrorHandling
 
             chain.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
 
-            Assert.That(testPolicy.Applied, Is.EqualTo(failedAttempts > 3));
+            testPolicy.Applied.Should().Be(failedAttempts > 3);
         }
 
-        [Test]
-        [TestCase(1, ErrorAction.Retry)]
-        [TestCase(2, ErrorAction.Retry)]
-        [TestCase(3, ErrorAction.Skip)]
-        [TestCase(4, ErrorAction.Skip)]
+        [Theory]
+        [InlineData(1, ErrorAction.Retry)]
+        [InlineData(2, ErrorAction.Retry)]
+        [InlineData(3, ErrorAction.Skip)]
+        [InlineData(4, ErrorAction.Skip)]
         public void ChainingTest2(int failedAttempts, ErrorAction expectedAction)
         {
             var chain = _errorPolicyBuilder.Chain(
@@ -48,7 +48,7 @@ namespace Silverback.Tests.Messaging.ErrorHandling
 
             var action = chain.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
 
-            Assert.That(action, Is.EqualTo(expectedAction));
+            action.Should().Be(expectedAction);
         }
     }
 }

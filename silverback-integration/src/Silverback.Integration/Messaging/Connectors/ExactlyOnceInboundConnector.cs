@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -21,17 +22,29 @@ namespace Silverback.Messaging.Connectors
             _logger = logger;
         }
 
-        protected override void RelayMessage(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected override void RelayMessages(IEnumerable<object> messages, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
-            if (!MustProcess(message, sourceEndpoint, serviceProvider))
-            {
-                _logger.LogTrace("Message is being skipped since it was already processed.", message, sourceEndpoint);
-                return;
-            }
+            messages = EnsureExactlyOnce(messages, sourceEndpoint, serviceProvider);
 
-            base.RelayMessage(message, sourceEndpoint, serviceProvider);
+            base.RelayMessages(messages, sourceEndpoint, serviceProvider);
         }
 
-        protected abstract bool MustProcess(IMessage message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider);
+        private IEnumerable<object> EnsureExactlyOnce(IEnumerable<object> messages, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        {
+            foreach (var message in messages)
+            {
+                if (MustProcess(message, sourceEndpoint, serviceProvider))
+                {
+                    yield return message;
+                }
+                else
+                {
+                    _logger.LogMessageTrace("Message is being skipped since it was already processed.", message,
+                        sourceEndpoint);
+                }
+            }
+        }
+
+        protected abstract bool MustProcess(object message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider);
     }
 }

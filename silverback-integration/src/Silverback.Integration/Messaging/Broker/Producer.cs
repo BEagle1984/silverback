@@ -18,32 +18,32 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
-        public void Produce(IMessage message)
+        public void Produce(object message)
         {
             EnsureIdentifier(message);
             Trace(message);
             Produce(message, Endpoint.Serializer.Serialize(message));
         }
 
-        public async Task ProduceAsync(IMessage message)
+        public async Task ProduceAsync(object message)
         {
             EnsureIdentifier(message);
             Trace(message);
             await ProduceAsync(message, Endpoint.Serializer.Serialize(message));
         }
 
-        private void Trace(IMessage message) =>
-            _logger.LogTrace("Producing message.", message, Endpoint);
+        private void Trace(object message) =>
+            _logger.LogMessageTrace("Producing message.", message, Endpoint);
 
-        private void EnsureIdentifier(IMessage message)
+        private void EnsureIdentifier(object message)
         {
             if (message is IIntegrationMessage integrationMessage)
                 integrationMessage.Id = Guid.NewGuid();
         }
 
-        protected abstract void Produce(IMessage message, byte[] serializedMessage);
+        protected abstract void Produce(object message, byte[] serializedMessage);
 
-        protected abstract Task ProduceAsync(IMessage message, byte[] serializedMessage);
+        protected abstract Task ProduceAsync(object message, byte[] serializedMessage);
     }
 
     public abstract class Producer<TBroker, TEndpoint> : Producer

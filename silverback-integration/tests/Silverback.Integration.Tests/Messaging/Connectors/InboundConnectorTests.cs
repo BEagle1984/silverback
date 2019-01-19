@@ -3,31 +3,30 @@
 
 using System;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework;
 using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
-using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.Connectors
 {
-    [TestFixture]
     public class InboundConnectorTests
     {
-        private TestSubscriber _testSubscriber;
-        private IInboundConnector _connector;
-        private TestBroker _broker;
-        private ErrorPolicyBuilder _errorPolicyBuilder;
+        private readonly TestSubscriber _testSubscriber;
+        private readonly IInboundConnector _connector;
+        private readonly TestBroker _broker;
+        private readonly ErrorPolicyBuilder _errorPolicyBuilder;
 
-        [SetUp]
-        public void Setup()
+        public InboundConnectorTests()
         {
             var services = new ServiceCollection();
 
@@ -36,7 +35,7 @@ namespace Silverback.Tests.Messaging.Connectors
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-            services.AddSingleton<IPublisher, Publisher>();
+            services.AddBus();
 
             _broker = new TestBroker();
             services.AddSingleton<IBroker>(_broker);
@@ -48,7 +47,7 @@ namespace Silverback.Tests.Messaging.Connectors
 
         #region Messages Received
 
-        [Test]
+        [Fact]
         public void Bind_PushMessages_MessagesReceived()
         {
             _connector.Bind(TestEndpoint.Default);
@@ -61,10 +60,10 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(5));
+           _testSubscriber.ReceivedMessages.Count.Should().Be(5);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesInBatch_MessagesReceived()
         {
             _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
@@ -83,14 +82,14 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(0));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(0);
 
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(7));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(7);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesInMultipleBatches_MessagesReceived()
         {
             _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
@@ -112,17 +111,17 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(7));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(7);
             _testSubscriber.ReceivedMessages.Clear();
 
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(7));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(7);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesToMultipleConsumers_MessagesReceived()
         {
             _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
@@ -140,10 +139,10 @@ namespace Silverback.Tests.Messaging.Connectors
                 }
             }
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(15));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(15);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesToMultipleConsumersInBatch_MessagesReceived()
         {
             _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
@@ -164,14 +163,14 @@ namespace Silverback.Tests.Messaging.Connectors
                     consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
                 }
             }
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(0));
+           _testSubscriber.ReceivedMessages.Count.Should().Be(0);
 
             foreach (var consumer in _broker.Consumers.Take(3))
             {
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             }
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(7 * 3));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(7 * 3);
 
             _testSubscriber.ReceivedMessages.Clear();
 
@@ -180,14 +179,14 @@ namespace Silverback.Tests.Messaging.Connectors
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             }
 
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(7 * 2));
+            _testSubscriber.ReceivedMessages.Count.Should().Be(7 * 2);
         }
 
         #endregion
 
         #region Acknowledge
 
-        [Test]
+        [Fact]
         public void Bind_PushMessages_Acknowledged()
         {
             _connector.Bind(TestEndpoint.Default);
@@ -200,10 +199,10 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(5));
+            consumer.AcknowledgeCount.Should().Be(5);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesInBatch_Acknowledged()
         {
             _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
@@ -222,14 +221,14 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(0));
+            consumer.AcknowledgeCount.Should().Be(0);
 
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(5));
+            consumer.AcknowledgeCount.Should().Be(5);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesInMultipleBatches_Acknowledged()
         {
             _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
@@ -251,16 +250,16 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(5));
+            consumer.AcknowledgeCount.Should().Be(5);
 
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
 
-            Assert.That(consumer.AcknowledgeCount, Is.EqualTo(10));
+            consumer.AcknowledgeCount.Should().Be(10);
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesToMultipleConsumers_Acknowledged()
         {
             _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
@@ -280,11 +279,11 @@ namespace Silverback.Tests.Messaging.Connectors
 
             foreach (var consumer in _broker.Consumers)
             {
-                Assert.That(consumer.AcknowledgeCount, Is.EqualTo(3));
+                consumer.AcknowledgeCount.Should().Be(3);
             }
         }
 
-        [Test]
+        [Fact]
         public void Bind_PushMessagesToMultipleConsumersInBatch_Acknowledged()
         {
             _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
@@ -306,28 +305,28 @@ namespace Silverback.Tests.Messaging.Connectors
                 }
             }
 
-            Assert.That(_broker.Consumers.Sum(c => c.AcknowledgeCount), Is.EqualTo(0));
+            _broker.Consumers.Sum(c => c.AcknowledgeCount).Should().Be(0);
 
             foreach (var consumer in _broker.Consumers.Take(3))
             {
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             }
 
-            Assert.That(_broker.Consumers.Sum(c => c.AcknowledgeCount), Is.EqualTo(15));
+            _broker.Consumers.Sum(c => c.AcknowledgeCount).Should().Be(15);
 
             foreach (var consumer in _broker.Consumers.Skip(3))
             {
                 consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             }
 
-            Assert.That(_broker.Consumers.Sum(c => c.AcknowledgeCount), Is.EqualTo(25));
+            _broker.Consumers.Sum(c => c.AcknowledgeCount).Should().Be(25);
         }
 
         #endregion
 
         #region Error Policy
 
-        [Test]
+        [Fact]
         public void Bind_WithRetryErrorPolicy_RetriedAndReceived()
         {
             _testSubscriber.MustFailCount = 3;
@@ -337,11 +336,11 @@ namespace Silverback.Tests.Messaging.Connectors
             var consumer = _broker.Consumers.First();
             consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
 
-            Assert.That(_testSubscriber.FailCount, Is.EqualTo(3));
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(1));
+            _testSubscriber.FailCount.Should().Be(3);
+            _testSubscriber.ReceivedMessages.Count.Should().Be(4);
         }
 
-        [Test]
+        [Fact]
         public void Bind_WithChainedErrorPolicy_RetriedAndMoved()
         {
             _testSubscriber.MustFailCount = 3;
@@ -355,12 +354,12 @@ namespace Silverback.Tests.Messaging.Connectors
 
             var producer = (TestProducer)_broker.GetProducer(new TestEndpoint("bad"));
 
-            Assert.That(_testSubscriber.FailCount, Is.EqualTo(2));
-            Assert.That(producer.ProducedMessages.Count, Is.EqualTo(1));
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(0));
+            _testSubscriber.FailCount.Should().Be(2);
+            _testSubscriber.ReceivedMessages.Count.Should().Be(2);
+            producer.ProducedMessages.Count.Should().Be(1);
         }
 
-        [Test]
+        [Fact]
         public void Bind_WithRetryErrorPolicy_RetriedAndReceivedInBatch()
         {
             _testSubscriber.MustFailCount = 3;
@@ -379,8 +378,11 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
             consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
 
-            Assert.That(_testSubscriber.FailCount, Is.EqualTo(3));
-            Assert.That(_testSubscriber.ReceivedMessages.Count, Is.EqualTo(4));
+            _testSubscriber.FailCount.Should().Be(3);
+            _testSubscriber.ReceivedMessages.OfType<BatchAbortedEvent>().Count().Should().Be(3);
+            _testSubscriber.ReceivedMessages.OfType<BatchCompleteEvent>().Count().Should().Be(4);
+            _testSubscriber.ReceivedMessages.OfType<BatchProcessedEvent>().Count().Should().Be(1);
+            _testSubscriber.ReceivedMessages.OfType<TestEventOne>().Count().Should().Be(5);
         }
 
         #endregion

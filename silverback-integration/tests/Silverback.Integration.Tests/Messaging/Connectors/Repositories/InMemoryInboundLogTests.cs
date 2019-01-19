@@ -2,36 +2,36 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using NUnit.Framework;
+using FluentAssertions;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
+using Xunit;
 
 namespace Silverback.Tests.Messaging.Connectors.Repositories
 {
-    [TestFixture]
+    [Collection("StaticInMemory")]
     public class InMemoryInboundLogTests
     {
-        private InMemoryInboundLog _log;
+        private readonly InMemoryInboundLog _log;
 
-        [SetUp]
-        public void Setup()
+        public InMemoryInboundLogTests()
         {
             _log = new InMemoryInboundLog();
             InMemoryInboundLog.Clear();
         }
 
-        [Test]
+        [Fact]
         public void AddTest()
         {
             _log.Add(new TestEventOne(), TestEndpoint.Default);
             _log.Add(new TestEventOne(), TestEndpoint.Default);
             _log.Add(new TestEventOne(), TestEndpoint.Default);
 
-            Assert.That(_log.Length, Is.EqualTo(0));
+            _log.Length.Should().Be(0);
         }
 
-        [Test]
+        [Fact]
         public void CommitTest()
         {
             _log.Add(new TestEventOne(), TestEndpoint.Default);
@@ -40,10 +40,10 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
 
             _log.Commit();
 
-            Assert.That(_log.Length, Is.EqualTo(3));
+            _log.Length.Should().Be(3);
         }
 
-        [Test]
+        [Fact]
         public void RollbackTest()
         {
             _log.Add(new TestEventOne(), TestEndpoint.Default);
@@ -52,10 +52,10 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
 
             _log.Rollback();
 
-            Assert.That(_log.Length, Is.EqualTo(0));
+            _log.Length.Should().Be(0);
         }
 
-        [Test]
+        [Fact]
         public void ExistsPositiveTest()
         {
             var messageId = Guid.NewGuid();
@@ -66,10 +66,10 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
 
             var result = _log.Exists(new TestEventOne{Id = messageId}, TestEndpoint.Default);
 
-            Assert.That(result, Is.True);
+            result.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void ExistsNegativeTest()
         {
             _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
@@ -78,7 +78,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
 
             var result = _log.Exists(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
 
-            Assert.That(result, Is.False);
+            result.Should().BeFalse();
         }
     }
 }
