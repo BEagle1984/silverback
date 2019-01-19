@@ -8,11 +8,11 @@ The inbound connector is used to automatically consume a topic/queue and relay t
 **Note:** The inbound connector abstracts the message broker completely and the messages are automatically acknowledged if the subscribers complete without throwing an exception (unless error handling policies are defined and unless batch processing).
 {: .notice--info}
 
-# Implementations
+## Implementations
 
 Multiple implementations are available, offering a variable degree of reliability.
 
-## Basic
+### Basic
 
 The basic `InboundConnector` is very simple and just forwards the consumed messages to the internal bus. If no exception is thrown, the message is committed and the next one is consumed.
 
@@ -36,7 +36,13 @@ public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
         .Broker.Connect();
 ```
 
-## Logged (exactly-once processing)
+### Exactly-once processing
+
+#### Offset storage
+
+_...coming soon..._
+
+#### Logged
 
 This `LoggedInboundConnector` will store the unique identifier of the processed messages into a database table to prevent double processing.
 
@@ -62,7 +68,7 @@ public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
         .Broker.Connect();
 ```
 
-# Error Handling
+## Error Handling
 
 If an exceptions is thrown by the methods consuming the incoming messages (subscribers) the consumer will stop, unless some error policies are defined.
 
@@ -105,7 +111,7 @@ policy.Move(new KafkaProducerEndpoint("same-endpoint") { ... })
 **Important!** If the last applied policy still fails the inbound connector will return the exception to the consumer, causing it to stop. A _Retry_ alone is therefore not recommendend and it should be combined with _Skip_ or _Move_.
 {: .notice--warning}
 
-# Batch Processing
+## Batch Processing
 
 The inbound connector can be configured to process the messages in batches.
 
@@ -129,7 +135,6 @@ public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
                 Batch = new Messaging.Batch.BatchSettings
                 {
                     Size = 5,
-                    MaxDegreeOfParallelism = 2,
                     MaxWaitTime = TimeSpan.FromSeconds(5)
                 }
             }))
@@ -180,7 +185,7 @@ public class InventoryService : ISubscriber
 }
 ```
 
-# Multi-threading
+## Multi-threaded consuming
 
 Multiple consumers can be created for the same endpoint to consume in parallel in multiple threads (you need multiple partitions in Kafka).
 

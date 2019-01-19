@@ -16,16 +16,11 @@ public Startup(IConfiguration configuration)
 
 public IConfiguration Configuration { get; }
 
-public void ConfigureServices(IServiceCollection services)
+public void Configure(IApplicationBuilder app, BusConfigurator busConfigurator))
 {
-   ...
-}
-
-public void Configure(IApplicationBuilder app, IBrokerEndpointsConfigurationBuilder endpoints)
-{
-    endpoints
-        .ReadConfig(Configuration, app.ApplicationServices)
-        .Broker.Connect();
+    busConfigurator.Connect(endpoints =>
+        endpoints
+            .ReadConfig(Configuration, app.ApplicationServices));
 }
 ```
 
@@ -48,7 +43,6 @@ And here is an example of configuration in the appsettings.json file:
           "Consumers": 2,
           "Batch": {
             "Size": 100,
-            "MaxDegreeOfParallelism": 5, 
             "MaxWaitTime": "00:00:02.500"
           }
         },        },

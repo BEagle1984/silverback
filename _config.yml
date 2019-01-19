@@ -6,6 +6,12 @@ description: "A framework to build reactive, event-driven, microservices with .n
 name: &name "BEagle1984"
 author: *name
 
+footer:
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/BEagle1984"
+
 remote_theme: "mmistakes/minimal-mistakes@4.14.1"
 #minimal_mistakes_skin: "air"
 
@@ -52,7 +58,7 @@ defaults:
       share: true
       toc: true
       toc_label: Contents
-      toc_icon: book
+      toc_icon: stream
       sidebar:
         nav: docs
   - scope:
@@ -71,3 +77,4 @@ tag_archive:
 
 plugins:
   - jekyll-include-cache
+  - jekyll-feed

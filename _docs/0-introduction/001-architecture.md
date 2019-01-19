@@ -33,13 +33,14 @@ The following diagram shows the Silverback's main components and how they intera
 4b | A producer is used to publish the messages to a Kafka topic
 5b | The messages are published to Kafka
 
-# Packages
+## Packages
 
 Silverback is modular and delivered as multiple packages, available on [nuget.org](https://www.nuget.org/packages?q=Silverback):
 
 Package | Description
 :-- | :--
 Silverback.Core<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.svg)](https://www.nuget.org/packages/Silverback.Core/) | It implements a very simple, yet very effective, publish/subscribe in-memory bus that can be used to decouple the software parts and easily implement a Domain Driven Design approach.
+Silverback.Core.Model<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.Model.svg)](https://www.nuget.org/packages/Silverback.Core.Model/) | It contains some interfaces that will help organize the messages and write cleaner code, adding some semantic. It also includes a sample implementation of a base class for your domain entities.
 Silverback.Core.EntityFrameworkCore<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore/) | Adds the ability to fire the domain events as part of the SaveChanges transaction.
 Silverback.Core.Rx<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.Rx.svg)](https://www.nuget.org/packages/Silverback.Core.Rx/) | Adds the possibility to create an Rx Observable over the internal bus.
 Silverback.Integration<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.svg)](https://www.nuget.org/packages/Silverback.Integration/) | Contains the message broker and connectors abstraction. Inbound and outbound connectors can be attached to a message broker to either export some events/commands/messages to other microservices or react to the messages fired by other microservices in the same way as internal messages are handled.
@@ -47,6 +48,6 @@ Silverback.Integration.EntityFrameworkCore<br/>[![NuGet](http://img.shields.io/n
 Silverback.Integration.Kafka<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Kafka.svg)](https://www.nuget.org/packages/Silverback.Integration.Kafka/) | An implementation of Silverback.Integration for the popular Apache Kafka message broker. It internally uses the Confluent.Kafka client.
 Silverback.Integration.Configuration<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Configuration.svg)](https://www.nuget.org/packages/Silverback.Integration.Configuration/) | Contains the logic to read the broker endpoints configuration from the IConfiguration from Microsoft.Extensions.Configuration (appsettings.json, environment variables, etc.)
 
-# Read more
+## Read more
 
 Have a look at the quickstart to see how simple it is to start working with it and how much you can achieve with very few lines of code.

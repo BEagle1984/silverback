@@ -29,8 +29,8 @@ docs:
         url: /docs/quickstart/key-concepts
       - title: Using the Bus
         url: /docs/quickstart/bus
-      - title: Message Types
-        url: /docs/quickstart/message-types
+      - title: Model
+        url: /docs/quickstart/model
       - title: DDD and Domain Events
         url: /docs/quickstart/domain-events
       - title: Connecting a Message Broker (Kafka)
@@ -49,6 +49,8 @@ docs:
         url: /docs/configuration/multiple
       - title: External Configurations
         url: /docs/configuration/external
+      - title: Message Keys
+        url: /docs/configuration/message-keys
   - title: Advanced Topics
     children:
       - title: Observable Bus

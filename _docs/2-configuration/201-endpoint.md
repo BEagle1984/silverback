@@ -5,11 +5,11 @@ permalink: /docs/configuration/endpoint
 
 The endpoint object contains all information that identify the topic/queue that is being connected and all the configurations. The endpoint object is therefore very specific and every broker type will define it's own implementation of `IEndpoint`.
 
-# Kafka
+## Kafka
 
 Silverback.Integration.Kafka uses two different classes to specify inbound and outbound endpoints configuration.
 
-## KafkaProducerEndpoint
+### KafkaProducerEndpoint
 
 Used for outbound endpoints, exposes the following properties:
 
@@ -30,7 +30,7 @@ new KafkaProducerEndpoint("silverback-examples-events")
 }
 ```
 
-## KafkaConsumerEndpoint
+### KafkaConsumerEndpoint
 
 Used for inbound endpoints, exposes the following properties:
 
