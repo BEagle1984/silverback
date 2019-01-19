@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -7,7 +7,6 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Silverback.Messaging.Configuration.Common;
 using Silverback.Messaging.Configuration.Reflection;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Configuration.Outbound
 {
@@ -44,7 +43,7 @@ namespace Silverback.Messaging.Configuration.Outbound
             var typeName = configSection.GetSection("MessageType").Value;
 
             if (typeName == null)
-                return typeof(IIntegrationMessage);
+                return typeof(object);
 
             return _typeFinder.FindClassOrInterface(typeName);
         }

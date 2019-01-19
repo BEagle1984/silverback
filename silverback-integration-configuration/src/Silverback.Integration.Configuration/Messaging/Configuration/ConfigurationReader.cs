@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
         
-        public void Apply(IBrokerEndpointsConfigurationBuilder builder)
+        public void Apply(IEndpointsConfigurationBuilder builder)
         {
             foreach (var inbound in Inbound)
             {

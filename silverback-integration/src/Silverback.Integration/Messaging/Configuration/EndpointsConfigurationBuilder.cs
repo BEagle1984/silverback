@@ -8,7 +8,7 @@ using Silverback.Messaging.ErrorHandling;
 
 namespace Silverback.Messaging.Configuration
 {
-    public class EndpointsConfigurationBuilder
+    public class EndpointsConfigurationBuilder : IEndpointsConfigurationBuilder
     {
         private readonly IOutboundRoutingConfiguration _outboundRoutingConfiguration;
         private readonly IEnumerable<IInboundConnector> _inboundConnectors;
