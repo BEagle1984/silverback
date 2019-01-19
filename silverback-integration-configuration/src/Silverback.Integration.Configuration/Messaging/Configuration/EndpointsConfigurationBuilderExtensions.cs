@@ -8,12 +8,12 @@ namespace Silverback.Messaging.Configuration
 {
     public static class EndpointsConfigurationBuilderExtensions
     {
-        public static EndpointsConfigurationBuilder ReadConfig(this EndpointsConfigurationBuilder builder, IConfiguration configuration, IServiceProvider serviceProvider)
+        public static IEndpointsConfigurationBuilder ReadConfig(this IEndpointsConfigurationBuilder builder, IConfiguration configuration, IServiceProvider serviceProvider)
         {
             return builder.ReadConfig(configuration.GetSection("Silverback"), serviceProvider);
         }
 
-        public static EndpointsConfigurationBuilder ReadConfig(this EndpointsConfigurationBuilder builder, IConfigurationSection configurationSection, IServiceProvider serviceProvider)
+        public static IEndpointsConfigurationBuilder ReadConfig(this IEndpointsConfigurationBuilder builder, IConfigurationSection configurationSection, IServiceProvider serviceProvider)
         {
             new ConfigurationReader(serviceProvider).Read(configurationSection).Apply(builder);
 

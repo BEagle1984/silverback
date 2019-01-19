@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -52,7 +52,7 @@ namespace Silverback.Examples.Main.UseCases
 
             serviceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
 
-            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>(), serviceProvider);
+            Configure(serviceProvider.GetService<BusConfigurator>(), serviceProvider);
 
             PreExecute(serviceProvider);
         }
@@ -79,7 +79,7 @@ namespace Silverback.Examples.Main.UseCases
 
         protected abstract void ConfigureServices(IServiceCollection services);
 
-        protected abstract void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider);
+        protected abstract void Configure(BusConfigurator configurator, IServiceProvider serviceProvider);
 
         protected abstract Task Execute(IServiceProvider serviceProvider);
 

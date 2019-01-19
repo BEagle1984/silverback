@@ -1,6 +1,9 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging.Messages;
@@ -17,11 +20,26 @@ namespace Silverback.Examples.ConsumerA
             _logger = logger;
         }
 
-        [Subscribe]
+        [Subscribe(Parallel = true)]
         void OnIntegrationEventReceived(IntegrationEvent message)
         {
             _logger.LogInformation($"Received IntegrationEvent '{message.Content}'");
         }
+
+        [Subscribe(Parallel = true)]
+        void OnIntegrationEventBatchReceived(IEnumerable<IntegrationEvent> messages)
+        {
+            if (messages.Count() <= 1) return;
+
+            _logger.LogInformation($"Received batch containing {messages.Count()} IntegrationEvent messages.");
+        }
+
+        [Subscribe(Parallel = true)]
+        void OnIntegrationEventReceived(IObservable<IntegrationEvent> messages) =>
+            messages.Subscribe(message =>
+            {
+                _logger.LogInformation($"Observed IntegrationEvent '{message.Content}'");
+            });
 
         [Subscribe]
         void OnBadEventReceived(BadIntegrationEvent message)
@@ -37,7 +55,7 @@ namespace Silverback.Examples.ConsumerA
         }
 
         [Subscribe]
-        void OnBatchReady(BatchReadyEvent message)
+        void OnBatchComplete(BatchCompleteEvent message)
         {
             _logger.LogInformation($"Batch '{message.BatchId} ready ({message.BatchSize} messages)");
         }

@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Silverback.Domain;
 using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Publishing;
@@ -12,17 +13,26 @@ namespace Silverback.Examples.Common.Data
 {
     public class ExamplesDbContext : DbContext
     {
-        private readonly IEventPublisher _eventPublisher;
+        private DbContextEventsPublisher<DomainEntity> _eventsPublisher;
 
-        public ExamplesDbContext(IEventPublisher eventPublisher)
+        public ExamplesDbContext(IPublisher publisher)
         {
-            _eventPublisher = eventPublisher;
+            InitEventsPublisher(publisher);
         }
 
-        public ExamplesDbContext(DbContextOptions options, IEventPublisher eventPublisher)
+        public ExamplesDbContext(DbContextOptions options, IPublisher publisher)
             : base(options)
         {
-            _eventPublisher = eventPublisher;
+            InitEventsPublisher(publisher);
+        }
+
+        private void InitEventsPublisher(IPublisher publisher)
+        {
+            _eventsPublisher = new DbContextEventsPublisher<DomainEntity>(
+                DomainEntityEventsAccessor.EventsSelector,
+                DomainEntityEventsAccessor.ClearEventsAction,
+                publisher,
+                this);
         }
 
         public DbSet<OutboundMessage> OutboundMessages { get; set; }
@@ -43,12 +53,13 @@ namespace Silverback.Examples.Common.Data
             => SaveChanges(true);
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
-            => DbContextEventsPublisher.ExecuteSaveTransaction(this, () => base.SaveChanges(acceptAllChangesOnSuccess), _eventPublisher);
+            => _eventsPublisher.ExecuteSaveTransaction(() => base.SaveChanges(acceptAllChangesOnSuccess));
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => SaveChangesAsync(true, cancellationToken);
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-            => DbContextEventsPublisher.ExecuteSaveTransactionAsync(this, () => base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken), _eventPublisher);
+            => _eventsPublisher.ExecuteSaveTransactionAsync(() =>
+                base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
     }
 }

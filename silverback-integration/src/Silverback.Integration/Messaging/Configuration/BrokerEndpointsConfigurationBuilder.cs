@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Configuration
     public static class EndpointsBusConfiguratorExtensions
     {
         public static BusConfigurator Connect(this BusConfigurator configurator,
-            Action<EndpointsConfigurationBuilder> endpointsConfigurationAction)
+            Action<IEndpointsConfigurationBuilder> endpointsConfigurationAction)
         {
             if (endpointsConfigurationAction == null)
                 throw new ArgumentNullException(nameof(endpointsConfigurationAction));

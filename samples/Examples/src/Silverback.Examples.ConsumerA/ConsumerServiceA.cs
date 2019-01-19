@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -20,48 +20,51 @@ namespace Silverback.Examples.ConsumerA
     public class ConsumerServiceA : ConsumerService
     {
         protected override void ConfigureServices(IServiceCollection services) => services
-            .AddBus()
+            .AddBus(options => options.Observable())
             .AddBroker<KafkaBroker>(options => options
                 .AddDbInboundConnector<ExamplesDbContext>()
                 .AddInboundConnector())
             .AddScoped<ISubscriber, SubscriberService>();
 
-        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider)
+        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
         {
             ConfigureNLog(serviceProvider);
 
-            endpoints
-                .AddInbound(CreateConsumerEndpoint("silverback-examples-events"))
-                .AddInbound(CreateConsumerEndpoint("silverback-examples-batch"), settings: new InboundConnectorSettings
-                {
-                    Batch = new Messaging.Batch.BatchSettings
-                    {
-                        Size = 5,
-                        MaxDegreeOfParallelism = 2,
-                        MaxWaitTime = TimeSpan.FromSeconds(5)
-                    },
-                    Consumers = 2
-                })
-                .AddInbound(CreateConsumerEndpoint("silverback-examples-bad-events"), policy => policy
-                    .Chain(
-                        policy.Retry(TimeSpan.FromMilliseconds(500)).MaxFailedAttempts(2),
-                        policy.Move(new KafkaProducerEndpoint("silverback-examples-bad-events-error")
-                        {
-                            Configuration = new KafkaProducerConfig
+            configurator
+                .Connect(endpoints =>
+                    endpoints
+                        .AddInbound(CreateConsumerEndpoint("silverback-examples-events"))
+                        .AddInbound(CreateConsumerEndpoint("silverback-examples-batch"),
+                            settings: new InboundConnectorSettings
                             {
-                                BootstrapServers = "PLAINTEXT://kafka:9092",
-                                ClientId = "consumer-service-a",
-                                GroupId = "silverback-examples"
-                            }
-                        })))
-                .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer", GetCustomSerializer()))
-                // Special inbound (not logged)
-                .AddInbound<InboundConnector>(CreateConsumerEndpoint("silverback-examples-legacy-messages", new LegacyMessageSerializer()))
-                .Broker.Connect();
+                                Batch = new Messaging.Batch.BatchSettings
+                                {
+                                    Size = 5,
+                                    MaxWaitTime = TimeSpan.FromSeconds(5)
+                                },
+                                Consumers = 2
+                            })
+                        .AddInbound(CreateConsumerEndpoint("silverback-examples-bad-events"), policy => policy
+                            .Chain(
+                                policy.Retry(TimeSpan.FromMilliseconds(500)).MaxFailedAttempts(2),
+                                policy.Move(new KafkaProducerEndpoint("silverback-examples-bad-events-error")
+                                {
+                                    Configuration = new KafkaProducerConfig
+                                    {
+                                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                                        ClientId = "consumer-service-a",
+                                        GroupId = "silverback-examples"
+                                    }
+                                })))
+                        .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer",
+                            GetCustomSerializer()))
+                        // Special inbound (not logged)
+                        .AddInbound<InboundConnector>(CreateConsumerEndpoint("silverback-examples-legacy-messages",
+                            new LegacyMessageSerializer())));
 
             Console.CancelKeyPress += (_, __) =>
             {
-                endpoints.Broker.Disconnect();
+                serviceProvider.GetService<IBroker>().Disconnect();
             };
         }
 
