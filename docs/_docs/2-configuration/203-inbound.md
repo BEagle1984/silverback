@@ -46,7 +46,7 @@ Silverback is able to keep track of the messages that have been consumed in orde
 
 The `DbOffsetStoredInboundConnector` will store the offset of the latest processed message (of each topic/partition) into a database table.
 
-**Note:** The `DbContext` must include a `DbSet<InboundMessage>`.
+**Note:** The `DbContext` must include a `DbSet<StoredOffset>`.
 {: .notice--info}
 
 ```c#
