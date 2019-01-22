@@ -24,16 +24,16 @@ public void ConfigureServices(IServiceCollection services)
             .AddOutboundConnector());
     ...
 }
-
-public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
+public void Configure(BusConfigurator busConfigurator)
 {
-    endpoints
-        .AddOutbound<IIntegrationEvent>(
-            new KafkaEndpoint("basket-events")
-            {
-                ...
-            })
-        .Broker.Connect();
+    busConfigurator
+        .Connect(endpoints =>
+            endpoints
+                .AddOutbound<IIntegrationEvent>(
+                    new KafkaEndpoint("basket-events")
+                    {
+                        ...
+                    }));
 ```
 
 ### Deferred
@@ -57,17 +57,19 @@ public void ConfigureServices(IServiceCollection services)
     ...
 }
 
-public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints, JobScheduler jobScheduler)
+public void Configure(BusConfigurator busConfigurator)
 {
-    endpoints
-        .AddOutbound<IIntegrationEvent>(
-            new KafkaEndpoint("catalog-events")
-            {
-                ...
-            })
-        .Broker.Connect();
+    busConfigurator
+        .Connect(endpoints =>
+            endpoints
+                .AddOutbound<IIntegrationEvent>(
+                    new KafkaEndpoint("catalog-events")
+                    {
+                        ...
+                    }));
 
     // Scheduling the OutboundQueueWorker using a poor-man scheduler
     jobScheduler.AddJob("outbound-queue-worker", TimeSpan.FromMilliseconds(100),
         s => s.GetRequiredService<OutboundQueueWorker>().ProcessQueue());
+}
 ```
