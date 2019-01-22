@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Data;
@@ -44,10 +45,10 @@ namespace Silverback.Examples.Main.UseCases.EfCore
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
-            var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
 
             await publisher.PublishAsync(new SimpleIntegrationEvent {Content = DateTime.Now.ToString("HH:mm:ss.fff")});
 
+            var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
             await dbContext.SaveChangesAsync();
         }
 

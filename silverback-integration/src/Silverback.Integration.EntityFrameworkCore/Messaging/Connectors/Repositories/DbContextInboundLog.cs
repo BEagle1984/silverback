@@ -44,16 +44,13 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public void Rollback()
         {
-            // Nothing to do, just not saving the DbContext
+            // Nothing to do, just not saving the changes made to the DbContext
         }
 
         public bool Exists(object message, IEndpoint endpoint)
         {
-            lock (_lock)
-            {
-                var key = _messageKeyProvider.GetKey(message);
-               return DbSet.Any(m => m.MessageId == key && m.EndpointName == endpoint.Name);
-            }
+            var key = _messageKeyProvider.GetKey(message);
+            return DbSet.Any(m => m.MessageId == key && m.EndpointName == endpoint.Name);
         }
 
         public int Length => DbSet.Count();

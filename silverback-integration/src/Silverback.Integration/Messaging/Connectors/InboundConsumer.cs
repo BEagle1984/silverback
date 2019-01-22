@@ -12,6 +12,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
 {
+
     // TODO: Test? (or implicitly tested with InboundConnector?)
     public class InboundConsumer
     {
@@ -19,7 +20,7 @@ namespace Silverback.Messaging.Connectors
         private readonly InboundConnectorSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
 
-        private readonly Action<IEnumerable<object>, IEndpoint, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, IServiceProvider> _messagesHandler;
         private readonly Action<IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
@@ -32,7 +33,7 @@ namespace Silverback.Messaging.Connectors
         public InboundConsumer(IBroker broker,
             IEndpoint endpoint,
             InboundConnectorSettings settings,
-            Action<IEnumerable<object>, IEndpoint, IServiceProvider> messagesHandler,
+            Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, IServiceProvider> messagesHandler,
             Action<IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy,
@@ -72,37 +73,37 @@ namespace Silverback.Messaging.Connectors
                     _errorPolicy,
                     _serviceProvider);
 
-                _consumer.Received += (_, args) => batch.AddMessage(args.Message, args.Offset);
+                _consumer.Received += (_, args) => batch.AddMessage(args);
             }
             else
             {
-                _consumer.Received += (_, args) => OnSingleMessageReceived(args.Message, args.Offset);
+                _consumer.Received += (_, args) => OnSingleMessageReceived(args);
             }
         }
 
-        private void OnSingleMessageReceived(object message, IOffset offset)
+        private void OnSingleMessageReceived(MessageReceivedEventArgs messageArgs)
         {
-            _messageLogger.LogTrace(_logger, "Processing message.", message, _endpoint);
+            _messageLogger.LogTrace(_logger, "Processing message.", messageArgs.Message, _endpoint, offset: messageArgs.Offset);
 
-            _errorPolicy.TryProcess(message, _ =>
+            _errorPolicy.TryProcess(messageArgs.Message, _ =>
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    RelayAndCommitSingleMessage(message, offset, scope.ServiceProvider);
+                    RelayAndCommitSingleMessage(messageArgs, scope.ServiceProvider);
                 }
             });
         }
 
-        private void RelayAndCommitSingleMessage(object message, IOffset offset, IServiceProvider serviceProvider)
+        private void RelayAndCommitSingleMessage(MessageReceivedEventArgs messageArgs, IServiceProvider serviceProvider)
         {
             try
             {
-                _messagesHandler(new[] {message}, _endpoint, serviceProvider);
-                Commit(new[] {offset}, serviceProvider);
+                _messagesHandler(new[] {messageArgs}, _endpoint, serviceProvider);
+                Commit(new[] {messageArgs.Offset}, serviceProvider);
             }
             catch (Exception ex)
             {
-                _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message.", message, _endpoint);
+                _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message.", messageArgs.Message, _endpoint, offset: messageArgs.Offset);
                 Rollback(serviceProvider);
                 throw;
             }

@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
 
@@ -11,30 +12,23 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public class DbContextOutboundQueueProducer : RepositoryBase<OutboundMessage>, IOutboundQueueProducer
     {
-        private readonly MessageKeyProvider _messageKeyProvider;
-
-        public DbContextOutboundQueueProducer(DbContext dbContext, MessageKeyProvider messageKeyProvider) : base(dbContext)
+        private readonly ILogger _logger;
+        public DbContextOutboundQueueProducer(DbContext dbContext, ILogger logger) : base(dbContext)
         {
-            _messageKeyProvider = messageKeyProvider;
+            _logger = logger;
         }
 
-        public Task Enqueue(object message, IEndpoint endpoint) =>
-            DbSet.AddAsync(CreateEntity(message, endpoint));
-
-        private OutboundMessage CreateEntity(object message, IEndpoint endpoint)
+        public async Task Enqueue(object message, IEndpoint endpoint)
         {
-            _messageKeyProvider.EnsureKeyIsInitialized(message);
-            
-            return new OutboundMessage
+            await DbSet.AddAsync(new OutboundMessage
             {
-                MessageId = _messageKeyProvider.GetKey(message),
                 Message = Serialize(message),
                 EndpointName = endpoint.Name,
                 Endpoint = Serialize(endpoint),
                 Created = DateTime.UtcNow
-            };
+            });
         }
-        
+
         public Task Commit()
         {
             // Nothing to do, the transaction is committed with the DbContext.SaveChanges()
@@ -43,7 +37,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public Task Rollback()
         {
-            // Nothing to do, the transaction is rolledback by the DbContext
+            // Nothing to do, the transaction is aborted by the DbContext
             return Task.CompletedTask;
         }
     }

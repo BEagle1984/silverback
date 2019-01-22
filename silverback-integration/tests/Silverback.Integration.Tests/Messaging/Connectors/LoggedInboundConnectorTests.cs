@@ -45,7 +45,7 @@ namespace Silverback.Tests.Messaging.Connectors
             _serviceProvider = services.BuildServiceProvider();
             _broker = (TestBroker)_serviceProvider.GetService<IBroker>();
             _connector = new LoggedInboundConnector(_broker, _serviceProvider, new NullLogger<LoggedInboundConnector>(),
-                new MessageLogger(new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()})));
+                new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })));
 
             InMemoryInboundLog.Clear();
         }
@@ -155,6 +155,9 @@ namespace Silverback.Tests.Messaging.Connectors
         public void Bind_PushMessagesInBatch_OnlyCommittedBatchWrittenToLog()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
+            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+            var e3 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+            var e4 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
 
             _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
             {
@@ -165,14 +168,16 @@ namespace Silverback.Tests.Messaging.Connectors
             });
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
-            consumer.TestPush(e1);
-            consumer.TestPush(e1);
-            consumer.TestPush(e1);
-            consumer.TestPush(e1);
-            consumer.TestPush(e1);
+            _testSubscriber.FailCondition = m => m is TestEventTwo m2 && m2.Id == e4.Id;
 
-            _serviceProvider.GetRequiredService<IInboundLog>().Length.Should().Be(1);
+            var consumer = _broker.Consumers.First();
+
+            try { consumer.TestPush(e1); } catch { }
+            try { consumer.TestPush(e2); } catch { }
+            try { consumer.TestPush(e3); } catch { }
+            try { consumer.TestPush(e4); } catch { }
+
+            _serviceProvider.GetRequiredService<IInboundLog>().Length.Should().Be(2);
         }
 
         [Fact]

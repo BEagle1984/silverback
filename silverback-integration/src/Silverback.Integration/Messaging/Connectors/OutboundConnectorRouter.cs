@@ -24,6 +24,6 @@ namespace Silverback.Messaging.Connectors
             _routing.GetRoutes(message)
                 .ForEachAsync(route =>
                     _outboundConnectors.GetConnectorInstance(route.OutboundConnectorType)
-                .RelayMessage(message, route.DestinationEndpoint));
+                        .RelayMessage(message, route.DestinationEndpoint));
     }
 }

@@ -98,9 +98,9 @@ namespace Silverback.Messaging.Broker
             var lastOffsets = offsets.OfType<KafkaOffset>()
                 .GroupBy(o => o.Key)
                 .Select(g => g
-                    .OrderByDescending(o => o.TopicPartitionOffset.Offset.Value)
+                    .OrderByDescending(o => o.Value)
                     .First()
-                    .TopicPartitionOffset)
+                    .AsTopicPartitionOffset())
                 .ToList();
 
             _innerConsumer.StoreOffset(lastOffsets

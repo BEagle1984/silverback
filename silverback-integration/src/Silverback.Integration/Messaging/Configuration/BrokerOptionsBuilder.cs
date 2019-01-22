@@ -42,7 +42,19 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddLoggedInboundConnector<TLog>() where TLog : class, IInboundLog
         {
             AddInboundConnector<LoggedInboundConnector>();
-            Services.AddScoped<IInboundLog, TLog>(); // TODO: Check this (scoped vs. singleton)
+            Services.AddScoped<IInboundLog, TLog>();
+            return this;
+        }
+
+        
+        /// <summary>
+        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
+        /// This implementation stores the offset of the latest consumed messages and prevents duplicated processing of the same message.
+        /// </summary>
+        public BrokerOptionsBuilder AddOffsetStoredInboundConnector<TStore>() where TStore : class, IOffsetStore
+        {
+            AddInboundConnector<OffsetStoredInboundConnector>();
+            Services.AddScoped<IOffsetStore, TStore>();
             return this;
         }
 
@@ -54,7 +66,7 @@ namespace Silverback.Messaging.Configuration
             if (Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
             {
                 Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
-                Services.AddSingleton<ISubscriber, OutboundConnectorRouter>();
+                Services.AddScoped<ISubscriber, OutboundConnectorRouter>();
             }
 
             Services.AddScoped<IOutboundConnector, TConnector>();

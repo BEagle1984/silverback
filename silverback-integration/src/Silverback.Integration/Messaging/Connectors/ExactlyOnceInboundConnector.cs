@@ -14,39 +14,39 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public abstract class ExactlyOnceInboundConnector : InboundConnector
     {
-        protected ILogger<LoggedInboundConnector> Logger;
+        protected ILogger Logger;
         private readonly MessageLogger _messageLogger;
 
-        protected ExactlyOnceInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<LoggedInboundConnector> logger, MessageLogger messageLogger)
+        protected ExactlyOnceInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<ExactlyOnceInboundConnector> logger, MessageLogger messageLogger)
             : base(broker, serviceProvider, logger)
         {
             Logger = logger;
             _messageLogger = messageLogger;
         }
 
-        protected override void RelayMessages(IEnumerable<object> messages, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected override void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
-            messages = EnsureExactlyOnce(messages, sourceEndpoint, serviceProvider);
+            messagesArgs = EnsureExactlyOnce(messagesArgs, sourceEndpoint, serviceProvider);
 
-            base.RelayMessages(messages, sourceEndpoint, serviceProvider);
+            base.RelayMessages(messagesArgs, sourceEndpoint, serviceProvider);
         }
 
-        private IEnumerable<object> EnsureExactlyOnce(IEnumerable<object> messages, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        private IEnumerable<MessageReceivedEventArgs> EnsureExactlyOnce(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
-            foreach (var message in messages)
+            foreach (var messageArgs in messagesArgs)
             {
-                if (MustProcess(message, sourceEndpoint, serviceProvider))
+                if (MustProcess(messageArgs, sourceEndpoint, serviceProvider))
                 {
-                    yield return message;
+                    yield return messageArgs;
                 }
                 else
                 {
-                    _messageLogger.LogTrace(Logger, "Message is being skipped since it was already processed.", message,
-                        sourceEndpoint);
+                    _messageLogger.LogTrace(Logger, "Message is being skipped since it was already processed.", messageArgs.Message,
+                        sourceEndpoint, offset: messageArgs.Offset);
                 }
             }
         }
 
-        protected abstract bool MustProcess(object message, IEndpoint sourceEndpoint, IServiceProvider serviceProvider);
+        protected abstract bool MustProcess(MessageReceivedEventArgs messageArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider);
     }
 }

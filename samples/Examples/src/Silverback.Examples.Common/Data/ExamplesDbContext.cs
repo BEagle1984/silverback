@@ -37,6 +37,7 @@ namespace Silverback.Examples.Common.Data
 
         public DbSet<OutboundMessage> OutboundMessages { get; set; }
         public DbSet<InboundMessage> InboundMessages { get; set; }
+        public DbSet<StoredOffset> StoredOffsets { get; set; }
         public DbSet<Customer> Customers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,6 +48,9 @@ namespace Silverback.Examples.Common.Data
             modelBuilder.Entity<InboundMessage>()
                 .ToTable("Messaging_InboundMessages")
                 .HasKey(t => new { t.MessageId, t.EndpointName });
+
+            modelBuilder.Entity<StoredOffset>()
+                .ToTable("Messaging_StoredOffsets");
         }
 
         public override int SaveChanges()

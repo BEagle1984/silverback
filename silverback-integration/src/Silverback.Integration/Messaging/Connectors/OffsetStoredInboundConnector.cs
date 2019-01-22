@@ -10,33 +10,30 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
 {
-    /// <summary>
-    /// Uses <see cref="IInboundLog"/> to keep track of each processed message and guarantee
-    /// that each one is processed only once.
-    /// </summary>
-    public class LoggedInboundConnector : ExactlyOnceInboundConnector
+    public class OffsetStoredInboundConnector: ExactlyOnceInboundConnector
     {
-        public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider,
-            ILogger<LoggedInboundConnector> logger, MessageLogger messageLogger)
+        public OffsetStoredInboundConnector(IBroker broker, IServiceProvider serviceProvider,
+            ILogger<OffsetStoredInboundConnector> logger, MessageLogger messageLogger) 
             : base(broker, serviceProvider, logger, messageLogger)
         {
         }
 
         protected override bool MustProcess(MessageReceivedEventArgs messageArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
-            var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
+            var offsetStore = serviceProvider.GetRequiredService<IOffsetStore>();
 
-            if (inboundLog.Exists(messageArgs.Message, sourceEndpoint))
+            var latest = offsetStore.GetLatestValue(messageArgs.Offset.Key);
+            if (latest != null && messageArgs.Offset.CompareTo(latest) <= 0)
                 return false;
 
-            inboundLog.Add(messageArgs.Message, sourceEndpoint);
+            offsetStore.Store(messageArgs.Offset);
             return true;
         }
 
         protected override void Commit(IServiceProvider serviceProvider) =>
-            serviceProvider.GetRequiredService<IInboundLog>().Commit();
+            serviceProvider.GetRequiredService<IOffsetStore>().Commit();
 
         protected override void Rollback(IServiceProvider serviceProvider) =>
-            serviceProvider.GetRequiredService<IInboundLog>().Rollback();
+            serviceProvider.GetRequiredService<IOffsetStore>().Rollback();
     }
 }

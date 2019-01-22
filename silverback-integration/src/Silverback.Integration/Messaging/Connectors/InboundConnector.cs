@@ -52,12 +52,14 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        protected virtual void RelayMessages(IEnumerable<object> messages, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected virtual void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
         {
-            messages = messages.Select(msg =>
-                msg is FailedMessage failedMessage
-                    ? failedMessage.Message
-                    : msg);
+            var messages = messagesArgs
+                .Select(args => args.Message)
+                .Select(msg =>
+                    msg is FailedMessage failedMessage
+                        ? failedMessage.Message
+                        : msg);
 
             serviceProvider.GetRequiredService<IPublisher>().Publish(messages);
         }

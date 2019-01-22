@@ -3,6 +3,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
@@ -16,13 +17,27 @@ namespace Silverback.Messaging.Configuration
         /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
         /// This implementation logs the incoming messages in the DbContext and prevents duplicated processing of the same message.
         /// </summary>
-        public static BrokerOptionsBuilder AddDbInboundConnector<TDbContext>(this BrokerOptionsBuilder builder)
+        public static BrokerOptionsBuilder AddDbLoggedInboundConnector<TDbContext>(this BrokerOptionsBuilder builder)
             where TDbContext : DbContext
         {
             builder.AddInboundConnector<LoggedInboundConnector>();
             builder.Services.AddScoped<IInboundLog>(s =>
                 new DbContextInboundLog(s.GetRequiredService<TDbContext>(),
                     s.GetRequiredService<MessageKeyProvider>()));
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
+        /// This implementation stores the offset of the latest consumed messages in the DbContext and prevents duplicated processing of the same message.
+        /// </summary>
+        public static BrokerOptionsBuilder AddDbOffsetStoredInboundConnector<TDbContext>(this BrokerOptionsBuilder builder)
+            where TDbContext : DbContext
+        {
+            builder.AddInboundConnector<OffsetStoredInboundConnector>();
+            builder.Services.AddScoped<IOffsetStore>(s =>
+                new DbContextOffsetStore(s.GetRequiredService<TDbContext>()));
 
             return builder;
         }
@@ -38,7 +53,7 @@ namespace Silverback.Messaging.Configuration
             builder.AddOutboundConnector<DeferredOutboundConnector>();
             builder.Services.AddScoped<IOutboundQueueProducer>(s =>
                 new DbContextOutboundQueueProducer(s.GetRequiredService<TDbContext>(),
-                    s.GetRequiredService<MessageKeyProvider>()));
+                    s.GetRequiredService<ILogger<DbContextOutboundQueueProducer>>()));
 
             return builder;
         }
@@ -50,13 +65,12 @@ namespace Silverback.Messaging.Configuration
         /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
         /// <param name="removeProduced">if set to <c>true</c> the messages will be removed from the database immediately after being produced.</param>
         public static BrokerOptionsBuilder AddDbOutboundWorker<TDbContext>(this BrokerOptionsBuilder builder,
-            bool enforceMessageOrder = true, int readPackageSize = 100, bool removeProduced = false)
+            bool enforceMessageOrder = true, int readPackageSize = 100, bool removeProduced = true)
             where TDbContext : DbContext
         {
             builder.AddOutboundWorker(enforceMessageOrder, readPackageSize);
             builder.Services.AddScoped<IOutboundQueueConsumer>(s =>
-                new DbContextOutboundQueueConsumer(s.GetRequiredService<TDbContext>(),
-                    s.GetRequiredService<MessageKeyProvider>(), removeProduced));
+                new DbContextOutboundQueueConsumer(s.GetRequiredService<TDbContext>(), removeProduced));
 
             return builder;
         }

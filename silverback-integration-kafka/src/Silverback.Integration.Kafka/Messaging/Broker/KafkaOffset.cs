@@ -3,19 +3,31 @@
 
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Silverback.Messaging.Broker
 {
     public sealed class KafkaOffset : IOffset, IComparable<KafkaOffset>
     {
-        public KafkaOffset(Confluent.Kafka.TopicPartitionOffset topicPartitionOffset)
+        [JsonConstructor]
+        public KafkaOffset(string topic, int partition, long offset)
         {
-            TopicPartitionOffset = topicPartitionOffset ?? throw new ArgumentNullException(nameof(topicPartitionOffset));
-            Key = topicPartitionOffset.TopicPartition.ToString();
-            Value = topicPartitionOffset.Offset.Value.ToString();
+            Topic = topic;
+            Partition = partition;
+            Offset = offset;
+
+            Key = $"{topic}[{partition}]";
+            Value = offset.ToString();
         }
 
-        public Confluent.Kafka.TopicPartitionOffset TopicPartitionOffset { get; }
+        public KafkaOffset(Confluent.Kafka.TopicPartitionOffset topicPartitionOffset)
+            : this(topicPartitionOffset.Topic, topicPartitionOffset.Partition.Value, topicPartitionOffset.Offset.Value)
+        {
+        }
+
+        public string Topic { get; }
+        public int Partition { get; }
+        public long Offset;
         public string Key { get; }
         public string Value { get; }
 
@@ -23,13 +35,13 @@ namespace Silverback.Messaging.Broker
         {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
-            return TopicPartitionOffset.Offset.Value.CompareTo(other.TopicPartitionOffset.Offset.Value);
+            return Offset.CompareTo(other.Offset);
         }
 
-        public int CompareTo(object obj)
+        public int CompareTo(IOffset obj)
         {
-            if (ReferenceEquals(null, obj)) return 1;
             if (ReferenceEquals(this, obj)) return 0;
+            if (ReferenceEquals(null, obj)) return 1;
             return obj is KafkaOffset other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(KafkaOffset)}");
         }
 
@@ -40,5 +52,9 @@ namespace Silverback.Messaging.Broker
         public static bool operator <=(KafkaOffset left, KafkaOffset right) => Comparer<KafkaOffset>.Default.Compare(left, right) <= 0;
 
         public static bool operator >=(KafkaOffset left, KafkaOffset right) => Comparer<KafkaOffset>.Default.Compare(left, right) >= 0;
+
+        public Confluent.Kafka.TopicPartitionOffset AsTopicPartitionOffset() =>
+            new Confluent.Kafka.TopicPartitionOffset(Topic, new Confluent.Kafka.Partition(Partition),
+                new Confluent.Kafka.Offset(Offset));
     }
 }

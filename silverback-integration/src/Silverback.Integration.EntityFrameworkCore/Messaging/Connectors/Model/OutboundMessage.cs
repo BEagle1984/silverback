@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Silverback.Messaging.Connectors.Model
 {
@@ -11,8 +12,8 @@ namespace Silverback.Messaging.Connectors.Model
     /// </summary>
     public class OutboundMessage
     {
-        [Key, MaxLength(300)]
-        public string MessageId { get; set; }
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
         public string Message { get; set; }
 

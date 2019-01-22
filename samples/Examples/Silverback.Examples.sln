@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Examples.Main", "src/Silverback.Examples.Main\Silverback.Examples.Main.csproj", "{805ECDC3-1A11-4B5D-8A82-C0A9C646F2CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Examples.Main", "src\Silverback.Examples.Main\Silverback.Examples.Main.csproj", "{805ECDC3-1A11-4B5D-8A82-C0A9C646F2CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Examples.Common", "src/Silverback.Examples.Common\Silverback.Examples.Common.csproj", "{DE771E63-2FF3-48BD-9E1E-E13C722B7C6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Examples.Common", "src\Silverback.Examples.Common\Silverback.Examples.Common.csproj", "{DE771E63-2FF3-48BD-9E1E-E13C722B7C6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Examples.ConsumerA", "src/Silverback.Examples.ConsumerA\Silverback.Examples.ConsumerA.csproj", "{CB042BEF-6AD8-4997-B506-24B4666E25F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Examples.ConsumerA", "src\Silverback.Examples.ConsumerA\Silverback.Examples.ConsumerA.csproj", "{CB042BEF-6AD8-4997-B506-24B4666E25F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

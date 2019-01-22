@@ -13,22 +13,20 @@ namespace Silverback.Messaging.Connectors.Repositories
     // TODO: Test
     public class DbContextOutboundQueueConsumer : RepositoryBase<OutboundMessage>, IOutboundQueueConsumer
     {
-        private readonly MessageKeyProvider _messageKeyProvider;
         private readonly bool _removeProduced;
 
-        public DbContextOutboundQueueConsumer(DbContext dbContext, MessageKeyProvider messageKeyProvider,
-            bool removeProduced) : base(dbContext)
+        public DbContextOutboundQueueConsumer(DbContext dbContext, bool removeProduced) : base(dbContext)
         {
             _removeProduced = removeProduced;
-            _messageKeyProvider = messageKeyProvider;
         }
 
         public IEnumerable<QueuedMessage> Dequeue(int count) => DbSet
             .Where(m => m.Produced == null)
-            .OrderBy(m => m.Created)
+            .OrderBy(m => m.Id)
             .Take(count)
             .ToList()
-            .Select(message => new QueuedMessage(
+            .Select(message => new DbQueuedMessage(
+                message.Id,
                 Deserialize<object>(message.Message),
                 Deserialize<IEndpoint>(message.Endpoint)));
 
@@ -39,8 +37,10 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public void Acknowledge(QueuedMessage queuedMessage)
         {
-            var key = _messageKeyProvider.GetKey(queuedMessage.Message);
-            var entity = DbSet.Find(key);
+            if (!(queuedMessage is DbQueuedMessage dbQueuedMessage))
+                throw new InvalidOperationException("A DbQueuedMessage is expected.");
+
+            var entity = DbSet.Find(dbQueuedMessage.Id);
 
             if (_removeProduced)
                 DbSet.Remove(entity);

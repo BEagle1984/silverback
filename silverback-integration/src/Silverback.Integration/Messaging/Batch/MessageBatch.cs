@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Batch
         private readonly BatchSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
 
-        private readonly Action<IEnumerable<object>, IEndpoint, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, IServiceProvider> _messagesHandler;
         private readonly Action<IEnumerable<IOffset>, IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
@@ -30,15 +30,14 @@ namespace Silverback.Messaging.Batch
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
 
-        private readonly List<object> _messages;
-        private readonly List<IOffset> _offsets;
+        private readonly List<MessageReceivedEventArgs> _messages;
         private readonly Timer _waitTimer;
 
         private Exception _processingException;
 
         public MessageBatch(IEndpoint endpoint,
             BatchSettings settings,
-            Action<IEnumerable<object>, IEndpoint, IServiceProvider> messagesHandler,
+            Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, IServiceProvider> messagesHandler,
             Action<IEnumerable<IOffset>, IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy, 
@@ -55,8 +54,7 @@ namespace Silverback.Messaging.Batch
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _settings = settings;
 
-            _messages = new List<object>(_settings.Size);
-            _offsets = new List<IOffset>(_settings.Size);
+            _messages = new List<MessageReceivedEventArgs>(_settings.Size);
 
             if (_settings.MaxWaitTime < TimeSpan.MaxValue)
             {
@@ -73,17 +71,16 @@ namespace Silverback.Messaging.Batch
 
         public int CurrentSize => _messages.Count;
 
-        public void AddMessage(object message, IOffset offset)
+        public void AddMessage(MessageReceivedEventArgs messageArgs)
         {
             if (_processingException != null)
                 throw new SilverbackException("Cannot add to the batch because the processing of the previous batch failed. See inner exception for details.", _processingException);
 
             lock (_messages)
             {
-                _messages.Add(message);
-                _offsets.Add(offset);
+                _messages.Add(messageArgs);
 
-                _messageLogger.LogTrace(_logger, "Message added to batch.", message, _endpoint, this);
+                _messageLogger.LogTrace(_logger, "Message added to batch.", messageArgs.Message, _endpoint, this, messageArgs.Offset);
 
                 if (_messages.Count == 1)
                 {
@@ -112,18 +109,17 @@ namespace Silverback.Messaging.Batch
         {
             try
             {
-                _logger.LogTrace("Processing batch '{batchId}' containing {batchSize}.", CurrentBatchId, _messages.Count);
+                _logger.LogTrace("Processing batch '{batchId}' containing {batchSize} message(s).", CurrentBatchId, _messages.Count);
 
                 _errorPolicy.TryProcess(
                     new BatchCompleteEvent(CurrentBatchId, _messages),
                     _ => ProcessEachMessageAndPublishEvents());
 
                 _messages.Clear();
-                _offsets.Clear();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to process batch '{batchId}' containing {batchSize}.", CurrentBatchId, _messages.Count);
+                _logger.LogError(ex, "Failed to process batch '{batchId}' containing {batchSize} message(s).", CurrentBatchId, _messages.Count);
 
                 _processingException = ex;
                 throw new SilverbackException("Failed to process batch. See inner exception for details.", ex);
@@ -140,7 +136,7 @@ namespace Silverback.Messaging.Batch
                     _messagesHandler(_messages, _endpoint, scope.ServiceProvider);
                     _publisher.Publish(new BatchProcessedEvent(CurrentBatchId, _messages));
 
-                    _commitHandler?.Invoke(_offsets, scope.ServiceProvider);
+                    _commitHandler?.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);
                 }
                 catch (Exception ex)
                 {

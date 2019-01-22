@@ -8,7 +8,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silverback.Configuration;
 using Silverback.Core.Rx.Tests.TestTypes.Messages;
 using Silverback.Core.Rx.Tests.TestTypes.Messages.Base;
 using Silverback.Messaging.Configuration;

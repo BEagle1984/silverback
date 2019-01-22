@@ -48,13 +48,16 @@ namespace Silverback.Examples.Main.UseCases
 
         private void CreateScopeAndConfigure(IServiceProvider serviceProvider)
         {
-            ConfigureNLog(serviceProvider);
+            using (var scope = serviceProvider.CreateScope())
+            {
+                ConfigureNLog(scope.ServiceProvider);
 
-            serviceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
+                scope.ServiceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
 
-            Configure(serviceProvider.GetService<BusConfigurator>(), serviceProvider);
+                Configure(scope.ServiceProvider.GetService<BusConfigurator>(), serviceProvider);
 
-            PreExecute(serviceProvider);
+                PreExecute(scope.ServiceProvider);
+            }
         }
 
         private static void ConfigureNLog(IServiceProvider serviceProvider)
