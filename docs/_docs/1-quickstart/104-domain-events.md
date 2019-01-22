@@ -55,7 +55,7 @@ To enable this mechanism we just need to override the various `SaveChanges` meth
 ```c#
 public class MyDbContext : DbContext
 {
-    private DbContextEventsPublisher<DomainEntity> _eventsPublisher;
+    private readonly DbContextEventsPublisher<DomainEntity> _eventsPublisher;
 
     public ShopDbContext(IPublisher publisher)
     {

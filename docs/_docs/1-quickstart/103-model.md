@@ -11,6 +11,16 @@ Event though strongly suggested, it's not mandatory to use the proposed hierarch
 
 In the following chapters you will find an overview of the different message types and their meaning.
 
+## Enabling Silverback.Core.Model
+
+In order to be able to use the messages and publisher variations in this article you need to active the following option.
+
+```c#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddBus(options => options.UseModel());
+```
+
 ## Internal Messages
 
 This messages can be used internally to the microservice bus but cannot be relayed to the message broker. (See [Translating Message]({{ site.baseurl }}/docs/quickstart/translating) for a convenient way to map the internal message to an `IIntegrationMessage`.)

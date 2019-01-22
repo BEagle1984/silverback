@@ -25,28 +25,29 @@ public void ConfigureServices(IServiceCollection services)
             .AddInboundConnector());
 }
 
-public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
+public void Configure(BusConfigurator busConfigurator)
 {
-    endpoints
-        .AddInbound(
-            new KafkaEndpoint("basket-events")
-            {
-                ...
-            })
-        .Broker.Connect();
+    busConfigurator
+        .Connect(endpoints =>
+            endpoints
+                .AddInbound(
+                    new KafkaEndpoint("basket-events")
+                    {
+                        ...
+                    }));
+}
 ```
 
 ### Exactly-once processing
 
+Silverback is able to keep track of the messages that have been consumed in order to guarantee that each one is processed exactly once.
+
 #### Offset storage
 
-_...coming soon..._
+The `DbOffsetStoredInboundConnector` will store the offset of the latest processed message (of each topic/partition) into a database table.
 
-#### Logged
-
-This `LoggedInboundConnector` will store the unique identifier of the processed messages into a database table to prevent double processing.
-
-The `DbContext` must include a `DbSet<InboundMessage>`.
+**Note:** The `DbContext` must include a `DbSet<InboundMessage>`.
+{: .notice--info}
 
 ```c#
 public void ConfigureServices(IServiceCollection services)
@@ -54,18 +55,25 @@ public void ConfigureServices(IServiceCollection services)
     services
         .AddBus()
         .AddBroker<KafkaBroker>(options => options
-            .AddDbInboundConnector<MyDbContext>());
+            .AddDbOffsetStoredConnector<MyDbContext>());
 }
+``` 
 
-public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
+#### Logged
+
+The `DbLoggedInboundConnector` will store all the processed messages into a database table. This has the double purpose of serving as a log in addition to preventing double processing.
+
+**Note:** The `DbContext` must include a `DbSet<InboundMessage>`.
+{: .notice--info}
+
+```c#
+public void ConfigureServices(IServiceCollection services)
 {
-    endpoints
-        .AddInbound(
-            new KafkaEndpoint("basket-events")
-            {
-                ...
-            })
-        .Broker.Connect();
+    services
+        .AddBus()
+        .AddBroker<KafkaBroker>(options => options
+            .AddDbLoggedInboundConnector<MyDbContext>());
+}
 ```
 
 ## Error Handling
@@ -80,23 +88,23 @@ Move | Used to re-publish the message to the specified endpoint, this policy is 
 Chain | Combine different policies, for example to move the message to a dead letter after some retries.
 
 ```c#
-protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints)
+public void Configure(BusConfigurator busConfigurator)
 {
-    endpoints
-        .AddInbound(
-            new KafkaConsumerEndpoint("some-events")
-            {
-                ...
-            },
-            policy => policy.Chain(
-                policy.Retry(5, TimeSpan.FromSeconds(10)),
-                policy.Move(new KafkaProducerEndpoint("bad-messages")
+    busConfigurator
+        .Connect(endpoints =>
+            endpoints
+                .AddInbound(
+                    new KafkaConsumerEndpoint("some-events")
                     {
                         ...
-                    }
-                )))
-        .Broker.Connect();
-
+                    },
+                    policy => policy.Chain(
+                        policy.Retry(5, TimeSpan.FromSeconds(10)),
+                        policy.Move(new KafkaProducerEndpoint("bad-messages")
+                            {
+                                ...
+                            }
+                        ))));
 }
 ```
 
@@ -122,23 +130,25 @@ Batch.MaxWaitTime | The maximum amount of time to wait for the batch to be fille
 Batch.MaxDegreeOfParallelism | The maximum number of parallel threads used to process the messages in the batch. The default is 1.
 
 ```c#
-public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
+public void Configure(BusConfigurator busConfigurator)
 {
-    endpoints
-        .AddInbound(
-            new KafkaEndpoint("basket-events")
-            {
-                ...
-            },
-            settings: new InboundConnectorSettings
-            {
-                Batch = new Messaging.Batch.BatchSettings
-                {
-                    Size = 5,
-                    MaxWaitTime = TimeSpan.FromSeconds(5)
-                }
-            }))
-        .Broker.Connect();
+    busConfigurator
+        .Connect(endpoints =>
+            endpoints
+                .AddInbound(
+                    new KafkaEndpoint("basket-events")
+                    {
+                        ...
+                    },
+                    settings: new InboundConnectorSettings
+                    {
+                        Batch = new Messaging.Batch.BatchSettings
+                        {
+                            Size = 5,
+                            MaxWaitTime = TimeSpan.FromSeconds(5)
+                        }
+                    }));
+}
 ```
 
 **Note:** The batch is consider a unit of work: it will be processed in the same DI scope, it will be atomically committed, the error policies will be applied to the batch as a whole and all messages will be acknowledged at once when the batch is successfully processed.
@@ -190,17 +200,19 @@ public class InventoryService : ISubscriber
 Multiple consumers can be created for the same endpoint to consume in parallel in multiple threads (you need multiple partitions in Kafka).
 
 ```c#
-public void Configure(..., IBrokerEndpointsConfigurationBuilder endpoints)
+public void Configure(BusConfigurator busConfigurator)
 {
-    endpoints
-        .AddInbound(
-            new KafkaEndpoint("basket-events")
-            {
-                ...
-            },
-            settings: new InboundConnectorSettings
-            {
-                Consumers: 2
-            }))
-        .Broker.Connect();
+    busConfigurator
+        .Connect(endpoints =>
+            endpoints
+                .AddInbound(
+                    new KafkaEndpoint("basket-events")
+                    {
+                        ...
+                    },
+                    settings: new InboundConnectorSettings
+                    {
+                        Consumers: 2
+                    }));
+}
 ```
