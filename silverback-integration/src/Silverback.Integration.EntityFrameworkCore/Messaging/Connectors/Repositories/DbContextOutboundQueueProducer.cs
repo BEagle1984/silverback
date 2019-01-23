@@ -23,7 +23,6 @@ namespace Silverback.Messaging.Connectors.Repositories
             await DbSet.AddAsync(new OutboundMessage
             {
                 Message = Serialize(message),
-                EndpointName = endpoint.Name,
                 Endpoint = Serialize(endpoint),
                 Created = DateTime.UtcNow
             });

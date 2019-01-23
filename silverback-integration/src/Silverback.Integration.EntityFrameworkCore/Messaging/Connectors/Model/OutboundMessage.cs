@@ -17,9 +17,6 @@ namespace Silverback.Messaging.Connectors.Model
 
         public string Message { get; set; }
 
-        [MaxLength(300)]
-        public string EndpointName { get; set; }
-
         public string Endpoint { get; set; }
 
         public DateTime Created { get; set; }
