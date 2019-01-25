@@ -30,8 +30,8 @@ namespace Silverback.Examples.Main.UseCases.Basic
             .AddBroker<KafkaBroker>();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints =>
-                endpoints.ReadConfig(Configuration, serviceProvider));
+            configurator.Connect(endpoints => endpoints
+                .ReadConfig(Configuration, serviceProvider));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
