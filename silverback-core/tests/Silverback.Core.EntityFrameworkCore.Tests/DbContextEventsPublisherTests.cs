@@ -1,10 +1,12 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Silverback.Core.EntityFrameworkCore.Tests.TestTypes;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Xunit;
 
@@ -92,6 +94,43 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
 
             await _publisher.Received(1).PublishAsync(Arg.Any<TestDomainEventOne>());
             await _publisher.Received(1).PublishAsync(Arg.Any<TestDomainEventTwo>());
+        }
+
+        [Fact]
+        public async Task SaveChangesAsync_Successful_StartedAndCompleteEventsFired()
+        {
+            var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
+
+            entity.Entity.AddEvent<TestDomainEventOne>();
+
+            await _dbContext.SaveChangesAsync();
+
+            await _publisher.Received(1).PublishAsync(Arg.Any<TransactionStartedEvent>());
+            await _publisher.Received(1).PublishAsync(Arg.Any<TransactionCompletedEvent>());
+        }
+
+        [Fact]
+        public async Task SaveChangesAsync_Error_StartedAndAbortedEventsFired()
+        {
+            var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
+
+            _publisher
+                .When(x => x.PublishAsync(Arg.Any<TestDomainEventOne>()))
+                .Do(x => throw new Exception());
+
+
+            entity.Entity.AddEvent<TestDomainEventOne>();
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            }
+
+            await _publisher.Received(1).PublishAsync(Arg.Any<TransactionStartedEvent>());
+            await _publisher.Received(1).PublishAsync(Arg.Any<TransactionAbortedEvent>());
         }
     }
 }

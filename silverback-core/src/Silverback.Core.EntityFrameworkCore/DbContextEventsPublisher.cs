@@ -46,11 +46,13 @@ namespace Silverback.EntityFrameworkCore
 
         private async Task<int> ExecuteSaveTransaction(Func<Task<int>> saveChanges, bool async)
         {
-            await PublishDomainEvents(async);
+            await PublishEvent<TransactionStartedEvent>(async);
 
             var saved = false;
             try
             {
+                await PublishDomainEvents(async);
+
                 var result = await saveChanges();
 
                 saved = true;
