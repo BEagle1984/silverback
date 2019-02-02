@@ -27,15 +27,21 @@ namespace Silverback.Messaging.Connectors
         }
 
         [Subscribe]
-        public Task OnTransactionCompleted(TransactionCompletedEvent message) => _queueProducer.Commit();
+        public async Task OnTransactionCompleted(TransactionCompletedEvent message)
+        {
+            await _queueProducer.Commit();
+        }
 
         [Subscribe]
-        public Task OnTransactionAborted(TransactionAbortedEvent message) => _queueProducer.Rollback();
+        public async Task OnTransactionAborted(TransactionAbortedEvent message)
+        {
+            await _queueProducer.Rollback();
+        }
 
-        public Task RelayMessage(object message, IEndpoint destinationEndpoint)
+        public async Task RelayMessage(object message, IEndpoint destinationEndpoint)
         {
             _messageLogger.LogTrace(_logger, "Queuing message for deferred publish.", message, destinationEndpoint);
-            return _queueProducer.Enqueue(message, destinationEndpoint);
+            await _queueProducer.Enqueue(message, destinationEndpoint);
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.TestTypes.Domain;
@@ -16,7 +17,7 @@ namespace Silverback.Tests.TestTypes
     public class TestConsumer : Consumer
     {
         public TestConsumer(IBroker broker, IEndpoint endpoint)
-            : base(broker, endpoint, new NullLogger<TestConsumer>(), new MessageLogger(new MessageKeyProvider(Enumerable.Empty<IMessageKeyProvider>())))
+            : base(broker, endpoint, new ChunkConsumer(new InMemoryChunkStore()), new NullLogger<TestConsumer>(), new MessageLogger(new MessageKeyProvider(Enumerable.Empty<IMessageKeyProvider>())))
         {
         }
 
@@ -24,7 +25,7 @@ namespace Silverback.Tests.TestTypes
 
         public int AcknowledgeCount { get; set; }
 
-        public void TestPush(IIntegrationMessage message, IOffset offset = null, IMessageSerializer serializer = null)
+        public void TestPush(object message, IOffset offset = null, IMessageSerializer serializer = null)
         {
             if (!Broker.IsConnected)
                 throw new InvalidOperationException("The broker is not connected.");

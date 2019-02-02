@@ -78,9 +78,9 @@ namespace Silverback.EntityFrameworkCore
             while (events.Any())
             {
                 if (async)
-                    await events.ForEachAsync(_publisher.PublishAsync);
+                    await _publisher.PublishAsync(events);
                 else
-                    events.ForEach(_publisher.Publish);
+                    _publisher.Publish(events);
 
                 events = GetDomainEvents();
             }

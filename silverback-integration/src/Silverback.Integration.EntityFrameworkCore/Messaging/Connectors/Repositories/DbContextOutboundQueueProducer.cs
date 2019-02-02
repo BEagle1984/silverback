@@ -28,16 +28,10 @@ namespace Silverback.Messaging.Connectors.Repositories
             });
         }
 
-        public Task Commit()
-        {
-            // Nothing to do, the transaction is committed with the DbContext.SaveChanges()
-            return Task.CompletedTask;
-        }
+        // Nothing to do, the transaction is committed with the DbContext.SaveChanges()
+        public Task Commit() => Task.CompletedTask;
 
-        public Task Rollback()
-        {
-            // Nothing to do, the transaction is aborted by the DbContext
-            return Task.CompletedTask;
-        }
+        // Nothing to do, the transaction is aborted by the DbContext
+        public Task Rollback() => Task.CompletedTask;
     }
 }
