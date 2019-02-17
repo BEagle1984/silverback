@@ -18,6 +18,7 @@ namespace Silverback.Messaging.Publishing
         private readonly ILogger _logger;
 
         private readonly BusOptions _options;
+        private readonly IEnumerable<IBehavior> _behaviors;
         private readonly IServiceProvider _serviceProvider;
 
         private IEnumerable<SubscribedMethod> _subscribedMethods;
@@ -29,6 +30,7 @@ namespace Silverback.Messaging.Publishing
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
             _logger = logger;
+            _behaviors = serviceProvider.GetServices<IBehavior>();
         }
 
         public void Publish(object message) => 
@@ -63,9 +65,18 @@ namespace Silverback.Messaging.Publishing
             if (messagesList == null || !messagesList.Any())
                 return Enumerable.Empty<object>();
 
-            return (await InvokeExclusiveMethods(messagesList, executeAsync))
-                .Union(await InvokeNonExclusiveMethods(messagesList))
-                .ToList();
+            return await ExecutePipeline(_behaviors, messagesList, async m =>
+                (await InvokeExclusiveMethods(m, executeAsync))
+                .Union(await InvokeNonExclusiveMethods(m, executeAsync))
+                .ToList());
+        }
+
+        private Task<IEnumerable<object>> ExecutePipeline(IEnumerable<IBehavior> behaviors, IEnumerable<object> messages, Func<IEnumerable<object>, Task<IEnumerable<object>>> finalAction)
+        {
+            if (behaviors == null || !behaviors.Any())
+                return finalAction(messages);
+
+            return behaviors.First().Handle(messages, m => ExecutePipeline(behaviors.Skip(1), m, finalAction));
         }
 
         private Task<IEnumerable<object>> InvokeExclusiveMethods(IEnumerable<object> messages, bool executeAsync) =>
@@ -73,10 +84,10 @@ namespace Silverback.Messaging.Publishing
                 .Where(method => method.Info.IsExclusive)
                 .SelectManyAsync(method => GetMethodInvoker().Invoke(method, messages, executeAsync));
 
-        private Task<IEnumerable<object>> InvokeNonExclusiveMethods(IEnumerable<object> messagesList) =>
+        private Task<IEnumerable<object>> InvokeNonExclusiveMethods(IEnumerable<object> messagesList, bool executeAsync) =>
             GetSubscribedMethods()
                 .Where(method => !method.Info.IsExclusive)
-                .ParallelSelectManyAsync(method => GetMethodInvoker().Invoke(method, messagesList, true));
+                .ParallelSelectManyAsync(method => GetMethodInvoker().Invoke(method, messagesList, executeAsync));
 
         private IEnumerable<SubscribedMethod> GetSubscribedMethods() =>
             _subscribedMethods ?? (_subscribedMethods = _options

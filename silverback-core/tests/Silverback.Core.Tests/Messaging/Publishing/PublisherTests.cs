@@ -11,6 +11,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silverback.Core.Tests.TestTypes.Behaviors;
 using Silverback.Core.Tests.TestTypes.Messages;
 using Silverback.Core.Tests.TestTypes.Messages.Base;
 using Silverback.Core.Tests.TestTypes.Subscribers;
@@ -40,13 +41,22 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
         private IPublisher GetPublisher(params ISubscriber[] subscribers) => GetPublisher(null, subscribers);
 
-        private IPublisher GetPublisher(Action<BusConfigurator> configAction, params ISubscriber[] subscribers)
+        private IPublisher GetPublisher(Action<BusConfigurator> configAction, params ISubscriber[] subscribers) =>
+        GetPublisher(configAction, null, subscribers);
+
+        private IPublisher GetPublisher(Action<BusConfigurator> configAction, IBehavior[] behaviors, params ISubscriber[] subscribers)
         {
             var services = new ServiceCollection();
             services.AddBus();
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+
+            if (behaviors != null)
+            {
+                foreach (var behavior in behaviors)
+                    services.AddSingleton<IBehavior>(behavior);
+            }
 
             foreach (var sub in subscribers)
                 services.AddSingleton<ISubscriber>(sub);
@@ -66,7 +76,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             publisher.Publish(new TestCommandOne());
             publisher.Publish(new TestCommandTwo());
 
-            _syncSubscriber.ReceivedMessagesCount.Should().Be(2, "2 messages have been published");
+            _syncSubscriber.ReceivedMessagesCount.Should().Be(2);
         }
 
         [Fact]
@@ -77,7 +87,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             await publisher.PublishAsync(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandTwo());
 
-            _syncSubscriber.ReceivedMessagesCount.Should().Be(2, "2 messages have been published");
+            _syncSubscriber.ReceivedMessagesCount.Should().Be(2);
         }
 
         [Fact]
@@ -380,7 +390,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             _asyncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(1);
             _asyncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(3);
         }
-        
+
         [Fact]
         public void Publish_MessagesBatch_EachMessageReceivedByDelegateSubscription()
         {
@@ -540,7 +550,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
                     {
                         await Task.Delay(20);
                         timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions {Exclusive = true}));
+                    }, new SubscriptionOptions { Exclusive = true }));
 
             publisher.Publish(new TestCommandOne());
 
@@ -603,7 +613,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
             subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(70));
         }
-        
+
         [Fact]
         public void Publish_NonParallelDelegateSubscription_SequentiallyProcessing()
         {
@@ -756,6 +766,71 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
             timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(50));
             timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(100));
+        }
+
+        [Fact]
+        public void Publish_SomeMessagesWithBehaviors_MessagesReceived()
+        {
+            var publisher = GetPublisher(null, new[] { new TestBehavior(), new TestBehavior() }, _asyncSubscriber);
+
+            publisher.Publish(new TestCommandOne());
+            publisher.Publish(new TestCommandTwo());
+
+            _asyncSubscriber.ReceivedMessagesCount.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task PublishAsync_SomeMessagesWithBehaviors_MessagesReceived()
+        {
+            var publisher = GetPublisher(null, new[] { new TestBehavior(), new TestBehavior() }, _asyncSubscriber);
+
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+
+            _asyncSubscriber.ReceivedMessagesCount.Should().Be(2);
+        }
+        
+        [Fact]
+        public void Publish_SomeMessagesWithBehaviors_BehaviorsExecuted()
+        {
+            var behavior1 = new TestBehavior();
+            var behavior2 = new TestBehavior();
+
+            var publisher = GetPublisher(null, new[] { behavior1, behavior2 }, _asyncSubscriber);
+
+            publisher.Publish(new TestCommandOne());
+            publisher.Publish(new TestCommandTwo());
+
+            behavior1.EnterCount.Should().Be(2);
+            behavior2.EnterCount.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task PublishAsync_SomeMessagesWithBehaviors_BehaviorsExecuted()
+        {
+            var behavior1 = new TestBehavior();
+            var behavior2 = new TestBehavior();
+
+            var publisher = GetPublisher(null, new[] { behavior1, behavior2 }, _asyncSubscriber);
+
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+
+            behavior1.EnterCount.Should().Be(2);
+            behavior2.EnterCount.Should().Be(2);
+        }
+        
+        [Fact]
+        public async Task PublishAsync_MessageChangingBehavior_BehaviorExecuted()
+        {
+            var behavior = new ChangeMessageBehavior<TestCommandOne>(_ => new []{ new TestCommandTwo(), new TestCommandTwo(), new TestCommandTwo()});
+
+            var publisher = GetPublisher(null, new[] { behavior }, _asyncSubscriber);
+
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+
+            _asyncSubscriber.ReceivedMessagesCount.Should().Be(4);
         }
 
         /* TODO: Implement following tests:
