@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Silverback</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.5.0.2</Version>
+    <Version>0.5.0.3</Version>
     <Authors>BEagle1984</Authors>
     <Company>BEagle1984</Company>
     <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package contains the default messages interfaces and domain entity implementation.</Description>

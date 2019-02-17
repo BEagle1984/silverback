@@ -13,8 +13,8 @@ namespace Silverback.Messaging.Publishing
 
         Task ExecuteAsync(ICommand commandMessage);
 
-        IEnumerable<TResult> Execute<TResult>(ICommand<TResult> commandMessage);
+        TResult Execute<TResult>(ICommand<TResult> commandMessage);
 
-        Task<IEnumerable<TResult>> ExecuteAsync<TResult>(ICommand<TResult> commandMessage);
+        Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage);
     }
 }

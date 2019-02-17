@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -20,10 +21,10 @@ namespace Silverback.Messaging.Publishing
 
         public Task ExecuteAsync(ICommand commandMessage) => _publisher.PublishAsync(commandMessage);
 
-        public IEnumerable<TResult> Execute<TResult>(ICommand<TResult> commandMessage) => 
-            _publisher.Publish<TResult>(commandMessage);
+        public TResult Execute<TResult>(ICommand<TResult> commandMessage) =>
+            _publisher.Publish<TResult>(commandMessage).SingleOrDefault();
 
-        public Task<IEnumerable<TResult>> ExecuteAsync<TResult>(ICommand<TResult> commandMessage) => 
-            _publisher.PublishAsync<TResult>(commandMessage);
+        public async Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage) =>
+            (await _publisher.PublishAsync<TResult>(commandMessage)).SingleOrDefault();
     }
 }
