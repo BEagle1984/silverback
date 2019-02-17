@@ -22,5 +22,11 @@ namespace Silverback.Messaging.Publishing
 
         public async Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage) =>
             (await _publisher.PublishAsync<TResult>(queryMessage)).SingleOrDefault();
+
+        public IEnumerable<TResult> Execute<TResult>(IEnumerable<IQuery<TResult>> queryMessages) =>
+            _publisher.Publish<TResult>(queryMessages);
+
+        public Task<IEnumerable<TResult>> ExecuteAsync<TResult>(IEnumerable<IQuery<TResult>> queryMessages) =>
+            _publisher.PublishAsync<TResult>(queryMessages);
     }
 }

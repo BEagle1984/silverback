@@ -21,10 +21,20 @@ namespace Silverback.Messaging.Publishing
 
         public Task ExecuteAsync(ICommand commandMessage) => _publisher.PublishAsync(commandMessage);
 
+        public void Execute(IEnumerable<ICommand> commandMessages) => _publisher.Publish(commandMessages);
+
+        public Task ExecuteAsync(IEnumerable<ICommand> commandMessages) => _publisher.PublishAsync(commandMessages);
+
         public TResult Execute<TResult>(ICommand<TResult> commandMessage) =>
             _publisher.Publish<TResult>(commandMessage).SingleOrDefault();
 
         public async Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage) =>
             (await _publisher.PublishAsync<TResult>(commandMessage)).SingleOrDefault();
+
+        public IEnumerable<TResult> Execute<TResult>(IEnumerable<ICommand<TResult>> commandMessages) =>
+            _publisher.Publish<TResult>(commandMessages);
+
+        public Task<IEnumerable<TResult>> ExecuteAsync<TResult>(IEnumerable<ICommand<TResult>> commandMessages) =>
+            _publisher.PublishAsync<TResult>(commandMessages);
     }
 }
