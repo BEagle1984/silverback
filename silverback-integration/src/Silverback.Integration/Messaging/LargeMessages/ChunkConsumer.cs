@@ -10,6 +10,7 @@ namespace Silverback.Messaging.LargeMessages
     public class ChunkConsumer
     {
         private readonly IChunkStore _store;
+        private readonly List<string> _completedMessagesId = new List<string>();
 
         public ChunkConsumer(IChunkStore store)
         {
@@ -28,13 +29,25 @@ namespace Silverback.Messaging.LargeMessages
 
                 chunks.Add(chunk.ChunkId, chunk.Content);
 
-                return Join(chunks);
+                var completeMessage = Join(chunks);
+
+                _completedMessagesId.Add(chunk.OriginalMessageId);
+
+                return completeMessage;
             }
             else
             {
-                _store.StoreChunk(chunk.OriginalMessageId, chunk.ChunkId, chunk.Content);
+                _store.StoreChunk(chunk);
                 return null;
             }
+        }
+
+        public void CleanupProcessedMessages()
+        {
+            foreach (var messageId in _completedMessagesId)
+                _store.Cleanup(messageId);
+
+            _completedMessagesId.Clear();
         }
 
         private static byte[] Join(Dictionary<int, byte[]> chunks)

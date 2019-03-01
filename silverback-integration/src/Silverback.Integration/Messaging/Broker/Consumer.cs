@@ -25,7 +25,10 @@ namespace Silverback.Messaging.Broker
 
         public event EventHandler<MessageReceivedEventArgs> Received;
 
-        public void Acknowledge(IOffset offset) => Acknowledge(new[] { offset });
+        public void Acknowledge(IOffset offset)
+        {
+            Acknowledge(new[] {offset});
+        }
 
         public abstract void Acknowledge(IEnumerable<IOffset> offsets);
 

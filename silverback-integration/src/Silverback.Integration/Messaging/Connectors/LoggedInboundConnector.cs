@@ -33,10 +33,16 @@ namespace Silverback.Messaging.Connectors
             return true;
         }
 
-        protected override void Commit(IServiceProvider serviceProvider) =>
+        protected override void Commit(IServiceProvider serviceProvider)
+        {
+            base.Commit(serviceProvider);
             serviceProvider.GetRequiredService<IInboundLog>().Commit();
+        }
 
-        protected override void Rollback(IServiceProvider serviceProvider) =>
+        protected override void Rollback(IServiceProvider serviceProvider)
+        {
+            base.Rollback(serviceProvider);
             serviceProvider.GetRequiredService<IInboundLog>().Rollback();
+        }
     }
 }

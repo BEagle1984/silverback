@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
 
@@ -27,8 +28,8 @@ namespace Silverback.Messaging.Connectors.Repositories
             .ToList()
             .Select(message => new DbQueuedMessage(
                 message.Id,
-                Deserialize<object>(message.Message),
-                Deserialize<IEndpoint>(message.Endpoint)));
+                DefaultSerializer.Deserialize<object>(message.Message),
+                DefaultSerializer.Deserialize<IEndpoint>(message.Endpoint)));
 
         public void Retry(QueuedMessage queuedMessage)
         {

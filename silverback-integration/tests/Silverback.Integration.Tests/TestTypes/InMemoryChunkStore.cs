@@ -11,10 +11,10 @@ namespace Silverback.Tests.TestTypes
     {
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<int, byte[]>> _store = new ConcurrentDictionary<string, ConcurrentDictionary<int, byte[]>>();
 
-        public void StoreChunk(string messageId, int chunkId, byte[] content) =>
+        public void StoreChunk(MessageChunk chunk) =>
             _store
-                .GetOrAdd(messageId, _ => new ConcurrentDictionary<int, byte[]>())
-                .AddOrUpdate(chunkId, content, (_, __) => content);
+                .GetOrAdd(chunk.OriginalMessageId, _ => new ConcurrentDictionary<int, byte[]>())
+                .AddOrUpdate(chunk.ChunkId, chunk.Content, (_, __) => chunk.Content);
 
         public int CountChunks(string messageId) =>
             _store.Where(x => x.Key == messageId).Sum(x => x.Value.Count);

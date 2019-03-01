@@ -1,14 +1,12 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Serialization;
+using Silverback.Messaging.LargeMessages;
 
 namespace Silverback.Messaging
 {
-    public interface IEndpoint
+    public interface IProducerEndpoint : IEndpoint
     {
-        string Name { get; }
-
-        IMessageSerializer Serializer { get; }
+        ChunkSettings Chunk { get; }
     }
 }
