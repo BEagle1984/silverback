@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Linq;
-using System.Text;
 using FluentAssertions;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Serialization;
-using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 using Xunit;
 
@@ -25,7 +25,7 @@ namespace Silverback.Tests.Messaging.LargeMessages
             };
             var serializedMessage = _serializer.Serialize(message);
 
-            var chunks = new ChunkProducer().ChunkIfNeeded(message.MessageId.ToString(), message, new ChunkSettings
+            var chunks = ChunkProducer.ChunkIfNeeded(message.MessageId.ToString(), message, new ChunkSettings
             {
                 Size = 500
             }, _serializer);
@@ -44,7 +44,7 @@ namespace Silverback.Tests.Messaging.LargeMessages
             };
             var serializedMessage = _serializer.Serialize(message);
 
-            var chunks = new ChunkProducer().ChunkIfNeeded(message.MessageId.ToString(), message, new ChunkSettings
+            var chunks = ChunkProducer.ChunkIfNeeded(message.MessageId.ToString(), message, new ChunkSettings
             {
                 Size = 500
             }, _serializer);

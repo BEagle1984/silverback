@@ -13,16 +13,14 @@ namespace Silverback.Messaging.Broker
     public abstract class Producer : EndpointConnectedObject, IProducer
     {
         private readonly MessageKeyProvider _messageKeyProvider;
-        private readonly ChunkProducer _chunkProducer;
         private readonly MessageLogger _messageLogger;
         private readonly ILogger<Producer> _logger;
 
         protected Producer(IBroker broker, IEndpoint endpoint, MessageKeyProvider messageKeyProvider,
-            ChunkProducer chunkProducer, ILogger<Producer> logger, MessageLogger messageLogger)
+            ILogger<Producer> logger, MessageLogger messageLogger)
             : base(broker, endpoint)
         {
             _messageKeyProvider = messageKeyProvider;
-            _chunkProducer = chunkProducer;
             _logger = logger;
             _messageLogger = messageLogger;
         }
@@ -40,7 +38,7 @@ namespace Silverback.Messaging.Broker
             _messageKeyProvider.EnsureKeyIsInitialized(message);
             Trace(message);
 
-            return _chunkProducer.ChunkIfNeeded(
+            return ChunkProducer.ChunkIfNeeded(
                 _messageKeyProvider.GetKey(message, false),
                 message,
                 (Endpoint as IProducerEndpoint)?.Chunk,
@@ -60,8 +58,8 @@ namespace Silverback.Messaging.Broker
         where TEndpoint : class, IEndpoint
     {
         protected Producer(IBroker broker, IEndpoint endpoint, MessageKeyProvider messageKeyProvider,
-            ChunkProducer chunkProducer, ILogger<Producer> logger, MessageLogger messageLogger) 
-            : base(broker, endpoint, messageKeyProvider, chunkProducer, logger, messageLogger)
+            ILogger<Producer> logger, MessageLogger messageLogger) 
+            : base(broker, endpoint, messageKeyProvider, logger, messageLogger)
         {
         }
 

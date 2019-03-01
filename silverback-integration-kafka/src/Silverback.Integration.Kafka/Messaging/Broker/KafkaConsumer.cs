@@ -17,10 +17,10 @@ namespace Silverback.Messaging.Broker
 
         private InnerConsumerWrapper _innerConsumer;
         private int _messagesSinceCommit = 0;
-        private Dictionary<Confluent.Kafka.TopicPartition, Confluent.Kafka.Offset> _pendingOffsets = new Dictionary<Confluent.Kafka.TopicPartition, Confluent.Kafka.Offset>();
 
-        public KafkaConsumer(KafkaBroker broker, KafkaConsumerEndpoint endpoint, ILogger<KafkaConsumer> logger,
-            MessageLogger messageLogger) : base(broker, endpoint, logger, messageLogger)
+        public KafkaConsumer(IBroker broker, KafkaConsumerEndpoint endpoint, ILogger<KafkaConsumer> logger,
+            MessageLogger messageLogger)
+            : base(broker, endpoint, logger, messageLogger)
         {
             _logger = logger;
 

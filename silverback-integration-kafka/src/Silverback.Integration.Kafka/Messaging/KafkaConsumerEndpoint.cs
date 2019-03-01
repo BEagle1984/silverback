@@ -15,15 +15,15 @@ namespace Silverback.Messaging
             if (names == null)
                 return;
 
-            Name = names.Length > 1 
-                ? "[" + string.Join(",", names) + "]" 
+            Name = names.Length > 1
+                ? "[" + string.Join(",", names) + "]"
                 : names[0];
         }
         public string[] Names { get; }
 
         public KafkaConsumerConfig Configuration { get; set; } = new KafkaConsumerConfig();
 
-        public override  void Validate()
+        public override void Validate()
         {
             base.Validate();
 
@@ -33,15 +33,15 @@ namespace Silverback.Messaging
             Configuration.Validate();
         }
 
-        #region IEquatable
+        #region Equality
 
-        #endregion
-
-        public bool Equals(KafkaConsumerEndpoint other) => 
+        public bool Equals(KafkaConsumerEndpoint other) =>
             base.Equals(other) && Equals(Configuration, other?.Configuration);
 
-        public override bool Equals(object obj) => 
+        public override bool Equals(object obj) =>
             base.Equals(obj) && obj is KafkaConsumerEndpoint endpoint && Equals(endpoint);
+
+        #endregion
     }
 #pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

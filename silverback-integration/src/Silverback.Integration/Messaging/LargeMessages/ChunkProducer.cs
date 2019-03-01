@@ -7,9 +7,9 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.LargeMessages
 {
-    public class ChunkProducer
+    public static class ChunkProducer
     {
-        public IEnumerable<(object message, byte[] serializedMessage)> ChunkIfNeeded(string messageId, object message, ChunkSettings settings, IMessageSerializer serializer)
+        public static IEnumerable<(object message, byte[] serializedMessage)> ChunkIfNeeded(string messageId, object message, ChunkSettings settings, IMessageSerializer serializer)
         {
             var serializedMessage = serializer.Serialize(message);
             var chunkSize = settings?.Size ?? int.MaxValue;

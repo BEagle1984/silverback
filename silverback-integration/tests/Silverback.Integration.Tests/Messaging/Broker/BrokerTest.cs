@@ -126,35 +126,5 @@ namespace Silverback.Tests.Messaging.Broker
 
             producer.ProducedMessages.Count.Should().Be(18);
         }
-        
-        [Fact]
-        public void Produce_LargeMessage_ConsumedAsOne()
-        {
-            var endpoint = new TestProducerEndpoint("point")
-            {
-                Chunk = new ChunkSettings
-                {
-                    Size = 10
-                }
-            };
-            var producer = (TestProducer)_broker.GetProducer(endpoint);
-
-            var message = new TestEventOne { Content = "abcdefghijklmnopqrstuvwxyz", Id = Guid.NewGuid() };
-
-            producer.Produce(message);
-
-            var consumer = (TestConsumer) _broker.GetConsumer(endpoint);
-
-            _broker.Connect();
-
-            object receivedMessage = null;
-            consumer.Received += (_, args) => receivedMessage = args.Message;
-
-            foreach (var producedMessage in producer.ProducedMessages)
-                consumer.TestPush(endpoint.Serializer.Deserialize(producedMessage.Message));
-
-            receivedMessage.Should().NotBeNull();
-            receivedMessage.As<TestEventOne>().Content.Should().BeEquivalentTo(message.Content);
-        }
     }
 }

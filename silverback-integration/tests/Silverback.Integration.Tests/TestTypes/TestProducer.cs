@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.TestTypes
@@ -19,7 +18,6 @@ namespace Silverback.Tests.TestTypes
         public TestProducer(TestBroker broker, IEndpoint endpoint)
             : base(broker, endpoint,
                 new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()}),
-                new ChunkProducer(),
                 new NullLogger<TestProducer>(),
                 new MessageLogger(new MessageKeyProvider(Enumerable.Empty<IMessageKeyProvider>())))
         {

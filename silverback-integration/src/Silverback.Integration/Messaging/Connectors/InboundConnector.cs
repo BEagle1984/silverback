@@ -60,7 +60,12 @@ namespace Silverback.Messaging.Connectors
                 .Select(msg =>
                     msg is FailedMessage failedMessage
                         ? failedMessage.Message
-                        : msg);
+                        : msg)
+                .Where(msg => msg != null)
+                .ToList();
+
+            if (!messages.Any())
+                return;
 
             serviceProvider.GetRequiredService<IPublisher>().Publish(messages);
         }
