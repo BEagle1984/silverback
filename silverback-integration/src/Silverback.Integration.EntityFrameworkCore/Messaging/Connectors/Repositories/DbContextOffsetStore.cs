@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System.Linq;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Silverback.Infrastructure;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors.Model;
 

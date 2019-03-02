@@ -1,9 +1,12 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
@@ -22,18 +25,24 @@ namespace Silverback.Messaging.Broker
             _messageLogger = messageLogger;
         }
 
-        public void Produce(object message)
-        {
-            _messageKeyProvider.EnsureKeyIsInitialized(message);
-            Trace(message);
-            Produce(message, Endpoint.Serializer.Serialize(message));
-        }
+        public void Produce(object message) =>
+            GetMessageContentChunks(message)
+                .ForEach(x => Produce(x.message, x.serializedMessage));
 
-        public async Task ProduceAsync(object message)
+        public Task ProduceAsync(object message) =>
+            GetMessageContentChunks(message)
+                .ForEachAsync(x => ProduceAsync(x.message, x.serializedMessage));
+
+        private IEnumerable<(object message, byte[] serializedMessage)> GetMessageContentChunks(object message)
         {
             _messageKeyProvider.EnsureKeyIsInitialized(message);
             Trace(message);
-            await ProduceAsync(message, Endpoint.Serializer.Serialize(message));
+
+            return ChunkProducer.ChunkIfNeeded(
+                _messageKeyProvider.GetKey(message, false),
+                message,
+                (Endpoint as IProducerEndpoint)?.Chunk,
+                Endpoint.Serializer);
         }
 
         private void Trace(object message) =>

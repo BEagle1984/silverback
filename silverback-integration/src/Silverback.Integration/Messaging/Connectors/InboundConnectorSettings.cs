@@ -7,7 +7,8 @@ namespace Silverback.Messaging.Connectors
 {
     public class InboundConnectorSettings
     {
-        public  BatchSettings Batch { get; set; } = new BatchSettings();
+        public BatchSettings Batch { get; set; } = new BatchSettings();
+
 
         /// <summary>
         /// The number of parallel consumers. The default is 1.
@@ -17,10 +18,9 @@ namespace Silverback.Messaging.Connectors
         public void Validate()
         {
             if (Batch == null)
-                throw new EndpointConfigurationException("Batch.Size must be greater or equal to 1.");
+                Batch = new BatchSettings();
 
-            if (Batch.Size < 1)
-                throw new EndpointConfigurationException("Batch.Size must be greater or equal to 1.");
+            Batch.Validate();
 
             if (Consumers < 1)
                 throw new EndpointConfigurationException("Consumers must be greater or equal to 1.");

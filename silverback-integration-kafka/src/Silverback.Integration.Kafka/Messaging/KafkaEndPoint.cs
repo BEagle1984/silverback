@@ -33,10 +33,7 @@ namespace Silverback.Messaging
 
         #region Equality
 
-        protected bool Equals(KafkaEndpoint other)
-        {
-            return string.Equals(Name, other.Name, StringComparison.InvariantCulture) && Equals(Serializer, other.Serializer);
-        }
+        protected bool Equals(KafkaEndpoint other) => string.Equals(Name, other.Name, StringComparison.InvariantCulture) && Equals(Serializer, other.Serializer);
 
         public override bool Equals(object obj)
         {

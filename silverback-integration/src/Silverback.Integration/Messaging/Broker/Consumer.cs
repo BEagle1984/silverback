@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Broker
         private readonly ILogger<Consumer> _logger;
         private readonly MessageLogger _messageLogger;
 
-        protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger, MessageLogger messageLogger)
+        protected Consumer(IBroker broker, IEndpoint endpoint,ILogger<Consumer> logger, MessageLogger messageLogger)
            : base(broker, endpoint)
         {
             _logger = logger;
@@ -22,7 +22,10 @@ namespace Silverback.Messaging.Broker
 
         public event EventHandler<MessageReceivedEventArgs> Received;
 
-        public void Acknowledge(IOffset offset) => Acknowledge(new[] {offset});
+        public void Acknowledge(IOffset offset)
+        {
+            Acknowledge(new[] {offset});
+        }
 
         public abstract void Acknowledge(IEnumerable<IOffset> offsets);
 
@@ -43,7 +46,8 @@ namespace Silverback.Messaging.Broker
         where TBroker : class, IBroker
         where TEndpoint : class, IEndpoint
     {
-        protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger, MessageLogger messageLogger) 
+        protected Consumer(IBroker broker, IEndpoint endpoint,
+            ILogger<Consumer> logger, MessageLogger messageLogger)
             : base(broker, endpoint, logger, messageLogger)
         {
         }

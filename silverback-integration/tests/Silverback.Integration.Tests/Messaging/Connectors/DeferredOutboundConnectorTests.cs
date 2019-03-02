@@ -45,12 +45,12 @@ namespace Silverback.Tests.Messaging.Connectors
         }
 
         [Fact]
-        public void CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
+        public async Task CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
-            _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
-            _connector.OnTransactionCompleted(new TransactionCompletedEvent());
-            _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
-            _connector.OnTransactionAborted(new TransactionAbortedEvent());
+            await _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
+            await _connector.OnTransactionCompleted(new TransactionCompletedEvent());
+            await _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
+            await _connector.OnTransactionAborted(new TransactionAbortedEvent());
 
             _queue.Length.Should().Be(1);
         }

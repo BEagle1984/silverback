@@ -9,8 +9,12 @@ namespace Silverback.Messaging.Publishing
 {
     public interface IRequestPublisher
     {
-        IEnumerable<TResponse> Execute<TResponse>(IRequest<TResponse> requestMessage);
+        TResponse Send<TResponse>(IRequest<TResponse> requestMessage);
 
-        Task<IEnumerable<TResponse>> ExecuteAsync<TResponse>(IRequest<TResponse> requestMessage);
+        Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> requestMessage);
+        
+        IEnumerable<TResponse> Send<TResponse>(IEnumerable<IRequest<TResponse>> requestMessages);
+
+        Task<IEnumerable<TResponse>> SendAsync<TResponse>(IEnumerable<IRequest<TResponse>> requestMessages);
     }
 }

@@ -77,11 +77,11 @@ namespace Silverback.Messaging.Connectors
             }
             else
             {
-                _consumer.Received += (_, args) => OnSingleMessageReceived(args);
+                _consumer.Received += (_, args) => ProcessSingleMessage(args);
             }
         }
 
-        private void OnSingleMessageReceived(MessageReceivedEventArgs messageArgs)
+        private void ProcessSingleMessage(MessageReceivedEventArgs messageArgs)
         {
             _messageLogger.LogTrace(_logger, "Processing message.", messageArgs.Message, _endpoint, offset: messageArgs.Offset);
 

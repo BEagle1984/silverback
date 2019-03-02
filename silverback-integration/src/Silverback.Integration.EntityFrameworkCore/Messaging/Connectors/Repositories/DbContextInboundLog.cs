@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
 
@@ -26,7 +27,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                 DbSet.Add(new InboundMessage
                 {
                     MessageId = _messageKeyProvider.GetKey(message),
-                    Message = Serialize(message),
+                    Message = DefaultSerializer.Serialize(message),
                     EndpointName = endpoint.Name,
                     Consumed = DateTime.UtcNow
                 });

@@ -30,10 +30,9 @@ namespace Silverback.Examples.Main.UseCases.Advanced
                 .AddDbOutboundWorker<ExamplesDbContext>());
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints =>
-                endpoints
-                    .AddOutbound<IntegrationEventA>(CreateEndpoint())
-                    .AddOutbound<IntegrationEventB, DeferredOutboundConnector>(CreateEndpoint()));
+            configurator.Connect(endpoints => endpoints
+                .AddOutbound<IntegrationEventA>(CreateEndpoint())
+                .AddOutbound<IntegrationEventB, DeferredOutboundConnector>(CreateEndpoint()));
 
         private KafkaEndpoint CreateEndpoint() =>
             new KafkaProducerEndpoint("silverback-examples-events")

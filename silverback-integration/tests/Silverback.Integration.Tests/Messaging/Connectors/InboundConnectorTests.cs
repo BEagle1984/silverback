@@ -11,6 +11,7 @@ using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
+using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes;
@@ -37,7 +38,7 @@ namespace Silverback.Tests.Messaging.Connectors
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             services.AddBus();
 
-            services.AddBroker<TestBroker>();
+            services.AddBroker<TestBroker>(options => options.AddChunkStore(_ => new InMemoryChunkStore()));
 
             var serviceProvider = services.BuildServiceProvider();
             _broker = (TestBroker)serviceProvider.GetService<IBroker>();
@@ -180,6 +181,169 @@ namespace Silverback.Tests.Messaging.Connectors
             }
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(7 * 2);
+        }
+
+        [Fact]
+        public void Bind_PushMessageChunks_FullMessagesReceived()
+        {
+            _connector.Bind(TestEndpoint.Default);
+            _broker.Connect();
+
+            var buffer = Convert.FromBase64String(
+                "eyIkdHlwZSI6IlNpbHZlcmJhY2suVGVzdHMuVGVzdFR5cGVzLkRvbWFpbi5UZXN0RXZlbnRPbmUsIFNp" +
+                "bHZlcmJhY2suSW50ZWdyYXRpb24uVGVzdHMiLCJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQi" +
+                "OiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new MessageChunk
+            {
+                 MessageId = Guid.NewGuid(),
+                 OriginalMessageId = "123",
+                 ChunkId = 1,
+                 ChunksCount = 4,
+                 Content = buffer.Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 2,
+                ChunksCount = 4,
+                Content = buffer.Skip(40).Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 3,
+                ChunksCount = 4,
+                Content = buffer.Skip(80).Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 4,
+                ChunksCount = 4,
+                Content = buffer.Skip(120).ToArray()
+            });
+
+            _testSubscriber.ReceivedMessages.Count.Should().Be(1);
+            _testSubscriber.ReceivedMessages.First().As<TestEventOne>().Content.Should().Be("A full message!");
+        }
+
+        [Fact]
+        public void Bind_PushMessageChunksInRandomOrder_FullMessagesReceived()
+        {
+            _connector.Bind(TestEndpoint.Default);
+            _broker.Connect();
+
+            var buffer = Convert.FromBase64String(
+                "eyIkdHlwZSI6IlNpbHZlcmJhY2suVGVzdHMuVGVzdFR5cGVzLkRvbWFpbi5UZXN0RXZlbnRPbmUsIFNp" +
+                "bHZlcmJhY2suSW50ZWdyYXRpb24uVGVzdHMiLCJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQi" +
+                "OiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 1,
+                ChunksCount = 4,
+                Content = buffer.Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 4,
+                ChunksCount = 4,
+                Content = buffer.Skip(120).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 3,
+                ChunksCount = 4,
+                Content = buffer.Skip(80).Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 2,
+                ChunksCount = 4,
+                Content = buffer.Skip(40).Take(40).ToArray()
+            });
+
+            _testSubscriber.ReceivedMessages.Count.Should().Be(1);
+            _testSubscriber.ReceivedMessages.First().As<TestEventOne>().Content.Should().Be("A full message!");
+        }
+        
+        [Fact]
+        public void Bind_PushMessageChunksWithDuplicates_FullMessagesReceived()
+        {
+            _connector.Bind(TestEndpoint.Default);
+            _broker.Connect();
+
+            var buffer = Convert.FromBase64String(
+                "eyIkdHlwZSI6IlNpbHZlcmJhY2suVGVzdHMuVGVzdFR5cGVzLkRvbWFpbi5UZXN0RXZlbnRPbmUsIFNp" +
+                "bHZlcmJhY2suSW50ZWdyYXRpb24uVGVzdHMiLCJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQi" +
+                "OiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 1,
+                ChunksCount = 4,
+                Content = buffer.Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 2,
+                ChunksCount = 4,
+                Content = buffer.Skip(40).Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 3,
+                ChunksCount = 4,
+                Content = buffer.Skip(80).Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 2,
+                ChunksCount = 4,
+                Content = buffer.Skip(40).Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 1,
+                ChunksCount = 4,
+                Content = buffer.Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 4,
+                ChunksCount = 4,
+                Content = buffer.Skip(120).ToArray()
+            });
+
+            _testSubscriber.ReceivedMessages.Count.Should().Be(1);
+            _testSubscriber.ReceivedMessages.First().As<TestEventOne>().Content.Should().Be("A full message!");
         }
 
         #endregion

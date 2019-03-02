@@ -4,7 +4,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Data;
@@ -31,16 +30,15 @@ namespace Silverback.Examples.Main.UseCases.EfCore
                 .AddDbOutboundWorker<ExamplesDbContext>());
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints =>
-                endpoints
-                    .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
+            configurator.Connect(endpoints => endpoints
+                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
+                {
+                    Configuration = new KafkaProducerConfig
                     {
-                        Configuration = new KafkaProducerConfig
-                        {
-                            BootstrapServers = "PLAINTEXT://kafka:9092",
-                            ClientId = GetType().FullName
-                        }
-                    }));
+                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                        ClientId = GetType().FullName
+                    }
+                }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

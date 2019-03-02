@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
@@ -52,22 +53,49 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        protected virtual void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected virtual void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint endpoint, IServiceProvider serviceProvider)
         {
             var messages = messagesArgs
-                .Select(args => args.Message)
+                .Select(args => HandleChunkedMessage(args, endpoint, serviceProvider) ? args.Message : null)
                 .Select(msg =>
                     msg is FailedMessage failedMessage
                         ? failedMessage.Message
-                        : msg);
+                        : msg)
+                .Where(msg => msg != null)
+                .ToList();
+
+            if (!messages.Any())
+                return;
 
             serviceProvider.GetRequiredService<IPublisher>().Publish(messages);
         }
 
+        private bool HandleChunkedMessage(MessageReceivedEventArgs args, IEndpoint endpoint, IServiceProvider serviceProvider)
+        {
+            if (args.Message is MessageChunk chunk)
+            {
+                var joined = serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(chunk);
+
+                if (joined == null)
+                    return false;
+
+                args.Message = endpoint.Serializer.Deserialize(joined);
+            }
+
+            return true;
+        }
+
         protected virtual void Commit(IServiceProvider serviceProvider)
-        { }
+        {
+            var chunkConsumer = serviceProvider.GetService<ChunkConsumer>();
+            chunkConsumer?.CleanupProcessedMessages();
+            chunkConsumer?.Commit();
+        }
 
         protected virtual void Rollback(IServiceProvider serviceProvider)
-        { }
+        {
+            var chunkConsumer = serviceProvider.GetService<ChunkConsumer>();
+            chunkConsumer?.Rollback();
+        }
     }
 }

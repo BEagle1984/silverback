@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Broker
         private static readonly ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.Producer<byte[], byte[]>> ProducersCache =
             new ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.Producer<byte[], byte[]>>(new KafkaClientConfigComparer());
 
-        public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, MessageKeyProvider messageKeyProvider,
+        public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, MessageKeyProvider messageKeyProvider, 
             ILogger<KafkaProducer> logger, MessageLogger messageLogger)
             : base(broker, endpoint, messageKeyProvider, logger, messageLogger)
         {

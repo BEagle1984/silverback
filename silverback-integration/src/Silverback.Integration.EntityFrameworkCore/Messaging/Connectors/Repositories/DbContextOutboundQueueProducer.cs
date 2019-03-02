@@ -4,40 +4,31 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Model;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
     public class DbContextOutboundQueueProducer : RepositoryBase<OutboundMessage>, IOutboundQueueProducer
     {
-        private readonly ILogger _logger;
-        public DbContextOutboundQueueProducer(DbContext dbContext, ILogger logger) : base(dbContext)
+        public DbContextOutboundQueueProducer(DbContext dbContext) : base(dbContext)
         {
-            _logger = logger;
         }
 
         public async Task Enqueue(object message, IEndpoint endpoint)
         {
             await DbSet.AddAsync(new OutboundMessage
             {
-                Message = Serialize(message),
-                Endpoint = Serialize(endpoint),
+                Message = DefaultSerializer.Serialize(message),
+                Endpoint = DefaultSerializer.Serialize(endpoint),
                 Created = DateTime.UtcNow
             });
         }
 
-        public Task Commit()
-        {
-            // Nothing to do, the transaction is committed with the DbContext.SaveChanges()
-            return Task.CompletedTask;
-        }
+        // Nothing to do, the transaction is committed with the DbContext.SaveChanges()
+        public Task Commit() => Task.CompletedTask;
 
-        public Task Rollback()
-        {
-            // Nothing to do, the transaction is aborted by the DbContext
-            return Task.CompletedTask;
-        }
+        // Nothing to do, the transaction is aborted by the DbContext
+        public Task Rollback() => Task.CompletedTask;
     }
 }

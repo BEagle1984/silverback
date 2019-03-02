@@ -38,6 +38,16 @@ namespace Silverback.Messaging.Batch
         }
 
         #endregion
+
+        public void Validate()
+        {
+            if (Size < 1)
+                throw new EndpointConfigurationException("Batch.Size must be greater or equal to 1.");
+
+            if (MaxWaitTime <= TimeSpan.Zero)
+                throw new EndpointConfigurationException("Batch.MaxWaitTime must be greater than 0.");
+
+        }
     }
 #pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

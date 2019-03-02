@@ -24,8 +24,8 @@ namespace Silverback.Examples.Main.UseCases.Advanced
                 .AddOutboundConnector());
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints =>
-                endpoints.AddOutbound<SampleBatchProcessedEvent>(CreateEndpoint()));
+            configurator.Connect(endpoints => endpoints
+                .AddOutbound<SampleBatchProcessedEvent>(CreateEndpoint()));
 
         private KafkaEndpoint CreateEndpoint() =>
             new KafkaProducerEndpoint("silverback-examples-batch")

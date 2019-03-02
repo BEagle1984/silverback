@@ -85,7 +85,7 @@ namespace Silverback.Tests.Messaging.Configuration
         [Fact]
         public void AddDeferredOutboundConnector_PublishMessages_MessagesQueued()
         {
-            _services.AddBroker<TestBroker>(options => options.AddDeferredOutboundConnector<InMemoryOutboundQueue>());
+            _services.AddBroker<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
             GetBusConfigurator().Connect(endpoints => 
                 endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.Default));
 
@@ -102,7 +102,7 @@ namespace Silverback.Tests.Messaging.Configuration
         [Fact]
         public void AddDeferredOutboundConnector_Rollback_MessagesNotQueued()
         {
-            _services.AddBroker<TestBroker>(options => options.AddDeferredOutboundConnector<InMemoryOutboundQueue>());
+            _services.AddBroker<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
             GetBusConfigurator().Connect(endpoints =>
                 endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.Default));
 
@@ -163,7 +163,7 @@ namespace Silverback.Tests.Messaging.Configuration
         [Fact]
         public void AddLoggedInboundConnector_PushMessages_MessagesReceived()
         {
-            _services.AddBroker<TestBroker>(options => options.AddLoggedInboundConnector<InMemoryInboundLog>());
+            _services.AddBroker<TestBroker>(options => options.AddLoggedInboundConnector(s => new InMemoryInboundLog(s.GetRequiredService<MessageKeyProvider>())));
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
                     .AddInbound(TestEndpoint.Default));
@@ -182,7 +182,7 @@ namespace Silverback.Tests.Messaging.Configuration
         [Fact]
         public void AddOffsetStoredInboundConnector_PushMessages_MessagesReceived()
         {
-            _services.AddBroker<TestBroker>(options => options.AddOffsetStoredInboundConnector<InMemoryOffsetStore>());
+            _services.AddBroker<TestBroker>(options => options.AddOffsetStoredInboundConnector(_ => new InMemoryOffsetStore()));
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
                     .AddInbound(TestEndpoint.Default));

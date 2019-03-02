@@ -1,10 +1,14 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Silverback.Core.EntityFrameworkCore.Tests.TestTypes;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Xunit;
 
@@ -39,8 +43,7 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
 
             _dbContext.SaveChanges();
 
-            _publisher.Received(3).Publish(Arg.Any<TestDomainEventOne>());
-            _publisher.Received(2).Publish(Arg.Any<TestDomainEventTwo>());
+            _publisher.Received(1).Publish(Arg.Any<IEnumerable<object>>());
         }
 
         [Fact]
@@ -56,8 +59,7 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
 
             await _dbContext.SaveChangesAsync();
 
-            await _publisher.Received(3).PublishAsync(Arg.Any<TestDomainEventOne>());
-            await _publisher.Received(2).PublishAsync(Arg.Any<TestDomainEventTwo>());
+            await _publisher.Received(1).PublishAsync(Arg.Any<IEnumerable<object>>());
         }
 
         [Fact]
@@ -66,15 +68,18 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
             _publisher
-                .When(x => x.Publish(Arg.Any<TestDomainEventOne>()))
-                .Do(x => entity.Entity.AddEvent<TestDomainEventTwo>());
+                .When(x => x.Publish(Arg.Any<IEnumerable<object>>()))
+                .Do(x =>
+                {
+                    if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
+                        entity.Entity.AddEvent<TestDomainEventTwo>();
+                });
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 
             _dbContext.SaveChanges();
 
-            _publisher.Received(1).Publish(Arg.Any<TestDomainEventOne>());
-            _publisher.Received(1).Publish(Arg.Any<TestDomainEventTwo>());
+            _publisher.Received(2).Publish(Arg.Any<IEnumerable<object>>());
         }
 
         [Fact]
@@ -83,15 +88,58 @@ namespace Silverback.Core.EntityFrameworkCore.Tests
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
             _publisher
-                .When(x => x.PublishAsync(Arg.Any<TestDomainEventOne>()))
-                .Do(x => entity.Entity.AddEvent<TestDomainEventTwo>());
+                .When(x => x.PublishAsync(Arg.Any<IEnumerable<object>>()))
+                .Do(x =>
+                {
+                    if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
+                        entity.Entity.AddEvent<TestDomainEventTwo>();
+                });
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 
             await _dbContext.SaveChangesAsync();
 
-            await _publisher.Received(1).PublishAsync(Arg.Any<TestDomainEventOne>());
-            await _publisher.Received(1).PublishAsync(Arg.Any<TestDomainEventTwo>());
+            await _publisher.Received(2).PublishAsync(Arg.Any<IEnumerable<object>>());
+        }
+
+        [Fact]
+        public async Task SaveChangesAsync_Successful_StartedAndCompleteEventsFired()
+        {
+            var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
+
+            entity.Entity.AddEvent<TestDomainEventOne>();
+
+            await _dbContext.SaveChangesAsync();
+
+            await _publisher.Received(1).PublishAsync(Arg.Any<TransactionStartedEvent>());
+            await _publisher.Received(1).PublishAsync(Arg.Any<TransactionCompletedEvent>());
+        }
+
+        [Fact]
+        public async Task SaveChangesAsync_Error_StartedAndAbortedEventsFired()
+        {
+            var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
+
+            _publisher
+                .When(x => x.PublishAsync(Arg.Any<IEnumerable<object>>()))
+                .Do(x =>
+                {
+                    if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
+                        throw new Exception();
+                });
+            
+            entity.Entity.AddEvent<TestDomainEventOne>();
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            }
+
+            await _publisher.Received(1).PublishAsync(Arg.Any<TransactionStartedEvent>());
+            await _publisher.Received(1).PublishAsync(Arg.Any<TransactionAbortedEvent>());
         }
     }
 }

@@ -25,9 +25,8 @@ namespace Silverback.Examples.Main.UseCases.Basic
             .AddBroker<KafkaBroker>();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints =>
-                endpoints
-                    .AddOutbound<IIntegrationEvent>(CreateEndpoint("silverback-examples-custom-serializer-events")));
+            configurator.Connect(endpoints => endpoints
+                .AddOutbound<IIntegrationEvent>(CreateEndpoint("silverback-examples-custom-serializer-events")));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

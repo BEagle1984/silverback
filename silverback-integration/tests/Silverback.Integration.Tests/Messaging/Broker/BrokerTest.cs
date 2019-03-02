@@ -1,8 +1,10 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Silverback.Messaging.LargeMessages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 using Xunit;
@@ -87,6 +89,42 @@ namespace Silverback.Tests.Messaging.Broker
             await producer.ProduceAsync(message);
 
             message.Id.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void Produce_LargeMessage_Chunked()
+        {
+            var producer = (TestProducer)_broker.GetProducer(new TestProducerEndpoint("point")
+            {
+                Chunk = new ChunkSettings
+                {
+                    Size = 10
+                }
+            });
+
+            var message = new TestEventOne {Content = "abcdefghijklmnopqrstuvwxyz", Id = Guid.NewGuid()};
+
+            producer.Produce(message);
+
+            producer.ProducedMessages.Count.Should().Be(18);
+        }
+
+        [Fact]
+        public void ProduceAsync_LargeMessage_Chunked()
+        {
+            var producer = (TestProducer)_broker.GetProducer(new TestProducerEndpoint("point")
+            {
+                Chunk = new ChunkSettings
+                {
+                    Size = 10
+                }
+            });
+
+            var message = new TestEventOne { Content = "abcdefghijklmnopqrstuvwxyz", Id = Guid.NewGuid() };
+
+            producer.Produce(message);
+
+            producer.ProducedMessages.Count.Should().Be(18);
         }
     }
 }

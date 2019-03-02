@@ -4,12 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Util;
 
 namespace Silverback.EntityFrameworkCore
 {
@@ -46,11 +44,13 @@ namespace Silverback.EntityFrameworkCore
 
         private async Task<int> ExecuteSaveTransaction(Func<Task<int>> saveChanges, bool async)
         {
-            await PublishDomainEvents(async);
+            await PublishEvent<TransactionStartedEvent>(async);
 
             var saved = false;
             try
             {
+                await PublishDomainEvents(async);
+
                 var result = await saveChanges();
 
                 saved = true;
@@ -76,9 +76,9 @@ namespace Silverback.EntityFrameworkCore
             while (events.Any())
             {
                 if (async)
-                    await events.ForEachAsync(_publisher.PublishAsync);
+                    await _publisher.PublishAsync(events);
                 else
-                    events.ForEach(_publisher.Publish);
+                    _publisher.Publish(events);
 
                 events = GetDomainEvents();
             }
