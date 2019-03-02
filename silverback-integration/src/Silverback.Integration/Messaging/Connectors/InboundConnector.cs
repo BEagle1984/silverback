@@ -87,10 +87,15 @@ namespace Silverback.Messaging.Connectors
 
         protected virtual void Commit(IServiceProvider serviceProvider)
         {
-            serviceProvider.GetService<ChunkConsumer>()?.CleanupProcessedMessages();
+            var chunkConsumer = serviceProvider.GetService<ChunkConsumer>();
+            chunkConsumer?.CleanupProcessedMessages();
+            chunkConsumer?.Commit();
         }
 
         protected virtual void Rollback(IServiceProvider serviceProvider)
-        { }
+        {
+            var chunkConsumer = serviceProvider.GetService<ChunkConsumer>();
+            chunkConsumer?.Rollback();
+        }
     }
 }

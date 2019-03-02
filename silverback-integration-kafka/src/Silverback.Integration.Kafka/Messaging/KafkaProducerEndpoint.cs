@@ -15,7 +15,22 @@ namespace Silverback.Messaging
 
         public KafkaProducerConfig Configuration { get; set; } = new KafkaProducerConfig();
 
-        public ChunkSettings Chunk { get; set; } = new ChunkSettings();
+        public ChunkSettings Chunk { get; set; } = new ChunkSettings
+        {
+            Size = int.MaxValue
+        };
+
+        public override void Validate()
+        {
+            base.Validate();
+
+            if (Configuration == null)
+                throw new EndpointConfigurationException("Configuration cannot be null.");
+
+            Configuration.Validate();
+
+            Chunk?.Validate();
+        }
 
         #region Equality
 

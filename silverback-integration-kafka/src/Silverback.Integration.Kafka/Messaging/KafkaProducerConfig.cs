@@ -10,6 +10,10 @@ namespace Silverback.Messaging
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public sealed class KafkaProducerConfig : Confluent.Kafka.ProducerConfig, ICollection<KeyValuePair<string, string>>, IEquatable<KafkaProducerConfig>
     {
+        public void Validate()
+        {
+        }
+
         #region IEquatable
 
         public bool Equals(KafkaProducerConfig other)
@@ -28,7 +32,6 @@ namespace Silverback.Messaging
         }
 
         #endregion
-
 
         #region ICollection
 

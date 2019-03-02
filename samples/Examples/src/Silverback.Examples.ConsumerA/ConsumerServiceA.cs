@@ -24,7 +24,8 @@ namespace Silverback.Examples.ConsumerA
             .AddBroker<KafkaBroker>(options => options
                 //.AddDbLoggedInboundConnector<ExamplesDbContext>()
                 .AddDbOffsetStoredInboundConnector<ExamplesDbContext>()
-                .AddInboundConnector())
+                .AddInboundConnector()
+                .AddDbChunkStore<ExamplesDbContext>())
             .AddScoped<ISubscriber, SubscriberService>();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)

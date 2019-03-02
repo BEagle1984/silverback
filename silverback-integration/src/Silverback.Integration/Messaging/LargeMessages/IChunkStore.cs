@@ -7,7 +7,11 @@ namespace Silverback.Messaging.LargeMessages
 {
     public interface IChunkStore
     {
-        void StoreChunk(MessageChunk chunk);
+        void Store(MessageChunk chunk);
+
+        void Commit();
+
+        void Rollback(); 
 
         int CountChunks(string messageId);
 

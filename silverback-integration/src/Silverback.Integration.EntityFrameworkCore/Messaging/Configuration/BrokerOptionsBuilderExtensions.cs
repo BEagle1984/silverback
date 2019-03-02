@@ -3,6 +3,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.LargeMessages;
@@ -70,7 +71,7 @@ namespace Silverback.Messaging.Configuration
 
             return builder;
         }
-        
+
         /// <summary>
         /// Adds a chunk store to temporary save the message chunks until the full message has been received.
         /// This implementation stores the message chunks in the DbContext.
@@ -78,7 +79,9 @@ namespace Silverback.Messaging.Configuration
         public static BrokerOptionsBuilder AddDbChunkStore<TDbContext>(this BrokerOptionsBuilder builder)
             where TDbContext : DbContext
         {
-            builder.AddChunkStore(s => new DbContextChunkStore(s.GetRequiredService<TDbContext>()));
+            builder.AddChunkStore(s => new DbContextChunkStore(
+                s.GetRequiredService<TDbContext>(),
+                s.GetRequiredService<ILogger<DbContextChunkStore>>()));
 
             return builder;
         }

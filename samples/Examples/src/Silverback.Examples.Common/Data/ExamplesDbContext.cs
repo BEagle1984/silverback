@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Silverback.Domain;
 using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Connectors.Model;
+using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Publishing;
 
 namespace Silverback.Examples.Common.Data
@@ -51,6 +52,10 @@ namespace Silverback.Examples.Common.Data
 
             modelBuilder.Entity<StoredOffset>()
                 .ToTable("Messaging_StoredOffsets");
+
+            modelBuilder.Entity<TemporaryMessageChunk>()
+                .ToTable("Messaging_MessageChunks")
+                .HasKey(t => new { t.OriginalMessageId, t.ChunkId });
         }
 
         public override int SaveChanges()

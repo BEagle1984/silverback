@@ -21,7 +21,7 @@ namespace Silverback.Messaging.LargeMessages
         {
             var count = _store.CountChunks(chunk.OriginalMessageId);
 
-            if (count == chunk.ChunksCount - 1)
+            if (count >= chunk.ChunksCount - 1)
             {
                 var chunks = _store.GetChunks(chunk.OriginalMessageId);
                 if (chunks.ContainsKey(chunk.ChunkId))
@@ -37,10 +37,14 @@ namespace Silverback.Messaging.LargeMessages
             }
             else
             {
-                _store.StoreChunk(chunk);
+                _store.Store(chunk);
                 return null;
             }
         }
+
+        public void Commit() => _store.Commit();
+
+        public void Rollback() => _store.Rollback();
 
         public void CleanupProcessedMessages()
         {
