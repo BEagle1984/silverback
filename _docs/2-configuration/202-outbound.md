@@ -27,13 +27,12 @@ public void ConfigureServices(IServiceCollection services)
 public void Configure(BusConfigurator busConfigurator)
 {
     busConfigurator
-        .Connect(endpoints =>
-            endpoints
-                .AddOutbound<IIntegrationEvent>(
-                    new KafkaEndpoint("basket-events")
-                    {
-                        ...
-                    }));
+        .Connect(endpoints => endpoints
+            .AddOutbound<IIntegrationEvent>(
+                new KafkaEndpoint("basket-events")
+                {
+                    ...
+                }));
 ```
 
 ### Deferred
@@ -60,16 +59,40 @@ public void ConfigureServices(IServiceCollection services)
 public void Configure(BusConfigurator busConfigurator)
 {
     busConfigurator
-        .Connect(endpoints =>
-            endpoints
-                .AddOutbound<IIntegrationEvent>(
-                    new KafkaEndpoint("catalog-events")
-                    {
-                        ...
-                    }));
+        .Connect(endpoints => endpoints
+            .AddOutbound<IIntegrationEvent>(
+                new KafkaEndpoint("catalog-events")
+                {
+                    ...
+                }));
 
     // Scheduling the OutboundQueueWorker using a poor-man scheduler
     jobScheduler.AddJob("outbound-queue-worker", TimeSpan.FromMilliseconds(100),
         s => s.GetRequiredService<OutboundQueueWorker>().ProcessQueue());
 }
 ```
+
+#### Extensibility
+
+You can easily create another implementation targeting another kind of storage, simply creating your own `IOutboundQueueProducer` and `IOutboundQueueConsumer`.
+It is then suggested to create an extension method for the `BrokerOptionsBuilder` to register your own types.
+
+```c#
+public static BrokerOptionsBuilder AddMyCustomOutboundConnector(this BrokerOptionsBuilder builder)
+{
+    builder.AddOutboundConnector<DeferredOutboundConnector>();
+    builder.Services.AddScoped<IOutboundQueueProducer, MyCustomQueueProducer>();
+
+    return builder;
+}
+
+public static BrokerOptionsBuilder AddMyCustomOutboundWorker<TDbContext>(this BrokerOptionsBuilder builder,
+    bool enforceMessageOrder = true, int readPackageSize = 100)
+{
+    builder.AddOutboundWorker(enforceMessageOrder, readPackageSize);
+    builder.Services.AddScoped<IOutboundQueueConsumer, MyCustomQueueConsumer>();
+
+    return builder;
+}
+```
+

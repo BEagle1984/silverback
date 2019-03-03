@@ -23,10 +23,9 @@ public void Configure(BusConfigurator busConfigurator)
     ConfigureNLog(serviceProvider);
 
     busConfigurator
-        .Connect(endpoints =>
-            endpoints
-                .AddInbound(CreateConsumerEndpoint("order-events"))
-                // The following inbound endpoint will use a basic InboundConnector instead of the default LoggedInboundConnector
-                .AddInbound<InboundConnector>(CreateConsumerEndpoint("legacy-messages")));
+        .Connect(endpoints => endpoints
+            .AddInbound(CreateConsumerEndpoint("order-events"))
+            // The following inbound endpoint will use a basic InboundConnector instead of the default LoggedInboundConnector
+            .AddInbound<InboundConnector>(CreateConsumerEndpoint("legacy-messages")));
 }
 ```

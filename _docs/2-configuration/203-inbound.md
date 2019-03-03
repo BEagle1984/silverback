@@ -28,13 +28,12 @@ public void ConfigureServices(IServiceCollection services)
 public void Configure(BusConfigurator busConfigurator)
 {
     busConfigurator
-        .Connect(endpoints =>
-            endpoints
-                .AddInbound(
-                    new KafkaEndpoint("basket-events")
-                    {
-                        ...
-                    }));
+        .Connect(endpoints => endpoints
+            .AddInbound(
+                new KafkaEndpoint("basket-events")
+                {
+                    ...
+                }));
 }
 ```
 
@@ -76,6 +75,29 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
+#### Extensibility
+
+You can easily implement your own storage for the offsets or the messages, simply creating your own `IOffsetStore` or `IInboundLog`.
+It is then suggested to create an extension method for the `BrokerOptionsBuilder` to register your own types.
+
+```c#
+public static BrokerOptionsBuilder AddMyCustomLoggedInboundConnector<TDbContext>(this BrokerOptionsBuilder builder)
+{
+    builder.AddInboundConnector<LoggedInboundConnector>();
+    builder.Services.AddScoped<IInboundLog, MyCustomInboundLog>();
+
+    return builder;
+}
+
+public static BrokerOptionsBuilder AddMyCustomOffsetStoredInboundConnector<TDbContext>(this BrokerOptionsBuilder builder)
+{
+    builder.AddInboundConnector<OffsetStoredInboundConnector>();
+    builder.Services.AddScoped<IOffsetStore, MyCustomOffsetStore>();
+
+    return builder;
+}
+```
+
 ## Error Handling
 
 If an exceptions is thrown by the methods consuming the incoming messages (subscribers) the consumer will stop, unless some error policies are defined.
@@ -91,20 +113,19 @@ Chain | Combine different policies, for example to move the message to a dead le
 public void Configure(BusConfigurator busConfigurator)
 {
     busConfigurator
-        .Connect(endpoints =>
-            endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("some-events")
-                    {
-                        ...
-                    },
-                    policy => policy.Chain(
-                        policy.Retry(5, TimeSpan.FromSeconds(10)),
-                        policy.Move(new KafkaProducerEndpoint("bad-messages")
-                            {
-                                ...
-                            }
-                        ))));
+        .Connect(endpoints => endpoints
+            .AddInbound(
+                new KafkaConsumerEndpoint("some-events")
+                {
+                    ...
+                },
+                policy => policy.Chain(
+                    policy.Retry(5, TimeSpan.FromSeconds(10)),
+                    policy.Move(new KafkaProducerEndpoint("bad-messages")
+                        {
+                            ...
+                        }
+                    ))));
 }
 ```
 
@@ -133,21 +154,20 @@ Batch.MaxDegreeOfParallelism | The maximum number of parallel threads used to pr
 public void Configure(BusConfigurator busConfigurator)
 {
     busConfigurator
-        .Connect(endpoints =>
-            endpoints
-                .AddInbound(
-                    new KafkaEndpoint("basket-events")
+        .Connect(endpoints => endpoints
+            .AddInbound(
+                new KafkaEndpoint("basket-events")
+                {
+                    ...
+                },
+                settings: new InboundConnectorSettings
+                {
+                    Batch = new Messaging.Batch.BatchSettings
                     {
-                        ...
-                    },
-                    settings: new InboundConnectorSettings
-                    {
-                        Batch = new Messaging.Batch.BatchSettings
-                        {
-                            Size = 5,
-                            MaxWaitTime = TimeSpan.FromSeconds(5)
-                        }
-                    }));
+                        Size = 5,
+                        MaxWaitTime = TimeSpan.FromSeconds(5)
+                    }
+                }));
 }
 ```
 
@@ -203,16 +223,15 @@ Multiple consumers can be created for the same endpoint to consume in parallel i
 public void Configure(BusConfigurator busConfigurator)
 {
     busConfigurator
-        .Connect(endpoints =>
-            endpoints
-                .AddInbound(
-                    new KafkaEndpoint("basket-events")
-                    {
-                        ...
-                    },
-                    settings: new InboundConnectorSettings
-                    {
-                        Consumers: 2
-                    }));
+        .Connect(endpoints => endpoints
+            .AddInbound(
+                new KafkaEndpoint("basket-events")
+                {
+                    ...
+                },
+                settings: new InboundConnectorSettings
+                {
+                    Consumers: 2
+                }));
 }
 ```

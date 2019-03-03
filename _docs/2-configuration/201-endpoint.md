@@ -19,14 +19,16 @@ Name | The name of the topic. This is set in the constructor.
 Serializer | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding.
 Configuration | An instance of `KafkaProducerConfig`, that's just an extension of `Confluent.Kafka.ProducerConfig`.
 Configuration.BootstrapServers, ...| All properties inherited from `Confluent.Kafka.ProducerConfig`. See [confluent-kafka-dotnet project](https://github.com/confluentinc/confluent-kafka-dotnet) for details.
+Chunk | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
 
 ```c#
 new KafkaProducerEndpoint("silverback-examples-events")
 {
-     Configuration = new Confluent.Kafka.ProducerConfig
-     {
-         BootstrapServers = "PLAINTEXT://kafka:9092"
-    }
+    Configuration = new KafkaProducerConfig
+    {
+        BootstrapServers = "PLAINTEXT://kafka:9092"
+    },
+    Chunk = ...
 }
 ```
 
@@ -45,16 +47,16 @@ Configuration.CommitOffsetEach | When auto-commit is disable, defines the number
 ```c#
 new KafkaConsumerEndpoint("silverback-examples-events", "silverback-examples-something")
 {
-     ConsumerThreads = 3,
-     Configuration = new Confluent.Kafka.ConsumerConfig
-     {
-         BootstrapServers = "PLAINTEXT://kafka:9092",
-         ClientId = "ClientTest",
-         GroupId = "advanced-silverback-consumer",
-         EnableAutoCommit = false,
-         AutoCommitIntervalMs = 5000,
-         StatisticsIntervalMs = 60000,
-         AutoOffsetReset = Confluent.Kafka.AutoOffsetResetType.Earliest
+    ConsumerThreads = 3,
+    Configuration = new KafkaConsumerConfig
+    {
+        BootstrapServers = "PLAINTEXT://kafka:9092",
+        ClientId = "ClientTest",
+        GroupId = "advanced-silverback-consumer",
+        EnableAutoCommit = false,
+        AutoCommitIntervalMs = 5000,
+        StatisticsIntervalMs = 60000,
+        AutoOffsetReset = Confluent.Kafka.AutoOffsetResetType.Earliest
     }
 }
 ```

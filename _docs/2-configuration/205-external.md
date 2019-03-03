@@ -18,9 +18,8 @@ public IConfiguration Configuration { get; }
 
 public void Configure(IApplicationBuilder app, BusConfigurator busConfigurator))
 {
-    busConfigurator.Connect(endpoints =>
-        endpoints
-            .ReadConfig(Configuration, app.ApplicationServices));
+    busConfigurator.Connect(endpoints => endpoints
+        .ReadConfig(Configuration, app.ApplicationServices));
 }
 ```
 
@@ -28,7 +27,7 @@ And here is an example of configuration in the appsettings.json file:
 ```json
 {
   "Silverback": {
-    "Using": [ "Silverback.Integration.Kafka" ],
+    "Using": [ "Silverback.Integration.Kafka", "Silverback.Core.Model" ],
     "Inbound": [
       {
         "Endpoint": {
@@ -71,6 +70,9 @@ And here is an example of configuration in the appsettings.json file:
           "Configuration": {
             "BootstrapServers": "PLAINTEXT://kafka:9092",
             "ClientId": "basket-service"
+          },
+          "Chunk": {
+              "Size": 3
           }
         }
       }

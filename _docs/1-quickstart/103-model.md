@@ -40,7 +40,7 @@ public async Task PublishEvent()
 }
 ```
 
-`IDomainEvent` extends `IEvent` and should be published only from within the domain entities (actually adding them to the internal collection and letting them be published during the save changes transaction).
+`IDomainEvent` extends `IEvent` and are usually published only from within the domain entities (actually adding them to the internal collection and letting them be published during the save changes transaction).
 
 ### Commands
 
@@ -62,8 +62,8 @@ private readonly ICommandPublisher _publisher;
 public async Task<MyResult> ExecuteCommand()
 {
    var command = new MyCommand() { ... };
-   var results = await _publisher.ExecuteAsync(command);
-   return results.Single();
+   var result = await _publisher.ExecuteAsync(command);
+   return result;
 }
 ```
 
@@ -77,8 +77,8 @@ private readonly IQueryPublisher _publisher;
 public async Task<MyResult> DoWork()
 {
    var query = new MyQuery() { ... };
-   var results = await _publisher.ExecuteAsync(myQuery);
-   return results.SingleOrDefault();
+   var result = await _publisher.ExecuteAsync(myQuery);
+   return result;
 }
 ```
 

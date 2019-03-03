@@ -22,34 +22,33 @@ public void ConfigureServices(IServiceCollection services)
 public void Configure(BusConfigurator busConfigurator)
 {
     busConfigurator
-        .Connect(endpoints =>
-            endpoints
-                .AddInbound(
-                    new KafkaEndpoint("basket-events")
+        .Connect(endpoints => endpoints
+            .AddInbound(
+                new KafkaEndpoint("basket-events")
+                {
+                    Configuration = new KafkaConsumerConfig
                     {
-                        Configuration = new Confluent.Kafka.ConsumerConfig
-                        {
-                            BootstrapServers = "PLAINTEXT://kafka:9092",
-                            GroupId = "order-service"
-                        }
-                    })
-                .AddInbound(
-                    new KafkaEndpoint("payment-events")
+                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                        GroupId = "order-service"
+                    }
+                })
+            .AddInbound(
+                new KafkaEndpoint("payment-events")
+                {
+                    Configuration = new KafkaConsumerConfig
                     {
-                        Configuration = new Confluent.Kafka.ConsumerConfig
-                        {
-                            BootstrapServers = "PLAINTEXT://kafka:9092",
-                            GroupId = "order-service"
-                        }
-                    })
-                .AddOutbound<IIntegrationEvent>(
-                    new KafkaEndpoint("order-events")
+                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                        GroupId = "order-service"
+                    }
+                })
+            .AddOutbound<IIntegrationEvent>(
+                new KafkaEndpoint("order-events")
+                {
+                    Configuration = new KafkaProducerConfig
                     {
-                        Configuration = new Confluent.Kafka.ProducerConfig
-                        {
-                            BootstrapServers = "PLAINTEXT://kafka:9092"
-                        }
-                    }));
+                        BootstrapServers = "PLAINTEXT://kafka:9092"
+                    }
+                }));
 ```
 
 `AddInbound` is used to automatically relay the incoming messages to the internal bus and they can therefore be subscribed as seen in the previous chapters.
