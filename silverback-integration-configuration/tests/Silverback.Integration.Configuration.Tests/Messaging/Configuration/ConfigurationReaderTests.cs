@@ -352,7 +352,6 @@ namespace Silverback.Tests.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
 
             var endpoint = (KafkaProducerEndpoint)reader.Outbound.First().Endpoint;
-
             endpoint.Configuration.EnableBackgroundPoll.Should().BeFalse();
         }
 
@@ -396,6 +395,28 @@ namespace Silverback.Tests.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
 
             reader.Outbound.First().MessageType.Should().Be(typeof(IIntegrationEvent));
+        }
+        
+        [Fact]
+        public void Read_SimplestOutbound_DefaultChunkSize()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.simplest"));
+
+            var endpoint = (KafkaProducerEndpoint)reader.Outbound.First().Endpoint;
+            endpoint.Chunk.Size.Should().Be(int.MaxValue);
+        }
+        
+        [Fact]
+        public void Read_SimplestOutbound_ChunkSizeSet()
+        {
+            var reader =
+                new ConfigurationReader(_serviceProvider)
+                    .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
+
+            var endpoint = (KafkaProducerEndpoint)reader.Outbound.First().Endpoint;
+            endpoint.Chunk.Size.Should().Be(100000);
         }
 
         #endregion

@@ -108,6 +108,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             endpoint2.Should().NotBeNull();
+            endpoint2.Configuration.Acks.Should().Be(endpoint1.Configuration.Acks);
         }
     }
 }

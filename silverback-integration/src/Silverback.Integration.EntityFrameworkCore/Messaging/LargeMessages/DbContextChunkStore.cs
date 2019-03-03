@@ -33,7 +33,8 @@ namespace Silverback.Messaging.LargeMessages
                     OriginalMessageId = chunk.OriginalMessageId,
                     ChunkId = chunk.ChunkId,
                     ChunksCount = chunk.ChunksCount,
-                    Content = chunk.Content
+                    Content = chunk.Content,
+                    Received = DateTime.UtcNow
                 });
             }
         }
@@ -59,29 +60,23 @@ namespace Silverback.Messaging.LargeMessages
 
         public void Cleanup(string messageId)
         {
-            try
+            lock (_lock)
             {
-                lock (_lock)
+                var entities = DbSet.Local.Where(c => c.OriginalMessageId == messageId).ToList();
+
+                // Chunks are always loaded all together for the message, therefore if any
+                // is in cache it means that we got all of them.
+                if (!entities.Any())
                 {
-                    var entities = DbSet.Local.Where(c => c.OriginalMessageId == messageId).ToList();
-
-                    if (!entities.Any() || entities.Count != entities.First().ChunksCount)
-                    {
-                        entities.AddRange(
-                            DbSet
-                                .Where(c => c.OriginalMessageId == messageId)
-                                .Select(c => c.ChunkId)
-                                .ToList()
-                                .Where(c => entities.All(e => e.ChunkId != c))
-                                .Select(x => new TemporaryMessageChunk {OriginalMessageId = messageId, ChunkId = x}));
-                    }
-
-                    DbSet.RemoveRange(entities);
+                    entities = DbSet
+                        .Where(c => c.OriginalMessageId == messageId)
+                        .Select(c => c.ChunkId)
+                        .ToList()
+                        .Select(chunkId => new TemporaryMessageChunk {OriginalMessageId = messageId, ChunkId = chunkId})
+                        .ToList();
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to cleanup chunks from temporary table for message '{messageId}'.", messageId);
+
+                DbSet.RemoveRange(entities);
             }
         }
     }

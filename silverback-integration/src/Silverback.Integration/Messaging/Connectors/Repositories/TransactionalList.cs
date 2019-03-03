@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             }
         }
 
-        public void Commit()
+        public virtual void Commit()
         {
             lock (UncommittedEntries)
             {
@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             }
         }
 
-        public void Rollback()
+        public virtual void Rollback()
         {
             lock (UncommittedEntries)
             {

@@ -31,7 +31,7 @@ namespace Silverback.Messaging.LargeMessages
 
                 var completeMessage = Join(chunks);
 
-                _completedMessagesId.Add(chunk.OriginalMessageId);
+                _store.Cleanup(chunk.OriginalMessageId);
 
                 return completeMessage;
             }
@@ -45,14 +45,6 @@ namespace Silverback.Messaging.LargeMessages
         public void Commit() => _store.Commit();
 
         public void Rollback() => _store.Rollback();
-
-        public void CleanupProcessedMessages()
-        {
-            foreach (var messageId in _completedMessagesId)
-                _store.Cleanup(messageId);
-
-            _completedMessagesId.Clear();
-        }
 
         private static byte[] Join(Dictionary<int, byte[]> chunks)
         {

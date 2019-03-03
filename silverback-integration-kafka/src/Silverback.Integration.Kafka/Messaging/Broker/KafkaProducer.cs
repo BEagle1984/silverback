@@ -45,19 +45,19 @@ namespace Silverback.Messaging.Broker
 
         private Confluent.Kafka.Producer<byte[], byte[]> GetInnerProducer() =>
             _innerProducer ?? (_innerProducer =
-                ProducersCache.GetOrAdd(Endpoint.Configuration, _ => CreateInnerProducer()));
+                ProducersCache.GetOrAdd(Endpoint.Configuration.ConfluentConfig, _ => CreateInnerProducer()));
 
         private Confluent.Kafka.Producer<byte[], byte[]> CreateInnerProducer()
         {
             _logger.LogTrace("Creating Confluent.Kafka.Producer...");
 
-            return new Confluent.Kafka.Producer<byte[], byte[]>(Endpoint.Configuration);
+            return new Confluent.Kafka.Producer<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig);
         }
 
         public void Dispose()
         {
             // Dispose only if still in cache to avoid ObjectDisposedException
-            if (!ProducersCache.TryRemove(Endpoint.Configuration, out _))
+            if (!ProducersCache.TryRemove(Endpoint.Configuration.ConfluentConfig, out _))
                 return;
 
             _innerProducer?.Flush(TimeSpan.FromSeconds(10));

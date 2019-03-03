@@ -97,6 +97,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             {
                 Configuration = new KafkaConsumerConfig
                 {
+                    CommitOffsetEach = 5,
                     AutoCommitIntervalMs = 1000
                 }
             };
@@ -108,6 +109,8 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             endpoint2.Should().NotBeNull();
+            endpoint2.Configuration.AutoCommitIntervalMs.Should().Be(endpoint1.Configuration.AutoCommitIntervalMs);
+            endpoint2.Configuration.CommitOffsetEach.Should().Be(endpoint1.Configuration.CommitOffsetEach);
         }
     }
 }

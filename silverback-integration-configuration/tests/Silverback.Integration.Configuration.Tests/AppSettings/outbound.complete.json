@@ -8,6 +8,7 @@
           "Type": "KafkaProducerEndpoint",
           "Name": "outbound-endpoint1",
           "Configuration": {
+            "BootstrapServers": "PLAINTEXT://kafka:9092",
             "EnableBackgroundPoll": false
           },
           "Serializer": {
@@ -15,6 +16,9 @@
             "Settings": {
               "Mode": 4
             }
+          },
+          "Chunk": {
+            "Size": 100000
           }
         }
       },
