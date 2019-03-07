@@ -62,6 +62,7 @@ namespace Silverback.Messaging.Connectors
                         ? failedMessage.Message
                         : msg)
                 .Where(msg => msg != null)
+                .SelectMany(msg => new[] { msg, WrapInboundMessage(msg, endpoint)})
                 .ToList();
 
             if (!messages.Any())
@@ -83,6 +84,14 @@ namespace Silverback.Messaging.Connectors
             }
 
             return true;
+        }
+
+        private IInboundMessage<object> WrapInboundMessage(object message, IEndpoint endpoint)
+        {
+            var wrapper = (IInboundMessage) Activator.CreateInstance(typeof(InboundMessage<>).MakeGenericType(message.GetType()));
+            wrapper.Endpoint = endpoint;
+            wrapper.Message = message;
+            return (IInboundMessage<object>)wrapper;
         }
 
         protected virtual void Commit(IServiceProvider serviceProvider)

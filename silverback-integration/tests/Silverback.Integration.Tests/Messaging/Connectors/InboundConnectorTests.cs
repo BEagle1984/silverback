@@ -23,6 +23,7 @@ namespace Silverback.Tests.Messaging.Connectors
     public class InboundConnectorTests
     {
         private readonly TestSubscriber _testSubscriber;
+        private readonly WrappedInboundMessageSubscriber _inboundSubscriber;
         private readonly IInboundConnector _connector;
         private readonly TestBroker _broker;
         private readonly ErrorPolicyBuilder _errorPolicyBuilder;
@@ -33,6 +34,9 @@ namespace Silverback.Tests.Messaging.Connectors
 
             _testSubscriber = new TestSubscriber();
             services.AddSingleton<ISubscriber>(_testSubscriber);
+
+            _inboundSubscriber = new WrappedInboundMessageSubscriber();
+            services.AddSingleton<ISubscriber>(_inboundSubscriber);
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
@@ -62,6 +66,23 @@ namespace Silverback.Tests.Messaging.Connectors
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
            _testSubscriber.ReceivedMessages.Count.Should().Be(5);
+        }
+
+        [Fact]
+        public void Bind_PushMessages_WrappedInboundMessagesReceived()
+        {
+            _connector.Bind(TestEndpoint.Default);
+            _broker.Connect();
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+
+            _inboundSubscriber.ReceivedMessages.OfType<InboundMessage<TestEventOne>>().Count().Should().Be(2);
+            _inboundSubscriber.ReceivedMessages.OfType<InboundMessage<TestEventTwo>>().Count().Should().Be(3);
         }
 
         [Fact]

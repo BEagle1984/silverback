@@ -15,7 +15,7 @@ namespace Silverback.Tests.TestTypes
 
         public Func<IMessage, bool> FailCondition { get; set; }
 
-        public int FailCount{ get; private set; }
+        public int FailCount { get; private set; }
 
         public List<IMessage> ReceivedMessages { get; } = new List<IMessage>();
 
