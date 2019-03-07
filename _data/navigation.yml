@@ -65,6 +65,10 @@ docs:
         url: /docs/advanced/chunking
       - title: Kafka Transactions
         url: /docs/advanced/kafka-transactions
+  - title: Special Use Cases
+    children:
+      - title: Producer and consumer in the same process
+        url: /docs/special/same-process
   - title: Extra
     children:
       - title: Samples
