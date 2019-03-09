@@ -22,14 +22,14 @@ namespace Microsoft.Extensions.DependencyInjection
             return services
                 .AddSingleton<BusOptions>()
                 .AddSingleton<BusConfigurator>()
-                .AddSingleton<SubscribedMethodInvoker>()
-                .AddSingleton<SubscribedMethodArgumentsResolver>()
-                .AddSingleton<IArgumentResolver, EnumerableMessageArgumentResolver>()
-                .AddSingleton<IArgumentResolver, SingleMessageArgumentResolver>()
-                .AddSingleton<IArgumentResolver, ServiceProviderAdditionalArgumentResolver>()
-                .AddSingleton<ReturnValueHandler>()
-                .AddSingleton<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
-                .AddSingleton<IReturnValueHandler, SingleMessageReturnValueHandler>()
+                .AddScoped<SubscribedMethodInvoker>()
+                .AddScoped<SubscribedMethodArgumentsResolver>()
+                .AddScoped<IArgumentResolver, EnumerableMessageArgumentResolver>()
+                .AddScoped<IArgumentResolver, SingleMessageArgumentResolver>()
+                .AddScoped<IArgumentResolver, ServiceProviderAdditionalArgumentResolver>()
+                .AddScoped<ReturnValueHandler>()
+                .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
+                .AddScoped<IReturnValueHandler, SingleMessageReturnValueHandler>()
                 .AddScoped<IPublisher, Publisher>();
         }
     }

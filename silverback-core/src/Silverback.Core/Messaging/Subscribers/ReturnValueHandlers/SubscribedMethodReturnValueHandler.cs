@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         public async Task<IEnumerable<object>> HandleReturnValues(IEnumerable<object> returnValues, bool executeAsync)
         {
             var unhandledReturnValues = new List<object>();
-            foreach (var returnValue in returnValues.Where(v => v != null))
+            foreach (var returnValue in returnValues.Where(v => v != null && v.GetType().Name != "VoidTaskResult"))
             {
                 var handler = _returnValueHandlers.FirstOrDefault(h => h.CanHandle(returnValue));
 

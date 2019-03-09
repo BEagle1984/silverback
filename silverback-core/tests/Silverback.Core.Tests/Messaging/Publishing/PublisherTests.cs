@@ -316,6 +316,49 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         }
 
         [Fact]
+        public void Publish_HandlersReturnValue_EnumerableReturned()
+        {
+            var publisher = GetPublisher(new TestRequestReplier());
+
+            var results = publisher.Publish<IEnumerable<string>>(new TestRequestCommandTwo());
+
+            results.SelectMany(x => x).Should().Equal("one", "two");
+        }
+
+        [Fact]
+        public async Task PublishAsync_HandlersReturnValue_EnumerableReturned()
+        {
+            var publisher = GetPublisher(new TestRequestReplier());
+
+            var results = await publisher.PublishAsync<IEnumerable<string>>(new TestRequestCommandTwo());
+
+            results.SelectMany(x => x).Should().Equal("one", "two");
+        }
+
+
+        [Fact]
+        public void Publish_HandlersReturnValue_EmptyEnumerableReturned()
+        {
+            var publisher = GetPublisher(new TestRequestReplier());
+
+            var results = publisher.Publish<IEnumerable<string>>(new TestRequestCommandThree());
+
+            results.First().Should().NotBeNull();
+            results.First().Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task PublishAsync_HandlersReturnValue_EmptyEnumerableReturned()
+        {
+            var publisher = GetPublisher(new TestRequestReplier());
+
+            var results = await publisher.PublishAsync<IEnumerable<string>>(new TestRequestCommandThree());
+
+            results.First().Should().NotBeNull();
+            results.First().Should().BeEmpty();
+        }
+
+        [Fact]
         public void Publish_SomeMessages_ReceivedAsEnumerable()
         {
             var publisher = GetPublisher(_syncEnumerableSubscriber, _asyncEnumerableSubscriber);
@@ -789,7 +832,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
 
             _asyncSubscriber.ReceivedMessagesCount.Should().Be(2);
         }
-        
+
         [Fact]
         public void Publish_SomeMessagesWithBehaviors_BehaviorsExecuted()
         {
@@ -819,11 +862,11 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             behavior1.EnterCount.Should().Be(2);
             behavior2.EnterCount.Should().Be(2);
         }
-        
+
         [Fact]
         public async Task PublishAsync_MessageChangingBehavior_BehaviorExecuted()
         {
-            var behavior = new ChangeMessageBehavior<TestCommandOne>(_ => new []{ new TestCommandTwo(), new TestCommandTwo(), new TestCommandTwo()});
+            var behavior = new ChangeMessageBehavior<TestCommandOne>(_ => new[] { new TestCommandTwo(), new TestCommandTwo(), new TestCommandTwo() });
 
             var publisher = GetPublisher(null, new[] { behavior }, _asyncSubscriber);
 
