@@ -24,7 +24,7 @@ public void Configure(BusConfigurator busConfigurator)
     busConfigurator
         .Connect(endpoints => endpoints
             .AddInbound(
-                new KafkaEndpoint("basket-events")
+                new KafkaConsumerEndpoint("basket-events")
                 {
                     Configuration = new KafkaConsumerConfig
                     {
@@ -33,7 +33,7 @@ public void Configure(BusConfigurator busConfigurator)
                     }
                 })
             .AddInbound(
-                new KafkaEndpoint("payment-events")
+                new KafkaConsumerEndpoint("payment-events")
                 {
                     Configuration = new KafkaConsumerConfig
                     {
@@ -42,7 +42,7 @@ public void Configure(BusConfigurator busConfigurator)
                     }
                 })
             .AddOutbound<IIntegrationEvent>(
-                new KafkaEndpoint("order-events")
+                new KafkaProducerEndpoint("order-events")
                 {
                     Configuration = new KafkaProducerConfig
                     {
