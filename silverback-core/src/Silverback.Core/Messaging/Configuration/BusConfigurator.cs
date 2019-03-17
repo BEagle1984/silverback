@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers.Subscriptions;
 
@@ -73,6 +74,7 @@ namespace Silverback.Messaging.Configuration
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
+
         public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, Task> handler, SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
@@ -123,12 +125,18 @@ namespace Silverback.Messaging.Configuration
 
         #region Subscribe (annotation based)
 
-        public BusConfigurator Subscribe<TSubscriber>() =>
-            Subscribe(typeof(TSubscriber));
+        public BusConfigurator Subscribe<TSubscriber>(bool autoSubscribeAllPublicMethods = true) =>
+            Subscribe(typeof(TSubscriber), autoSubscribeAllPublicMethods);
 
-        public BusConfigurator Subscribe(Type subscriberType)
+        public BusConfigurator Subscribe(Type subscriberType, bool autoSubscribeAllPublicMethods = true)
         {
-            _busOptions.Subscriptions.Add(new AnnotationBasedSubscription(subscriberType));
+            var previousSubscription = _busOptions.Subscriptions.OfType<TypeSubscription>()
+                .FirstOrDefault(sub => sub.SubscriberType == subscriberType);
+
+            if (previousSubscription != null)
+                _busOptions.Subscriptions.Remove(previousSubscription);
+
+            _busOptions.Subscriptions.Add(new TypeSubscription(subscriberType, autoSubscribeAllPublicMethods));
             return this;
         }
 

@@ -10,7 +10,29 @@ namespace Silverback.Core.Tests.TestTypes.Subscribers
     {
         public int ReceivedMessagesCount { get; private set; }
 
+        public int ReceivedCallsCount { get; private set; }
+
         [Subscribe]
-        public void OnTestMessageReceived(ITestMessage message) => ReceivedMessagesCount++;
+        public void OnTestMessageReceived(ITestMessage message)
+        {
+            ReceivedMessagesCount++;
+            ReceivedCallsCount++;
+        }
+
+        [Subscribe]
+        private void OnTestMessageReceived2(ITestMessage message)
+        {
+            ReceivedCallsCount++;
+        }
+
+        public void OnTestMessageReceived3(ITestMessage message)
+        {
+            ReceivedCallsCount++;
+        }
+
+        private void OnTestMessageReceived4(ITestMessage message)
+        {
+            ReceivedCallsCount++;
+        }
     }
 }

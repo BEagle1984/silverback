@@ -54,8 +54,19 @@ namespace Silverback.Messaging.Publishing
         public IEnumerable<TResult> Publish<TResult>(IEnumerable<object> messages) => 
             Publish(messages, false).Result.Cast<TResult>().ToList();
 
-        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) => 
-            (await Publish(messages, true)).Cast<TResult>().ToList();
+        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IEnumerable<object> messages)
+        {
+            var results = await Publish(messages, true);
+
+            try
+            {
+                return results.Cast<TResult>().ToList();
+            }
+            catch (InvalidCastException ex)
+            {
+                throw new SilverbackException("One or more subscribers returned a result that is not compatible with the expected response type.", ex);
+            }
+        }
 
         // TODO: Test recursion
         private async Task<IEnumerable<object>> Publish(IEnumerable<object> messages, bool executeAsync)

@@ -30,6 +30,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         private readonly TestAsyncSubscriber _asyncSubscriber;
         private readonly TestEnumerableSubscriber _syncEnumerableSubscriber;
         private readonly TestAsyncEnumerableSubscriber _asyncEnumerableSubscriber;
+        private BusConfigurator _configurator;
 
         public PublisherTests()
         {
@@ -192,7 +193,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         {
             var service1 = new TestServiceOne();
             var service2 = new TestServiceTwo();
-            var publisher = GetPublisher(service1, service2);
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), service1, service2);
 
             await publisher.PublishAsync(new TestCommandOne());         // service1 +2
             await publisher.PublishAsync(new TestCommandTwo());         // service2 +2
@@ -298,7 +299,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Fact]
         public void Publish_HandlersReturnValue_ResultsReturned()
         {
-            var publisher = GetPublisher(new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
 
             var results = publisher.Publish<string>(new TestRequestCommandOne());
 
@@ -318,7 +319,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Fact]
         public void Publish_HandlersReturnValue_EnumerableReturned()
         {
-            var publisher = GetPublisher(new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
 
             var results = publisher.Publish<IEnumerable<string>>(new TestRequestCommandTwo());
 
@@ -339,7 +340,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Fact]
         public void Publish_HandlersReturnValue_EmptyEnumerableReturned()
         {
-            var publisher = GetPublisher(new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
 
             var results = publisher.Publish<IEnumerable<string>>(new TestRequestCommandThree());
 
@@ -350,7 +351,7 @@ namespace Silverback.Core.Tests.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_HandlersReturnValue_EmptyEnumerableReturned()
         {
-            var publisher = GetPublisher(new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
 
             var results = await publisher.PublishAsync<IEnumerable<string>>(new TestRequestCommandThree());
 
@@ -876,8 +877,37 @@ namespace Silverback.Core.Tests.Messaging.Publishing
             _asyncSubscriber.ReceivedMessagesCount.Should().Be(4);
         }
 
-        /* TODO: Implement following tests:
-         * - Parallel and Exclusive
-         * - Republish messages not implementing IMessage */
+        [Fact]
+        public void Publish_AutoSubscribing_AllMethodsInvoked()
+        {
+            var publisher = GetPublisher(_syncSubscriber);
+
+            publisher.Publish(new TestEventOne());
+
+            _syncSubscriber.ReceivedCallsCount.Should().Be(3);
+        }
+
+        [Fact]
+        public void Publish_AutoSubscribingDisabled_OnlyDecoratedMethodsInvoked()
+        {
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), _syncSubscriber);
+
+            publisher.Publish(new TestEventOne());
+
+            _syncSubscriber.ReceivedCallsCount.Should().Be(2);
+        }
+
+        [Fact]
+        public void Publish_GenericSubscriber_MessageReceived()
+        {
+            var subscriber = new EventOneGenericSubscriber();
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), subscriber);
+
+            publisher.Publish(new TestEventOne());
+            publisher.Publish(new TestEventTwo());
+            publisher.Publish(new TestEventOne());
+
+            subscriber.ReceivedMessagesCount.Should().Be(2);
+        }
     }
 }

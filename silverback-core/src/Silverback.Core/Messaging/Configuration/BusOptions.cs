@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Configuration
     {
         public BusOptions()
         {
-            Subscriptions.Add(new AnnotationBasedSubscription(typeof(ISubscriber)));
+            Subscriptions.Add(new TypeSubscription(typeof(ISubscriber)));
             MessageTypes.Add(typeof(IMessage));
         }
 

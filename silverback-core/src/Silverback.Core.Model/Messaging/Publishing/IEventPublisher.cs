@@ -7,7 +7,6 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Publishing
 {
-    // TODO: Add overload accepting enumerable
     public interface IEventPublisher
     {
         void Publish(IEvent eventMessage);

@@ -9,7 +9,6 @@ namespace Silverback.Messaging.Subscribers
 {
     public class SubscribedMethodInfo
     {
-        // TODO: Overload to pass exclusive and parallel for non attribute based registrations
         public SubscribedMethodInfo(MethodInfo methodInfo, bool? exclusive = null, bool? parallel = null, int? maxDegreeOfParallelism = null)
         {
             MethodInfo = methodInfo ?? throw new ArgumentNullException(nameof(methodInfo));
