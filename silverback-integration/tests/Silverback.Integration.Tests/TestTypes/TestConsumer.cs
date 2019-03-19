@@ -23,7 +23,7 @@ namespace Silverback.Tests.TestTypes
 
         public int AcknowledgeCount { get; set; }
 
-        public void TestPush(object message, IOffset offset = null, IMessageSerializer serializer = null)
+        public void TestPush(object message, IEnumerable<MessageHeader> headers = null, IOffset offset = null, IMessageSerializer serializer = null)
         {
             if (!Broker.IsConnected)
                 throw new InvalidOperationException("The broker is not connected.");
@@ -36,7 +36,7 @@ namespace Silverback.Tests.TestTypes
 
             var buffer = serializer.Serialize(message);
 
-            HandleMessage(buffer, offset);
+            HandleMessage(buffer, headers, offset);
         }
 
         public override void Acknowledge(IEnumerable<IOffset> offsets) =>

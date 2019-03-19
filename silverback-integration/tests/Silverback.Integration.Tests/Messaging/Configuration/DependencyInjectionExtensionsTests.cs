@@ -50,8 +50,6 @@ namespace Silverback.Tests.Messaging.Configuration
             _services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             _services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-            _services.AddSingleton<IPublisher, Publisher>();
-
             _serviceProvider = null; // Creation deferred to after AddBroker() has been called
 
             InMemoryInboundLog.Clear();
@@ -190,22 +188,22 @@ namespace Silverback.Tests.Messaging.Configuration
             var consumer = GetBroker().Consumers.First();
             consumer.TestPush(
                 new TestEventOne {Id = Guid.NewGuid()},
-                new TestOffset("test-1", "1"));
+                offset: new TestOffset("test-1", "1"));
             consumer.TestPush(
                 new TestEventTwo { Id = Guid.NewGuid() },
-                new TestOffset("test-2", "1"));
+                offset: new TestOffset("test-2", "1"));
             consumer.TestPush(
                 new TestEventOne { Id = Guid.NewGuid() },
-                new TestOffset("test-1", "2"));
+                offset: new TestOffset("test-1", "2"));
             consumer.TestPush(
                 new TestEventTwo { Id = Guid.NewGuid() },
-                new TestOffset("test-2", "1"));
+                offset: new TestOffset("test-2", "1"));
             consumer.TestPush(
                 new TestEventOne { Id = Guid.NewGuid() },
-                new TestOffset("test-1", "3"));
+                offset: new TestOffset("test-1", "3"));
             consumer.TestPush(
                 new TestEventTwo { Id = Guid.NewGuid() },
-                new TestOffset("test-2", "2"));
+                offset: new TestOffset("test-2", "2"));
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(5);
         }

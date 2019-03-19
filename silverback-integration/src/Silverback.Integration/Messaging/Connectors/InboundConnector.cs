@@ -56,13 +56,10 @@ namespace Silverback.Messaging.Connectors
         protected virtual void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint endpoint, IServiceProvider serviceProvider)
         {
             var messages = messagesArgs
-                .Select(args => HandleChunkedMessage(args, endpoint, serviceProvider) ? args.Message : null)
-                .Select(msg =>
-                    msg is FailedMessage failedMessage
-                        ? failedMessage.Message
-                        : msg)
-                .Where(msg => msg != null)
-                .SelectMany(msg => new[] { msg, WrapInboundMessage(msg, endpoint)})
+                .Select(args => HandleChunkedMessage(args, endpoint, serviceProvider) ? args : null)
+                .Select(UnwrapFailedMessage)
+                .Where(args => args != null)
+                .SelectMany(args => new[] { args.Message, WrapInboundMessage(args, endpoint)})
                 .ToList();
 
             if (!messages.Any())
@@ -86,12 +83,25 @@ namespace Silverback.Messaging.Connectors
             return true;
         }
 
-        private IInboundMessage<object> WrapInboundMessage(object message, IEndpoint endpoint)
+        private MessageReceivedEventArgs UnwrapFailedMessage(MessageReceivedEventArgs args)
         {
-            var wrapper = (IInboundMessage) Activator.CreateInstance(typeof(InboundMessage<>).MakeGenericType(message.GetType()));
+            if (args?.Message is FailedMessage failedMessage)
+                args.Message = failedMessage.Message;
+
+            return args;
+        }
+
+        private IInboundMessage WrapInboundMessage(MessageReceivedEventArgs args, IEndpoint endpoint)
+        {
+            var wrapper = (IInboundMessage) Activator.CreateInstance(typeof(InboundMessage<>).MakeGenericType(args.Message.GetType()));
+
             wrapper.Endpoint = endpoint;
-            wrapper.Message = message;
-            return (IInboundMessage<object>)wrapper;
+            wrapper.Message = args.Message;
+
+            if (args.Headers != null)
+                wrapper.Headers.AddRange(args.Headers);
+
+            return wrapper;
         }
 
         protected virtual void Commit(IServiceProvider serviceProvider)

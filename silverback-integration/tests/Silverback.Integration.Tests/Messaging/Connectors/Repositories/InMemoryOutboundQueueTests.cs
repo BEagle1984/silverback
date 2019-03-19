@@ -27,7 +27,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         {
             Parallel.For(0, 3, _ =>
             {
-                _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+                _queue.Enqueue(new TestEventOne(), null, TestEndpoint.Default);
             });
 
             _queue.Length.Should().Be(0);
@@ -38,7 +38,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         {
             Parallel.For(0, 3, _ =>
             {
-                _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+                _queue.Enqueue(new TestEventOne(), null, TestEndpoint.Default);
             });
 
             _queue.Commit();
@@ -51,7 +51,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         {
             Parallel.For(0, 3, _ =>
             {
-                _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+                _queue.Enqueue(new TestEventOne(), null, TestEndpoint.Default);
             });
 
             _queue.Rollback();
@@ -62,11 +62,11 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         [Fact]
         public void EnqueueCommitRollbackCommitTest()
         {
-            _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+            _queue.Enqueue(new TestEventOne(), null, TestEndpoint.Default);
             _queue.Commit();
-            _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+            _queue.Enqueue(new TestEventOne(), null, TestEndpoint.Default);
             _queue.Rollback();
-            _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+            _queue.Enqueue(new TestEventOne(), null, TestEndpoint.Default);
             _queue.Commit();
 
             _queue.Length.Should().Be(2);
@@ -80,7 +80,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         {
             for (var i = 0; i < 5; i++)
             {
-                _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+                _queue.Enqueue(new TestEventOne(), null, TestEndpoint.Default);
             }
 
             _queue.Commit();
@@ -95,7 +95,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         {
             for (var i = 0; i < 5; i++)
             {
-                _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+                _queue.Enqueue(new TestEventOne(), null, TestEndpoint.Default);
             }
 
             _queue.Commit();

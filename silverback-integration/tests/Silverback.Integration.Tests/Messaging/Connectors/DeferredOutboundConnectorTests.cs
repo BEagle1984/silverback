@@ -34,22 +34,28 @@ namespace Silverback.Tests.Messaging.Connectors
             var endpoint = TestEndpoint.Default;
 
             var message = new TestEventOne { Content = "Test" };
+            var headers = new[]
+            {
+                new MessageHeader("header1", "value1"),
+                new MessageHeader("header2", "value2")
+            };
 
-            await _connector.RelayMessage(message, endpoint);
+            await _connector.RelayMessage(message, headers, endpoint);
             await _queue.Commit();
 
             _queue.Length.Should().Be(1);
             var queued = _queue.Dequeue(1).First();
             queued.Endpoint.Should().Be(endpoint);
+            queued.Headers.Count().Should().Be(2);
             ((IIntegrationMessage)queued.Message).Id.Should().Be(message.Id);
         }
 
         [Fact]
         public async Task CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
-            await _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
+            await _connector.RelayMessage(new TestEventOne(), null, TestEndpoint.Default);
             await _connector.OnTransactionCompleted(new TransactionCompletedEvent());
-            await _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
+            await _connector.RelayMessage(new TestEventOne(), null, TestEndpoint.Default);
             await _connector.OnTransactionAborted(new TransactionAbortedEvent());
 
             _queue.Length.Should().Be(1);
