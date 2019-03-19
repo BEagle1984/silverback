@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Messages
     {
         public IEndpoint Endpoint { get; set; }
 
-        public MessageHeaderCollection Headers => new MessageHeaderCollection();
+        public MessageHeaderCollection Headers { get; set; } = new MessageHeaderCollection();
 
         public TMessage Message { get; set; }
 

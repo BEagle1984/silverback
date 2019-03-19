@@ -44,6 +44,6 @@ namespace Silverback.Messaging.Connectors
         [Subscribe]
         internal Task OnOutboundMessageReceived(IOutboundMessageInternal outboundMessage) =>
             _outboundConnectors.GetConnectorInstance(outboundMessage.Route.OutboundConnectorType)
-                .RelayMessage(outboundMessage.Message, outboundMessage.Headers, outboundMessage.Endpoint);
+                .RelayMessage(outboundMessage);
     }
 }

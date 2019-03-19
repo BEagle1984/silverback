@@ -26,38 +26,42 @@ namespace Silverback.Tests.Messaging.Connectors
         [Fact]
         public async Task OnMessageReceived_SingleMessage_Relayed()
         {
-            var endpoint = TestEndpoint.Default;
+            var outboundMessage = new OutboundMessage<TestEventOne>()
+            {
+                Message = new TestEventOne { Content = "Test" },
+                Endpoint = TestEndpoint.Default
+            };
 
-            var message = new TestEventOne { Content = "Test" };
-
-            await _connector.RelayMessage(message, null, endpoint);
+            await _connector.RelayMessage(outboundMessage);
 
             _broker.ProducedMessages.Count.Should().Be(1);
-            _broker.ProducedMessages.First().Endpoint.Should().Be(endpoint);
+            _broker.ProducedMessages.First().Endpoint.Should().Be(outboundMessage.Endpoint);
 
-            var producedMessage = endpoint.Serializer.Deserialize(_broker.ProducedMessages.First().Message) as TestEventOne;
-            producedMessage.Id.Should().Be(message.Id);
+            var producedMessage = outboundMessage.Endpoint.Serializer.Deserialize(_broker.ProducedMessages.First().Message) as TestEventOne;
+            producedMessage.Id.Should().Be(outboundMessage.Message.Id);
         }
 
         [Fact]
         public async Task OnMessageReceived_SingleMessage_HeadersSent()
         {
-            var endpoint = TestEndpoint.Default;
-
-            var message = new TestEventOne { Content = "Test" };
-            var headers = new[]
+            var outboundMessage = new OutboundMessage<TestEventOne>()
             {
-                new MessageHeader("header1", "value1"),
-                new MessageHeader("header2", "value2")
+                Message = new TestEventOne {Content = "Test"},
+                Endpoint = TestEndpoint.Default,
+                Headers =
+                {
+                    {"header1", "value1"},
+                    {"header2", "value2"}
+                }
             };
 
-            await _connector.RelayMessage(message, headers , endpoint);
+            await _connector.RelayMessage(outboundMessage);
 
             _broker.ProducedMessages.Count.Should().Be(1);
-            _broker.ProducedMessages.First().Endpoint.Should().Be(endpoint);
+            _broker.ProducedMessages.First().Endpoint.Should().Be(outboundMessage.Endpoint);
 
             var producedMessage = _broker.ProducedMessages.First();
-            producedMessage.Headers.Should().BeEquivalentTo(headers);
+            producedMessage.Headers.Should().BeEquivalentTo(outboundMessage.Headers);
         }
     }
 }

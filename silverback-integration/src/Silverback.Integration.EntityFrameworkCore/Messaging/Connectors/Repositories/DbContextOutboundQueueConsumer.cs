@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Model;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -20,22 +21,19 @@ namespace Silverback.Messaging.Connectors.Repositories
             _removeProduced = removeProduced;
         }
 
-        public IEnumerable<QueuedMessage> Dequeue(int count) => DbSet
+        public IEnumerable<IOutboundMessage> Dequeue(int count) => DbSet
             .Where(m => m.Produced == null)
             .OrderBy(m => m.Id)
             .Take(count)
             .ToList()
-            .Select(message => new DbQueuedMessage(
-                message.Id,
-                DefaultSerializer.Deserialize<object>(message.Message),
-                DefaultSerializer.Deserialize<IEndpoint>(message.Endpoint)));
+            .Select(message => DefaultSerializer.Deserialize<IOutboundMessage>(message.Message));
 
-        public void Retry(QueuedMessage queuedMessage)
+        public void Retry(IOutboundMessage queuedMessage)
         {
             // Nothing to do, the message is retried if not marked as produced
         }
 
-        public void Acknowledge(QueuedMessage queuedMessage)
+        public void Acknowledge(IOutboundMessage queuedMessage)
         {
             if (!(queuedMessage is DbQueuedMessage dbQueuedMessage))
                 throw new InvalidOperationException("A DbQueuedMessage is expected.");

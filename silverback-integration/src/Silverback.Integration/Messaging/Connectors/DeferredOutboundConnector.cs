@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Connectors
 {
-    // TODO: Test?
     /// <summary>
     /// Stores the message into a queue to be forwarded to the message broker later on.
     /// </summary>
-    public class DeferredOutboundConnector : IOutboundConnector, ISubscriber
+    public class DeferredOutboundConnector : IOutboundConnector
     {
         private readonly IOutboundQueueProducer _queueProducer;
         private readonly ILogger _logger;
@@ -27,22 +25,10 @@ namespace Silverback.Messaging.Connectors
             _messageLogger = messageLogger;
         }
 
-        [Subscribe]
-        public async Task OnTransactionCompleted(TransactionCompletedEvent message)
+        public async Task RelayMessage(IOutboundMessage message)
         {
-            await _queueProducer.Commit();
-        }
-
-        [Subscribe]
-        public async Task OnTransactionAborted(TransactionAbortedEvent message)
-        {
-            await _queueProducer.Rollback();
-        }
-
-        public async Task RelayMessage(object message, IEnumerable<MessageHeader> headers, IEndpoint destinationEndpoint)
-        {
-            _messageLogger.LogTrace(_logger, "Queuing message for deferred publish.", message, destinationEndpoint);
-            await _queueProducer.Enqueue(message, headers, destinationEndpoint);
+            _messageLogger.LogTrace(_logger, "Queuing message for deferred publish.", message.Message, message.Endpoint);
+            await _queueProducer.Enqueue(message);
         }
     }
 }

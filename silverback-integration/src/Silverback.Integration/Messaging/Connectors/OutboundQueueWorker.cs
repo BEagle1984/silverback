@@ -45,13 +45,13 @@ namespace Silverback.Messaging.Connectors
         {
             try
             {
-                ProduceMessage(message.Message, message.Endpoint);
+                ProduceMessage(message.Message);
 
                 _queue.Acknowledge(message);
             }
             catch (Exception ex)
             {
-                _messageLogger.LogError(_logger, ex, "Failed to publish queued message.", message?.Message, message?.Endpoint);
+                _messageLogger.LogError(_logger, ex, "Failed to publish queued message.", message?.Message.Message, message?.Message.Endpoint);
 
                 _queue.Retry(message);
 
@@ -61,7 +61,7 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        protected virtual void ProduceMessage(object message, IEndpoint endpoint)
-            => _broker.GetProducer(endpoint).Produce(message);
+        protected virtual void ProduceMessage(IOutboundMessage message)
+            => _broker.GetProducer(message.Endpoint).Produce(message.Message);
     }
 }

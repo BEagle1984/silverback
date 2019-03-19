@@ -17,8 +17,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Silverback.Core" Version="0.5.2" />
-    <PackageReference Include="Silverback.Integration" Version="0.5.2.8" />
+    <PackageReference Include="Silverback.Core" Version="0.6.0" />
+    <PackageReference Include="Silverback.Integration" Version="0.5.4" />
   </ItemGroup>
 
 </Project>
