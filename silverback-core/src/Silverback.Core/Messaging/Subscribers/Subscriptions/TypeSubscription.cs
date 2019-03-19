@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers.Subscriptions
 {
