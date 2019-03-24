@@ -1,6 +1,4 @@
-﻿// Copyright (c) 2018-2019 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
-namespace Silverback.Messaging.Proxies
+﻿namespace Silverback.Messaging.Proxies
 {
     public class ConfluentConsumerConfigProxy
     {
@@ -8,6 +6,20 @@ namespace Silverback.Messaging.Proxies
 
         ///<summary> A comma separated list of fields that may be optionally set in <see cref="T:Confluent.Kafka.ConsumeResult`2" /> objects returned by the <see cref="M:Confluent.Kafka.Consumer`2.Consume(System.TimeSpan)" /> method. Disabling fields that you do not require will improve throughput and reduce memory consumption. Allowed values: headers, timestamp, topic, all, none default: all </summary>
         public string ConsumeResultFields { set => ConfluentConfig.ConsumeResultFields = value; }
+
+        public string GroupId { get => ConfluentConfig.GroupId; set => ConfluentConfig.GroupId = value; }
+
+        public Confluent.Kafka.PartitionAssignmentStrategy? PartitionAssignmentStrategy { get => ConfluentConfig.PartitionAssignmentStrategy; set => ConfluentConfig.PartitionAssignmentStrategy = value; }
+
+        public int? SessionTimeoutMs { get => ConfluentConfig.SessionTimeoutMs; set => ConfluentConfig.SessionTimeoutMs = value; }
+
+        public int? HeartbeatIntervalMs { get => ConfluentConfig.HeartbeatIntervalMs; set => ConfluentConfig.HeartbeatIntervalMs = value; }
+
+        public string GroupProtocolType { get => ConfluentConfig.GroupProtocolType; set => ConfluentConfig.GroupProtocolType = value; }
+
+        public int? CoordinatorQueryIntervalMs { get => ConfluentConfig.CoordinatorQueryIntervalMs; set => ConfluentConfig.CoordinatorQueryIntervalMs = value; }
+
+        public int? MaxPollIntervalMs { get => ConfluentConfig.MaxPollIntervalMs; set => ConfluentConfig.MaxPollIntervalMs = value; }
 
         ///<summary> Automatically and periodically commit offsets in the background. Note: setting this to false does not prevent the consumer from fetching previously committed start offsets. To circumvent this behaviour set specific start offsets per partition in the call to assign(). </summary>
         public bool? EnableAutoCommit { get => ConfluentConfig.EnableAutoCommit; set => ConfluentConfig.EnableAutoCommit = value; }
@@ -46,10 +58,12 @@ namespace Silverback.Messaging.Proxies
         public bool? CheckCrcs { get => ConfluentConfig.CheckCrcs; set => ConfluentConfig.CheckCrcs = value; }
 
         ///<summary> Action to take when there is no initial offset in offset store or the desired offset is out of range: 'smallest','earliest' - automatically reset the offset to the smallest offset, 'largest','latest' - automatically reset the offset to the largest offset, 'error' - trigger an error which is retrieved by consuming messages and checking 'message-&gt;err'. </summary>
-        public Confluent.Kafka.AutoOffsetResetType? AutoOffsetReset { get => ConfluentConfig.AutoOffsetReset; set => ConfluentConfig.AutoOffsetReset = value; }
+        public Confluent.Kafka.AutoOffsetReset? AutoOffsetReset { get => ConfluentConfig.AutoOffsetReset; set => ConfluentConfig.AutoOffsetReset = value; }
 
         ///<summary> SASL mechanism to use for authentication. Supported: GSSAPI, PLAIN, SCRAM-SHA-256, SCRAM-SHA-512. **NOTE**: Despite the name, you may not configure more than one mechanism. </summary>
-        public Confluent.Kafka.SaslMechanismType? SaslMechanism { get => ConfluentConfig.SaslMechanism; set => ConfluentConfig.SaslMechanism = value; }
+        public Confluent.Kafka.SaslMechanism? SaslMechanism { get => ConfluentConfig.SaslMechanism; set => ConfluentConfig.SaslMechanism = value; }
+
+        public Confluent.Kafka.Acks? Acks { get => ConfluentConfig.Acks; set => ConfluentConfig.Acks = value; }
 
         ///<summary> Client identifier. </summary>
         public string ClientId { get => ConfluentConfig.ClientId; set => ConfluentConfig.ClientId = value; }
@@ -93,9 +107,6 @@ namespace Silverback.Messaging.Proxies
         ///<summary> Default timeout for network requests. Producer: ProduceRequests will use the lesser value of `socket.timeout.ms` and remaining `message.timeout.ms` for the first message in the batch. Consumer: FetchRequests will use `fetch.wait.max.ms` + `socket.timeout.ms`. Admin: Admin requests will use `socket.timeout.ms` or explicitly set `rd_kafka_AdminOptions_set_operation_timeout()` value. </summary>
         public int? SocketTimeoutMs { get => ConfluentConfig.SocketTimeoutMs; set => ConfluentConfig.SocketTimeoutMs = value; }
 
-        ///<summary> **DEPRECATED** No longer used. </summary>
-        public int? SocketBlockingMaxMs { get => ConfluentConfig.SocketBlockingMaxMs; set => ConfluentConfig.SocketBlockingMaxMs = value; }
-
         ///<summary> Broker socket send buffer size. System default is used if 0. </summary>
         public int? SocketSendBufferBytes { get => ConfluentConfig.SocketSendBufferBytes; set => ConfluentConfig.SocketSendBufferBytes = value; }
 
@@ -115,13 +126,10 @@ namespace Silverback.Messaging.Proxies
         public int? BrokerAddressTtl { get => ConfluentConfig.BrokerAddressTtl; set => ConfluentConfig.BrokerAddressTtl = value; }
 
         ///<summary> Allowed broker IP address families: any, v4, v6 </summary>
-        public Confluent.Kafka.BrokerAddressFamilyType? BrokerAddressFamily { get => ConfluentConfig.BrokerAddressFamily; set => ConfluentConfig.BrokerAddressFamily = value; }
+        public Confluent.Kafka.BrokerAddressFamily? BrokerAddressFamily { get => ConfluentConfig.BrokerAddressFamily; set => ConfluentConfig.BrokerAddressFamily = value; }
 
         ///<summary> When enabled the client will only connect to brokers it needs to communicate with. When disabled the client will maintain connections to all brokers in the cluster. </summary>
         public bool? EnableSparseConnections { get => ConfluentConfig.EnableSparseConnections; set => ConfluentConfig.EnableSparseConnections = value; }
-
-        ///<summary> **DEPRECATED** No longer used. See `reconnect.backoff.ms` and `reconnect.backoff.max.ms`. </summary>
-        public int? ReconnectBackoffJitterMs { get => ConfluentConfig.ReconnectBackoffJitterMs; set => ConfluentConfig.ReconnectBackoffJitterMs = value; }
 
         ///<summary> The initial time to wait before reconnecting to a broker after the connection has been closed. The time is increased exponentially until `reconnect.backoff.max.ms` is reached. -25% to +50% jitter is applied to each reconnect backoff. A value of 0 disables the backoff and reconnects immediately. </summary>
         public int? ReconnectBackoffMs { get => ConfluentConfig.ReconnectBackoffMs; set => ConfluentConfig.ReconnectBackoffMs = value; }
@@ -157,7 +165,7 @@ namespace Silverback.Messaging.Proxies
         public string BrokerVersionFallback { get => ConfluentConfig.BrokerVersionFallback; set => ConfluentConfig.BrokerVersionFallback = value; }
 
         ///<summary> Protocol used to communicate with brokers. </summary>
-        public Confluent.Kafka.SecurityProtocolType? SecurityProtocol { get => ConfluentConfig.SecurityProtocol; set => ConfluentConfig.SecurityProtocol = value; }
+        public Confluent.Kafka.SecurityProtocol? SecurityProtocol { get => ConfluentConfig.SecurityProtocol; set => ConfluentConfig.SecurityProtocol = value; }
 
         ///<summary> A cipher suite is a named combination of authentication, encryption, MAC and key exchange algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol. See manual page for `ciphers(1)` and `SSL_CTX_set_cipher_list(3). </summary>
         public string SslCipherSuites { get => ConfluentConfig.SslCipherSuites; set => ConfluentConfig.SslCipherSuites = value; }
@@ -213,22 +221,6 @@ namespace Silverback.Messaging.Proxies
         ///<summary> List of plugin libraries to load (; separated). The library search path is platform dependent (see dlopen(3) for Unix and LoadLibrary() for Windows). If no filename extension is specified the platform-specific extension (such as .dll or .so) will be appended automatically. </summary>
         public string PluginLibraryPaths { get => ConfluentConfig.PluginLibraryPaths; set => ConfluentConfig.PluginLibraryPaths = value; }
 
-        ///<summary> Client group id string. All clients sharing the same group.id belong to the same group. </summary>
-        public string GroupId { get => ConfluentConfig.GroupId; set => ConfluentConfig.GroupId = value; }
-
-        ///<summary> Name of partition assignment strategy to use when elected group leader assigns partitions to group members. </summary>
-        public Confluent.Kafka.PartitionAssignmentStrategyType? PartitionAssignmentStrategy { get => ConfluentConfig.PartitionAssignmentStrategy; set => ConfluentConfig.PartitionAssignmentStrategy = value; }
-
-        ///<summary> Client group session and failure detection timeout. </summary>
-        public int? SessionTimeoutMs { get => ConfluentConfig.SessionTimeoutMs; set => ConfluentConfig.SessionTimeoutMs = value; }
-
-        ///<summary> Group session keepalive heartbeat interval. </summary>
-        public int? HeartbeatIntervalMs { get => ConfluentConfig.HeartbeatIntervalMs; set => ConfluentConfig.HeartbeatIntervalMs = value; }
-
-        ///<summary> Group protocol type </summary>
-        public string GroupProtocolType { get => ConfluentConfig.GroupProtocolType; set => ConfluentConfig.GroupProtocolType = value; }
-
-        ///<summary> How often to query for the current client group coordinator. If the currently assigned coordinator is down the configured query interval will be divided by ten to more quickly recover in case of coordinator reassignment. </summary>
-        public int? CoordinatorQueryIntervalMs { get => ConfluentConfig.CoordinatorQueryIntervalMs; set => ConfluentConfig.CoordinatorQueryIntervalMs = value; }
+        public int CancellationDelayMaxMs { set => ConfluentConfig.CancellationDelayMaxMs = value; }
     }
 }

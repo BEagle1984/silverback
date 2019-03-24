@@ -24,7 +24,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             var config1 = new Confluent.Kafka.ConsumerConfig
             {
                 BootstrapServers = "myserver",
-                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategyType.Range,
+                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategy.Range,
                 EnableAutoCommit = false
             };
             var config2 = config1;
@@ -40,12 +40,12 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             var config1 = new Confluent.Kafka.ConsumerConfig
             {
                 BootstrapServers = "myserver",
-                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategyType.Range,
+                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategy.Range,
                 EnableAutoCommit = false
             };
             var config2 = new Confluent.Kafka.ConsumerConfig
             {
-                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategyType.Range,
+                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategy.Range,
                 BootstrapServers = "myserver",
                 EnableAutoCommit = false
             };
@@ -61,12 +61,12 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             var config1 = new Confluent.Kafka.ConsumerConfig
             {
                 BootstrapServers = "myserver",
-                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategyType.Range,
+                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategy.Range,
                 EnableAutoCommit = false
             };
             var config2 = new Confluent.Kafka.ConsumerConfig
             {
-                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategyType.Range,
+                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategy.Range,
                 BootstrapServers = "myserver",
                 EnableAutoCommit = true
             };
@@ -82,12 +82,12 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             var config1 = new Confluent.Kafka.ConsumerConfig
             {
                 BootstrapServers = "myserver",
-                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategyType.Range,
+                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategy.Range,
                 EnableAutoCommit = false
             };
             var config2 = new Confluent.Kafka.ConsumerConfig
             {
-                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategyType.Range,
+                PartitionAssignmentStrategy = Confluent.Kafka.PartitionAssignmentStrategy.Range,
                 BootstrapServers = "myserver"
             };
 

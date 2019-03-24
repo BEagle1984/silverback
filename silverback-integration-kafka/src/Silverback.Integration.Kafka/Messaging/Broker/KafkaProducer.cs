@@ -15,10 +15,10 @@ namespace Silverback.Messaging.Broker
     public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
         private readonly ILogger _logger;
-        private Confluent.Kafka.Producer<byte[], byte[]> _innerProducer;
+        private Confluent.Kafka.IProducer<byte[], byte[]> _innerProducer;
 
-        private static readonly ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.Producer<byte[], byte[]>> ProducersCache =
-            new ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.Producer<byte[], byte[]>>(new KafkaClientConfigComparer());
+        private static readonly ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>> ProducersCache =
+            new ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>>(new KafkaClientConfigComparer());
 
         public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, MessageKeyProvider messageKeyProvider, 
             ILogger<KafkaProducer> logger, MessageLogger messageLogger)
@@ -52,15 +52,15 @@ namespace Silverback.Messaging.Broker
                 deliveryReport.Topic, deliveryReport.Partition, deliveryReport.Offset);
         }
 
-        private Confluent.Kafka.Producer<byte[], byte[]> GetInnerProducer() =>
+        private Confluent.Kafka.IProducer<byte[], byte[]> GetInnerProducer() =>
             _innerProducer ?? (_innerProducer =
                 ProducersCache.GetOrAdd(Endpoint.Configuration.ConfluentConfig, _ => CreateInnerProducer()));
 
-        private Confluent.Kafka.Producer<byte[], byte[]> CreateInnerProducer()
+        private Confluent.Kafka.IProducer<byte[], byte[]> CreateInnerProducer()
         {
             _logger.LogTrace("Creating Confluent.Kafka.Producer...");
 
-            return new Confluent.Kafka.Producer<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig);
+            return new Confluent.Kafka.ProducerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig).Build();
         }
 
         public void Dispose()

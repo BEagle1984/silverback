@@ -17,7 +17,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                     Acks = 3
+                     Acks = Confluent.Kafka.Acks.Leader
                 }
             };
 
@@ -31,7 +31,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = 3
+                    Acks = Confluent.Kafka.Acks.Leader
                 }
             };
 
@@ -39,7 +39,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = 3
+                    Acks = Confluent.Kafka.Acks.Leader
                 }
             };
 
@@ -53,7 +53,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = 3
+                    Acks = Confluent.Kafka.Acks.Leader
                 }
             };
 
@@ -61,7 +61,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = 3
+                    Acks = Confluent.Kafka.Acks.Leader
                 }
             };
 
@@ -75,7 +75,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = 3
+                    Acks = Confluent.Kafka.Acks.Leader
                 }
             };
 
@@ -83,7 +83,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = 2
+                    Acks = Confluent.Kafka.Acks.All
                 }
             };
 
@@ -97,7 +97,7 @@ namespace Silverback.Integration.Kafka.Tests.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = 2
+                    Acks = Confluent.Kafka.Acks.All
                 }
             };
 

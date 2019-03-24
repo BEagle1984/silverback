@@ -41,7 +41,7 @@ namespace Consumer
                 {
                     BootstrapServers = "PLAINTEXT://kafka:9092",
                     GroupId = "silverback-consumer",
-                    AutoOffsetReset = Confluent.Kafka.AutoOffsetResetType.Earliest
+                    AutoOffsetReset = Confluent.Kafka.AutoOffsetReset.Earliest
                 }
             });
 

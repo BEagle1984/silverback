@@ -1,7 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -27,8 +28,8 @@ namespace Silverback.Examples.ConsumerA
                 if (message.Headers != null && message.Headers.Any())
                 {
                     _logger.LogInformation(
-                        "Headers: [{headers}]",
-                        string.Join(", ", message.Headers.Select(h => $"'{h.Key}'='{h.Value}'")));
+                        "Headers: {headers}",
+                        string.Join(", ", message.Headers.Select(h => $"{h.Key}={h.Value}")));
                 }
             }
 

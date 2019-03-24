@@ -154,10 +154,7 @@ namespace Silverback.Tests.Messaging.Configuration
 
             var endpoint = (KafkaConsumerEndpoint)reader.Inbound.First().Endpoint;
 
-            // Note: Confluent.Kafka currently has a bug preventing the property
-            // value to be retrieved
-            Action action = () => endpoint.Configuration.AutoOffsetReset.Should().Be(AutoOffsetResetType.Earliest);
-            action.Should().Throw<ArgumentException>().WithMessage("Requested value 'earliest' was not found.");
+            endpoint.Configuration.AutoOffsetReset.Should().Be(AutoOffsetReset.Earliest);
         }
 
         [Fact]

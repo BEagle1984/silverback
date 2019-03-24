@@ -55,8 +55,7 @@ namespace Silverback.Examples.ConsumerA
                                 Configuration = new KafkaProducerConfig
                                 {
                                     BootstrapServers = "PLAINTEXT://kafka:9092",
-                                    ClientId = "consumer-service-a",
-                                    GroupId = "silverback-examples"
+                                    ClientId = "consumer-service-a"
                                 }
                             })))
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer",

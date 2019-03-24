@@ -9,10 +9,10 @@ namespace Silverback.Messaging.Messages
     {
         private static readonly Encoding Encoding = Encoding.UTF8;
 
-        public static Confluent.Kafka.Header ToConfluentHeader(this MessageHeader header)
-            => new Confluent.Kafka.Header(header.Key, Encoding.GetBytes(header.Value));
+        public static Confluent.Kafka.Header ToConfluentHeader(this MessageHeader header) =>
+            new Confluent.Kafka.Header(header.Key, Encoding.GetBytes(header.Value));
 
-        public static MessageHeader ToSilverbackHeader(this Confluent.Kafka.Header header)
-            => new MessageHeader(header.Key, Encoding.GetString(header.Value));
+        public static MessageHeader ToSilverbackHeader(this Confluent.Kafka.IHeader header) =>
+            new MessageHeader(header.Key, Encoding.GetString(header.GetValueBytes()));
     }
 }
