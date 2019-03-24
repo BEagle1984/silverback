@@ -40,7 +40,7 @@ defaults:
       read_time: false
       show_date: true
       comments: true
-      share: true
+      share: false
       related: true
       pager: true
   - scope:
@@ -55,7 +55,7 @@ defaults:
       layout: single
       pager: true
       author_profile: false
-      share: true
+      share: false
       toc: true
       toc_label: Contents
       toc_icon: stream

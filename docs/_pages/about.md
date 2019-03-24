@@ -35,3 +35,4 @@ Silverback uses the following libraries under the hood:
 A very big thank you to my friends and colleagues:
 * [Fabio](https://github.com/ppx80) for the help with Kafka
 * [Laurent](https://github.com/lbovet) for constantly challenging, pushing and bringing new ideas and feedbacks
+* [Marc](https://github.com/msallin) for the testing and the valuable feedbacks
