@@ -16,11 +16,9 @@ namespace Silverback.Messaging.Connectors.Model
         public int Id { get; set; }
 
         public string Message { get; set; }
-
         public string Endpoint { get; set; }
 
         public DateTime Created { get; set; }
-
         public DateTime? Produced { get; set; }
     }
 }

@@ -34,5 +34,10 @@ namespace Silverback.Core.Tests.TestTypes.Subscribers
         {
             ReceivedCallsCount++;
         }
+
+        // This is here to try and break the reflection based logic -> DON'T REMOVE
+        public void TryToBreakIt(int param)
+        {
+        }
     }
 }

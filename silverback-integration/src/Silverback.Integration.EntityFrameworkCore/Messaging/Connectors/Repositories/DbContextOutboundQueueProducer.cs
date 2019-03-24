@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Model;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -15,17 +16,16 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        public async Task Enqueue(object message, IEndpoint endpoint)
+        public async Task Enqueue(IOutboundMessage message)
         {
             await DbSet.AddAsync(new OutboundMessage
             {
                 Message = DefaultSerializer.Serialize(message),
-                Endpoint = DefaultSerializer.Serialize(endpoint),
+                Endpoint = message.Endpoint.Name,
                 Created = DateTime.UtcNow
             });
         }
 
-        // Nothing to do, the transaction is committed with the DbContext.SaveChanges()
         public Task Commit() => Task.CompletedTask;
 
         // Nothing to do, the transaction is aborted by the DbContext

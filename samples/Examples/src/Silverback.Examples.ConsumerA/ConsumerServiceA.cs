@@ -12,6 +12,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Subscribers;
 
@@ -26,7 +27,8 @@ namespace Silverback.Examples.ConsumerA
                 .AddDbOffsetStoredInboundConnector<ExamplesDbContext>()
                 .AddInboundConnector()
                 .AddDbChunkStore<ExamplesDbContext>())
-            .AddScoped<ISubscriber, SubscriberService>();
+            .AddScoped<ISubscriber, SubscriberService>()
+            .AddScoped<IBehavior, LogHeadersBehavior>();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
         {
@@ -53,8 +55,7 @@ namespace Silverback.Examples.ConsumerA
                                 Configuration = new KafkaProducerConfig
                                 {
                                     BootstrapServers = "PLAINTEXT://kafka:9092",
-                                    ClientId = "consumer-service-a",
-                                    GroupId = "silverback-examples"
+                                    ClientId = "consumer-service-a"
                                 }
                             })))
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer",

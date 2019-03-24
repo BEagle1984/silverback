@@ -1,8 +1,11 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
+
+using Silverback.Messaging.Connectors;
+
 namespace Silverback.Messaging.Messages
 {
-    public class InboundMessage<TMessage> : IInboundMessage<TMessage>
+    public class OutboundMessage<TMessage> : IOutboundMessage<TMessage>, IOutboundMessageInternal
     {
         public IEndpoint Endpoint { get; set; }
 
@@ -10,7 +13,9 @@ namespace Silverback.Messaging.Messages
 
         public TMessage Message { get; set; }
 
-        object IInboundMessage.Message
+        public IOutboundRoute Route { get; set; }
+
+        object IOutboundMessage.Message
         {
             get => Message;
             set => Message = (TMessage)value;

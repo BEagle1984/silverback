@@ -1,10 +1,13 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
+
+using Silverback.Messaging.Messages;
+
 namespace Silverback.Messaging.Connectors.Repositories
 {
     public class DbQueuedMessage : QueuedMessage
     {
-        public DbQueuedMessage(int id, object message, IEndpoint endpoint) : base(message, endpoint)
+        public DbQueuedMessage(int id, IOutboundMessage message) : base(message)
         {
             Id = id;
         }

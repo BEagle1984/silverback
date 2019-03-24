@@ -11,9 +11,10 @@ namespace Silverback.Util
     internal static class ObservableOfTypeExtensions
     {
         public static IObservable<object> OfType(this IObservable<object> source, Type type) =>
-            (IObservable<object>)
-            typeof(Observable).GetMethod("OfType", BindingFlags.Static | BindingFlags.Public)
-                .MakeGenericMethod(type)
-                .Invoke(null, new object[] { source });
+            typeof(Observable)
+                    .GetMethod("OfType", BindingFlags.Static | BindingFlags.Public)
+                    .MakeGenericMethod(type)
+                    .Invoke(null, new object[] {source})
+                as IObservable<object> ?? Observable.Empty<object>();
     }
 }

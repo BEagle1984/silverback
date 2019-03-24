@@ -87,7 +87,7 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddDeferredOutboundConnector(Func<IServiceProvider, IOutboundQueueProducer> outboundQueueProducerFactory)
         {
             AddOutboundConnector<DeferredOutboundConnector>();
-            Services.AddScoped<ISubscriber, DeferredOutboundConnector>();
+            Services.AddScoped<ISubscriber, DeferredOutboundConnectorTransactionManager>();
             Services.AddScoped<IOutboundQueueProducer>(outboundQueueProducerFactory);
 
             return this;

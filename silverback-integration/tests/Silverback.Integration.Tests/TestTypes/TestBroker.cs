@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.TestTypes
 {
@@ -39,13 +40,15 @@ namespace Silverback.Tests.TestTypes
 
         public class ProducedMessage
         {
-            public ProducedMessage(byte[] message, IEndpoint endpoint)
+            public ProducedMessage(byte[] message, IEnumerable<MessageHeader> headers, IEndpoint endpoint)
             {
                 Message = message;
+                Headers = headers;
                 Endpoint = endpoint;
             }
 
             public byte[] Message { get; }
+            public IEnumerable<MessageHeader> Headers { get; }
             public IEndpoint Endpoint { get; }
         }
     }

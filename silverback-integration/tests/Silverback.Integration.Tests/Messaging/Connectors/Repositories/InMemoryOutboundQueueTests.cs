@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Messages;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 using Xunit;
@@ -15,6 +16,12 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
     public class InMemoryOutboundQueueTests
     {
         private readonly InMemoryOutboundQueue _queue;
+        private readonly IOutboundMessage _sampleOutboundMessage = new OutboundMessage<TestEventOne>
+        {
+            Message = new TestEventOne { Content = "Test" },
+            Endpoint = TestEndpoint.Default
+        };
+
 
         public InMemoryOutboundQueueTests()
         {
@@ -27,7 +34,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         {
             Parallel.For(0, 3, _ =>
             {
-                _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+                _queue.Enqueue(_sampleOutboundMessage);
             });
 
             _queue.Length.Should().Be(0);
@@ -38,7 +45,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         {
             Parallel.For(0, 3, _ =>
             {
-                _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+                _queue.Enqueue(_sampleOutboundMessage);
             });
 
             _queue.Commit();
@@ -51,7 +58,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         {
             Parallel.For(0, 3, _ =>
             {
-                _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+                _queue.Enqueue(_sampleOutboundMessage);
             });
 
             _queue.Rollback();
@@ -62,11 +69,11 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         [Fact]
         public void EnqueueCommitRollbackCommitTest()
         {
-            _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+            _queue.Enqueue(_sampleOutboundMessage);
             _queue.Commit();
-            _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+            _queue.Enqueue(_sampleOutboundMessage);
             _queue.Rollback();
-            _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+            _queue.Enqueue(_sampleOutboundMessage);
             _queue.Commit();
 
             _queue.Length.Should().Be(2);
@@ -80,7 +87,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         {
             for (var i = 0; i < 5; i++)
             {
-                _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+                _queue.Enqueue(_sampleOutboundMessage);
             }
 
             _queue.Commit();
@@ -95,7 +102,7 @@ namespace Silverback.Tests.Messaging.Connectors.Repositories
         {
             for (var i = 0; i < 5; i++)
             {
-                _queue.Enqueue(new TestEventOne(), TestEndpoint.Default);
+                _queue.Enqueue(_sampleOutboundMessage);
             }
 
             _queue.Commit();

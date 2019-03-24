@@ -25,13 +25,13 @@ namespace Silverback.Messaging.Broker
             _messageLogger = messageLogger;
         }
 
-        public void Produce(object message) =>
+        public void Produce(object message, IEnumerable<MessageHeader> headers = null) =>
             GetMessageContentChunks(message)
-                .ForEach(x => Produce(x.message, x.serializedMessage));
+                .ForEach(x => Produce(x.message, x.serializedMessage, headers));
 
-        public Task ProduceAsync(object message) =>
+        public Task ProduceAsync(object message, IEnumerable<MessageHeader> headers = null) =>
             GetMessageContentChunks(message)
-                .ForEachAsync(x => ProduceAsync(x.message, x.serializedMessage));
+                .ForEachAsync(x => ProduceAsync(x.message, x.serializedMessage, headers));
 
         private IEnumerable<(object message, byte[] serializedMessage)> GetMessageContentChunks(object message)
         {
@@ -48,9 +48,9 @@ namespace Silverback.Messaging.Broker
         private void Trace(object message) =>
             _messageLogger.LogTrace(_logger, "Producing message.", message, Endpoint);
 
-        protected abstract void Produce(object message, byte[] serializedMessage);
+        protected abstract void Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers);
 
-        protected abstract Task ProduceAsync(object message, byte[] serializedMessage);
+        protected abstract Task ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers);
     }
 
     public abstract class Producer<TBroker, TEndpoint> : Producer

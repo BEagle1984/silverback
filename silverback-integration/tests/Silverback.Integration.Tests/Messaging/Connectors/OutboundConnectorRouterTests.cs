@@ -4,10 +4,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 using Silverback.Tests.TestTypes;
 using Silverback.Tests.TestTypes.Domain;
 using Xunit;
@@ -24,23 +27,24 @@ namespace Silverback.Tests.Messaging.Connectors
 
         public OutboundConnectorRouterTests()
         {
-            _broker = new TestBroker();
+            var services = new ServiceCollection();
 
             _outboundQueue = new InMemoryOutboundQueue();
 
-            var outboundConnector = new OutboundConnector(_broker);
-            var deferredOutboundConnector = new DeferredOutboundConnector(_outboundQueue,
-                new NullLogger<DeferredOutboundConnector>(),
-                new MessageLogger(new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()})));
+            services
+                .AddBus()
+                .AddBroker<TestBroker>(options => options
+                    .AddDeferredOutboundConnector(_ => _outboundQueue)
+                    .AddOutboundConnector());
 
-            _routingConfiguration = new OutboundRoutingConfiguration();
-            _connectorRouter = new OutboundConnectorRouter(
-                _routingConfiguration,
-                new IOutboundConnector[]
-                {
-                    deferredOutboundConnector,
-                    outboundConnector
-                });
+            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
+            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            _connectorRouter = (OutboundConnectorRouter)serviceProvider.GetServices<ISubscriber>().First(s => s is OutboundConnectorRouter);
+            _routingConfiguration = (OutboundRoutingConfiguration)serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
+            _broker = (TestBroker)serviceProvider.GetRequiredService<IBroker>();
 
             InMemoryOutboundQueue.Clear();
         }
@@ -56,11 +60,11 @@ namespace Silverback.Tests.Messaging.Connectors
             await _connectorRouter.OnMessageReceived(message);
             await _outboundQueue.Commit();
 
-            var enqueued = _outboundQueue.Dequeue(100);
+            var queued = _outboundQueue.Dequeue(100);
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
-                enqueued.Count(x => x.Endpoint.Name == expectedEndpointName).Should().Be(1);
+                queued.Count(x => x.Message.Endpoint.Name == expectedEndpointName).Should().Be(1);
             }
 
             var notExpectedEndpointNames = _routingConfiguration
@@ -69,7 +73,7 @@ namespace Silverback.Tests.Messaging.Connectors
 
             foreach (var notExpectedEndpointName in notExpectedEndpointNames)
             {
-                enqueued.Count(x => x.Endpoint.Name == notExpectedEndpointName).Should().Be(0);
+                queued.Count(x => x.Message.Endpoint.Name == notExpectedEndpointName).Should().Be(0);
             }
         }
 

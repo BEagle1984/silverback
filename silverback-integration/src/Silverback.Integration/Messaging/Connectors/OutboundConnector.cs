@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -15,7 +16,7 @@ namespace Silverback.Messaging.Connectors
             _broker = broker;
         }
 
-        public Task RelayMessage(object message, IEndpoint destinationEndpoint) =>
-            _broker.GetProducer(destinationEndpoint).ProduceAsync(message);
+        public Task RelayMessage(IOutboundMessage message) =>
+            _broker.GetProducer(message.Endpoint).ProduceAsync(message.Message, message.Headers);
     }
 }

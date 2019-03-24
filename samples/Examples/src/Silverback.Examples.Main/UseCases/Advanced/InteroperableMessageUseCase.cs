@@ -14,7 +14,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
 {
     public class InteroperableMessageUseCase : UseCase
     {
-        public InteroperableMessageUseCase() : base("Interoperable incoming message (free schema, not published by Silberback)", 10)
+        public InteroperableMessageUseCase() : base("Interoperable incoming message (free schema, not published by Silverback)", 10)
         {
         }
 

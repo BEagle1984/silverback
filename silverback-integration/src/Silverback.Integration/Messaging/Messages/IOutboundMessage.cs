@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 namespace Silverback.Messaging.Messages
 {
-    public interface IInboundMessage
+    public interface IOutboundMessage
     {
         IEndpoint Endpoint { get; set; }
 
@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
         object Message { get; set; }
     }
 
-    public interface IInboundMessage<out TMessage> : IInboundMessage
+    public interface IOutboundMessage<out TMessage> : IOutboundMessage
     {
         new TMessage Message { get; }
     }

@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Broker
                 return;
 
             _innerConsumer = new InnerConsumerWrapper(
-                new Confluent.Kafka.Consumer<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig),
+                Endpoint.Configuration.ConfluentConfig,
                 _cancellationTokenSource.Token,
                 _logger);
 
@@ -80,7 +80,11 @@ namespace Silverback.Messaging.Broker
             try
             {
                 _messagesSinceCommit++;
-                HandleMessage(message.Value, new KafkaOffset(tpo));
+
+                HandleMessage(
+                    message.Value, 
+                    message?.Headers?.Select(h => h.ToSilverbackHeader()).ToList(), 
+                    new KafkaOffset(tpo));
             }
             catch (Exception ex)
             {

@@ -19,38 +19,54 @@ namespace Silverback.Tests.Messaging.Connectors
     {
         private readonly InMemoryOutboundQueue _queue;
         private readonly DeferredOutboundConnector _connector;
+        private readonly DeferredOutboundConnectorTransactionManager _transactionManager;
 
         public DeferredOutboundConnectorTests()
         {
             _queue = new InMemoryOutboundQueue();
             _connector = new DeferredOutboundConnector(_queue, new NullLogger<DeferredOutboundConnector>(),
                 new MessageLogger(new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()})));
+            _transactionManager = new DeferredOutboundConnectorTransactionManager(_queue);
             InMemoryOutboundQueue.Clear();
         }
 
         [Fact]
         public async Task OnMessageReceived_SingleMessage_Queued()
         {
-            var endpoint = TestEndpoint.Default;
+            var outboundMessage = new OutboundMessage<TestEventOne>()
+            {
+                Message = new TestEventOne {Content = "Test"},
+                Headers =
+                {
+                    { "header1", "value1"},
+                    { "header2", "value2"}
+                },
+                Endpoint = TestEndpoint.Default
+            };
 
-            var message = new TestEventOne { Content = "Test" };
-
-            await _connector.RelayMessage(message, endpoint);
+            await _connector.RelayMessage(outboundMessage);
             await _queue.Commit();
 
             _queue.Length.Should().Be(1);
             var queued = _queue.Dequeue(1).First();
-            queued.Endpoint.Should().Be(endpoint);
-            ((IIntegrationMessage)queued.Message).Id.Should().Be(message.Id);
+            queued.Message.Endpoint.Should().Be(outboundMessage.Endpoint);
+            queued.Message.Headers.Count.Should().Be(2);
+            ((IIntegrationMessage)queued.Message.Message).Id.Should().Be(outboundMessage.Message.Id);
         }
 
         [Fact]
         public async Task CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
-            await _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
-            await _connector.OnTransactionCompleted(new TransactionCompletedEvent());
-            await _connector.RelayMessage(new TestEventOne(), TestEndpoint.Default);
-            await _connector.OnTransactionAborted(new TransactionAbortedEvent());
+            var outboundMessage = new OutboundMessage<TestEventOne>()
+            {
+                Message = new TestEventOne(),
+                Endpoint = TestEndpoint.Default
+            };
+
+            await _connector.RelayMessage(outboundMessage);
+            await _transactionManager.OnTransactionCompleted(new TransactionCompletedEvent());
+            await _connector.RelayMessage(outboundMessage);
+            await _transactionManager.OnTransactionAborted(new TransactionAbortedEvent());
 
             _queue.Length.Should().Be(1);
         }

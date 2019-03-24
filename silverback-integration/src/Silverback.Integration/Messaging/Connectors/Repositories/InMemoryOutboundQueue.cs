@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -17,9 +18,9 @@ namespace Silverback.Messaging.Connectors.Repositories
     {
         #region Writer
 
-        public Task Enqueue(object message, IEndpoint endpoint)
+        public Task Enqueue(IOutboundMessage message)
         {
-            Add(new QueuedMessage(message, endpoint));
+            Add(new QueuedMessage(message));
             return Task.CompletedTask;
         }
 

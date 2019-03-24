@@ -57,8 +57,8 @@ namespace Silverback.Tests.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new TestOffset("a", "1"));
-            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() }, new TestOffset("a", "2"));
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, offset: new TestOffset("a", "1"));
+            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() }, offset: new TestOffset("a", "2"));
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(2);
         }
@@ -75,11 +75,11 @@ namespace Silverback.Tests.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e1, o1);
-            consumer.TestPush(e2, o2);
-            consumer.TestPush(e1, o1);
-            consumer.TestPush(e2, o2);
-            consumer.TestPush(e1, o1);
+            consumer.TestPush(e1, offset: o1);
+            consumer.TestPush(e2, offset: o2);
+            consumer.TestPush(e1, offset: o1);
+            consumer.TestPush(e2, offset: o2);
+            consumer.TestPush(e1, offset: o1);
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(2);
         }
@@ -95,11 +95,11 @@ namespace Silverback.Tests.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e, o1);
-            consumer.TestPush(e, o2);
-            consumer.TestPush(e, o1);
-            consumer.TestPush(e, o2);
-            consumer.TestPush(e, o1);
+            consumer.TestPush(e, offset: o1);
+            consumer.TestPush(e, offset: o2);
+            consumer.TestPush(e, offset: o1);
+            consumer.TestPush(e, offset: o2);
+            consumer.TestPush(e, offset: o1);
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(2);
         }
@@ -116,11 +116,11 @@ namespace Silverback.Tests.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e, o1);
-            consumer.TestPush(e, o2);
-            consumer.TestPush(e, o3);
-            consumer.TestPush(e, o2);
-            consumer.TestPush(e, o1);
+            consumer.TestPush(e, offset: o1);
+            consumer.TestPush(e, offset: o2);
+            consumer.TestPush(e, offset: o3);
+            consumer.TestPush(e, offset: o2);
+            consumer.TestPush(e, offset: o1);
 
             _serviceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>().Count.Should().Be(2);
         }
@@ -143,12 +143,12 @@ namespace Silverback.Tests.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e, o1);
-            consumer.TestPush(e, o2);
-            consumer.TestPush(e, o3);
-            consumer.TestPush(e, o2);
-            consumer.TestPush(e, o1);
-            consumer.TestPush(e, o3);
+            consumer.TestPush(e, offset: o1);
+            consumer.TestPush(e, offset: o2);
+            consumer.TestPush(e, offset: o3);
+            consumer.TestPush(e, offset: o2);
+            consumer.TestPush(e, offset: o1);
+            consumer.TestPush(e, offset: o3);
 
             _testSubscriber.ReceivedMessages.OfType<TestEventOne>().Should().HaveCount(3);
         }
@@ -171,11 +171,11 @@ namespace Silverback.Tests.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e, o1);
-            consumer.TestPush(e, o2);
-            consumer.TestPush(e, o3);
-            consumer.TestPush(e, o2);
-            consumer.TestPush(e, o1);
+            consumer.TestPush(e, offset: o1);
+            consumer.TestPush(e, offset: o2);
+            consumer.TestPush(e, offset: o3);
+            consumer.TestPush(e, offset: o2);
+            consumer.TestPush(e, offset: o1);
 
             _serviceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>().Count.Should().Be(2);
         }
@@ -203,10 +203,10 @@ namespace Silverback.Tests.Messaging.Connectors
 
             var consumer = _broker.Consumers.First();
 
-            try { consumer.TestPush(e, o1); } catch { }
-            try { consumer.TestPush(e, o2); } catch { }
-            try { consumer.TestPush(e, o3); } catch { }
-            try { consumer.TestPush(fail, o4); } catch { }
+            try { consumer.TestPush(e, offset: o1); } catch { }
+            try { consumer.TestPush(e, offset: o2); } catch { }
+            try { consumer.TestPush(e, offset: o3); } catch { }
+            try { consumer.TestPush(fail, offset: o4); } catch { }
 
             _serviceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a").Value.Should().Be("2");
         }
@@ -242,8 +242,8 @@ namespace Silverback.Tests.Messaging.Connectors
                 {
                     try
                     {
-                        consumer1.TestPush(e, o1);
-                        consumer1.TestPush(e, o2);
+                        consumer1.TestPush(e, offset: o1);
+                        consumer1.TestPush(e, offset: o2);
                     }
                     catch (Exception)
                     { }
@@ -252,8 +252,8 @@ namespace Silverback.Tests.Messaging.Connectors
                 {
                     try
                     {
-                        consumer2.TestPush(e, o3);
-                        consumer2.TestPush(fail, o4);
+                        consumer2.TestPush(e, offset: o3);
+                        consumer2.TestPush(fail,offset: o4);
                     }
                     catch (Exception)
                     {
