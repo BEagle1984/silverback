@@ -62,6 +62,6 @@ namespace Silverback.Messaging.Connectors
         }
 
         protected virtual void ProduceMessage(IOutboundMessage message)
-            => _broker.GetProducer(message.Endpoint).Produce(message.Message);
+            => _broker.GetProducer(message.Endpoint).Produce(message.Message, message.Headers);
     }
 }

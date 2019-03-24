@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Connectors
                 _routing.GetRoutes(message)
                     .Select(route => WrapOutboundMessage(message, route)));
 
-        private IOutboundMessage WrapOutboundMessage(object message,IOutboundRoute route)
+        private IOutboundMessage WrapOutboundMessage(object message, IOutboundRoute route)
         {
             var wrapper = (IOutboundMessageInternal)Activator.CreateInstance(typeof(OutboundMessage<>).MakeGenericType(message.GetType()));
 

@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +29,8 @@ namespace Silverback.Examples.Main.UseCases.EfCore
             .AddBus(options => options.UseModel())
             .AddBroker<KafkaBroker>(options => options
                 .AddDbOutboundConnector<ExamplesDbContext>()
-                .AddDbOutboundWorker<ExamplesDbContext>());
+                .AddDbOutboundWorker<ExamplesDbContext>())
+            .AddScoped<IBehavior, CustomHeadersBehavior>();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
@@ -63,6 +66,19 @@ namespace Silverback.Examples.Main.UseCases.EfCore
         {
             // Let the worker run for some time before 
             Thread.Sleep(2000);
+        }
+
+        public class CustomHeadersBehavior : IBehavior
+        {
+            public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
+            {
+                foreach (var message in messages.OfType<IOutboundMessage>())
+                {
+                    message.Headers.Add("was-created", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                }
+
+                return await next(messages);
+            }
         }
     }
 }
