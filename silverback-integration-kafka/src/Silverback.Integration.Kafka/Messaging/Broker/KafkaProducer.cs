@@ -3,9 +3,13 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
@@ -26,16 +30,22 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        protected override void Produce(object message, byte[] serializedMessage)
-            => Task.Run(() => ProduceAsync(message, serializedMessage)).Wait();
+        protected override void Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers) => 
+            Task.Run(() => ProduceAsync(message, serializedMessage, headers)).Wait();
 
-        protected override async Task ProduceAsync(object message, byte[] serializedMessage)
+        protected override async Task ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers)
         {
             var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
             {
                 Key = KeyHelper.GetMessageKey(message),
                 Value = serializedMessage
             };
+
+            if (headers != null && headers.Any())
+            {
+                kafkaMessage.Headers = new Confluent.Kafka.Headers();
+                headers.ForEach(h => kafkaMessage.Headers.Add(h.ToConfluentHeader()));
+            }
 
             var deliveryReport = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage);
             _logger.LogTrace(

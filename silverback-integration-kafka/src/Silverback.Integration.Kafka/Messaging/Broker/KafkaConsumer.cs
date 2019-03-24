@@ -80,7 +80,9 @@ namespace Silverback.Messaging.Broker
             try
             {
                 _messagesSinceCommit++;
-                HandleMessage(message.Value, new KafkaOffset(tpo));
+                var headers = message.Headers?.Select(h => h.ToSilverbackHeader()).ToList();
+
+                HandleMessage(message.Value, headers, new KafkaOffset(tpo));
             }
             catch (Exception ex)
             {
