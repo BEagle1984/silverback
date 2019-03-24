@@ -21,19 +21,21 @@ namespace Silverback.Messaging.Connectors.Repositories
             _removeProduced = removeProduced;
         }
 
-        public IEnumerable<IOutboundMessage> Dequeue(int count) => DbSet
+        public IEnumerable<QueuedMessage> Dequeue(int count) => DbSet
             .Where(m => m.Produced == null)
             .OrderBy(m => m.Id)
             .Take(count)
             .ToList()
-            .Select(message => DefaultSerializer.Deserialize<IOutboundMessage>(message.Message));
+            .Select(message => new DbQueuedMessage(
+                message.Id, 
+                DefaultSerializer.Deserialize<IOutboundMessage>(message.Message)));
 
-        public void Retry(IOutboundMessage queuedMessage)
+        public void Retry(QueuedMessage queuedMessage)
         {
             // Nothing to do, the message is retried if not marked as produced
         }
 
-        public void Acknowledge(IOutboundMessage queuedMessage)
+        public void Acknowledge(QueuedMessage queuedMessage)
         {
             if (!(queuedMessage is DbQueuedMessage dbQueuedMessage))
                 throw new InvalidOperationException("A DbQueuedMessage is expected.");
