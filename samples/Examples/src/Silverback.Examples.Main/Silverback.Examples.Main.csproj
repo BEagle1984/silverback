@@ -21,19 +21,19 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="NLog" Version="4.5.11" />
+    <PackageReference Include="NLog" Version="4.6.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.4.0" />
-    <PackageReference Include="Silverback.Core" Version="0.5.2" />
-    <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="0.5.1.1" />
-    <PackageReference Include="Silverback.Core.Model" Version="0.5.1" />
-    <PackageReference Include="Silverback.Core.Rx" Version="0.5.0.1" />
-    <PackageReference Include="Silverback.Integration" Version="0.5.2.8" />
-    <PackageReference Include="Silverback.Integration.Configuration" Version="0.5.2" />
-    <PackageReference Include="Silverback.Integration.EntityFrameworkCore" Version="0.5.2.4" />
-    <PackageReference Include="Silverback.Integration.Kafka" Version="0.5.2.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.2.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.1" />
+    <PackageReference Include="Silverback.Core" Version="0.6.0" />
+    <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="0.6.0" />
+    <PackageReference Include="Silverback.Core.Model" Version="0.6.0" />
+    <PackageReference Include="Silverback.Core.Rx" Version="0.6.0" />
+    <PackageReference Include="Silverback.Integration" Version="0.6.0" />
+    <PackageReference Include="Silverback.Integration.Configuration" Version="0.6.0" />
+    <PackageReference Include="Silverback.Integration.EntityFrameworkCore" Version="0.6.0" />
+    <PackageReference Include="Silverback.Integration.Kafka" Version="0.6.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.2.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>

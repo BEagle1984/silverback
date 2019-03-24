@@ -119,7 +119,6 @@ namespace Silverback.Messaging.Broker
                 try
                 {
                     var result = _innerConsumer.Consume(_cancellationToken);
-
                     _consumed = true;
 
                     _logger.LogTrace("Consuming message: {topic} {partition} @{offset}", result.Topic, result.Partition, result.Offset);
