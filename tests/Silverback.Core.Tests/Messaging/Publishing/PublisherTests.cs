@@ -545,7 +545,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 2);
         }
 
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public void Publish_NonExclusiveSubscribers_InvokedInParallel()
         {
             var subscriber = new NonExclusiveSubscriberTestService();
@@ -596,7 +596,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             parallel.Steps.Should().BeEquivalentTo(1, 2);
         }
 
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public void Publish_NonExclusiveDelegateSubscription_InvokedInParallel()
         {
             var parallel = new ParallelTestingUtil();
