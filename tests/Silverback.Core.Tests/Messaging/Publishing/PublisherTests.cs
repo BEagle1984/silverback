@@ -542,7 +542,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             publisher.Publish(new TestCommandOne());
 
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(20));
+            subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 2);
         }
 
         [Fact]
@@ -553,7 +553,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             publisher.Publish(new TestCommandOne());
 
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(20));
+            subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1);
         }
 
         [Fact]
@@ -564,7 +564,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             await publisher.PublishAsync(new TestCommandOne());
 
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(20));
+            subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 2);
         }
 
         [Fact]
@@ -575,53 +575,44 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             await publisher.PublishAsync(new TestCommandOne());
 
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(20));
+            subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1);
         }
 
         [Fact]
         public void Publish_ExclusiveDelegateSubscription_SequentiallyInvoked()
         {
-            var timestamps = new ConcurrentBag<DateTime>();
+            var parallel = new ParallelTestingUtil();
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>((ICommand _) =>
-                    {
-                        Thread.Sleep(20);
-                        timestamps.Add(DateTime.Now);
-                    })
-                    .Subscribe<ICommand>(async (ICommand _) =>
-                    {
-                        await Task.Delay(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Exclusive = true }));
+                    .Subscribe<ICommand>(
+                        (ICommand _) => parallel.DoWork())
+                    .Subscribe<ICommand>(
+                        async (ICommand _) => await parallel.DoWorkAsync(),
+                        new SubscriptionOptions {Exclusive = true}));
 
             publisher.Publish(new TestCommandOne());
 
-            timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(20));
+            parallel.Steps.Should().BeEquivalentTo(1, 2);
         }
 
         [Fact]
         public void Publish_NonExclusiveDelegateSubscription_InvokedInParallel()
         {
-            var timestamps = new ConcurrentBag<DateTime>();
+            var parallel = new ParallelTestingUtil();
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>((ICommand _) =>
-                    {
-                        Thread.Sleep(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Exclusive = false })
-                    .Subscribe<ICommand>(async (ICommand _) =>
-                    {
-                        await Task.Delay(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Exclusive = false }));
+                    .Subscribe<ICommand>(
+                        (ICommand _) => parallel.DoWork(),
+                        new SubscriptionOptions {Exclusive = false})
+                    .Subscribe<ICommand>(
+                        async (ICommand _) => await parallel.DoWorkAsync(),
+                        new SubscriptionOptions {Exclusive = false}));
 
             publisher.Publish(new TestCommandOne());
 
-            timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(20));
+            parallel.Steps.Should().BeEquivalentTo(1, 1);
         }
 
         [Fact]
@@ -634,11 +625,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             {
                 new TestCommandOne(),
                 new TestCommandTwo(),
-                new TestCommandOne(),
-                new TestCommandTwo()
             });
 
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(160));
+            subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 2, 3, 4);
         }
 
         [Fact]
@@ -651,69 +640,55 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             {
                 new TestCommandOne(),
                 new TestCommandTwo(),
-                new TestCommandOne(),
-                new TestCommandTwo()
             });
 
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(70));
+            subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
         }
 
         [Fact]
         public void Publish_NonParallelDelegateSubscription_SequentiallyProcessing()
         {
-            var timestamps = new ConcurrentBag<DateTime>();
+            var parallel = new ParallelTestingUtil();
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>((ICommand _) =>
-                    {
-                        Thread.Sleep(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Parallel = false })
-                    .Subscribe<ICommand>(async (ICommand _) =>
-                    {
-                        await Task.Delay(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Parallel = false }));
+                    .Subscribe<ICommand>(
+                        (ICommand _) => parallel.DoWork(),
+                        new SubscriptionOptions {Parallel = false})
+                    .Subscribe<ICommand>(
+                        async (ICommand _) => await parallel.DoWorkAsync(),
+                        new SubscriptionOptions {Parallel = false}));
 
             publisher.Publish(new ICommand[]
             {
                 new TestCommandOne(),
                 new TestCommandTwo(),
-                new TestCommandOne(),
-                new TestCommandTwo()
             });
 
-            timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(160));
+            parallel.Steps.Should().BeEquivalentTo(1, 2, 3, 4);
         }
 
         [Fact]
         public void Publish_ParallelDelegateSubscription_ProcessingInParallel()
         {
-            var timestamps = new ConcurrentBag<DateTime>();
+            var parallel = new ParallelTestingUtil();
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>((ICommand _) =>
-                    {
-                        Thread.Sleep(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Parallel = true })
-                    .Subscribe<ICommand>(async (ICommand _) =>
-                    {
-                        await Task.Delay(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Parallel = true }));
+                    .Subscribe<ICommand>(
+                        (ICommand _) => parallel.DoWork(),
+                        new SubscriptionOptions {Parallel = true})
+                    .Subscribe<ICommand>(
+                        async (ICommand _) => await parallel.DoWorkAsync(),
+                        new SubscriptionOptions {Parallel = true}));
 
             publisher.Publish(new ICommand[]
             {
                 new TestCommandOne(),
                 new TestCommandTwo(),
-                new TestCommandOne(),
-                new TestCommandTwo()
             });
 
-            timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(50));
+            parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
         }
 
         [Fact]
@@ -726,12 +701,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             {
                 new TestCommandOne(),
                 new TestCommandTwo(),
-                new TestCommandOne(),
-                new TestCommandTwo()
             });
 
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(50));
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(100));
+            subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
         }
 
         [Fact]
@@ -745,71 +717,57 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 new TestCommandOne(),
                 new TestCommandTwo(),
                 new TestCommandOne(),
-                new TestCommandTwo()
             });
 
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(50));
-            subscriber.Timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(100));
+            subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
 
         [Fact]
         public void Publish_LimitedParallelDelegateSubscription_ProcessingInParallel()
         {
-            var timestamps = new ConcurrentBag<DateTime>();
+            var parallel = new ParallelTestingUtil();
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>((ICommand _) =>
-                    {
-                        Thread.Sleep(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 })
-                    .Subscribe<ICommand>(async (ICommand _) =>
-                    {
-                        await Task.Delay(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 }));
+                    .Subscribe<ICommand>(
+                        (ICommand _) => parallel.DoWork(),
+                        new SubscriptionOptions {Parallel = true, MaxDegreeOfParallelism = 2})
+                    .Subscribe<ICommand>(
+                        async (ICommand _) => await parallel.DoWorkAsync(),
+                        new SubscriptionOptions {Parallel = true, MaxDegreeOfParallelism = 2}));
 
             publisher.Publish(new ICommand[]
             {
                 new TestCommandOne(),
                 new TestCommandTwo(),
                 new TestCommandOne(),
-                new TestCommandTwo()
             });
 
-            timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(50));
-            timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(100));
+            parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
 
         [Fact]
         public async Task PublishAsync_LimitedParallelDelegateSubscription_ProcessingInParallel()
         {
-            var timestamps = new ConcurrentBag<DateTime>();
+            var parallel = new ParallelTestingUtil();
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>((ICommand _) =>
-                    {
-                        Thread.Sleep(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 })
-                    .Subscribe<ICommand>(async (ICommand _) =>
-                    {
-                        await Task.Delay(20);
-                        timestamps.Add(DateTime.Now);
-                    }, new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 }));
+                    .Subscribe<ICommand>(
+                        (ICommand _) => parallel.DoWork(),
+                        new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 })
+                    .Subscribe<ICommand>(
+                        async (ICommand _) => await parallel.DoWorkAsync(),
+                        new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 }));
 
             await publisher.PublishAsync(new ICommand[]
             {
                 new TestCommandOne(),
                 new TestCommandTwo(),
                 new TestCommandOne(),
-                new TestCommandTwo()
             });
 
-            timestamps.Should().Match(times => times.Max() - times.Min() > TimeSpan.FromMilliseconds(50));
-            timestamps.Should().Match(times => times.Max() - times.Min() < TimeSpan.FromMilliseconds(100));
+            parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
 
         [Fact]

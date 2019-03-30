@@ -6,27 +6,19 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers;
+using Silverback.Tests.Core.Messaging.Publishing;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
     public class NonExclusiveSubscriberTestService : ISubscriber
     {
-        public ConcurrentBag<DateTime> Timestamps { get; } = new ConcurrentBag<DateTime>();
+        public ParallelTestingUtil Parallel { get; } = new ParallelTestingUtil();
 
         [Subscribe(Exclusive = false)]
-        private void OnMessageReceived1(object _)
-        {
-            Thread.Sleep(20);
-
-            Timestamps.Add(DateTime.Now);
-        }
+        private void OnMessageReceived(object _) => Parallel.DoWork();
 
         [Subscribe(Exclusive = false)]
-        private async Task OnMessageReceived2(object _)
-        {
-            await Task.Delay(20);
+        private Task OnMessageReceivedAsync(object _) => Parallel.DoWorkAsync();
 
-            Timestamps.Add(DateTime.Now);
-        }
     }
 }

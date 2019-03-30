@@ -8,6 +8,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -54,7 +55,7 @@ namespace Silverback.Tests.Core.Rx.Messaging
             _publisher.Publish(new TestEventTwo());
             _publisher.Publish(new TestCommandOne());
 
-            Assert.Equal(2, count);
+            count.Should().Be(2);
         }
 
         [Fact]
@@ -69,7 +70,7 @@ namespace Silverback.Tests.Core.Rx.Messaging
             _publisher.Publish(new TestEventOne());
             _publisher.Publish(new TestCommandOne());
 
-            Assert.Equal(3, count);
+            count.Should().Be(3);
         }
 
         [Fact]
@@ -97,8 +98,8 @@ namespace Silverback.Tests.Core.Rx.Messaging
                     threads.Add(Thread.CurrentThread.ManagedThreadId);
                 });
 
-            Assert.Equal(2, count);
-            Assert.Equal(3, threads.Distinct().Count());
+            count.Should().Be(2);
+            threads.Distinct().Count().Should().BeGreaterThan(1);
         }
 
         [Fact]
@@ -129,8 +130,8 @@ namespace Silverback.Tests.Core.Rx.Messaging
             
             await Task.Delay(100);
 
-            Assert.Equal(4, count);
-            Assert.Equal(3, threads.Distinct().Count());
+            count.Should().Be(4);
+            threads.Distinct().Count().Should().BeGreaterThan(1);
         }
     }
 }
