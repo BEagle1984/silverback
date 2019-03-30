@@ -607,7 +607,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                         (ICommand _) => parallel.DoWork(),
                         new SubscriptionOptions {Exclusive = false})
                     .Subscribe<ICommand>(
-                        async (ICommand _) => await parallel.DoWorkAsync(),
+                        (ICommand _) => parallel.DoWorkAsync(),
                         new SubscriptionOptions {Exclusive = false}));
 
             publisher.Publish(new TestCommandOne());
@@ -743,7 +743,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 new TestCommandOne(),
             });
 
-            parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
+            parallel.Steps.OrderBy(x => x).Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
 
         [Fact]
