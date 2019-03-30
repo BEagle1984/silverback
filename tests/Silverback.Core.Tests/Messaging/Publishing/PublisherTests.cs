@@ -565,7 +565,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 2);
         }
 
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public async Task PublishAsync_NonExclusiveSubscribers_InvokedInParallel()
         {
             var subscriber = new NonExclusiveSubscriberTestService();
@@ -628,7 +628,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 2, 3, 4);
         }
 
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public void Publish_ParallelSubscriber_ProcessingInParallel()
         {
             var subscriber = new ParallelSubscriberTestService();
@@ -666,7 +666,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             parallel.Steps.Should().BeEquivalentTo(1, 2, 3, 4);
         }
 
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public void Publish_ParallelDelegateSubscription_ProcessingInParallel()
         {
             var parallel = new ParallelTestingUtil();
@@ -689,7 +689,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
         }
 
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public void Publish_LimitedParallelSubscriber_ProcessingInParallel()
         {
             var subscriber = new LimitedParallelSubscriberTestService();
@@ -704,7 +704,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
         }
 
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public async Task PublishAsync_LimitedParallelSubscriber_ProcessingInParallel()
         {
             var subscriber = new LimitedParallelSubscriberTestService();
@@ -744,7 +744,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
 
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public async Task PublishAsync_LimitedParallelDelegateSubscription_ProcessingInParallel()
         {
             var parallel = new ParallelTestingUtil();
