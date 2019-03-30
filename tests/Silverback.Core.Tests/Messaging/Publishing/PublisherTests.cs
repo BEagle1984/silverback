@@ -722,7 +722,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
 
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public void Publish_LimitedParallelDelegateSubscription_ProcessingInParallel()
         {
             var parallel = new ParallelTestingUtil();
