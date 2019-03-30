@@ -15,14 +15,14 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         public void DoWork()
         {
             Steps.Add(_lastStep + 1);
-            Thread.Sleep(20);
+            Thread.Sleep(100);
             Interlocked.Increment(ref _lastStep);
         }
 
         public async Task DoWorkAsync()
         {
             Steps.Add(_lastStep + 1);
-            await Task.Delay(20);
+            await Task.Delay(100);
             Interlocked.Increment(ref _lastStep);
         }
     }
