@@ -10,19 +10,21 @@ namespace Silverback.Tests.Core.Messaging.Publishing
     public class ParallelTestingUtil
     {
         private int _lastStep = 0;
-        public ConcurrentBag<int> Steps { get; } = new ConcurrentBag<int>();
+        public List<int> Steps { get; } = new List<int>();
 
         public void DoWork()
         {
-            Steps.Add(_lastStep + 1);
-            Thread.Sleep(100);
+            Thread.Sleep(20);
+            lock (Steps) Steps.Add(_lastStep + 1);
+            Thread.Sleep(20);
             Interlocked.Increment(ref _lastStep);
         }
 
         public async Task DoWorkAsync()
         {
-            Steps.Add(_lastStep + 1);
-            await Task.Delay(100);
+            await Task.Delay(20);
+            lock (Steps) Steps.Add(_lastStep + 1);
+            await Task.Delay(20);
             Interlocked.Increment(ref _lastStep);
         }
     }

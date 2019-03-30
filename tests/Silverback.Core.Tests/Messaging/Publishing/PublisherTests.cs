@@ -743,7 +743,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 new TestCommandOne(),
             });
 
-            parallel.Steps.OrderBy(x => x).Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
+            parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
 
         [Fact]
