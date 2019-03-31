@@ -7,13 +7,24 @@ using Newtonsoft.Json;
 
 namespace Silverback.Messaging.Serialization
 {
-    public class JsonMessageSerializer : IMessageSerializer
+    public class JsonMessageSerializer<TMessage> : IMessageSerializer
     {
+        [DefaultValue("UTF8")] public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
+
+        public JsonSerializerSettings Settings { get; } = new JsonSerializerSettings
+        {
+            Formatting = Formatting.None,
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.Auto
+        };
+
         public byte[] Serialize(object message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
-            var json = JsonConvert.SerializeObject(message, typeof(object), Settings);
+            var json = JsonConvert.SerializeObject(message, typeof(TMessage), Settings);
 
             return GetEncoding().GetBytes(json);
         }
@@ -24,20 +35,8 @@ namespace Silverback.Messaging.Serialization
 
             var json = GetEncoding().GetString(message);
 
-            return JsonConvert.DeserializeObject(json, Settings);
+            return JsonConvert.DeserializeObject<TMessage>(json, Settings);
         }
-
-        [DefaultValue("UTF8")]
-        public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
-
-        public JsonSerializerSettings Settings { get; } = new JsonSerializerSettings
-        {
-            Formatting = Formatting.None,
-            DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto
-        };
 
         private System.Text.Encoding GetEncoding()
         {
@@ -57,5 +56,9 @@ namespace Silverback.Messaging.Serialization
                     throw new InvalidOperationException("Unhandled encoding.");
             }
         }
+    }
+
+    public class JsonMessageSerializer : JsonMessageSerializer<object>
+    {
     }
 }
