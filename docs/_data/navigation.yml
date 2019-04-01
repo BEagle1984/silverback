@@ -51,8 +51,6 @@ docs:
         url: /docs/configuration/multiple
       - title: External Configurations
         url: /docs/configuration/external
-      - title: Message Keys
-        url: /docs/configuration/message-keys
   - title: Advanced Topics
     children:
       - title: Observable Bus
@@ -63,8 +61,10 @@ docs:
         url: /docs/advanced/broker
       - title: Chunking
         url: /docs/advanced/chunking
-      - title: Kafka Transactions
-        url: /docs/advanced/kafka-transactions
+      - title: Custom Serializer
+        url: /docs/advanced/custom-serializer
+      - title: Message Keys
+        url: /docs/advanced/message-keys
   - title: Special Use Cases
     children:
       - title: Producer and consumer in the same process

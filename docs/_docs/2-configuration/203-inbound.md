@@ -30,7 +30,7 @@ public void Configure(BusConfigurator busConfigurator)
     busConfigurator
         .Connect(endpoints => endpoints
             .AddInbound(
-                new KafkaEndpoint("basket-events")
+                new KafkaConsumerEndpoint("basket-events")
                 {
                     ...
                 }));
@@ -156,7 +156,7 @@ public void Configure(BusConfigurator busConfigurator)
     busConfigurator
         .Connect(endpoints => endpoints
             .AddInbound(
-                new KafkaEndpoint("basket-events")
+                new KafkaConsumerEndpoint("basket-events")
                 {
                     ...
                 },
@@ -225,7 +225,7 @@ public void Configure(BusConfigurator busConfigurator)
     busConfigurator
         .Connect(endpoints => endpoints
             .AddInbound(
-                new KafkaEndpoint("basket-events")
+                new KafkaConsumerEndpoint("basket-events")
                 {
                     ...
                 },

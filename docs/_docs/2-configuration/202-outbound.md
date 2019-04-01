@@ -29,7 +29,7 @@ public void Configure(BusConfigurator busConfigurator)
     busConfigurator
         .Connect(endpoints => endpoints
             .AddOutbound<IIntegrationEvent>(
-                new KafkaEndpoint("basket-events")
+                new KafkaProducerEndpoint("basket-events")
                 {
                     ...
                 }));
@@ -61,7 +61,7 @@ public void Configure(BusConfigurator busConfigurator)
     busConfigurator
         .Connect(endpoints => endpoints
             .AddOutbound<IIntegrationEvent>(
-                new KafkaEndpoint("catalog-events")
+                new KafkaProducerEndpoint("catalog-events")
                 {
                     ...
                 }));
