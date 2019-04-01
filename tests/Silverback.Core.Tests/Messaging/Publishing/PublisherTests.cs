@@ -28,7 +28,6 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         private readonly TestAsyncSubscriber _asyncSubscriber;
         private readonly TestEnumerableSubscriber _syncEnumerableSubscriber;
         private readonly TestAsyncEnumerableSubscriber _asyncEnumerableSubscriber;
-        private BusConfigurator _configurator;
 
         public PublisherTests()
         {
