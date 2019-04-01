@@ -16,7 +16,7 @@ Used for outbound endpoints, exposes the following properties:
 Property | Description
 :-- | :--
 Name | The name of the topic. This is set in the constructor.
-Serializer | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding.
+Serializer | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. (see also [Custom Serializer]({{ site.baseurl }}/docs/advanced/chunking))
 Configuration | An instance of `KafkaProducerConfig`, that's just an extension of `Confluent.Kafka.ProducerConfig`.
 Configuration.BootstrapServers, ...| All properties inherited from `Confluent.Kafka.ProducerConfig`. See [confluent-kafka-dotnet project](https://github.com/confluentinc/confluent-kafka-dotnet) for details.
 Chunk | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.

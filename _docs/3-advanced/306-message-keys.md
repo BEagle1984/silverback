@@ -1,6 +1,6 @@
 ---
 title: Message Keys
-permalink: /docs/configuration/message-keys
+permalink: /docs/advanced/message-keys
 
 toc: false
 ---
