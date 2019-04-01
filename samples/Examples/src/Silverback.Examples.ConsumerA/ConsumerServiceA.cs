@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
+using Silverback.Examples.Common.Messages;
 using Silverback.Examples.Common.Serialization;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -62,7 +63,10 @@ namespace Silverback.Examples.ConsumerA
                         GetCustomSerializer()))
                     // Special inbound (not logged)
                     .AddInbound<InboundConnector>(CreateConsumerEndpoint("silverback-examples-legacy-messages",
-                        new LegacyMessageSerializer())));
+                        new JsonMessageSerializer<LegacyMessage>()
+                        {
+                            Encoding = MessageEncoding.ASCII
+                        })));
 
             Console.CancelKeyPress += (_, __) =>
             {
