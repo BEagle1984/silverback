@@ -12,7 +12,7 @@
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType />
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>0.6.1.0</Version>
+    <Version>0.6.1.2</Version>
 	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
 	<PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
   </PropertyGroup>
@@ -30,7 +30,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Silverback.Core" Version="0.6.0" />
+    <PackageReference Include="Silverback.Core" Version="0.6.1" />
     <PackageReference Include="System.Memory" Version="4.5.2" />
   </ItemGroup>
 

@@ -20,6 +20,7 @@ $sources =
 	("Silverback.Integration", "..\src\Silverback.Integration\bin\$buildConfiguration"),
     ("Silverback.Integration.EntityFrameworkCore", "..\src\Silverback.Integration.EntityFrameworkCore\bin\$buildConfiguration"),
     ("Silverback.Integration.Kafka", "..\src\Silverback.Integration.Kafka\bin\$buildConfiguration"),
+    ("Silverback.Integration.InMemory", "..\src\Silverback.Integration.InMemory\bin\$buildConfiguration"),
     ("Silverback.Integration.Configuration", "..\src\Silverback.Integration.Configuration\bin\$buildConfiguration")
 
 function Check-Location()

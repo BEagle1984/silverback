@@ -53,13 +53,15 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        protected virtual void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint endpoint, IServiceProvider serviceProvider)
+        protected virtual void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint endpoint, InboundConnectorSettings settings, IServiceProvider serviceProvider)
         {
             var messages = messagesArgs
                 .Select(args => HandleChunkedMessage(args, endpoint, serviceProvider) ? args : null)
                 .Select(UnwrapFailedMessage)
                 .Where(args => args != null)
-                .SelectMany(args => new[] { args.Message, WrapInboundMessage(args, endpoint)})
+                .SelectMany(args => settings.UnwrapMessages
+                    ? new[] {args.Message, WrapInboundMessage(args, endpoint)}
+                    : new[] {WrapInboundMessage(args, endpoint)})
                 .ToList();
 
             if (!messages.Any())

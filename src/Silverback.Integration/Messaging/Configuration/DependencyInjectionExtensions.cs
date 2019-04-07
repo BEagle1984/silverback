@@ -2,12 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
 // ReSharper disable once CheckNamespace
-namespace Silverback.Messaging.Configuration
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DependencyInjectionExtensions
     {
