@@ -2,14 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 
 // ReSharper disable once CheckNamespace
-namespace Silverback.Messaging.Configuration
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DependencyInjectionExtensions
     {

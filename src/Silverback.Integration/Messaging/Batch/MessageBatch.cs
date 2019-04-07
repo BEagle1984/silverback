@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Batch
         private readonly BatchSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
 
-        private readonly Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<MessageReceivedEventArgs>, IServiceProvider> _messagesHandler;
         private readonly Action<IEnumerable<IOffset>, IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Batch
 
         public MessageBatch(IEndpoint endpoint,
             BatchSettings settings,
-            Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, IServiceProvider> messagesHandler,
+            Action<IEnumerable<MessageReceivedEventArgs>, IServiceProvider> messagesHandler,
             Action<IEnumerable<IOffset>, IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy, 
@@ -133,7 +133,7 @@ namespace Silverback.Messaging.Batch
                 try
                 {
                     _publisher.Publish(new BatchCompleteEvent(CurrentBatchId, _messages));
-                    _messagesHandler(_messages, _endpoint, scope.ServiceProvider);
+                    _messagesHandler(_messages, scope.ServiceProvider);
                     _publisher.Publish(new BatchProcessedEvent(CurrentBatchId, _messages));
 
                     _commitHandler?.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);

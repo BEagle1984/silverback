@@ -24,29 +24,29 @@ namespace Silverback.Messaging.Connectors
             _messageLogger = messageLogger;
         }
 
-        protected override void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected override void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint endpoint, InboundConnectorSettings settings, IServiceProvider serviceProvider)
         {
-            messagesArgs = EnsureExactlyOnce(messagesArgs, sourceEndpoint, serviceProvider);
+            messagesArgs = EnsureExactlyOnce(messagesArgs, endpoint, serviceProvider);
 
-            base.RelayMessages(messagesArgs, sourceEndpoint, serviceProvider);
+            base.RelayMessages(messagesArgs, endpoint, settings, serviceProvider);
         }
 
-        private IEnumerable<MessageReceivedEventArgs> EnsureExactlyOnce(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        private IEnumerable<MessageReceivedEventArgs> EnsureExactlyOnce(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint endpoint, IServiceProvider serviceProvider)
         {
             foreach (var messageArgs in messagesArgs)
             {
-                if (MustProcess(messageArgs, sourceEndpoint, serviceProvider))
+                if (MustProcess(messageArgs, endpoint, serviceProvider))
                 {
                     yield return messageArgs;
                 }
                 else
                 {
                     _messageLogger.LogTrace(Logger, "Message is being skipped since it was already processed.", messageArgs.Message,
-                        sourceEndpoint, offset: messageArgs.Offset);
+                        endpoint, offset: messageArgs.Offset);
                 }
             }
         }
 
-        protected abstract bool MustProcess(MessageReceivedEventArgs messageArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider);
+        protected abstract bool MustProcess(MessageReceivedEventArgs messageArgs, IEndpoint endpoint, IServiceProvider serviceProvider);
     }
 }

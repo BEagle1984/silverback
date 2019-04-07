@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Broker
 
         public string Topic { get; }
         public int Partition { get; }
-        public long Offset;
+        public long Offset { get; }
         public string Key { get; }
         public string Value { get; }
 

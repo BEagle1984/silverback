@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Connectors
         private readonly InboundConnectorSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
 
-        private readonly Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, InboundConnectorSettings, IServiceProvider> _messagesHandler;
         private readonly Action<IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Connectors
         public InboundConsumer(IBroker broker,
             IEndpoint endpoint,
             InboundConnectorSettings settings,
-            Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, IServiceProvider> messagesHandler,
+            Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, InboundConnectorSettings, IServiceProvider> messagesHandler,
             Action<IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy,
@@ -67,7 +67,7 @@ namespace Silverback.Messaging.Connectors
                 var batch = new MessageBatch(
                     _endpoint,
                     _settings.Batch,
-                    _messagesHandler,
+                    (messageArgs, serviceProvider) => _messagesHandler(messageArgs, _endpoint, _settings, serviceProvider),
                     Commit,
                     _rollbackHandler,
                     _errorPolicy,
@@ -98,8 +98,8 @@ namespace Silverback.Messaging.Connectors
         {
             try
             {
-                _messagesHandler(new[] {messageArgs}, _endpoint, serviceProvider);
-                Commit(new[] {messageArgs.Offset}, serviceProvider);
+                _messagesHandler(new[] { messageArgs }, _endpoint, _settings, serviceProvider);
+                Commit(new[] { messageArgs.Offset }, serviceProvider);
             }
             catch (Exception ex)
             {
