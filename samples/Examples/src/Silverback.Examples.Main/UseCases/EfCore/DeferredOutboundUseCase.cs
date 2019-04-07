@@ -1,7 +1,9 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,29 +26,30 @@ namespace Silverback.Examples.Main.UseCases.EfCore
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
-            .AddBus()
+            .AddBus(options => options.UseModel())
             .AddBroker<KafkaBroker>(options => options
                 .AddDbOutboundConnector<ExamplesDbContext>()
-                .AddDbOutboundWorker<ExamplesDbContext>());
+                .AddDbOutboundWorker<ExamplesDbContext>())
+            .AddScoped<IBehavior, CustomHeadersBehavior>();
 
-        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider) => endpoints
-            .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
-            {
-                Configuration = new KafkaProducerConfig
+        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
+            configurator.Connect(endpoints => endpoints
+                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
                 {
-                    BootstrapServers = "PLAINTEXT://kafka:9092",
-                    ClientId = GetType().FullName
-                }
-            })
-            .Broker.Connect();
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                        ClientId = GetType().FullName
+                    }
+                }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
-            var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
 
             await publisher.PublishAsync(new SimpleIntegrationEvent {Content = DateTime.Now.ToString("HH:mm:ss.fff")});
 
+            var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
             await dbContext.SaveChangesAsync();
         }
 
@@ -63,6 +66,19 @@ namespace Silverback.Examples.Main.UseCases.EfCore
         {
             // Let the worker run for some time before 
             Thread.Sleep(2000);
+        }
+
+        public class CustomHeadersBehavior : IBehavior
+        {
+            public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
+            {
+                foreach (var message in messages.OfType<IOutboundMessage>())
+                {
+                    message.Headers.Add("was-created", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                }
+
+                return await next(messages);
+            }
         }
     }
 }

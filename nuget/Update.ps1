@@ -1,5 +1,4 @@
-﻿$repositoryLocation = "c:\source\silverback\nuget"
-$cacheLocation = Join-Path $env:USERPROFILE ".nuget/packages"
+﻿$repositoryLocation = "."
 [bool]$clearCache = $FALSE
 
 foreach ($arg in $args)
@@ -13,29 +12,30 @@ foreach ($arg in $args)
 $buildConfiguration = "Debug"
 
 $sources =
-    ("Silverback.Core", "..\silverback-core\src\Silverback.Core\bin\$buildConfiguration"),
-    ("Silverback.Core.EntityFrameworkCore", "..\silverback-core\src\Silverback.Core.EntityFrameworkCore\bin\$buildConfiguration"),
-    ("Silverback.Core.Rx", "..\silverback-core\src\Silverback.Core.Rx\bin\$buildConfiguration"),
-	("Silverback.Integration", "..\silverback-integration\src\Silverback.Integration\bin\$buildConfiguration"),
-    ("Silverback.Integration.EntityFrameworkCore", "..\silverback-integration\src\Silverback.Integration.EntityFrameworkCore\bin\$buildConfiguration"),
-    ("Silverback.Integration.FileSystem", "..\silverback-testing\src\Silverback.Integration.FileSystem\bin\$buildConfiguration"),
-    ("Silverback.Integration.Kafka", "..\silverback-integration-kafka\src\Silverback.Integration.Kafka\bin\$buildConfiguration"),
-    ("Silverback.Integration.Configuration", "..\silverback-integration-configuration\src\Silverback.Integration.Configuration\bin\$buildConfiguration")
+    ("Silverback.Core", "..\src\Silverback.Core\bin\$buildConfiguration"),
+    ("Silverback.Core.EntityFrameworkCore", "..\src\Silverback.Core.EntityFrameworkCore\bin\$buildConfiguration"),
+    ("Silverback.Core.Rx", "..\src\Silverback.Core.Rx\bin\$buildConfiguration"),
+    ("Silverback.Core.Model", "..\src\Silverback.Core.Model\bin\$buildConfiguration"),
+	("Silverback.Integration", "..\src\Silverback.Integration\bin\$buildConfiguration"),
+    ("Silverback.Integration.EntityFrameworkCore", "..\src\Silverback.Integration.EntityFrameworkCore\bin\$buildConfiguration"),
+    ("Silverback.Integration.Kafka", "..\src\Silverback.Integration.Kafka\bin\$buildConfiguration"),
+    ("Silverback.Integration.InMemory", "..\src\Silverback.Integration.InMemory\bin\$buildConfiguration"),
+    ("Silverback.Integration.Configuration", "..\src\Silverback.Integration.Configuration\bin\$buildConfiguration")
 
-function Check-Location()
-{
-    [string]$currentLocation = Get-Location
+# function Check-Location()
+# {
+#     [string]$currentLocation = Get-Location
 
-    if ($currentLocation -ne $repositoryLocation)
-    {
-        Write-Host "This script is supposed to run in $repositoryLocation!" -ForegroundColor Red
-        $choice = Read-Host "Wanna swith to $repositoryLocation ? [Y/n]"
-        if ($choice -ne "n")
-        {
-            cd $repositoryLocation
-        }
-    }
-}
+#     if ($currentLocation -ne $repositoryLocation)
+#     {
+#         Write-Host "This script is supposed to run in $repositoryLocation!" -ForegroundColor Red
+#         $choice = Read-Host "Wanna swith to $repositoryLocation ? [Y/n]"
+#         if ($choice -ne "n")
+#         {
+#             cd $repositoryLocation
+#         }
+#     }
+# }
 
 function Delete-All()
 {
@@ -50,6 +50,9 @@ function Delete-All()
 
 function Copy-All()
 {
+    $destination = $repositoryLocation
+    Ensure-Folder-Exists $destination
+
     Write-Host "Copying packages..." -ForegroundColor Yellow
 
     foreach ($source in $sources)
@@ -58,11 +61,11 @@ function Copy-All()
         $sourcePath = Join-Path $source[1] "*.nupkg"
 
         Copy-Package $name $sourcePath
+    }
 
-		if ($clearCache)
-		{
-        	Delete-Cache $name
-		}
+    if ($clearCache)
+    {
+        Delete-Cache $name
     }
 
     Write-Host "`nAvailable packages:" -ForegroundColor Yellow
@@ -74,10 +77,6 @@ function Copy-All()
 function Copy-Package([string]$name, [string]$sourcePath)
 {
     Write-Host "`t$name..." -NoNewline
-
-    $destination = $repositoryLocation
-
-    Ensure-Folder-Exists $destination
 
     Copy-Item $sourcePath -Destination $destination -Recurse
 
@@ -109,6 +108,7 @@ function Show-Summary([string]$path)
 
     foreach ($file in $files)
     {
+        $file = Split-Path $file -leaf
         Add-Version $file $hashtable
     }
 
@@ -195,15 +195,9 @@ function Delete-Cache([string]$name)
 {
     Write-Host "`tClearing cache..." -NoNewline
 
-    $cache = Join-Path $cacheLocation $name
-
-    Get-ChildItem $cache -Recurse |
-    Remove-Item -Force -Recurse |
-    Out-Null
-
-    Write-Host "OK" -ForegroundColor Green
+    dotnet nuget locals all --clear
 }
 
-Check-Location
+# Check-Location
 Delete-All
 Copy-All

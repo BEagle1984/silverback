@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Sergio Aquilini
+// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -23,16 +23,16 @@ namespace Silverback.Examples.Main.UseCases.Advanced
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
-            .AddBus()
+            .AddBus(options => options.UseModel())
             .AddBroker<KafkaBroker>(options => options
                 .AddOutboundConnector()
                 .AddDbOutboundConnector<ExamplesDbContext>()
                 .AddDbOutboundWorker<ExamplesDbContext>());
 
-        protected override void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider) => endpoints
-            .AddOutbound<IntegrationEventA>(CreateEndpoint())
-            .AddOutbound<IntegrationEventB, DeferredOutboundConnector>(CreateEndpoint())
-            .Broker.Connect();
+        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
+            configurator.Connect(endpoints => endpoints
+                .AddOutbound<IntegrationEventA>(CreateEndpoint())
+                .AddOutbound<IntegrationEventB, DeferredOutboundConnector>(CreateEndpoint()));
 
         private KafkaEndpoint CreateEndpoint() =>
             new KafkaProducerEndpoint("silverback-examples-events")

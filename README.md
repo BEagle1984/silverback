@@ -1,4 +1,6 @@
 # Silverback
+[![Travis branch](https://img.shields.io/travis/BEagle1984/silverback/develop.svg?label=travis-ci)](https://travis-ci.com/BEagle1984/silverback)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/BEagle1984/silverback/blob/master/LICENSE)
 
 Silverback is a simple framework to build reactive, event-driven, microservices.
 
@@ -19,6 +21,7 @@ Silverback is split into multiple nuget packages available on nuget.org.
 Package | Version
 :--- | ---
 Silverback.Core  | [![NuGet](http://img.shields.io/nuget/v/Silverback.Core.svg)](https://www.nuget.org/packages/Silverback.Core/)
+Silverback.Core.Model  | [![NuGet](http://img.shields.io/nuget/v/Silverback.Core.Model.svg)](https://www.nuget.org/packages/Silverback.Core.Model/)
 Silverback.Core.EntityFrameworkCore | [![NuGet](http://img.shields.io/nuget/v/Silverback.Core.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore/)
 Silverback.Core.Rx | [![NuGet](http://img.shields.io/nuget/v/Silverback.Core.Rx.svg)](https://www.nuget.org/packages/Silverback.Core.Rx/)
 Silverback.Integration | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.svg)](https://www.nuget.org/packages/Silverback.Integration/)
@@ -28,8 +31,8 @@ Silverback.Integration.Configuration | [![NuGet](http://img.shields.io/nuget/v/S
 
 ## Usage
 
-Have a look at the [project's website](https://beagle1984.github.io/silverback/docs) for usage details, snippets and examples.
+Have a look at the [project's website](https://beagle1984.github.io/silverback/docs/architecture) for usage details, snippets and examples.
 
 ## License
 
-[MIT](https://github.com/BEagle1984/silverback/blob/master/LICENSE)
+This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE) file for details)

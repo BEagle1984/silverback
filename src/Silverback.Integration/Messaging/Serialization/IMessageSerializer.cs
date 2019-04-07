@@ -1,0 +1,14 @@
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+namespace Silverback.Messaging.Serialization
+{
+    /// <summary>
+    /// Serializes and deserializes the messages sent through the broker.
+    /// </summary>
+    public interface IMessageSerializer
+    {
+        byte[] Serialize(object message);
+
+        object Deserialize(byte[] message);
+    }
+}

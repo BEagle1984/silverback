@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -20,11 +20,11 @@ namespace Silverback.Examples.Common.Consumer
 
             _serviceProvider = services.BuildServiceProvider();
 
-            Configure(_serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>(), _serviceProvider);
+            Configure(_serviceProvider.GetService<BusConfigurator>(), _serviceProvider);
         }
 
         protected abstract void ConfigureServices(IServiceCollection services);
 
-        protected abstract void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider);
+        protected abstract void Configure(BusConfigurator configurator, IServiceProvider serviceProvider);
     }
 }

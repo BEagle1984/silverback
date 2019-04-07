@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Sergio Aquilini
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -48,13 +48,16 @@ namespace Silverback.Examples.Main.UseCases
 
         private void CreateScopeAndConfigure(IServiceProvider serviceProvider)
         {
-            ConfigureNLog(serviceProvider);
+            using (var scope = serviceProvider.CreateScope())
+            {
+                ConfigureNLog(scope.ServiceProvider);
 
-            serviceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
+                scope.ServiceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
 
-            Configure(serviceProvider.GetService<IBrokerEndpointsConfigurationBuilder>(), serviceProvider);
+                Configure(scope.ServiceProvider.GetService<BusConfigurator>(), serviceProvider);
 
-            PreExecute(serviceProvider);
+                PreExecute(scope.ServiceProvider);
+            }
         }
 
         private static void ConfigureNLog(IServiceProvider serviceProvider)
@@ -79,7 +82,7 @@ namespace Silverback.Examples.Main.UseCases
 
         protected abstract void ConfigureServices(IServiceCollection services);
 
-        protected abstract void Configure(IBrokerEndpointsConfigurationBuilder endpoints, IServiceProvider serviceProvider);
+        protected abstract void Configure(BusConfigurator configurator, IServiceProvider serviceProvider);
 
         protected abstract Task Execute(IServiceProvider serviceProvider);
 
