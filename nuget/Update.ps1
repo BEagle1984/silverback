@@ -1,5 +1,4 @@
-﻿$repositoryLocation = "c:\source\silverback\nuget"
-$cacheLocation = Join-Path $env:USERPROFILE ".nuget/packages"
+﻿$repositoryLocation = "."
 [bool]$clearCache = $FALSE
 
 foreach ($arg in $args)
@@ -23,20 +22,20 @@ $sources =
     ("Silverback.Integration.InMemory", "..\src\Silverback.Integration.InMemory\bin\$buildConfiguration"),
     ("Silverback.Integration.Configuration", "..\src\Silverback.Integration.Configuration\bin\$buildConfiguration")
 
-function Check-Location()
-{
-    [string]$currentLocation = Get-Location
+# function Check-Location()
+# {
+#     [string]$currentLocation = Get-Location
 
-    if ($currentLocation -ne $repositoryLocation)
-    {
-        Write-Host "This script is supposed to run in $repositoryLocation!" -ForegroundColor Red
-        $choice = Read-Host "Wanna swith to $repositoryLocation ? [Y/n]"
-        if ($choice -ne "n")
-        {
-            cd $repositoryLocation
-        }
-    }
-}
+#     if ($currentLocation -ne $repositoryLocation)
+#     {
+#         Write-Host "This script is supposed to run in $repositoryLocation!" -ForegroundColor Red
+#         $choice = Read-Host "Wanna swith to $repositoryLocation ? [Y/n]"
+#         if ($choice -ne "n")
+#         {
+#             cd $repositoryLocation
+#         }
+#     }
+# }
 
 function Delete-All()
 {
@@ -51,6 +50,9 @@ function Delete-All()
 
 function Copy-All()
 {
+    $destination = $repositoryLocation
+    Ensure-Folder-Exists $destination
+
     Write-Host "Copying packages..." -ForegroundColor Yellow
 
     foreach ($source in $sources)
@@ -59,11 +61,11 @@ function Copy-All()
         $sourcePath = Join-Path $source[1] "*.nupkg"
 
         Copy-Package $name $sourcePath
+    }
 
-		if ($clearCache)
-		{
-        	Delete-Cache $name
-		}
+    if ($clearCache)
+    {
+        Delete-Cache $name
     }
 
     Write-Host "`nAvailable packages:" -ForegroundColor Yellow
@@ -75,10 +77,6 @@ function Copy-All()
 function Copy-Package([string]$name, [string]$sourcePath)
 {
     Write-Host "`t$name..." -NoNewline
-
-    $destination = $repositoryLocation
-
-    Ensure-Folder-Exists $destination
 
     Copy-Item $sourcePath -Destination $destination -Recurse
 
@@ -110,6 +108,8 @@ function Show-Summary([string]$path)
 
     foreach ($file in $files)
     {
+        $file = Split-Path $file -leaf
+        Write-Host $file
         Add-Version $file $hashtable
     }
 
@@ -131,6 +131,8 @@ function Add-Version([string]$path, [hashtable]$hashtable)
     $revision = 0
     $patch = 0
     $versionTokenIndex = 0
+
+    Write-Host "Path: $($path)"
 
     foreach ($token in $path.Split("."))
     {
@@ -184,6 +186,8 @@ function Add-Version([string]$path, [hashtable]$hashtable)
         }
     }
 
+    Write-Host "Name: $($name)"
+
     $hashtable[$name] = @{ 
         major = $major
         minor = $minor
@@ -196,15 +200,9 @@ function Delete-Cache([string]$name)
 {
     Write-Host "`tClearing cache..." -NoNewline
 
-    $cache = Join-Path $cacheLocation $name
-
-    Get-ChildItem $cache -Recurse |
-    Remove-Item -Force -Recurse |
-    Out-Null
-
-    Write-Host "OK" -ForegroundColor Green
+    nuget locals --clear
 }
 
-Check-Location
+# Check-Location
 Delete-All
 Copy-All
