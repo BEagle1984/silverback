@@ -626,7 +626,7 @@ tr, td, th { vertical-align: middle; }
 @media (max-width: 63.9375em) { .nav__list a:hover { text-decoration: underline; } }
 
 .nav__list .nav__items { margin: 0; font-size: 1rem; }
-.nav__list .nav__items a { color: inherit; }
+.nav__list .nav__items a { color: inherit; padding: 0.25em 0;}
 .nav__list .nav__items .active { margin-left: -0.5em; padding-left: 0.5em; padding-right: 0.5em; font-weight: bold; }
 @media (max-width: 63.9375em) { .nav__list .nav__items { position: relative; max-height: 0; opacity: 0%; overflow: hidden; z-index: 10; -webkit-transition: 0.3s ease-in-out; transition: 0.3s ease-in-out; -webkit-transform: translate(0, 10%); -ms-transform: translate(0, 10%); transform: translate(0, 10%); } }
 
@@ -1104,8 +1104,9 @@ a.reversefootnote:hover { text-decoration: underline; }
 @media (max-width: 64em) { .sidebar { /* fix z-index order of follow links */ position: relative; z-index: 10; -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0); } }
 @media (min-width: 64em) { .sidebar { float: left; width: calc(200px - 1em); opacity: 0.75; -webkit-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; }
   .sidebar:hover { opacity: 1; }
-  .sidebar.sticky { overflow-y: auto; /* calculate height of nav list viewport height - nav height - masthead x-padding
-*/ height: calc(100vh - 2em - 2em); } }
+  /*.sidebar.sticky { overflow-y: auto; height: calc(100vh - 2em - 2em); } */
+  .sidebar.sticky { min-height: calc(100vh - 2em - 2em); }
+}
 @media (min-width: 80em) { .sidebar { width: calc(300px - 1em); } }
 .sidebar > * { margin-top: 1em; margin-bottom: 1em; }
 .sidebar h2, .sidebar h3, .sidebar h4, .sidebar h5, .sidebar h6 { margin-bottom: 0; font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif; }

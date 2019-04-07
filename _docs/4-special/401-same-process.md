@@ -25,5 +25,25 @@ public class SubscribingService : ISubscriber
 
 Silverback always wraps the inbound messages (received from the message broker) into an `IInboundMessage<TMessage>` and publishes both the wrapped and unwrapped message to the bus, allowing you to subscribe either of them.
 
-The `IInboundMessage<TMessage>` also contains a reference to the source `IEndpoint`.
+**Note:** The `IInboundMessage<TMessage>` also contains a reference to the source `IEndpoint`.
+{: .notice--info}
+
+**Important!** To avoid an infinite loop you also have to disable the message unwrapping in the inbound connector.
+
+```c#
+public void Configure(BusConfigurator busConfigurator)
+{
+    busConfigurator
+        .Connect(endpoints => endpoints
+            .AddInbound(
+                new KafkaConsumerEndpoint("basket-events")
+                {
+                    ...
+                },
+                settings: new InboundConnectorSettings
+                {
+                    UnwrapMessages: false
+                }));
+}
+```
 
