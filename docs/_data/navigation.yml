@@ -39,6 +39,8 @@ docs:
         url: /docs/quickstart/translating
       - title: Behaviors
         url: /docs/quickstart/behaviors
+      - title: Testing
+        url: /docs/quickstart/testing
   - title: Broker Configuration Explained
     children:
       - title: Endpoint
