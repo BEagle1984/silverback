@@ -1,5 +1,5 @@
 # Silverback
-[![Travis branch](https://img.shields.io/travis/BEagle1984/silverback/develop.svg?label=travis-ci)](https://travis-ci.com/BEagle1984/silverback)
+[![Build Status](https://travis-ci.com/BEagle1984/silverback.svg?branch=develop)](https://travis-ci.com/BEagle1984/silverback)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/BEagle1984/silverback/blob/master/LICENSE)
 
 Silverback is a simple framework to build reactive, event-driven, microservices.
