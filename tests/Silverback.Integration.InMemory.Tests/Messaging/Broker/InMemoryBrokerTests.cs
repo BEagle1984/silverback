@@ -108,8 +108,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 
             receivedHeaders.First().Should().BeEquivalentTo(new MessageHeader("a", "b"), new MessageHeader("c", "d"));
         }
-
-
+        
         [Fact]
         public void InMemoryBroker_PublishMessageThroughConnector_MessageConsumed()
         {

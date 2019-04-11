@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3" Version="3.3.100.1" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.101.3" />
     <PackageReference Include="Silverback.Integration" Version="0.6.1.1" />
   </ItemGroup>
 

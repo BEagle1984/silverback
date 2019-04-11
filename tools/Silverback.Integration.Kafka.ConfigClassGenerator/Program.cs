@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 
-namespace ConfigClassGenerator
+namespace Silverback.Integration.Kafka.ConfigClassGenerator
 {
     class Program
     {
@@ -12,7 +12,7 @@ namespace ConfigClassGenerator
         {
             var xmlDocumentationPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                @".nuget\packages\confluent.kafka\1.0.0-beta2\lib\netstandard1.3\Confluent.Kafka.xml");
+                @".nuget\packages\confluent.kafka\1.0.0-rc3\lib\netstandard1.3\Confluent.Kafka.xml");
 
             var consumerConfig = new ProxyClassGenerator(typeof(Confluent.Kafka.ConsumerConfig), "ConfluentConsumerConfigProxy", xmlDocumentationPath).Generate();
             Console.Write(consumerConfig);
