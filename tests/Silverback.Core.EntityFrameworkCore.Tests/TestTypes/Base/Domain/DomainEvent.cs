@@ -3,7 +3,6 @@
 namespace Silverback.Tests.Core.EntityFrameworkCore.TestTypes.Base.Domain
 {
     public abstract class DomainEvent<TEntity> : IDomainEvent<TEntity>
-        where TEntity : IDomainEntity
     {
         public TEntity Source { get; set; }
 
@@ -16,7 +15,7 @@ namespace Silverback.Tests.Core.EntityFrameworkCore.TestTypes.Base.Domain
         {
         }
 
-        IDomainEntity IDomainEvent.Source
+        object IDomainEvent.Source
         {
             get => Source;
             set => Source = (TEntity) value;

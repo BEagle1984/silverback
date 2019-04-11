@@ -40,5 +40,29 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
 
             result.Should().BeEquivalentTo(1, 2, 3);
         }
+
+        [Fact]
+        public async Task ExecuteAsync_ListQueries_EnumerablesReturned()
+        {
+            var result = await _publisher.ExecuteAsync(new []{new ListQuery { Count = 3 }, new ListQuery { Count = 3 }});
+
+            result.Should().BeEquivalentTo(new[]{1, 2, 3}, new[] { 1, 2, 3 });
+        }
+
+        [Fact]
+        public void Execute_ListQuery_EnumerableReturned()
+        {
+            var result = _publisher.Execute(new ListQuery { Count = 3 });
+
+            result.Should().BeEquivalentTo(1, 2, 3);
+        }
+
+        [Fact]
+        public void Execute_ListQueries_EnumerablesReturned()
+        {
+            var result = _publisher.Execute(new[] { new ListQuery { Count = 3 }, new ListQuery { Count = 3 } });
+
+            result.Should().BeEquivalentTo(new[] { 1, 2, 3 }, new[] { 1, 2, 3 });
+        }
     }
 }

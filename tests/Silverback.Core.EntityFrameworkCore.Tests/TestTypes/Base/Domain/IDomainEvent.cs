@@ -4,11 +4,10 @@ namespace Silverback.Tests.Core.EntityFrameworkCore.TestTypes.Base.Domain
 {
     public interface IDomainEvent : IEvent
     {
-        IDomainEntity Source { get; set; }
+        object Source { get; set; }
     }
 
     public interface IDomainEvent<out TEntity> : IDomainEvent
-        where TEntity : IDomainEntity
     {
         new TEntity Source { get; }
     }

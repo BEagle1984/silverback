@@ -1,9 +1,9 @@
-﻿using System;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker

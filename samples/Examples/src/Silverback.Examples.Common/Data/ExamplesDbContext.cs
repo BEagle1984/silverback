@@ -14,26 +14,17 @@ namespace Silverback.Examples.Common.Data
 {
     public class ExamplesDbContext : DbContext
     {
-        private DbContextEventsPublisher<DomainEntity> _eventsPublisher;
+        private readonly DbContextEventsPublisher _eventsPublisher;
 
         public ExamplesDbContext(IPublisher publisher)
         {
-            InitEventsPublisher(publisher);
+            _eventsPublisher = new DbContextEventsPublisher(publisher, this);
         }
 
         public ExamplesDbContext(DbContextOptions options, IPublisher publisher)
             : base(options)
         {
-            InitEventsPublisher(publisher);
-        }
-
-        private void InitEventsPublisher(IPublisher publisher)
-        {
-            _eventsPublisher = new DbContextEventsPublisher<DomainEntity>(
-                DomainEntityEventsAccessor.EventsSelector,
-                DomainEntityEventsAccessor.ClearEventsAction,
-                publisher,
-                this);
+            _eventsPublisher = new DbContextEventsPublisher(publisher, this);
         }
 
         public DbSet<OutboundMessage> OutboundMessages { get; set; }

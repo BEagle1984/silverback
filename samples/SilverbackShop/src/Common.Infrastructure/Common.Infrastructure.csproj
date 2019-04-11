@@ -4,9 +4,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SilverbackShop.Common.Infrastructure</AssemblyName>
     <RootNamespace>SilverbackShop.Common.Infrastructure</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 

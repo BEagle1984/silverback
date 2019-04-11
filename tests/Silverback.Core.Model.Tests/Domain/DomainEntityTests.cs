@@ -8,10 +8,10 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Model.Domain
 {
-    public class EntityTests
+    public class DomainEntityTests
     {
         [Fact]
-        public void AddEventTest()
+        public void AddEvent_EventInstance_AddedToCollection()
         {
             var entity = new TestAggregateRoot();
 
@@ -25,7 +25,7 @@ namespace Silverback.Tests.Core.Model.Domain
         }
 
         [Fact]
-        public void AddEventGenericTest()
+        public void AddEvent_EventType_AddedToCollection()
         {
             var entity = new TestAggregateRoot();
 
@@ -39,14 +39,26 @@ namespace Silverback.Tests.Core.Model.Domain
         }
 
         [Fact]
-        public void ClearEventsTest()
+        public void AddEvent_SameEventTypeWithoutAllowMultiple_AddedOnlyOnceToCollection()
+        {
+            var entity = new TestAggregateRoot();
+
+            entity.AddEvent<TestDomainEventOne>(false);
+            entity.AddEvent<TestDomainEventTwo>(false);
+            entity.AddEvent<TestDomainEventOne>(false);
+
+            entity.DomainEvents.Count().Should().Be(2);
+        }
+
+        [Fact]
+        public void ClearMessages_WithSomePendingMessages_MessagesCleared()
         {
             var entity = new TestAggregateRoot();
 
             entity.AddEvent<TestDomainEventOne>();
             entity.AddEvent<TestDomainEventTwo>();
             entity.AddEvent<TestDomainEventOne>();
-            entity.ClearEvents();
+            entity.ClearMessages();
 
             entity.DomainEvents.Should().NotBeNull();
             entity.DomainEvents.Should().BeEmpty();

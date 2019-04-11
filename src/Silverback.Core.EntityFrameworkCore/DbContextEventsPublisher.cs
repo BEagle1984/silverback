@@ -14,15 +14,23 @@ namespace Silverback.EntityFrameworkCore
     /// <summary>
     /// Exposes some methods to handle domain events as part of the SaveChanges transaction.
     /// </summary>
-    public class DbContextEventsPublisher<TDomainEntity> where TDomainEntity : class
+    public class DbContextEventsPublisher
     {
-        private readonly Func<TDomainEntity, IEnumerable<object>> _eventsSelector;
-        private readonly Action<TDomainEntity> _clearEventsAction;
+        private readonly Func<object, IEnumerable<object>> _eventsSelector;
+        private readonly Action<object> _clearEventsAction;
         private readonly IPublisher _publisher;
         private readonly DbContext _dbContext;
 
-        public DbContextEventsPublisher(Func<TDomainEntity, IEnumerable<object>> eventsSelector,
-            Action<TDomainEntity> clearEventsAction, IPublisher publisher, DbContext dbContext)
+        public DbContextEventsPublisher(IPublisher publisher, DbContext dbContext)
+        : this(
+            e => (e as IMessagesSource)?.GetMessages(),
+            e => (e as IMessagesSource)?.ClearMessages(),
+            publisher, dbContext)
+        {
+        }
+
+        public DbContextEventsPublisher(Func<object, IEnumerable<object>> eventsSelector,
+            Action<object> clearEventsAction, IPublisher publisher, DbContext dbContext)
         {
             _eventsSelector = eventsSelector ?? throw new ArgumentNullException(nameof(eventsSelector));
             _clearEventsAction = clearEventsAction ?? throw new ArgumentNullException(nameof(clearEventsAction));
@@ -86,15 +94,15 @@ namespace Silverback.EntityFrameworkCore
 
         private List<object> GetDomainEvents() =>
             _dbContext
-                .ChangeTracker.Entries<TDomainEntity>()
+                .ChangeTracker.Entries()
                 .SelectMany(e =>
                 {
-                    var selected = _eventsSelector(e.Entity).ToList();
+                    var selected = _eventsSelector(e.Entity)?.ToList();
 
                     // Clear all events to avoid firing the same event multiple times during the recursion
                     _clearEventsAction(e.Entity);
 
-                    return selected;
+                    return selected ?? Enumerable.Empty<object>();
                 }).ToList();
 
         private async Task PublishEvent<TEvent>(bool async)

@@ -1,26 +1,7 @@
 ﻿$repositoryLocation = "."
-[bool]$clearCache = $FALSE
-
-foreach ($arg in $args)
-{
-	if ($arg -eq "-c")
-	{
-		$clearCache = $TRUE
-	}
-}
-
-$buildConfiguration = "Debug"
-
-$sources =
-    ("Silverback.Core", "..\src\Silverback.Core\bin\$buildConfiguration"),
-    ("Silverback.Core.EntityFrameworkCore", "..\src\Silverback.Core.EntityFrameworkCore\bin\$buildConfiguration"),
-    ("Silverback.Core.Rx", "..\src\Silverback.Core.Rx\bin\$buildConfiguration"),
-    ("Silverback.Core.Model", "..\src\Silverback.Core.Model\bin\$buildConfiguration"),
-	("Silverback.Integration", "..\src\Silverback.Integration\bin\$buildConfiguration"),
-    ("Silverback.Integration.EntityFrameworkCore", "..\src\Silverback.Integration.EntityFrameworkCore\bin\$buildConfiguration"),
-    ("Silverback.Integration.Kafka", "..\src\Silverback.Integration.Kafka\bin\$buildConfiguration"),
-    ("Silverback.Integration.InMemory", "..\src\Silverback.Integration.InMemory\bin\$buildConfiguration"),
-    ("Silverback.Integration.Configuration", "..\src\Silverback.Integration.Configuration\bin\$buildConfiguration")
+[bool]$global:clearCache = $FALSE
+[bool]$global:build = $TRUE
+$global:buildConfiguration = "Release"
 
 # function Check-Location()
 # {
@@ -36,6 +17,53 @@ $sources =
 #         }
 #     }
 # }
+
+function Check-Args([string[]]$argsArray)
+{
+    For ($i=0; $i -le $argsArray.Length; $i++) {
+        $arg = $argsArray[$i]
+
+        if ($arg -eq "--configuration" -Or $arg -eq "-c")
+        {
+           $global:buildConfiguration = $argsArray[$i + 1]
+        }
+        elseif ($arg -eq "--clear-cache" -Or $arg -eq "-l")
+        {
+           $global:clearCache = $TRUE
+        }
+        elseif ($arg -eq "--no-build")
+        {
+           $global:build = $FALSE
+        }
+    }
+}
+
+function Get-Sources() 
+{
+    $sources = 
+        ("Silverback.Core", "..\src\Silverback.Core\bin\$global:buildConfiguration"),
+        ("Silverback.Core.EntityFrameworkCore", "..\src\Silverback.Core.EntityFrameworkCore\bin\$global:buildConfiguration"),
+        ("Silverback.Core.Rx", "..\src\Silverback.Core.Rx\bin\$global:buildConfiguration"),
+        ("Silverback.Core.Model", "..\src\Silverback.Core.Model\bin\$global:buildConfiguration"),
+        ("Silverback.Integration", "..\src\Silverback.Integration\bin\$global:buildConfiguration"),
+        ("Silverback.Integration.EntityFrameworkCore", "..\src\Silverback.Integration.EntityFrameworkCore\bin\$global:buildConfiguration"),
+        ("Silverback.Integration.Kafka", "..\src\Silverback.Integration.Kafka\bin\$global:buildConfiguration"),
+        ("Silverback.Integration.InMemory", "..\src\Silverback.Integration.InMemory\bin\$global:buildConfiguration"),
+        ("Silverback.Integration.Configuration", "..\src\Silverback.Integration.Configuration\bin\$global:buildConfiguration"),
+        ("Silverback.EventSourcing", "..\src\Silverback.EventSourcing\bin\$global:buildConfiguration")
+
+    return $sources
+}
+
+function Build()
+{
+    if ($global:build)
+    {
+        Write-Host "Building ($global:buildConfiguration)...`n" -ForegroundColor Yellow
+        dotnet build -c $global:buildConfiguration -v q ../Silverback.sln
+        Write-Host "" -ForegroundColor Yellow
+    }
+}
 
 function Delete-All()
 {
@@ -55,7 +83,7 @@ function Copy-All()
 
     Write-Host "Copying packages..." -ForegroundColor Yellow
 
-    foreach ($source in $sources)
+    foreach ($source in Get-Sources)
     {
         $name = $source[0]
         $sourcePath = Join-Path $source[1] "*.nupkg"
@@ -63,7 +91,7 @@ function Copy-All()
         Copy-Package $name $sourcePath
     }
 
-    if ($clearCache)
+    if ($global:clearCache)
     {
         Delete-Cache $name
     }
@@ -112,7 +140,7 @@ function Show-Summary([string]$path)
         Add-Version $file $hashtable
     }
 
-    foreach ($source in $sources)
+    foreach ($source in Get-Sources)
     {
         $key = $source[0]
         
@@ -198,6 +226,8 @@ function Delete-Cache([string]$name)
     dotnet nuget locals all --clear
 }
 
+Check-Args $args
 # Check-Location
+Build
 Delete-All
 Copy-All
