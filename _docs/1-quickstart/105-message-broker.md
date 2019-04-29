@@ -5,7 +5,7 @@ permalink: /docs/quickstart/message-broker
 
 To connect Silverback to a message broker we need a reference to _Silverback.Integration_, plus the concrete implementation (_Silverback.Integration.Kafka_ in this example). We can then add the broker to the DI and configure the connected endpoints. 
 
-## Sample Configuration
+## Sample configuration
 
 The following example is very simple and there are of course many more configurations and possibilities. Some more details are given in the dedicated _Broker Configuration Explained_ section.
 

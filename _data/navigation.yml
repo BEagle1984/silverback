@@ -41,6 +41,8 @@ docs:
         url: /docs/quickstart/behaviors
       - title: Testing
         url: /docs/quickstart/testing
+      - title: Event Sourcing
+        url: /docs/quickstart/event-sourcing
   - title: Broker Configuration Explained
     children:
       - title: Endpoint

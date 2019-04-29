@@ -37,7 +37,7 @@ public void ConfigureServices(IServiceCollection services)
 
 At every call to `IPublisher.Publish` the `Handle` method of each registered behavior is called, passing in the array of messages and the delegate to the next step in the pipeline. This gives you the flexibility to execute any sort of code before and after the messages have been actually published (before or after calling the `next()` step). You can for example modify the messages before publishing them, validate them (like in the above example), add some logging / tracing, etc.
 
-## Message Headers
+## Message headers
 
 The behaviors can be quite useful to get and set the message headers for inbound/outbound messages.
 

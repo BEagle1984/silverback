@@ -5,7 +5,7 @@ permalink: /docs/advanced/chunking
 
 The message brokers are usually very efficient at handling huge amount of relatively small messages. In order to make the most out of it you may want to split your largest messages (e.g. containing binary data) into smaller chunks. Silverback can handle such scenario transparently, reassembling the message automatically in the inbound connector before pushing it to the internal bus.
 
-## Producer Configuration
+## Producer configuration
 
 The producer endpoint can be configured to split the message into chunks by specifying their maximum size (in byte).
 
@@ -23,7 +23,7 @@ new KafkaProducerEndpoint("silverback-examples-events")
 }
 ```
 
-## Consumer Configuration
+## Consumer configuration
 
 The `DbContextChunkStore` will temporary store the chunks into a database table and the inbound connector will rebuild the original message as soon as all chunks have been received.
 
