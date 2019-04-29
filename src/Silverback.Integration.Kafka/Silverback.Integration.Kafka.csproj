@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.0.0-RC3" />
+    <PackageReference Include="Confluent.Kafka" Version="1.0.0" />
     <PackageReference Include="Silverback.Integration" Version="0.7.0" />
   </ItemGroup>
 
