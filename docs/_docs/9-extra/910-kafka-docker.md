@@ -7,7 +7,7 @@ permalink: /docs/extra/kafka-docker
 
 Source: https://docs.confluent.io/current/installation/docker/docs/installation/single-node-client.html
 
-### Create a Docker Network
+### Create a docker network
 
 ```
 docker network create confluent

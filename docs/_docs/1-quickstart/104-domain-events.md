@@ -6,14 +6,17 @@ toc: false
 
 One of the core features of Silverback is the ability to publish the domain events as part of the `DbContext` save changes transaction in order to guarantee consistency.
 
-The _Silverback.Core.Model_ package contains a sample implementation of a `DomainEntity` but you can also implement you own type.
+The _Silverback.Core.Model_ package contains a sample implementation of a `DomainEntity` but you can also implement you own type. 
+
+**Important!** In case of a custom implementation the only constraint is that you must implement the `IMessagesSource` interface in order for Silverback to be able to access the associated events.
+{: .notice--warning}
 
 ```c#
 using Silverback.Domain;
 
 namespace Sample
 {
-    public class Basket : Entity, IAggregateRoot
+    public class Basket : DomainEntity, IAggregateRoot
     {
         private readonly List<BasketItem> _items = new List<BasketItem>();
 
@@ -48,33 +51,24 @@ namespace Sample
 }
 ```
 
-The `AddEvent<TEvent>()` method adds the domain event to the `IDomainEntity` events collection, to be published by the when the entity is saved.
+The `AddEvent<TEvent>()` method adds the domain event to the events collection, to be published when the entity is saved.
 
 To enable this mechanism we just need to override the various `SaveChanges` methods to plug-in the `DbContextEventsPublisher` contained in the _Silverback.Core.EntityFrameworkCore_ package.
 
 ```c#
 public class MyDbContext : DbContext
 {
-    private readonly DbContextEventsPublisher<DomainEntity> _eventsPublisher;
+    private readonly DbContextEventsPublisher _eventsPublisher;
 
-    public ShopDbContext(IPublisher publisher)
+    public MyDbContext(IPublisher publisher)
     {
-        InitEventsPublisher(publisher);
+        _eventsPublisher = new DbContextEventsPublisher(publisher, this);
     }
 
-    public ShopDbContext(DbContextOptions options, IPublisher publisher)
+    public MyDbContext(DbContextOptions options, IPublisher publisher)
         : base(options)
     {
-        InitEventsPublisher(publisher);
-    }
-
-    private void InitEventsPublisher(IPublisher publisher)
-    {
-        _eventsPublisher = new DbContextEventsPublisher<DomainEntity>(
-            DomainEntityEventsAccessor.EventsSelector,
-            DomainEntityEventsAccessor.ClearEventsAction,
-            publisher,
-            this);
+        _eventsPublisher = new DbContextEventsPublisher(publisher, this);
     }
 
     public override int SaveChanges()

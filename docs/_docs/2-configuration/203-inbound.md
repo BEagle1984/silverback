@@ -98,7 +98,7 @@ public static BrokerOptionsBuilder AddMyCustomOffsetStoredInboundConnector<TDbCo
 }
 ```
 
-## Error Handling
+## Error handling
 
 If an exceptions is thrown by the methods consuming the incoming messages (subscribers) the consumer will stop, unless some error policies are defined.
 
@@ -140,7 +140,7 @@ policy.Move(new KafkaProducerEndpoint("same-endpoint") { ... })
 **Important!** If the last applied policy still fails the inbound connector will return the exception to the consumer, causing it to stop. A _Retry_ alone is therefore not recommendend and it should be combined with _Skip_ or _Move_.
 {: .notice--warning}
 
-## Batch Processing
+## Batch processing
 
 The inbound connector can be configured to process the messages in batches.
 
