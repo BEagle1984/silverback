@@ -50,10 +50,7 @@ Silverback.Integration.InMemory<br/>[![NuGet](http://img.shields.io/nuget/v/Silv
 Silverback.Integration.Configuration<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Configuration.svg)](https://www.nuget.org/packages/Silverback.Integration.Configuration/) | Contains the logic to read the broker endpoints configuration from the IConfiguration from Microsoft.Extensions.Configuration (appsettings.json, environment variables, etc.)
 Silverback.EventSourcing<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.EventSourcing.svg)](https://www.nuget.org/packages/Silverback.EventSourcing/) | Contains the event store abstractions.
 Silverback.EventSourcing.EntityFrameworkCore<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.EventSourcing.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.EventSourcing.EntityFrameworkCore/) | Contains the implementation of the EventStore for EntityFramework.
-<<<<<<< HEAD
 
-=======
->>>>>>> cbb30e1938b8994ff93632c5cb7ad8c63985490e
 ## Read more
 
 Have a look at the quickstart to see how simple it is to start working with it and how much you can achieve with very few lines of code.
