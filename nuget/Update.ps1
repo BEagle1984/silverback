@@ -50,7 +50,8 @@ function Get-Sources()
         ("Silverback.Integration.Kafka", "..\src\Silverback.Integration.Kafka\bin\$global:buildConfiguration"),
         ("Silverback.Integration.InMemory", "..\src\Silverback.Integration.InMemory\bin\$global:buildConfiguration"),
         ("Silverback.Integration.Configuration", "..\src\Silverback.Integration.Configuration\bin\$global:buildConfiguration"),
-        ("Silverback.EventSourcing", "..\src\Silverback.EventSourcing\bin\$global:buildConfiguration")
+        ("Silverback.EventSourcing", "..\src\Silverback.EventSourcing\bin\$global:buildConfiguration"),
+        ("Silverback.EventSourcing.EntityFrameworkCore", "..\src\Silverback.EventSourcing.EntityFrameworkCore\bin\$global:buildConfiguration")
 
     return $sources
 }
