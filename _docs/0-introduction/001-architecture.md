@@ -35,21 +35,57 @@ The following diagram shows the Silverback's main components and how they intera
 
 ## Packages
 
-Silverback is modular and delivered as multiple packages, available on [nuget.org](https://www.nuget.org/packages?q=Silverback):
+Silverback is modular and delivered in multiple packages, available through [nuget.org](https://www.nuget.org/packages?q=Silverback).
 
-Package | Description
-:-- | :--
-Silverback.Core<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.svg)](https://www.nuget.org/packages/Silverback.Core/) | It implements a very simple, yet very effective, publish/subscribe in-memory bus that can be used to decouple the software parts and easily implement a Domain Driven Design approach.
-Silverback.Core.Model<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.Model.svg)](https://www.nuget.org/packages/Silverback.Core.Model/) | It contains some interfaces that will help organize the messages and write cleaner code, adding some semantic. It also includes a sample implementation of a base class for your domain entities.
-Silverback.Core.EntityFrameworkCore<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore/) | Adds the ability to fire the domain events as part of the SaveChanges transaction.
-Silverback.Core.Rx<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.Rx.svg)](https://www.nuget.org/packages/Silverback.Core.Rx/) | Adds the possibility to create an Rx Observable over the internal bus.
-Silverback.Integration<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.svg)](https://www.nuget.org/packages/Silverback.Integration/) | Contains the message broker and connectors abstraction. Inbound and outbound connectors can be attached to a message broker to either export some events/commands/messages to other microservices or react to the messages fired by other microservices in the same way as internal messages are handled.
-Silverback.Integration.EntityFrameworkCore<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Integration.EntityFrameworkCore/) | Enables the creation of the inbound and outbound messages DbSet. This approach leads to fully transactional messaging, since the outbound messages are saved in the same transaction as the changes to the local data (outbox table pattern). It also allows to temporarly store the message chunks in the database, using Entity Framework Core. 
-Silverback.Integration.Kafka<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Kafka.svg)](https://www.nuget.org/packages/Silverback.Integration.Kafka/) | An implementation of Silverback.Integration for the popular Apache Kafka message broker. It internally uses the Confluent.Kafka client.
-Silverback.Integration.InMemory<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.InMemory.svg)](https://www.nuget.org/packages/Silverback.Integration.InMemory/) | Includes a mocked message broker to be used for testing only.
-Silverback.Integration.Configuration<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Configuration.svg)](https://www.nuget.org/packages/Silverback.Integration.Configuration/) | Contains the logic to read the broker endpoints configuration from the IConfiguration from Microsoft.Extensions.Configuration (appsettings.json, environment variables, etc.)
-Silverback.EventSourcing<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.EventSourcing.svg)](https://www.nuget.org/packages/Silverback.EventSourcing/) | Contains the event store abstractions.
-Silverback.EventSourcing.EntityFrameworkCore<br/>[![NuGet](http://img.shields.io/nuget/v/Silverback.EventSourcing.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.EventSourcing.EntityFrameworkCore/) | Contains the implementation of the EventStore for EntityFramework.
+### Core
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.svg)](https://www.nuget.org/packages/Silverback.Core/)
+**Silverback.Core**<br/>
+It implements a very simple, yet very effective, publish/subscribe in-memory bus that can be used to decouple the software parts and easily implement a Domain Driven Design approach.
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.Model.svg)](https://www.nuget.org/packages/Silverback.Core.Model/)
+**Silverback.Core.Model**<br/>
+It contains some interfaces that will help organize the messages and write cleaner code, adding some semantic. It also includes a sample implementation of a base class for your domain entities.
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore/)
+**Silverback.Core.EntityFrameworkCore**<br/>
+Adds the ability to fire the domain events as part of the SaveChanges transaction.
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.Core.Rx.svg)](https://www.nuget.org/packages/Silverback.Core.Rx/)
+**Silverback.Core.Rx**<br/>
+Adds the possibility to create an Rx Observable over the internal bus.
+
+### Integration
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.svg)](https://www.nuget.org/packages/Silverback.Integration/)
+**Silverback.Integration**<br/>
+Contains the message broker and connectors abstraction. Inbound and outbound connectors can be attached to a message broker to either export some events/commands/messages to other microservices or react to the messages fired by other microservices in the same way as internal messages are handled.
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Integration.EntityFrameworkCore/)
+**Silverback.Integration.EntityFrameworkCore**<br/>
+Enables the creation of the inbound and outbound messages DbSet. This approach leads to fully transactional messaging, since the outbound messages are saved in the same transaction as the changes to the local data (outbox table pattern). It also allows to temporarly store the message chunks in the database, using Entity Framework Core. 
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Kafka.svg)](https://www.nuget.org/packages/Silverback.Integration.Kafka/)
+**Silverback.Integration.Kafka**<br/>
+An implementation of Silverback.Integration for the popular Apache Kafka message broker. It internally uses the Confluent.Kafka client.
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.InMemory.svg)](https://www.nuget.org/packages/Silverback.Integration.InMemory/)
+**Silverback.Integration.InMemory**<br/>
+Includes a mocked message broker to be used for testing only.
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Configuration.svg)](https://www.nuget.org/packages/Silverback.Integration.Configuration/)
+**Silverback.Integration.Configuration**<br/>
+Contains the logic to read the broker endpoints configuration from the IConfiguration from Microsoft.Extensions.Configuration (appsettings.json, environment variables, etc.)
+
+### Event Sourcing
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.EventSourcing.svg)](https://www.nuget.org/packages/Silverback.EventSourcing/)
+**Silverback.EventSourcing**<br/>
+Contains the event store abstractions.
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.EventSourcing.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.EventSourcing.EntityFrameworkCore/)
+**Silverback.EventSourcing.EntityFrameworkCore**<br/>
+Contains the implementation of the EventStore for EntityFramework.
 
 ## Read more
 
