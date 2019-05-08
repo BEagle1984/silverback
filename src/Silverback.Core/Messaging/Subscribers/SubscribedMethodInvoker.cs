@@ -80,7 +80,7 @@ namespace Silverback.Messaging.Subscribers
             return AsyncHelper.RunSynchronously<object>(() =>
             {
                 var result = (Task)method.Info.MethodInfo.Invoke(method.Target, parameters);
-                return ((Task)result).GetReturnValue();
+                return result.GetReturnValue();
             });
         }
 

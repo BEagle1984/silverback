@@ -13,5 +13,8 @@ namespace Silverback.Tests.Core.Model.TestTypes.Subscribers
     {
         [Subscribe]
         public Task<IEnumerable<int>> Handle(ListQuery query) => Task.FromResult(Enumerable.Range(1, query.Count));
+
+        [Subscribe]
+        public Task TryToBreak(ListQuery query) => Task.FromResult(new object[0]);
     }
 }
