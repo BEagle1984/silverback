@@ -43,6 +43,9 @@ The **Silverback.Integration.EntityFrameworkCore** package contains an implement
 
 The `DbContext` must include a `DbSet<OutboundMessage>` and an `OutboundWorker` is to be scheduled using your scheduler of choice to process the outbound queue.
 
+**Important!** The current `OutboundWorker` cannot be horizontally scaled and starting multiple instances will cause the messages to be produced multiple times. In the following example a distributed lock in the database is used to ensure that only one instance is running and another one will _immediatly_ take over when it stops (the `DbContext` must include a `DbSet<Lock>` as well).
+{: .notice--warning}
+
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
@@ -50,13 +53,18 @@ public void ConfigureServices(IServiceCollection services)
 
     services
         .AddBus()
+
+        // Setup the background task manager using the database
+        // to handle the distributed locks
+        .AddBackgroundTaskManager<MyDbContext>()
+
         .AddBroker<KafkaBroker>(options => options
             .AddDbOutboundConnector<MyDbContext>()
             .AddDbOutboundWorker<MyDbContext>());
     ...
 }
 
-public void Configure(BusConfigurator busConfigurator)
+public void Configure(BusConfigurator busConfigurator, OutboundQueueWorker outboundWorker, IApplicationLifetime appLifetime)
 {
     busConfigurator
         .Connect(endpoints => endpoints
@@ -66,8 +74,17 @@ public void Configure(BusConfigurator busConfigurator)
                     ...
                 }));
 
-    // Scheduling the OutboundQueueWorker using a poor-man scheduler
-    jobScheduler.AddJob("outbound-queue-worker", TimeSpan.FromMilliseconds(100),
+    // Start processing the outbound queue:
+    // -> take appLifetime.ApplicationStopping as cancellation token
+    // -> sleep 500 milliseconds when the queue is empty
+    // -> check if the lock is gone every 1 seconds (= the running instance was stopped and we need to take over)
+    outboundWorker.StartProcessing(
+        appLifetime.ApplicationStopping,
+        TimeSpan.FromMilliseconds(500),
+        new Background.DistributedLockSettings(
+            acquireRetryInterval: TimeSpan.FromSeconds(1))
+        );
+        jobScheduler.AddJob("outbound-queue-worker", TimeSpan.FromMilliseconds(100),
         s => s.GetRequiredService<OutboundQueueWorker>().ProcessQueue());
 }
 ```
