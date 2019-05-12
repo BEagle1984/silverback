@@ -65,8 +65,8 @@ namespace Silverback.Messaging.Configuration
             bool enforceMessageOrder = true, int readPackageSize = 100, bool removeProduced = true)
             where TDbContext : DbContext
         {
-            builder.AddOutboundWorker(s =>
-                new DbContextOutboundQueueConsumer(s.GetRequiredService<TDbContext>(), removeProduced),
+            builder.AddOutboundWorker(
+                s => new DbContextOutboundQueueConsumer(s.GetRequiredService<TDbContext>(), removeProduced),
                 enforceMessageOrder, readPackageSize);
 
             return builder;

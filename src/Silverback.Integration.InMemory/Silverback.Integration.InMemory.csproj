@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Silverback</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.7.0.1</Version>
+    <Version>0.7.1.0</Version>
     <Authors>BEagle1984</Authors>
     <Company>BEagle1984</Company>
     <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package includes a mocked message broker to be used for testing only.</Description>
@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Integration" Version="0.7.0.0" />
+    <PackageReference Include="Silverback.Integration" Version="0.7.1" />
   </ItemGroup>
 
 </Project>

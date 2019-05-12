@@ -8,7 +8,6 @@ using NLog.Extensions.Logging;
 using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Common.Messages;
-using Silverback.Examples.Common.Serialization;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;

@@ -2,32 +2,30 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Data;
-using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
 
 namespace Silverback.Examples.Main.UseCases.EfCore
 {
-    public class DeferredOutboundUseCase : UseCase
+    public class OutboundWorkerUseCase : UseCase
     {
-        public DeferredOutboundUseCase() : base("Deferred publish (DbOutbound)", 10)
+        public OutboundWorkerUseCase() : base("Outbound worker (start background processing)", 15, 1)
         {
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus(options => options.UseModel())
+            .AddBackgroundTaskManager<ExamplesDbContext>()
             .AddBroker<KafkaBroker>(options => options
                 .AddDbOutboundConnector<ExamplesDbContext>()
-                .AddDbOutboundWorker<ExamplesDbContext>())
-            .AddScoped<IBehavior, CustomHeadersBehavior>();
+                .AddDbOutboundWorker<ExamplesDbContext>());
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
@@ -40,27 +38,30 @@ namespace Silverback.Examples.Main.UseCases.EfCore
                     }
                 }));
 
-        protected override async Task Execute(IServiceProvider serviceProvider)
+        protected override Task Execute(IServiceProvider serviceProvider)
         {
-            var publisher = serviceProvider.GetService<IEventPublisher>();
+            var cancellationTokenSource = new CancellationTokenSource();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent {Content = DateTime.Now.ToString("HH:mm:ss.fff")});
+            Console.WriteLine("Starting OutboundWorker background process (press ESC to stop)...");
 
-            var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
-            await dbContext.SaveChangesAsync();
-        }
-        
-        public class CustomHeadersBehavior : IBehavior
-        {
-            public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
+            serviceProvider.GetRequiredService<OutboundQueueWorker>()
+                .StartProcessing(
+                    cancellationTokenSource.Token,
+                    TimeSpan.FromMilliseconds(100),
+                    new Background.DistributedLockSettings(acquireRetryInterval: TimeSpan.FromSeconds(1)));
+
+            while (Console.ReadKey(false).Key != ConsoleKey.Escape)
             {
-                foreach (var message in messages.OfType<IOutboundMessage>())
-                {
-                    message.Headers.Add("was-created", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                }
-
-                return await next(messages);
             }
+
+            Console.WriteLine("Canceling...");
+
+            cancellationTokenSource.Cancel();
+
+            // Let the worker gracefully exit
+            Thread.Sleep(2000);
+
+            return Task.CompletedTask;
         }
     }
 }

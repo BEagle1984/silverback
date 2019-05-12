@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Silverback.Tests.Core.Messaging.Publishing
+namespace Silverback.Tests.Core.TestTypes
 {
     public class ParallelTestingUtil
     {

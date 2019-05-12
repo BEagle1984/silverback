@@ -15,11 +15,12 @@ namespace Silverback.Examples.Main.UseCases
 {
     public abstract class UseCase : MenuItem
     {
-        private const int ExecutionsCount = 3;
+        private readonly int _executionsCount;
 
-        protected UseCase(string name, int sortIndex = 100)
+        protected UseCase(string name, int sortIndex = 100, int executionCount = 3)
             : base(name, sortIndex)
         {
+            _executionsCount = executionCount;
         }
 
         public void Execute()
@@ -37,7 +38,7 @@ namespace Silverback.Examples.Main.UseCases
             {
                 CreateScopeAndConfigure(serviceProvider);
 
-                for (int i = 0; i < ExecutionsCount; i++)
+                for (int i = 0; i < _executionsCount; i++)
                 {
                     CreateScopeAndExecute(serviceProvider);
                 }

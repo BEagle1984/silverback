@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Background;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
@@ -96,8 +97,9 @@ namespace Silverback.Messaging.Configuration
         internal BrokerOptionsBuilder AddOutboundWorker(bool enforceMessageOrder, int readPackageSize)
         {
             Services.AddScoped(s => new OutboundQueueWorker(
-                s.GetRequiredService<IOutboundQueueConsumer>(), 
-                s.GetRequiredService<IBroker>(), 
+                s.GetRequiredService<IServiceProvider>(),
+                s.GetRequiredService<IBroker>(),
+                s.GetRequiredService<IBackgroundTaskManager>(),
                 s.GetRequiredService<ILogger<OutboundQueueWorker>>(),
                 s.GetRequiredService<MessageLogger>(),
                 enforceMessageOrder, readPackageSize));
@@ -140,7 +142,7 @@ namespace Silverback.Messaging.Configuration
         internal void CompleteWithDefaults() => SetDefaults();
 
         /// <summary>
-        /// Sets the default values for the options that have not been explicitely set
+        /// Sets the default values for the options that have not been explicitly set
         /// by the user.
         /// </summary>
         protected virtual void SetDefaults()

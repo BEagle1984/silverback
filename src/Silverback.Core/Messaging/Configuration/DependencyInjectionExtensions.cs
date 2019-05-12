@@ -11,7 +11,7 @@ using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class DependencyInjectionExtensions
+    public static partial class DependencyInjectionExtensions
     {
         public static IServiceCollection AddBus(this IServiceCollection services, Action<BusPluginOptions> optionsAction = null)
         {

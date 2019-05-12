@@ -4,7 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Silverback.Domain;
+using Silverback.Background.Model;
 using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.LargeMessages;
@@ -30,6 +30,8 @@ namespace Silverback.Examples.Common.Data
         public DbSet<OutboundMessage> OutboundMessages { get; set; }
         public DbSet<InboundMessage> InboundMessages { get; set; }
         public DbSet<StoredOffset> StoredOffsets { get; set; }
+        public DbSet<Lock> Locks { get; set; }
+
         public DbSet<Customer> Customers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

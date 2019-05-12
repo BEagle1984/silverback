@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Silverback</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.7.0.1</Version>
+    <Version>0.7.1.0</Version>
     <Authors>BEagle1984</Authors>
     <Company>BEagle1984</Company>
     <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package contains the event store abstraction.</Description>
@@ -25,6 +25,6 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Silverback.Core" Version="0.7.0.1" />
+    <PackageReference Include="Silverback.Core" Version="0.7.1" />
   </ItemGroup>
 </Project>

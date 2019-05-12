@@ -14,6 +14,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.Subscriptions;
+using Silverback.Tests.Core.TestTypes;
 using Silverback.Tests.Core.TestTypes.Behaviors;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
