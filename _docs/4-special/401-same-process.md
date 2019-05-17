@@ -42,7 +42,7 @@ public void Configure(BusConfigurator busConfigurator)
                 },
                 settings: new InboundConnectorSettings
                 {
-                    UnwrapMessages: false
+                    UnwrapMessages = false
                 }));
 }
 ```
