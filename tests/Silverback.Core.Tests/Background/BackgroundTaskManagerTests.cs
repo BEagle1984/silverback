@@ -85,5 +85,26 @@ namespace Silverback.Tests.Core.Background
 
             executed2.Should().BeTrue();
         }
+
+        [Fact]
+        public void New_WithLock_HeartbeatIsSent()
+        {
+            var lockManager = new TestLockManager();
+            var manager = new BackgroundTaskManager(lockManager, new NullLoggerFactory());
+            var cancellationTokenSource = new CancellationTokenSource();
+
+            manager.Start("test", () =>
+            {
+                while (!cancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    Thread.Sleep(10);
+                }
+            });
+
+            Thread.Sleep(200);
+            cancellationTokenSource.Cancel();
+
+            lockManager.Heartbeats.Should().BeGreaterOrEqualTo(3);
+        }
     }
 }

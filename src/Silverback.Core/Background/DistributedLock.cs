@@ -12,12 +12,14 @@ namespace Silverback.Background
     {
         private readonly string _name;
         private readonly IDistributedLockManager _lockManager;
+        private readonly int _heartbeatIntervalInMilliseconds;
         private bool _disposed;
 
-        public DistributedLock(string name, IDistributedLockManager lockManager)
+        public DistributedLock(string name, IDistributedLockManager lockManager, int heartbeatIntervalInMilliseconds = 1000)
         {
             _name = name;
             _lockManager = lockManager;
+            _heartbeatIntervalInMilliseconds = heartbeatIntervalInMilliseconds;
 
             Task.Run(SendHeartbeats);
         }
@@ -28,7 +30,7 @@ namespace Silverback.Background
             {
                 _lockManager.SendHeartbeat(_name);
 
-                Thread.Sleep(1000);
+                Thread.Sleep(_heartbeatIntervalInMilliseconds);
             }
         }
 

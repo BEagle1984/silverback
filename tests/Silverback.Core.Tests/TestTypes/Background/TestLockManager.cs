@@ -9,6 +9,8 @@ namespace Silverback.Tests.Core.TestTypes.Background
     {
         private readonly List<string> _locks = new List<string>();
 
+        public int Heartbeats { get; set; } = 0;
+
         public IDisposable Acquire(string resourceName, DistributedLockSettings settings = null) =>
             Acquire(resourceName, settings?.AcquireTimeout, settings?.AcquireRetryInterval);
 
@@ -25,7 +27,7 @@ namespace Silverback.Tests.Core.TestTypes.Background
                         if (!_locks.Contains(resourceName))
                         {
                             _locks.Add(resourceName);
-                            return new DistributedLock(resourceName, this);
+                            return new DistributedLock(resourceName, this, 50);
                         }
                     }
                 }
@@ -39,7 +41,7 @@ namespace Silverback.Tests.Core.TestTypes.Background
 
         public void SendHeartbeat(string resourceName)
         {
-            // Not yet implemented
+            Heartbeats++;
         }
 
         public void Release(string resourceName)
