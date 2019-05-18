@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -20,8 +21,8 @@ namespace Silverback.Messaging.ErrorHandling
 
         private Func<object, Exception, object> _transformationFunction;
 
-        public MoveMessageErrorPolicy(IBroker broker, IEndpoint endpoint, ILogger<MoveMessageErrorPolicy> logger, MessageLogger messageLogger) 
-            : base(logger, messageLogger)
+        public MoveMessageErrorPolicy(IBroker broker, IEndpoint endpoint, IPublisher publisher, ILogger<MoveMessageErrorPolicy> logger, MessageLogger messageLogger) 
+            : base(publisher, logger, messageLogger)
         {
             _producer = broker.GetProducer(endpoint);
             _endpoint = endpoint;
@@ -35,7 +36,7 @@ namespace Silverback.Messaging.ErrorHandling
             return this;
         }
 
-        public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception)
         {
             if (failedMessage.Message is BatchCompleteEvent batchMessage)
             {

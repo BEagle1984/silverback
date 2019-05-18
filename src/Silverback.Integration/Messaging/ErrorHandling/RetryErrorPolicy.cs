@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -20,8 +21,8 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
 
-        public RetryErrorPolicy(ILogger<RetryErrorPolicy> logger, MessageLogger messageLogger, TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)
-            : base(logger, messageLogger)
+        public RetryErrorPolicy(IPublisher publisher, ILogger<RetryErrorPolicy> logger, MessageLogger messageLogger, TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)
+            : base(publisher, logger, messageLogger)
         {
             _initialDelay = initialDelay ?? TimeSpan.Zero;
             _delayIncrement = delayIncrement ?? TimeSpan.Zero;
@@ -29,7 +30,7 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception)
         {
             ApplyDelay(failedMessage);
 

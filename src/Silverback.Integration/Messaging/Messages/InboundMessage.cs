@@ -10,6 +10,8 @@ namespace Silverback.Messaging.Messages
 
         public TMessage Message { get; set; }
 
+        public int FailedAttempts { get; set; }
+
         object IInboundMessage.Message
         {
             get => Message;

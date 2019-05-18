@@ -17,6 +17,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.Configuration.Types;
 using Xunit;
@@ -34,6 +35,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
 
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             services.AddSingleton(Substitute.For<IBroker>());
+            services.AddSingleton(Substitute.For<IPublisher>());
             services.AddSingleton<MessageLogger>();
             services.AddSingleton<MessageKeyProvider>();
 

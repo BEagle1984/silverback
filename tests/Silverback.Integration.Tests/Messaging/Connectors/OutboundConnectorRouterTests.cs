@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -49,7 +51,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             InMemoryOutboundQueue.Clear();
         }
 
-        [Theory, ClassData(typeof(OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
+        [Theory, MemberData(nameof(OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
         public async Task OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoint(IIntegrationMessage message, string[] expectedEndpointNames)
         {
             _routingConfiguration.Add<IIntegrationMessage>(new TestEndpoint("allMessages"), null);
@@ -76,6 +78,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 queued.Count(x => x.Message.Endpoint.Name == notExpectedEndpointName).Should().Be(0);
             }
         }
+
+        public static IEnumerable<object[]> OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoints_TestData =>
+            new[]
+            {
+                new object[] { new TestEventOne(), new[] { "allMessages", "allEvents", "eventOne" } },
+                new object[] { new TestEventTwo(), new[] { "allMessages", "allEvents", "eventTwo" } }
+            };
 
         [Fact]
         public async Task OnMessageReceived_Message_CorrectlyRoutedToDefaultConnector()

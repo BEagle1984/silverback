@@ -6,11 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.ErrorHandling
 {
     public abstract class ErrorPolicyBase : IErrorPolicy
     {
+        private readonly IPublisher _publisher;
         private readonly ILogger<ErrorPolicyBase> _logger;
         private readonly MessageLogger _messageLogger;
         private readonly List<Type> _excludedExceptions = new List<Type>();
@@ -18,11 +20,14 @@ namespace Silverback.Messaging.ErrorHandling
         private Func<FailedMessage, Exception, bool> _applyRule;
         private int _maxFailedAttempts = -1;
 
-        protected ErrorPolicyBase(ILogger<ErrorPolicyBase> logger, MessageLogger messageLogger)
+        protected ErrorPolicyBase(IPublisher publisher, ILogger<ErrorPolicyBase> logger, MessageLogger messageLogger)
         {
+            _publisher = publisher;
             _logger = logger;
             _messageLogger = messageLogger;
         }
+
+        internal Func<FailedMessage, object> MessageToPublishFactory { get; private set; }
 
         public ErrorPolicyBase ApplyTo<T>() where T : Exception
         {
@@ -57,6 +62,12 @@ namespace Silverback.Messaging.ErrorHandling
         public ErrorPolicyBase MaxFailedAttempts(int maxFailedAttempts)
         {
             _maxFailedAttempts = maxFailedAttempts;
+            return this;
+        }
+
+        public ErrorPolicyBase Publish(Func<FailedMessage, object> factory)
+        {
+            MessageToPublishFactory = factory;
             return this;
         }
 
@@ -103,6 +114,18 @@ namespace Silverback.Messaging.ErrorHandling
             return true;
         }
 
-        public abstract ErrorAction HandleError(FailedMessage failedMessage, Exception exception);
+        public ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
+        {
+            var result = ApplyPolicy(failedMessage, exception);
+
+            if (MessageToPublishFactory != null)
+            {
+                _publisher.Publish(MessageToPublishFactory.Invoke(failedMessage));
+            }
+
+            return result;
+        }
+
+        protected abstract ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception);
     }
 }

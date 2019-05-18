@@ -4,8 +4,10 @@
 using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
@@ -13,11 +15,11 @@ namespace Silverback.Tests.Integration.TestTypes
     {
         public bool Applied { get; private set; }
 
-        public TestErrorPolicy() : base(NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>(), new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })))
+        public TestErrorPolicy(IPublisher publisher = null) : base(publisher, NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>(), new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })))
         {
         }
 
-        public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception)
         {
             Applied = true;
             return ErrorAction.Skip;

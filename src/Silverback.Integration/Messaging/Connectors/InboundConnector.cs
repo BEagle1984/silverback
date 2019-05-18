@@ -57,11 +57,11 @@ namespace Silverback.Messaging.Connectors
         {
             var messages = messagesArgs
                 .Select(args => HandleChunkedMessage(args, endpoint, serviceProvider) ? args : null)
-                .Select(UnwrapFailedMessage)
                 .Where(args => args != null)
-                .SelectMany(args => settings.UnwrapMessages
-                    ? new[] {args.Message, WrapInboundMessage(args, endpoint)}
-                    : new[] {WrapInboundMessage(args, endpoint)})
+                .Select(args => MapToInboundMessage(args, endpoint))
+                .SelectMany(msg => settings.UnwrapMessages
+                    ? new[] { msg.Message, msg }
+                    : new[] { msg })
                 .ToList();
 
             if (!messages.Any())
@@ -85,25 +85,32 @@ namespace Silverback.Messaging.Connectors
             return true;
         }
 
-        private MessageReceivedEventArgs UnwrapFailedMessage(MessageReceivedEventArgs args)
+        private IInboundMessage MapToInboundMessage(MessageReceivedEventArgs args, IEndpoint endpoint)
         {
-            if (args?.Message is FailedMessage failedMessage)
-                args.Message = failedMessage.Message;
+            var message = UnwrapFailedMessage(args.Message, out var failedAttempts);
 
-            return args;
-        }
-
-        private IInboundMessage WrapInboundMessage(MessageReceivedEventArgs args, IEndpoint endpoint)
-        {
-            var wrapper = (IInboundMessage) Activator.CreateInstance(typeof(InboundMessage<>).MakeGenericType(args.Message.GetType()));
+            var wrapper = (IInboundMessage) Activator.CreateInstance(typeof(InboundMessage<>).MakeGenericType(message.GetType()));
 
             wrapper.Endpoint = endpoint;
-            wrapper.Message = args.Message;
+            wrapper.Message = message;
+            wrapper.FailedAttempts = failedAttempts;
 
             if (args.Headers != null)
                 wrapper.Headers.AddRange(args.Headers);
 
             return wrapper;
+        }
+
+        private object UnwrapFailedMessage(object message, out int failedAttempts)
+        {
+            if (message is FailedMessage failedMessage)
+            {
+                failedAttempts = failedMessage.FailedAttempts;
+                return failedMessage.Message;
+            }
+
+            failedAttempts = 0;
+            return message;
         }
 
         protected virtual void Commit(IServiceProvider serviceProvider)

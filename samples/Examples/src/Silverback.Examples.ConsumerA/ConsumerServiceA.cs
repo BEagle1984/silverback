@@ -49,15 +49,23 @@ namespace Silverback.Examples.ConsumerA
                         })
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-bad-events"), policy => policy
                         .Chain(
-                            policy.Retry(TimeSpan.FromMilliseconds(500)).MaxFailedAttempts(2),
-                            policy.Move(new KafkaProducerEndpoint("silverback-examples-bad-events-error")
-                            {
-                                Configuration = new KafkaProducerConfig
+                            policy
+                                .Retry(TimeSpan.FromMilliseconds(500))
+                                .MaxFailedAttempts(2),
+                            policy
+                                .Move(new KafkaProducerEndpoint("silverback-examples-bad-events-error")
                                 {
-                                    BootstrapServers = "PLAINTEXT://kafka:9092",
-                                    ClientId = "consumer-service-a"
-                                }
-                            })))
+                                    Configuration = new KafkaProducerConfig
+                                    {
+                                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                                        ClientId = "consumer-service-a"
+                                    }
+                                })
+                                .Publish(msg => new MessageMovedEvent
+                                {
+                                    Id = ((IntegrationEvent) msg.Message).Id,
+                                    Destination = "silverback-examples-bad-events-error"
+                                })))
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer",
                         GetCustomSerializer()))
                     // Special inbound (not logged)

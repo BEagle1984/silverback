@@ -86,6 +86,52 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
+        public void Bind_PushFailedMessages_WrappedInboundMessagesReceived()
+        {
+            _connector.Bind(TestEndpoint.Default);
+            _broker.Connect();
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new FailedMessage(new TestEventOne { Id = Guid.NewGuid() }));
+            consumer.TestPush(new FailedMessage(new TestEventTwo { Id = Guid.NewGuid() }));
+            consumer.TestPush(new FailedMessage(new TestEventOne { Id = Guid.NewGuid() }));
+            consumer.TestPush(new FailedMessage(new TestEventTwo { Id = Guid.NewGuid() }));
+            consumer.TestPush(new FailedMessage(new TestEventTwo { Id = Guid.NewGuid() }));
+
+            _inboundSubscriber.ReceivedMessages.OfType<InboundMessage<TestEventOne>>().Count().Should().Be(2);
+            _inboundSubscriber.ReceivedMessages.OfType<InboundMessage<TestEventTwo>>().Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void Bind_PushMessages_HeadersReceivedWithInboundMessages()
+        {
+            _connector.Bind(TestEndpoint.Default);
+            _broker.Connect();
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = "key", Value = "value1" } });
+            consumer.TestPush(new FailedMessage(new TestEventOne { Id = Guid.NewGuid() }, 3), new[] { new MessageHeader { Key = "key", Value = "value2" } });
+
+            var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
+            inboundMessages.First().Headers.First().Value.Should().Be("value1");
+            inboundMessages.Skip(1).First().Headers.First().Value.Should().Be("value2");
+        }
+
+        [Fact]
+        public void Bind_PushMessages_FailedAttemptsReceivedWithInboundMessages()
+        {
+            _connector.Bind(TestEndpoint.Default);
+            _broker.Connect();
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
+            consumer.TestPush(new FailedMessage(new TestEventOne { Id = Guid.NewGuid() }, 3));
+
+            var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
+            inboundMessages.First().FailedAttempts.Should().Be(0);
+            inboundMessages.Skip(1).First().FailedAttempts.Should().Be(3);
+        }
+        [Fact]
         public void Bind_PushMessagesInBatch_MessagesReceived()
         {
             _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings

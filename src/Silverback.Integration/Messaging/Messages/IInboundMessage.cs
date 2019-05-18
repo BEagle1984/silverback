@@ -9,6 +9,8 @@ namespace Silverback.Messaging.Messages
         MessageHeaderCollection Headers { get; }
 
         object Message { get; set; }
+
+        int FailedAttempts { get; set; }
     }
 
     public interface IInboundMessage<out TMessage> : IInboundMessage

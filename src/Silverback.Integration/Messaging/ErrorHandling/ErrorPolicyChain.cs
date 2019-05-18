@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -18,13 +19,13 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly MessageLogger _messageLogger;
         private readonly IEnumerable<ErrorPolicyBase> _policies;
 
-        public ErrorPolicyChain(ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger, params ErrorPolicyBase[] policies)
-            : this (policies.AsEnumerable(), logger, messageLogger)
+        public ErrorPolicyChain(IPublisher publisher, ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger, params ErrorPolicyBase[] policies)
+            : this (policies.AsEnumerable(), publisher, logger, messageLogger)
         {
         }
 
-        public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies, ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger)
-            : base(logger, messageLogger)
+        public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies, IPublisher publisher, ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger)
+            : base(publisher, logger, messageLogger)
         {
             _logger = logger;
             _messageLogger = messageLogger;
@@ -34,7 +35,7 @@ namespace Silverback.Messaging.ErrorHandling
             if (_policies.Any(p => p == null)) throw new ArgumentNullException(nameof(policies), "One or more policies in the chain have a null value.");
         }
 
-        public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception)
         {
             foreach (var policy in _policies)
             {
