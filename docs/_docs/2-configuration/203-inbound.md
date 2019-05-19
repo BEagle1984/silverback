@@ -120,7 +120,7 @@ public void Configure(BusConfigurator busConfigurator)
                     ...
                 },
                 policy => policy.Chain(
-                    policy.Retry(5, TimeSpan.FromSeconds(10)),
+                    policy.Retry(TimeSpan.FromSeconds(10)).MaxFailedAttempts(3),
                     policy.Move(new KafkaProducerEndpoint("bad-messages")
                         {
                             ...
@@ -129,16 +129,67 @@ public void Configure(BusConfigurator busConfigurator)
 }
 ```
 
+**Important!** If the processing still fails after the last policy is applied the inbound connector will return the exception to the consumer, causing it to stop. A _Retry_ (with limited amount of attempts) alone is therefore not recommendend and it should be combined with _Skip_ or _Move_.
+{: .notice--warning}
+
+### Retries
+
+_Retry_ and _Move_ policies can be used to retry over and over the same message. Use `MaxFailedAttempts` to limit the number of attempts.
+
+```c#
+policy.Chain(
+    policy.Retry(TimeSpan.FromSeconds(1)).MaxFailedAttempts(3),
+    policy.Skip())
+```
+
+**Note:** A message can be moved to the same topic to simply be moved to the end of the queue.
+{: .notice--info}
+
+**Important!** The Retry policy will prevent the message broker to be polled for the entire comulative duration of the attempts and it could lead to timeouts. With Kafka you should for example set the _max.poll.interval.ms_ settings to an higher value.
+{: .notice--warning}
+
+### Apply rules
+
 Use `ApplyTo` and `Exclude` methods to decide which exceptions must be handled by the error policy or take advantage of  `ApplyWhen` to specify a custom apply rule.
 
 ```c#
 policy.Move(new KafkaProducerEndpoint("same-endpoint") { ... })
     .Exclude<MyException>()
-    .ApplyWhen((msg, ex) => msg.FailedAttempts < 10)
+    .ApplyWhen((msg, ex) => msg.Xy == myValue)
 ```
 
-**Important!** If the last applied policy still fails the inbound connector will return the exception to the consumer, causing it to stop. A _Retry_ alone is therefore not recommendend and it should be combined with _Skip_ or _Move_.
-{: .notice--warning}
+### Publishing messages (events)
+
+Messages can be published when a policy is applied, in order to execute custom code.
+
+```c#
+public void Configure(BusConfigurator busConfigurator)
+{
+    busConfigurator
+        .Connect(endpoints => endpoints
+            .AddInbound(
+                new KafkaConsumerEndpoint("some-events")
+                {
+                    ...
+                },
+                policy => policy.Chain(
+                    policy
+                        .Retry(TimeSpan.FromMilliseconds(500))
+                        .MaxFailedAttempts(3),
+                    policy
+                        .Skip()
+                        .Publish(msg => new ProcessingFailedEvent(msg))
+                )));
+}
+
+[Subscribe]
+public void OnProcessingFailed(ProcessingFailedEvent @event)
+{
+    _processingStatusService.SetFailed(@event.Message.Id);
+
+    _mailService.SendNotification("Failed to process message!");
+}
+```
 
 ## Batch processing
 
