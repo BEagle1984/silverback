@@ -84,8 +84,6 @@ public void Configure(BusConfigurator busConfigurator, OutboundQueueWorker outbo
         new Background.DistributedLockSettings(
             acquireRetryInterval: TimeSpan.FromSeconds(1))
         );
-        jobScheduler.AddJob("outbound-queue-worker", TimeSpan.FromMilliseconds(100),
-        s => s.GetRequiredService<OutboundQueueWorker>().ProcessQueue());
 }
 ```
 
