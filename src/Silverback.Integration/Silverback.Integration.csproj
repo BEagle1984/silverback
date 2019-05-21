@@ -11,7 +11,7 @@
     <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType />
-    <Version>0.7.1.1</Version>
+    <Version>0.7.1.2</Version>
 	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
 	<PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
     <LangVersion>latest</LangVersion>

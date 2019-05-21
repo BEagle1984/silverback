@@ -17,6 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.2" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
@@ -28,7 +30,7 @@
     <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="0.7.1.1" />
     <PackageReference Include="Silverback.Core.Model" Version="0.7.1.1" />
     <PackageReference Include="Silverback.Core.Rx" Version="0.7.1.1" />
-    <PackageReference Include="Silverback.Integration" Version="0.7.1.1" />
+    <PackageReference Include="Silverback.Integration" Version="0.7.1.2" />
     <PackageReference Include="Silverback.Integration.Configuration" Version="0.7.1.1" />
     <PackageReference Include="Silverback.Integration.EntityFrameworkCore" Version="0.7.1.1" />
     <PackageReference Include="Silverback.Integration.Kafka" Version="0.7.1.1" />

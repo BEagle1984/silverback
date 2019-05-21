@@ -96,7 +96,7 @@ namespace Silverback.Messaging.Configuration
 
         internal BrokerOptionsBuilder AddOutboundWorker(bool enforceMessageOrder, int readPackageSize)
         {
-            Services.AddScoped(s => new OutboundQueueWorker(
+            Services.AddSingleton(s => new OutboundQueueWorker(
                 s.GetRequiredService<IServiceProvider>(),
                 s.GetRequiredService<IBroker>(),
                 s.GetRequiredService<IBackgroundTaskManager>(),

@@ -16,6 +16,8 @@ namespace Silverback.Examples.Main.UseCases.EfCore
 {
     public class OutboundWorkerUseCase : UseCase
     {
+        private CancellationTokenSource _cancellationTokenSource;
+
         public OutboundWorkerUseCase() : base("Outbound worker (start background processing)", 15, 1)
         {
         }
@@ -27,7 +29,8 @@ namespace Silverback.Examples.Main.UseCases.EfCore
                 .AddDbOutboundConnector<ExamplesDbContext>()
                 .AddDbOutboundWorker<ExamplesDbContext>());
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
+        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
+        {
             configurator.Connect(endpoints => endpoints
                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
                 {
@@ -38,25 +41,26 @@ namespace Silverback.Examples.Main.UseCases.EfCore
                     }
                 }));
 
-        protected override Task Execute(IServiceProvider serviceProvider)
-        {
-            var cancellationTokenSource = new CancellationTokenSource();
+            _cancellationTokenSource = new CancellationTokenSource();
 
             Console.WriteLine("Starting OutboundWorker background process (press ESC to stop)...");
 
             serviceProvider.GetRequiredService<OutboundQueueWorker>()
                 .StartProcessing(
-                    cancellationTokenSource.Token,
+                    _cancellationTokenSource.Token,
                     TimeSpan.FromMilliseconds(100),
                     new Background.DistributedLockSettings(acquireRetryInterval: TimeSpan.FromSeconds(1)));
+        }
 
+        protected override Task Execute(IServiceProvider serviceProvider)
+        {
             while (Console.ReadKey(false).Key != ConsoleKey.Escape)
             {
             }
 
             Console.WriteLine("Canceling...");
 
-            cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Cancel();
 
             // Let the worker gracefully exit
             Thread.Sleep(2000);

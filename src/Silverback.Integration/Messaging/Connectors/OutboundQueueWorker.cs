@@ -55,9 +55,9 @@ namespace Silverback.Messaging.Connectors
 
             cancellationToken.Register(WaitUntilStopped);
 
-            var queue = _serviceProvider.GetRequiredService<IOutboundQueueConsumer>();
+            var queueConsumerType = GetQueueConsumerType();
 
-            _backgroundTaskManager.Start($"OutboundQueueWorker[{queue.GetType().FullName}]", () =>
+            _backgroundTaskManager.Start($"OutboundQueueWorker[{queueConsumerType.FullName}]", () =>
             {
                 _running = true;
 
@@ -77,6 +77,17 @@ namespace Silverback.Messaging.Connectors
 
                 _running = false;
             }, lockSettings);
+        }
+
+        private Type GetQueueConsumerType()
+        {
+            Type queueType;
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                queueType = scope.ServiceProvider.GetRequiredService<IOutboundQueueConsumer>().GetType();
+            }
+
+            return queueType;
         }
 
         private void ProcessQueue(IOutboundQueueConsumer queue)
