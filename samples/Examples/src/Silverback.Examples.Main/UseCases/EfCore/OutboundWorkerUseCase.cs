@@ -24,7 +24,7 @@ namespace Silverback.Examples.Main.UseCases.EfCore
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus(options => options.UseModel())
-            .AddBackgroundTaskManager<ExamplesDbContext>()
+            .AddDbBackgroundTaskManager<ExamplesDbContext>()
             .AddBroker<KafkaBroker>(options => options
                 .AddDbOutboundConnector<ExamplesDbContext>()
                 .AddDbOutboundWorker<ExamplesDbContext>());

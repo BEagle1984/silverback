@@ -18,7 +18,7 @@
     <PackageReference Include="Silverback.Core.Model" Version="0.7.1.1" />
     <PackageReference Include="Silverback.Core.Rx" Version="0.7.1.1" />
     <PackageReference Include="Silverback.Integration" Version="0.7.1.2" />
-    <PackageReference Include="Silverback.Integration.EntityFrameworkCore" Version="0.7.1.1" />
+    <PackageReference Include="Silverback.Integration.EntityFrameworkCore" Version="0.7.1.2" />
     <PackageReference Include="Silverback.Integration.Kafka" Version="0.7.1.1" />
   </ItemGroup>
 

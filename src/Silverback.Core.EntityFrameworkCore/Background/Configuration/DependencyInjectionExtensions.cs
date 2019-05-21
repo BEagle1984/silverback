@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds the <see cref="IBackgroundTaskManager"/> implementation and uses the specified DbContext to
         /// handle the distributed locks.
         /// </summary>
-        public static IServiceCollection AddBackgroundTaskManager<TDbContext>(this IServiceCollection services)
+        public static IServiceCollection AddDbBackgroundTaskManager<TDbContext>(this IServiceCollection services)
             where TDbContext : DbContext
         {
             return services.AddBackgroundTaskManager<DbContextDistributedLockManager<TDbContext>>();
