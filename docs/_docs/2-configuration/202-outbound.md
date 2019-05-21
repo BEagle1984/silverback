@@ -56,7 +56,7 @@ public void ConfigureServices(IServiceCollection services)
 
         // Setup the background task manager using the database
         // to handle the distributed locks
-        .AddBackgroundTaskManager<MyDbContext>()
+        .AddDbBackgroundTaskManager<MyDbContext>()
 
         .AddBroker<KafkaBroker>(options => options
             .AddDbOutboundConnector<MyDbContext>()
