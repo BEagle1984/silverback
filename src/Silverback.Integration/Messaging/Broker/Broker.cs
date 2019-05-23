@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Broker
         {
             return _producers.GetOrAdd(endpoint, _ =>
             {
-                _logger?.LogInformation($"Creating new producer for endpoint '{endpoint.Name}'");
+                _logger.LogInformation($"Creating new producer for endpoint '{endpoint.Name}'");
                 return InstantiateProducer(endpoint);
             });
         }
@@ -147,6 +147,5 @@ namespace Silverback.Messaging.Broker
             if (!(endpoint is TEndpoint))
                 throw new ArgumentException($"An endpoint of type {typeof(TEndpoint).Name} is expected.");
         }
-
     }
 }

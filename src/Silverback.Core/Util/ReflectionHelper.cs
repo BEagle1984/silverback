@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Silverback.Util
 {
-    // TODO: Test
     internal static class ReflectionHelper
     {
-        public static bool IsAsync(this MethodInfo methodInfo) =>
+        public static bool ReturnsTask(this MethodInfo methodInfo) =>
             typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
     }
 }

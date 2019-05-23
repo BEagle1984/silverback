@@ -74,8 +74,8 @@ namespace Silverback.Messaging.Subscribers
 
         private object InvokeSync(SubscribedMethod method, object[] parameters)
         {
-            if (!method.Info.MethodInfo.IsAsync())
-                return method.Info.MethodInfo.Invoke(method.Target, parameters );
+            if (!method.Info.MethodInfo.ReturnsTask())
+                return method.Info.MethodInfo.Invoke(method.Target, parameters);
 
             return AsyncHelper.RunSynchronously<object>(() =>
             {
@@ -86,7 +86,7 @@ namespace Silverback.Messaging.Subscribers
 
         private Task<object> InvokeAsync(SubscribedMethod method, object[] parameters)
         {
-            if (!method.Info.MethodInfo.IsAsync())
+            if (!method.Info.MethodInfo.ReturnsTask())
                 return Task.Run(() => method.Info.MethodInfo.Invoke(method.Target, parameters));
 
             var result = method.Info.MethodInfo.Invoke(method.Target, parameters);
