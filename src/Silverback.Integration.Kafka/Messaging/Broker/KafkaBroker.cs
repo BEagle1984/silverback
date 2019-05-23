@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -18,7 +19,7 @@ namespace Silverback.Messaging.Broker
         private readonly MessageLogger _messageLogger;
 
         public KafkaBroker(MessageKeyProvider messageKeyProvider, ILoggerFactory loggerFactory,
-            MessageLogger messageLogger) : base(loggerFactory)
+            MessageLogger messageLogger, DiagnosticListener diagnosticListener) : base(loggerFactory, diagnosticListener)
         {
             _messageKeyProvider = messageKeyProvider;
             _loggerFactory = loggerFactory;
@@ -29,7 +30,7 @@ namespace Silverback.Messaging.Broker
             new KafkaProducer(this, (KafkaProducerEndpoint) endpoint, _messageKeyProvider, _loggerFactory.CreateLogger<KafkaProducer>(), _messageLogger);
 
         protected override Consumer InstantiateConsumer(IEndpoint endpoint) =>
-            new KafkaConsumer(this, (KafkaConsumerEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaConsumer>(), _messageLogger);
+            new KafkaConsumer(this, (KafkaConsumerEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaConsumer>(), _messageLogger, DiagnosticListener);
 
         protected override void Connect(IEnumerable<IConsumer> consumers) =>
             consumers.Cast<KafkaConsumer>().ToList().ForEach(c => c.Connect());

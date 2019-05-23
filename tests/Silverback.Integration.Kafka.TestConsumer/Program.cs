@@ -2,13 +2,17 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using Silverback.Integration.Kafka.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Integration.Kafka.TestConsumer
 {
@@ -20,8 +24,9 @@ namespace Silverback.Integration.Kafka.TestConsumer
         private static void Main()
         {
             Console.Clear();
-            
+
             PrintHeader();
+            Setup();
 
             Connect();
             Console.CancelKeyPress += (_, e) => { Disconnect(); };
@@ -32,8 +37,16 @@ namespace Silverback.Integration.Kafka.TestConsumer
 
         private static void Connect()
         {
-            var messageKeyProvider = new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()});
-            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger(messageKeyProvider));
+            var d = new DiagnosticListenerObserver(new DiagnosticObserver());
+            DiagnosticListener.AllListeners.Subscribe(d);
+
+            var listener = new DiagnosticListener("SilverbackConsumerDiagnosticListener");
+
+            var messageKeyProvider = new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() });
+            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger(messageKeyProvider), listener);
+
+            var serializer = new JsonMessageSerializer<TestMessage>();
+            serializer.Settings.TypeNameHandling = TypeNameHandling.None;
 
             _consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
             {
@@ -42,13 +55,20 @@ namespace Silverback.Integration.Kafka.TestConsumer
                     BootstrapServers = "PLAINTEXT://kafka:9092",
                     GroupId = "silverback-consumer",
                     AutoOffsetReset = Confluent.Kafka.AutoOffsetReset.Earliest
-                }
+                },
+                Serializer = serializer
             });
 
             _consumer.Received += OnMessageReceived;
 
             _broker.Connect();
         }
+
+        private static void Setup()
+        {
+            
+        }
+
         private static void Disconnect()
         {
             _broker.Disconnect();
@@ -57,6 +77,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
         private static void OnMessageReceived(object sender, MessageReceivedEventArgs args)
         {
             var testMessage = args.Message as TestMessage;
+            var testMessageHeaders = args.Headers;
 
             if (testMessage == null)
             {
@@ -64,7 +85,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
                 return;
             }
 
-            Console.WriteLine($"[{testMessage.Id}] {testMessage.Text}");
+            Console.WriteLine($"[{testMessage.Id}] {testMessage.Text} (CorrelationId: {Activity.Current.Id}; Bag: {string.Join(' ', Activity.Current.Baggage.Select(b => b.Key + ":" + b.Value))})");
 
             var text = testMessage.Text.ToLower().Trim();
             if (text == "bad")

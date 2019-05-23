@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
@@ -14,8 +15,10 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestConsumer : Consumer
     {
+        static DiagnosticListener _diagnosticsListener = new DiagnosticListener("test");
+
         public TestConsumer(IBroker broker, IEndpoint endpoint)
-            : base(broker, endpoint, new NullLogger<TestConsumer>(), new MessageLogger(new MessageKeyProvider(Enumerable.Empty<IMessageKeyProvider>())))
+            : base(broker, endpoint, new NullLogger<TestConsumer>(), new MessageLogger(new MessageKeyProvider(Enumerable.Empty<IMessageKeyProvider>())), _diagnosticsListener)
         {
         }
 

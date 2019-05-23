@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Util;
@@ -19,10 +20,12 @@ namespace Silverback.Messaging.Broker
 
         protected readonly ILoggerFactory LoggerFactory;
 
-        protected Broker(ILoggerFactory loggerFactory)
+        protected readonly DiagnosticListener DiagnosticListener;
+
+        protected Broker(ILoggerFactory loggerFactory, DiagnosticListener diagnosticListener)
         {
             LoggerFactory = loggerFactory;
-
+            DiagnosticListener = diagnosticListener;
             _logger = loggerFactory.CreateLogger(GetType());
         }
 
@@ -123,8 +126,8 @@ namespace Silverback.Messaging.Broker
     public abstract class Broker<TEndpoint> : Broker
         where TEndpoint : class, IEndpoint
     {
-        protected Broker(ILoggerFactory loggerFactory)
-            : base(loggerFactory)
+        protected Broker(ILoggerFactory loggerFactory, DiagnosticListener diagnosticListener)
+            : base(loggerFactory, diagnosticListener)
         {
         }
 

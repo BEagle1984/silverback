@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.Logging;
@@ -19,8 +20,8 @@ namespace Silverback.Messaging.Broker
         private int _messagesSinceCommit = 0;
 
         public KafkaConsumer(IBroker broker, KafkaConsumerEndpoint endpoint, ILogger<KafkaConsumer> logger,
-            MessageLogger messageLogger)
-            : base(broker, endpoint, logger, messageLogger)
+            MessageLogger messageLogger, DiagnosticListener diagnosticListener)
+            : base(broker, endpoint, logger, messageLogger, diagnosticListener)
         {
             _logger = logger;
 

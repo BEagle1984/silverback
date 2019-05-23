@@ -12,7 +12,7 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestBroker : Broker
     {
-        public TestBroker() : base(NullLoggerFactory.Instance)
+        public TestBroker() : base(NullLoggerFactory.Instance, null)
         {
         }
 

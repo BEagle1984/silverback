@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
@@ -30,8 +32,14 @@ namespace Silverback.Integration.Kafka.TestProducer
 
         private static void Connect()
         {
+            var d = new DiagnosticListenerObserver(new DiagnosticObserver());
+            DiagnosticListener.AllListeners.Subscribe(d);
+
+            DiagnosticListener listener = new DiagnosticListener("SilverbackConsumerDiagnosticListener");
+
+
             var messageKeyProvider = new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() });
-            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger(messageKeyProvider));
+            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger(messageKeyProvider), listener);
             _broker.Connect();
 
             _producer = _broker.GetProducer(new KafkaProducerEndpoint("Topic1")
@@ -77,12 +85,18 @@ namespace Silverback.Integration.Kafka.TestProducer
 
         private static void Produce(IProducer producer, string text)
         {
+            var headers = new List<MessageHeader>
+            {
+                new MessageHeader("CorrelationId", Guid.NewGuid().ToString()),
+                new MessageHeader("CorrelationBaggage", "key1,value1;key2,value2")
+            };
+
             producer.Produce(new TestMessage
             {
                 Id = Guid.NewGuid(),
                 Text = text,
                 Type = "TestMessage"
-            });
+            }, headers);
         }
 
         private static void PrintUsage()
@@ -107,6 +121,55 @@ namespace Silverback.Integration.Kafka.TestProducer
             NLog.LogManager.LoadConfiguration("nlog.config");
 
             return loggerFactory;
+        }
+    }
+
+
+    public class DiagnosticObserver : IObserver<KeyValuePair<string, object>>
+    {
+        public void OnCompleted()
+        {
+            // Empty because this class is just a marker.
+        }
+
+        public void OnError(Exception error)
+        {
+            // Empty because this class is just a marker.
+        }
+
+        public void OnNext(KeyValuePair<string, object> value)
+        {
+            // Empty because this class is just a marker.
+        }
+    }
+
+    public class DiagnosticListenerObserver : IObserver<DiagnosticListener>
+    {
+        private readonly DiagnosticObserver _diagnosticObserver;
+
+        public DiagnosticListenerObserver(DiagnosticObserver diagnosticObserver)
+        {
+            _diagnosticObserver = diagnosticObserver;
+        }
+
+        public void OnCompleted()
+        {
+            // Intentionally do nothing.
+        }
+
+        public void OnError(Exception error)
+        {
+            // Intentionally do nothing.
+        }
+
+        public void OnNext(DiagnosticListener value)
+        {
+            switch (value.Name)
+            {
+                case "SilverbackConsumerDiagnosticListener":
+                    value.Subscribe(_diagnosticObserver);
+                    break;
+            }
         }
     }
 }
