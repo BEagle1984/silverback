@@ -2,12 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Silverback.Integration.Kafka.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Integration.Kafka.TestProducer
@@ -30,6 +32,8 @@ namespace Silverback.Integration.Kafka.TestProducer
 
         private static void Connect()
         {
+            SilverbackDiagnostics.Enable();
+
             var messageKeyProvider = new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() });
             _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger(messageKeyProvider));
             _broker.Connect();
@@ -71,7 +75,15 @@ namespace Silverback.Integration.Kafka.TestProducer
                     continue;
                 }
 
+                // Simulate e.g. a HttpRequest.
+                var activity = new Activity("test");
+                activity.AddBaggage("item1", "value1");
+                activity.AddBaggage("item2", "value2");
+                activity.Start();
+
                 Produce(producer, text);
+
+                activity.Stop();
             }
         }
 

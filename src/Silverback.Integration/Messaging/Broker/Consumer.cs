@@ -3,17 +3,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
     public abstract class Consumer : EndpointConnectedObject, IConsumer
     {
+        private static readonly DiagnosticListener _diagnosticListener = new DiagnosticListener(DiagnosticsConstants.DiagnosticListenerNameConsumer);
+
         private readonly ILogger<Consumer> _logger;
         private readonly MessageLogger _messageLogger;
 
-        protected Consumer(IBroker broker, IEndpoint endpoint,ILogger<Consumer> logger, MessageLogger messageLogger)
+        protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger, MessageLogger messageLogger)
            : base(broker, endpoint)
         {
             _logger = logger;
@@ -24,12 +28,25 @@ namespace Silverback.Messaging.Broker
 
         public void Acknowledge(IOffset offset)
         {
-            Acknowledge(new[] {offset});
+            Acknowledge(new[] { offset });
         }
 
         public abstract void Acknowledge(IEnumerable<IOffset> offsets);
 
         protected void HandleMessage(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset)
+        {
+            Activity activity = StartActivity(headers);
+            try
+            {
+                InternalHandleMessage(message, headers, offset);
+            }
+            finally
+            {
+                StopActivity(activity);
+            }
+        }
+
+        private void InternalHandleMessage(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset)
         {
             if (Received == null)
                 throw new InvalidOperationException("A message was received but no handler is configured, please attach to the Received event.");
@@ -39,6 +56,44 @@ namespace Silverback.Messaging.Broker
             _messageLogger.LogTrace(_logger, "Message received.", deserializedMessage, Endpoint);
 
             Received.Invoke(this, new MessageReceivedEventArgs(deserializedMessage, headers, offset));
+        }
+
+        private Activity StartActivity(IEnumerable<MessageHeader> messageHeaders)
+        {
+            string correlationId =  messageHeaders.GetFromHeaders(DiagnosticsConstants.CorrelationIdHeaderKey);
+
+            var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
+            if (!string.IsNullOrEmpty(correlationId))
+            {
+                // This will reflect, that the current activity is a child of the activity
+                // which is represented in the message.
+                activity.SetParentId(correlationId);
+
+                // We expect baggage to be empty by default
+                // Only very advanced users will be using it in near future, we encourage them to keep baggage small (few items)
+                string baggage = messageHeaders.GetFromHeaders(DiagnosticsConstants.CorrelationBaggageHeaderKey);
+                if (BaggageConverter.TryDeserialize(baggage, out var baggageItems))
+                {
+                    activity.AddBaggageRange(baggageItems);
+                }
+            }
+
+            if (_diagnosticListener.IsEnabled())
+            {
+                _diagnosticListener.StartActivity(activity, null);
+            }
+            else
+            {
+                // TODO: Need a way to turn-off propagation.
+                activity.Start();
+            }
+
+            return activity;
+        }
+
+        private void StopActivity(Activity activity)
+        {
+            _diagnosticListener.StopActivity(activity, null);
         }
     }
 
