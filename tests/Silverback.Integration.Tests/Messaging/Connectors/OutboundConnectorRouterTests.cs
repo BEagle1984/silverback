@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -62,7 +61,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await _connectorRouter.OnMessageReceived(message);
             await _outboundQueue.Commit();
 
-            var queued = _outboundQueue.Dequeue(100);
+            var queued = await _outboundQueue.Dequeue(100);
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
@@ -94,7 +93,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await _connectorRouter.OnMessageReceived(new TestEventOne());
             await _outboundQueue.Commit();
 
-            var queued = _outboundQueue.Dequeue(1);
+            var queued = await _outboundQueue.Dequeue(1);
             queued.Count().Should().Be(1);
             _broker.ProducedMessages.Count.Should().Be(0);
         }
@@ -107,7 +106,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await _connectorRouter.OnMessageReceived(new TestEventOne());
             await _outboundQueue.Commit();
 
-            var queued = _outboundQueue.Dequeue(1);
+            var queued = await _outboundQueue.Dequeue(1);
             queued.Count().Should().Be(0);
             _broker.ProducedMessages.Count.Should().Be(1);
         }

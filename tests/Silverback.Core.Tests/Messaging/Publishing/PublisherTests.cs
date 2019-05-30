@@ -19,7 +19,6 @@ using Silverback.Tests.Core.TestTypes.Behaviors;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Tests.Core.TestTypes.Subscribers;
-using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing

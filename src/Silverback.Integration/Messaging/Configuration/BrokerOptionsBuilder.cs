@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Background;
 using Silverback.Messaging.Broker;
@@ -94,15 +95,21 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        internal BrokerOptionsBuilder AddOutboundWorker(bool enforceMessageOrder, int readPackageSize)
+        internal BrokerOptionsBuilder AddOutboundWorker(TimeSpan interval, DistributedLockSettings distributedLockSettings, bool enforceMessageOrder, int readPackageSize)
         {
-            Services.AddSingleton(s => new OutboundQueueWorker(
-                s.GetRequiredService<IServiceProvider>(),
-                s.GetRequiredService<IBroker>(),
-                s.GetRequiredService<IBackgroundTaskManager>(),
-                s.GetRequiredService<ILogger<OutboundQueueWorker>>(),
-                s.GetRequiredService<MessageLogger>(),
-                enforceMessageOrder, readPackageSize));
+            Services
+                .AddSingleton<IOutboundQueueWorker>(s => new OutboundQueueWorker(
+                    s.GetRequiredService<IServiceProvider>(),
+                    s.GetRequiredService<IBroker>(),
+                    s.GetRequiredService<ILogger<OutboundQueueWorker>>(),
+                    s.GetRequiredService<MessageLogger>(),
+                    enforceMessageOrder, readPackageSize))
+                .AddSingleton<IHostedService>(s => new OutboundQueueWorkerService(
+                    interval,
+                    s.GetRequiredService<IOutboundQueueWorker>(),
+                    distributedLockSettings,
+                    s.GetService<IDistributedLockManager>() ?? new NullLockManager(),
+                    s.GetRequiredService<ILogger<OutboundQueueWorkerService>>()));
 
             return this;
         }
@@ -111,13 +118,41 @@ namespace Silverback.Messaging.Configuration
         /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <param name="outboundQueueConsumerFactory"></param>
-        /// <param name="enforceMessageOrder">if set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
+        /// <param name="interval">The interval between each run (default is 500ms).</param>
+        /// <param name="enforceMessageOrder">If set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
         /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
         // TODO: Test
-        public BrokerOptionsBuilder AddOutboundWorker(Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory, bool enforceMessageOrder = true, int readPackageSize = 100)
+        public BrokerOptionsBuilder AddOutboundWorker(Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory, TimeSpan? interval = null, bool enforceMessageOrder = true, int readPackageSize = 100) =>
+            AddOutboundWorker(outboundQueueConsumerFactory, new DistributedLockSettings(), interval, enforceMessageOrder, readPackageSize);
+
+        /// <summary>
+        /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        /// </summary>
+        /// <param name="outboundQueueConsumerFactory"></param>
+        /// <param name="distributedLockSettings">The settings for the locking mechanism.</param>
+        /// <param name="interval">The interval between each run (default is 500ms).</param>
+        /// <param name="enforceMessageOrder">If set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
+        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
+        // TODO: Test
+        public BrokerOptionsBuilder AddOutboundWorker(
+            Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
+            DistributedLockSettings distributedLockSettings, TimeSpan? interval = null, 
+            bool enforceMessageOrder = true, int readPackageSize = 100)
         {
-            AddOutboundWorker(enforceMessageOrder, readPackageSize);
-            Services.AddScoped<IOutboundQueueConsumer>(outboundQueueConsumerFactory);
+            if (outboundQueueConsumerFactory == null) throw new ArgumentNullException(nameof(outboundQueueConsumerFactory));
+            if (distributedLockSettings == null) throw new ArgumentNullException(nameof(distributedLockSettings));
+
+            if (string.IsNullOrEmpty(distributedLockSettings.ResourceName))
+                distributedLockSettings.ResourceName = "OutboundQueueWorker";
+
+            AddOutboundWorker(
+                interval ?? TimeSpan.FromMilliseconds(500), 
+                distributedLockSettings, 
+                enforceMessageOrder,
+                readPackageSize);
+
+            Services
+                .AddScoped<IOutboundQueueConsumer>(outboundQueueConsumerFactory);
 
             return this;
         }

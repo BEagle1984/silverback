@@ -1,19 +1,16 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Threading;
 using System.Threading.Tasks;
-using Silverback.Util;
 
 namespace Silverback.Background
 {
-    public class DistributedLock : IDisposable
+    public class DistributedLock
     {
         private readonly string _name;
         private readonly IDistributedLockManager _lockManager;
         private readonly int _heartbeatIntervalInMilliseconds;
-        private bool _disposed;
+        private bool _released;
 
         public DistributedLock(string name, IDistributedLockManager lockManager, int heartbeatIntervalInMilliseconds = 1000)
         {
@@ -24,20 +21,20 @@ namespace Silverback.Background
             Task.Run(SendHeartbeats);
         }
 
-        private void SendHeartbeats()
+        private async Task SendHeartbeats()
         {
-            while (!_disposed)
+            while (!_released)
             {
-                _lockManager.SendHeartbeat(_name);
+                await _lockManager.SendHeartbeat(_name);
 
-                Thread.Sleep(_heartbeatIntervalInMilliseconds);
+                await Task.Delay(_heartbeatIntervalInMilliseconds);
             }
         }
 
-        public void Dispose()
+        public async Task Release()
         {
-            _disposed = true;
-            _lockManager.Release(_name);
+            _released = true;
+            await _lockManager.Release(_name);
         }
     }
 }

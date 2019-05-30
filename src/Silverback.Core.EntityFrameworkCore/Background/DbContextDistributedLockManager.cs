@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -23,30 +23,33 @@ namespace Silverback.Background
             _logger = serviceProvider.GetRequiredService<ILogger<DbContextDistributedLockManager<TDbContext>>>();
         }
 
-        public IDisposable Acquire(string resourceName, DistributedLockSettings settings = null) =>
-            Acquire(resourceName, settings?.AcquireTimeout, settings?.AcquireRetryInterval, settings?.HeartbeatTimeout);
+        public Task<DistributedLock> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default) =>
+            Acquire(settings.ResourceName, settings.AcquireTimeout, settings.AcquireRetryInterval, settings.HeartbeatTimeout, cancellationToken);
 
-        public IDisposable Acquire(string resourceName, TimeSpan? acquireTimeout = null, TimeSpan? acquireRetryInterval = null, TimeSpan? heartbeatTimeout = null)
+        public async Task<DistributedLock> Acquire(string resourceName, TimeSpan? acquireTimeout = null, TimeSpan? acquireRetryInterval = null, TimeSpan? heartbeatTimeout = null, CancellationToken cancellationToken = default)
         {
             var start = DateTime.Now;
             while (acquireTimeout == null || DateTime.Now - start < acquireTimeout)
             {
-                if (TryAcquireLock(resourceName, heartbeatTimeout))
+                if (await TryAcquireLock(resourceName, heartbeatTimeout))
                     return new DistributedLock(resourceName, this);
 
-                Thread.Sleep(acquireRetryInterval?.Milliseconds ?? 500);
+                await Task.Delay(acquireRetryInterval?.Milliseconds ?? 500, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                    break;
             }
 
             throw new TimeoutException($"Timeout waiting to get the required lock '{resourceName}'.");
         }
 
-        public void SendHeartbeat(string resourceName)
+        public async Task SendHeartbeat(string resourceName)
         {
             try
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    SendHeartbeat(resourceName, scope.ServiceProvider);
+                    await SendHeartbeat(resourceName, scope.ServiceProvider);
                 }
             }
             catch (Exception ex)
@@ -57,13 +60,13 @@ namespace Silverback.Background
             }
         }
 
-        public void Release(string resourceName)
+        public async Task Release(string resourceName)
         {
             try
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    Release(resourceName, scope.ServiceProvider);
+                    await Release(resourceName, scope.ServiceProvider);
                 }
             }
             catch (Exception ex)
@@ -72,13 +75,13 @@ namespace Silverback.Background
             }
         }
 
-        private bool TryAcquireLock(string resourceName, TimeSpan? heartbeatTimeout = null)
+        private async Task<bool> TryAcquireLock(string resourceName, TimeSpan? heartbeatTimeout = null)
         {
             try
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    return AcquireLock(resourceName, heartbeatTimeout, scope.ServiceProvider);
+                    return await AcquireLock(resourceName, heartbeatTimeout, scope.ServiceProvider);
                 }
             }
             catch (Exception ex)
@@ -90,55 +93,56 @@ namespace Silverback.Background
             return false;
         }
 
-        private bool AcquireLock(string resourceName, TimeSpan? heartbeatTimeout, IServiceProvider serviceProvider)
+        private async Task<bool> AcquireLock(string resourceName, TimeSpan? heartbeatTimeout, IServiceProvider serviceProvider)
         {
             var heartbeatThreshold = DateTime.UtcNow.Subtract(heartbeatTimeout ?? TimeSpan.FromSeconds(10));
 
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            if (dbSet.Any(l => l.Name == resourceName && l.Heartbeat >= heartbeatThreshold))
+            if (await dbSet.AnyAsync(l => l.Name == resourceName && l.Heartbeat >= heartbeatThreshold))
                 return false;
 
-            WriteLock(resourceName, dbSet, dbContext);
+            await WriteLock(resourceName, dbSet, dbContext);
 
             return true;
         }
 
-        private void WriteLock(string resourceName, DbSet<Lock> dbSet, TDbContext dbContext)
+        private async Task WriteLock(string resourceName, DbSet<Lock> dbSet, TDbContext dbContext)
         {
-            var entity = dbSet.FirstOrDefault(e => e.Name == resourceName)
+            var entity = await dbSet.FirstOrDefaultAsync(e => e.Name == resourceName)
                          ?? dbSet.Add(new Lock { Name = resourceName }).Entity;
 
             entity.Heartbeat = entity.Created = DateTime.UtcNow;
 
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
         
-        private void SendHeartbeat(string resourceName, IServiceProvider serviceProvider)
+        private async Task SendHeartbeat(string resourceName, IServiceProvider serviceProvider)
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            var lockRecord = dbSet.FirstOrDefault(l => l.Name == resourceName);
+            var lockRecord = await dbSet.FirstOrDefaultAsync(l => l.Name == resourceName);
 
             if (lockRecord == null)
                 return;
 
             lockRecord.Heartbeat = DateTime.UtcNow;
 
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
         
-        private void Release(string resourceName, IServiceProvider serviceProvider)
+        private async Task Release(string resourceName, IServiceProvider serviceProvider)
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            var lockRecord = dbSet.FirstOrDefault(l => l.Name == resourceName);
+            var lockRecord = await dbSet.FirstOrDefaultAsync(l => l.Name == resourceName);
 
             if (lockRecord == null)
                 return;
 
             dbSet.Remove(lockRecord);
-            dbContext.SaveChanges();
+
+            await dbContext.SaveChangesAsync();
         }
 
         private (DbSet<Lock> dbSet, TDbContext dbContext) GetDbSet(IServiceProvider serviceProvider)

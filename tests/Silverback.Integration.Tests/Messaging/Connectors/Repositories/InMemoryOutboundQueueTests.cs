@@ -67,14 +67,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
-        public void EnqueueCommitRollbackCommitTest()
+        public async Task EnqueueCommitRollbackCommitTest()
         {
-            _queue.Enqueue(_sampleOutboundMessage);
-            _queue.Commit();
-            _queue.Enqueue(_sampleOutboundMessage);
-            _queue.Rollback();
-            _queue.Enqueue(_sampleOutboundMessage);
-            _queue.Commit();
+            await _queue.Enqueue(_sampleOutboundMessage);
+            await _queue.Commit();
+            await _queue.Enqueue(_sampleOutboundMessage);
+            await _queue.Rollback();
+            await _queue.Enqueue(_sampleOutboundMessage);
+            await _queue.Commit();
 
             _queue.Length.Should().Be(2);
         }
@@ -83,37 +83,37 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [InlineData(3, 3)]
         [InlineData(5, 5)]
         [InlineData(10, 5)]
-        public void DequeueTest(int count, int expected)
+        public async Task DequeueTest(int count, int expected)
         {
             for (var i = 0; i < 5; i++)
             {
-                _queue.Enqueue(_sampleOutboundMessage);
+                await _queue.Enqueue(_sampleOutboundMessage);
             }
 
-            _queue.Commit();
+            await _queue.Commit();
 
-            var result = _queue.Dequeue(count);
+            var result = await _queue.Dequeue(count);
 
             result.Count().Should().Be(expected);
         }
 
         [Fact]
-        public void AcknowledgeRetryTest()
+        public async Task AcknowledgeRetryTest()
         {
             for (var i = 0; i < 5; i++)
             {
-                _queue.Enqueue(_sampleOutboundMessage);
+                await _queue.Enqueue(_sampleOutboundMessage);
             }
 
-            _queue.Commit();
+            await _queue.Commit();
 
-            var result = _queue.Dequeue(5).ToArray();
+            var result = (await _queue.Dequeue(5)).ToArray();
 
-            _queue.Acknowledge(result[0]);
-            _queue.Retry(result[1]);
-            _queue.Acknowledge(result[2]);
-            _queue.Retry(result[3]);
-            _queue.Acknowledge(result[4]);
+            await _queue.Acknowledge(result[0]);
+            await _queue.Retry(result[1]);
+            await _queue.Acknowledge(result[2]);
+            await _queue.Retry(result[3]);
+            await _queue.Acknowledge(result[4]);
 
             _queue.Length.Should().Be(2);
         }

@@ -2,18 +2,19 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Background
 {
     public interface IDistributedLockManager
     {
-        IDisposable Acquire(string resourceName, DistributedLockSettings settings = null);
+        Task<DistributedLock> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default);
 
-        IDisposable Acquire(string resourceName, TimeSpan? acquireTimeout = null, TimeSpan? acquireRetryInterval = null, TimeSpan? heartbeatTimeout = null);
+        Task<DistributedLock> Acquire(string resourceName, TimeSpan? acquireTimeout = null, TimeSpan? acquireRetryInterval = null, TimeSpan? heartbeatTimeout = null, CancellationToken cancellationToken = default);
 
-        void SendHeartbeat(string resourceName);
+        Task SendHeartbeat(string resourceName);
 
-        void Release(string resourceName);
+        Task Release(string resourceName);
     }
 }

@@ -7,12 +7,15 @@ namespace Silverback.Background
 {
     public class DistributedLockSettings
     {
-        public DistributedLockSettings(TimeSpan? acquireTimeout = null, TimeSpan? acquireRetryInterval = null, TimeSpan? heartbeatTimeout = null)
+        public DistributedLockSettings(string resourceName = null, TimeSpan? acquireTimeout = null, TimeSpan? acquireRetryInterval = null, TimeSpan? heartbeatTimeout = null)
         {
+            ResourceName = resourceName;
             AcquireTimeout = acquireTimeout;
             AcquireRetryInterval = acquireRetryInterval;
             HeartbeatTimeout = heartbeatTimeout;
         }
+
+        public string ResourceName { get; set; }
 
         public TimeSpan? AcquireTimeout { get; set; }
 

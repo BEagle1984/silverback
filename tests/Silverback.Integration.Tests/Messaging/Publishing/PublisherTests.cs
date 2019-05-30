@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.TestTypes;
 using Xunit;
 

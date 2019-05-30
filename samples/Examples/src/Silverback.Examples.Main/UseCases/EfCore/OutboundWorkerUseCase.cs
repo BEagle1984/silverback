@@ -5,6 +5,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Silverback.Background;
 using Silverback.Examples.Common.Data;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -24,10 +26,15 @@ namespace Silverback.Examples.Main.UseCases.EfCore
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus(options => options.UseModel())
-            .AddDbBackgroundTaskManager<ExamplesDbContext>()
+            .AddDbDistributedLockManager<ExamplesDbContext>()
             .AddBroker<KafkaBroker>(options => options
                 .AddDbOutboundConnector<ExamplesDbContext>()
-                .AddDbOutboundWorker<ExamplesDbContext>());
+                .AddDbOutboundWorker<ExamplesDbContext>(
+                    interval: TimeSpan.FromMilliseconds(100),
+                    distributedLockSettings: new DistributedLockSettings
+                    {
+                        AcquireRetryInterval = TimeSpan.FromSeconds(1)
+                    }));
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
         {
@@ -45,11 +52,9 @@ namespace Silverback.Examples.Main.UseCases.EfCore
 
             Console.WriteLine("Starting OutboundWorker background process (press ESC to stop)...");
 
-            serviceProvider.GetRequiredService<OutboundQueueWorker>()
-                .StartProcessing(
-                    _cancellationTokenSource.Token,
-                    TimeSpan.FromMilliseconds(100),
-                    new Background.DistributedLockSettings(acquireRetryInterval: TimeSpan.FromSeconds(1)));
+            var service = serviceProvider.GetRequiredService<IHostedService>();
+            service.StartAsync(CancellationToken.None);
+            _cancellationTokenSource.Token.Register(() => service.StopAsync(CancellationToken.None));
         }
 
         protected override Task Execute(IServiceProvider serviceProvider)

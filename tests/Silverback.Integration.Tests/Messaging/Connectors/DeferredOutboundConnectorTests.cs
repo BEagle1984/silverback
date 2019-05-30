@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await _queue.Commit();
 
             _queue.Length.Should().Be(1);
-            var queued = _queue.Dequeue(1).First();
+            var queued = (await _queue.Dequeue(1)).First();
             queued.Message.Endpoint.Should().Be(outboundMessage.Endpoint);
             queued.Message.Headers.Count.Should().Be(2);
             ((IIntegrationMessage)queued.Message.Message).Id.Should().Be(outboundMessage.Message.Id);
