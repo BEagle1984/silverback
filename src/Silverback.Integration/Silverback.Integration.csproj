@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -12,8 +12,8 @@
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType />
     <Version>0.8.0.0</Version>
-	<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
-	<PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
+  <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+  <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
     <LangVersion>latest</LangVersion>
     <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
