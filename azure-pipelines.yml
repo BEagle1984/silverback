@@ -15,7 +15,7 @@ variables:
 steps:
 - script: dotnet build Silverback.sln --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
-- script: dotnet test Silverback.sln --logger trx --collect "Code coverage" --filter CI!=false
+- script: dotnet test Silverback.sln --logger trx --collect "Code coverage" --filter CI!=false /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest

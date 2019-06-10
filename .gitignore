@@ -289,3 +289,6 @@ __pycache__/
 
 # Nuget local report
 nuget/
+
+# Coverage report
+/tests/**/coverage.cobertura.xml
