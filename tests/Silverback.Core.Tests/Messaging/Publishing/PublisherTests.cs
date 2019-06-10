@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -241,8 +242,11 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(new TestExceptionSubscriber());
 
-            publisher.Invoking(x => x.Publish(new TestEventOne())).Should().Throw<AggregateException>();
-            publisher.Invoking(x => x.Publish(new TestEventTwo())).Should().Throw<AggregateException>();
+            Action act1 = () => publisher.Publish(new TestEventOne());
+            Action act2 = () => publisher.Publish(new TestEventTwo());
+
+            act1.Should().Throw<AggregateException>();
+            act2.Should().Throw<AggregateException>();
         }
 
         [Fact]
@@ -253,8 +257,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             Func<Task> act1 = async () => await publisher.PublishAsync(new TestEventOne());
             Func<Task> act2 = async () => await publisher.PublishAsync(new TestEventTwo());
 
-            act1.Should().Throw<AggregateException>();
-            act2.Should().Throw<AggregateException>();
+            act1.Should().Throw<TargetInvocationException>();
+            act2.Should().Throw<TargetInvocationException>();
         }
 
         [Fact]

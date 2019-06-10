@@ -159,6 +159,23 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         }
 
         [Fact]
+        public void AddInboundConnector_CalledMultipleTimes_EachMessageReceivedOnce()
+        {
+            _services.AddBroker<TestBroker>(options => options.AddInboundConnector().AddInboundConnector());
+            GetBusConfigurator().Connect(endpoints =>
+                endpoints
+                    .AddInbound(TestEndpoint.Default));
+
+            var consumer = GetBroker().Consumers.First();
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+
+            _testSubscriber.ReceivedMessages.Count.Should().Be(5);
+        }
+        [Fact]
         public void AddLoggedInboundConnector_PushMessages_MessagesReceived()
         {
             _services.AddBroker<TestBroker>(options => options.AddLoggedInboundConnector(s => new InMemoryInboundLog(s.GetRequiredService<MessageKeyProvider>())));

@@ -11,6 +11,8 @@ namespace Silverback.Messaging.Messages
         object Message { get; set; }
 
         int FailedAttempts { get; set; }
+
+        bool MustUnwrap { get; set; }
     }
 
     public interface IInboundMessage<out TMessage> : IInboundMessage

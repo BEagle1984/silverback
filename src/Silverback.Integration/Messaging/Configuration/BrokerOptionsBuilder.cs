@@ -31,6 +31,10 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddInboundConnector<TConnector>() where TConnector : class, IInboundConnector
         {
             Services.AddSingleton<IInboundConnector, TConnector>();
+
+            if (Services.All(s => s.ImplementationType != typeof(InboundMessageUnwrapper)))
+                Services.AddScoped<ISubscriber, InboundMessageUnwrapper>();
+
             return this;
         }
 

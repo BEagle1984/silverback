@@ -58,10 +58,7 @@ namespace Silverback.Messaging.Connectors
             var messages = messagesArgs
                 .Select(args => HandleChunkedMessage(args, endpoint, serviceProvider) ? args : null)
                 .Where(args => args != null)
-                .Select(args => MapToInboundMessage(args, endpoint))
-                .SelectMany(msg => settings.UnwrapMessages
-                    ? new[] { msg.Message, msg }
-                    : new[] { msg })
+                .Select(args => MapToInboundMessage(args, endpoint, settings.UnwrapMessages))
                 .ToList();
 
             if (!messages.Any())
@@ -85,7 +82,7 @@ namespace Silverback.Messaging.Connectors
             return true;
         }
 
-        private IInboundMessage MapToInboundMessage(MessageReceivedEventArgs args, IEndpoint endpoint)
+        private IInboundMessage MapToInboundMessage(MessageReceivedEventArgs args, IEndpoint endpoint, bool mustUnwrap)
         {
             var message = UnwrapFailedMessage(args.Message, out var failedAttempts);
 
@@ -94,6 +91,7 @@ namespace Silverback.Messaging.Connectors
             wrapper.Endpoint = endpoint;
             wrapper.Message = message;
             wrapper.FailedAttempts = failedAttempts;
+            wrapper.MustUnwrap = mustUnwrap;
 
             if (args.Headers != null)
                 wrapper.Headers.AddRange(args.Headers);
