@@ -2,15 +2,25 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.ErrorHandling
 {
     // TODO: Test
-    public static class ErrorPolicyTryProcessExtension
+    public class ErrorPolicyHelper
     {
-        public static void TryProcess<TMessage>(this IErrorPolicy errorPolicy, TMessage message, Action<TMessage> messageHandler)
+        private readonly ILogger _logger;
+        private readonly MessageLogger _messageLogger;
+
+        public ErrorPolicyHelper(MessageLogger messageLogger, ILogger<ErrorPolicyHelper> logger)
+        {
+            _messageLogger = messageLogger;
+            _logger = logger;
+        }
+
+        public void TryProcessMessage<TMessage>(IErrorPolicy errorPolicy, TMessage message, Action<TMessage> messageHandler)
         {
             int attempts = 1;
 
@@ -25,7 +35,7 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private static MessageHandlerResult HandleMessage<TMessage>(TMessage message, Action<TMessage> messageHandler, int failedAttempts,
+        private MessageHandlerResult HandleMessage<TMessage>(TMessage message, Action<TMessage> messageHandler, int failedAttempts,
             IErrorPolicy errorPolicy)
         {
             try

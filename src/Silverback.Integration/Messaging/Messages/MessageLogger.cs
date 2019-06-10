@@ -23,6 +23,9 @@ namespace Silverback.Messaging.Messages
         public void LogTrace(ILogger logger, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null) =>
             Log(logger, LogLevel.Trace, null, logMessage, message, endpoint, batch, offset);
 
+        public void LogInformation(ILogger logger, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null) =>
+            Log(logger, LogLevel.Information, null, logMessage, message, endpoint, batch, offset);
+
         public void LogWarning(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null) =>
             Log(logger, LogLevel.Warning, exception, logMessage, message, endpoint, batch, offset);
 
@@ -32,7 +35,8 @@ namespace Silverback.Messaging.Messages
         public void LogCritical(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null) =>
             Log(logger, LogLevel.Critical, exception, logMessage, message, endpoint, batch, offset);
 
-        public void Log(ILogger logger, LogLevel logLevel, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null)
+        public void Log(ILogger logger, LogLevel logLevel, Exception exception, string logMessage, object message,
+            IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null)
         {
             var failedMessage = message as FailedMessage;
 
@@ -40,9 +44,6 @@ namespace Silverback.Messaging.Messages
 
             var properties = new List<(string, string, object)>();
 
-            var key = _messageKeyProvider.GetKey(message, false);
-            if (key != null)
-                properties.Add(("id", "messageId", key));
 
             if (offset != null)
                 properties.Add(("offset", "offset", $"{offset.Key}@{offset.Value}"));
@@ -50,7 +51,14 @@ namespace Silverback.Messaging.Messages
             if (endpoint != null)
                 properties.Add(("endpoint", "endpointName", endpoint.Name));
 
-            properties.Add(("type", "messageType", innerMessage.GetType().Name));
+            if (innerMessage != null)
+            {
+                properties.Add(("type", "messageType", innerMessage.GetType().Name));
+
+                var key = _messageKeyProvider.GetKey(innerMessage, false);
+                if (key != null)
+                    properties.Add(("id", "messageId", key));
+            }
 
             if (batch != null)
             {
@@ -66,10 +74,10 @@ namespace Silverback.Messaging.Messages
             if (failedMessage != null)
                 properties.Add(("failedAttempts", "failedAttempts", failedMessage.FailedAttempts));
 
-                logger.Log(
-                        logLevel, exception,
-                        logMessage + " {{" + string.Join(", ", properties.Select(p => $"{p.Item1}={{{p.Item2}}}")) + "}}",
-                        properties.Select(p => p.Item3).ToArray());
+            logger.Log(
+                logLevel, exception,
+                logMessage + " {{" + string.Join(", ", properties.Select(p => $"{p.Item1}={{{p.Item2}}}")) + "}}",
+                properties.Select(p => p.Item3).ToArray());
         }
     }
 }

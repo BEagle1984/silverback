@@ -38,16 +38,19 @@ namespace Silverback.Background
             {
                 try
                 {
-                    _acquiredLock = await _distributedLockManager.Acquire(_distributedLockSettings);
+                    _acquiredLock = await _distributedLockManager.Acquire(_distributedLockSettings, stoppingToken);
 
                     _logger.LogInformation($"Lock acquired, executing background service {GetType().FullName}.");
 
                     await ExecuteLockedAsync(stoppingToken);
                 }
+                catch (TaskCanceledException)
+                {
+                    // Don't log exception that is fired by the cancellation token.
+                }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex,
-                        $"Background service '{GetType().FullName}' failed. See inner exception for details.");
+                    _logger.LogError(ex, $"Background service '{GetType().FullName}' failed.");
                 }
                 finally
                 {

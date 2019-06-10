@@ -27,6 +27,7 @@ namespace Silverback.Messaging.Connectors
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
+        private readonly ErrorPolicyHelper _errorPolicyHelper;
 
         private readonly IConsumer _consumer;
 
@@ -50,6 +51,7 @@ namespace Silverback.Messaging.Connectors
             _serviceProvider = serviceProvider;
             _logger = serviceProvider.GetRequiredService<ILogger<InboundConsumer>>();
             _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
+            _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
 
             _consumer = broker.GetConsumer(_endpoint);
 
@@ -83,15 +85,19 @@ namespace Silverback.Messaging.Connectors
 
         private void ProcessSingleMessage(MessageReceivedEventArgs messageArgs)
         {
-            _messageLogger.LogTrace(_logger, "Processing message.", messageArgs.Message, _endpoint, offset: messageArgs.Offset);
+            _messageLogger.LogInformation(_logger, "Processing message.", messageArgs.Message, _endpoint,
+                offset: messageArgs.Offset);
 
-            _errorPolicy.TryProcess(messageArgs.Message, _ =>
-            {
-                using (var scope = _serviceProvider.CreateScope())
+            _errorPolicyHelper.TryProcessMessage(
+                _errorPolicy,
+                messageArgs.Message,
+                _ =>
                 {
-                    RelayAndCommitSingleMessage(messageArgs, scope.ServiceProvider);
-                }
-            });
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        RelayAndCommitSingleMessage(messageArgs, scope.ServiceProvider);
+                    }
+                });
         }
 
         private void RelayAndCommitSingleMessage(MessageReceivedEventArgs messageArgs, IServiceProvider serviceProvider)

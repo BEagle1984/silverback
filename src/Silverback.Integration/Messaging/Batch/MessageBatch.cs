@@ -29,6 +29,7 @@ namespace Silverback.Messaging.Batch
         private readonly IPublisher _publisher;
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
+        private readonly ErrorPolicyHelper _errorPolicyHelper;
 
         private readonly List<MessageReceivedEventArgs> _messages;
         private readonly Timer _waitTimer;
@@ -65,6 +66,7 @@ namespace Silverback.Messaging.Batch
             _publisher = serviceProvider.GetRequiredService<IPublisher>();
             _logger = serviceProvider.GetRequiredService<ILogger<MessageBatch>>();
             _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
+            _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
         }
 
         public Guid CurrentBatchId { get; private set; }
@@ -80,7 +82,7 @@ namespace Silverback.Messaging.Batch
             {
                 _messages.Add(messageArgs);
 
-                _messageLogger.LogTrace(_logger, "Message added to batch.", messageArgs.Message, _endpoint, this, messageArgs.Offset);
+                _messageLogger.LogInformation(_logger, "Message added to batch.", messageArgs.Message, _endpoint, this, messageArgs.Offset);
 
                 if (_messages.Count == 1)
                 {
@@ -109,9 +111,10 @@ namespace Silverback.Messaging.Batch
         {
             try
             {
-                _logger.LogTrace("Processing batch '{batchId}' containing {batchSize} message(s).", CurrentBatchId, _messages.Count);
+                _logger.LogInformation("Processing batch '{batchId}' containing {batchSize} message(s).", CurrentBatchId, _messages.Count);
 
-                _errorPolicy.TryProcess(
+                _errorPolicyHelper.TryProcessMessage(
+                    _errorPolicy,
                     new BatchCompleteEvent(CurrentBatchId, _messages),
                     _ => ProcessEachMessageAndPublishEvents());
 
@@ -119,8 +122,6 @@ namespace Silverback.Messaging.Batch
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to process batch '{batchId}' containing {batchSize} message(s).", CurrentBatchId, _messages.Count);
-
                 _processingException = ex;
                 throw new SilverbackException("Failed to process batch. See inner exception for details.", ex);
             }
@@ -140,6 +141,8 @@ namespace Silverback.Messaging.Batch
                 }
                 catch (Exception ex)
                 {
+                    _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message batch.", null, _endpoint, batch: this);
+
                     _rollbackHandler?.Invoke(scope.ServiceProvider);
 
                     _publisher.Publish(new BatchAbortedEvent(CurrentBatchId, _messages, ex));

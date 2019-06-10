@@ -25,7 +25,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         protected override ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception)
         {
-            _messageLogger.LogTrace(_logger, "The message will be skipped.", failedMessage);
+            _messageLogger.LogWarning(_logger, exception, "The message will be skipped.", failedMessage);
 
             return ErrorAction.Skip;
         }

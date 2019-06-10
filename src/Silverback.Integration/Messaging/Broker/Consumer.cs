@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker
 
             var deserializedMessage = Endpoint.Serializer.Deserialize(message);
 
-            _messageLogger.LogTrace(_logger, "Message received.", deserializedMessage, Endpoint);
+            _messageLogger.LogTrace(_logger, "Message received.", deserializedMessage, Endpoint, null, offset);
 
             Received.Invoke(this, new MessageReceivedEventArgs(deserializedMessage, headers, offset));
         }

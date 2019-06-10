@@ -34,7 +34,7 @@ namespace Silverback.Messaging.ErrorHandling
         {
             ApplyDelay(failedMessage);
 
-            _messageLogger.LogTrace(_logger, "The message will be processed again.", failedMessage);
+            _messageLogger.LogInformation(_logger, "The message will be processed again.", failedMessage);
 
             return ErrorAction.Retry;
         }
