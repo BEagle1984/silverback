@@ -35,6 +35,7 @@ And here is an example of configuration in the appsettings.json file:
           "Name": "catalog-events",
           "Configuration": {
             "BootstrapServers": "PLAINTEXT://kafka:9092",
+            "GroupId": "basket-service",
             "ClientId": "basket-service",
             "AutoOffsetReset": "Earliest"
           },
