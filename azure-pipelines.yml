@@ -15,11 +15,8 @@ variables:
 steps:
 - script: dotnet build Silverback.sln --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
-- task: VSTest@2
+- script: dotnet test Silverback.sln --logger trx --collect "Code coverage" --filter CI!=false
+- task: PublishTestResults@2
   inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: '**\*.Tests.dll
-      !**\*TestAdapter.dll
-      !**\obj\**'
-    searchFolder: '$(System.DefaultWorkingDirectory)'
-    testFiltercriteria: 'CI!=false'
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
