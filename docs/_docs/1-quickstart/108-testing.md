@@ -34,23 +34,23 @@ public class InMemoryBrokerTests
     [Fact]
     public void SampleTest()
     {
+        // Arrange
         var receivedMessages = new List<object>();
 
+        // Configure the Bus
         _serviceProvider.GetRequiredService<BusConfigurator>()
             // Bind the subscribers under test (if needed)
             .Subscribe((IInboundMessage<TestMessage> msg) => receivedMessages.Add(msg))
             // Configure inbound and outbound endpoints
             .Connect(endpoints => endpoints
-                .AddInbound(new KafkaConsumerEndpoint("test-topic"), settings: new InboundConnectorSettings
-                {
-                    UnwrapMessages = false
-                })
-                .AddOutbound<TestMessage>(new KafkaProducerEndpoint("test-topic")));
+                .AddInbound(new KafkaConsumerEndpoint("test-topic"));
 
-        // Publish some messages
-        var publisher = _serviceProvider.GetRequiredService<IPublisher>();
-        publisher.Publish(new TestMessage { Content = "hello!" });
-        publisher.Publish(new TestMessage { Content = "hello 2!" });
+        // Create a producer to push to test-topic
+        var producer = _serviceProvider.GetRequiredService<IBroker>().GetProducer(new KafkaProducerEndpoint("test-topic"));
+
+        // Act
+        producer.Produce(new TestMessage { Content = "hello!" });
+        producer.Produce(new TestMessage { Content = "hello 2!" });
 
         // Assert
         receivedMessages.Count.Should().Be(2);
