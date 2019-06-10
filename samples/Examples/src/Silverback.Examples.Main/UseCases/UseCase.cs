@@ -66,7 +66,10 @@ namespace Silverback.Examples.Main.UseCases
             }
             else
             {
-                return services.BuildServiceProvider();
+                return services.BuildServiceProvider(new ServiceProviderOptions
+                {
+                    ValidateScopes = true
+                });
             }
         }
 

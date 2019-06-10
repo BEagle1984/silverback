@@ -5,7 +5,6 @@ using System;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -21,8 +20,8 @@ namespace Silverback.Messaging.ErrorHandling
 
         private Func<object, Exception, object> _transformationFunction;
 
-        public MoveMessageErrorPolicy(IBroker broker, IEndpoint endpoint, IPublisher publisher, ILogger<MoveMessageErrorPolicy> logger, MessageLogger messageLogger) 
-            : base(publisher, logger, messageLogger)
+        public MoveMessageErrorPolicy(IBroker broker, IEndpoint endpoint, IServiceProvider serviceProvider, ILogger<MoveMessageErrorPolicy> logger, MessageLogger messageLogger) 
+            : base(serviceProvider, logger, messageLogger)
         {
             _producer = broker.GetProducer(endpoint);
             _endpoint = endpoint;

@@ -26,17 +26,16 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         private readonly IServiceCollection _services;
         private readonly TestSubscriber _testSubscriber;
         private IServiceProvider _serviceProvider;
+        private IServiceScope _serviceScope;
 
-        private IServiceProvider GetServiceProvider() => _serviceProvider ?? (_serviceProvider = _services.BuildServiceProvider());
+        private IServiceProvider GetServiceProvider() => _serviceProvider ?? (_serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true }));
+        private IServiceProvider GetScopedServiceProvider() => (_serviceScope ?? (_serviceScope = GetServiceProvider().CreateScope())).ServiceProvider;
 
         private TestBroker GetBroker() => (TestBroker) GetServiceProvider().GetService<IBroker>();
-        private IPublisher GetPublisher() => GetServiceProvider().GetService<IPublisher>();
+        private IPublisher GetPublisher() => GetScopedServiceProvider().GetService<IPublisher>();
 
         private BusConfigurator GetBusConfigurator() => GetServiceProvider().GetService<BusConfigurator>();
-        private InMemoryOutboundQueue GetOutboundQueue() => (InMemoryOutboundQueue)GetServiceProvider().GetService<IOutboundQueueProducer>();
-
-        private IInboundConnector GetInboundConnector() => GetServiceProvider().GetService<IInboundConnector>();
-        private InMemoryInboundLog GetInboundLog() => (InMemoryInboundLog)GetServiceProvider().GetService<IInboundLog>();
+        private InMemoryOutboundQueue GetOutboundQueue() => (InMemoryOutboundQueue)GetScopedServiceProvider().GetService<IOutboundQueueProducer>();
 
         public DependencyInjectionExtensionsTests()
         {
@@ -51,6 +50,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             _services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
             _serviceProvider = null; // Creation deferred to after AddBroker() has been called
+            _serviceScope = null;
 
             InMemoryInboundLog.Clear();
             InMemoryOutboundQueue.Clear();

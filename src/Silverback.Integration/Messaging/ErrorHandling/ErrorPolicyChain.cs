@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -19,13 +18,13 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly MessageLogger _messageLogger;
         private readonly IEnumerable<ErrorPolicyBase> _policies;
 
-        public ErrorPolicyChain(IPublisher publisher, ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger, params ErrorPolicyBase[] policies)
-            : this (policies.AsEnumerable(), publisher, logger, messageLogger)
+        public ErrorPolicyChain(IServiceProvider serviceProvider, ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger, params ErrorPolicyBase[] policies)
+            : this (policies.AsEnumerable(), serviceProvider, logger, messageLogger)
         {
         }
 
-        public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies, IPublisher publisher, ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger)
-            : base(publisher, logger, messageLogger)
+        public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies, IServiceProvider serviceProvider, ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger)
+            : base(serviceProvider, logger, messageLogger)
         {
             _logger = logger;
             _messageLogger = messageLogger;

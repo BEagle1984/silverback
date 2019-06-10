@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.S3" Version="3.3.101.3" />
-    <PackageReference Include="Silverback.Integration" Version="0.8.0" />
+    <PackageReference Include="Silverback.Integration" Version="0.9.0" />
   </ItemGroup>
 
 </Project>

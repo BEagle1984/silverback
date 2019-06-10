@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             services.AddBroker<TestBroker>(options => { });
 
-            var serviceProvider = services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
             _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
 

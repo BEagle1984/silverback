@@ -19,8 +19,6 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 {
     public class PublisherTests
     {
-        private IPublisher GetPublisher(params ISubscriber[] subscribers) => GetPublisher(null, subscribers);
-
         private IPublisher GetPublisher(Action<BusConfigurator> configAction, params ISubscriber[] subscribers)
         {
             var services = new ServiceCollection();
@@ -30,13 +28,13 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
             foreach (var sub in subscribers)
-                services.AddSingleton<ISubscriber>(sub);
+                services.AddScoped<ISubscriber>(_ => sub);
 
-            var serviceProvider = services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
             configAction?.Invoke(serviceProvider.GetRequiredService<BusConfigurator>());
 
-            return serviceProvider.GetRequiredService<IPublisher>();
+            return serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IPublisher>();
         }
 
         [Fact]

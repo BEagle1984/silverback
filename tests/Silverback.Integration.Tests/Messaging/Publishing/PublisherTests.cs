@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +20,8 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
     /// </summary>
     public class PublisherTests
     {
-        private readonly ServiceProvider _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceProvider _scopedServiceProvider;
 
         public PublisherTests()
         {
@@ -33,7 +35,8 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
                 .AddBus()
                 .AddBroker<TestBroker>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+            _scopedServiceProvider = _serviceProvider.CreateScope().ServiceProvider;
         }
         
         [Fact]
@@ -43,12 +46,11 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
                 .Subscribe<object>(_ => "response")
                 .Subscribe<object>(_ => "response2");
 
-            var results = _serviceProvider.GetService<IPublisher>().Publish<string>("test");
+            var results = _scopedServiceProvider.GetService<IPublisher>().Publish<string>("test");
 
             results.Should().Equal("response", "response2");
         }
-
-
+        
         [Fact]
         public async Task PublishAsync_HandlersReturnValue_ResultsReturned()
         {
@@ -56,7 +58,7 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
                 .Subscribe<object>(_ => "response")
                 .Subscribe<object>(_ => "response2");
 
-            var results = await _serviceProvider.GetService<IPublisher>().PublishAsync<string>("test");
+            var results = await _scopedServiceProvider.GetService<IPublisher>().PublishAsync<string>("test");
 
             results.Should().Equal("response", "response2");
         }

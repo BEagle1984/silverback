@@ -35,11 +35,14 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
 
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             services.AddSingleton(Substitute.For<IBroker>());
-            services.AddSingleton(Substitute.For<IPublisher>());
+            services.AddScoped(s => Substitute.For<IPublisher>());
             services.AddSingleton<MessageLogger>();
             services.AddSingleton<MessageKeyProvider>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true
+            });
 
             _builder = Substitute.For<IEndpointsConfigurationBuilder>();
         }

@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-            _errorPolicyBuilder = new ErrorPolicyBuilder(services.BuildServiceProvider(), NullLoggerFactory.Instance);
+            _errorPolicyBuilder = new ErrorPolicyBuilder(services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true }), NullLoggerFactory.Instance);
         }
 
         [Theory]

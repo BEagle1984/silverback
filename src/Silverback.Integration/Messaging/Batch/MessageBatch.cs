@@ -26,7 +26,6 @@ namespace Silverback.Messaging.Batch
         private readonly Action<IServiceProvider> _rollbackHandler;
 
         private readonly IServiceProvider _serviceProvider;
-        private readonly IPublisher _publisher;
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
@@ -63,7 +62,6 @@ namespace Silverback.Messaging.Batch
                 _waitTimer.Elapsed += OnWaitTimerElapsed;
             }
 
-            _publisher = serviceProvider.GetRequiredService<IPublisher>();
             _logger = serviceProvider.GetRequiredService<ILogger<MessageBatch>>();
             _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
             _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
@@ -131,11 +129,13 @@ namespace Silverback.Messaging.Batch
         {
             using (var scope = _serviceProvider.CreateScope())
             {
+                var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+
                 try
                 {
-                    _publisher.Publish(new BatchCompleteEvent(CurrentBatchId, _messages));
+                    publisher.Publish(new BatchCompleteEvent(CurrentBatchId, _messages));
                     _messagesHandler(_messages, scope.ServiceProvider);
-                    _publisher.Publish(new BatchProcessedEvent(CurrentBatchId, _messages));
+                    publisher.Publish(new BatchProcessedEvent(CurrentBatchId, _messages));
 
                     _commitHandler?.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);
                 }
@@ -145,7 +145,7 @@ namespace Silverback.Messaging.Batch
 
                     _rollbackHandler?.Invoke(scope.ServiceProvider);
 
-                    _publisher.Publish(new BatchAbortedEvent(CurrentBatchId, _messages, ex));
+                    publisher.Publish(new BatchAbortedEvent(CurrentBatchId, _messages, ex));
 
                     throw;
                 }

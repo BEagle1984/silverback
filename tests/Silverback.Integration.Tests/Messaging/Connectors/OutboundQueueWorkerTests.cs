@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 .AddBus()
                 .AddBroker<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
 
-            var serviceProvider = services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
             serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>()
                 .Add<IIntegrationMessage>(TestEndpoint.Default);

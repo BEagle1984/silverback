@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -103,7 +104,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         public void Publish_Exception_MessagePublished()
         {
             var publisher = Substitute.For<IPublisher>();
-            var policy = (TestErrorPolicy) new TestErrorPolicy(publisher).Publish(msg => new TestEventTwo{ Content = msg.FailedAttempts.ToString()});
+            var serviceProvider = new ServiceCollection().AddScoped(_ => publisher).BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+            var policy = (TestErrorPolicy) new TestErrorPolicy(serviceProvider).Publish(msg => new TestEventTwo{ Content = msg.FailedAttempts.ToString()});
             var message = new FailedMessage(new TestEventOne(), 3);
 
             policy.HandleError(message, new ArgumentNullException());

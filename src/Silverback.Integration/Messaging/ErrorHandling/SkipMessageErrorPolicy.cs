@@ -4,7 +4,6 @@
 using System;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -16,8 +15,8 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
         
-        public SkipMessageErrorPolicy(IPublisher publisher, ILogger<SkipMessageErrorPolicy> logger, MessageLogger messageLogger)
-            : base(publisher, logger, messageLogger)
+        public SkipMessageErrorPolicy(IServiceProvider serviceProvider, ILogger<SkipMessageErrorPolicy> logger, MessageLogger messageLogger)
+            : base(serviceProvider, logger, messageLogger)
         {
             _logger = logger;
             _messageLogger = messageLogger;

@@ -33,7 +33,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             services.AddBus();
             services.AddBroker<InMemoryBroker>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
         }
 
         [Fact]
@@ -126,10 +126,13 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
                     })
                     .AddOutbound<TestMessage>(new KafkaProducerEndpoint(endpointName)));
 
-            var publisher = _serviceProvider.GetRequiredService<IPublisher>();
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
 
-            publisher.Publish(new TestMessage { Content = "hello!" });
-            publisher.Publish(new TestMessage { Content = "hello 2!" });
+                publisher.Publish(new TestMessage { Content = "hello!" });
+                publisher.Publish(new TestMessage { Content = "hello 2!" });
+            }
 
             receivedMessages.Count.Should().Be(2);
             receivedMessages.OfType<IInboundMessage>().Select(x => x.Message).Should().AllBeOfType<TestMessage>();

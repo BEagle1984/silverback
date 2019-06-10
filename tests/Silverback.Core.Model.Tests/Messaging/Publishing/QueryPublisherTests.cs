@@ -28,9 +28,9 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
 
             services.AddSingleton<ISubscriber>(_ => new QueriesHandler());
 
-            var serviceProvider = services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
-            _publisher = serviceProvider.GetRequiredService<IQueryPublisher>();
+            _publisher = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IQueryPublisher>();
         }
 
         [Fact]

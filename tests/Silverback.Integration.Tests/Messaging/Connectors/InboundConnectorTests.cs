@@ -44,7 +44,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             services.AddBroker<TestBroker>(options => options.AddChunkStore(_ => new InMemoryChunkStore()));
 
-            var serviceProvider = services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true
+            });
             _broker = (TestBroker)serviceProvider.GetService<IBroker>();
             _connector = new InboundConnector(_broker, serviceProvider, new NullLogger<InboundConnector>());
             _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);

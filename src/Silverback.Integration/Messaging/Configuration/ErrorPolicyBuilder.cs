@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         public ErrorPolicyChain Chain(params ErrorPolicyBase[] policies) =>
             new ErrorPolicyChain(
-                _serviceProvider.GetRequiredService<IPublisher>(),
+                _serviceProvider,
                 _loggerFactory.CreateLogger<ErrorPolicyChain>(),
                 _serviceProvider.GetRequiredService<MessageLogger>(), 
                 policies);
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         public RetryErrorPolicy Retry(TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null) =>
             new RetryErrorPolicy(
-                _serviceProvider.GetRequiredService<IPublisher>(),
+                _serviceProvider,
                 _loggerFactory.CreateLogger<RetryErrorPolicy>(),
                 _serviceProvider.GetRequiredService<MessageLogger>(),
                 initialDelay, delayIncrement);
@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         public SkipMessageErrorPolicy Skip() =>
             new SkipMessageErrorPolicy(
-                _serviceProvider.GetRequiredService<IPublisher>(),
+                _serviceProvider,
                 _loggerFactory.CreateLogger<SkipMessageErrorPolicy>(),
                 _serviceProvider.GetRequiredService<MessageLogger>());
 
@@ -65,7 +65,7 @@ namespace Silverback.Messaging.Configuration
         public MoveMessageErrorPolicy Move(IEndpoint endpoint) =>
             new MoveMessageErrorPolicy(
                 _serviceProvider.GetRequiredService<IBroker>(), endpoint,
-                _serviceProvider.GetRequiredService<IPublisher>(),
+                _serviceProvider,
                 _loggerFactory.CreateLogger<MoveMessageErrorPolicy>(),
                 _serviceProvider.GetRequiredService<MessageLogger>());
     }

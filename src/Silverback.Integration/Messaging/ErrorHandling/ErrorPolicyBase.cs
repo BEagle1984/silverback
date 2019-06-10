@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -12,7 +13,7 @@ namespace Silverback.Messaging.ErrorHandling
 {
     public abstract class ErrorPolicyBase : IErrorPolicy
     {
-        private readonly IPublisher _publisher;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<ErrorPolicyBase> _logger;
         private readonly MessageLogger _messageLogger;
         private readonly List<Type> _excludedExceptions = new List<Type>();
@@ -20,9 +21,9 @@ namespace Silverback.Messaging.ErrorHandling
         private Func<FailedMessage, Exception, bool> _applyRule;
         private int _maxFailedAttempts = -1;
 
-        protected ErrorPolicyBase(IPublisher publisher, ILogger<ErrorPolicyBase> logger, MessageLogger messageLogger)
+        protected ErrorPolicyBase(IServiceProvider serviceProvider, ILogger<ErrorPolicyBase> logger, MessageLogger messageLogger)
         {
-            _publisher = publisher;
+            _serviceProvider = serviceProvider;
             _logger = logger;
             _messageLogger = messageLogger;
         }
@@ -166,7 +167,11 @@ namespace Silverback.Messaging.ErrorHandling
 
             if (MessageToPublishFactory != null)
             {
-                _publisher.Publish(MessageToPublishFactory.Invoke(failedMessage));
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    scope.ServiceProvider.GetRequiredService<IPublisher>()
+                        .Publish(MessageToPublishFactory.Invoke(failedMessage));
+                }
             }
 
             return result;
