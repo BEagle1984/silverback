@@ -15,8 +15,13 @@ variables:
 steps:
 - script: dotnet build Silverback.sln --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
-- script: dotnet test Silverback.sln --logger trx --collect "Code coverage" --filter CI!=false /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+- script: dotnet test Silverback.sln --logger trx --collect "Code coverage" --filter CI!=false /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+  displayName: 'dotnet test'
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
+- task: PublishCodeCoverageResults@1
+  inputs:
+    summaryFileLocation: $(Build.SourcesDirectory)\tests\**\coverage.cobertura.xml
+    codecoverageTool: cobertura
