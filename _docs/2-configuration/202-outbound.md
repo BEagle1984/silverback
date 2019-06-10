@@ -55,20 +55,24 @@ public void ConfigureServices(IServiceCollection services)
         .AddBus()
 
         // Setup the lock manager using the database
-        // to handle the distributed locks
+        // to handle the distributed locks.
+        // If this line is omitted the OutboundWorker will still
+        // work without locking. 
         .AddDbDistributedLockManager<MyDbContext>()
 
         .AddBroker<KafkaBroker>(options => options
             .AddDbOutboundConnector<MyDbContext>()
 
-            // Start processing the outbound queue:
+            // Add the IHostedService processing the outbound queue:
             // -> sleep 500 milliseconds when the queue is empty
-            // -> check if the lock is gone every 1 seconds (= the running instance was stopped and we need to take over)
+            // -> check if the lock is gone every 1 second
+            //    (= the running instance was stopped and we need to take over)
             .AddDbOutboundWorker<MyDbContext>(
-                TimeSpan.FromMilliseconds(500),
-                new Background.DistributedLockSettings(
-                    acquireRetryInterval: TimeSpan.FromSeconds(1))
-                ));
+                interval: TimeSpan.FromMilliseconds(500),
+                distributedLockSettings: new DistributedLockSettings
+                {
+                    AcquireRetryInterval = TimeSpan.FromSeconds(1)
+                });
     ...
 }
 ```
