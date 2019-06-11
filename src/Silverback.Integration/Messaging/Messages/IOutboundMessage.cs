@@ -4,10 +4,19 @@ namespace Silverback.Messaging.Messages
 {
     public interface IOutboundMessage
     {
+        /// <summary>
+        /// Gets the destination endpoint.
+        /// </summary>
         IEndpoint Endpoint { get; set; }
 
+        /// <summary>
+        /// Gets the optional message headers.
+        /// </summary>
         MessageHeaderCollection Headers { get; }
 
+        /// <summary>
+        /// Gets the message.
+        /// </summary>
         object Message { get; set; }
     }
 

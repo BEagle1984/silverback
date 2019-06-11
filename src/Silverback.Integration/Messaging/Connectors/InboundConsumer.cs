@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Batch;
@@ -20,7 +21,7 @@ namespace Silverback.Messaging.Connectors
         private readonly InboundConnectorSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
 
-        private readonly Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, InboundConnectorSettings, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
         private readonly Action<IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
@@ -34,7 +35,7 @@ namespace Silverback.Messaging.Connectors
         public InboundConsumer(IBroker broker,
             IEndpoint endpoint,
             InboundConnectorSettings settings,
-            Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, InboundConnectorSettings, IServiceProvider> messagesHandler,
+            Action<IEnumerable<IInboundMessage>, IServiceProvider> messagesHandler,
             Action<IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy,
@@ -69,18 +70,34 @@ namespace Silverback.Messaging.Connectors
                 var batch = new MessageBatch(
                     _endpoint,
                     _settings.Batch,
-                    (messageArgs, serviceProvider) => _messagesHandler(messageArgs, _endpoint, _settings, serviceProvider),
+                    _messagesHandler,
                     Commit,
                     _rollbackHandler,
                     _errorPolicy,
                     _serviceProvider);
 
-                _consumer.Received += (_, args) => batch.AddMessage(args);
+                _consumer.Received += (_, args) => batch.AddMessage(CreateInboundMessage(args));
             }
             else
             {
-                _consumer.Received += (_, args) => ProcessSingleMessage(args);
+                _consumer.Received += (_, args) => ProcessSingleMessage(CreateInboundMessage(args));
             }
+        }
+
+        private IInboundMessage CreateInboundMessage(MessageReceivedEventArgs args)
+        {
+            // TODO: Policies!
+            var deserializedMessage = _endpoint.Serializer.Deserialize(args.Message);
+
+            var message = (InboundMessage) Activator.CreateInstance(typeof(InboundMessage<>).MakeGenericType(deserializedMessage.GetType()));
+            message.Message = deserializedMessage;
+            message.Endpoint = _endpoint;
+            message.MustUnwrap = _settings.UnwrapMessages;
+
+            if (args.Headers != null)
+                message.Headers.AddRange(args.Headers);
+
+            return message;
         }
 
         private void ProcessSingleMessage(MessageReceivedEventArgs messageArgs)

@@ -46,7 +46,7 @@ namespace Silverback.Messaging.Broker
         }
 
         private void Trace(object message) =>
-            _messageLogger.LogTrace(_logger, "Producing message.", message, Endpoint);
+            _messageLogger.LogInformation(_logger, "Producing message.", message);
 
         protected abstract void Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers);
 

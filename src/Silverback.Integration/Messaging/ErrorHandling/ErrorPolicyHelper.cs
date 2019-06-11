@@ -9,37 +9,27 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.ErrorHandling
 {
     // TODO: Test
-    public class ErrorPolicyHelper
+    public static class InboundMessageExtensions
     {
-        private readonly ILogger _logger;
-        private readonly MessageLogger _messageLogger;
-
-        public ErrorPolicyHelper(MessageLogger messageLogger, ILogger<ErrorPolicyHelper> logger)
+        public static void TryProcessMessage(this IInboundMessage message, IErrorPolicy errorPolicy, Action<IInboundMessage> messageHandler)
         {
-            _messageLogger = messageLogger;
-            _logger = logger;
-        }
-
-        public void TryProcessMessage<TMessage>(IErrorPolicy errorPolicy, TMessage message, Action<TMessage> messageHandler)
-        {
-            int attempts = 1;
-
             while (true)
             {
-                var result = HandleMessage(message, messageHandler, attempts, errorPolicy);
+                var result = HandleMessage(message, messageHandler, errorPolicy);
 
                 if (result.IsSuccessful || result.Action == ErrorAction.Skip)
                     return;
-
-                attempts++;
             }
         }
 
-        private MessageHandlerResult HandleMessage<TMessage>(TMessage message, Action<TMessage> messageHandler, int failedAttempts,
-            IErrorPolicy errorPolicy)
+        private static MessageHandlerResult HandleMessage(IInboundMessage message, Action<IInboundMessage> messageHandler, IErrorPolicy errorPolicy)
         {
             try
             {
+                message = message.Message is byte[]
+                    ? InboundMessageHelper.CreateNewInboundMessage(Deserialize(message), message)
+                    : message;
+
                 messageHandler(message);
 
                 return MessageHandlerResult.Success;
@@ -49,12 +39,12 @@ namespace Silverback.Messaging.ErrorHandling
                 if (errorPolicy == null)
                     throw;
 
-                var failedMessage = new FailedMessage(message, failedAttempts);
+                message.Headers.Replace(MessageHeader.FailedAttemptsHeaderName, (message.FailedAttempts + 1).ToString());
 
-                if (!errorPolicy.CanHandle(failedMessage, ex))
+                if (!errorPolicy.CanHandle(message, ex))
                     throw;
 
-                var action = errorPolicy.HandleError(failedMessage, ex);
+                var action = errorPolicy.HandleError(message, ex);
 
                 if (action == ErrorAction.StopConsuming)
                     throw;
@@ -62,5 +52,8 @@ namespace Silverback.Messaging.ErrorHandling
                 return MessageHandlerResult.Error(action);
             }
         }
+
+        private static object Deserialize(IInboundMessage message) =>
+            message.Endpoint.Serializer.Deserialize((byte[]) message.Message);
     }
 }

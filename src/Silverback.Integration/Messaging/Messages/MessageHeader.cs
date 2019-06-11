@@ -7,6 +7,8 @@ namespace Silverback.Messaging.Messages
 {
     public class MessageHeader
     {
+        public const string FailedAttemptsHeaderName = "Silverback.FailedAttempts";
+
         public MessageHeader()
         {
         }

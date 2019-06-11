@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Batch
         private readonly BatchSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
 
-        private readonly Action<IEnumerable<MessageReceivedEventArgs>, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
         private readonly Action<IEnumerable<IOffset>, IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
@@ -30,14 +30,14 @@ namespace Silverback.Messaging.Batch
         private readonly MessageLogger _messageLogger;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly List<MessageReceivedEventArgs> _messages;
+        private readonly List<IInboundMessage> _messages;
         private readonly Timer _waitTimer;
 
         private Exception _processingException;
 
         public MessageBatch(IEndpoint endpoint,
             BatchSettings settings,
-            Action<IEnumerable<MessageReceivedEventArgs>, IServiceProvider> messagesHandler,
+            Action<IEnumerable<IInboundMessage>, IServiceProvider> messagesHandler,
             Action<IEnumerable<IOffset>, IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy, 
@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Batch
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _settings = settings;
 
-            _messages = new List<MessageReceivedEventArgs>(_settings.Size);
+            _messages = new List<IInboundMessage>(_settings.Size);
 
             if (_settings.MaxWaitTime < TimeSpan.MaxValue)
             {
@@ -71,16 +71,16 @@ namespace Silverback.Messaging.Batch
 
         public int CurrentSize => _messages.Count;
 
-        public void AddMessage(MessageReceivedEventArgs messageArgs)
+        public void AddMessage(IInboundMessage message)
         {
             if (_processingException != null)
                 throw new SilverbackException("Cannot add to the batch because the processing of the previous batch failed. See inner exception for details.", _processingException);
 
             lock (_messages)
             {
-                _messages.Add(messageArgs);
+                _messages.Add(message);
 
-                _messageLogger.LogInformation(_logger, "Message added to batch.", messageArgs.Message, _endpoint, this, messageArgs.Offset);
+                _messageLogger.LogInformation(_logger, "Message added to batch.", message, this);
 
                 if (_messages.Count == 1)
                 {
