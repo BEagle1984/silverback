@@ -35,9 +35,9 @@ namespace Silverback.Messaging.ErrorHandling
             return this;
         }
 
-        protected override ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
         {
-            if (failedMessage.Message is BatchCompleteEvent batchMessage)
+            if (message.Message is BatchEvent batchMessage)
             {
                 foreach (var singleFailedMessage in batchMessage.Messages)
                 {
@@ -46,10 +46,10 @@ namespace Silverback.Messaging.ErrorHandling
             }
             else
             {
-                PublishToNewEndpoint(failedMessage, exception);
+                PublishToNewEndpoint(message, exception);
             }
 
-            _messageLogger.LogTrace(_logger, "The failed message has been moved and will be skipped.", failedMessage, _endpoint);
+            _messageLogger.LogTrace(_logger, "The failed message has been moved and will be skipped.", message, _endpoint);
 
             return ErrorAction.Skip;
         }

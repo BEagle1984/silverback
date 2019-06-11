@@ -28,7 +28,6 @@ namespace Silverback.Messaging.Connectors
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
-        private readonly ErrorPolicyHelper _errorPolicyHelper;
 
         private readonly IConsumer _consumer;
 
@@ -52,7 +51,6 @@ namespace Silverback.Messaging.Connectors
             _serviceProvider = serviceProvider;
             _logger = serviceProvider.GetRequiredService<ILogger<InboundConsumer>>();
             _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
-            _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
 
             _consumer = broker.GetConsumer(_endpoint);
 
@@ -100,33 +98,31 @@ namespace Silverback.Messaging.Connectors
             return message;
         }
 
-        private void ProcessSingleMessage(MessageReceivedEventArgs messageArgs)
+        private void ProcessSingleMessage(IInboundMessage message)
         {
-            _messageLogger.LogInformation(_logger, "Processing message.", messageArgs.Message, _endpoint,
-                offset: messageArgs.Offset);
-
-            _errorPolicyHelper.TryProcessMessage(
+            message.TryDeserializeAndProcess(
                 _errorPolicy,
-                messageArgs.Message,
-                _ =>
+                deserializedMessage =>
                 {
                     using (var scope = _serviceProvider.CreateScope())
                     {
-                        RelayAndCommitSingleMessage(messageArgs, scope.ServiceProvider);
+                        RelayAndCommitSingleMessage(deserializedMessage, scope.ServiceProvider);
                     }
                 });
         }
 
-        private void RelayAndCommitSingleMessage(MessageReceivedEventArgs messageArgs, IServiceProvider serviceProvider)
+        private void RelayAndCommitSingleMessage(IInboundMessage message, IServiceProvider serviceProvider)
         {
             try
             {
-                _messagesHandler(new[] { messageArgs }, _endpoint, _settings, serviceProvider);
-                Commit(new[] { messageArgs.Offset }, serviceProvider);
+                _messageLogger.LogInformation(_logger, "Processing message.", message);
+
+                _messagesHandler(new[] { message }, serviceProvider);
+                Commit(new[] { message.Offset }, serviceProvider);
             }
             catch (Exception ex)
             {
-                _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message.", messageArgs.Message, _endpoint, offset: messageArgs.Offset);
+                _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message.", message);
                 Rollback(serviceProvider);
                 throw;
             }

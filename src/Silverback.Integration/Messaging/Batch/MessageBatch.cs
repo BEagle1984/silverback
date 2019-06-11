@@ -28,7 +28,6 @@ namespace Silverback.Messaging.Batch
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
-        private readonly ErrorPolicyHelper _errorPolicyHelper;
 
         private readonly List<IInboundMessage> _messages;
         private readonly Timer _waitTimer;
@@ -64,7 +63,6 @@ namespace Silverback.Messaging.Batch
 
             _logger = serviceProvider.GetRequiredService<ILogger<MessageBatch>>();
             _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
-            _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
         }
 
         public Guid CurrentBatchId { get; private set; }
@@ -111,10 +109,10 @@ namespace Silverback.Messaging.Batch
             {
                 _logger.LogInformation("Processing batch '{batchId}' containing {batchSize} message(s).", CurrentBatchId, _messages.Count);
 
-                _errorPolicyHelper.TryProcessMessage(
-                    _errorPolicy,
-                    new BatchCompleteEvent(CurrentBatchId, _messages),
-                    _ => ProcessEachMessageAndPublishEvents());
+                InboundMessageHelper.CreateNewInboundMessage(
+                        new BatchCompleteEvent(CurrentBatchId, _messages),
+                        _messages.Last())
+                    .TryDeserializeAndProcess(_errorPolicy, ProcessEachMessageAndPublishEvents);
 
                 _messages.Clear();
             }
@@ -125,7 +123,7 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private void ProcessEachMessageAndPublishEvents()
+        private void ProcessEachMessageAndPublishEvents(IInboundMessage<BatchCompleteEvent>)
         {
             using (var scope = _serviceProvider.CreateScope())
             {

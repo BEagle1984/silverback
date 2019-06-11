@@ -11,7 +11,7 @@ namespace Silverback.Messaging.ErrorHandling
     // TODO: Test
     public static class InboundMessageExtensions
     {
-        public static void TryProcessMessage(this IInboundMessage message, IErrorPolicy errorPolicy, Action<IInboundMessage> messageHandler)
+        public static void TryDeserializeAndProcess(this IInboundMessage message, IErrorPolicy errorPolicy, Action<IInboundMessage> messageHandler)
         {
             while (true)
             {

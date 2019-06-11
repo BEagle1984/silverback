@@ -22,9 +22,9 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        protected override ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
         {
-            _messageLogger.LogWarning(_logger, exception, "The message will be skipped.", failedMessage);
+            _messageLogger.LogWarning(_logger, exception, "The message will be skipped.", message);
 
             return ErrorAction.Skip;
         }
