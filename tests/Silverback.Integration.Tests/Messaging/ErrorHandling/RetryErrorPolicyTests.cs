@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(7, false)]
         public void CanHandleTest(int failedAttempts, bool expectedResult)
         {
-            var canHandle = _policy.CanHandle(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
+            var canHandle = _policy.CanHandle(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
 
             canHandle.Should().Be(expectedResult);
         }

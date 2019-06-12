@@ -71,6 +71,7 @@ namespace Silverback.Messaging.Batch
 
         public void AddMessage(IInboundMessage message)
         {
+            // TODO: Check this!
             if (_processingException != null)
                 throw new SilverbackException("Cannot add to the batch because the processing of the previous batch failed. See inner exception for details.", _processingException);
 
@@ -109,10 +110,10 @@ namespace Silverback.Messaging.Batch
             {
                 _logger.LogInformation("Processing batch '{batchId}' containing {batchSize} message(s).", CurrentBatchId, _messages.Count);
 
-                InboundMessageHelper.CreateNewInboundMessage(
-                        new BatchCompleteEvent(CurrentBatchId, _messages),
-                        _messages.Last())
-                    .TryDeserializeAndProcess(_errorPolicy, ProcessEachMessageAndPublishEvents);
+                new InboundBatch(CurrentBatchId, _messages, _endpoint)
+                    .TryDeserializeAndProcess(_errorPolicy,
+                        deserializedBatch =>
+                            ProcessEachMessageAndPublishEvents((IInboundBatch) deserializedBatch));
 
                 _messages.Clear();
             }
@@ -123,27 +124,29 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private void ProcessEachMessageAndPublishEvents(IInboundMessage<BatchCompleteEvent>)
+        private void ProcessEachMessageAndPublishEvents(IInboundBatch deserializedBatch)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
                 var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
 
+                var unwrappedMessages = deserializedBatch.Messages.Select(m => m.Message).ToList();
+
                 try
                 {
-                    publisher.Publish(new BatchCompleteEvent(CurrentBatchId, _messages));
-                    _messagesHandler(_messages, scope.ServiceProvider);
-                    publisher.Publish(new BatchProcessedEvent(CurrentBatchId, _messages));
+                    publisher.Publish(new BatchCompleteEvent(CurrentBatchId, unwrappedMessages));
+                    _messagesHandler(deserializedBatch.Messages, scope.ServiceProvider);
+                    publisher.Publish(new BatchProcessedEvent(CurrentBatchId, unwrappedMessages));
 
                     _commitHandler?.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);
                 }
                 catch (Exception ex)
                 {
-                    _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message batch.", null, _endpoint, batch: this);
+                    _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message batch.", deserializedBatch, _endpoint);
 
                     _rollbackHandler?.Invoke(scope.ServiceProvider);
 
-                    publisher.Publish(new BatchAbortedEvent(CurrentBatchId, _messages, ex));
+                    publisher.Publish(new BatchAbortedEvent(CurrentBatchId, unwrappedMessages, ex));
 
                     throw;
                 }

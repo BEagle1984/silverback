@@ -24,29 +24,28 @@ namespace Silverback.Messaging.Connectors
             _messageLogger = messageLogger;
         }
 
-        protected override void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint endpoint, InboundConnectorSettings settings, IServiceProvider serviceProvider)
+        protected override void RelayMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
         {
-            messagesArgs = EnsureExactlyOnce(messagesArgs, endpoint, serviceProvider);
+            messages = EnsureExactlyOnce(messages, serviceProvider);
 
-            base.RelayMessages(messagesArgs, endpoint, settings, serviceProvider);
+            base.RelayMessages(messages, serviceProvider);
         }
 
-        private IEnumerable<MessageReceivedEventArgs> EnsureExactlyOnce(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint endpoint, IServiceProvider serviceProvider)
+        private IEnumerable<IInboundMessage> EnsureExactlyOnce(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
         {
-            foreach (var messageArgs in messagesArgs)
+            foreach (var message in messages)
             {
-                if (MustProcess(messageArgs, endpoint, serviceProvider))
+                if (MustProcess(message, serviceProvider))
                 {
-                    yield return messageArgs;
+                    yield return message;
                 }
                 else
                 {
-                    _messageLogger.LogTrace(Logger, "Message is being skipped since it was already processed.", messageArgs.Message,
-                        endpoint, offset: messageArgs.Offset);
+                    _messageLogger.LogTrace(Logger, "Message is being skipped since it was already processed.", message);
                 }
             }
         }
 
-        protected abstract bool MustProcess(MessageReceivedEventArgs messageArgs, IEndpoint endpoint, IServiceProvider serviceProvider);
+        protected abstract bool MustProcess(IInboundMessage message, IServiceProvider serviceProvider);
     }
 }

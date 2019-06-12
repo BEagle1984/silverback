@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
 
@@ -19,7 +20,13 @@ namespace Silverback.Messaging.Messages
         public int FailedAttempts
         {
             get => Headers.GetValue<int>(MessageHeader.FailedAttemptsHeaderName);
-            set => Headers.Replace(MessageHeader.FailedAttemptsHeaderName, value.ToString());
+            set
+            {
+                Headers.Remove(MessageHeader.FailedAttemptsHeaderName);
+
+                if (value > 0)
+                    Headers.Add(MessageHeader.FailedAttemptsHeaderName, value.ToString());
+            }
         }
 
         public bool MustUnwrap { get; set; }

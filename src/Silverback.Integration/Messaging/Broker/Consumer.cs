@@ -34,11 +34,9 @@ namespace Silverback.Messaging.Broker
             if (Received == null)
                 throw new InvalidOperationException("A message was received but no handler is configured, please attach to the Received event.");
 
-            var deserializedMessage = Endpoint.Serializer.Deserialize(message);
+            _messageLogger.LogTrace(_logger, "Message received.", null, Endpoint, offset);
 
-            _messageLogger.LogTrace(_logger, "Message received.", deserializedMessage, Endpoint, null, offset);
-
-            Received.Invoke(this, new MessageReceivedEventArgs(deserializedMessage, headers, offset));
+            Received.Invoke(this, new MessageReceivedEventArgs(message, headers, offset));
         }
     }
 

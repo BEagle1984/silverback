@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(3),
                 testPolicy);
 
-            chain.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
+            chain.HandleError(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
 
             testPolicy.Applied.Should().Be(failedAttempts > 3);
         }
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(2),
                 _errorPolicyBuilder.Skip());
 
-            var action = chain.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
+            var action = chain.HandleError(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
 
             action.Should().Be(expectedAction);
         }

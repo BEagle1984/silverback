@@ -20,41 +20,41 @@ namespace Silverback.Messaging.Messages
             _messageKeyProvider = messageKeyProvider;
         }
 
-        public void LogTrace(ILogger logger, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null) =>
-            Log(logger, LogLevel.Trace, null, logMessage, message, endpoint, batch, offset, null);
+        public void LogTrace(ILogger logger, string logMessage, object message, IEndpoint endpoint = null, IOffset offset = null, MessageBatch batch = null) =>
+            Log(logger, LogLevel.Trace, null, logMessage, message, endpoint, offset, null, batch);
 
         public void LogTrace(ILogger logger, string logMessage, IInboundMessage message, MessageBatch batch = null) =>
             Log(logger, LogLevel.Trace, null, logMessage, message, batch);
 
-        public void LogInformation(ILogger logger, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null) =>
-            Log(logger, LogLevel.Information, null, logMessage, message, endpoint, batch, offset, null);
+        public void LogInformation(ILogger logger, string logMessage, object message, IEndpoint endpoint = null, IOffset offset = null, MessageBatch batch = null) =>
+            Log(logger, LogLevel.Information, null, logMessage, message, endpoint, offset, null, batch);
 
         public void LogInformation(ILogger logger, string logMessage, IInboundMessage message, MessageBatch batch = null) =>
             Log(logger, LogLevel.Information, null, logMessage, message, batch);
 
-        public void LogWarning(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null) =>
-            Log(logger, LogLevel.Warning, exception, logMessage, message, endpoint, batch, offset, null);
+        public void LogWarning(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, IOffset offset = null, MessageBatch batch = null) =>
+            Log(logger, LogLevel.Warning, exception, logMessage, message, endpoint, offset, null, batch);
 
         public void LogWarning(ILogger logger, string logMessage, IInboundMessage message, MessageBatch batch = null) =>
             Log(logger, LogLevel.Warning, null, logMessage, message, batch);
 
-        public void LogError(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null) =>
-            Log(logger, LogLevel.Error, exception, logMessage, message, endpoint, batch, offset, null);
+        public void LogError(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, IOffset offset = null, MessageBatch batch = null) =>
+            Log(logger, LogLevel.Error, exception, logMessage, message, endpoint, offset, null, batch);
 
         public void LogError(ILogger logger, string logMessage, IInboundMessage message, MessageBatch batch = null) =>
             Log(logger, LogLevel.Error, null, logMessage, message, batch);
 
-        public void LogCritical(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, MessageBatch batch = null, IOffset offset = null) =>
-            Log(logger, LogLevel.Critical, exception, logMessage, message, endpoint, batch, offset, null);
+        public void LogCritical(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, IOffset offset = null, MessageBatch batch = null) =>
+            Log(logger, LogLevel.Critical, exception, logMessage, message, endpoint, offset, null, batch);
 
         public void LogCritical(ILogger logger, string logMessage, IInboundMessage message, MessageBatch batch = null) =>
             Log(logger, LogLevel.Critical, null, logMessage, message, batch);
         
         private void Log(ILogger logger, LogLevel logLevel, Exception exception, string logMessage, IInboundMessage message, MessageBatch batch) =>
-            Log(logger, logLevel, exception, logMessage, message.Message, message.Endpoint, batch, message.Offset, message.FailedAttempts);
-        
+            Log(logger, logLevel, exception, logMessage, message.Message, message.Endpoint, message.Offset, message.FailedAttempts, batch);
+
         private void Log(ILogger logger, LogLevel logLevel, Exception exception, string logMessage, object message,
-            IEndpoint endpoint, MessageBatch batch, IOffset offset, int? failedAttempts)
+            IEndpoint endpoint, IOffset offset, int? failedAttempts, MessageBatch batch)
         {
             var properties = new List<(string, string, object)>();
             
@@ -73,19 +73,19 @@ namespace Silverback.Messaging.Messages
                     properties.Add(("id", "messageId", key));
             }
 
+            if (failedAttempts != null && failedAttempts > 0)
+                properties.Add(("failedAttempts", "failedAttempts", failedAttempts));
+
             if (batch != null)
             {
                 properties.Add(("batchId", "batchId", batch.CurrentBatchId));
                 properties.Add(("batchSize", "batchSize", batch.CurrentSize));
             }
-            else if (message is BatchEvent batchMessage)
+            else if (message is IInboundBatch inboundBatch)
             {
-                properties.Add(("batchId", "batchId", batchMessage.BatchId));
-                properties.Add(("batchSize", "batchSize", batchMessage.BatchSize));
+                properties.Add(("batchId", "batchId", inboundBatch.Id));
+                properties.Add(("batchSize", "batchSize", inboundBatch.Size));
             }
-
-            if (failedAttempts != null && failedAttempts > 0)
-                properties.Add(("failedAttempts", "failedAttempts", failedAttempts));
 
             logger.Log(
                 logLevel, exception,

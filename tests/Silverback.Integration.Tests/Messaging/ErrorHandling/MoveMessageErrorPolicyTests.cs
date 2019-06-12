@@ -44,7 +44,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default);
 
-            policy.HandleError(new FailedMessage(new TestEventOne()), new Exception("test"));
+            policy.HandleError(new InboundMessage { Message = new TestEventOne() }, new Exception("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
 
@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default)
                 .Transform((msg, ex) => new TestEventTwo());
 
-            policy.HandleError(new FailedMessage(new TestEventOne()), new Exception("test"));
+            policy.HandleError(new InboundMessage { Message = new TestEventOne() }, new Exception("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
             var producedMessage = producer.Endpoint.Serializer.Deserialize(producer.ProducedMessages[0].Message);

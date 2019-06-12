@@ -89,23 +89,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
-        public void Bind_PushFailedMessages_WrappedInboundMessagesReceived()
-        {
-            _connector.Bind(TestEndpoint.Default);
-            _broker.Connect();
-
-            var consumer = _broker.Consumers.First();
-            consumer.TestPush(new FailedMessage(new TestEventOne { Id = Guid.NewGuid() }));
-            consumer.TestPush(new FailedMessage(new TestEventTwo { Id = Guid.NewGuid() }));
-            consumer.TestPush(new FailedMessage(new TestEventOne { Id = Guid.NewGuid() }));
-            consumer.TestPush(new FailedMessage(new TestEventTwo { Id = Guid.NewGuid() }));
-            consumer.TestPush(new FailedMessage(new TestEventTwo { Id = Guid.NewGuid() }));
-
-            _inboundSubscriber.ReceivedMessages.OfType<InboundMessage<TestEventOne>>().Count().Should().Be(2);
-            _inboundSubscriber.ReceivedMessages.OfType<InboundMessage<TestEventTwo>>().Count().Should().Be(3);
-        }
-
-        [Fact]
         public void Bind_PushMessages_HeadersReceivedWithInboundMessages()
         {
             _connector.Bind(TestEndpoint.Default);
@@ -113,7 +96,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var consumer = _broker.Consumers.First();
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = "key", Value = "value1" } });
-            consumer.TestPush(new FailedMessage(new TestEventOne { Id = Guid.NewGuid() }, 3), new[] { new MessageHeader { Key = "key", Value = "value2" } });
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = "key", Value = "value2" } });
 
             var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
             inboundMessages.First().Headers.First().Value.Should().Be("value1");
@@ -128,12 +111,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var consumer = _broker.Consumers.First();
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
-            consumer.TestPush(new FailedMessage(new TestEventOne { Id = Guid.NewGuid() }, 3));
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = MessageHeader.FailedAttemptsHeaderName, Value = "3" } });
 
             var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
             inboundMessages.First().FailedAttempts.Should().Be(0);
             inboundMessages.Skip(1).First().FailedAttempts.Should().Be(3);
         }
+
         [Fact]
         public void Bind_PushMessagesInBatch_MessagesReceived()
         {
@@ -575,6 +559,23 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
+        public void Bind_ErrorInDeserializerWithRetryErrorPolicy_RetriedAndReceived()
+        {
+            var testSerializer = new TestSerializer { MustFailCount = 3 };
+            _connector.Bind(new TestEndpoint("test")
+            {
+                Serializer = testSerializer
+            }, _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
+            _broker.Connect();
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+
+            testSerializer.FailCount.Should().Be(3);
+            _testSubscriber.ReceivedMessages.Count.Should().Be(1);
+        }
+
+        [Fact]
         public void Bind_WithChainedErrorPolicy_RetriedAndMoved()
         {
             _testSubscriber.MustFailCount = 3;
@@ -619,6 +620,34 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _testSubscriber.ReceivedMessages.OfType<TestEventOne>().Count().Should().Be(5);
         }
 
+        [Fact]
+        public void Bind_ErrorInDeserializerWithRetryErrorPolicy_RetriedAndReceivedInBatch()
+        {
+            var testSerializer = new TestSerializer { MustFailCount = 3 };
+            _connector.Bind(new TestEndpoint("test")
+                {
+                    Serializer = testSerializer
+                },
+                _errorPolicyBuilder.Retry().MaxFailedAttempts(3),
+                new InboundConnectorSettings
+                {
+                    Batch = new BatchSettings
+                    {
+                        Size = 2
+                    }
+                });
+            _broker.Connect();
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+            consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+
+            testSerializer.FailCount.Should().Be(3);
+            _testSubscriber.ReceivedMessages.OfType<BatchAbortedEvent>().Count().Should().Be(0);
+            _testSubscriber.ReceivedMessages.OfType<BatchCompleteEvent>().Count().Should().Be(1);
+            _testSubscriber.ReceivedMessages.OfType<BatchProcessedEvent>().Count().Should().Be(1);
+            _testSubscriber.ReceivedMessages.OfType<TestEventOne>().Count().Should().Be(2);
+        }
         #endregion
     }
 }

@@ -76,7 +76,9 @@ namespace Silverback.Messaging.Connectors
             if (joinedMessage == null)
                 return null;
 
-            return InboundMessageHelper.CreateNewInboundMessage<byte[]>(joinedMessage, message);
+            var deserializedJoinedMessage = message.Endpoint.Serializer.Deserialize(joinedMessage);
+
+            return InboundMessageHelper.CreateNewInboundMessage(deserializedJoinedMessage, message);
         }
 
         protected virtual void RelayMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider) => 

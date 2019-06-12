@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Batch;
@@ -84,13 +83,13 @@ namespace Silverback.Messaging.Connectors
 
         private IInboundMessage CreateInboundMessage(MessageReceivedEventArgs args)
         {
-            // TODO: Policies!
-            var deserializedMessage = _endpoint.Serializer.Deserialize(args.Message);
-
-            var message = (InboundMessage) Activator.CreateInstance(typeof(InboundMessage<>).MakeGenericType(deserializedMessage.GetType()));
-            message.Message = deserializedMessage;
-            message.Endpoint = _endpoint;
-            message.MustUnwrap = _settings.UnwrapMessages;
+            var message = new InboundMessage<byte[]>
+            {
+                Message = args.Message,
+                Endpoint = _endpoint,
+                Offset = args.Offset,
+                MustUnwrap = _settings.UnwrapMessages
+            };
 
             if (args.Headers != null)
                 message.Headers.AddRange(args.Headers);
