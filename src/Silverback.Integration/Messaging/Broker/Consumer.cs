@@ -13,8 +13,8 @@ namespace Silverback.Messaging.Broker
         private readonly ILogger<Consumer> _logger;
         private readonly MessageLogger _messageLogger;
 
-        protected Consumer(IBroker broker, IEndpoint endpoint,ILogger<Consumer> logger, MessageLogger messageLogger)
-           : base(broker, endpoint)
+        protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger, MessageLogger messageLogger)
+            : base(broker, endpoint)
         {
             _logger = logger;
             _messageLogger = messageLogger;
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker
 
             _messageLogger.LogTrace(_logger, "Message received.", null, Endpoint, offset);
 
-            Received.Invoke(this, new MessageReceivedEventArgs(message, headers, offset));
+            Received.Invoke(this, new MessageReceivedEventArgs(message, headers, offset, Endpoint));
         }
     }
 

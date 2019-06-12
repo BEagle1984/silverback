@@ -6,7 +6,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Model;
-using Silverback.Messaging.Messages;
+using MessageKeyProvider = Silverback.Messaging.Messages.MessageKeyProvider;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {

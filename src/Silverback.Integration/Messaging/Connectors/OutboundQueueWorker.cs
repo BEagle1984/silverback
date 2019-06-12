@@ -22,9 +22,6 @@ namespace Silverback.Messaging.Connectors
 
         private readonly int _readPackageSize;
         private readonly bool _enforceMessageOrder;
-
-        private bool _running;
-
         public OutboundQueueWorker(IServiceProvider serviceProvider, IBroker broker, ILogger<OutboundQueueWorker> logger,
             MessageLogger messageLogger, bool enforceMessageOrder, int readPackageSize)
         {

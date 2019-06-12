@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Core", "src\Silverback.Core\Silverback.Core.csproj", "{FE7472E6-E52F-4352-82AD-AFB700397B20}"
 EndProject
@@ -44,11 +44,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9818A770-01ED-4340-BD4A-CFDDA6C56168}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Kafka.ConfigClassGenerator", "tools\Silverback.Integration.Kafka.ConfigClassGenerator\Silverback.Integration.Kafka.ConfigClassGenerator.csproj", "{228CC403-4FBE-4E4F-9B74-891F30A404E0}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1348F753-96CC-4A2E-A7D4-F5C0BE4C8BA1}"
-	ProjectSection(SolutionItems) = preProject
-		.travis.yml = .travis.yml
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.InMemory", "src\Silverback.Integration.InMemory\Silverback.Integration.InMemory.csproj", "{7918D431-D931-4353-841B-4E6098D1CF70}"
 EndProject
