@@ -42,5 +42,17 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             message2.Should().NotBeNull();
             message2.Content.Should().Be(message.Content);
         }
+
+        [Fact]
+        public void Serialize_ByteArray_ReturnedUnmodified()
+        {
+            var messageBytes = Encoding.UTF8.GetBytes("test");
+
+            var serializer = new JsonMessageSerializer();
+
+            var serialized = serializer.Serialize(messageBytes);
+
+            serialized.Should().BeSameAs(messageBytes);
+        }
     }
 }

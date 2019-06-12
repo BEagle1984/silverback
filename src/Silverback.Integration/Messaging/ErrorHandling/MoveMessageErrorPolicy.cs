@@ -19,6 +19,7 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly MessageLogger _messageLogger;
 
         private Func<object, Exception, object> _transformationFunction;
+        private Func<MessageHeaderCollection, Exception, MessageHeaderCollection> _headersTransformationFunction;
 
         public MoveMessageErrorPolicy(IBroker broker, IEndpoint endpoint, IServiceProvider serviceProvider, ILogger<MoveMessageErrorPolicy> logger, MessageLogger messageLogger) 
             : base(serviceProvider, logger, messageLogger)
@@ -29,17 +30,19 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        public MoveMessageErrorPolicy Transform(Func<object, Exception, object> transformationFunction)
+        public MoveMessageErrorPolicy Transform(Func<object, Exception, object> transformationFunction,
+            Func<MessageHeaderCollection, Exception, MessageHeaderCollection> headersTransformationFunction = null)
         {
             _transformationFunction = transformationFunction;
+            _headersTransformationFunction = headersTransformationFunction;
             return this;
         }
 
         protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
         {
-            if (message.Message is BatchEvent batchMessage)
+            if (message is IInboundBatch inboundBatch)
             {
-                foreach (var singleFailedMessage in batchMessage.Messages)
+                foreach (var singleFailedMessage in inboundBatch.Messages)
                 {
                     PublishToNewEndpoint(singleFailedMessage, exception);
                 }
@@ -54,9 +57,11 @@ namespace Silverback.Messaging.ErrorHandling
             return ErrorAction.Skip;
         }
 
-        private void PublishToNewEndpoint(object failedMessage, Exception exception)
+        private void PublishToNewEndpoint(IInboundMessage message, Exception exception)
         {
-            _producer.Produce(_transformationFunction?.Invoke(failedMessage, exception) ?? failedMessage);
+            _producer.Produce(
+                _transformationFunction?.Invoke(message.Message, exception) ?? message.Message,
+                _headersTransformationFunction?.Invoke(message.Headers, exception) ?? message.Headers);
         }
     }
 }
