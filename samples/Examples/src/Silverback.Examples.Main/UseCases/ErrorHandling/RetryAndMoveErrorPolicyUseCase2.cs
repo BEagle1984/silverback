@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
@@ -10,12 +11,13 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Examples.Main.UseCases.ErrorHandling
 {
-    public class RetryAndMoveErrorPolicyUseCase : UseCase
+    public class RetryAndMoveErrorPolicyUseCase2 : UseCase
     {
-        public RetryAndMoveErrorPolicyUseCase() : base("Processing error -> retry (x2) -> move to same topic (x2) -> move to another topic", 10, 1)
+        public RetryAndMoveErrorPolicyUseCase2() : base("Deserialization error -> retry (x2) -> move to same topic (x2) -> move to another topic", 11, 1)
         {
         }
 
@@ -31,7 +33,8 @@ namespace Silverback.Examples.Main.UseCases.ErrorHandling
                     {
                         BootstrapServers = "PLAINTEXT://kafka:9092",
                         ClientId = GetType().FullName
-                    }
+                    },
+                    Serializer = new BuggySerializer()
                 }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
@@ -39,6 +42,16 @@ namespace Silverback.Examples.Main.UseCases.ErrorHandling
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
             await publisher.PublishAsync(new BadIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+        }
+
+        private class BuggySerializer : IMessageSerializer
+        {
+            public byte[] Serialize(object message) => new byte[] { 0, 1, 2, 3, 4 };
+
+            public object Deserialize(byte[] message)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

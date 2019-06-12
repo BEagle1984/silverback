@@ -47,13 +47,13 @@ namespace Silverback.Examples.ConsumerA
                             },
                             Consumers = 2
                         })
-                    .AddInbound(CreateConsumerEndpoint("silverback-examples-bad-events"), policy => policy
+                    .AddInbound(CreateConsumerEndpoint("silverback-examples-error-events"), policy => policy
                         .Chain(
                             policy
                                 .Retry(TimeSpan.FromMilliseconds(500))
                                 .MaxFailedAttempts(2),
                             policy
-                                .Move(new KafkaProducerEndpoint("silverback-examples-bad-events-error")
+                                .Move(new KafkaProducerEndpoint("silverback-examples-error-events")
                                 {
                                     Configuration = new KafkaProducerConfig
                                     {
@@ -61,10 +61,31 @@ namespace Silverback.Examples.ConsumerA
                                         ClientId = "consumer-service-a"
                                     }
                                 })
+                                .MaxFailedAttempts(4),
+                            policy
+                                .Move(new KafkaProducerEndpoint("silverback-examples-events")
+                                {
+                                    Configuration = new KafkaProducerConfig
+                                    {
+                                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                                        ClientId = "consumer-service-a"
+                                    }
+                                })
+                                .Transform(
+                                    (msg, ex) => new IntegrationEventA
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        Content = $"Transformed BadEvent (exception: {ex.Message})"
+                                    },
+                                    (headers, ex) =>
+                                    {
+                                        headers.Add("exception-message", ex.Message);
+                                        return headers;
+                                    })
                                 .Publish(msg => new MessageMovedEvent
                                 {
-                                    Id = ((IntegrationEvent) msg.Message).Id,
-                                    Destination = "silverback-examples-bad-events-error"
+                                    Id = (msg.Message as IntegrationEvent)?.Id ?? Guid.Empty,
+                                    Destination = msg.Endpoint.Name
                                 })))
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer",
                         GetCustomSerializer()))
