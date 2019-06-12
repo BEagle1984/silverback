@@ -559,7 +559,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
-        public void Bind_ErrorInDeserializerWithRetryErrorPolicy_RetriedAndReceived()
+        public void Bind_WithRetryErrorPolicyToHandleDeserializerErrors_RetriedAndReceived()
         {
             var testSerializer = new TestSerializer { MustFailCount = 3 };
             _connector.Bind(new TestEndpoint("test")
@@ -573,6 +573,60 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             testSerializer.FailCount.Should().Be(3);
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
+        }
+
+        [Fact]
+        public void Bind_WithRetryErrorPolicyToHandleDeserializerErrorsInChunkedMessage_RetriedAndReceived()
+        {
+            var testSerializer = new TestSerializer { MustFailCount = 3 };
+            _connector.Bind(new TestEndpoint("test")
+            {
+                Serializer = testSerializer
+            }, _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
+            _broker.Connect();
+
+            var buffer = Convert.FromBase64String(
+                "eyIkdHlwZSI6IlNpbHZlcmJhY2suVGVzdHMuSW50ZWdyYXRpb24uVGVzdFR5cGVzLkRvbWFpbi5UZXN0" +
+                "RXZlbnRPbmUsIFNpbHZlcmJhY2suSW50ZWdyYXRpb24uVGVzdHMiLCJDb250ZW50IjoiQSBmdWxsIG1l" +
+                "c3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 1,
+                ChunksCount = 4,
+                Content = buffer.Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 2,
+                ChunksCount = 4,
+                Content = buffer.Skip(40).Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 3,
+                ChunksCount = 4,
+                Content = buffer.Skip(80).Take(40).ToArray()
+            });
+            consumer.TestPush(new MessageChunk
+            {
+                MessageId = Guid.NewGuid(),
+                OriginalMessageId = "123",
+                ChunkId = 4,
+                ChunksCount = 4,
+                Content = buffer.Skip(120).ToArray()
+            });
+
+            testSerializer.FailCount.Should().Be(3);
+            _testSubscriber.ReceivedMessages.Count.Should().Be(1);
+            _testSubscriber.ReceivedMessages.First().As<TestEventOne>().Content.Should().Be("A full message!");
         }
 
         [Fact]
@@ -621,7 +675,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
-        public void Bind_ErrorInDeserializerWithRetryErrorPolicy_RetriedAndReceivedInBatch()
+        public void Bind_WithRetryErrorPolicyToHandleDeserializerErrors_RetriedAndReceivedInBatch()
         {
             var testSerializer = new TestSerializer { MustFailCount = 3 };
             _connector.Bind(new TestEndpoint("test")

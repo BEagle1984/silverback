@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.Integration.TestTypes
@@ -19,13 +20,15 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public object Deserialize(byte[] message)
         {
-            if (MustFailCount > FailCount)
+            var deserialized = new JsonMessageSerializer().Deserialize(message);
+
+            if (MustFailCount > FailCount && !(deserialized is MessageChunk))
             {
                 FailCount++;
                 throw new Exception("Test failure");
             }
 
-            return new JsonMessageSerializer().Deserialize(message);
+            return deserialized;
         }
     }
 }
