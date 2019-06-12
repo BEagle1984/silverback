@@ -3,8 +3,6 @@
 
 // TODO: DELETE, replaced by InboundMessage
 
-using System;
-
 namespace Silverback.Messaging.Messages
 {
     //public class FailedMessage

@@ -4,7 +4,6 @@
 using System;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 
 // ReSharper disable once CheckNamespace
