@@ -68,15 +68,15 @@ namespace Silverback.Messaging.ErrorHandling
         {
             if (message is IInboundBatch batch)
                 return new InboundBatch(
-                        batch.Id,
-                        batch.Messages.Select(DeserializeIfNeeded),
-                        batch.Endpoint);
+                    batch.Id,
+                    batch.Messages.Select(DeserializeIfNeeded),
+                    batch.Endpoint);
 
             if (message.Message is byte[])
                 return InboundMessageHelper.CreateNewInboundMessage(
                     Deserialize(message),
                     message);
-            
+
             return message;
         }
 
