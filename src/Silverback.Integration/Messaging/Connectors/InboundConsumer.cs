@@ -19,6 +19,7 @@ namespace Silverback.Messaging.Connectors
         private readonly IEndpoint _endpoint;
         private readonly InboundConnectorSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
+        private readonly InboundMessageProcessor _inboundMessageProcessor;
 
         private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
         private readonly Action<IServiceProvider> _commitHandler;
@@ -50,6 +51,7 @@ namespace Silverback.Messaging.Connectors
             _serviceProvider = serviceProvider;
             _logger = serviceProvider.GetRequiredService<ILogger<InboundConsumer>>();
             _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
+            _inboundMessageProcessor = serviceProvider.GetRequiredService<InboundMessageProcessor>();
 
             _consumer = broker.GetConsumer(_endpoint);
 
@@ -99,7 +101,8 @@ namespace Silverback.Messaging.Connectors
 
         private void ProcessSingleMessage(IInboundMessage message)
         {
-            message.TryDeserializeAndProcess(
+            _inboundMessageProcessor.TryDeserializeAndProcess(
+                message,
                 _errorPolicy,
                 deserializedMessage =>
                 {
@@ -114,14 +117,11 @@ namespace Silverback.Messaging.Connectors
         {
             try
             {
-                _messageLogger.LogInformation(_logger, "Processing message.", message);
-
                 _messagesHandler(new[] { message }, serviceProvider);
                 Commit(new[] { message.Offset }, serviceProvider);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message.", message);
                 Rollback(serviceProvider);
                 throw;
             }

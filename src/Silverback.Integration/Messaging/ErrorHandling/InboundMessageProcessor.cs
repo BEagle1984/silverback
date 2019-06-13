@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -10,9 +11,19 @@ using Silverback.Util;
 namespace Silverback.Messaging.ErrorHandling
 {
     // TODO: Test
-    public static class InboundMessageExtensions
+    public class InboundMessageProcessor
     {
-        public static void TryDeserializeAndProcess(this IInboundMessage message, IErrorPolicy errorPolicy, Action<IInboundMessage> messageHandler)
+        private readonly ILogger<InboundMessageProcessor> _logger;
+        private readonly MessageLogger _messageLogger;
+
+        public InboundMessageProcessor(ILogger<InboundMessageProcessor> logger, MessageLogger messageLogger)
+        {
+            _logger = logger;
+            _messageLogger = messageLogger;
+        }
+
+        public void TryDeserializeAndProcess<TInboundMessage>(TInboundMessage message, IErrorPolicy errorPolicy, Action<TInboundMessage> messageHandler)
+            where TInboundMessage : IInboundMessage
         {
             var attempt = message.FailedAttempts + 1;
 
@@ -27,11 +38,14 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private static MessageHandlerResult HandleMessage(IInboundMessage message, Action<IInboundMessage> messageHandler, IErrorPolicy errorPolicy, int attempt)
+        private MessageHandlerResult HandleMessage<TInboundMessage>(TInboundMessage message, Action<TInboundMessage> messageHandler, IErrorPolicy errorPolicy, int attempt)
+            where TInboundMessage : IInboundMessage
         {
             try
             {
-                message = DeserializeIfNeeded(message);
+                message = (TInboundMessage)DeserializeIfNeeded(message);
+
+                _messageLogger.LogProcessing(_logger, message);
 
                 messageHandler(message);
 
@@ -39,6 +53,8 @@ namespace Silverback.Messaging.ErrorHandling
             }
             catch (Exception ex)
             {
+                _messageLogger.LogProcessingError(_logger, message, ex);
+
                 if (errorPolicy == null)
                     throw;
 

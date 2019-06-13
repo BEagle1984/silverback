@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class RetryErrorPolicyTests
     {
-        private RetryErrorPolicy _policy;
+        private readonly RetryErrorPolicy _policy;
 
         public RetryErrorPolicyTests()
         {

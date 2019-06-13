@@ -20,6 +20,7 @@ namespace Silverback.Messaging.Batch
         private readonly IEndpoint _endpoint;
         private readonly BatchSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
+        private readonly InboundMessageProcessor _inboundMessageProcessor;
 
         private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
         private readonly Action<IEnumerable<IOffset>, IServiceProvider> _commitHandler;
@@ -48,9 +49,10 @@ namespace Silverback.Messaging.Batch
             _commitHandler = commitHandler ?? throw new ArgumentNullException(nameof(commitHandler));
             _rollbackHandler = rollbackHandler ?? throw new ArgumentNullException(nameof(rollbackHandler));
 
-            _errorPolicy = errorPolicy;
-
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _inboundMessageProcessor = serviceProvider.GetRequiredService<InboundMessageProcessor>();
+
+            _errorPolicy = errorPolicy;
             _settings = settings;
 
             _messages = new List<IInboundMessage>(_settings.Size);
@@ -79,7 +81,7 @@ namespace Silverback.Messaging.Batch
             {
                 _messages.Add(message);
 
-                _messageLogger.LogInformation(_logger, "Message added to batch.", message, this);
+                _messageLogger.LogInformation(_logger, "Message added to batch.", message, CurrentBatchId, CurrentSize);
 
                 if (_messages.Count == 1)
                 {
@@ -108,12 +110,10 @@ namespace Silverback.Messaging.Batch
         {
             try
             {
-                _logger.LogInformation("Processing batch '{batchId}' containing {batchSize} message(s).", CurrentBatchId, _messages.Count);
-
-                new InboundBatch(CurrentBatchId, _messages, _endpoint)
-                    .TryDeserializeAndProcess(_errorPolicy,
-                        deserializedBatch =>
-                            ProcessEachMessageAndPublishEvents((IInboundBatch) deserializedBatch));
+                _inboundMessageProcessor.TryDeserializeAndProcess(
+                    new InboundBatch(CurrentBatchId, _messages, _endpoint),
+                    _errorPolicy,
+                    deserializedBatch => ProcessEachMessageAndPublishEvents((IInboundBatch) deserializedBatch));
 
                 _messages.Clear();
             }
@@ -142,8 +142,6 @@ namespace Silverback.Messaging.Batch
                 }
                 catch (Exception ex)
                 {
-                    _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message batch.", deserializedBatch, _endpoint);
-
                     _rollbackHandler?.Invoke(scope.ServiceProvider);
 
                     publisher.Publish(new BatchAbortedEvent(CurrentBatchId, unwrappedMessages, ex));

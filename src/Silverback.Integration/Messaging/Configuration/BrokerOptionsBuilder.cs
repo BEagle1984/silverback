@@ -10,6 +10,7 @@ using Silverback.Background;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
@@ -34,6 +35,9 @@ namespace Silverback.Messaging.Configuration
 
             if (Services.All(s => s.ImplementationType != typeof(InboundMessageUnwrapper)))
                 Services.AddScoped<ISubscriber, InboundMessageUnwrapper>();
+
+            if (Services.All(s => s.ImplementationType != typeof(InboundMessageProcessor)))
+                Services.AddSingleton<InboundMessageProcessor>();
 
             return this;
         }
