@@ -15,14 +15,14 @@ namespace Silverback.Messaging.Messages
         {
             var newMessage = (InboundMessage) Activator.CreateInstance(typeof(InboundMessage<>).MakeGenericType(message.GetType()));
 
+            if (sourceInboundMessage.Headers != null)
+                newMessage.Headers.AddRange(sourceInboundMessage.Headers);
+
             newMessage.Message = message;
             newMessage.Endpoint = sourceInboundMessage.Endpoint;
             newMessage.Offset = sourceInboundMessage.Offset;
             newMessage.FailedAttempts = sourceInboundMessage.FailedAttempts;
             newMessage.MustUnwrap = sourceInboundMessage.MustUnwrap;
-
-            if (sourceInboundMessage.Headers != null)
-                newMessage.Headers.AddRange(sourceInboundMessage.Headers);
 
             return (IInboundMessage<TMessage>) newMessage;
         }

@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Messages
         public void Remove(string key) =>
             RemoveAll(x => x.Key == key);
 
-        public void Replace(string key, string newValue)
+        public void AddOrReplace(string key, string newValue)
         {
             Remove(key);
             Add(key, newValue);

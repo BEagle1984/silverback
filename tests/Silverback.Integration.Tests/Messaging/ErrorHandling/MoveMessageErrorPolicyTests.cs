@@ -114,9 +114,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             producedMessage.Should().BeOfType<TestEventTwo>();
         }
 
-
         [Fact]
-        public void Transform_InboundMessage_HeadersModified()
+        public void Transform_InboundMessage_HeadersProperlyModified()
         {
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default)
                 .Transform((msg, ex) => new TestEventTwo(), (headers, ex) =>

@@ -10,14 +10,9 @@ namespace Silverback.Messaging.Broker
 {
     public abstract class Consumer : EndpointConnectedObject, IConsumer
     {
-        private readonly ILogger<Consumer> _logger;
-        private readonly MessageLogger _messageLogger;
-
-        protected Consumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger, MessageLogger messageLogger)
+        protected Consumer(IBroker broker, IEndpoint endpoint)
             : base(broker, endpoint)
         {
-            _logger = logger;
-            _messageLogger = messageLogger;
         }
 
         public event EventHandler<MessageReceivedEventArgs> Received;
@@ -34,8 +29,6 @@ namespace Silverback.Messaging.Broker
             if (Received == null)
                 throw new InvalidOperationException("A message was received but no handler is configured, please attach to the Received event.");
 
-            _messageLogger.LogTrace(_logger, "Message received.", null, Endpoint, offset);
-
             Received.Invoke(this, new MessageReceivedEventArgs(message, headers, offset, Endpoint));
         }
     }
@@ -44,9 +37,8 @@ namespace Silverback.Messaging.Broker
         where TBroker : class, IBroker
         where TEndpoint : class, IEndpoint
     {
-        protected Consumer(IBroker broker, IEndpoint endpoint,
-            ILogger<Consumer> logger, MessageLogger messageLogger)
-            : base(broker, endpoint, logger, messageLogger)
+        protected Consumer(IBroker broker, IEndpoint endpoint)
+            : base(broker, endpoint)
         {
         }
 

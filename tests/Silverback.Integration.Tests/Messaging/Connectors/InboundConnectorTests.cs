@@ -649,6 +649,23 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
+        public void Bind_WithChainedErrorPolicy_OneAndOnlyOneFailedAttemptsHeaderIsAdded()
+        {
+            _testSubscriber.MustFailCount = 3;
+            _connector.Bind(TestEndpoint.Default, _errorPolicyBuilder.Chain(
+                _errorPolicyBuilder.Retry().MaxFailedAttempts(1),
+                _errorPolicyBuilder.Move(new TestEndpoint("bad"))));
+            _broker.Connect();
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+
+            var producer = (TestProducer)_broker.GetProducer(new TestEndpoint("bad"));
+
+            producer.ProducedMessages.Last().Headers.Count(h => h.Key == MessageHeader.FailedAttemptsHeaderName).Should().Be(1);
+        }
+
+        [Fact]
         public void Bind_WithRetryErrorPolicy_RetriedAndReceivedInBatch()
         {
             _testSubscriber.MustFailCount = 3;

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -15,7 +14,7 @@ namespace Silverback.Tests.Integration.TestTypes
     public class TestConsumer : Consumer
     {
         public TestConsumer(IBroker broker, IEndpoint endpoint)
-            : base(broker, endpoint, new NullLogger<TestConsumer>(), new MessageLogger(new MessageKeyProvider(Enumerable.Empty<IMessageKeyProvider>())))
+            : base(broker, endpoint)
         {
         }
 

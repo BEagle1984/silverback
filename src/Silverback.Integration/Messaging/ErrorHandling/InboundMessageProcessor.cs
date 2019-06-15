@@ -77,7 +77,7 @@ namespace Silverback.Messaging.ErrorHandling
             if (message is IInboundBatch batch)
                 batch.Messages.ForEach(m => UpdateFailedAttemptsHeader(m, attempt));
             else
-                message.Headers.Replace(MessageHeader.FailedAttemptsHeaderName, attempt.ToString());
+                message.Headers.AddOrReplace(MessageHeader.FailedAttemptsHeaderName, attempt.ToString());
         }
 
         private static IInboundMessage DeserializeIfNeeded(IInboundMessage message)
