@@ -19,7 +19,7 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly List<Type> _excludedExceptions = new List<Type>();
         private readonly List<Type> _includedExceptions = new List<Type>();
         private Func<IInboundMessage, Exception, bool> _applyRule;
-        private int _maxFailedAttempts = -1;
+        
 
         protected ErrorPolicyBase(IServiceProvider serviceProvider, ILogger<ErrorPolicyBase> logger, MessageLogger messageLogger)
         {
@@ -29,6 +29,8 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         internal Func<IInboundMessage, object> MessageToPublishFactory { get; private set; }
+
+        internal int MaxFailedAttemptsSetting { get; private set; } = -1;
 
         /// <summary>
         /// Restricts the application of this policy to the specified exception type only.
@@ -102,7 +104,7 @@ namespace Silverback.Messaging.ErrorHandling
         /// <returns></returns>
         public ErrorPolicyBase MaxFailedAttempts(int maxFailedAttempts)
         {
-            _maxFailedAttempts = maxFailedAttempts;
+            MaxFailedAttemptsSetting = maxFailedAttempts;
             return this;
         }
 
@@ -126,11 +128,11 @@ namespace Silverback.Messaging.ErrorHandling
                 return false;
             }
 
-            if (_maxFailedAttempts >= 0 && message.FailedAttempts > _maxFailedAttempts)
+            if (MaxFailedAttemptsSetting >= 0 && message.FailedAttempts > MaxFailedAttemptsSetting)
             {
                 _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the current failed attempts " +
                                  $"({message.FailedAttempts}) exceeds the configured maximum attempts " +
-                                 $"({_maxFailedAttempts}).", message);
+                                 $"({MaxFailedAttemptsSetting}).", message);
 
                 return false;
             }
