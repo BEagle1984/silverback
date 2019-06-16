@@ -68,8 +68,6 @@ public class LogHeadersBehavior : IBehavior
 
     public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
     {
-        var result = await next(messages);
-
         foreach (var message in messages.OfType<IInboundMessage>())
         {
             if (message.Headers != null && message.Headers.Any())
@@ -80,7 +78,7 @@ public class LogHeadersBehavior : IBehavior
             }
         }
 
-        return result;
+        return await next(messages);
     }
 }
 ```

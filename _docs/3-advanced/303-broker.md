@@ -44,9 +44,13 @@ public class MyCustomMessageProcessor
 
     private static void OnMessageReceived(object sender, ReceivedMessageEventArgs args)
     {
-        // Process args.Message
+        // Deserialize
+        var message = args.Endpoint.Serializer.Deserialize(args.Message);
+
+        // Process
         ...
 
+        // Commit
         _consumer.Acknowledge(args.Offset);
     }
 }

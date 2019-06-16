@@ -13,7 +13,6 @@ footer:
       url: "https://github.com/BEagle1984"
 
 remote_theme: "mmistakes/minimal-mistakes@4.14.1"
-#minimal_mistakes_skin: "air"
 
 baseurl: /silverback
 
@@ -77,4 +76,3 @@ tag_archive:
 
 plugins:
   - jekyll-include-cache
-  - jekyll-feed
