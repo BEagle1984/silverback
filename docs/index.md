@@ -30,9 +30,3 @@ features:
 
 {% include feature_row id="intro" type="center" %}
 {% include feature_row id="features" %}
-
-# Latest Posts
-
-{% for post in site.posts limit:3 %}
-  {% include archive-single.html %}
-{% endfor %}
