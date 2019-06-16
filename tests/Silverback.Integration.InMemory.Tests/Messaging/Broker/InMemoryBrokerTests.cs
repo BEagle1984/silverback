@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
-            consumer.Received += (_, e) => receivedMessages.Add(e.Message);
+            consumer.Received += (_, e) => receivedMessages.Add(e.Endpoint.Serializer.Deserialize(e.Message));
 
             producer.Produce(new TestMessage { Content = "hello!" });
             producer.Produce(new TestMessage { Content = "hello 2!" });
@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
-            consumer.Received += (_, e) => receivedMessages.Add(e.Message);
+            consumer.Received += (_, e) => receivedMessages.Add(e.Endpoint.Serializer.Deserialize(e.Message));
 
             producer.Produce(new TestMessage { Content = "hello!" });
 
@@ -105,12 +105,12 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             consumer.Received += (_, e) => receivedHeaders.Add(e.Headers);
 
             producer.Produce(
-                new TestMessage {Content = "hello!"},
-                new[] {new MessageHeader("a", "b"), new MessageHeader("c", "d")});
+                new TestMessage { Content = "hello!" },
+                new[] { new MessageHeader("a", "b"), new MessageHeader("c", "d") });
 
             receivedHeaders.First().Should().BeEquivalentTo(new MessageHeader("a", "b"), new MessageHeader("c", "d"));
         }
-        
+
         [Fact]
         public void InMemoryBroker_PublishMessageThroughConnector_MessageConsumed()
         {

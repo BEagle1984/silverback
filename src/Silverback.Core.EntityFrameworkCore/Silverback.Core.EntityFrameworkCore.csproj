@@ -7,8 +7,8 @@
     <Company></Company>
     <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package adds the ability to fire the domain events as part of the EntityFramework's SaveChanges transaction.</Description>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/BEagle1984/silverback/blob/master/LICENSE</PackageLicenseUrl>
-    <Version>0.9.0.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Version>0.10.0.0</Version>
     <RootNamespace>Silverback</RootNamespace>
     <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
     <LangVersion>latest</LangVersion>
@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
-    <PackageReference Include="Silverback.Core" Version="0.9.0" />
+    <PackageReference Include="Silverback.Core" Version="0.10.0" />
   </ItemGroup>
 
 </Project>

@@ -24,6 +24,9 @@ namespace Silverback.Messaging.Serialization
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
+            if (message is byte[] bytes)
+                return bytes;
+
             var json = JsonConvert.SerializeObject(message, typeof(TMessage), Settings);
 
             return GetEncoding().GetBytes(json);

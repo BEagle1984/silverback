@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(333, ErrorAction.Skip)]
         public void SkipTest(int failedAttempts, ErrorAction expectedAction)
         {
-            var action = _policy.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
+            var action = _policy.HandleError(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
 
             action.Should().Be(expectedAction);
         }

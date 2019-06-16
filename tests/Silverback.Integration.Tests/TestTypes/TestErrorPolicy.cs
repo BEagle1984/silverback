@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
@@ -18,7 +17,7 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        protected override ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
         {
             Applied = true;
             return ErrorAction.Skip;

@@ -4,7 +4,6 @@
 using System;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 
 // ReSharper disable once CheckNamespace
@@ -20,8 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<ErrorPolicyBuilder>()
                 .AddSingleton<IMessageKeyProvider, DefaultPropertiesMessageKeyProvider>()
                 .AddSingleton<MessageKeyProvider>()
-                .AddSingleton<MessageLogger>()
-                .AddSingleton<ErrorPolicyHelper>();
+                .AddSingleton<MessageLogger>();
 
             var options = new BrokerOptionsBuilder(services);
             optionsAction?.Invoke(options);

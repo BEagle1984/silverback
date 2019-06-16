@@ -29,23 +29,23 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        protected override ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
         {
-            ApplyDelay(failedMessage);
+            ApplyDelay(message);
 
-            _messageLogger.LogInformation(_logger, "The message will be processed again.", failedMessage);
+            _messageLogger.LogInformation(_logger, "The message will be processed again.", message);
 
             return ErrorAction.Retry;
         }
 
-        private void ApplyDelay(FailedMessage failedMessage)
+        private void ApplyDelay(IInboundMessage message)
         {
-            var delay = _initialDelay.Milliseconds + failedMessage.FailedAttempts * _delayIncrement.Milliseconds;
+            var delay = _initialDelay.Milliseconds + message.FailedAttempts * _delayIncrement.Milliseconds;
 
             if (delay <= 0)
                 return;
 
-            _messageLogger.LogTrace(_logger, $"Waiting {delay} milliseconds before retrying the message.", failedMessage);
+            _messageLogger.LogTrace(_logger, $"Waiting {delay} milliseconds before retrying the message.", message);
             Thread.Sleep(delay);
         }
     }

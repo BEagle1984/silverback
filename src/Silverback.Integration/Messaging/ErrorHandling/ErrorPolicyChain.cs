@@ -31,19 +31,34 @@ namespace Silverback.Messaging.ErrorHandling
 
             _policies = policies ?? throw new ArgumentNullException(nameof(policies));
 
+            StackMaxFailedAttempts(policies);
+
             if (_policies.Any(p => p == null)) throw new ArgumentNullException(nameof(policies), "One or more policies in the chain have a null value.");
         }
 
-        protected override ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
         {
             foreach (var policy in _policies)
             {
-                if (policy.CanHandle(failedMessage, exception))
-                    return policy.HandleError(failedMessage, exception);
+                if (policy.CanHandle(message, exception))
+                    return policy.HandleError(message, exception);
             }
 
-            _messageLogger.LogTrace(_logger, "All policies have been applied but the message still couldn't be successfully processed. The consumer will be stopped.", failedMessage);
+            _messageLogger.LogTrace(_logger, "All policies have been applied but the message still couldn't be successfully processed. The consumer will be stopped.", message);
             return ErrorAction.StopConsuming;
+        }
+
+        private static void StackMaxFailedAttempts(IEnumerable<ErrorPolicyBase> policies)
+        {
+            var totalAttempts = 0;
+            foreach (var policy in policies)
+            {
+                if (policy.MaxFailedAttemptsSetting <= 0)
+                    continue;
+
+                totalAttempts += policy.MaxFailedAttemptsSetting;
+                policy.MaxFailedAttempts(totalAttempts);
+            }
         }
     }
 }

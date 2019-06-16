@@ -10,6 +10,8 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class InMemoryChunkStore : TransactionalList<InMemoryStoredChunk>, IChunkStore
     {
+        private string _pendingCleanup;
+
         public void Store(MessageChunk chunk) =>
             Add(new InMemoryStoredChunk
             {
@@ -34,8 +36,23 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public void Cleanup(string messageId)
         {
-            Entries.RemoveAll(e => e.MessageId == messageId);
-            UncommittedEntries.RemoveAll(e => e.MessageId == messageId);
+            _pendingCleanup = messageId;
+        }
+
+        public override void Commit()
+        {
+            if (!string.IsNullOrEmpty(_pendingCleanup))
+            {
+                Entries.RemoveAll(e => e.MessageId == _pendingCleanup);
+                UncommittedEntries.RemoveAll(e => e.MessageId == _pendingCleanup);
+            }
+            base.Commit();
+        }
+
+        public override void Rollback()
+        {
+            _pendingCleanup = null;
+            base.Rollback();
         }
     }
 }

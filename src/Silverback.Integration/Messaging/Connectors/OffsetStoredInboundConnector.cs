@@ -18,15 +18,15 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        protected override bool MustProcess(MessageReceivedEventArgs messageArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected override bool MustProcess(IInboundMessage message, IServiceProvider serviceProvider)
         {
             var offsetStore = serviceProvider.GetRequiredService<IOffsetStore>();
 
-            var latest = offsetStore.GetLatestValue(messageArgs.Offset.Key);
-            if (latest != null && messageArgs.Offset.CompareTo(latest) <= 0)
+            var latest = offsetStore.GetLatestValue(message.Offset.Key);
+            if (latest != null && message.Offset.CompareTo(latest) <= 0)
                 return false;
 
-            offsetStore.Store(messageArgs.Offset);
+            offsetStore.Store(message.Offset);
             return true;
         }
 

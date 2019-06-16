@@ -3,10 +3,14 @@
 
 using System;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
 
@@ -14,12 +18,26 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class RetryErrorPolicyTests
     {
-        private RetryErrorPolicy _policy;
+        private readonly ErrorPolicyBuilder _errorPolicyBuilder;
+        private readonly IBroker _broker;
 
         public RetryErrorPolicyTests()
         {
-            _policy = new RetryErrorPolicy(null, NullLoggerFactory.Instance.CreateLogger<RetryErrorPolicy>(), new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })));
-            _policy.MaxFailedAttempts(3);
+            var services = new ServiceCollection();
+
+            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
+            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+
+            services.AddBus();
+
+            services.AddBroker<TestBroker>(options => { });
+
+            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+
+            _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
+
+            _broker = serviceProvider.GetRequiredService<IBroker>();
+            _broker.Connect();
         }
 
         [Theory]
@@ -27,9 +45,11 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(3, true)]
         [InlineData(4, false)]
         [InlineData(7, false)]
-        public void CanHandleTest(int failedAttempts, bool expectedResult)
+        public void CanHandle_InboundMessageWithDifferentFailedAttemptsCount_ReturnReflectsMaxFailedAttempts(int failedAttempts, bool expectedResult)
         {
-            var canHandle = _policy.CanHandle(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
+            var policy = _errorPolicyBuilder.Retry().MaxFailedAttempts(3);
+
+            var canHandle = policy.CanHandle(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
 
             canHandle.Should().Be(expectedResult);
         }

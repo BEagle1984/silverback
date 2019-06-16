@@ -5,8 +5,8 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Infrastructure;
-using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
+using InboundMessage = Silverback.Messaging.Connectors.Model.InboundMessage;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {

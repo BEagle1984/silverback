@@ -24,15 +24,16 @@ namespace Silverback.Tests.Integration.TestTypes
             ProducedMessages = broker.ProducedMessages;
         }
 
-        protected override void Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers)
+        protected override IOffset Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers)
         {
             ProducedMessages.Add(new TestBroker.ProducedMessage(serializedMessage, headers, Endpoint));
+            return null;
         }
 
-        protected override Task ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers)
+        protected override Task<IOffset> ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers)
         {
             Produce(message, serializedMessage, headers);
-            return Task.CompletedTask;
+            return Task.FromResult<IOffset>(null);
         }
     }
 }

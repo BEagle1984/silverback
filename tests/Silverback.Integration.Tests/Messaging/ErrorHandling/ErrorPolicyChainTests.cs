@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(1)]
         [InlineData(3)]
         [InlineData(4)]
-        public void ChainingTest(int failedAttempts)
+        public void HandleError_RetryWithMaxFailedAttempts_AppliedAccordingToMaxFailedAttempts(int failedAttempts)
         {
             var testPolicy = new TestErrorPolicy();
 
@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(3),
                 testPolicy);
 
-            chain.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
+            chain.HandleError(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
 
             testPolicy.Applied.Should().Be(failedAttempts > 3);
         }
@@ -53,15 +53,40 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(2, ErrorAction.Retry)]
         [InlineData(3, ErrorAction.Skip)]
         [InlineData(4, ErrorAction.Skip)]
-        public void ChainingTest2(int failedAttempts, ErrorAction expectedAction)
+        public void HandleError_RetryTwiceThenSkip_CorrectPolicyApplied(int failedAttempts, ErrorAction expectedAction)
         {
             var chain = _errorPolicyBuilder.Chain(
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(2),
                 _errorPolicyBuilder.Skip());
 
-            var action = chain.HandleError(new FailedMessage(new TestEventOne(), failedAttempts), new Exception("test"));
+            var action = chain.HandleError(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
 
             action.Should().Be(expectedAction);
+        }
+
+        [Theory]
+        [InlineData(1, 0)]
+        [InlineData(2, 0)]
+        [InlineData(3, 1)]
+        [InlineData(4, 1)]
+        [InlineData(5, 2)]
+        public void HandleError_MultiplePoliciesWithSetMaxFailedAttempts_CorrectPolicyApplied(int failedAttempts, int expectedAppliedPolicy)
+        {
+            var policies = new ErrorPolicyBase[]
+            {
+                new TestErrorPolicy().MaxFailedAttempts(2),
+                new TestErrorPolicy().MaxFailedAttempts(2),
+                new TestErrorPolicy().MaxFailedAttempts(2)
+            };
+
+            var chain = _errorPolicyBuilder.Chain(policies);
+
+            chain.HandleError(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
+
+            for (int i = 0; i < policies.Length; i++)
+            {
+                policies[i].As<TestErrorPolicy>().Applied.Should().Be(i == expectedAppliedPolicy);
+            }
         }
     }
 }

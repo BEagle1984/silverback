@@ -15,7 +15,7 @@ namespace Silverback.Examples.Main.UseCases.ErrorHandling
 {
     public class RetryAndMoveErrorPolicyUseCase : UseCase
     {
-        public RetryAndMoveErrorPolicyUseCase() : base("Retry then move to dead letter", 10)
+        public RetryAndMoveErrorPolicyUseCase() : base("Processing error -> retry (x2) -> move to same topic (x2) -> move to another topic", 10, 1)
         {
         }
 
@@ -25,7 +25,7 @@ namespace Silverback.Examples.Main.UseCases.ErrorHandling
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-bad-events")
+                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-error-events")
                 {
                     Configuration = new KafkaProducerConfig
                     {

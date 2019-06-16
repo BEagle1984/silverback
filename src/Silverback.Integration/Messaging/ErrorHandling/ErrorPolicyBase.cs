@@ -18,8 +18,8 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly MessageLogger _messageLogger;
         private readonly List<Type> _excludedExceptions = new List<Type>();
         private readonly List<Type> _includedExceptions = new List<Type>();
-        private Func<FailedMessage, Exception, bool> _applyRule;
-        private int _maxFailedAttempts = -1;
+        private Func<IInboundMessage, Exception, bool> _applyRule;
+        
 
         protected ErrorPolicyBase(IServiceProvider serviceProvider, ILogger<ErrorPolicyBase> logger, MessageLogger messageLogger)
         {
@@ -28,7 +28,9 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        internal Func<FailedMessage, object> MessageToPublishFactory { get; private set; }
+        internal Func<IInboundMessage, object> MessageToPublishFactory { get; private set; }
+
+        internal int MaxFailedAttemptsSetting { get; private set; } = -1;
 
         /// <summary>
         /// Restricts the application of this policy to the specified exception type only.
@@ -85,7 +87,7 @@ namespace Silverback.Messaging.ErrorHandling
         /// <param name="applyRule">The predicate.</param>
         /// <returns></returns>
 
-        public ErrorPolicyBase ApplyWhen(Func<FailedMessage, Exception, bool> applyRule)
+        public ErrorPolicyBase ApplyWhen(Func<IInboundMessage, Exception, bool> applyRule)
         {
             _applyRule = applyRule;
             return this;
@@ -102,7 +104,7 @@ namespace Silverback.Messaging.ErrorHandling
         /// <returns></returns>
         public ErrorPolicyBase MaxFailedAttempts(int maxFailedAttempts)
         {
-            _maxFailedAttempts = maxFailedAttempts;
+            MaxFailedAttemptsSetting = maxFailedAttempts;
             return this;
         }
 
@@ -112,25 +114,25 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="factory">The factory returning the message to be published.</param>
         /// <returns></returns>
-        public ErrorPolicyBase Publish(Func<FailedMessage, object> factory)
+        public ErrorPolicyBase Publish(Func<IInboundMessage, object> factory)
         {
             MessageToPublishFactory = factory;
             return this;
         }
 
-        public virtual bool CanHandle(FailedMessage failedMessage, Exception exception)
+        public virtual bool CanHandle(IInboundMessage message, Exception exception)
         {
-            if (failedMessage == null)
+            if (message == null)
             {
                 _logger.LogTrace($"The policy '{GetType().Name}' cannot be applied because the message is null.");
                 return false;
             }
 
-            if (_maxFailedAttempts >= 0 && failedMessage.FailedAttempts > _maxFailedAttempts)
+            if (MaxFailedAttemptsSetting >= 0 && message.FailedAttempts > MaxFailedAttemptsSetting)
             {
                 _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the current failed attempts " +
-                                 $"({failedMessage.FailedAttempts}) exceeds the configured maximum attempts " +
-                                 $"({_maxFailedAttempts}).", failedMessage);
+                                 $"({message.FailedAttempts}) exceeds the configured maximum attempts " +
+                                 $"({MaxFailedAttemptsSetting}).", message);
 
                 return false;
             }
@@ -138,7 +140,7 @@ namespace Silverback.Messaging.ErrorHandling
             if (_includedExceptions.Any() && _includedExceptions.All(e => !e.IsInstanceOfType(exception)))
             {
                 _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
-                                 $"is not in the list of handled exceptions.", failedMessage);
+                                 $"is not in the list of handled exceptions.", message);
 
                 return false;
             }
@@ -146,37 +148,37 @@ namespace Silverback.Messaging.ErrorHandling
             if (_excludedExceptions.Any(e => e.IsInstanceOfType(exception)))
             {
                 _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
-                                 $"is in the list of excluded exceptions.", failedMessage);
+                                 $"is in the list of excluded exceptions.", message);
 
                 return false;
             }
 
-            if (_applyRule != null && !_applyRule.Invoke(failedMessage, exception))
+            if (_applyRule != null && !_applyRule.Invoke(message, exception))
             {
                 _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
-                                 $"evaluated and returned false.", failedMessage);
+                                 $"evaluated and returned false.", message);
                 return false;
             }
 
             return true;
         }
 
-        public ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
+        public ErrorAction HandleError(IInboundMessage message, Exception exception)
         {
-            var result = ApplyPolicy(failedMessage, exception);
+            var result = ApplyPolicy(message, exception);
 
             if (MessageToPublishFactory != null)
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     scope.ServiceProvider.GetRequiredService<IPublisher>()
-                        .Publish(MessageToPublishFactory.Invoke(failedMessage));
+                        .Publish(MessageToPublishFactory.Invoke(message));
                 }
             }
 
             return result;
         }
 
-        protected abstract ErrorAction ApplyPolicy(FailedMessage failedMessage, Exception exception);
+        protected abstract ErrorAction ApplyPolicy(IInboundMessage message, Exception exception);
     }
 }
