@@ -61,7 +61,7 @@ namespace Silverback.Examples.ConsumerA
                                         ClientId = "consumer-service-a"
                                     }
                                 })
-                                .MaxFailedAttempts(4),
+                                .MaxFailedAttempts(2),
                             policy
                                 .Move(new KafkaProducerEndpoint("silverback-examples-events")
                                 {

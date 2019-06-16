@@ -24,6 +24,10 @@ namespace Silverback.Messaging.ErrorHandling
         public MoveMessageErrorPolicy(IBroker broker, IEndpoint endpoint, IServiceProvider serviceProvider, ILogger<MoveMessageErrorPolicy> logger, MessageLogger messageLogger) 
             : base(serviceProvider, logger, messageLogger)
         {
+            if (broker == null) throw new ArgumentNullException(nameof(broker));
+            if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
+            if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
+
             _producer = broker.GetProducer(endpoint);
             _endpoint = endpoint;
             _logger = logger;
@@ -40,6 +44,8 @@ namespace Silverback.Messaging.ErrorHandling
 
         protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
         {
+            _messageLogger.LogInformation(_logger, $"The message will be  be moved to '{_endpoint.Name}'.", message);
+
             if (message is IInboundBatch inboundBatch)
             {
                 foreach (var singleFailedMessage in inboundBatch.Messages)
@@ -51,8 +57,6 @@ namespace Silverback.Messaging.ErrorHandling
             {
                 PublishToNewEndpoint(message, exception);
             }
-
-            _messageLogger.LogTrace(_logger, "The failed message has been moved and will be skipped.", message, _endpoint);
 
             return ErrorAction.Skip;
         }

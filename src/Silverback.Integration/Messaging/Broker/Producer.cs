@@ -27,16 +27,23 @@ namespace Silverback.Messaging.Broker
 
         public void Produce(object message, IEnumerable<MessageHeader> headers = null) =>
             GetMessageContentChunks(message)
-                .ForEach(x => Produce(x.message, x.serializedMessage, headers));
+                .ForEach(x =>
+                {
+                    var offset = Produce(x.message, x.serializedMessage, headers);
+                    Trace(message, offset);
+                });
 
         public Task ProduceAsync(object message, IEnumerable<MessageHeader> headers = null) =>
             GetMessageContentChunks(message)
-                .ForEachAsync(x => ProduceAsync(x.message, x.serializedMessage, headers));
+                .ForEachAsync(async x =>
+                {
+                    var offset = await ProduceAsync(x.message, x.serializedMessage, headers);
+                    Trace(message, offset);
+                });
 
         private IEnumerable<(object message, byte[] serializedMessage)> GetMessageContentChunks(object message)
         {
             _messageKeyProvider.EnsureKeyIsInitialized(message);
-            Trace(message);
 
             return ChunkProducer.ChunkIfNeeded(
                 _messageKeyProvider.GetKey(message, false),
@@ -45,12 +52,12 @@ namespace Silverback.Messaging.Broker
                 Endpoint.Serializer);
         }
 
-        private void Trace(object message) =>
-            _messageLogger.LogInformation(_logger, "Producing message.", message);
+        private void Trace(object message, IOffset offset) =>
+            _messageLogger.LogInformation(_logger, "Message produced.", message, Endpoint, offset);
 
-        protected abstract void Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers);
+        protected abstract IOffset Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers);
 
-        protected abstract Task ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers);
+        protected abstract Task<IOffset> ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers);
     }
 
     public abstract class Producer<TBroker, TEndpoint> : Producer
