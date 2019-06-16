@@ -74,19 +74,19 @@ namespace Silverback.Messaging.Subscribers
 
         private object InvokeSync(SubscribedMethod method, object[] parameters)
         {
-            if (!method.Info.MethodInfo.IsAsync())
-                return method.Info.MethodInfo.Invoke(method.Target, parameters );
+            if (!method.Info.MethodInfo.ReturnsTask())
+                return method.Info.MethodInfo.Invoke(method.Target, parameters);
 
             return AsyncHelper.RunSynchronously<object>(() =>
             {
                 var result = (Task)method.Info.MethodInfo.Invoke(method.Target, parameters);
-                return ((Task)result).GetReturnValue();
+                return result.GetReturnValue();
             });
         }
 
         private Task<object> InvokeAsync(SubscribedMethod method, object[] parameters)
         {
-            if (!method.Info.MethodInfo.IsAsync())
+            if (!method.Info.MethodInfo.ReturnsTask())
                 return Task.Run(() => method.Info.MethodInfo.Invoke(method.Target, parameters));
 
             var result = method.Info.MethodInfo.Invoke(method.Target, parameters);

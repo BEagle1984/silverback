@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Silverback.Tests.Core.Messaging.Publishing
+namespace Silverback.Tests.Core.TestTypes
 {
     public class ParallelTestingUtil
     {

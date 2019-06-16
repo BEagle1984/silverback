@@ -39,9 +39,9 @@ namespace Silverback.Tests.Core.Rx.Messaging
 
             services.AddSingleton<ISubscriber>(observable);
 
-            var serviceProvider = services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
-            _publisher = serviceProvider.GetRequiredService<IPublisher>();
+            _publisher = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IPublisher>();
         }
 
         [Fact]

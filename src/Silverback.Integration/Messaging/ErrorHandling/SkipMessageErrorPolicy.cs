@@ -15,16 +15,16 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
         
-        public SkipMessageErrorPolicy(ILogger<SkipMessageErrorPolicy> logger, MessageLogger messageLogger)
-            : base(logger, messageLogger)
+        public SkipMessageErrorPolicy(IServiceProvider serviceProvider, ILogger<SkipMessageErrorPolicy> logger, MessageLogger messageLogger)
+            : base(serviceProvider, logger, messageLogger)
         {
             _logger = logger;
             _messageLogger = messageLogger;
         }
 
-        public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
         {
-            _messageLogger.LogTrace(_logger, "The message will be skipped.", failedMessage);
+            _messageLogger.LogWarning(_logger, exception, "The message will be skipped.", message);
 
             return ErrorAction.Skip;
         }

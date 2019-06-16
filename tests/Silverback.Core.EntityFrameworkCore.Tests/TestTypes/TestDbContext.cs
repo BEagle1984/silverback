@@ -6,34 +6,24 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.EntityFrameworkCore.TestTypes.Base.Domain;
 
 namespace Silverback.Tests.Core.EntityFrameworkCore.TestTypes
 {
     public class TestDbContext : DbContext
     {
-        private DbContextEventsPublisher<DomainEntity> _eventsPublisher;
+        private readonly DbContextEventsPublisher _eventsPublisher;
 
         public DbSet<TestAggregateRoot> TestAggregates { get; set; }
 
         public TestDbContext(IPublisher publisher)
         {
-            InitEventsPublisher(publisher);
+            _eventsPublisher = new DbContextEventsPublisher(publisher, this);
         }
 
         public TestDbContext(DbContextOptions options, IPublisher publisher)
             : base(options)
         {
-            InitEventsPublisher(publisher);
-        }
-
-        private void InitEventsPublisher(IPublisher publisher)
-        {
-            _eventsPublisher = new DbContextEventsPublisher<DomainEntity>(
-                DomainEntityEventsAccessor.EventsSelector,
-                DomainEntityEventsAccessor.ClearEventsAction,
-                publisher,
-                this);
+            _eventsPublisher = new DbContextEventsPublisher(publisher, this);
         }
 
         public override int SaveChanges()

@@ -7,11 +7,11 @@ namespace Silverback.Tests.Core.Model.TestTypes.Domain
 {
     public class TestAggregateRoot : DomainEntity, IAggregateRoot
     {
-        public new void AddEvent(IDomainEvent<IDomainEntity> domainEvent)
+        public new void AddEvent(IDomainEvent domainEvent)
             => base.AddEvent(domainEvent);
 
-        public new TEvent AddEvent<TEvent>() 
-            where TEvent : IDomainEvent<IDomainEntity>, new()
-            => base.AddEvent<TEvent>();
+        public new TEvent AddEvent<TEvent>(bool allowMultiple = true) 
+            where TEvent : IDomainEvent, new()
+            => base.AddEvent<TEvent>(allowMultiple);
     }
 }

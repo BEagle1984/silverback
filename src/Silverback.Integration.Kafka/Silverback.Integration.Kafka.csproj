@@ -6,19 +6,19 @@
     <AssemblyVersion>1.0.1.0</AssemblyVersion>
     <FileVersion>1.0.1.0</FileVersion>
     <Company></Company>
-    <Version>0.6.1.0</Version>
+    <Version>0.10.0.0</Version>
     <Authors>BEagle1984, ppx80</Authors>
-    <PackageLicenseUrl>https://github.com/BEagle1984/silverback/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Silverback is a simple framework to build reactive, event-driven, microservices.  This package contains an implementation of Silverback.Integration for the popular Apache Kafka message broker.</Description>
     <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
+    <LangVersion>latest</LangVersion>
+    <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>latest</LangVersion>
     <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.Kafka.xml</DocumentationFile>
-    <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -26,8 +26,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.0.0-RC1" />
-    <PackageReference Include="Silverback.Integration" Version="0.6.1.1" />
+    <PackageReference Include="Confluent.Kafka" Version="1.0.1" />
+    <PackageReference Include="Silverback.Integration" Version="0.10.0" />
   </ItemGroup>
 
 </Project>

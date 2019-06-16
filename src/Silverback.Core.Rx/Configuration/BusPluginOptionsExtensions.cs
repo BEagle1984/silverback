@@ -14,8 +14,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static BusPluginOptions Observable(this BusPluginOptions options)
         {
             options.Services
-                .AddSingleton<IArgumentResolver, ObservableMessageArgumentResolver>()
-                .AddSingleton<IReturnValueHandler, ObservableMessagesReturnValueHandler>()
+                .AddScoped<IArgumentResolver, ObservableMessageArgumentResolver>()
+                .AddScoped<IReturnValueHandler, ObservableMessagesReturnValueHandler>()
                 .AddSingleton<MessageObservable, MessageObservable>()
                 .AddSingleton<ISubscriber, MessageObservable>()
                 .AddSingleton(typeof(IMessageObservable<>), typeof(MessageObservable<>));

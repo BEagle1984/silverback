@@ -22,14 +22,14 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        protected override bool MustProcess(MessageReceivedEventArgs messageArgs, IEndpoint sourceEndpoint, IServiceProvider serviceProvider)
+        protected override bool MustProcess(IInboundMessage message, IServiceProvider serviceProvider)
         {
             var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
 
-            if (inboundLog.Exists(messageArgs.Message, sourceEndpoint))
+            if (inboundLog.Exists(message.Message, message.Endpoint))
                 return false;
 
-            inboundLog.Add(messageArgs.Message, sourceEndpoint);
+            inboundLog.Add(message.Message, message.Endpoint);
             return true;
         }
 

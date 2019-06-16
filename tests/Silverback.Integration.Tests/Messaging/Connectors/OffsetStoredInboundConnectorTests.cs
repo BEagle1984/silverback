@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
@@ -27,6 +26,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         private readonly IInboundConnector _connector;
         private readonly TestBroker _broker;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceProvider _scopedServiceProvider;
 
         public OffsetStoredInboundConnectorTests()
         {
@@ -43,10 +43,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             services.AddScoped<IOffsetStore, InMemoryOffsetStore>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
             _broker = (TestBroker)_serviceProvider.GetService<IBroker>();
             _connector = new OffsetStoredInboundConnector(_broker, _serviceProvider, new NullLogger<OffsetStoredInboundConnector>(),
                 new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })));
+
+            _scopedServiceProvider = _serviceProvider.CreateScope().ServiceProvider;
 
             InMemoryOffsetStore.Clear();
         }
@@ -123,7 +125,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             consumer.TestPush(e, offset: o2);
             consumer.TestPush(e, offset: o1);
 
-            _serviceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>().Count.Should().Be(2);
+            _scopedServiceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>().Count.Should().Be(2);
         }
 
         [Fact]
@@ -178,7 +180,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             consumer.TestPush(e, offset: o2);
             consumer.TestPush(e, offset: o1);
 
-            _serviceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>().Count.Should().Be(2);
+            _scopedServiceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>().Count.Should().Be(2);
         }
 
         [Fact]
@@ -209,7 +211,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             try { consumer.TestPush(e, offset: o3); } catch { }
             try { consumer.TestPush(fail, offset: o4); } catch { }
 
-            _serviceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a").Value.Should().Be("2");
+            _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a").Value.Should().Be("2");
         }
 
         [Fact]
@@ -264,7 +266,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             Task.WaitAll(tasks);
 
-            _serviceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a").Value.Should().Be("2");
+            _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a").Value.Should().Be("2");
         }
     }
 }

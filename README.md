@@ -1,5 +1,5 @@
 # Silverback
-[![Build Status](https://travis-ci.com/BEagle1984/silverback.svg?branch=develop)](https://travis-ci.com/BEagle1984/silverback)
+[![Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/BEagle1984.silverback?branchName=develop)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=develop)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/BEagle1984/silverback/blob/master/LICENSE)
 
 Silverback is a simple framework to build reactive, event-driven, microservices.

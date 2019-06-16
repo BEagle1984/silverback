@@ -9,5 +9,14 @@ namespace Silverback.Messaging.Messages
     {
         public void Add(string key, string value) => 
             Add(new MessageHeader {Key = key, Value = value});
+
+        public void Remove(string key) =>
+            RemoveAll(x => x.Key == key);
+
+        public void AddOrReplace(string key, string newValue)
+        {
+            Remove(key);
+            Add(key, newValue);
+        }
     }
 }

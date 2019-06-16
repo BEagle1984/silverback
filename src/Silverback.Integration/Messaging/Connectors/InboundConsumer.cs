@@ -19,8 +19,9 @@ namespace Silverback.Messaging.Connectors
         private readonly IEndpoint _endpoint;
         private readonly InboundConnectorSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
+        private readonly InboundMessageProcessor _inboundMessageProcessor;
 
-        private readonly Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, InboundConnectorSettings, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
         private readonly Action<IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
@@ -33,7 +34,7 @@ namespace Silverback.Messaging.Connectors
         public InboundConsumer(IBroker broker,
             IEndpoint endpoint,
             InboundConnectorSettings settings,
-            Action<IEnumerable<MessageReceivedEventArgs>, IEndpoint, InboundConnectorSettings, IServiceProvider> messagesHandler,
+            Action<IEnumerable<IInboundMessage>, IServiceProvider> messagesHandler,
             Action<IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy,
@@ -50,6 +51,7 @@ namespace Silverback.Messaging.Connectors
             _serviceProvider = serviceProvider;
             _logger = serviceProvider.GetRequiredService<ILogger<InboundConsumer>>();
             _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
+            _inboundMessageProcessor = serviceProvider.GetRequiredService<InboundMessageProcessor>();
 
             _consumer = broker.GetConsumer(_endpoint);
 
@@ -67,43 +69,59 @@ namespace Silverback.Messaging.Connectors
                 var batch = new MessageBatch(
                     _endpoint,
                     _settings.Batch,
-                    (messageArgs, serviceProvider) => _messagesHandler(messageArgs, _endpoint, _settings, serviceProvider),
+                    _messagesHandler,
                     Commit,
                     _rollbackHandler,
                     _errorPolicy,
                     _serviceProvider);
 
-                _consumer.Received += (_, args) => batch.AddMessage(args);
+                _consumer.Received += (_, args) => batch.AddMessage(CreateInboundMessage(args));
             }
             else
             {
-                _consumer.Received += (_, args) => ProcessSingleMessage(args);
+                _consumer.Received += (_, args) => ProcessSingleMessage(CreateInboundMessage(args));
             }
         }
 
-        private void ProcessSingleMessage(MessageReceivedEventArgs messageArgs)
+        private IInboundMessage CreateInboundMessage(MessageReceivedEventArgs args)
         {
-            _messageLogger.LogTrace(_logger, "Processing message.", messageArgs.Message, _endpoint, offset: messageArgs.Offset);
-
-            _errorPolicy.TryProcess(messageArgs.Message, _ =>
+            var message = new InboundMessage<byte[]>
             {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    RelayAndCommitSingleMessage(messageArgs, scope.ServiceProvider);
-                }
-            });
+                Message = args.Message,
+                Endpoint = _endpoint,
+                Offset = args.Offset,
+                MustUnwrap = _settings.UnwrapMessages
+            };
+
+            if (args.Headers != null)
+                message.Headers.AddRange(args.Headers);
+
+            return message;
         }
 
-        private void RelayAndCommitSingleMessage(MessageReceivedEventArgs messageArgs, IServiceProvider serviceProvider)
+        private void ProcessSingleMessage(IInboundMessage message)
+        {
+            _inboundMessageProcessor.TryDeserializeAndProcess(
+                message,
+                _errorPolicy,
+                deserializedMessage =>
+                {
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        RelayAndCommitSingleMessage(deserializedMessage, scope.ServiceProvider);
+                    }
+                });
+        }
+
+        private void RelayAndCommitSingleMessage(IInboundMessage message, IServiceProvider serviceProvider)
         {
             try
             {
-                _messagesHandler(new[] { messageArgs }, _endpoint, _settings, serviceProvider);
-                Commit(new[] { messageArgs.Offset }, serviceProvider);
+                _messagesHandler(new[] { message }, serviceProvider);
+                Commit(new[] { message.Offset }, serviceProvider);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _messageLogger.LogWarning(_logger, ex, "Error occurred processing the message.", messageArgs.Message, _endpoint, offset: messageArgs.Offset);
                 Rollback(serviceProvider);
                 throw;
             }

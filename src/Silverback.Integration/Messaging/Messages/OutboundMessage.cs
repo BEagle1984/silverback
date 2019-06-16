@@ -5,11 +5,11 @@ using Silverback.Messaging.Connectors;
 
 namespace Silverback.Messaging.Messages
 {
-    public class OutboundMessage<TMessage> : IOutboundMessage<TMessage>, IOutboundMessageInternal
+    internal class OutboundMessage<TMessage> : IOutboundMessage<TMessage>, IOutboundMessageInternal
     {
         public IEndpoint Endpoint { get; set; }
 
-        public MessageHeaderCollection Headers { get; set; } = new MessageHeaderCollection();
+        public MessageHeaderCollection Headers { get; } = new MessageHeaderCollection();
 
         public TMessage Message { get; set; }
 

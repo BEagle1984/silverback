@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Connectors
                     _broker,
                     endpoint,
                     settings, 
-                    RelayMessages,
+                    HandleMessages,
                     Commit,
                     Rollback,
                     errorPolicy, 
@@ -53,67 +53,41 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        protected virtual void RelayMessages(IEnumerable<MessageReceivedEventArgs> messagesArgs, IEndpoint endpoint, InboundConnectorSettings settings, IServiceProvider serviceProvider)
+        protected void HandleMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
         {
-            var messages = messagesArgs
-                .Select(args => HandleChunkedMessage(args, endpoint, serviceProvider) ? args : null)
-                .Select(UnwrapFailedMessage)
+            messages = messages
+                .Select(message => HandleChunkedMessage(message, serviceProvider))
                 .Where(args => args != null)
-                .SelectMany(args => settings.UnwrapMessages
-                    ? new[] {args.Message, WrapInboundMessage(args, endpoint)}
-                    : new[] {WrapInboundMessage(args, endpoint)})
                 .ToList();
 
             if (!messages.Any())
                 return;
 
+            RelayMessages(messages, serviceProvider);
+        }
+
+        private IInboundMessage HandleChunkedMessage(IInboundMessage message, IServiceProvider serviceProvider)
+        {
+            if (!(message.Message is MessageChunk chunk))
+                return message;
+
+            var joinedMessage = serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(chunk);
+
+            if (joinedMessage == null)
+                return null;
+
+            var deserializedJoinedMessage = message.Endpoint.Serializer.Deserialize(joinedMessage);
+
+            return InboundMessageHelper.CreateNewInboundMessage(deserializedJoinedMessage, message);
+        }
+
+        protected virtual void RelayMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider) => 
             serviceProvider.GetRequiredService<IPublisher>().Publish(messages);
-        }
 
-        private bool HandleChunkedMessage(MessageReceivedEventArgs args, IEndpoint endpoint, IServiceProvider serviceProvider)
-        {
-            if (args.Message is MessageChunk chunk)
-            {
-                var joined = serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(chunk);
-
-                if (joined == null)
-                    return false;
-
-                args.Message = endpoint.Serializer.Deserialize(joined);
-            }
-
-            return true;
-        }
-
-        private MessageReceivedEventArgs UnwrapFailedMessage(MessageReceivedEventArgs args)
-        {
-            if (args?.Message is FailedMessage failedMessage)
-                args.Message = failedMessage.Message;
-
-            return args;
-        }
-
-        private IInboundMessage WrapInboundMessage(MessageReceivedEventArgs args, IEndpoint endpoint)
-        {
-            var wrapper = (IInboundMessage) Activator.CreateInstance(typeof(InboundMessage<>).MakeGenericType(args.Message.GetType()));
-
-            wrapper.Endpoint = endpoint;
-            wrapper.Message = args.Message;
-
-            if (args.Headers != null)
-                wrapper.Headers.AddRange(args.Headers);
-
-            return wrapper;
-        }
-
-        protected virtual void Commit(IServiceProvider serviceProvider)
-        {
+        protected virtual void Commit(IServiceProvider serviceProvider) => 
             serviceProvider.GetService<ChunkConsumer>()?.Commit();
-        }
 
-        protected virtual void Rollback(IServiceProvider serviceProvider)
-        {
+        protected virtual void Rollback(IServiceProvider serviceProvider) => 
             serviceProvider.GetService<ChunkConsumer>()?.Rollback();
-        }
     }
 }

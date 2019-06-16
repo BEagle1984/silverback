@@ -65,5 +65,11 @@ namespace Silverback.Examples.ConsumerA
         {
             _logger.LogInformation($"Successfully processed batch '{message.BatchId} ({message.BatchSize} messages)");
         }
+
+        [Subscribe]
+        void OnMessageMoved(MessageMovedEvent @event)
+        {
+            _logger.LogInformation($"MessageMovedEvent :: Message '{@event.Id}' moved to '{@event.Destination}'");
+        }
     }
 }

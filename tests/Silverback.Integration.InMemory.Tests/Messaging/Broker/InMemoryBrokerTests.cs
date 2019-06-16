@@ -1,7 +1,9 @@
-﻿using System;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -31,7 +33,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             services.AddBus();
             services.AddBroker<InMemoryBroker>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
         }
 
         [Fact]
@@ -65,7 +67,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
-            consumer.Received += (_, e) => receivedMessages.Add(e.Message);
+            consumer.Received += (_, e) => receivedMessages.Add(e.Endpoint.Serializer.Deserialize(e.Message));
 
             producer.Produce(new TestMessage { Content = "hello!" });
             producer.Produce(new TestMessage { Content = "hello 2!" });
@@ -83,7 +85,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
-            consumer.Received += (_, e) => receivedMessages.Add(e.Message);
+            consumer.Received += (_, e) => receivedMessages.Add(e.Endpoint.Serializer.Deserialize(e.Message));
 
             producer.Produce(new TestMessage { Content = "hello!" });
 
@@ -103,12 +105,11 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             consumer.Received += (_, e) => receivedHeaders.Add(e.Headers);
 
             producer.Produce(
-                new TestMessage {Content = "hello!"},
-                new[] {new MessageHeader("a", "b"), new MessageHeader("c", "d")});
+                new TestMessage { Content = "hello!" },
+                new[] { new MessageHeader("a", "b"), new MessageHeader("c", "d") });
 
             receivedHeaders.First().Should().BeEquivalentTo(new MessageHeader("a", "b"), new MessageHeader("c", "d"));
         }
-
 
         [Fact]
         public void InMemoryBroker_PublishMessageThroughConnector_MessageConsumed()
@@ -125,10 +126,13 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
                     })
                     .AddOutbound<TestMessage>(new KafkaProducerEndpoint(endpointName)));
 
-            var publisher = _serviceProvider.GetRequiredService<IPublisher>();
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
 
-            publisher.Publish(new TestMessage { Content = "hello!" });
-            publisher.Publish(new TestMessage { Content = "hello 2!" });
+                publisher.Publish(new TestMessage { Content = "hello!" });
+                publisher.Publish(new TestMessage { Content = "hello 2!" });
+            }
 
             receivedMessages.Count.Should().Be(2);
             receivedMessages.OfType<IInboundMessage>().Select(x => x.Message).Should().AllBeOfType<TestMessage>();

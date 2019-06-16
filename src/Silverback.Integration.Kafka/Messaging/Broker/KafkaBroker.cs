@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Broker
             new KafkaProducer(this, (KafkaProducerEndpoint) endpoint, _messageKeyProvider, _loggerFactory.CreateLogger<KafkaProducer>(), _messageLogger);
 
         protected override Consumer InstantiateConsumer(IEndpoint endpoint) =>
-            new KafkaConsumer(this, (KafkaConsumerEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaConsumer>(), _messageLogger);
+            new KafkaConsumer(this, (KafkaConsumerEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaConsumer>());
 
         protected override void Connect(IEnumerable<IConsumer> consumers) =>
             consumers.Cast<KafkaConsumer>().ToList().ForEach(c => c.Connect());

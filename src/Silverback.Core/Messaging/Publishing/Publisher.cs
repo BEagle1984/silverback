@@ -36,35 +36,40 @@ namespace Silverback.Messaging.Publishing
         public void Publish(object message) => 
             Publish(new[] { message });
 
-        public Task PublishAsync(object message) => 
+        public Task PublishAsync(object message) =>
             PublishAsync(new[] { message });
-
+    
         public IEnumerable<TResult> Publish<TResult>(object message) => 
             Publish<TResult>(new[] { message });
 
-        public Task<IEnumerable<TResult>> PublishAsync<TResult>(object message) => 
-            PublishAsync<TResult>(new[] { message });
+        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(object message) => 
+            await PublishAsync<TResult>(new[] { message });
 
         public void Publish(IEnumerable<object> messages) => 
             Publish(messages, false).Wait();
 
-        public Task PublishAsync(IEnumerable<object> messages) => 
-            Publish(messages, true);
+        public Task PublishAsync(IEnumerable<object> messages) => Publish(messages, true);
 
-        public IEnumerable<TResult> Publish<TResult>(IEnumerable<object> messages) => 
-            Publish(messages, false).Result.Cast<TResult>().ToList();
+        public IEnumerable<TResult> Publish<TResult>(IEnumerable<object> messages) =>
+            CastResults<TResult>(Publish(messages, false).Result);
+        
+        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) => 
+            CastResults<TResult>(await Publish(messages, true));
 
-        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IEnumerable<object> messages)
+        private IEnumerable<TResult> CastResults<TResult>(IEnumerable<object> results)
         {
-            var results = await Publish(messages, true);
-
-            try
+            foreach (var result in results)
             {
-                return results.Cast<TResult>().ToList();
-            }
-            catch (InvalidCastException ex)
-            {
-                throw new SilverbackException("One or more subscribers returned a result that is not compatible with the expected response type.", ex);
+                if (result is TResult castResult)
+                {
+                    yield return castResult;
+                }
+                else
+                { 
+                    _logger.LogTrace(
+                        $"Discarding result of type {result.GetType().FullName} because it doesn't match " +
+                        $"the expected return type {typeof(TResult).FullName}.");
+                    }
             }
         }
 

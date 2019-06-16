@@ -9,7 +9,7 @@ namespace Silverback.Examples.Main.Menu
 {
     public abstract class MenuItem
     {
-        private static Dictionary<Type, MenuItem[]> _cache = new Dictionary<Type, MenuItem[]>();
+        private static readonly Dictionary<Type, MenuItem[]> _cache = new Dictionary<Type, MenuItem[]>();
         protected MenuItem(string name, int sortIndex = 100)
         {
             Name = name;

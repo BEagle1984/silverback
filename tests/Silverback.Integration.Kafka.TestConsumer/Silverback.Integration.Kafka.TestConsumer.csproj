@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,23 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
-    <PackageReference Include="NLog" Version="4.6.0" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.4.0" />
-    <PackageReference Include="Silverback.Core" Version="0.6.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
+    <PackageReference Include="NLog" Version="4.6.4" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.5.1" />
+    <PackageReference Include="Silverback.Core" Version="0.10.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Silverback.Integration">
-      <HintPath>..\..\..\..\..\Users\Fabio\.nuget\packages\silverback.integration\1.0.15\lib\netstandard2.0\Silverback.Integration.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections">
-      <HintPath>..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.netcore.app\2.0.0\ref\netcoreapp2.0\System.Collections.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

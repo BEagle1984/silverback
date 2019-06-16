@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Silverback.Infrastructure
 {
-    public static class DefaultSerializer
+    internal static class DefaultSerializer
     {
         private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
         {

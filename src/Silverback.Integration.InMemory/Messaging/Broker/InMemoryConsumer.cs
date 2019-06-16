@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker
 {
     public class InMemoryConsumer : Consumer<InMemoryBroker, IEndpoint>
     {
-        public InMemoryConsumer(IBroker broker, IEndpoint endpoint, ILogger<Consumer> logger, MessageLogger messageLogger) : base(broker, endpoint, logger, messageLogger)
+        public InMemoryConsumer(IBroker broker, IEndpoint endpoint) : base(broker, endpoint)
         {
         }
 

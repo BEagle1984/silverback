@@ -1,9 +1,11 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Background;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.LargeMessages;
@@ -58,15 +60,42 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="interval">The interval between each run (default is 500ms).</param>
         /// <param name="enforceMessageOrder">if set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
         /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
         /// <param name="removeProduced">if set to <c>true</c> the messages will be removed from the database immediately after being produced.</param>
         public static BrokerOptionsBuilder AddDbOutboundWorker<TDbContext>(this BrokerOptionsBuilder builder,
+            TimeSpan? interval = null, bool enforceMessageOrder = true, int readPackageSize = 100,
+            bool removeProduced = true)
+            where TDbContext : DbContext
+        {
+            return builder.AddDbOutboundWorker<TDbContext>(new DistributedLockSettings(), interval,
+                    enforceMessageOrder, readPackageSize);
+        }
+
+        /// <summary>
+        /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="distributedLockSettings">The settings for the locking mechanism.</param>
+        /// <param name="interval">The interval between each run (default is 500ms).</param>
+        /// <param name="enforceMessageOrder">if set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
+        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
+        /// <param name="removeProduced">if set to <c>true</c> the messages will be removed from the database immediately after being produced.</param>
+        public static BrokerOptionsBuilder AddDbOutboundWorker<TDbContext>(this BrokerOptionsBuilder builder,
+            DistributedLockSettings distributedLockSettings, TimeSpan? interval = null,
             bool enforceMessageOrder = true, int readPackageSize = 100, bool removeProduced = true)
             where TDbContext : DbContext
         {
-            builder.AddOutboundWorker(s =>
-                new DbContextOutboundQueueConsumer(s.GetRequiredService<TDbContext>(), removeProduced),
+            if (distributedLockSettings == null) throw new ArgumentNullException(nameof(distributedLockSettings));
+
+            if (string.IsNullOrEmpty(distributedLockSettings.ResourceName))
+                distributedLockSettings.ResourceName = $"OutboundQueueWorker[{typeof(TDbContext).Name}]";
+
+            builder.AddOutboundWorker(
+                s => new DbContextOutboundQueueConsumer(s.GetRequiredService<TDbContext>(), removeProduced),
+                distributedLockSettings, interval,
                 enforceMessageOrder, readPackageSize);
 
             return builder;

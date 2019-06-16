@@ -4,9 +4,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SilverbackShop.Catalog.Integration</AssemblyName>
     <RootNamespace>SilverbackShop.Catalog.Integration</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 

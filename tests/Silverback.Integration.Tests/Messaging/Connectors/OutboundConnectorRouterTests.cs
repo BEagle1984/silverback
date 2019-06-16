@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -8,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Subscribers;
@@ -50,7 +50,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             InMemoryOutboundQueue.Clear();
         }
 
-        [Theory, ClassData(typeof(OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
+        [Theory, MemberData(nameof(OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
         public async Task OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoint(IIntegrationMessage message, string[] expectedEndpointNames)
         {
             _routingConfiguration.Add<IIntegrationMessage>(new TestEndpoint("allMessages"), null);
@@ -61,7 +61,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await _connectorRouter.OnMessageReceived(message);
             await _outboundQueue.Commit();
 
-            var queued = _outboundQueue.Dequeue(100);
+            var queued = await _outboundQueue.Dequeue(100);
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
@@ -78,6 +78,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             }
         }
 
+        public static IEnumerable<object[]> OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoints_TestData =>
+            new[]
+            {
+                new object[] { new TestEventOne(), new[] { "allMessages", "allEvents", "eventOne" } },
+                new object[] { new TestEventTwo(), new[] { "allMessages", "allEvents", "eventTwo" } }
+            };
+
         [Fact]
         public async Task OnMessageReceived_Message_CorrectlyRoutedToDefaultConnector()
         {
@@ -86,7 +93,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await _connectorRouter.OnMessageReceived(new TestEventOne());
             await _outboundQueue.Commit();
 
-            var queued = _outboundQueue.Dequeue(1);
+            var queued = await _outboundQueue.Dequeue(1);
             queued.Count().Should().Be(1);
             _broker.ProducedMessages.Count.Should().Be(0);
         }
@@ -99,7 +106,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await _connectorRouter.OnMessageReceived(new TestEventOne());
             await _outboundQueue.Commit();
 
-            var queued = _outboundQueue.Dequeue(1);
+            var queued = await _outboundQueue.Dequeue(1);
             queued.Count().Should().Be(0);
             _broker.ProducedMessages.Count.Should().Be(1);
         }

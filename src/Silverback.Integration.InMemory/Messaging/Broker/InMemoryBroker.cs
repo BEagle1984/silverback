@@ -1,9 +1,9 @@
-﻿using System;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Broker
 
         protected override Consumer InstantiateConsumer(IEndpoint endpoint) =>
             GetTopic(endpoint.Name).Subscribe(
-                new InMemoryConsumer(this, endpoint, LoggerFactory.CreateLogger<InMemoryConsumer>(), _messageLogger));
+                new InMemoryConsumer(this, endpoint));
 
         protected override void Connect(IEnumerable<IConsumer> consumers)
         {

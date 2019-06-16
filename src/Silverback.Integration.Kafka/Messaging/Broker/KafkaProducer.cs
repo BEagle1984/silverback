@@ -29,10 +29,10 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        protected override void Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers) => 
-            Task.Run(() => ProduceAsync(message, serializedMessage, headers)).Wait();
+        protected override IOffset Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers) => 
+            AsyncHelper.RunSynchronously(() => ProduceAsync(message, serializedMessage, headers));
 
-        protected override async Task ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers)
+        protected override async Task<IOffset> ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers)
         {
             var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
             {
@@ -47,9 +47,8 @@ namespace Silverback.Messaging.Broker
             }
 
             var deliveryReport = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage);
-            _logger.LogTrace(
-                "Successfully produced: {topic} {partition} @{offset}.",
-                deliveryReport.Topic, deliveryReport.Partition, deliveryReport.Offset);
+
+            return new KafkaOffset(deliveryReport.TopicPartitionOffset);
         }
 
         private Confluent.Kafka.IProducer<byte[], byte[]> GetInnerProducer() =>

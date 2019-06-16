@@ -13,11 +13,11 @@ namespace Silverback.Tests.Integration.TestTypes
     {
         public bool Applied { get; private set; }
 
-        public TestErrorPolicy() : base(NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>(), new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })))
+        public TestErrorPolicy(IServiceProvider serviceProvider = null) : base(serviceProvider, NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>(), new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })))
         {
         }
 
-        public override ErrorAction HandleError(FailedMessage failedMessage, Exception exception)
+        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
         {
             Applied = true;
             return ErrorAction.Skip;

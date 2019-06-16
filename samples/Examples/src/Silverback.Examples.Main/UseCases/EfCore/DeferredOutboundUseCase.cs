@@ -4,16 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Examples.Common;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
@@ -52,22 +49,7 @@ namespace Silverback.Examples.Main.UseCases.EfCore
             var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
             await dbContext.SaveChangesAsync();
         }
-
-        protected override void PreExecute(IServiceProvider serviceProvider)
-        {
-            // Setup OutboundWorker to run every 50 milliseconds using a poor-man scheduler
-            serviceProvider.GetRequiredService<JobScheduler>().AddJob(
-                "OutboundWorker",
-                TimeSpan.FromMilliseconds(50),
-                s => s.GetRequiredService<OutboundQueueWorker>().ProcessQueue());
-        }
-
-        protected override void PostExecute(IServiceProvider serviceProvider)
-        {
-            // Let the worker run for some time before 
-            Thread.Sleep(2000);
-        }
-
+        
         public class CustomHeadersBehavior : IBehavior
         {
             public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)

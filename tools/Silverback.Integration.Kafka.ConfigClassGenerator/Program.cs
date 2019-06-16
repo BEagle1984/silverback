@@ -3,16 +3,18 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 
-namespace ConfigClassGenerator
+namespace Silverback.Integration.Kafka.ConfigClassGenerator
 {
     class Program
     {
         static void Main(string[] args)
         {
             var xmlDocumentationPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                @".nuget\packages\confluent.kafka\1.0.0-beta2\lib\netstandard1.3\Confluent.Kafka.xml");
+                Path.GetDirectoryName(
+                    Assembly.GetAssembly(typeof(Confluent.Kafka.ClientConfig)).Location),
+                "Confluent.Kafka.xml");
 
             var consumerConfig = new ProxyClassGenerator(typeof(Confluent.Kafka.ConsumerConfig), "ConfluentConsumerConfigProxy", xmlDocumentationPath).Generate();
             Console.Write(consumerConfig);

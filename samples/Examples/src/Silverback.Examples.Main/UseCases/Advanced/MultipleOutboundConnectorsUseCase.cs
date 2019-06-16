@@ -2,10 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Examples.Common;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
@@ -54,21 +52,6 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             await publisherB.PublishAsync(new IntegrationEventB { Content = "B->" + DateTime.Now.ToString("HH:mm:ss.fff") });
 
             await dbContext.SaveChangesAsync();
-        }
-
-        protected override void PreExecute(IServiceProvider serviceProvider)
-        {
-            // Setup OutboundWorker to run every 50 milliseconds using a poor-man scheduler
-            serviceProvider.GetRequiredService<JobScheduler>().AddJob(
-                "OutboundWorker",
-                TimeSpan.FromMilliseconds(50),
-                s => s.GetRequiredService<OutboundQueueWorker>().ProcessQueue());
-        }
-
-        protected override void PostExecute(IServiceProvider serviceProvider)
-        {
-            // Let the worker run for some time before 
-            Thread.Sleep(2000);
         }
     }
 }

@@ -56,7 +56,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
 
         private static void OnMessageReceived(object sender, MessageReceivedEventArgs args)
         {
-            var testMessage = args.Message as TestMessage;
+            var testMessage = args.Endpoint.Serializer.Deserialize(args.Message) as TestMessage;
 
             if (testMessage == null)
             {

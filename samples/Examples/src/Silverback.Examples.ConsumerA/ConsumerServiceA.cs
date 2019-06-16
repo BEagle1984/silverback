@@ -8,7 +8,6 @@ using NLog.Extensions.Logging;
 using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Common.Messages;
-using Silverback.Examples.Common.Serialization;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -48,17 +47,46 @@ namespace Silverback.Examples.ConsumerA
                             },
                             Consumers = 2
                         })
-                    .AddInbound(CreateConsumerEndpoint("silverback-examples-bad-events"), policy => policy
+                    .AddInbound(CreateConsumerEndpoint("silverback-examples-error-events"), policy => policy
                         .Chain(
-                            policy.Retry(TimeSpan.FromMilliseconds(500)).MaxFailedAttempts(2),
-                            policy.Move(new KafkaProducerEndpoint("silverback-examples-bad-events-error")
-                            {
-                                Configuration = new KafkaProducerConfig
+                            policy
+                                .Retry(TimeSpan.FromMilliseconds(500))
+                                .MaxFailedAttempts(2),
+                            policy
+                                .Move(new KafkaProducerEndpoint("silverback-examples-error-events")
                                 {
-                                    BootstrapServers = "PLAINTEXT://kafka:9092",
-                                    ClientId = "consumer-service-a"
-                                }
-                            })))
+                                    Configuration = new KafkaProducerConfig
+                                    {
+                                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                                        ClientId = "consumer-service-a"
+                                    }
+                                })
+                                .MaxFailedAttempts(2),
+                            policy
+                                .Move(new KafkaProducerEndpoint("silverback-examples-events")
+                                {
+                                    Configuration = new KafkaProducerConfig
+                                    {
+                                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                                        ClientId = "consumer-service-a"
+                                    }
+                                })
+                                .Transform(
+                                    (msg, ex) => new IntegrationEventA
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        Content = $"Transformed BadEvent (exception: {ex.Message})"
+                                    },
+                                    (headers, ex) =>
+                                    {
+                                        headers.Add("exception-message", ex.Message);
+                                        return headers;
+                                    })
+                                .Publish(msg => new MessageMovedEvent
+                                {
+                                    Id = (msg.Message as IntegrationEvent)?.Id ?? Guid.Empty,
+                                    Destination = msg.Endpoint.Name
+                                })))
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer",
                         GetCustomSerializer()))
                     // Special inbound (not logged)

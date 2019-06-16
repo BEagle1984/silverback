@@ -2,7 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
@@ -15,11 +18,14 @@ namespace Silverback.Examples.Main.UseCases
 {
     public abstract class UseCase : MenuItem
     {
-        private const int ExecutionsCount = 3;
+        private const bool UseAutofac = false;
 
-        protected UseCase(string name, int sortIndex = 100)
+        private readonly int _executionsCount;
+
+        protected UseCase(string name, int sortIndex = 100, int executionCount = 3)
             : base(name, sortIndex)
         {
+            _executionsCount = executionCount;
         }
 
         public void Execute()
@@ -33,17 +39,46 @@ namespace Silverback.Examples.Main.UseCases
 
             ConfigureServices(services);
 
-            using (var serviceProvider = services.BuildServiceProvider())
+            var serviceProvider = BuildServiceProvider(services);
+
+            try
             {
                 CreateScopeAndConfigure(serviceProvider);
 
-                for (int i = 0; i < ExecutionsCount; i++)
+                for (int i = 0; i < _executionsCount; i++)
                 {
                     CreateScopeAndExecute(serviceProvider);
                 }
 
                 CreateScopeAndPostExecute(serviceProvider);
             }
+            finally
+            {
+                ((IDisposable) serviceProvider)?.Dispose();
+            }
+        }
+
+        private IServiceProvider BuildServiceProvider(IServiceCollection services)
+        {
+            if (UseAutofac)
+            {
+                return ConfigureAutofac(services);
+            }
+            else
+            {
+                return services.BuildServiceProvider(new ServiceProviderOptions
+                {
+                    ValidateScopes = true
+                });
+            }
+        }
+
+        private IServiceProvider ConfigureAutofac(IServiceCollection services)
+        {
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.RegisterAssemblyModules(Assembly.GetExecutingAssembly());
+            containerBuilder.Populate(services);
+            return new AutofacServiceProvider(containerBuilder.Build());
         }
 
         private void CreateScopeAndConfigure(IServiceProvider serviceProvider)
@@ -54,7 +89,7 @@ namespace Silverback.Examples.Main.UseCases
 
                 scope.ServiceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
 
-                Configure(scope.ServiceProvider.GetService<BusConfigurator>(), serviceProvider);
+                Configure(scope.ServiceProvider.GetService<BusConfigurator>(), scope.ServiceProvider);
 
                 PreExecute(scope.ServiceProvider);
             }

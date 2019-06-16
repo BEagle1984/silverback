@@ -2,20 +2,30 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.5.0.0</Version>
+    <Version>0.10.0.0</Version>
     <RootNamespace>Silverback</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <LangVersion>7.1</LangVersion>
     <Authors>BEagle1984</Authors>
-    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package enables the creation of the inbound and outbound messages DbSet.</Description>
-    <PackageLicenseUrl>https://github.com/BEagle1984/silverback/blob/master/LICENSE</PackageLicenseUrl>
+    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package enables the storage of the message chunks into S3.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
     <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
+    <LangVersion>latest</LangVersion>
+    <NoWarn>1701;1702;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.S3.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\Silverback.Integration.S3.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3" Version="3.3.100.1" />
-    <PackageReference Include="Silverback.Integration" Version="0.6.1.1" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.101.3" />
+    <PackageReference Include="Silverback.Integration" Version="0.10.0" />
   </ItemGroup>
 
 </Project>

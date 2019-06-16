@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -9,16 +10,16 @@ namespace Silverback.Messaging.Connectors.Repositories
     {
         int Length { get; }
 
-        IEnumerable<QueuedMessage> Dequeue(int count);
+        Task<IEnumerable<QueuedMessage>> Dequeue(int count);
 
         /// <summary>
         /// Re-enqueue the message to retry.
         /// </summary>
-        void Retry(QueuedMessage queuedMessage);
+        Task Retry(QueuedMessage queuedMessage);
 
         /// <summary>
         /// Acknowledges the specified message has been sent.
         /// </summary>
-        void Acknowledge(QueuedMessage queuedMessage);
+        Task Acknowledge(QueuedMessage queuedMessage);
     }
 }

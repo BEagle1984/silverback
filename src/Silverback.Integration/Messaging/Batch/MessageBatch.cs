@@ -20,24 +20,24 @@ namespace Silverback.Messaging.Batch
         private readonly IEndpoint _endpoint;
         private readonly BatchSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
+        private readonly InboundMessageProcessor _inboundMessageProcessor;
 
-        private readonly Action<IEnumerable<MessageReceivedEventArgs>, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
         private readonly Action<IEnumerable<IOffset>, IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
         private readonly IServiceProvider _serviceProvider;
-        private readonly IPublisher _publisher;
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
 
-        private readonly List<MessageReceivedEventArgs> _messages;
+        private readonly List<IInboundMessage> _messages;
         private readonly Timer _waitTimer;
 
         private Exception _processingException;
 
         public MessageBatch(IEndpoint endpoint,
             BatchSettings settings,
-            Action<IEnumerable<MessageReceivedEventArgs>, IServiceProvider> messagesHandler,
+            Action<IEnumerable<IInboundMessage>, IServiceProvider> messagesHandler,
             Action<IEnumerable<IOffset>, IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy, 
@@ -49,12 +49,13 @@ namespace Silverback.Messaging.Batch
             _commitHandler = commitHandler ?? throw new ArgumentNullException(nameof(commitHandler));
             _rollbackHandler = rollbackHandler ?? throw new ArgumentNullException(nameof(rollbackHandler));
 
-            _errorPolicy = errorPolicy;
-
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _inboundMessageProcessor = serviceProvider.GetRequiredService<InboundMessageProcessor>();
+
+            _errorPolicy = errorPolicy;
             _settings = settings;
 
-            _messages = new List<MessageReceivedEventArgs>(_settings.Size);
+            _messages = new List<IInboundMessage>(_settings.Size);
 
             if (_settings.MaxWaitTime < TimeSpan.MaxValue)
             {
@@ -62,7 +63,6 @@ namespace Silverback.Messaging.Batch
                 _waitTimer.Elapsed += OnWaitTimerElapsed;
             }
 
-            _publisher = serviceProvider.GetRequiredService<IPublisher>();
             _logger = serviceProvider.GetRequiredService<ILogger<MessageBatch>>();
             _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
         }
@@ -71,16 +71,17 @@ namespace Silverback.Messaging.Batch
 
         public int CurrentSize => _messages.Count;
 
-        public void AddMessage(MessageReceivedEventArgs messageArgs)
+        public void AddMessage(IInboundMessage message)
         {
+            // TODO: Check this!
             if (_processingException != null)
                 throw new SilverbackException("Cannot add to the batch because the processing of the previous batch failed. See inner exception for details.", _processingException);
 
             lock (_messages)
             {
-                _messages.Add(messageArgs);
+                _messages.Add(message);
 
-                _messageLogger.LogTrace(_logger, "Message added to batch.", messageArgs.Message, _endpoint, this, messageArgs.Offset);
+                _messageLogger.LogInformation(_logger, "Message added to batch.", message, CurrentBatchId, CurrentSize);
 
                 if (_messages.Count == 1)
                 {
@@ -109,32 +110,33 @@ namespace Silverback.Messaging.Batch
         {
             try
             {
-                _logger.LogTrace("Processing batch '{batchId}' containing {batchSize} message(s).", CurrentBatchId, _messages.Count);
-
-                _errorPolicy.TryProcess(
-                    new BatchCompleteEvent(CurrentBatchId, _messages),
-                    _ => ProcessEachMessageAndPublishEvents());
+                _inboundMessageProcessor.TryDeserializeAndProcess(
+                    new InboundBatch(CurrentBatchId, _messages, _endpoint),
+                    _errorPolicy,
+                    deserializedBatch => ProcessEachMessageAndPublishEvents((IInboundBatch) deserializedBatch));
 
                 _messages.Clear();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to process batch '{batchId}' containing {batchSize} message(s).", CurrentBatchId, _messages.Count);
-
                 _processingException = ex;
                 throw new SilverbackException("Failed to process batch. See inner exception for details.", ex);
             }
         }
 
-        private void ProcessEachMessageAndPublishEvents()
+        private void ProcessEachMessageAndPublishEvents(IInboundBatch deserializedBatch)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
+                var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+
+                var unwrappedMessages = deserializedBatch.Messages.Select(m => m.Message).ToList();
+
                 try
                 {
-                    _publisher.Publish(new BatchCompleteEvent(CurrentBatchId, _messages));
-                    _messagesHandler(_messages, scope.ServiceProvider);
-                    _publisher.Publish(new BatchProcessedEvent(CurrentBatchId, _messages));
+                    publisher.Publish(new BatchCompleteEvent(CurrentBatchId, unwrappedMessages));
+                    _messagesHandler(deserializedBatch.Messages, scope.ServiceProvider);
+                    publisher.Publish(new BatchProcessedEvent(CurrentBatchId, unwrappedMessages));
 
                     _commitHandler?.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);
                 }
@@ -142,7 +144,7 @@ namespace Silverback.Messaging.Batch
                 {
                     _rollbackHandler?.Invoke(scope.ServiceProvider);
 
-                    _publisher.Publish(new BatchAbortedEvent(CurrentBatchId, _messages, ex));
+                    publisher.Publish(new BatchAbortedEvent(CurrentBatchId, unwrappedMessages, ex));
 
                     throw;
                 }

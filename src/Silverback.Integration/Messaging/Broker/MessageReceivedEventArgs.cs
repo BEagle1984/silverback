@@ -9,17 +9,18 @@ namespace Silverback.Messaging.Broker
 {
     public class MessageReceivedEventArgs : EventArgs
     {
-        public MessageReceivedEventArgs(object message, IEnumerable<MessageHeader> headers, IOffset offset)
+        public MessageReceivedEventArgs(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset,
+            IEndpoint endpoint)
         {
             Message = message;
             Headers = headers;
             Offset = offset;
+            Endpoint = endpoint;
         }
 
-        public object Message { get; set; }
-
-        public IEnumerable<MessageHeader> Headers { get; set; }
-
-        public IOffset Offset { get; set; }
+        public byte[] Message { get; }
+        public IEnumerable<MessageHeader> Headers { get; }
+        public IOffset Offset { get; }
+        public IEndpoint Endpoint { get; }
     }
 }

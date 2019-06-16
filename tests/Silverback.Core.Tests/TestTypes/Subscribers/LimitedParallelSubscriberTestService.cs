@@ -3,7 +3,6 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers;
-using Silverback.Tests.Core.Messaging.Publishing;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {

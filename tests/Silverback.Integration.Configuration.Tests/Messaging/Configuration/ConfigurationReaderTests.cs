@@ -17,6 +17,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.Configuration.Types;
 using Xunit;
@@ -34,10 +35,14 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
 
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             services.AddSingleton(Substitute.For<IBroker>());
+            services.AddScoped(s => Substitute.For<IPublisher>());
             services.AddSingleton<MessageLogger>();
             services.AddSingleton<MessageKeyProvider>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true
+            });
 
             _builder = Substitute.For<IEndpointsConfigurationBuilder>();
         }
@@ -221,8 +226,8 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new FailedMessage(null, 3), new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new FailedMessage(null, 6), new ArgumentException()).Should().BeFalse();
+            policy.CanHandle(new InboundMessage { FailedAttempts = 3 }, new ArgumentException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage { FailedAttempts = 6 }, new ArgumentException()).Should().BeFalse();
         }
         
         [Fact]
@@ -245,9 +250,9 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new FailedMessage(), new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new FailedMessage(), new InvalidOperationException()).Should().BeTrue();
-            policy.CanHandle(new FailedMessage(), new FormatException()).Should().BeFalse();
+            policy.CanHandle(new InboundMessage(), new ArgumentException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage(), new InvalidOperationException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage(), new FormatException()).Should().BeFalse();
         }
 
         [Fact]
@@ -258,8 +263,8 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new FailedMessage(), new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new FailedMessage(), new ArgumentNullException()).Should().BeFalse();
+            policy.CanHandle(new InboundMessage(), new ArgumentException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage(), new ArgumentNullException()).Should().BeFalse();
         }
 
         [Fact]

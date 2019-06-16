@@ -18,9 +18,8 @@ namespace Silverback.Messaging.Broker
         private InnerConsumerWrapper _innerConsumer;
         private int _messagesSinceCommit = 0;
 
-        public KafkaConsumer(IBroker broker, KafkaConsumerEndpoint endpoint, ILogger<KafkaConsumer> logger,
-            MessageLogger messageLogger)
-            : base(broker, endpoint, logger, messageLogger)
+        public KafkaConsumer(IBroker broker, KafkaConsumerEndpoint endpoint, ILogger<KafkaConsumer> logger)
+            : base(broker, endpoint)
         {
             _logger = logger;
 

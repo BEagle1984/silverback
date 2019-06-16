@@ -4,9 +4,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SilverbackShop.Baskets.Domain</AssemblyName>
     <RootNamespace>SilverbackShop.Baskets.Domain</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 

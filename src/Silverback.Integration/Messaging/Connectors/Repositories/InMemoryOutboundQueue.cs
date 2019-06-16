@@ -40,16 +40,21 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         #region Reader
 
-        public IEnumerable<QueuedMessage> Dequeue(int count) => Entries.Take(count).ToArray();
+        public Task<IEnumerable<QueuedMessage>> Dequeue(int count) => Task.FromResult(Entries.Take(count).ToArray().AsEnumerable());
 
-        public void Retry(QueuedMessage queuedMessage)
+        public Task Retry(QueuedMessage queuedMessage)
         {
             // Nothing to do in the current implementation
             // --> the messages just stay in the queue until acknowledged
             // --> that's why reading is not thread-safe
+            return Task.CompletedTask;
         }
 
-        public void Acknowledge(QueuedMessage queuedMessage) => Remove(queuedMessage);
+        public Task Acknowledge(QueuedMessage queuedMessage)
+        {
+            Remove(queuedMessage);
+            return Task.CompletedTask;
+        }
 
         #endregion
     }
