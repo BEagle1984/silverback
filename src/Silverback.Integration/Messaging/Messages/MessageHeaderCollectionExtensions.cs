@@ -9,9 +9,12 @@ namespace Silverback.Messaging.Messages
 {
     public static class MessageHeaderCollectionExtensions
     {
-        public static T GetValue<T>(this IEnumerable<MessageHeader> headers, string headerName)
+        public static bool Contains(this IEnumerable<MessageHeader> headers, string key) =>
+            headers.Any(h => h.Key == key);
+
+        public static T GetValue<T>(this IEnumerable<MessageHeader> headers, string key)
         {
-            var value = headers.FirstOrDefault(h => h.Key == MessageHeader.FailedAttemptsHeaderName)?.Value;
+            var value = headers.FirstOrDefault(h => h.Key == MessageHeader.FailedAttemptsKey)?.Value;
 
             if (value == null)
                 return default;

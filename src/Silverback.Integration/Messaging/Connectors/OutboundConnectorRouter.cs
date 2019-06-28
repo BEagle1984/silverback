@@ -16,12 +16,14 @@ namespace Silverback.Messaging.Connectors
         private readonly IOutboundRoutingConfiguration _routing;
         private readonly IEnumerable<IOutboundConnector> _outboundConnectors;
         private readonly IPublisher _publisher;
+        private readonly MessageKeyProvider _messageKeyProvider;
 
-        public OutboundConnectorRouter(IOutboundRoutingConfiguration routingConfiguration, IEnumerable<IOutboundConnector> outboundConnectors, IPublisher publisher)
+        public OutboundConnectorRouter(IOutboundRoutingConfiguration routingConfiguration, IEnumerable<IOutboundConnector> outboundConnectors, IPublisher publisher, MessageKeyProvider messageKeyProvider)
         {
             _routing = routingConfiguration;
             _outboundConnectors = outboundConnectors;
             _publisher = publisher;
+            _messageKeyProvider = messageKeyProvider;
         }
 
         [Subscribe]
@@ -34,9 +36,12 @@ namespace Silverback.Messaging.Connectors
         {
             var wrapper = (IOutboundMessageInternal)Activator.CreateInstance(typeof(OutboundMessage<>).MakeGenericType(message.GetType()));
 
-            wrapper.Endpoint = route.DestinationEndpoint;
             wrapper.Message = message;
+            wrapper.Endpoint = route.DestinationEndpoint;
             wrapper.Route = route;
+
+            wrapper.Headers.Add(MessageHeader.MessageIdKey,
+                _messageKeyProvider.GetKey(message, false) ?? Guid.NewGuid().ToString().ToLower());
 
             return wrapper;
         }

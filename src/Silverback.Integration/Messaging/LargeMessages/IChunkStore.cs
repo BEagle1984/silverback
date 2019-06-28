@@ -7,7 +7,7 @@ namespace Silverback.Messaging.LargeMessages
 {
     public interface IChunkStore
     {
-        void Store(MessageChunk chunk);
+        void Store(string messageId, int chunkId, int chunksCount, byte[] content);
 
         void Commit();
 

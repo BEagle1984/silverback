@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.ErrorHandling
@@ -11,8 +12,8 @@ namespace Silverback.Messaging.ErrorHandling
     /// </summary>
     public interface IErrorPolicy
     {
-        bool CanHandle(IInboundMessage message, Exception exception);
+        bool CanHandle(IEnumerable<IRawInboundMessage> messages, Exception exception);
 
-        ErrorAction HandleError(IInboundMessage message, Exception exception);
+        ErrorAction HandleError(IEnumerable<IRawInboundMessage> messages, Exception exception);
     }
 }

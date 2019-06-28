@@ -28,7 +28,7 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        internal Func<IInboundMessage, object> MessageToPublishFactory { get; private set; }
+        internal Func<IEnumerable<IInboundMessage>, object> MessageToPublishFactory { get; private set; }
 
         internal int MaxFailedAttemptsSetting { get; private set; } = -1;
 
@@ -114,13 +114,16 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="factory">The factory returning the message to be published.</param>
         /// <returns></returns>
-        public ErrorPolicyBase Publish(Func<IInboundMessage, object> factory)
+        public ErrorPolicyBase Publish(Func<IEnumerable<IInboundMessage>, object> factory)
         {
             MessageToPublishFactory = factory;
             return this;
         }
 
-        public virtual bool CanHandle(IInboundMessage message, Exception exception)
+        public virtual bool CanHandle(IEnumerable<IRawInboundMessage> messages, Exception exception) =>
+            messages.All(msg => CanHandle(msg, exception)); // TODO: Check this
+
+        public virtual bool CanHandle(IRawInboundMessage message, Exception exception)
         {
             if (message == null)
             {
@@ -128,10 +131,11 @@ namespace Silverback.Messaging.ErrorHandling
                 return false;
             }
 
-            if (MaxFailedAttemptsSetting >= 0 && message.FailedAttempts > MaxFailedAttemptsSetting)
+            var failedAttempts = message.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey);
+            if (MaxFailedAttemptsSetting >= 0 && failedAttempts > MaxFailedAttemptsSetting)
             {
                 _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the current failed attempts " +
-                                 $"({message.FailedAttempts}) exceeds the configured maximum attempts " +
+                                 $"({failedAttempts}) exceeds the configured maximum attempts " +
                                  $"({MaxFailedAttemptsSetting}).", message);
 
                 return false;
@@ -163,22 +167,22 @@ namespace Silverback.Messaging.ErrorHandling
             return true;
         }
 
-        public ErrorAction HandleError(IInboundMessage message, Exception exception)
+        public ErrorAction HandleError(IEnumerable<IRawInboundMessage> messages, Exception exception)
         {
-            var result = ApplyPolicy(message, exception);
+            var result = ApplyPolicy(messages, exception);
 
             if (MessageToPublishFactory != null)
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     scope.ServiceProvider.GetRequiredService<IPublisher>()
-                        .Publish(MessageToPublishFactory.Invoke(message));
+                        .Publish(MessageToPublishFactory.Invoke(messages));
                 }
             }
 
             return result;
         }
 
-        protected abstract ErrorAction ApplyPolicy(IInboundMessage message, Exception exception);
+        protected abstract ErrorAction ApplyPolicy(IEnumerable<IRawInboundMessage> messages, Exception exception);
     }
 }

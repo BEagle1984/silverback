@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -29,7 +30,7 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
+        protected override ErrorAction ApplyPolicy(IEnumerable<IRawInboundMessage> message, Exception exception)
         {
             ApplyDelay(message);
 
@@ -40,7 +41,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         private void ApplyDelay(IInboundMessage message)
         {
-            var delay = _initialDelay.Milliseconds + message.FailedAttempts * _delayIncrement.Milliseconds;
+            var delay = _initialDelay.Milliseconds + message.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey) * _delayIncrement.Milliseconds;
 
             if (delay <= 0)
                 return;

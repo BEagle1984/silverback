@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Connectors
         {
             settings = settings ?? new InboundConnectorSettings();
 
-            for (int i = 0; i < settings.Consumers; i++)
+            for (var i = 0; i < settings.Consumers; i++)
             {
                 _inboundConsumers.Add(new InboundConsumer(
                     _broker,
@@ -53,33 +53,34 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        protected void HandleMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
+        protected void HandleMessages(IEnumerable<IRawInboundMessage> messages, IServiceProvider serviceProvider)
         {
-            messages = messages
+            var deserializedMessages = messages
                 .Select(message => HandleChunkedMessage(message, serviceProvider))
                 .Where(args => args != null)
+                .Select(DeserializeRawMessage)
                 .ToList();
 
-            if (!messages.Any())
+            if (!deserializedMessages.Any())
                 return;
 
-            RelayMessages(messages, serviceProvider);
+            RelayMessages(deserializedMessages, serviceProvider);
         }
 
-        private IInboundMessage HandleChunkedMessage(IInboundMessage message, IServiceProvider serviceProvider)
+        private IRawInboundMessage HandleChunkedMessage(IRawInboundMessage message, IServiceProvider serviceProvider)
         {
-            if (!(message.Message is MessageChunk chunk))
+            if (!message.Headers.Contains(MessageHeader.ChunkIdKey))
                 return message;
 
-            var joinedMessage = serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(chunk);
+            var completeMessage = serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(message);
 
-            if (joinedMessage == null)
-                return null;
-
-            var deserializedJoinedMessage = message.Endpoint.Serializer.Deserialize(joinedMessage);
-
-            return InboundMessageHelper.CreateNewInboundMessage(deserializedJoinedMessage, message);
+            return completeMessage == null 
+                ? null 
+                : new RawInboundMessage(completeMessage, message.Headers, message.Offset, message.Endpoint, message.MustUnwrap);
         }
+
+        private static IInboundMessage DeserializeRawMessage(IRawInboundMessage message) => 
+            InboundMessageHelper.CreateInboundMessage(message.Endpoint.Serializer.Deserialize(message.Message, message.Headers), message);
 
         protected virtual void RelayMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider) => 
             serviceProvider.GetRequiredService<IPublisher>().Publish(messages);

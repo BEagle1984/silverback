@@ -2,9 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -42,26 +45,17 @@ namespace Silverback.Messaging.ErrorHandling
             return this;
         }
 
-        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
+        protected override ErrorAction ApplyPolicy(IEnumerable<IRawInboundMessage> messages, Exception exception)
         {
-            _messageLogger.LogInformation(_logger, $"The message will be  be moved to '{_endpoint.Name}'.", message);
+            _messageLogger.LogInformation(_logger,
+                $"{messages.Count()} message(s) will be  be moved to endpoint '{_endpoint.Name}'.", messages);
 
-            if (message is IInboundBatch inboundBatch)
-            {
-                foreach (var singleFailedMessage in inboundBatch.Messages)
-                {
-                    PublishToNewEndpoint(singleFailedMessage, exception);
-                }
-            }
-            else
-            {
-                PublishToNewEndpoint(message, exception);
-            }
+            messages.ForEach(msg => PublishToNewEndpoint(msg, exception));
 
             return ErrorAction.Skip;
         }
 
-        private void PublishToNewEndpoint(IInboundMessage message, Exception exception)
+        private void PublishToNewEndpoint(IRawInboundMessage message, Exception exception)
         {
             _producer.Produce(
                 _transformationFunction?.Invoke(message.Message, exception) ?? message.Message,

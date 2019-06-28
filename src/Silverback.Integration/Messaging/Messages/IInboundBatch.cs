@@ -1,18 +1,20 @@
-﻿// Copyright (c) 2018-2019 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
+﻿// TODO: Delete
 
-using System;
-using System.Collections.Generic;
+//// Copyright (c) 2018-2019 Sergio Aquilini
+//// This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Messaging.Messages
-{
-    internal interface IInboundBatch
-    {
-        Guid Id { get; }
+//using System;
+//using System.Collections.Generic;
 
-        IEnumerable<IInboundMessage> Messages { get; }
+//namespace Silverback.Messaging.Messages
+//{
+//    internal interface IInboundBatch
+//    {
+//        Guid Id { get; }
 
-        int Size { get; }
-        IEndpoint Endpoint { get; }
-    }
-}
+//        IEnumerable<IInboundMessage> Messages { get; }
+
+//        int Size { get; }
+//        IEndpoint Endpoint { get; }
+//    }
+//}

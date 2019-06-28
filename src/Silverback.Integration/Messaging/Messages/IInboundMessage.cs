@@ -28,11 +28,6 @@ namespace Silverback.Messaging.Messages
         IEndpoint Endpoint { get; }
 
         /// <summary>
-        /// Gets the number of failed processing attempt for this message.
-        /// </summary>
-        int FailedAttempts { get; }
-
-        /// <summary>
         /// Gets a boolean value indicating whether the contained Message must be extracted and
         /// published to the internal bus. (This is true, unless specifically configured otherwise
         /// to handle some special cases.)

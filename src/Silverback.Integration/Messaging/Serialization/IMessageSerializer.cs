@@ -1,6 +1,9 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
+using Silverback.Messaging.Messages;
+
 namespace Silverback.Messaging.Serialization
 {
     /// <summary>
@@ -8,8 +11,8 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public interface IMessageSerializer
     {
-        byte[] Serialize(object message);
+        byte[] Serialize(object message, MessageHeaderCollection messageHeaders);
 
-        object Deserialize(byte[] message);
+        object Deserialize(byte[] message, MessageHeaderCollection messageHeaders);
     }
 }

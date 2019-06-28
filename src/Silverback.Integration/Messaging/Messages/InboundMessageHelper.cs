@@ -7,22 +7,18 @@ namespace Silverback.Messaging.Messages
 {
     internal static class InboundMessageHelper
     {
-        public static IInboundMessage CreateNewInboundMessage(object message, IInboundMessage sourceInboundMessage) => 
-            CreateNewInboundMessage<object>(message, sourceInboundMessage);
+        public static IInboundMessage CreateInboundMessage(object deserializedMessage, IRawInboundMessage rawInboundMessage) => 
+            CreateInboundMessage<object>(deserializedMessage, rawInboundMessage);
 
-        public static IInboundMessage<TMessage> CreateNewInboundMessage<TMessage>(TMessage message,
-            IInboundMessage sourceInboundMessage)
+        public static IInboundMessage<TMessage> CreateInboundMessage<TMessage>(TMessage deserializedMessage, IRawInboundMessage rawInboundMessage)
         {
-            var newMessage = (InboundMessage) Activator.CreateInstance(typeof(InboundMessage<>).MakeGenericType(message.GetType()));
+            var newMessage = (InboundMessage) Activator.CreateInstance(
+                    typeof(InboundMessage<>).MakeGenericType(deserializedMessage.GetType()),
+                    deserializedMessage,
+                    rawInboundMessage);
 
-            if (sourceInboundMessage.Headers != null)
-                newMessage.Headers.AddRange(sourceInboundMessage.Headers);
-
-            newMessage.Message = message;
-            newMessage.Endpoint = sourceInboundMessage.Endpoint;
-            newMessage.Offset = sourceInboundMessage.Offset;
-            newMessage.FailedAttempts = sourceInboundMessage.FailedAttempts;
-            newMessage.MustUnwrap = sourceInboundMessage.MustUnwrap;
+            if (rawInboundMessage.Headers != null)
+                newMessage.Headers.AddRange(rawInboundMessage.Headers);
 
             return (IInboundMessage<TMessage>) newMessage;
         }

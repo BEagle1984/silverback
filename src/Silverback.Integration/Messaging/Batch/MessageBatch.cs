@@ -20,9 +20,9 @@ namespace Silverback.Messaging.Batch
         private readonly IEndpoint _endpoint;
         private readonly BatchSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
-        private readonly InboundMessageProcessor _inboundMessageProcessor;
+        private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<IRawInboundMessage>, IServiceProvider> _messagesHandler;
         private readonly Action<IEnumerable<IOffset>, IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
@@ -30,14 +30,14 @@ namespace Silverback.Messaging.Batch
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
 
-        private readonly List<IInboundMessage> _messages;
+        private readonly List<IRawInboundMessage> _messages;
         private readonly Timer _waitTimer;
 
         private Exception _processingException;
 
         public MessageBatch(IEndpoint endpoint,
             BatchSettings settings,
-            Action<IEnumerable<IInboundMessage>, IServiceProvider> messagesHandler,
+            Action<IEnumerable<IRawInboundMessage>, IServiceProvider> messagesHandler,
             Action<IEnumerable<IOffset>, IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy, 
@@ -50,12 +50,12 @@ namespace Silverback.Messaging.Batch
             _rollbackHandler = rollbackHandler ?? throw new ArgumentNullException(nameof(rollbackHandler));
 
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _inboundMessageProcessor = serviceProvider.GetRequiredService<InboundMessageProcessor>();
+            _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
 
             _errorPolicy = errorPolicy;
             _settings = settings;
 
-            _messages = new List<IInboundMessage>(_settings.Size);
+            _messages = new List<IRawInboundMessage>(_settings.Size);
 
             if (_settings.MaxWaitTime < TimeSpan.MaxValue)
             {
@@ -71,7 +71,7 @@ namespace Silverback.Messaging.Batch
 
         public int CurrentSize => _messages.Count;
 
-        public void AddMessage(IInboundMessage message)
+        public void AddMessage(IRawInboundMessage message)
         {
             // TODO: Check this!
             if (_processingException != null)
@@ -110,10 +110,12 @@ namespace Silverback.Messaging.Batch
         {
             try
             {
-                _inboundMessageProcessor.TryDeserializeAndProcess(
-                    new InboundBatch(CurrentBatchId, _messages, _endpoint),
+                AddHeaders(_messages);
+
+                _errorPolicyHelper.TryProcess(
+                    _messages,
                     _errorPolicy,
-                    deserializedBatch => ProcessEachMessageAndPublishEvents((IInboundBatch) deserializedBatch));
+                    ProcessEachMessageAndPublishEvents);
 
                 _messages.Clear();
             }
@@ -124,19 +126,26 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private void ProcessEachMessageAndPublishEvents(IInboundBatch deserializedBatch)
+        private void AddHeaders(List<IRawInboundMessage> messages)
+        {
+            foreach (var message in messages)
+            {
+                message.Headers.AddOrReplace(MessageHeader.BatchIdKey, CurrentBatchId);
+                message.Headers.AddOrReplace(MessageHeader.BatchSizeKey, CurrentSize);
+            }
+        }
+
+        private void ProcessEachMessageAndPublishEvents(IEnumerable<IRawInboundMessage> messages)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
                 var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
 
-                var unwrappedMessages = deserializedBatch.Messages.Select(m => m.Message).ToList();
-
                 try
                 {
-                    publisher.Publish(new BatchCompleteEvent(CurrentBatchId, unwrappedMessages));
-                    _messagesHandler(deserializedBatch.Messages, scope.ServiceProvider);
-                    publisher.Publish(new BatchProcessedEvent(CurrentBatchId, unwrappedMessages));
+                    publisher.Publish(new BatchCompleteEvent(CurrentBatchId, messages));
+                    _messagesHandler(messages, scope.ServiceProvider);
+                    publisher.Publish(new BatchProcessedEvent(CurrentBatchId, messages));
 
                     _commitHandler?.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);
                 }
@@ -144,7 +153,7 @@ namespace Silverback.Messaging.Batch
                 {
                     _rollbackHandler?.Invoke(scope.ServiceProvider);
 
-                    publisher.Publish(new BatchAbortedEvent(CurrentBatchId, unwrappedMessages, ex));
+                    publisher.Publish(new BatchAbortedEvent(CurrentBatchId, messages, ex));
 
                     throw;
                 }

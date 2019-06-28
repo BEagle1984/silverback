@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Messages
                 if (!string.IsNullOrWhiteSpace((string)current))
                     return;
 
-                prop.SetValue(message, Guid.NewGuid().ToString());
+                prop.SetValue(message, Guid.NewGuid().ToString().ToLower());
             }
         }
 

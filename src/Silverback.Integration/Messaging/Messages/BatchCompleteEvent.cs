@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public class BatchCompleteEvent : BatchEvent
     {
-        public BatchCompleteEvent(Guid batchId, IEnumerable<object> messages) : base(batchId, messages)
+        public BatchCompleteEvent(Guid batchId, IEnumerable<IRawInboundMessage> messages) : base(batchId, messages)
         {
         }
     }

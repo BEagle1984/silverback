@@ -93,10 +93,9 @@ namespace Silverback.Messaging.Messages
 
         #region Specific
 
-        public void LogProcessing(ILogger logger, IInboundMessage message)
+        public void LogProcessing(ILogger logger, IEnumerable<IInboundMessage> messages)
         {
-            var batch = message as IInboundBatch;
-
+            if ()
             LogInformation(logger,
                 batch != null
                     ? "Processing inbound batch."

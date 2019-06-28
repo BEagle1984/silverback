@@ -111,7 +111,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var consumer = _broker.Consumers.First();
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
-            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = MessageHeader.FailedAttemptsHeaderName, Value = "3" } });
+            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = MessageHeader.FailedAttemptsKey, Value = "3" } });
 
             var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
             inboundMessages.First().FailedAttempts.Should().Be(0);
@@ -662,7 +662,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var producer = (TestProducer)_broker.GetProducer(new TestEndpoint("bad"));
 
-            producer.ProducedMessages.Last().Headers.Count(h => h.Key == MessageHeader.FailedAttemptsHeaderName).Should().Be(1);
+            producer.ProducedMessages.Last().Headers.Count(h => h.Key == MessageHeader.FailedAttemptsKey).Should().Be(1);
         }
 
         [Fact]

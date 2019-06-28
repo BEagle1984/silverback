@@ -4,42 +4,64 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.LargeMessages
 {
     public class ChunkConsumer
     {
         private readonly IChunkStore _store;
-        private readonly List<string> _completedMessagesId = new List<string>();
-
+ 
         public ChunkConsumer(IChunkStore store)
         {
             _store = store;
         }
 
-        public byte[] JoinIfComplete(MessageChunk chunk)
+        public byte[] JoinIfComplete(IRawInboundMessage message)
         {
-            var count = _store.CountChunks(chunk.OriginalMessageId);
+            var (messageId, chunkId, chunksCount) = ExtractHeadersValues(message);
 
-            if (count >= chunk.ChunksCount - 1)
+            var count = _store.CountChunks(messageId);
+
+            if (count >= chunksCount - 1)
             {
-                var chunks = _store.GetChunks(chunk.OriginalMessageId);
-                if (chunks.ContainsKey(chunk.ChunkId))
+                var chunks = _store.GetChunks(messageId);
+                if (chunks.ContainsKey(chunkId))
                     return null;
 
-                chunks.Add(chunk.ChunkId, chunk.Content);
+                chunks.Add(chunkId, message.Message);
 
                 var completeMessage = Join(chunks);
 
-                _store.Cleanup(chunk.OriginalMessageId);
+                _store.Cleanup(messageId);
 
                 return completeMessage;
             }
             else
             {
-                _store.Store(chunk);
+                _store.Store(messageId, chunkId, chunksCount, message.Message);
                 return null;
             }
+        }
+
+        private (string messageId, int chinkId, int chunksCount) ExtractHeadersValues(IRawInboundMessage message)
+        {
+            var messageId = message.Headers.GetValue<string>(MessageHeader.MessageIdKey);
+
+            var chunkId = message.Headers.GetValue<int>(MessageHeader.ChunkIdKey);
+
+            var chunksCount = message.Headers.GetValue<int>(MessageHeader.ChunksCountKey);
+
+            if (string.IsNullOrEmpty(messageId))
+                throw new InvalidOperationException("Message id header not found or invalid.");
+
+            if (chunkId <= 0)
+                throw new InvalidOperationException("Chunk id header not found or invalid.");
+
+            if (chunksCount <= 0)
+                throw new InvalidOperationException("Chunks count header not found or invalid.");
+
+            return (messageId, chunkId, chunksCount);
         }
 
         public void Commit() => _store.Commit();

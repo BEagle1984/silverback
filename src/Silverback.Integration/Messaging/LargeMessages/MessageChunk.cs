@@ -1,21 +1,23 @@
-﻿// Copyright (c) 2018-2019 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
+﻿// TODO: Delete
 
-using System;
-using Silverback.Messaging.Messages;
+//// Copyright (c) 2018-2019 Sergio Aquilini
+//// This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Messaging.LargeMessages
-{
-    public class MessageChunk : IMessage
-    {
-        public Guid MessageId { get; set; }
+//using System;
+//using Silverback.Messaging.Messages;
 
-        public string OriginalMessageId { get; set; }
+//namespace Silverback.Messaging.LargeMessages
+//{
+//    public class MessageChunk : IMessage
+//    {
+//        public Guid MessageId { get; set; }
 
-        public int ChunkId { get; set; }
+//        public string OriginalMessageId { get; set; }
 
-        public int ChunksCount { get; set; }
+//        public int ChunkId { get; set; }
 
-        public byte[] Content { get; set; }
-    }
-}
+//        public int ChunksCount { get; set; }
+
+//        public byte[] Content { get; set; }
+//    }
+//}
