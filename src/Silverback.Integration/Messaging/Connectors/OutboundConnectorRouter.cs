@@ -34,12 +34,11 @@ namespace Silverback.Messaging.Connectors
 
         private IOutboundMessage WrapOutboundMessage(object message, IOutboundRoute route)
         {
-            var wrapper = (IOutboundMessageInternal)Activator.CreateInstance(
+            var wrapper = (IOutboundMessage)Activator.CreateInstance(
                 typeof(OutboundMessage<>).MakeGenericType(message.GetType()),
                 message, null, route);
 
-            wrapper.Headers.Add(MessageHeader.MessageIdKey,
-                _messageKeyProvider.GetKey(message, false) ?? Guid.NewGuid().ToString().ToLower());
+            _messageKeyProvider.EnsureKeyIsInitialized(wrapper);
 
             return wrapper;
         }

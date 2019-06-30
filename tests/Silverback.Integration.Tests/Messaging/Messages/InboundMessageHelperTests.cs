@@ -1,49 +1,51 @@
-﻿// Copyright (c) 2018-2019 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
+﻿// TODO: DELETE
 
-using FluentAssertions;
-using Silverback.Messaging.Messages;
-using Silverback.Tests.Integration.TestTypes;
-using Xunit;
+//// Copyright (c) 2018-2019 Sergio Aquilini
+//// This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Tests.Integration.Messaging.Messages
-{
-    public class InboundMessageHelperTests
-    {
-        [Fact]
-        public void Create_InboundMessage_MessageReplaced()
-        {
-            var inboundMessage = new InboundMessage
-            {
-                Message = 1,
-            };
+//using FluentAssertions;
+//using Silverback.Messaging.Messages;
+//using Silverback.Tests.Integration.TestTypes;
+//using Xunit;
 
-            var newInboundMessage = InboundMessageHelper.CreateNewInboundMessage(2, inboundMessage);
+//namespace Silverback.Tests.Integration.Messaging.Messages
+//{
+//    public class InboundMessageHelperTests
+//    {
+//        [Fact]
+//        public void Create_InboundMessage_MessageReplaced()
+//        {
+//            var inboundMessage = new InboundMessage
+//            {
+//                Message = 1,
+//            };
 
-            newInboundMessage.Message.Should().Be(2);
-        }
+//            var newInboundMessage = InboundMessageHelper.CreateNewInboundMessage(2, inboundMessage);
 
-        [Fact]
-        public void Create_InboundMessage_ValuesPreserved()
-        {
-            var inboundMessage = new InboundMessage
-            {
-                Message = 1,
-                Endpoint = TestEndpoint.Default,
-                FailedAttempts = 3,
-                Offset = new TestOffset("a", "b"),
-                MustUnwrap = true
-            };
-            inboundMessage.Headers.Add("h1", "h1");
-            inboundMessage.Headers.Add("h2", "h2");
+//            newInboundMessage.Message.Should().Be(2);
+//        }
 
-            var newInboundMessage = InboundMessageHelper.CreateNewInboundMessage(2, inboundMessage);
+//        [Fact]
+//        public void Create_InboundMessage_ValuesPreserved()
+//        {
+//            var inboundMessage = new InboundMessage
+//            {
+//                Message = 1,
+//                Endpoint = TestEndpoint.Default,
+//                FailedAttempts = 3,
+//                Offset = new TestOffset("a", "b"),
+//                MustUnwrap = true
+//            };
+//            inboundMessage.Headers.Add("h1", "h1");
+//            inboundMessage.Headers.Add("h2", "h2");
 
-            newInboundMessage.Endpoint.Should().BeEquivalentTo(inboundMessage.Endpoint);
-            newInboundMessage.FailedAttempts.Should().Be(inboundMessage.FailedAttempts);
-            newInboundMessage.Offset.Should().BeEquivalentTo(inboundMessage.Offset);
-            newInboundMessage.MustUnwrap.Should().Be(inboundMessage.MustUnwrap);
-            newInboundMessage.Headers.Should().BeEquivalentTo(inboundMessage.Headers);
-        }
-    }
-}
+//            var newInboundMessage = InboundMessageHelper.CreateNewInboundMessage(2, inboundMessage);
+
+//            newInboundMessage.Endpoint.Should().BeEquivalentTo(inboundMessage.Endpoint);
+//            newInboundMessage.FailedAttempts.Should().Be(inboundMessage.FailedAttempts);
+//            newInboundMessage.Offset.Should().BeEquivalentTo(inboundMessage.Offset);
+//            newInboundMessage.MustUnwrap.Should().Be(inboundMessage.MustUnwrap);
+//            newInboundMessage.Headers.Should().BeEquivalentTo(inboundMessage.Headers);
+//        }
+//    }
+//}

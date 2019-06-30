@@ -12,7 +12,7 @@ namespace Silverback.Messaging.LargeMessages
     {
         public static IEnumerable<OutboundMessage> ChunkIfNeeded(OutboundMessage message)
         {
-            var messageId = message.Headers.GetValue<string>(MessageHeader.MessageIdKey);
+            var messageId = message.Headers.GetValue(MessageHeader.MessageIdKey);
             var settings = (message.Endpoint as IProducerEndpoint)?.Chunk;
 
             var chunkSize = settings?.Size ?? int.MaxValue;

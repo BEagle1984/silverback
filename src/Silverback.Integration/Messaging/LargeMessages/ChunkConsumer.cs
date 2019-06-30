@@ -46,7 +46,7 @@ namespace Silverback.Messaging.LargeMessages
 
         private (string messageId, int chinkId, int chunksCount) ExtractHeadersValues(IInboundMessage message)
         {
-            var messageId = message.Headers.GetValue<string>(MessageHeader.MessageIdKey);
+            var messageId = message.Headers.GetValue(MessageHeader.MessageIdKey);
 
             var chunkId = message.Headers.GetValue<int>(MessageHeader.ChunkIdKey);
 
@@ -55,13 +55,13 @@ namespace Silverback.Messaging.LargeMessages
             if (string.IsNullOrEmpty(messageId))
                 throw new InvalidOperationException("Message id header not found or invalid.");
 
-            if (chunkId <= 0)
+            if (chunkId == null)
                 throw new InvalidOperationException("Chunk id header not found or invalid.");
 
-            if (chunksCount <= 0)
+            if (chunksCount == null)
                 throw new InvalidOperationException("Chunks count header not found or invalid.");
 
-            return (messageId, chunkId, chunksCount);
+            return (messageId, chunkId.Value, chunksCount.Value);
         }
 
         public void Commit() => _store.Commit();

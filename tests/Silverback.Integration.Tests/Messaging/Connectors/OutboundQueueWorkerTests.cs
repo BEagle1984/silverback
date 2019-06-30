@@ -24,11 +24,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         private readonly TestBroker _broker;
         private readonly OutboundQueueWorker _worker;
 
-        private readonly IOutboundMessage _sampleOutboundMessage = new OutboundMessage<TestEventOne>
-        {
-            Message = new TestEventOne {Content = "Test"},
-            Endpoint = TestEndpoint.Default
-        };
+        private readonly IOutboundMessage _sampleOutboundMessage = new OutboundMessage<TestEventOne>(
+            new TestEventOne {Content = "Test"}, null, TestEndpoint.Default);
 
         public OutboundQueueWorkerTests()
         {
@@ -59,16 +56,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_SomeMessages_Produced()
         {
-            await _queue.Enqueue(new OutboundMessage<TestEventOne>
-            {
-                Message = new TestEventOne { Content = "Test" },
-                Endpoint = new TestEndpoint("topic1")
-            });
-            await _queue.Enqueue(new OutboundMessage<TestEventOne>
-            {
-                Message = new TestEventOne { Content = "Test" },
-                Endpoint = new TestEndpoint("topic2")
-            });
+            await _queue.Enqueue(new OutboundMessage<TestEventOne>(
+                new TestEventOne { Content = "Test" }, null,
+                new TestEndpoint("topic1")));
+            await _queue.Enqueue(new OutboundMessage<TestEventOne>(
+                new TestEventOne { Content = "Test" }, null,
+                new TestEndpoint("topic2")));
             await _queue.Commit();
 
             await _worker.ProcessQueue(CancellationToken.None);

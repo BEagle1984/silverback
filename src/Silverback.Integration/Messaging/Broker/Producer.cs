@@ -37,16 +37,15 @@ namespace Silverback.Messaging.Broker
             GetOutboundMessages(message, headers)
                 .ForEachAsync(async x =>
                 {
-                    var offset = await ProduceAsync(x.Content, x.RawContent, x.Headers);
+                    x.Offset = await ProduceAsync(x.Content, x.RawContent, x.Headers);
                     Trace(x);
                 });
 
         private IEnumerable<OutboundMessage> GetOutboundMessages(object message, IEnumerable<MessageHeader> headers)
         {
-            // TODO: Add chunk id and count headers
-            _messageKeyProvider.EnsureKeyIsInitialized(message);
-
             var outboundMessage = new OutboundMessage(message, headers, Endpoint);
+
+            _messageKeyProvider.EnsureKeyIsInitialized(outboundMessage);
 
             outboundMessage.RawContent = Endpoint.Serializer
                 .Serialize(outboundMessage.Content, outboundMessage.Headers);

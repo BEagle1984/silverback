@@ -45,8 +45,13 @@ namespace Silverback.Messaging.Messages
 
     internal class OutboundMessage<TContent> : OutboundMessage, IOutboundMessage<TContent>
     {
-        public OutboundMessage(object content, IEnumerable<MessageHeader> headers, IOutboundRoute route)
+        public OutboundMessage(TContent content, IEnumerable<MessageHeader> headers, IOutboundRoute route)
             : base(content, headers, route)
+        {
+        }
+
+        public OutboundMessage(TContent content, IEnumerable<MessageHeader> headers, IEndpoint endpoint)
+            : base(content, headers, endpoint)
         {
         }
 

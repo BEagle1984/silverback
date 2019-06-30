@@ -43,7 +43,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         private int GetAttemptNumber(IEnumerable<IInboundMessage> messages)
         {
-            var minAttempts = messages.Min(m => m.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey));
+            var minAttempts = messages.Min(m => m.Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey));
 
             // Uniform failed attempts, just in case (mostly for consistent logging)
             UpdateFailedAttemptsHeader(messages, minAttempts);

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
@@ -33,16 +34,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task OnMessageReceived_SingleMessage_Queued()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>()
-            {
-                Content = new TestEventOne {Content = "Test"},
-                Headers =
+            var outboundMessage = new OutboundMessage<TestEventOne>(
+                new TestEventOne { Content = "Test" },
+                new[]
                 {
-                    { "header1", "value1"},
-                    { "header2", "value2"}
+                    new MessageHeader("header1", "value1"),
+                    new MessageHeader("header2", "value2")
                 },
-                Endpoint = TestEndpoint.Default
-            };
+                TestEndpoint.Default);
 
             await _connector.RelayMessage(outboundMessage);
             await _queue.Commit();
@@ -51,18 +50,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var queued = (await _queue.Dequeue(1)).First();
             queued.Message.Endpoint.Should().Be(outboundMessage.Endpoint);
             queued.Message.Headers.Count.Should().Be(2);
-            ((IIntegrationMessage)queued.Message.Message).Id.Should().Be(outboundMessage.Message.Id);
+            ((IIntegrationMessage)queued.Message.Content).Id.Should().Be(outboundMessage.Content.Id);
         }
 
         [Fact]
         public async Task CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>()
-            {
-                Message = new TestEventOne(),
-                Endpoint = TestEndpoint.Default
-            };
-
+            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne(), null, TestEndpoint.Default);
+ 
             await _connector.RelayMessage(outboundMessage);
             await _transactionManager.OnTransactionCompleted(new TransactionCompletedEvent());
             await _connector.RelayMessage(outboundMessage);

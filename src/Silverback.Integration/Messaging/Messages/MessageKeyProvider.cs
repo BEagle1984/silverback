@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,7 +32,11 @@ namespace Silverback.Messaging.Messages
             return provider.GetKey(message);
         }
 
-        public void EnsureKeyIsInitialized(object message) =>
-            _providers.FirstOrDefault(p => p.CanHandle(message))?.EnsureKeyIsInitialized(message);
+        public void EnsureKeyIsInitialized(IOutboundMessage message)
+        {
+            var key = _providers.FirstOrDefault(p => p.CanHandle(message.Content))?.EnsureKeyIsInitialized(message.Content);
+
+            message.Headers.AddOrReplace(MessageHeader.MessageIdKey, key ?? Guid.NewGuid().ToString().ToLower());
+        }
     }
 }

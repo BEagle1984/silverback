@@ -244,34 +244,36 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var buffer = Convert.FromBase64String(
-                "eyIkdHlwZSI6IlNpbHZlcmJhY2suVGVzdHMuSW50ZWdyYXRpb24uVGVzdFR5cGVzLkRvbWFpbi5UZXN0" +
-                "RXZlbnRPbmUsIFNpbHZlcmJhY2suSW50ZWdyYXRpb24uVGVzdHMiLCJDb250ZW50IjoiQSBmdWxsIG1l" +
-                "c3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
+                "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
             var consumer = _broker.Consumers.First();
             consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "1"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "2"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "3"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "4"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
@@ -285,34 +287,36 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var buffer = Convert.FromBase64String(
-                "eyIkdHlwZSI6IlNpbHZlcmJhY2suVGVzdHMuSW50ZWdyYXRpb24uVGVzdFR5cGVzLkRvbWFpbi5UZXN0" +
-                "RXZlbnRPbmUsIFNpbHZlcmJhY2suSW50ZWdyYXRpb24uVGVzdHMiLCJDb250ZW50IjoiQSBmdWxsIG1l" +
-                "c3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
+                "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
             var consumer = _broker.Consumers.First();
             consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "1"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "4"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "3"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "2"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
@@ -326,46 +330,50 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var buffer = Convert.FromBase64String(
-                "eyIkdHlwZSI6IlNpbHZlcmJhY2suVGVzdHMuSW50ZWdyYXRpb24uVGVzdFR5cGVzLkRvbWFpbi5UZXN0" +
-                "RXZlbnRPbmUsIFNpbHZlcmJhY2suSW50ZWdyYXRpb24uVGVzdHMiLCJDb250ZW50IjoiQSBmdWxsIG1l" +
-                "c3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
+                "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
             var consumer = _broker.Consumers.First();
             consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "1"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "4"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "3"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "4"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "3"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "2"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
@@ -558,34 +566,36 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var buffer = Convert.FromBase64String(
-                "eyIkdHlwZSI6IlNpbHZlcmJhY2suVGVzdHMuSW50ZWdyYXRpb24uVGVzdFR5cGVzLkRvbWFpbi5UZXN0" +
-                "RXZlbnRPbmUsIFNpbHZlcmJhY2suSW50ZWdyYXRpb24uVGVzdHMiLCJDb250ZW50IjoiQSBmdWxsIG1l" +
-                "c3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
+                "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
             var consumer = _broker.Consumers.First();
             consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "1"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "2"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "3"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
             consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
                 new MessageHeader(MessageHeader.MessageIdKey, "123"),
                 new MessageHeader(MessageHeader.ChunkIdKey, "4"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4")
+                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
+                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
             });
 
             testSerializer.FailCount.Should().Be(3);
@@ -678,8 +688,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
 
             testSerializer.FailCount.Should().Be(3);
-            _testSubscriber.ReceivedMessages.OfType<BatchAbortedEvent>().Count().Should().Be(0);
-            _testSubscriber.ReceivedMessages.OfType<BatchCompleteEvent>().Count().Should().Be(1);
+            _testSubscriber.ReceivedMessages.OfType<BatchCompleteEvent>().Count().Should().Be(4);
+            _testSubscriber.ReceivedMessages.OfType<BatchAbortedEvent>().Count().Should().Be(3);
             _testSubscriber.ReceivedMessages.OfType<BatchProcessedEvent>().Count().Should().Be(1);
             _testSubscriber.ReceivedMessages.OfType<TestEventOne>().Count().Should().Be(2);
         }

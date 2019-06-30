@@ -19,6 +19,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
     {
         private readonly ErrorPolicyBuilder _errorPolicyBuilder;
 
+        // TODO: Test with multiple messages (batch)
+
         public ErrorPolicyChainTests()
         {
             var services = new ServiceCollection();
@@ -43,7 +45,13 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(3),
                 testPolicy);
 
-            chain.HandleError(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
+            chain.HandleError(new[]
+            {
+                new InboundMessage(
+                    new byte[1],
+                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
+                    null, TestEndpoint.Default, true)
+            }, new Exception("test"));
 
             testPolicy.Applied.Should().Be(failedAttempts > 3);
         }
@@ -59,7 +67,13 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(2),
                 _errorPolicyBuilder.Skip());
 
-            var action = chain.HandleError(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
+            var action = chain.HandleError(new[]
+            {
+                new InboundMessage(
+                    new byte[1],
+                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
+                    null, TestEndpoint.Default, true)
+            }, new Exception("test"));
 
             action.Should().Be(expectedAction);
         }
@@ -81,7 +95,13 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var chain = _errorPolicyBuilder.Chain(policies);
 
-            chain.HandleError(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
+            chain.HandleError(new[]
+            {
+                new InboundMessage(
+                    new byte[1],
+                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
+                    null, TestEndpoint.Default, true)
+            }, new Exception("test"));
 
             for (int i = 0; i < policies.Length; i++)
             {

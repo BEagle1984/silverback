@@ -45,9 +45,17 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         public void HandleError_InboundMessage_MessageMoved()
         {
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default);
+            var message = new InboundMessage(
+                new byte[1],
+                null,
+                null, TestEndpoint.Default, true);
 
-            policy.HandleError(new InboundMessage { Message = new TestEventOne() }, new Exception("test"));
+            message.Content = "hey oh!";
 
+            policy.HandleError(new[]
+            {
+                message
+            }, new Exception("test"));
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
 
             producer.ProducedMessages.Count.Should().Be(1);
@@ -58,16 +66,20 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default);
 
-            var message = new InboundMessage { Message = new TestEventOne { Content = "hey oh!" } };
+            var content = new TestEventOne { Content = "hey oh!" };
+            var headers = new MessageHeaderCollection();
+            var rawContent = TestEndpoint.Default.Serializer.Serialize(content, headers);
+            var message = new InboundMessage(rawContent, headers, null, TestEndpoint.Default, true);
+            message.Content = content;
             message.Headers.Add("key1", "value1");
             message.Headers.Add("key2", "value2");
-            policy.HandleError(message, new Exception("test"));
+            policy.HandleError(new[]{message}, new Exception("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
 
             var producedMessage = producer.ProducedMessages.Last();
-            var deserializedMessage = producedMessage.Endpoint.Serializer.Deserialize(producedMessage.Message);
-            deserializedMessage.Should().BeEquivalentTo(message.Message);
+            var deserializedMessage = producedMessage.Endpoint.Serializer.Deserialize(producedMessage.Message, producedMessage.Headers);
+            deserializedMessage.Should().BeEquivalentTo(message.Content);
         }
 
         [Fact]
@@ -75,10 +87,15 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default);
 
-            var message = new InboundMessage { Message = Encoding.UTF8.GetBytes("hey oh!") };
+            var message = new InboundMessage(
+                Encoding.UTF8.GetBytes("hey oh!"),
+                null,
+                null, TestEndpoint.Default, true);
+            message.Content = "hey oh!";
             message.Headers.Add("key1", "value1");
             message.Headers.Add("key2", "value2");
-            policy.HandleError(message, new Exception("test"));
+
+            policy.HandleError(new[] { message }, new Exception("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
             var producedMessage = producer.ProducedMessages.Last();
@@ -91,14 +108,18 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default);
 
-            var message = new InboundMessage { Message = new TestEventOne() };
+            var message = new InboundMessage(
+                Encoding.UTF8.GetBytes("hey oh!"),
+                null,
+                null, TestEndpoint.Default, true);
+            message.Content = "hey oh!";
             message.Headers.Add("key1", "value1");
             message.Headers.Add("key2", "value2");
-            policy.HandleError(message, new Exception("test"));
+            policy.HandleError(new[] { message }, new Exception("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
 
-            producer.ProducedMessages.Last().Headers.Should().BeEquivalentTo(message.Headers);
+            producer.ProducedMessages.Last().Headers.Should().Contain(message.Headers);
         }
 
         [Fact]
@@ -107,10 +128,16 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var policy = _errorPolicyBuilder.Move(TestEndpoint.Default)
                 .Transform((msg, ex) => new TestEventTwo());
 
-            policy.HandleError(new InboundMessage { Message = new TestEventOne() }, new Exception("test"));
+            policy.HandleError(new[]
+            {
+                new InboundMessage(
+                    Encoding.UTF8.GetBytes("hey oh!"),
+                    new[] { new MessageHeader(MessageHeader.MessageTypeKey, typeof(System.String).AssemblyQualifiedName) },
+                    null, TestEndpoint.Default, true)
+            }, new Exception("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
-            var producedMessage = producer.Endpoint.Serializer.Deserialize(producer.ProducedMessages[0].Message);
+            var producedMessage = producer.Endpoint.Serializer.Deserialize(producer.ProducedMessages[0].Message, producer.ProducedMessages[0].Headers);
             producedMessage.Should().BeOfType<TestEventTwo>();
         }
 
@@ -124,13 +151,16 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     return headers;
                 });
 
-            var message = new InboundMessage { Message = new TestEventOne() };
+            var message = new InboundMessage(
+                Encoding.UTF8.GetBytes("hey oh!"),
+                null,
+                null, TestEndpoint.Default, true);
             message.Headers.Add("key", "value");
-            policy.HandleError(message, new Exception("test"));
+            policy.HandleError(new[] { message }, new Exception("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestEndpoint.Default);
             var newHeaders = producer.ProducedMessages[0].Headers;
-            newHeaders.Count().Should().Be(2);
+            newHeaders.Count().Should().Be(4); // message-id, message-type, key, error
         }
     }
 }

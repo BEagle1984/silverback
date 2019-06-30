@@ -49,7 +49,13 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var policy = _errorPolicyBuilder.Retry().MaxFailedAttempts(3);
 
-            var canHandle = policy.CanHandle(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
+            var canHandle = policy.CanHandle(new[]
+            {
+                new InboundMessage(
+                    new byte[1],
+                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
+                    null, TestEndpoint.Default, true)
+            }, new Exception("test"));
 
             canHandle.Should().Be(expectedResult);
         }

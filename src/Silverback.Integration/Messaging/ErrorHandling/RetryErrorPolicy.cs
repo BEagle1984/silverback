@@ -42,7 +42,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         private void ApplyDelay(IEnumerable<IInboundMessage> messages)
         {
-            var delay = _initialDelay.Milliseconds + messages.First().Headers.GetValue<int>(MessageHeader.FailedAttemptsKey) * _delayIncrement.Milliseconds;
+            var delay = _initialDelay.Milliseconds + messages.First().Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey) * _delayIncrement.Milliseconds;
 
             if (delay <= 0)
                 return;

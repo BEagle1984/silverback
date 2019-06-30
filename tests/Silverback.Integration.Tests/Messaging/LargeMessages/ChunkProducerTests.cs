@@ -5,7 +5,9 @@ using System;
 using System.Linq;
 using FluentAssertions;
 using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
 
@@ -23,15 +25,21 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 MessageId = Guid.NewGuid(),
                 Content = GetByteArray(100)
             };
-            var serializedMessage = _serializer.Serialize(message);
-
-            var chunks = ChunkProducer.ChunkIfNeeded(message.MessageId.ToString(), message, new ChunkSettings
+            var headers = new MessageHeaderCollection();
+            var serializedMessage = _serializer.Serialize(message, headers);
+            var outboundMessage = new OutboundMessage(message, headers, new TestProducerEndpoint("test")
             {
-                Size = 500
-            }, _serializer);
+                Chunk = new ChunkSettings
+                {
+                    Size = 500
+                }
+            });
+            outboundMessage.RawContent = serializedMessage;
+
+            var chunks = ChunkProducer.ChunkIfNeeded(outboundMessage);
 
             chunks.Should().HaveCount(1);
-            chunks.First().Should().BeEquivalentTo((message, serializedMessage));
+            chunks.First().Should().BeEquivalentTo(outboundMessage);
         }
 
         [Fact]
@@ -42,16 +50,25 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 MessageId = Guid.NewGuid(),
                 Content = GetByteArray(1400)
             };
-            var serializedMessage = _serializer.Serialize(message);
-
-            var chunks = ChunkProducer.ChunkIfNeeded(message.MessageId.ToString(), message, new ChunkSettings
+            var headers = new MessageHeaderCollection
             {
-                Size = 500
-            }, _serializer);
+                { MessageHeader.MessageIdKey, "1234" }
+            };
 
-            chunks.Should().HaveCount(5);
-            chunks.Should().Match(c => c.All(t => t.Item1 is MessageChunk));
-            chunks.Should().Match(c => c.All(t => t.Item2.Length < 1000));
+            var serializedMessage = _serializer.Serialize(message, headers);
+            var outboundMessage = new OutboundMessage(message, headers, new TestProducerEndpoint("test")
+            {
+                Chunk = new ChunkSettings
+                {
+                    Size = 500
+                }
+            });
+            outboundMessage.RawContent = serializedMessage;
+
+            var chunks = ChunkProducer.ChunkIfNeeded(outboundMessage);
+
+            chunks.Should().HaveCount(4);
+            chunks.Should().Match(c => c.All(m => m.RawContent.Length < 1000));
         }
 
         private byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte) 255).ToArray();

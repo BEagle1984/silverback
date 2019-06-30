@@ -131,7 +131,7 @@ namespace Silverback.Messaging.ErrorHandling
                 return false;
             }
 
-            var failedAttempts = message.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey);
+            var failedAttempts = message.Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey);
             if (MaxFailedAttemptsSetting >= 0 && failedAttempts > MaxFailedAttemptsSetting)
             {
                 _messageLogger.LogTrace(_logger, $"The policy '{GetType().Name}' will be skipped because the current failed attempts " +

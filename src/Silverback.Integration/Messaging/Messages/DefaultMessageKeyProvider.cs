@@ -8,35 +8,47 @@ namespace Silverback.Messaging.Messages
 {
     public class DefaultPropertiesMessageKeyProvider : IMessageKeyProvider
     {
-        public bool CanHandle(object message) => GetIdProperty(message) != null;
+        public bool CanHandle(object message)
+        {
+            var idProperty =  GetIdProperty(message);
+
+            return idProperty != null &&
+                   (idProperty.PropertyType == typeof(Guid) || idProperty.PropertyType == typeof(string));
+        }
 
         public string GetKey(object message) => GetIdProperty(message)?.GetValue(message).ToString();
 
-        public void EnsureKeyIsInitialized(object message)
+        public string EnsureKeyIsInitialized(object message)
         {
             var prop = GetIdProperty(message);
 
             if (!prop.CanRead || !prop.CanWrite)
-                return;
+                throw new InvalidOperationException("The id property must be a read/write property.");
 
             if (prop.PropertyType == typeof(Guid))
             {
                 var current = prop.GetValue(message);
 
                 if (current != null && (Guid)current != Guid.Empty)
-                    return;
+                    return current.ToString().ToLower();
 
-                prop.SetValue(message, Guid.NewGuid());
+                var newValue = Guid.NewGuid();
+                prop.SetValue(message, newValue);
+                return newValue.ToString();
             }
             else if (prop.PropertyType == typeof(string))
             {
-                var current = prop.GetValue(message);
+                var current = (string) prop.GetValue(message);
 
-                if (!string.IsNullOrWhiteSpace((string)current))
-                    return;
+                if (!string.IsNullOrWhiteSpace(current))
+                    return current;
 
-                prop.SetValue(message, Guid.NewGuid().ToString().ToLower());
+                var newValue = Guid.NewGuid().ToString().ToLower();
+                prop.SetValue(message, newValue);
+                return newValue;
             }
+
+            throw new InvalidOperationException("Unhandled key type.");
         }
 
         private PropertyInfo GetIdProperty(object message) =>

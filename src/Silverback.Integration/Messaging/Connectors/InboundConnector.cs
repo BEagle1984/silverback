@@ -81,8 +81,11 @@ namespace Silverback.Messaging.Connectors
 
         private static IInboundMessage DeserializeRawMessage(IInboundMessage message)
         {
-            var deserialized = message.Endpoint.Serializer.Deserialize(message.RawContent, message.Headers);
+            var deserialized =
+                message.Content ?? (((InboundMessage) message).Content =
+                    message.Endpoint.Serializer.Deserialize(message.RawContent, message.Headers));
 
+            // Create typed message for easier specific subscription
             var typedInboundMessage = (InboundMessage) Activator.CreateInstance(
                 typeof(InboundMessage<>).MakeGenericType(deserialized.GetType()),
                 message);

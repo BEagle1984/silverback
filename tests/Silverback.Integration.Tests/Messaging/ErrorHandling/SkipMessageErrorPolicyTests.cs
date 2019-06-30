@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
 
@@ -25,7 +26,13 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(333, ErrorAction.Skip)]
         public void SkipTest(int failedAttempts, ErrorAction expectedAction)
         {
-            var action = _policy.HandleError(new InboundMessage { Message = new TestEventOne(), FailedAttempts = failedAttempts }, new Exception("test"));
+            var action = _policy.HandleError(new[]
+            {
+                new InboundMessage(
+                    new byte[1],
+                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
+                    null, TestEndpoint.Default, true)
+            }, new Exception("test"));
 
             action.Should().Be(expectedAction);
         }

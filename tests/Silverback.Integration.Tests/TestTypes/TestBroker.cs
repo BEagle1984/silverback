@@ -43,12 +43,15 @@ namespace Silverback.Tests.Integration.TestTypes
             public ProducedMessage(byte[] message, IEnumerable<MessageHeader> headers, IEndpoint endpoint)
             {
                 Message = message;
-                Headers = headers;
+
+                if (headers != null)
+                    Headers.AddRange(headers);
+
                 Endpoint = endpoint;
             }
 
             public byte[] Message { get; }
-            public IEnumerable<MessageHeader> Headers { get; }
+            public MessageHeaderCollection Headers { get; } = new MessageHeaderCollection();
             public IEndpoint Endpoint { get; }
         }
     }

@@ -16,12 +16,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
     public class InMemoryOutboundQueueTests
     {
         private readonly InMemoryOutboundQueue _queue;
-        private readonly IOutboundMessage _sampleOutboundMessage = new OutboundMessage<TestEventOne>
-        {
-            Message = new TestEventOne { Content = "Test" },
-            Endpoint = TestEndpoint.Default
-        };
 
+        private readonly IOutboundMessage _sampleOutboundMessage = new OutboundMessage<TestEventOne>(
+            new TestEventOne { Content = "Test" }, null, TestEndpoint.Default);
 
         public InMemoryOutboundQueueTests()
         {

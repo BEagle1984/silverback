@@ -3,6 +3,7 @@
 
 using System.Text;
 using FluentAssertions;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -11,16 +12,19 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 {
     public class JsonMessageSerializerTests
     {
+        // TODO: Properly test added headers!
+
         [Fact]
         public void SerializeDeserialize_Message_CorrectlyDeserialized()
         {
             var message = new TestEventOne {Content = "the message"};
+            var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer();
+            
+            var serialized = serializer.Serialize(message, headers);
 
-            var serialized = serializer.Serialize(message);
-
-            var message2 = serializer.Deserialize(serialized) as TestEventOne;
+            var message2 = serializer.Deserialize(serialized, headers) as TestEventOne;
 
             message2.Should().NotBeNull();
             message2.Content.Should().Be(message.Content);
@@ -33,11 +37,11 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var serialized = serializer.Serialize(message);
+            var serialized = serializer.Serialize(message, new MessageHeaderCollection());
 
             Encoding.UTF8.GetString(serialized).Should().NotContain("TestEventOne");
 
-            var message2 = serializer.Deserialize(serialized) as TestEventOne;
+            var message2 = serializer.Deserialize(serialized, new MessageHeaderCollection()) as TestEventOne;
             
             message2.Should().NotBeNull();
             message2.Content.Should().Be(message.Content);
@@ -50,7 +54,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serializer = new JsonMessageSerializer();
 
-            var serialized = serializer.Serialize(messageBytes);
+            var serialized = serializer.Serialize(messageBytes, new MessageHeaderCollection());
 
             serialized.Should().BeSameAs(messageBytes);
         }

@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Serialization
             var type = message.GetType();
             var json = JsonConvert.SerializeObject(message, type, Settings);
 
-            messageHeaders.Add(MessageHeader.MessageTypeKey, type.AssemblyQualifiedName);
+            messageHeaders.AddOrReplace(MessageHeader.MessageTypeKey, type.AssemblyQualifiedName);
 
             return GetEncoding().GetBytes(json);
         }
@@ -69,7 +69,7 @@ namespace Silverback.Messaging.Serialization
             if (message == null) throw new ArgumentNullException(nameof(message));
             if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
 
-            var typeName = messageHeaders.GetValue<string>(MessageHeader.MessageTypeKey) ?? throw new SilverbackException($"Message type header not found ('{MessageHeader.MessageTypeKey}').");
+            var typeName = messageHeaders.GetValue(MessageHeader.MessageTypeKey) ?? throw new SilverbackException($"Message type header not found ('{MessageHeader.MessageTypeKey}').");
             var type = Type.GetType(typeName);
             var json = GetEncoding().GetString(message);
 
