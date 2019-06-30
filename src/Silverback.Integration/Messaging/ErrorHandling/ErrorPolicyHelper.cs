@@ -24,11 +24,11 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         public void TryProcess(
-            IEnumerable<IRawInboundMessage> messages, 
+            IEnumerable<IInboundMessage> messages, 
             IErrorPolicy errorPolicy,
-            Action<IEnumerable<IRawInboundMessage>> messagesHandler)
+            Action<IEnumerable<IInboundMessage>> messagesHandler)
         {
-            var attempt = messages.Min(m => m.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey)) + 1;
+            var attempt = GetAttemptNumber(messages);
 
             while (true)
             {
@@ -41,9 +41,19 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
+        private int GetAttemptNumber(IEnumerable<IInboundMessage> messages)
+        {
+            var minAttempts = messages.Min(m => m.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey));
+
+            // Uniform failed attempts, just in case (mostly for consistent logging)
+            UpdateFailedAttemptsHeader(messages, minAttempts);
+
+            return minAttempts + 1;
+        }
+
         private MessageHandlerResult HandleMessages(
-            IEnumerable<IRawInboundMessage> messages,
-            Action<IEnumerable<IRawInboundMessage>> messagesHandler, 
+            IEnumerable<IInboundMessage> messages,
+            Action<IEnumerable<IInboundMessage>> messagesHandler, 
             IErrorPolicy errorPolicy, int attempt)
         {
             try
@@ -63,7 +73,7 @@ namespace Silverback.Messaging.ErrorHandling
 
                 UpdateFailedAttemptsHeader(messages, attempt);
 
-                if (messages.Any(m => !errorPolicy.CanHandle(m, ex)))
+                if (!errorPolicy.CanHandle(messages, ex))
                     throw;
 
                 var action = errorPolicy.HandleError(messages, ex);
@@ -75,7 +85,7 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private void UpdateFailedAttemptsHeader(IEnumerable<IInboundMessage> messages, int attempt) => 
-            messages.ForEach(msg => msg.Headers.AddOrReplace(MessageHeader.FailedAttemptsKey, attempt));
+        private void UpdateFailedAttemptsHeader(IEnumerable<IBrokerMessage> messages, int attempt) => 
+            messages?.ForEach(msg => msg.Headers.AddOrReplace(MessageHeader.FailedAttemptsKey, attempt));
     }
 }

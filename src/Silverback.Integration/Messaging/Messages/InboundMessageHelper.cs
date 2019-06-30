@@ -1,26 +1,25 @@
-﻿// Copyright (c) 2018-2019 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
+﻿// TODO: DELETE
 
-using System;
+//// Copyright (c) 2018-2019 Sergio Aquilini
+//// This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Messaging.Messages
-{
-    internal static class InboundMessageHelper
-    {
-        public static IInboundMessage CreateInboundMessage(object deserializedMessage, IRawInboundMessage rawInboundMessage) => 
-            CreateInboundMessage<object>(deserializedMessage, rawInboundMessage);
+//using System;
 
-        public static IInboundMessage<TMessage> CreateInboundMessage<TMessage>(TMessage deserializedMessage, IRawInboundMessage rawInboundMessage)
-        {
-            var newMessage = (InboundMessage) Activator.CreateInstance(
-                    typeof(InboundMessage<>).MakeGenericType(deserializedMessage.GetType()),
-                    deserializedMessage,
-                    rawInboundMessage);
+//namespace Silverback.Messaging.Messages
+//{
+//    internal static class InboundMessageHelper
+//    {
+//        public static IInboundMessage CreateInboundMessage(object deserializedMessage, IInboundMessage rawInboundMessage) => 
+//            CreateInboundMessage<object>(deserializedMessage, rawInboundMessage);
 
-            if (rawInboundMessage.Headers != null)
-                newMessage.Headers.AddRange(rawInboundMessage.Headers);
+//        public static IInboundMessage<TMessage> CreateInboundMessage<TMessage>(IInboundMessage rawInboundMessage)
+//        {
 
-            return (IInboundMessage<TMessage>) newMessage;
-        }
-    }
-}
+
+//            if (rawInboundMessage.Headers != null)
+//                newMessage.Headers.AddRange(rawInboundMessage.Headers);
+
+//            return (IInboundMessage<TMessage>) newMessage;
+//        }
+//    }
+//}

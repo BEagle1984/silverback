@@ -1,21 +1,24 @@
-﻿// Copyright (c) 2018-2019 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
+﻿// TODO: Delete
 
-using System;
-using Silverback.Messaging.Serialization;
+//// Copyright (c) 2018-2019 Sergio Aquilini
+//// This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Tests.Integration.TestTypes
-{
-    public class FakeSerializer : IMessageSerializer
-    {
-        public byte[] Serialize(object message)
-        {
-            throw new NotImplementedException();
-        }
+//using System;
+//using Silverback.Messaging.Messages;
+//using Silverback.Messaging.Serialization;
 
-        public object Deserialize(byte[] message)
-        {
-            throw new NotImplementedException();
-        }
-    }
-}
+//namespace Silverback.Tests.Integration.TestTypes
+//{
+//    public class FakeSerializer : IMessageSerializer
+//    {
+//        public byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
+//        {
+//            throw new NotImplementedException();
+//        }
+//    }
+//}

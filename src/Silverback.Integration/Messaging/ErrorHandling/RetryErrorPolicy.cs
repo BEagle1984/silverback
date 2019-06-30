@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -30,23 +31,23 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        protected override ErrorAction ApplyPolicy(IEnumerable<IRawInboundMessage> message, Exception exception)
+        protected override ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception)
         {
-            ApplyDelay(message);
+            ApplyDelay(messages);
 
-            _messageLogger.LogInformation(_logger, "The message will be processed again.", message);
+            _messageLogger.LogInformation(_logger, "The message(s) will be processed again.", messages);
 
             return ErrorAction.Retry;
         }
 
-        private void ApplyDelay(IInboundMessage message)
+        private void ApplyDelay(IEnumerable<IInboundMessage> messages)
         {
-            var delay = _initialDelay.Milliseconds + message.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey) * _delayIncrement.Milliseconds;
+            var delay = _initialDelay.Milliseconds + messages.First().Headers.GetValue<int>(MessageHeader.FailedAttemptsKey) * _delayIncrement.Milliseconds;
 
             if (delay <= 0)
                 return;
 
-            _messageLogger.LogTrace(_logger, $"Waiting {delay} milliseconds before retrying the message.", message);
+            _messageLogger.LogTrace(_logger, $"Waiting {delay} milliseconds before retrying to process the message(s).", messages);
             Thread.Sleep(delay);
         }
     }

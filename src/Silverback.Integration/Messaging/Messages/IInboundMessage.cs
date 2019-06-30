@@ -5,13 +5,10 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
-    public interface IInboundMessage
-    {
-        /// <summary>
-        /// Gets the message.
-        /// </summary>
-        object Message { get; }
+    // TODO: Split file
 
+    public interface IBrokerMessage
+    {
         /// <summary>
         /// Gets the optional message headers.
         /// </summary>
@@ -28,6 +25,19 @@ namespace Silverback.Messaging.Messages
         IEndpoint Endpoint { get; }
 
         /// <summary>
+        /// Gets the deserialized message body.
+        /// </summary>
+        object Content { get; }
+
+        /// <summary>
+        /// Gets the serialized message body.
+        /// </summary>
+        byte[] RawContent { get; }
+    }
+
+    public interface IInboundMessage : IBrokerMessage
+    {
+        /// <summary>
         /// Gets a boolean value indicating whether the contained Message must be extracted and
         /// published to the internal bus. (This is true, unless specifically configured otherwise
         /// to handle some special cases.)
@@ -35,11 +45,11 @@ namespace Silverback.Messaging.Messages
         bool MustUnwrap { get; }
     }
 
-    public interface IInboundMessage<out TMessage> : IInboundMessage
+    public interface IInboundMessage<out TContent> : IInboundMessage
     {
         /// <summary>
-        /// Gets the deserialized message.
+        /// Gets the deserialized message body.
         /// </summary>
-        new TMessage Message { get; }
+        new TContent Content { get;  }
     }
 }

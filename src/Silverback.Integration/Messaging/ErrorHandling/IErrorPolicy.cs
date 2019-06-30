@@ -12,8 +12,8 @@ namespace Silverback.Messaging.ErrorHandling
     /// </summary>
     public interface IErrorPolicy
     {
-        bool CanHandle(IEnumerable<IRawInboundMessage> messages, Exception exception);
+        bool CanHandle(IEnumerable<IInboundMessage> messages, Exception exception);
 
-        ErrorAction HandleError(IEnumerable<IRawInboundMessage> messages, Exception exception);
+        ErrorAction HandleError(IEnumerable<IInboundMessage> messages, Exception exception);
     }
 }

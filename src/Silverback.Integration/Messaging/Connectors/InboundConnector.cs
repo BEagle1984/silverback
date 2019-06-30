@@ -40,11 +40,11 @@ namespace Silverback.Messaging.Connectors
                 _inboundConsumers.Add(new InboundConsumer(
                     _broker,
                     endpoint,
-                    settings, 
+                    settings,
                     HandleMessages,
                     Commit,
                     Rollback,
-                    errorPolicy, 
+                    errorPolicy,
                     _serviceProvider));
             }
 
@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        protected void HandleMessages(IEnumerable<IRawInboundMessage> messages, IServiceProvider serviceProvider)
+        protected void HandleMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
         {
             var deserializedMessages = messages
                 .Select(message => HandleChunkedMessage(message, serviceProvider))
@@ -67,7 +67,7 @@ namespace Silverback.Messaging.Connectors
             RelayMessages(deserializedMessages, serviceProvider);
         }
 
-        private IRawInboundMessage HandleChunkedMessage(IRawInboundMessage message, IServiceProvider serviceProvider)
+        private IInboundMessage HandleChunkedMessage(IInboundMessage message, IServiceProvider serviceProvider)
         {
             if (!message.Headers.Contains(MessageHeader.ChunkIdKey))
                 return message;
@@ -76,11 +76,21 @@ namespace Silverback.Messaging.Connectors
 
             return completeMessage == null 
                 ? null 
-                : new RawInboundMessage(completeMessage, message.Headers, message.Offset, message.Endpoint, message.MustUnwrap);
+                : new InboundMessage(completeMessage, message.Headers, message.Offset, message.Endpoint, message.MustUnwrap);
         }
 
-        private static IInboundMessage DeserializeRawMessage(IRawInboundMessage message) => 
-            InboundMessageHelper.CreateInboundMessage(message.Endpoint.Serializer.Deserialize(message.Message, message.Headers), message);
+        private static IInboundMessage DeserializeRawMessage(IInboundMessage message)
+        {
+            var deserialized = message.Endpoint.Serializer.Deserialize(message.RawContent, message.Headers);
+
+            var typedInboundMessage = (InboundMessage) Activator.CreateInstance(
+                typeof(InboundMessage<>).MakeGenericType(deserialized.GetType()),
+                message);
+
+            typedInboundMessage.Content = deserialized;
+
+            return typedInboundMessage;
+        }
 
         protected virtual void RelayMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider) => 
             serviceProvider.GetRequiredService<IPublisher>().Publish(messages);

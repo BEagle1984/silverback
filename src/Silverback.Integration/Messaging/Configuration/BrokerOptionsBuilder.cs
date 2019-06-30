@@ -36,8 +36,8 @@ namespace Silverback.Messaging.Configuration
             if (Services.All(s => s.ImplementationType != typeof(InboundMessageUnwrapper)))
                 Services.AddScoped<ISubscriber, InboundMessageUnwrapper>();
 
-            if (Services.All(s => s.ImplementationType != typeof(InboundMessageProcessor)))
-                Services.AddSingleton<InboundMessageProcessor>();
+            if (Services.All(s => s.ImplementationType != typeof(ErrorPolicyHelper)))
+                Services.AddSingleton<ErrorPolicyHelper>();
 
             return this;
         }

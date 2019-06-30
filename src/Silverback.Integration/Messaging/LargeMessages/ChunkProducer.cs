@@ -3,20 +3,23 @@
 
 using System;
 using System.Collections.Generic;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.LargeMessages
 {
-    public static class ChunkProducer
+    internal static class ChunkProducer
     {
-        public static IEnumerable<(object message, byte[] serializedMessage)> ChunkIfNeeded(string messageId, object message, ChunkSettings settings, IMessageSerializer serializer)
+        public static IEnumerable<OutboundMessage> ChunkIfNeeded(OutboundMessage message)
         {
-            var serializedMessage = serializer.Serialize(message);
+            var messageId = message.Headers.GetValue<string>(MessageHeader.MessageIdKey);
+            var settings = (message.Endpoint as IProducerEndpoint)?.Chunk;
+
             var chunkSize = settings?.Size ?? int.MaxValue;
 
-            if (chunkSize >= serializedMessage.Length)
+            if (chunkSize >= message.RawContent.Length)
             {
-                yield return (message, serializedMessage);
+                yield return message;
                 yield break;
             }
 
@@ -28,22 +31,20 @@ namespace Silverback.Messaging.LargeMessages
                     "use a custom IMessageKeyProvider.");
             }
 
-            var span = serializedMessage.AsMemory();
-            var chunksCount = (int)Math.Ceiling(serializedMessage.Length / (double)chunkSize);
+            var span = message.RawContent.AsMemory();
+            var chunksCount = (int)Math.Ceiling(message.RawContent.Length / (double)chunkSize);
             var offset = 0;
 
             for (var i = 0; i < chunksCount; i++)
             {
-                var messageChunk = new MessageChunk
-                {
-                    MessageId = Guid.NewGuid(),
-                    OriginalMessageId = messageId,
-                    ChunkId = i,
-                    ChunksCount = chunksCount,
-                    Content = span.Slice(offset, Math.Min(chunkSize, serializedMessage.Length - offset)).ToArray()
-                };
+                var messageChunk = new OutboundMessage(message.Content, message.Headers, message.Endpoint);
 
-                yield return (messageChunk, serializer.Serialize(messageChunk));
+                messageChunk.RawContent = span.Slice(offset, Math.Min(chunkSize, message.RawContent.Length - offset)).ToArray();
+
+                messageChunk.Headers.AddOrReplace(MessageHeader.ChunkIdKey, i);
+                messageChunk.Headers.AddOrReplace(MessageHeader.ChunksCountKey, chunksCount);
+
+                yield return messageChunk;
 
                 offset += chunkSize;
             }

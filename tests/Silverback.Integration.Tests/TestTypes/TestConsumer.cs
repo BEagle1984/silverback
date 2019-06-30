@@ -22,7 +22,23 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public int AcknowledgeCount { get; set; }
 
-        public void TestPush(object message, IEnumerable<MessageHeader> headers = null, IOffset offset = null, IMessageSerializer serializer = null)
+        public void TestPush(object message, IEnumerable<MessageHeader> headers = null, IOffset offset = null, IMessageSerializer serializer = null) => 
+            TestPush(message, new MessageHeaderCollection(headers), offset, serializer);
+
+        public void TestPush(byte[] rawMessage, IEnumerable<MessageHeader> headers = null, IOffset offset = null, IMessageSerializer serializer = null) =>
+            TestPush(rawMessage, new MessageHeaderCollection(headers), offset, serializer);
+
+        public void TestPush(object message, MessageHeaderCollection headers, IOffset offset = null, IMessageSerializer serializer = null)
+        {
+            if (serializer == null)
+                serializer = new JsonMessageSerializer();
+
+            var buffer = serializer.Serialize(message, headers);
+
+            TestPush(buffer, headers, offset, serializer);
+        }
+
+        public void TestPush(byte[] rawMessage, MessageHeaderCollection headers, IOffset offset = null, IMessageSerializer serializer = null)
         {
             if (!Broker.IsConnected)
                 throw new InvalidOperationException("The broker is not connected.");
@@ -33,9 +49,7 @@ namespace Silverback.Tests.Integration.TestTypes
             if (serializer == null)
                 serializer = new JsonMessageSerializer();
 
-            var buffer = serializer.Serialize(message);
-
-            HandleMessage(buffer, headers, offset);
+            HandleMessage(rawMessage, headers, offset);
         }
 
         public override void Acknowledge(IEnumerable<IOffset> offsets) =>

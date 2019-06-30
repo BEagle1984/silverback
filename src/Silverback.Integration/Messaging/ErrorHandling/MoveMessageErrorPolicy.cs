@@ -45,7 +45,7 @@ namespace Silverback.Messaging.ErrorHandling
             return this;
         }
 
-        protected override ErrorAction ApplyPolicy(IEnumerable<IRawInboundMessage> messages, Exception exception)
+        protected override ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception)
         {
             _messageLogger.LogInformation(_logger,
                 $"{messages.Count()} message(s) will be  be moved to endpoint '{_endpoint.Name}'.", messages);
@@ -55,10 +55,10 @@ namespace Silverback.Messaging.ErrorHandling
             return ErrorAction.Skip;
         }
 
-        private void PublishToNewEndpoint(IRawInboundMessage message, Exception exception)
+        private void PublishToNewEndpoint(IInboundMessage message, Exception exception)
         {
             _producer.Produce(
-                _transformationFunction?.Invoke(message.Message, exception) ?? message.Message,
+                _transformationFunction?.Invoke(message.Content, exception) ?? message.Content,
                 _headersTransformationFunction?.Invoke(message.Headers, exception) ?? message.Headers);
         }
     }

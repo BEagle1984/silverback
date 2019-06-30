@@ -36,7 +36,7 @@ namespace Silverback.Messaging.ErrorHandling
             if (_policies.Any(p => p == null)) throw new ArgumentNullException(nameof(policies), "One or more policies in the chain have a null value.");
         }
 
-        protected override ErrorAction ApplyPolicy(IEnumerable<IRawInboundMessage> messages, Exception exception)
+        protected override ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception)
         {
             foreach (var policy in _policies)
             {
@@ -44,7 +44,7 @@ namespace Silverback.Messaging.ErrorHandling
                     return policy.HandleError(messages, exception);
             }
 
-            _messageLogger.LogTrace(_logger, "All policies have been applied but the message still couldn't be successfully processed. The consumer will be stopped.", messages);
+            _messageLogger.LogTrace(_logger, "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.", messages);
             return ErrorAction.StopConsuming;
         }
 

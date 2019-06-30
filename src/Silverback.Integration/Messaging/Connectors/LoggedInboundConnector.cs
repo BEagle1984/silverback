@@ -26,10 +26,10 @@ namespace Silverback.Messaging.Connectors
         {
             var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
 
-            if (inboundLog.Exists(message.Message, message.Endpoint))
+            if (inboundLog.Exists(message.Content, message.Endpoint))
                 return false;
 
-            inboundLog.Add(message.Message, message.Endpoint);
+            inboundLog.Add(message.Content, message.Endpoint);
             return true;
         }
 

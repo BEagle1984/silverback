@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Batch
         private readonly IErrorPolicy _errorPolicy;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly Action<IEnumerable<IRawInboundMessage>, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
         private readonly Action<IEnumerable<IOffset>, IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
@@ -30,14 +30,14 @@ namespace Silverback.Messaging.Batch
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
 
-        private readonly List<IRawInboundMessage> _messages;
+        private readonly List<IInboundMessage> _messages;
         private readonly Timer _waitTimer;
 
         private Exception _processingException;
 
         public MessageBatch(IEndpoint endpoint,
             BatchSettings settings,
-            Action<IEnumerable<IRawInboundMessage>, IServiceProvider> messagesHandler,
+            Action<IEnumerable<IInboundMessage>, IServiceProvider> messagesHandler,
             Action<IEnumerable<IOffset>, IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy, 
@@ -55,7 +55,7 @@ namespace Silverback.Messaging.Batch
             _errorPolicy = errorPolicy;
             _settings = settings;
 
-            _messages = new List<IRawInboundMessage>(_settings.Size);
+            _messages = new List<IInboundMessage>(_settings.Size);
 
             if (_settings.MaxWaitTime < TimeSpan.MaxValue)
             {
@@ -71,7 +71,7 @@ namespace Silverback.Messaging.Batch
 
         public int CurrentSize => _messages.Count;
 
-        public void AddMessage(IRawInboundMessage message)
+        public void AddMessage(IInboundMessage message)
         {
             // TODO: Check this!
             if (_processingException != null)
@@ -81,7 +81,7 @@ namespace Silverback.Messaging.Batch
             {
                 _messages.Add(message);
 
-                _messageLogger.LogInformation(_logger, "Message added to batch.", message, CurrentBatchId, CurrentSize);
+                _messageLogger.LogInformation(_logger, "Message added to batch.", message);
 
                 if (_messages.Count == 1)
                 {
@@ -126,7 +126,7 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private void AddHeaders(List<IRawInboundMessage> messages)
+        private void AddHeaders(List<IInboundMessage> messages)
         {
             foreach (var message in messages)
             {
@@ -135,7 +135,7 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private void ProcessEachMessageAndPublishEvents(IEnumerable<IRawInboundMessage> messages)
+        private void ProcessEachMessageAndPublishEvents(IEnumerable<IInboundMessage> messages)
         {
             using (var scope = _serviceProvider.CreateScope())
             {

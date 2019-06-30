@@ -120,10 +120,10 @@ namespace Silverback.Messaging.ErrorHandling
             return this;
         }
 
-        public virtual bool CanHandle(IEnumerable<IRawInboundMessage> messages, Exception exception) =>
+        public virtual bool CanHandle(IEnumerable<IInboundMessage> messages, Exception exception) =>
             messages.All(msg => CanHandle(msg, exception)); // TODO: Check this
 
-        public virtual bool CanHandle(IRawInboundMessage message, Exception exception)
+        public virtual bool CanHandle(IInboundMessage message, Exception exception)
         {
             if (message == null)
             {
@@ -167,7 +167,7 @@ namespace Silverback.Messaging.ErrorHandling
             return true;
         }
 
-        public ErrorAction HandleError(IEnumerable<IRawInboundMessage> messages, Exception exception)
+        public ErrorAction HandleError(IEnumerable<IInboundMessage> messages, Exception exception)
         {
             var result = ApplyPolicy(messages, exception);
 
@@ -175,7 +175,7 @@ namespace Silverback.Messaging.ErrorHandling
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    scope.ServiceProvider.GetRequiredService<IPublisher>()
+                     scope.ServiceProvider.GetRequiredService<IPublisher>()
                         .Publish(MessageToPublishFactory.Invoke(messages));
                 }
             }
@@ -183,6 +183,6 @@ namespace Silverback.Messaging.ErrorHandling
             return result;
         }
 
-        protected abstract ErrorAction ApplyPolicy(IEnumerable<IRawInboundMessage> messages, Exception exception);
+        protected abstract ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception);
     }
 }

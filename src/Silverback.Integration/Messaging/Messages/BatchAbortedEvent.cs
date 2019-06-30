@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public class BatchAbortedEvent : BatchEvent
     {
-        public BatchAbortedEvent(Guid batchId, IEnumerable<IRawInboundMessage> messages, Exception exception)
+        public BatchAbortedEvent(Guid batchId, IEnumerable<IInboundMessage> messages, Exception exception)
             : base(batchId, messages)
         {
             Exception = exception;

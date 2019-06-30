@@ -114,8 +114,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = MessageHeader.FailedAttemptsKey, Value = "3" } });
 
             var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
-            inboundMessages.First().FailedAttempts.Should().Be(0);
-            inboundMessages.Skip(1).First().FailedAttempts.Should().Be(3);
+            inboundMessages.First().Headers.GetValue<int>(MessageHeader.FailedAttemptsKey).Should().Be(0);
+            inboundMessages.Skip(1).First().Headers.GetValue<int>(MessageHeader.FailedAttemptsKey).Should().Be(3);
         }
 
         [Fact]
@@ -218,7 +218,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                     consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
                 }
             }
-           _testSubscriber.ReceivedMessages.Count.Should().Be(0);
+            _testSubscriber.ReceivedMessages.Count.Should().Be(0);
 
             foreach (var consumer in _broker.Consumers.Take(3))
             {
@@ -249,37 +249,29 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 "c3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
-                 MessageId = Guid.NewGuid(),
-                 OriginalMessageId = "123",
-                 ChunkId = 1,
-                 ChunksCount = 4,
-                 Content = buffer.Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "1"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 2,
-                ChunksCount = 4,
-                Content = buffer.Skip(40).Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "2"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 3,
-                ChunksCount = 4,
-                Content = buffer.Skip(80).Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "3"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 4,
-                ChunksCount = 4,
-                Content = buffer.Skip(120).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "4"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
@@ -298,37 +290,29 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 "c3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 1,
-                ChunksCount = 4,
-                Content = buffer.Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "1"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 4,
-                ChunksCount = 4,
-                Content = buffer.Skip(120).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "4"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 3,
-                ChunksCount = 4,
-                Content = buffer.Skip(80).Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "3"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 2,
-                ChunksCount = 4,
-                Content = buffer.Skip(40).Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "2"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
@@ -347,53 +331,41 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 "c3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 1,
-                ChunksCount = 4,
-                Content = buffer.Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "1"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 2,
-                ChunksCount = 4,
-                Content = buffer.Skip(40).Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "4"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 3,
-                ChunksCount = 4,
-                Content = buffer.Skip(80).Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "3"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 2,
-                ChunksCount = 4,
-                Content = buffer.Skip(40).Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "4"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 1,
-                ChunksCount = 4,
-                Content = buffer.Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "3"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 4,
-                ChunksCount = 4,
-                Content = buffer.Skip(120).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "2"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
@@ -591,37 +563,29 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 "c3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 1,
-                ChunksCount = 4,
-                Content = buffer.Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "1"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 2,
-                ChunksCount = 4,
-                Content = buffer.Skip(40).Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "2"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 3,
-                ChunksCount = 4,
-                Content = buffer.Skip(80).Take(40).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "3"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
-            consumer.TestPush(new MessageChunk
+            consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
-                MessageId = Guid.NewGuid(),
-                OriginalMessageId = "123",
-                ChunkId = 4,
-                ChunksCount = 4,
-                Content = buffer.Skip(120).ToArray()
+                new MessageHeader(MessageHeader.MessageIdKey, "123"),
+                new MessageHeader(MessageHeader.ChunkIdKey, "4"),
+                new MessageHeader(MessageHeader.ChunksCountKey, "4")
             });
 
             testSerializer.FailCount.Should().Be(3);

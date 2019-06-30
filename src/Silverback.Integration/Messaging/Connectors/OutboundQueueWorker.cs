@@ -77,7 +77,7 @@ namespace Silverback.Messaging.Connectors
             }
             catch (Exception ex)
             {
-                _messageLogger.LogError(_logger, ex, "Failed to publish queued message.", message?.Message.Message, message?.Message.Endpoint);
+                _messageLogger.LogError(_logger, ex, "Failed to publish queued message.", message?.Message);
 
                 await queue.Retry(message);
 
@@ -88,6 +88,6 @@ namespace Silverback.Messaging.Connectors
         }
         
         protected virtual Task ProduceMessage(IOutboundMessage message)
-            => _broker.GetProducer(message.Endpoint).ProduceAsync(message.Message, message.Headers);
+            => _broker.GetProducer(message.Endpoint).ProduceAsync(message.Content, message.Headers);
     }
 }

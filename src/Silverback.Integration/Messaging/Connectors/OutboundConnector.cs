@@ -17,6 +17,6 @@ namespace Silverback.Messaging.Connectors
         }
 
         public Task RelayMessage(IOutboundMessage message) =>
-            _broker.GetProducer(message.Endpoint).ProduceAsync(message.Message, message.Headers);
+            _broker.GetProducer(message.Endpoint).ProduceAsync(message.Content, message.Headers);
     }
 }

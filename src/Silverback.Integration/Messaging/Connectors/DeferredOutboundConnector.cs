@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Connectors
 
         public async Task RelayMessage(IOutboundMessage message)
         {
-            _messageLogger.LogTrace(_logger, "Queuing message for deferred publish.", message.Message, message.Endpoint);
+            _messageLogger.LogTrace(_logger, "Queuing message for deferred publish.", message);
             await _queueProducer.Enqueue(message);
         }
     }

@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Connectors
         private readonly IErrorPolicy _errorPolicy;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly Action<IEnumerable<IRawInboundMessage>, IServiceProvider> _messagesHandler;
+        private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
         private readonly Action<IServiceProvider> _commitHandler;
         private readonly Action<IServiceProvider> _rollbackHandler;
 
@@ -34,7 +34,7 @@ namespace Silverback.Messaging.Connectors
         public InboundConsumer(IBroker broker,
             IEndpoint endpoint,
             InboundConnectorSettings settings,
-            Action<IEnumerable<IRawInboundMessage>, IServiceProvider> messagesHandler,
+            Action<IEnumerable<IInboundMessage>, IServiceProvider> messagesHandler,
             Action<IServiceProvider> commitHandler,
             Action<IServiceProvider> rollbackHandler,
             IErrorPolicy errorPolicy,
@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Connectors
                 var batch = new MessageBatch(
                     _endpoint,
                     _settings.Batch,
-                    _messagesHandler,
+                     _messagesHandler,
                     Commit,
                     _rollbackHandler,
                     _errorPolicy,
@@ -82,8 +82,8 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        private IRawInboundMessage CreateInboundMessage(MessageReceivedEventArgs args) =>
-            new RawInboundMessage(
+        private IInboundMessage CreateInboundMessage(MessageReceivedEventArgs args) =>
+            new InboundMessage(
                 args.Message,
                 args.Headers,
                 args.Offset,
@@ -91,7 +91,7 @@ namespace Silverback.Messaging.Connectors
                 _settings.UnwrapMessages
             );
 
-        private void ProcessSingleMessage(IRawInboundMessage message)
+        private void ProcessSingleMessage(IInboundMessage message)
         {
             _errorPolicyHelper.TryProcess(
                 new []{ message },
@@ -105,7 +105,7 @@ namespace Silverback.Messaging.Connectors
                 });
         }
 
-        private void RelayAndCommitSingleMessage(IEnumerable<IRawInboundMessage> messages, IServiceProvider serviceProvider)
+        private void RelayAndCommitSingleMessage(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
         {
             try
             {

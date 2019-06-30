@@ -9,6 +9,6 @@ namespace Silverback.Messaging.Connectors
     public class InboundMessageUnwrapper : ISubscriber
     {
         [Subscribe]
-        public object OnMessageReceived(IInboundMessage message) => message.MustUnwrap ? message.Message : null;
+        public object OnMessageReceived(IInboundMessage message) => message.MustUnwrap ? message.Content : null;
     }
 }

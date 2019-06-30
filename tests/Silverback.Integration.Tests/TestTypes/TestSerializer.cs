@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.Integration.TestTypes
@@ -13,16 +14,16 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public int FailCount { get; private set; }
 
-        public byte[] Serialize(object message)
+        public byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
         {
             throw new NotImplementedException();
         }
 
-        public object Deserialize(byte[] message)
+        public object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
         {
-            var deserialized = new JsonMessageSerializer().Deserialize(message);
+            var deserialized = new JsonMessageSerializer().Deserialize(message, messageHeaders);
 
-            if (MustFailCount > FailCount && !(deserialized is MessageChunk))
+            if (MustFailCount > FailCount)
             {
                 FailCount++;
                 throw new Exception("Test failure");

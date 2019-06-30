@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         {
             var outboundMessage = new OutboundMessage<TestEventOne>()
             {
-                Message = new TestEventOne {Content = "Test"},
+                Content = new TestEventOne {Content = "Test"},
                 Headers =
                 {
                     { "header1", "value1"},

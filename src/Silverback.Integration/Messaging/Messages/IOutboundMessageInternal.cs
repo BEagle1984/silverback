@@ -7,6 +7,6 @@ namespace Silverback.Messaging.Messages
 {
     internal interface IOutboundMessageInternal : IOutboundMessage
     {
-        IOutboundRoute Route { get; set; }
+        IOutboundRoute Route { get; }
     }
 }

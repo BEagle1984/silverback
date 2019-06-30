@@ -17,7 +17,7 @@ namespace Silverback.Messaging.LargeMessages
             _store = store;
         }
 
-        public byte[] JoinIfComplete(IRawInboundMessage message)
+        public byte[] JoinIfComplete(IInboundMessage message)
         {
             var (messageId, chunkId, chunksCount) = ExtractHeadersValues(message);
 
@@ -29,7 +29,7 @@ namespace Silverback.Messaging.LargeMessages
                 if (chunks.ContainsKey(chunkId))
                     return null;
 
-                chunks.Add(chunkId, message.Message);
+                chunks.Add(chunkId, message.RawContent);
 
                 var completeMessage = Join(chunks);
 
@@ -39,12 +39,12 @@ namespace Silverback.Messaging.LargeMessages
             }
             else
             {
-                _store.Store(messageId, chunkId, chunksCount, message.Message);
+                _store.Store(messageId, chunkId, chunksCount, message.RawContent);
                 return null;
             }
         }
 
-        private (string messageId, int chinkId, int chunksCount) ExtractHeadersValues(IRawInboundMessage message)
+        private (string messageId, int chinkId, int chunksCount) ExtractHeadersValues(IInboundMessage message)
         {
             var messageId = message.Headers.GetValue<string>(MessageHeader.MessageIdKey);
 

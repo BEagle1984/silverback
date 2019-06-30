@@ -7,6 +7,12 @@ namespace Silverback.Messaging.Messages
 {
     public class MessageHeaderCollection : List<MessageHeader>
     {
+        public MessageHeaderCollection(IEnumerable<MessageHeader> headers = null)
+        {
+            if (headers != null)
+                AddRange(headers);
+        }
+
         public void Add(string key, object value) =>
             Add(key, value.ToString());
 

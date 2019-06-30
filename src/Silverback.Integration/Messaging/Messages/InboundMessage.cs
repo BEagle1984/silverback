@@ -8,50 +8,51 @@ namespace Silverback.Messaging.Messages
 {
     internal class InboundMessage : IInboundMessage
     {
-        public InboundMessage()
+        public InboundMessage(byte[] rawContent, IEnumerable<MessageHeader> headers, IOffset offset, IEndpoint endpoint, bool mustUnwrap)
         {
-        }
-
-        public InboundMessage(object message, IEnumerable<MessageHeader> headers, IOffset offset, IEndpoint endpoint, bool mustUnwrap)
-        {
-            Message = message;
-
             if (headers != null)
                 Headers.AddRange(headers);
 
             Offset = offset;
             Endpoint = endpoint;
+            RawContent = rawContent;
             MustUnwrap = mustUnwrap;
         }
 
-        /// <inheritdoc />
-        public object Message { get; }
-
-        /// <inheritdoc />
         public MessageHeaderCollection Headers { get; } = new MessageHeaderCollection();
 
-        /// <inheritdoc />
         public IOffset Offset { get; }
 
-        /// <inheritdoc />
         public IEndpoint Endpoint { get; }
 
-        /// <inheritdoc />
+        public byte[] RawContent { get; }
+
+        public object Content { get; set; }
+
         public bool MustUnwrap { get; }
     }
 
-    internal class InboundMessage<TMessage> : InboundMessage, IInboundMessage<TMessage>
+    internal class InboundMessage<TContent> : InboundMessage, IInboundMessage<TContent>
     {
-        public InboundMessage(TMessage message, IEnumerable<MessageHeader> headers, IOffset offset, IEndpoint endpoint, bool mustUnwrap) 
-            : base(message, headers, offset, endpoint, mustUnwrap)
+        public InboundMessage(byte[] rawContent, IEnumerable<MessageHeader> headers, IOffset offset, IEndpoint endpoint, bool mustUnwrap)
+            : base(rawContent, headers, offset, endpoint, mustUnwrap)
         {
         }
 
-        public InboundMessage(TMessage message, IRawInboundMessage rawMessage) : 
-            base(message, rawMessage.Headers, rawMessage.Offset, rawMessage.Endpoint, rawMessage.MustUnwrap)
+        public InboundMessage(IInboundMessage message)
+            : base(message.RawContent, message.Headers, message.Offset, message.Endpoint, message.MustUnwrap)
         {
+            if (message.Headers != null)
+                Headers.AddRange(message.Headers);
+
+            if (message.Content != null)
+                Content = (TContent)message.Content;
         }
 
-        public new TMessage Message => (TMessage)base.Message;
+        public new TContent Content
+        {
+            get => (TContent)base.Content;
+            set => base.Content = value;
+        }
     }
 }
