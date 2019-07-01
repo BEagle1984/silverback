@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
-            consumer.Received += (_, e) => receivedMessages.Add(e.Endpoint.Serializer.Deserialize(e.Message));
+            consumer.Received += (_, e) => receivedMessages.Add(e.Endpoint.Serializer.Deserialize(e.Message, new MessageHeaderCollection(e.Headers)));
 
             producer.Produce(new TestMessage { Content = "hello!" });
             producer.Produce(new TestMessage { Content = "hello 2!" });
@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
-            consumer.Received += (_, e) => receivedMessages.Add(e.Endpoint.Serializer.Deserialize(e.Message));
+            consumer.Received += (_, e) => receivedMessages.Add(e.Endpoint.Serializer.Deserialize(e.Message, new MessageHeaderCollection(e.Headers)));
 
             producer.Produce(new TestMessage { Content = "hello!" });
 
@@ -108,7 +108,8 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
                 new TestMessage { Content = "hello!" },
                 new[] { new MessageHeader("a", "b"), new MessageHeader("c", "d") });
 
-            receivedHeaders.First().Should().BeEquivalentTo(new MessageHeader("a", "b"), new MessageHeader("c", "d"));
+            receivedHeaders.First().Should().ContainEquivalentOf(new MessageHeader("a", "b"));
+            receivedHeaders.First().Should().ContainEquivalentOf(new MessageHeader("c", "d"));
         }
 
         [Fact]
@@ -135,7 +136,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             }
 
             receivedMessages.Count.Should().Be(2);
-            receivedMessages.OfType<IInboundMessage>().Select(x => x.Message).Should().AllBeOfType<TestMessage>();
+            receivedMessages.OfType<IInboundMessage>().Select(x => x.Content).Should().AllBeOfType<TestMessage>();
         }
     }
 }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,13 +72,13 @@ namespace Silverback.Messaging.Connectors
         {
             try
             {
-                await ProduceMessage(message.Message);
+                await ProduceMessage(message.Content, message.Headers, message.Endpoint);
 
                 await queue.Acknowledge(message);
             }
             catch (Exception ex)
             {
-                _messageLogger.LogError(_logger, ex, "Failed to publish queued message.", message?.Message);
+                _messageLogger.LogError(_logger, ex, "Failed to publish queued message.", new OutboundMessage(message.Content, message.Headers, message.Endpoint));
 
                 await queue.Retry(message);
 
@@ -87,7 +88,7 @@ namespace Silverback.Messaging.Connectors
             }
         }
         
-        protected virtual Task ProduceMessage(IOutboundMessage message)
-            => _broker.GetProducer(message.Endpoint).ProduceAsync(message.Content, message.Headers);
+        protected virtual Task ProduceMessage(byte[] content, IEnumerable<MessageHeader> headers, IEndpoint endpoint)
+            => _broker.GetProducer(endpoint).ProduceAsync(content, headers);
     }
 }

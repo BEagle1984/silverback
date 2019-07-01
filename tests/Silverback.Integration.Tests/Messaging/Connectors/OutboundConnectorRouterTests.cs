@@ -65,7 +65,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
-                queued.Count(x => x.Message.Endpoint.Name == expectedEndpointName).Should().Be(1);
+                queued.Count(x => x.Endpoint.Name == expectedEndpointName).Should().Be(1);
             }
 
             var notExpectedEndpointNames = _routingConfiguration
@@ -74,7 +74,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             foreach (var notExpectedEndpointName in notExpectedEndpointNames)
             {
-                queued.Count(x => x.Message.Endpoint.Name == notExpectedEndpointName).Should().Be(0);
+                queued.Count(x => x.Endpoint.Name == notExpectedEndpointName).Should().Be(0);
             }
         }
 

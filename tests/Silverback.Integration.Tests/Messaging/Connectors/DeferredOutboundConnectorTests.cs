@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -42,15 +43,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                     new MessageHeader("header2", "value2")
                 },
                 TestEndpoint.Default);
+            outboundMessage.RawContent = new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers);
 
             await _connector.RelayMessage(outboundMessage);
             await _queue.Commit();
 
             _queue.Length.Should().Be(1);
             var queued = (await _queue.Dequeue(1)).First();
-            queued.Message.Endpoint.Should().Be(outboundMessage.Endpoint);
-            queued.Message.Headers.Count.Should().Be(2);
-            ((IIntegrationMessage)queued.Message.Content).Id.Should().Be(outboundMessage.Content.Id);
+            queued.Endpoint.Should().Be(outboundMessage.Endpoint);
+            queued.Headers.Count().Should().Be(3);
+            queued.Content.Should().BeEquivalentTo(new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers));
         }
 
         [Fact]

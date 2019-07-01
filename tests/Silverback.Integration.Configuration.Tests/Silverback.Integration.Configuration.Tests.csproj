@@ -22,7 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Silverback.Integration.Kafka" Version="0.10.0" />
+    <PackageReference Include="Silverback.Integration.Kafka" Version="0.11.0" />
   </ItemGroup>
 
   <ItemGroup>

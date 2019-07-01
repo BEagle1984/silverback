@@ -7,8 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Infrastructure;
-using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
+using OutboundMessage = Silverback.Messaging.Connectors.Model.OutboundMessage;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -30,7 +30,9 @@ namespace Silverback.Messaging.Connectors.Repositories
                 .ToListAsync())
             .Select(message => new DbQueuedMessage(
                 message.Id,
-                DefaultSerializer.Deserialize<IOutboundMessage>(message.Message)));
+                message.Content,
+                DefaultSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
+                DefaultSerializer.Deserialize<IEndpoint>(message.Endpoint)));
 
         public Task Retry(QueuedMessage queuedMessage)
         {

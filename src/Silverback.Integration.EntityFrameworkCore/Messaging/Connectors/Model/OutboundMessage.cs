@@ -15,8 +15,10 @@ namespace Silverback.Messaging.Connectors.Model
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public string Message { get; set; }
+        public byte[] Content { get; set; }
+        public string Headers { get; set; }
         public string Endpoint { get; set; }
+        public string EndpointName { get; set; }
 
         public DateTime Created { get; set; }
         public DateTime? Produced { get; set; }

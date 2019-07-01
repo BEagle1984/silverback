@@ -11,6 +11,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -24,8 +25,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         private readonly TestBroker _broker;
         private readonly OutboundQueueWorker _worker;
 
-        private readonly IOutboundMessage _sampleOutboundMessage = new OutboundMessage<TestEventOne>(
-            new TestEventOne {Content = "Test"}, null, TestEndpoint.Default);
+        private readonly OutboundMessage _sampleOutboundMessage;
 
         public OutboundQueueWorkerTests()
         {
@@ -51,6 +51,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _worker = new OutboundQueueWorker(serviceProvider, _broker, new NullLogger<OutboundQueueWorker>(), new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })), true, 100); // TODO: Test order not enforced
 
             InMemoryOutboundQueue.Clear();
+
+            _sampleOutboundMessage = new OutboundMessage<TestEventOne>(
+                new TestEventOne { Content = "Test" }, null, TestEndpoint.Default);
+            _sampleOutboundMessage.RawContent =
+                new JsonMessageSerializer().Serialize(_sampleOutboundMessage.Content, _sampleOutboundMessage.Headers);
         }
 
         [Fact]

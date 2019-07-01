@@ -56,9 +56,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
 
         private static void OnMessageReceived(object sender, MessageReceivedEventArgs args)
         {
-            var testMessage = args.Endpoint.Serializer.Deserialize(args.Message) as TestMessage;
-
-            if (testMessage == null)
+            if (!(args.Endpoint.Serializer.Deserialize(args.Message, new MessageHeaderCollection(args.Headers)) is TestMessage testMessage))
             {
                 Console.WriteLine("Received a weird message!");
                 return;

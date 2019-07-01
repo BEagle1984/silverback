@@ -5,35 +5,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Silverback.Infrastructure;
 
 namespace Silverback.Messaging.LargeMessages
 {
     public class DbContextChunkStore : RepositoryBase<TemporaryMessageChunk>, IChunkStore
     {
-        private readonly ILogger _logger;
         private readonly object _lock = new object();
 
-        public DbContextChunkStore(DbContext dbContext, ILogger<DbContextChunkStore> logger) : base(dbContext)
+        public DbContextChunkStore(DbContext dbContext) : base(dbContext)
         {
-            _logger = logger;
         }
 
-        public void Store(MessageChunk chunk)
+        public void Store(string messageId, int chunkId, int chunksCount, byte[] content)
         {
             lock (_lock)
             {
                 // TODO: Log?
-                if (DbSet.Any(c => c.OriginalMessageId == chunk.OriginalMessageId && c.ChunkId == chunk.ChunkId))
+                if (DbSet.Any(c => c.OriginalMessageId == messageId && c.ChunkId == chunkId))
                     return;
 
                 DbSet.Add(new TemporaryMessageChunk
                 {
-                    OriginalMessageId = chunk.OriginalMessageId,
-                    ChunkId = chunk.ChunkId,
-                    ChunksCount = chunk.ChunksCount,
-                    Content = chunk.Content,
+                    OriginalMessageId = messageId,
+                    ChunkId = chunkId,
+                    ChunksCount = chunksCount,
+                    Content = content,
                     Received = DateTime.UtcNow
                 });
             }
