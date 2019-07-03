@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
             DbSet.Add(new OutboundMessage
             {
-                Content = message.RawContent,
+                Content = message.RawContent ?? message.Endpoint.Serializer.Serialize(message.Content, message.Headers),
                 Headers = DefaultSerializer.Serialize((IEnumerable<MessageHeader>) message.Headers),
                 Endpoint = DefaultSerializer.Serialize(message.Endpoint),
                 EndpointName = message.Endpoint.Name,
