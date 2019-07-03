@@ -65,7 +65,10 @@ namespace Silverback.Messaging.Messages
             var firstMessage = messages.First();
 
             properties.Add(("endpoint", "endpointName", firstMessage.Endpoint?.Name));
-            properties.Add(("failedAttempts", "failedAttempts", firstMessage.Headers.GetValue(MessageHeader.FailedAttemptsKey)));
+
+            var failedAttempts = firstMessage.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey);
+            if (failedAttempts > 0)
+                properties.Add(("failedAttempts", "failedAttempts", failedAttempts.ToString()));
 
             if (messages.Count() == 1)
             {
