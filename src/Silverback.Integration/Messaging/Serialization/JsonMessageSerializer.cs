@@ -45,7 +45,7 @@ namespace Silverback.Messaging.Serialization
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
             NullValueHandling = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.None
+            TypeNameHandling = TypeNameHandling.Auto
         };
 
         public virtual byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
@@ -69,9 +69,9 @@ namespace Silverback.Messaging.Serialization
             if (message == null) throw new ArgumentNullException(nameof(message));
             if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
 
-            var typeName = messageHeaders.GetValue(MessageHeader.MessageTypeKey) ?? throw new SilverbackException($"Message type header not found ('{MessageHeader.MessageTypeKey}').");
-            var type = Type.GetType(typeName);
             var json = GetEncoding().GetString(message);
+            var typeName = messageHeaders.GetValue(MessageHeader.MessageTypeKey);
+            var type = typeName != null ? Type.GetType(typeName) : typeof(object);
 
             return JsonConvert.DeserializeObject(json, type, Settings);
         }
