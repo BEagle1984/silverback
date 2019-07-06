@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -14,8 +15,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 {
     public class OutboundConnectorTests
     {
-        private OutboundConnector _connector;
-        private TestBroker _broker;
+        private readonly OutboundConnector _connector;
+        private readonly TestBroker _broker;
 
         public OutboundConnectorTests()
         {

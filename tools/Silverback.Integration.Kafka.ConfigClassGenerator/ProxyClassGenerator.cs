@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.IO;
 using System.Reflection;
 using System.Text;

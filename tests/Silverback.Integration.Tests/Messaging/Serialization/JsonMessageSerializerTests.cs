@@ -62,7 +62,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         }
 
         [Fact]
-        // This is necessary for backward compatibility
+        // This is necessary for backward compatibility with messages generated with version <= 0.10
         public void Deserialize_NoTypeHeader_MessageDeserializedByEmbeddedTypeInformation()
         {
             var original = new TestEventOne { Id = Guid.NewGuid(), Content = "abcd" };
