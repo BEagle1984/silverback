@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -43,15 +45,18 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _connectorRouter = (OutboundConnectorRouter)serviceProvider.GetServices<ISubscriber>().First(s => s is OutboundConnectorRouter);
-            _routingConfiguration = (OutboundRoutingConfiguration)serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
-            _broker = (TestBroker)serviceProvider.GetRequiredService<IBroker>();
+            _connectorRouter = (OutboundConnectorRouter) serviceProvider.GetServices<ISubscriber>()
+                .First(s => s is OutboundConnectorRouter);
+            _routingConfiguration =
+                (OutboundRoutingConfiguration) serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
+            _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
 
             InMemoryOutboundQueue.Clear();
         }
 
         [Theory, MemberData(nameof(OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
-        public async Task OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoint(IIntegrationMessage message, string[] expectedEndpointNames)
+        public async Task OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoint(IIntegrationMessage message,
+            string[] expectedEndpointNames)
         {
             _routingConfiguration.Add<IIntegrationMessage>(new TestEndpoint("allMessages"), null);
             _routingConfiguration.Add<IIntegrationEvent>(new TestEndpoint("allEvents"), null);
@@ -108,6 +113,18 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var queued = await _outboundQueue.Dequeue(1);
             queued.Count().Should().Be(0);
+            _broker.ProducedMessages.Count.Should().Be(1);
+        }
+
+        [Fact]
+        // Test for possible issue similar to #33: messages don't have to be registered with HandleMessagesOfType to be relayed
+        public async Task OnMessageReceived_UnhandledMessageType_CorrectlyRelayed()
+        {
+            var message = new SomeUnhandledMessage { Content = "abc" };
+            _routingConfiguration.Add<SomeUnhandledMessage>(new TestEndpoint("eventOne"), typeof(OutboundConnector));
+
+            await _connectorRouter.OnMessageReceived(message);
+
             _broker.ProducedMessages.Count.Should().Be(1);
         }
     }

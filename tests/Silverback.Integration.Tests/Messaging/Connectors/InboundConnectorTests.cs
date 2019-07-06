@@ -23,6 +23,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
     {
         private readonly TestSubscriber _testSubscriber;
         private readonly WrappedInboundMessageSubscriber _inboundSubscriber;
+        private readonly SomeUnhandledMessageSubscriber _someUnhandledMessageSubscriber;
         private readonly IInboundConnector _connector;
         private readonly TestBroker _broker;
         private readonly ErrorPolicyBuilder _errorPolicyBuilder;
@@ -36,6 +37,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _inboundSubscriber = new WrappedInboundMessageSubscriber();
             services.AddSingleton<ISubscriber>(_inboundSubscriber);
+
+            _someUnhandledMessageSubscriber = new SomeUnhandledMessageSubscriber();
+            services.AddSingleton<ISubscriber>(_someUnhandledMessageSubscriber);
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
@@ -68,6 +72,21 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
            _testSubscriber.ReceivedMessages.Count.Should().Be(5);
+        }
+
+        [Fact]
+        // Test for issue  #33: messages don't have to be registered with HandleMessagesOfType to be unwrapped and received
+        public void Bind_PushUnhandledMessages_MessagesUnwrappedAndReceived()
+        {
+            _connector.Bind(TestEndpoint.Default);
+            _broker.Connect();
+
+            var consumer = _broker.Consumers.First();
+            consumer.TestPush(new SomeUnhandledMessage { Content = "abc" });
+            consumer.TestPush(new SomeUnhandledMessage { Content = "def" });
+            consumer.TestPush(new SomeUnhandledMessage { Content = "ghi" });
+
+            _someUnhandledMessageSubscriber.ReceivedMessages.Count.Should().Be(3);
         }
 
         [Fact]
