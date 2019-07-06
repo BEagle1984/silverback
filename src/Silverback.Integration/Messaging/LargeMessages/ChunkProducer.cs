@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.LargeMessages
 {

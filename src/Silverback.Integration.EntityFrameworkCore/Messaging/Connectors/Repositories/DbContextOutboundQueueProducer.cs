@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Infrastructure;
-using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
 using OutboundMessage = Silverback.Messaging.Connectors.Model.OutboundMessage;
 

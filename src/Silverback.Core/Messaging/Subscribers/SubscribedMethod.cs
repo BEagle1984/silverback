@@ -14,7 +14,5 @@ namespace Silverback.Messaging.Subscribers
         public object Target { get; }
 
         public SubscribedMethodInfo Info { get; }
-
-        // TODO: Add (and use) added argument resolvers
     }
 }

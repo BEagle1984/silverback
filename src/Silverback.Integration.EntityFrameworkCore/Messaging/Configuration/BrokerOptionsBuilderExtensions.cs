@@ -4,7 +4,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Background;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
