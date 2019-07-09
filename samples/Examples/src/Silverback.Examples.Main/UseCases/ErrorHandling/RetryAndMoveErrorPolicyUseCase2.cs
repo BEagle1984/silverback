@@ -46,9 +46,9 @@ namespace Silverback.Examples.Main.UseCases.ErrorHandling
 
         private class BuggySerializer : IMessageSerializer
         {
-            public byte[] Serialize(object message) => new byte[] { 0, 1, 2, 3, 4 };
+            public byte[] Serialize(object message, MessageHeaderCollection messageHeaders) => new byte[] { 0, 1, 2, 3, 4 };
 
-            public object Deserialize(byte[] message)
+            public object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
             {
                 throw new NotImplementedException();
             }

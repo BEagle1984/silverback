@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 
@@ -22,9 +23,9 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
+        protected override ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception)
         {
-            _messageLogger.LogWarning(_logger, exception, "The message will be skipped.", message);
+            _messageLogger.LogWarning(_logger, exception, "The message(s) will be skipped.", messages);
 
             return ErrorAction.Skip;
         }

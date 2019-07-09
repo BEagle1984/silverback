@@ -20,7 +20,10 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public Task Enqueue(IOutboundMessage message)
         {
-            Add(new QueuedMessage(message));
+            if (message.RawContent == null)
+                ((OutboundMessage)message).RawContent = message.Endpoint.Serializer.Serialize(message.Content, message.Headers);
+
+            Add(new QueuedMessage(message.RawContent, message.Headers, message.Endpoint));
             return Task.CompletedTask;
         }
 

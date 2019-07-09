@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.ErrorHandling;
@@ -17,7 +18,7 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        protected override ErrorAction ApplyPolicy(IInboundMessage message, Exception exception)
+        protected override ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception)
         {
             Applied = true;
             return ErrorAction.Skip;

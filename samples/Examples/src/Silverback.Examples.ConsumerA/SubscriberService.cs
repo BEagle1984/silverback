@@ -69,7 +69,10 @@ namespace Silverback.Examples.ConsumerA
         [Subscribe]
         void OnMessageMoved(MessageMovedEvent @event)
         {
-            _logger.LogInformation($"MessageMovedEvent :: Message '{@event.Id}' moved to '{@event.Destination}'");
+            foreach (var id in @event.Identifiers)
+            {
+                _logger.LogInformation($"MessageMovedEvent :: Message '{id}' moved from '{@event.Source}' to '{@event.Destination}'");
+            }
         }
     }
 }

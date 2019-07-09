@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public class BatchProcessedEvent : BatchEvent
     {
-        public BatchProcessedEvent(Guid batchId, IEnumerable<object> messages) : base(batchId, messages)
+        public BatchProcessedEvent(Guid batchId, IEnumerable<IInboundMessage> messages) : base(batchId, messages)
         {
         }
     }

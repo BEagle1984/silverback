@@ -7,7 +7,13 @@ namespace Silverback.Messaging.Messages
 {
     public class MessageHeader
     {
-        public const string FailedAttemptsHeaderName = "Silverback.FailedAttempts";
+        public const string MessageIdKey = "x-message-id";
+        public const string MessageTypeKey = "x-message-type";
+        public const string FailedAttemptsKey = "x-failed-attempts";
+        public const string ChunkIdKey = "x-chunk-id";
+        public const string ChunksCountKey = "x-chunks-count";
+        public const string BatchIdKey = "x-batch-id";
+        public const string BatchSizeKey = "x-batch-size";
 
         public MessageHeader()
         {

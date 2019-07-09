@@ -26,34 +26,35 @@ namespace Silverback.Messaging.Broker
         }
 
         public void Produce(object message, IEnumerable<MessageHeader> headers = null) =>
-            GetMessageContentChunks(message)
+            GetOutboundMessages(message, headers)
                 .ForEach(x =>
                 {
-                    var offset = Produce(x.message, x.serializedMessage, headers);
-                    Trace(message, offset);
+                    x.Offset = Produce(x.Content, x.RawContent, x.Headers);
+                    Trace(x);
                 });
 
         public Task ProduceAsync(object message, IEnumerable<MessageHeader> headers = null) =>
-            GetMessageContentChunks(message)
+            GetOutboundMessages(message, headers)
                 .ForEachAsync(async x =>
                 {
-                    var offset = await ProduceAsync(x.message, x.serializedMessage, headers);
-                    Trace(message, offset);
+                    x.Offset = await ProduceAsync(x.Content, x.RawContent, x.Headers);
+                    Trace(x);
                 });
 
-        private IEnumerable<(object message, byte[] serializedMessage)> GetMessageContentChunks(object message)
+        private IEnumerable<OutboundMessage> GetOutboundMessages(object message, IEnumerable<MessageHeader> headers)
         {
-            _messageKeyProvider.EnsureKeyIsInitialized(message);
+            var outboundMessage = new OutboundMessage(message, headers, Endpoint);
 
-            return ChunkProducer.ChunkIfNeeded(
-                _messageKeyProvider.GetKey(message, false),
-                message,
-                (Endpoint as IProducerEndpoint)?.Chunk,
-                Endpoint.Serializer);
+            _messageKeyProvider.EnsureKeyIsInitialized(outboundMessage);
+
+            outboundMessage.RawContent = Endpoint.Serializer
+                .Serialize(outboundMessage.Content, outboundMessage.Headers);
+
+            return ChunkProducer.ChunkIfNeeded(outboundMessage);
         }
 
-        private void Trace(object message, IOffset offset) =>
-            _messageLogger.LogInformation(_logger, "Message produced.", message, Endpoint, offset);
+        private void Trace(IOutboundMessage message) => 
+            _messageLogger.LogInformation(_logger, "Message produced.", message);
 
         protected abstract IOffset Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers);
 

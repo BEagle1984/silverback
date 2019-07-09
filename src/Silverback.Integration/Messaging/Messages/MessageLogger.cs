@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
@@ -21,104 +20,94 @@ namespace Silverback.Messaging.Messages
 
         #region Generic
 
-        public void LogTrace(ILogger logger, string logMessage, object message, IEndpoint endpoint = null, IOffset offset = null, Guid? batchId = null, int? batchSize = null) =>
-            Log(logger, LogLevel.Trace, null, logMessage, message, endpoint, offset, null, batchId, batchSize);
+        public void LogTrace(ILogger logger, string logMessage, IBrokerMessage message) =>
+            Log(logger, LogLevel.Trace, null, logMessage, new[]{ message });
+        public void LogTrace(ILogger logger, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+            Log(logger, LogLevel.Trace, null, logMessage, messages);
 
-        public void LogTrace(ILogger logger, string logMessage, IInboundMessage message, Guid? batchId = null, int? batchSize = null) =>
-            Log(logger, LogLevel.Trace, null, logMessage, message, batchId, batchSize);
+        public void LogInformation(ILogger logger, string logMessage, IBrokerMessage message) =>
+            Log(logger, LogLevel.Information, null, logMessage, new[] { message });
+        public void LogInformation(ILogger logger, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+            Log(logger, LogLevel.Information, null, logMessage, messages);
 
-        public void LogInformation(ILogger logger, string logMessage, object message, IEndpoint endpoint = null, IOffset offset = null, Guid? batchId = null, int? batchSize = null) =>
-            Log(logger, LogLevel.Information, null, logMessage, message, endpoint, offset, null, batchId, batchSize);
+        public void LogWarning(ILogger logger, string logMessage, IBrokerMessage message) =>
+            Log(logger, LogLevel.Warning, null, logMessage, new[] { message });
+        public void LogWarning(ILogger logger, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+            Log(logger, LogLevel.Warning, null, logMessage, messages);
+        public void LogWarning(ILogger logger, Exception exception, string logMessage, IBrokerMessage message) =>
+            Log(logger, LogLevel.Warning, exception, logMessage, new[] { message });
+        public void LogWarning(ILogger logger, Exception exception, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+            Log(logger, LogLevel.Warning, exception, logMessage, messages);
 
-        public void LogInformation(ILogger logger, string logMessage, IInboundMessage message, Guid? batchId = null, int? batchSize = null) =>
-            Log(logger, LogLevel.Information, null, logMessage, message, batchId, batchSize);
+        public void LogError(ILogger logger, string logMessage, IBrokerMessage message) =>
+            Log(logger, LogLevel.Error, null, logMessage, new[] { message });
+        public void LogError(ILogger logger, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+            Log(logger, LogLevel.Error, null, logMessage, messages);
+        public void LogError(ILogger logger, Exception exception, string logMessage, IBrokerMessage message) =>
+            Log(logger, LogLevel.Error, exception, logMessage, new[] { message });
+        public void LogError(ILogger logger, Exception exception, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+            Log(logger, LogLevel.Error, exception, logMessage, messages);
 
-        public void LogWarning(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, IOffset offset = null, Guid? batchId = null, int? batchSize = null) =>
-            Log(logger, LogLevel.Warning, exception, logMessage, message, endpoint, offset, null, batchId, batchSize);
+        public void LogCritical(ILogger logger, string logMessage, IBrokerMessage message) =>
+            Log(logger, LogLevel.Critical, null, logMessage, new[] { message });
+        public void LogCritical(ILogger logger, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+            Log(logger, LogLevel.Critical, null, logMessage, messages);
+        public void LogCritical(ILogger logger, Exception exception, string logMessage, IInboundMessage message) =>
+            Log(logger, LogLevel.Critical, exception, logMessage, new[] { message });
+        public void LogCritical(ILogger logger, Exception exception, string logMessage, IEnumerable<IInboundMessage> messages) =>
+            Log(logger, LogLevel.Critical, exception, logMessage, messages);
 
-        public void LogWarning(ILogger logger, Exception exception, string logMessage, IInboundMessage message, Guid? batchId = null, int? batchSize = null) =>
-            Log(logger, LogLevel.Warning, exception, logMessage, message, batchId, batchSize);
-
-        public void LogError(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, IOffset offset = null, Guid? batchId = null, int? batchSize = null) =>
-            Log(logger, LogLevel.Error, exception, logMessage, message, endpoint, offset, null, batchId, batchSize);
-
-        public void LogError(ILogger logger, string logMessage, IInboundMessage message, Guid? batchId = null, int? batchSize = null) =>
-            Log(logger, LogLevel.Error, null, logMessage, message, batchId, batchSize);
-
-        public void LogCritical(ILogger logger, Exception exception, string logMessage, object message, IEndpoint endpoint = null, IOffset offset = null, Guid? batchId = null, int? batchSize = null) =>
-            Log(logger, LogLevel.Critical, exception, logMessage, message, endpoint, offset, null, batchId, batchSize);
-
-        public void LogCritical(ILogger logger, string logMessage, IInboundMessage message, Guid? batchId = null, int? batchSize = null) =>
-            Log(logger, LogLevel.Critical, null, logMessage, message, batchId, batchSize);
-        
-        private void Log(ILogger logger, LogLevel logLevel, Exception exception, string logMessage, IInboundMessage message, Guid? batchId, int? batchSize) =>
-            Log(logger, logLevel, exception, logMessage, message.Message, message.Endpoint, message.Offset, message.FailedAttempts, batchId, batchSize);
-
-        private void Log(ILogger logger, LogLevel logLevel, Exception exception, string logMessage, object message,
-            IEndpoint endpoint, IOffset offset, int? failedAttempts, Guid? batchId, int? batchSize)
+        private void Log(ILogger logger, LogLevel logLevel, Exception exception, string logMessage, IEnumerable<IBrokerMessage> messages)
         {
-            var properties = new List<(string, string, object)>();
-            
-            if (offset != null)
-                properties.Add(("offset", "offset", $"{offset.Key}@{offset.Value}"));
-            
-            if (endpoint != null)
-                properties.Add(("endpoint", "endpointName", endpoint.Name));
+            var properties = new List<(string, string, string)>();
 
-            if (message != null && !(message is byte[]))
+            var firstMessage = messages.First();
+
+            properties.Add(("endpoint", "endpointName", firstMessage.Endpoint?.Name));
+
+            var failedAttempts = firstMessage.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey);
+            if (failedAttempts > 0)
+                properties.Add(("failedAttempts", "failedAttempts", failedAttempts.ToString()));
+
+            if (messages.Count() == 1)
             {
-                properties.Add(("type", "messageType", message.GetType().Name));
+                properties.Add(("type", "messageType", firstMessage.Headers.GetValue(MessageHeader.MessageTypeKey)));
+                properties.Add(("id", "messageId", firstMessage.Headers.GetValue(MessageHeader.MessageIdKey)));
 
-                var key = _messageKeyProvider.GetKey(message, false);
-                if (key != null)
-                    properties.Add(("id", "messageId", key));
+                if (firstMessage.Offset != null)
+                    properties.Add(("offset", "offset", $"{firstMessage.Offset.Key}@{firstMessage.Offset.Value}"));
             }
 
-            if (failedAttempts != null && failedAttempts > 0)
-                properties.Add(("failedAttempts", "failedAttempts", failedAttempts));
+            properties.Add(("batchId", "batchId", firstMessage.Headers.GetValue(MessageHeader.BatchIdKey)));
+            properties.Add(("batchSize", "batchSize", firstMessage.Headers.GetValue(MessageHeader.BatchSizeKey)));
 
-            if (batchId != null)
-                properties.Add(("batchId", "batchId", batchId));
-
-            if (batchSize != null)
-                properties.Add(("batchSize", "batchSize", batchSize));
+            // Don't log empty values
+            properties.RemoveAll(x => string.IsNullOrWhiteSpace(x.Item3));
 
             logger.Log(
                 logLevel, exception,
-                logMessage + " {{" + string.Join(", ", properties.Select(p => $"{p.Item1}={{{p.Item2}}}")) + "}}",
-                properties.Select(p => p.Item3).ToArray());
+                logMessage + string.Join("", properties.Select(p => $" [{p.Item1}={{{p.Item2}}}]")),
+                properties.Select(p => p.Item3).Cast<object>().ToArray());
         }
 
         #endregion
 
         #region Specific
 
-        public void LogProcessing(ILogger logger, IInboundMessage message)
-        {
-            var batch = message as IInboundBatch;
-
+        public void LogProcessing(ILogger logger, IEnumerable<IBrokerMessage> messages) =>
             LogInformation(logger,
-                batch != null
-                    ? "Processing inbound batch."
+                messages.Count() > 1
+                    ? $"Processing the batch of {messages.Count()} inbound messages."
                     : "Processing inbound message.",
-                message,
-                batch?.Id,
-                batch?.Size);
-        }
+                messages);
 
-        public void LogProcessingError(ILogger logger, IInboundMessage message, Exception exception)
-        {
-            var batch = message as IInboundBatch;
-
+        public void LogProcessingError(ILogger logger, IEnumerable<IBrokerMessage> messages, Exception exception) =>
             LogWarning(logger,
                 exception,
-                batch != null
-                    ? "Error occurred processing the inbound batch."
+                messages.Count() > 1
+                    ? $"Error occurred the batch of ({messages.Count()} inbound messages."
                     : "Error occurred processing the inbound message.",
-                message,
-                batch?.Id,
-                batch?.Size);
-        }
+                messages);
 
         #endregion
     }

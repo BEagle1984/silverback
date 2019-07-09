@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -14,8 +15,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 {
     public class OutboundConnectorTests
     {
-        private OutboundConnector _connector;
-        private TestBroker _broker;
+        private readonly OutboundConnector _connector;
+        private readonly TestBroker _broker;
 
         public OutboundConnectorTests()
         {
@@ -26,34 +27,30 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task OnMessageReceived_SingleMessage_Relayed()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>()
-            {
-                Message = new TestEventOne { Content = "Test" },
-                Endpoint = TestEndpoint.Default
-            };
+            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne { Content = "Test" }, null, TestEndpoint.Default);
 
             await _connector.RelayMessage(outboundMessage);
 
             _broker.ProducedMessages.Count.Should().Be(1);
             _broker.ProducedMessages.First().Endpoint.Should().Be(outboundMessage.Endpoint);
 
-            var producedMessage = outboundMessage.Endpoint.Serializer.Deserialize(_broker.ProducedMessages.First().Message) as TestEventOne;
-            producedMessage.Id.Should().Be(outboundMessage.Message.Id);
+            var producedMessage = outboundMessage.Endpoint.Serializer.Deserialize(
+                _broker.ProducedMessages.First().Message, 
+                new MessageHeaderCollection(_broker.ProducedMessages.First().Headers)) as TestEventOne;
+            producedMessage.Id.Should().Be(outboundMessage.Content.Id);
         }
 
         [Fact]
         public async Task OnMessageReceived_SingleMessage_HeadersSent()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>()
-            {
-                Message = new TestEventOne {Content = "Test"},
-                Endpoint = TestEndpoint.Default,
-                Headers =
+            var outboundMessage = new OutboundMessage<TestEventOne>(
+                new TestEventOne { Content = "Test" },
+                new[]
                 {
-                    {"header1", "value1"},
-                    {"header2", "value2"}
-                }
-            };
+                    new MessageHeader("header1", "value1"),
+                    new MessageHeader("header2", "value2")
+                },
+                TestEndpoint.Default);
 
             await _connector.RelayMessage(outboundMessage);
 
@@ -61,7 +58,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.ProducedMessages.First().Endpoint.Should().Be(outboundMessage.Endpoint);
 
             var producedMessage = _broker.ProducedMessages.First();
-            producedMessage.Headers.Should().BeEquivalentTo(outboundMessage.Headers);
+            producedMessage.Headers.Should().Contain(outboundMessage.Headers);
         }
     }
 }

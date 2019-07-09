@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using FluentAssertions;
 using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -20,39 +21,43 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public void JoinIfComplete_AllChunks_Joined()
         {
+            var headers = new MessageHeaderCollection();
             var originalMessage = new BinaryMessage
             {
                 MessageId = Guid.NewGuid(),
                 Content = GetByteArray(500)
             };
 
-            var originalSerializedMessage = _serializer.Serialize(originalMessage);
+            var originalSerializedMessage = _serializer.Serialize(originalMessage, headers);
 
-            var chunks = new MessageChunk[3];
-            chunks[0] = new MessageChunk
-            {
-                MessageId = Guid.NewGuid(),
-                ChunkId = 0,
-                ChunksCount = 3,
-                OriginalMessageId = originalMessage.MessageId.ToString(),
-                Content = originalSerializedMessage.AsMemory().Slice(0, 300).ToArray()
-            };
-            chunks[1] = new MessageChunk
-            {
-                MessageId = Guid.NewGuid(),
-                ChunkId = 1,
-                ChunksCount = 3,
-                OriginalMessageId = originalMessage.MessageId.ToString(),
-                Content = originalSerializedMessage.AsMemory().Slice(300, 300).ToArray()
-            };
-            chunks[2] = new MessageChunk
-            {
-                MessageId = Guid.NewGuid(),
-                ChunkId = 2,
-                ChunksCount = 3,
-                OriginalMessageId = originalMessage.MessageId.ToString(),
-                Content = originalSerializedMessage.AsMemory().Slice(600).ToArray()
-            };
+            var chunks = new InboundMessage[3];
+            chunks[0] = new InboundMessage(
+                originalSerializedMessage.AsMemory().Slice(0, 300).ToArray(),
+                new[]
+                {
+                    new MessageHeader(MessageHeader.MessageIdKey, originalMessage.MessageId.ToString()),
+                    new MessageHeader(MessageHeader.ChunkIdKey, "0"),
+                    new MessageHeader(MessageHeader.ChunksCountKey, "3"),
+                },
+                null, TestEndpoint.Default, true);
+            chunks[1] = new InboundMessage(
+                originalSerializedMessage.AsMemory().Slice(300, 300).ToArray(),
+                new[]
+                {
+                    new MessageHeader(MessageHeader.MessageIdKey, originalMessage.MessageId.ToString()),
+                    new MessageHeader(MessageHeader.ChunkIdKey, "1"),
+                    new MessageHeader(MessageHeader.ChunksCountKey, "3"),
+                },
+                null, TestEndpoint.Default, true);
+            chunks[2] = new InboundMessage(
+                originalSerializedMessage.AsMemory().Slice(600).ToArray(),
+                new[]
+                {
+                    new MessageHeader(MessageHeader.MessageIdKey, originalMessage.MessageId.ToString()),
+                    new MessageHeader(MessageHeader.ChunkIdKey, "2"),
+                    new MessageHeader(MessageHeader.ChunksCountKey, "3"),
+                },
+                null, TestEndpoint.Default, true);
 
             var result = new ChunkConsumer(_store).JoinIfComplete(chunks[0]);
             result.Should().BeNull();
@@ -61,7 +66,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             result = new ChunkConsumer(_store).JoinIfComplete(chunks[2]);
             result.Should().NotBeNull();
 
-            var deserializedResult = (BinaryMessage)_serializer.Deserialize(result);
+            var deserializedResult = (BinaryMessage)_serializer.Deserialize(result, headers);
             deserializedResult.Content.Should().BeEquivalentTo(originalMessage.Content);
         }
 

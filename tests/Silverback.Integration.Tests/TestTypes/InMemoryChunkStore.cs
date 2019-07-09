@@ -12,12 +12,12 @@ namespace Silverback.Tests.Integration.TestTypes
     {
         private string _pendingCleanup;
 
-        public void Store(MessageChunk chunk) =>
+        public void Store(string messageId, int chunkId, int chunksCount, byte[] content) =>
             Add(new InMemoryStoredChunk
             {
-                MessageId = chunk.OriginalMessageId,
-                ChunkId = chunk.ChunkId,
-                Content = chunk.Content
+                MessageId = messageId,
+                ChunkId = chunkId,
+                Content = content
             });
 
         public int CountChunks(string messageId) =>

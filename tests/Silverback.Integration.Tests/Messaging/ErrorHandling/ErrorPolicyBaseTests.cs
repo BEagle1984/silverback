@@ -23,7 +23,12 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 .ApplyTo<ArgumentException>()
                 .ApplyTo<InvalidCastException>();
 
-            var canHandle = policy.CanHandle(new InboundMessage { Message = new TestEventOne(), FailedAttempts = 99 }, exception);
+            var canHandle = policy.CanHandle(
+                new InboundMessage(
+                    new byte[1],
+                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "99") },
+                    null, TestEndpoint.Default, true),
+                exception);
 
             canHandle.Should().Be(mustApply);
         }
@@ -44,7 +49,12 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 .Exclude<ArgumentException>()
                 .Exclude<InvalidCastException>();
 
-            var canHandle = policy.CanHandle(new InboundMessage { Message = new TestEventOne(), FailedAttempts = 99 }, exception);
+            var canHandle = policy.CanHandle(
+                new InboundMessage(
+                    new byte[1],
+                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "99") },
+                    null, TestEndpoint.Default, true),
+                exception);
 
             canHandle.Should().Be(mustApply);
         }
@@ -66,7 +76,12 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 .Exclude<ArgumentOutOfRangeException>()
                 .ApplyTo<FormatException>();
 
-            var canHandle = policy.CanHandle(new InboundMessage{ Message = new TestEventOne(), FailedAttempts = 99}, exception);
+            var canHandle = policy.CanHandle(
+                new InboundMessage(
+                    new byte[1],
+                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "99") },
+                    null, TestEndpoint.Default, true),
+                exception);
 
             canHandle.Should().Be(mustApply);
         }
@@ -85,7 +100,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         public void ApplyWhen_Exception_CanHandleReturnsExpectedResult(IInboundMessage message, Exception exception, bool mustApply)
         {
             var policy = (TestErrorPolicy)new TestErrorPolicy()
-                .ApplyWhen((msg, ex) => msg.FailedAttempts <= 5 && ex.Message != "no");
+                .ApplyWhen((msg, ex) => msg.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey) <= 5 && ex.Message != "no");
 
             var canHandle = policy.CanHandle(message, exception);
 
@@ -97,19 +112,28 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             {
                 new object[]
                 {
-                    new InboundMessage { Message = new TestEventOne(), FailedAttempts = 3 },
+                    new InboundMessage(
+                        new byte[1],
+                        new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
+                        null, TestEndpoint.Default, true),
                     new ArgumentException(),
                     true
                 },
                 new object[]
                 {
-                    new InboundMessage { Message = new TestEventOne(), FailedAttempts = 6 },
+                    new InboundMessage(
+                        new byte[1],
+                        new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "6") },
+                        null, TestEndpoint.Default, true),
                     new ArgumentException(),
                     false
                 },
                 new object[]
                 {
-                    new InboundMessage { Message = new TestEventOne(), FailedAttempts = 3 },
+                    new InboundMessage(
+                        new byte[1],
+                        new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
+                        null, TestEndpoint.Default, true),
                     new ArgumentException("no"),
                     false
                 }
@@ -119,13 +143,22 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         public void Publish_Exception_MessagePublished()
         {
             var publisher = Substitute.For<IPublisher>();
-            var serviceProvider = new ServiceCollection().AddScoped(_ => publisher).BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-            var policy = (TestErrorPolicy) new TestErrorPolicy(serviceProvider).Publish(msg => new TestEventTwo{ Content = msg.FailedAttempts.ToString()});
-            var message = new InboundMessage { Message = new TestEventOne(), FailedAttempts = 3 };
+            var serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
+                .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+            var policy =
+                (TestErrorPolicy) new TestErrorPolicy(serviceProvider).Publish(msg => new TestEventTwo
+                    { Content = "aaa" });
+            var message = new InboundMessage(
+                new byte[1],
+                new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
+                null, TestEndpoint.Default, true);
 
-            policy.HandleError(message, new ArgumentNullException());
+
+            policy.HandleError(new[] { message }, new ArgumentNullException());
 
             publisher.Received().Publish(Arg.Any<TestEventTwo>());
         }
+
+        // TODO: Test with multiple messages (batch)
     }
 }

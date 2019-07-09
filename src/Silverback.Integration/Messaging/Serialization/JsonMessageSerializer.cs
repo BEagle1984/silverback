@@ -4,10 +4,38 @@
 using System;
 using System.ComponentModel;
 using Newtonsoft.Json;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Serialization
 {
-    public class JsonMessageSerializer<TMessage> : IMessageSerializer
+    // TODO: Test separately
+    public class JsonMessageSerializer<TMessage> : JsonMessageSerializer
+    {
+        public override byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
+        {
+            if (message == null) throw new ArgumentNullException(nameof(message));
+
+            if (message is byte[] bytes)
+                return bytes;
+
+            var type = typeof(TMessage);
+            var json = JsonConvert.SerializeObject(message, type, Settings);
+
+            return GetEncoding().GetBytes(json);
+        }
+
+        public override object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
+        {
+            if (message == null) throw new ArgumentNullException(nameof(message));
+
+            var type = typeof(TMessage);
+            var json = GetEncoding().GetString(message);
+            
+            return JsonConvert.DeserializeObject(json, type, Settings);
+        }
+    }
+
+    public class JsonMessageSerializer : IMessageSerializer
     {
         [DefaultValue("UTF8")] public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
 
@@ -20,28 +48,35 @@ namespace Silverback.Messaging.Serialization
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        public byte[] Serialize(object message)
+        public virtual byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
+            if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
 
             if (message is byte[] bytes)
                 return bytes;
 
-            var json = JsonConvert.SerializeObject(message, typeof(TMessage), Settings);
+            var type = message.GetType();
+            var json = JsonConvert.SerializeObject(message, type, Settings);
+
+            messageHeaders.AddOrReplace(MessageHeader.MessageTypeKey, type.AssemblyQualifiedName);
 
             return GetEncoding().GetBytes(json);
         }
 
-        public object Deserialize(byte[] message)
+        public virtual object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
+            if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
 
             var json = GetEncoding().GetString(message);
+            var typeName = messageHeaders.GetValue(MessageHeader.MessageTypeKey);
+            var type = typeName != null ? Type.GetType(typeName) : typeof(object);
 
-            return JsonConvert.DeserializeObject<TMessage>(json, Settings);
+            return JsonConvert.DeserializeObject(json, type, Settings);
         }
 
-        private System.Text.Encoding GetEncoding()
+        protected System.Text.Encoding GetEncoding()
         {
             switch (Encoding)
             {
@@ -59,9 +94,5 @@ namespace Silverback.Messaging.Serialization
                     throw new InvalidOperationException("Unhandled encoding.");
             }
         }
-    }
-
-    public class JsonMessageSerializer : JsonMessageSerializer<object>
-    {
     }
 }

@@ -106,7 +106,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 
             producer.Produce(message);
 
-            producer.ProducedMessages.Count.Should().Be(19);
+            producer.ProducedMessages.Count.Should().Be(9);
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 
             producer.Produce(message);
 
-            producer.ProducedMessages.Count.Should().Be(19);
+            producer.ProducedMessages.Count.Should().Be(9);
         }
     }
 }

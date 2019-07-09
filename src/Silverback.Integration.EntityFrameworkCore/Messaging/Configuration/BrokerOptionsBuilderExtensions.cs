@@ -4,7 +4,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Background;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
@@ -71,7 +70,7 @@ namespace Silverback.Messaging.Configuration
             where TDbContext : DbContext
         {
             return builder.AddDbOutboundWorker<TDbContext>(new DistributedLockSettings(), interval,
-                    enforceMessageOrder, readPackageSize);
+                    enforceMessageOrder, readPackageSize, removeProduced);
         }
 
         /// <summary>
@@ -109,8 +108,7 @@ namespace Silverback.Messaging.Configuration
             where TDbContext : DbContext
         {
             builder.AddChunkStore(s => new DbContextChunkStore(
-                s.GetRequiredService<TDbContext>(),
-                s.GetRequiredService<ILogger<DbContextChunkStore>>()));
+                s.GetRequiredService<TDbContext>()));
 
             return builder;
         }

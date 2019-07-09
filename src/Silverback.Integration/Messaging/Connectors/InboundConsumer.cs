@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Batch;
@@ -19,7 +20,7 @@ namespace Silverback.Messaging.Connectors
         private readonly IEndpoint _endpoint;
         private readonly InboundConnectorSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
-        private readonly InboundMessageProcessor _inboundMessageProcessor;
+        private readonly ErrorPolicyHelper _errorPolicyHelper;
 
         private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
         private readonly Action<IServiceProvider> _commitHandler;
@@ -27,7 +28,6 @@ namespace Silverback.Messaging.Connectors
 
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
-        private readonly MessageLogger _messageLogger;
 
         private readonly IConsumer _consumer;
 
@@ -50,8 +50,7 @@ namespace Silverback.Messaging.Connectors
 
             _serviceProvider = serviceProvider;
             _logger = serviceProvider.GetRequiredService<ILogger<InboundConsumer>>();
-            _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
-            _inboundMessageProcessor = serviceProvider.GetRequiredService<InboundMessageProcessor>();
+            _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
 
             _consumer = broker.GetConsumer(_endpoint);
 
@@ -69,7 +68,7 @@ namespace Silverback.Messaging.Connectors
                 var batch = new MessageBatch(
                     _endpoint,
                     _settings.Batch,
-                    _messagesHandler,
+                     _messagesHandler,
                     Commit,
                     _rollbackHandler,
                     _errorPolicy,
@@ -83,42 +82,35 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        private IInboundMessage CreateInboundMessage(MessageReceivedEventArgs args)
-        {
-            var message = new InboundMessage<byte[]>
-            {
-                Message = args.Message,
-                Endpoint = _endpoint,
-                Offset = args.Offset,
-                MustUnwrap = _settings.UnwrapMessages
-            };
-
-            if (args.Headers != null)
-                message.Headers.AddRange(args.Headers);
-
-            return message;
-        }
+        private IInboundMessage CreateInboundMessage(MessageReceivedEventArgs args) =>
+            new InboundMessage(
+                args.Message,
+                args.Headers,
+                args.Offset,
+                args.Endpoint,
+                _settings.UnwrapMessages
+            );
 
         private void ProcessSingleMessage(IInboundMessage message)
         {
-            _inboundMessageProcessor.TryDeserializeAndProcess(
-                message,
+            _errorPolicyHelper.TryProcess(
+                new []{ message },
                 _errorPolicy,
-                deserializedMessage =>
+                messages =>
                 {
                     using (var scope = _serviceProvider.CreateScope())
                     {
-                        RelayAndCommitSingleMessage(deserializedMessage, scope.ServiceProvider);
+                        RelayAndCommitSingleMessage(messages, scope.ServiceProvider);
                     }
                 });
         }
 
-        private void RelayAndCommitSingleMessage(IInboundMessage message, IServiceProvider serviceProvider)
+        private void RelayAndCommitSingleMessage(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
         {
             try
             {
-                _messagesHandler(new[] { message }, serviceProvider);
-                Commit(new[] { message.Offset }, serviceProvider);
+                _messagesHandler(messages, serviceProvider);
+                Commit(messages.Select(m => m.Offset), serviceProvider);
             }
             catch (Exception)
             {

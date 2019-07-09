@@ -226,10 +226,10 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new InboundMessage { FailedAttempts = 3 }, new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage { FailedAttempts = 6 }, new ArgumentException()).Should().BeFalse();
+            policy.CanHandle(new InboundMessage(null, new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") }, null, null, true), new ArgumentException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage(null, new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "6") }, null, null, true), new ArgumentException()).Should().BeFalse();
         }
-        
+
         [Fact]
         public void Read_CompleteInbound_ErrorPolicyConstructorParameterSet()
         {
@@ -250,9 +250,9 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new InboundMessage(), new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage(), new InvalidOperationException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage(), new FormatException()).Should().BeFalse();
+            policy.CanHandle(new InboundMessage(null, null, null, null, true), new ArgumentException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage(null, null, null, null, true), new InvalidOperationException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage(null, null, null, null, true), new FormatException()).Should().BeFalse();
         }
 
         [Fact]
@@ -263,8 +263,8 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new InboundMessage(), new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage(), new ArgumentNullException()).Should().BeFalse();
+            policy.CanHandle(new InboundMessage(null, null, null, null, true), new ArgumentException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage(null, null, null, null, true), new ArgumentNullException()).Should().BeFalse();
         }
 
         [Fact]

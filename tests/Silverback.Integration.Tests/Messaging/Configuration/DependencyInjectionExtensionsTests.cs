@@ -115,7 +115,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         }
 
         [Fact]
-        public void AddOutboundRoutingTest()
+        public void AddOutbound_MultipleRoutes_MessagesCorrectlyRouted()
         {
             _services.AddBroker<TestBroker>(options => options.AddOutboundConnector());
 

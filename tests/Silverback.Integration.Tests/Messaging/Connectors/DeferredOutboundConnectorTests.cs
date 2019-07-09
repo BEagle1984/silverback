@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -33,36 +34,31 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task OnMessageReceived_SingleMessage_Queued()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>()
-            {
-                Message = new TestEventOne {Content = "Test"},
-                Headers =
+            var outboundMessage = new OutboundMessage<TestEventOne>(
+                new TestEventOne { Content = "Test" },
+                new[]
                 {
-                    { "header1", "value1"},
-                    { "header2", "value2"}
+                    new MessageHeader("header1", "value1"),
+                    new MessageHeader("header2", "value2")
                 },
-                Endpoint = TestEndpoint.Default
-            };
+                TestEndpoint.Default);
+            outboundMessage.RawContent = new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers);
 
             await _connector.RelayMessage(outboundMessage);
             await _queue.Commit();
 
             _queue.Length.Should().Be(1);
             var queued = (await _queue.Dequeue(1)).First();
-            queued.Message.Endpoint.Should().Be(outboundMessage.Endpoint);
-            queued.Message.Headers.Count.Should().Be(2);
-            ((IIntegrationMessage)queued.Message.Message).Id.Should().Be(outboundMessage.Message.Id);
+            queued.Endpoint.Should().Be(outboundMessage.Endpoint);
+            queued.Headers.Count().Should().Be(3);
+            queued.Content.Should().BeEquivalentTo(new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers));
         }
 
         [Fact]
         public async Task CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>()
-            {
-                Message = new TestEventOne(),
-                Endpoint = TestEndpoint.Default
-            };
-
+            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne(), null, TestEndpoint.Default);
+ 
             await _connector.RelayMessage(outboundMessage);
             await _transactionManager.OnTransactionCompleted(new TransactionCompletedEvent());
             await _connector.RelayMessage(outboundMessage);

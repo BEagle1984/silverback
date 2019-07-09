@@ -2,11 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Infrastructure;
-using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
+using OutboundMessage = Silverback.Messaging.Connectors.Model.OutboundMessage;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -16,14 +17,18 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        public async Task Enqueue(IOutboundMessage message)
+        public Task Enqueue(IOutboundMessage message)
         {
-            await DbSet.AddAsync(new OutboundMessage
+            DbSet.Add(new OutboundMessage
             {
-                Message = DefaultSerializer.Serialize(message),
-                Endpoint = message.Endpoint.Name,
+                Content = message.RawContent ?? message.Endpoint.Serializer.Serialize(message.Content, message.Headers),
+                Headers = DefaultSerializer.Serialize((IEnumerable<MessageHeader>) message.Headers),
+                Endpoint = DefaultSerializer.Serialize(message.Endpoint),
+                EndpointName = message.Endpoint.Name,
                 Created = DateTime.UtcNow
             });
+
+            return Task.CompletedTask;
         }
 
         public Task Commit() => Task.CompletedTask;

@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Silverback</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.10.0.0</Version>
+    <Version>0.11.0-rc1</Version>
     <Authors>BEagle1984</Authors>
     <Description>Silverback is a simple framework to build reactive, event-driven, microservices.  This package contains the logic to read the broker endpoints configuration from the IConfiguration (see Microsoft.Extensions.Configuration).</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -26,7 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
-    <PackageReference Include="Silverback.Integration" Version="0.10.0" />
+    <PackageReference Include="Silverback.Integration" Version="0.11.0-rc1" />
   </ItemGroup>
 
 </Project>

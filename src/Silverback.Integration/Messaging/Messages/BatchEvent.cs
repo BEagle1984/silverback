@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Messages
 {
     public abstract class BatchEvent : ISilverbackEvent
     {
-        protected BatchEvent(Guid batchId, IEnumerable<object> messages)
+        protected BatchEvent(Guid batchId, IEnumerable<IInboundMessage> messages)
         {
             Messages = messages;
             BatchId = batchId;
@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Messages
 
         public Guid BatchId { get; }
 
-        public IEnumerable<object> Messages { get; }
+        public IEnumerable<IInboundMessage> Messages { get; }
 
         public int BatchSize { get; }
     }
