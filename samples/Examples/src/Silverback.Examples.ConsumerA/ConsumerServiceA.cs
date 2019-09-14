@@ -4,10 +4,6 @@
 using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Exceptions;
-using Serilog.Sinks.SystemConsole.Themes;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
