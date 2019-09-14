@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Silverback.Infrastructure;
@@ -13,7 +15,7 @@ namespace Silverback.Messaging.Connectors.Repositories
     public class DbContextOffsetStore : RepositoryBase<StoredOffset>, IOffsetStore
     {
         private static readonly JsonSerializerSettings SerializerSettings;
-        private readonly object _lock = new object();
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
         static DbContextOffsetStore()
         {
@@ -31,11 +33,13 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        public void Store(IOffset offset)
+        public async Task Store(IOffset offset)
         {
-            lock (_lock)
+            await _semaphore.WaitAsync();
+
+            try
             {
-                var entity = DbSet.Find(offset.Key) ??
+                var entity = await DbSet.FindAsync(offset.Key) ??
                              DbSet.Add(new StoredOffset
                              {
                                  Key = offset.Key
@@ -43,31 +47,39 @@ namespace Silverback.Messaging.Connectors.Repositories
 
                 entity.Offset = JsonConvert.SerializeObject(offset, typeof(IOffset), SerializerSettings);
             }
-        }
-
-        public void Commit()
-        {
-            lock (_lock)
+            finally
             {
-                // Call SaveChanges, in case it isn't called by a subscriber
-                DbContext.SaveChanges();
+                _semaphore.Release();
             }
         }
 
-        public void Rollback()
+        public async Task Commit()
         {
-            // Nothing to do, just not saving the changes made to the DbContext
+            await _semaphore.WaitAsync();
+
+            try
+            {
+                // Call SaveChanges, in case it isn't called by a subscriber
+                await DbContext.SaveChangesAsync();
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
-        public IOffset GetLatestValue(string key)
+        public Task Rollback()
         {
-            var json = DbSet
-                .Where(o => o.Key == key)
-                .Select(o => o.Offset)
-                .FirstOrDefault();
+            // Nothing to do, just not saving the changes made to the DbContext
+            return Task.CompletedTask;
+        }
 
-            return json != null 
-                ? JsonConvert.DeserializeObject<IOffset>(json, SerializerSettings)
+        public async Task<IOffset> GetLatestValue(string key)
+        {
+            var storedOffset = await DbSet.FindAsync(key);
+
+            return storedOffset?.Offset != null 
+                ? JsonConvert.DeserializeObject<IOffset>(storedOffset.Offset, SerializerSettings)
                 : null;
         }
     }

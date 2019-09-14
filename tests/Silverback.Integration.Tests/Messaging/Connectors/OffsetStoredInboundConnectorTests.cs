@@ -54,20 +54,20 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
-        public void Bind_PushMessages_MessagesReceived()
+        public async Task Bind_PushMessages_MessagesReceived()
         {
             _connector.Bind(TestEndpoint.Default);
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, offset: new TestOffset("a", "1"));
-            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() }, offset: new TestOffset("a", "2"));
+            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, offset: new TestOffset("a", "1"));
+            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() }, offset: new TestOffset("a", "2"));
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(2);
         }
 
         [Fact]
-        public void Bind_PushMessages_EachIsConsumedOnce()
+        public async Task Bind_PushMessages_EachIsConsumedOnce()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
@@ -78,17 +78,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e1, offset: o1);
-            consumer.TestPush(e2, offset: o2);
-            consumer.TestPush(e1, offset: o1);
-            consumer.TestPush(e2, offset: o2);
-            consumer.TestPush(e1, offset: o1);
+            await consumer.TestPush(e1, offset: o1);
+            await consumer.TestPush(e2, offset: o2);
+            await consumer.TestPush(e1, offset: o1);
+            await consumer.TestPush(e2, offset: o2);
+            await consumer.TestPush(e1, offset: o1);
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(2);
         }
 
         [Fact]
-        public void Bind_PushMessagesFromDifferentTopics_EachIsConsumedOnce()
+        public async Task Bind_PushMessagesFromDifferentTopics_EachIsConsumedOnce()
         {
             var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var o1 = new TestOffset("a", "1");
@@ -98,17 +98,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e, offset: o1);
-            consumer.TestPush(e, offset: o2);
-            consumer.TestPush(e, offset: o1);
-            consumer.TestPush(e, offset: o2);
-            consumer.TestPush(e, offset: o1);
+            await consumer.TestPush(e, offset: o1);
+            await consumer.TestPush(e, offset: o2);
+            await consumer.TestPush(e, offset: o1);
+            await consumer.TestPush(e, offset: o2);
+            await consumer.TestPush(e, offset: o1);
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(2);
         }
 
         [Fact]
-        public void Bind_PushMessages_OffsetStored()
+        public async Task Bind_PushMessages_OffsetStored()
         {
             var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var o1 = new TestOffset("a", "1");
@@ -119,17 +119,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e, offset: o1);
-            consumer.TestPush(e, offset: o2);
-            consumer.TestPush(e, offset: o3);
-            consumer.TestPush(e, offset: o2);
-            consumer.TestPush(e, offset: o1);
+            await consumer.TestPush(e, offset: o1);
+            await consumer.TestPush(e, offset: o2);
+            await consumer.TestPush(e, offset: o3);
+            await consumer.TestPush(e, offset: o2);
+            await consumer.TestPush(e, offset: o1);
 
             _scopedServiceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>().Count.Should().Be(2);
         }
 
         [Fact]
-        public void Bind_PushMessagesInBatch_EachIsConsumedOnce()
+        public async Task Bind_PushMessagesInBatch_EachIsConsumedOnce()
         {
             var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var o1 = new TestOffset("a", "1");
@@ -146,18 +146,18 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e, offset: o1);
-            consumer.TestPush(e, offset: o2);
-            consumer.TestPush(e, offset: o3);
-            consumer.TestPush(e, offset: o2);
-            consumer.TestPush(e, offset: o1);
-            consumer.TestPush(e, offset: o3);
+            await consumer.TestPush(e, offset: o1);
+            await consumer.TestPush(e, offset: o2);
+            await consumer.TestPush(e, offset: o3);
+            await consumer.TestPush(e, offset: o2);
+            await consumer.TestPush(e, offset: o1);
+            await consumer.TestPush(e, offset: o3);
 
             _testSubscriber.ReceivedMessages.OfType<TestEventOne>().Should().HaveCount(3);
         }
 
         [Fact]
-        public void Bind_PushMessagesInBatch_OffsetStored()
+        public async Task Bind_PushMessagesInBatch_OffsetStored()
         {
             var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var o1 = new TestOffset("a", "1");
@@ -174,17 +174,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e, offset: o1);
-            consumer.TestPush(e, offset: o2);
-            consumer.TestPush(e, offset: o3);
-            consumer.TestPush(e, offset: o2);
-            consumer.TestPush(e, offset: o1);
+            await consumer.TestPush(e, offset: o1);
+            await consumer.TestPush(e, offset: o2);
+            await consumer.TestPush(e, offset: o3);
+            await consumer.TestPush(e, offset: o2);
+            await consumer.TestPush(e, offset: o1);
 
             _scopedServiceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>().Count.Should().Be(2);
         }
 
         [Fact]
-        public void Bind_PushMessagesInBatch_OnlyOffsetOfCommittedBatchStored()
+        public async Task Bind_PushMessagesInBatch_OnlyOffsetOfCommittedBatchStored()
         {
             var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var fail = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
@@ -206,16 +206,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var consumer = _broker.Consumers.First();
 
-            try { consumer.TestPush(e, offset: o1); } catch { }
-            try { consumer.TestPush(e, offset: o2); } catch { }
-            try { consumer.TestPush(e, offset: o3); } catch { }
-            try { consumer.TestPush(fail, offset: o4); } catch { }
+            try { await consumer.TestPush(e, offset: o1); } catch { }
+            try { await consumer.TestPush(e, offset: o2); } catch { }
+            try { await consumer.TestPush(e, offset: o3); } catch { }
+            try { await consumer.TestPush(fail, offset: o4); } catch { }
 
-            _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a").Value.Should().Be("2");
+            (await _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a")).Value.Should().Be("2");
         }
 
         [Fact]
-        public void Bind_PushMessagesInBatchToMultipleConsumers_OnlyOffsetOfCommittedBatchStored()
+        public async Task Bind_PushMessagesInBatchToMultipleConsumers_OnlyOffsetOfCommittedBatchStored()
         {
             var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var fail = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
@@ -241,22 +241,22 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var tasks = new[]
             {
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
                     try
                     {
-                        consumer1.TestPush(e, offset: o1);
-                        consumer1.TestPush(e, offset: o2);
+                        await consumer1.TestPush(e, offset: o1);
+                        await consumer1.TestPush(e, offset: o2);
                     }
                     catch (Exception)
                     { }
                 }),
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
                     try
                     {
-                        consumer2.TestPush(e, offset: o3);
-                        consumer2.TestPush(fail,offset: o4);
+                        await consumer2.TestPush(e, offset: o3);
+                        await consumer2.TestPush(fail,offset: o4);
                     }
                     catch (Exception)
                     {
@@ -264,9 +264,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 })
             };
 
-            Task.WaitAll(tasks);
+            await Task.WhenAll(tasks);
 
-            _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a").Value.Should().Be("2");
+            (await _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a")).Value.Should().Be("2");
         }
     }
 }

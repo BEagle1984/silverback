@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
-        public event MessageReceivedHandler Received;
+        public event KafkaMessageReceivedHandler Received;
 
         public void Subscribe(KafkaConsumerEndpoint endpoint)
         {
@@ -38,18 +38,16 @@ namespace Silverback.Messaging.Broker
             _innerConsumer.Subscribe(_endpoints.Select(e => e.Name));
         }
 
-        public void Commit(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets)
-        {
+        public void Commit(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets) => 
             _innerConsumer.Commit(offsets);
-        }
 
         public void StoreOffset(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets) =>
             offsets.ForEach(_innerConsumer.StoreOffset);
         
-        public void CommitAll(CancellationToken cancellationToken = default)
+        public void CommitAll()
         {
             if (!_consumed) return;
-            
+
             _innerConsumer.Commit();
         }
 
@@ -71,13 +69,13 @@ namespace Silverback.Messaging.Broker
                 .SetPartitionsAssignedHandler((_, partitions) =>
                 {
                     partitions.ForEach(partition =>
-                        _logger.LogTrace("Assigned topic {topic} partition {partition}, member id: {memberId}",
+                        _logger.LogInformation("Assigned topic {topic} partition {partition}, member id: {memberId}",
                             partition.Topic, partition.Partition, _innerConsumer.MemberId));
                 })
                 .SetPartitionsRevokedHandler((_, partitions) =>
                 {
                     partitions.ForEach(partition =>
-                        _logger.LogTrace("Revoked topic {topic} partition {partition}, member id: {memberId}",
+                        _logger.LogInformation("Revoked topic {topic} partition {partition}, member id: {memberId}",
                             partition.Topic, partition.Partition, _innerConsumer.MemberId));
                 })
                 .SetOffsetsCommittedHandler((_, offsets) =>
@@ -102,7 +100,7 @@ namespace Silverback.Messaging.Broker
                 })
                 .SetErrorHandler((_, e) =>
                 {
-                    _logger.Log(e.IsFatal ? LogLevel.Critical : LogLevel.Warning,
+                    _logger.Log(e.IsFatal ? LogLevel.Critical : LogLevel.Error,
                             "Error in Kafka consumer: {reason}.", e.Reason);
                 })
                 .SetStatisticsHandler((_, json) =>
@@ -112,7 +110,7 @@ namespace Silverback.Messaging.Broker
                 .Build();
         }
 
-        private void Consume()
+        private async Task Consume()
         {
             while (!_cancellationToken.IsCancellationRequested)
             {
@@ -123,7 +121,8 @@ namespace Silverback.Messaging.Broker
 
                     _logger.LogTrace("Consuming message: {topic} {partition} @{offset}", result.Topic, result.Partition, result.Offset);
 
-                    Received?.Invoke(result.Message, result.TopicPartitionOffset);
+                    if (Received != null)
+                        await Received.Invoke(result.Message, result.TopicPartitionOffset);
                 }
                 catch (OperationCanceledException)
                 {

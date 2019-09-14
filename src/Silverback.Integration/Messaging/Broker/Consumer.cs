@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
@@ -14,21 +15,18 @@ namespace Silverback.Messaging.Broker
         {
         }
 
-        public event EventHandler<MessageReceivedEventArgs> Received;
+        public event MessageReceivedHandler Received;
 
-        public void Acknowledge(IOffset offset)
-        {
-            Acknowledge(new[] {offset});
-        }
+        public Task Acknowledge(IOffset offset) => Acknowledge(new[] {offset});
 
-        public abstract void Acknowledge(IEnumerable<IOffset> offsets);
+        public abstract Task Acknowledge(IEnumerable<IOffset> offsets);
 
-        protected void HandleMessage(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset)
+        protected async Task HandleMessage(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset)
         {
             if (Received == null)
                 throw new InvalidOperationException("A message was received but no handler is configured, please attach to the Received event.");
 
-            Received.Invoke(this, new MessageReceivedEventArgs(message, headers, offset, Endpoint));
+            await Received.Invoke(this, new MessageReceivedEventArgs(message, headers, offset, Endpoint));
         }
     }
 

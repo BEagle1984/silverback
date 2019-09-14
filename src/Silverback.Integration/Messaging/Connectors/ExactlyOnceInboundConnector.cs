@@ -3,9 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -18,34 +21,29 @@ namespace Silverback.Messaging.Connectors
         private readonly MessageLogger _messageLogger;
 
         protected ExactlyOnceInboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<ExactlyOnceInboundConnector> logger, MessageLogger messageLogger)
-            : base(broker, serviceProvider, logger)
+            : base(broker, serviceProvider)
         {
             Logger = logger;
             _messageLogger = messageLogger;
         }
 
-        protected override void RelayMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
+        protected override async Task RelayMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
         {
-            messages = EnsureExactlyOnce(messages, serviceProvider);
+            messages = await EnsureExactlyOnce(messages, serviceProvider);
 
-            base.RelayMessages(messages, serviceProvider);
+            await base.RelayMessages(messages, serviceProvider);
         }
 
-        private IEnumerable<IInboundMessage> EnsureExactlyOnce(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
-        {
-            foreach (var message in messages)
+        private async Task<IEnumerable<IInboundMessage>> EnsureExactlyOnce(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider) =>
+            await messages.WhereAsync(async message =>
             {
-                if (MustProcess(message, serviceProvider))
-                {
-                    yield return message;
-                }
-                else
-                {
-                    _messageLogger.LogTrace(Logger, "Message is being skipped since it was already processed.", message);
-                }
-            }
-        }
+                if (await MustProcess(message, serviceProvider))
+                    return true;
 
-        protected abstract bool MustProcess(IInboundMessage message, IServiceProvider serviceProvider);
+                _messageLogger.LogTrace(Logger, "Message is being skipped since it was already processed.", message);
+                return false;
+            });
+
+        protected abstract Task<bool> MustProcess(IInboundMessage message, IServiceProvider serviceProvider);
     }
 }

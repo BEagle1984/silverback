@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -22,23 +23,25 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public int AcknowledgeCount { get; set; }
 
-        public void TestPush(object message, IEnumerable<MessageHeader> headers = null, IOffset offset = null, IMessageSerializer serializer = null) => 
+        public Task TestPush(object message, IEnumerable<MessageHeader> headers = null, IOffset offset = null,
+            IMessageSerializer serializer = null) =>
             TestPush(message, new MessageHeaderCollection(headers), offset, serializer);
 
-        public void TestPush(byte[] rawMessage, IEnumerable<MessageHeader> headers = null, IOffset offset = null, IMessageSerializer serializer = null) =>
-            TestPush(rawMessage, new MessageHeaderCollection(headers), offset, serializer);
+        public Task TestPush(byte[] rawMessage, IEnumerable<MessageHeader> headers = null, IOffset offset = null) =>
+            TestPush(rawMessage, new MessageHeaderCollection(headers), offset);
 
-        public void TestPush(object message, MessageHeaderCollection headers, IOffset offset = null, IMessageSerializer serializer = null)
+        public async Task TestPush(object message, MessageHeaderCollection headers, IOffset offset = null,
+            IMessageSerializer serializer = null)
         {
             if (serializer == null)
                 serializer = new JsonMessageSerializer();
 
             var buffer = serializer.Serialize(message, headers);
 
-            TestPush(buffer, headers, offset, serializer);
+            await TestPush(buffer, headers, offset);
         }
 
-        public void TestPush(byte[] rawMessage, MessageHeaderCollection headers, IOffset offset = null, IMessageSerializer serializer = null)
+        public async Task TestPush(byte[] rawMessage, MessageHeaderCollection headers, IOffset offset = null)
         {
             if (!Broker.IsConnected)
                 throw new InvalidOperationException("The broker is not connected.");
@@ -46,13 +49,12 @@ namespace Silverback.Tests.Integration.TestTypes
             if (!IsReady)
                 throw new InvalidOperationException("The consumer is not ready.");
 
-            if (serializer == null)
-                serializer = new JsonMessageSerializer();
-
-            HandleMessage(rawMessage, headers, offset);
+            await HandleMessage(rawMessage, headers, offset);
         }
 
-        public override void Acknowledge(IEnumerable<IOffset> offsets) =>
-            AcknowledgeCount = AcknowledgeCount + offsets.Count();
+#pragma warning disable 1998
+        public override async Task Acknowledge(IEnumerable<IOffset> offsets) =>
+            AcknowledgeCount += offsets.Count();
+#pragma warning restore 1998
     }
 }

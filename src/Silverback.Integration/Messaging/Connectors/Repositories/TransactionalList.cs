@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -10,17 +11,19 @@ namespace Silverback.Messaging.Connectors.Repositories
         protected static readonly List<T> Entries = new List<T>();
         protected readonly List<T> UncommittedEntries = new List<T>();
 
-        public int Length => Entries.Count;
+        public Task<int> GetLength() => Task.FromResult(Entries.Count);
 
-        protected void Add(T entry)
+        protected Task Add(T entry)
         {
             lock (UncommittedEntries)
             {
                 UncommittedEntries.Add(entry);
             }
+
+            return Task.CompletedTask;
         }
 
-        public virtual void Commit()
+        public virtual Task Commit()
         {
             lock (UncommittedEntries)
             {
@@ -31,22 +34,28 @@ namespace Silverback.Messaging.Connectors.Repositories
 
                 UncommittedEntries.Clear();
             }
+
+            return Task.CompletedTask;
         }
 
-        public virtual void Rollback()
+        public virtual Task Rollback()
         {
             lock (UncommittedEntries)
             {
                 UncommittedEntries.Clear();
             }
+
+            return Task.CompletedTask;
         }
 
-        protected void Remove(T entry)
+        protected Task Remove(T entry)
         {
             lock (Entries)
             {
                 Entries.Remove(entry);
             }
+
+            return Task.CompletedTask;
         }
 
         public static void Clear()

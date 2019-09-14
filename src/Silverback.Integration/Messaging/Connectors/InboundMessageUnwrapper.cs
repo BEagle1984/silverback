@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
@@ -17,10 +18,10 @@ namespace Silverback.Messaging.Connectors
         }
 
         [Subscribe]
-        public void OnMessageReceived(IInboundMessage message)
+        public async Task OnMessageReceived(IInboundMessage message)
         {
             if (message.MustUnwrap)
-                _publisher.Publish(message.Content);
+                await _publisher.PublishAsync(message.Content);
         }
     }
 }

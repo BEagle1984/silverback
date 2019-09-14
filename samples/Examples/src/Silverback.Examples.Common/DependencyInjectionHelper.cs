@@ -4,6 +4,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using Silverback.Examples.Common.Data;
 
 namespace Silverback.Examples.Common
@@ -13,6 +14,8 @@ namespace Silverback.Examples.Common
         public static IServiceCollection GetServiceCollection() => new ServiceCollection()
             .AddDbContext<ExamplesDbContext>(options => options
                 .UseSqlServer(Configuration.ConnectionString))
-            .AddLogging(logging => logging.SetMinimumLevel(LogLevel.Trace));
+            .AddLogging(l => l
+                .SetMinimumLevel(LogLevel.Trace)
+                .AddSerilog());
     }
 }

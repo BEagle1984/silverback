@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging.Messages;
@@ -42,10 +44,19 @@ namespace Silverback.Examples.ConsumerA
             });
 
         [Subscribe]
-        void OnBadEventReceived(BadIntegrationEvent message)
+        async Task OnBadEventReceived(BadIntegrationEvent message)
         {
             _logger.LogInformation($"Message '{message.Content}' is BAD...throwing exception!");
-            throw new System.Exception("Bad message!");
+
+            await DoFail();
+        }
+
+        private async Task DoFail()
+        {
+            throw new AggregateException(new Exception("Bad message!", new Exception("Inner reason...")));
+
+            //throw new TaskCanceledException();
+            //throw new Exception("Bad message!", new Exception("Inner reason..."));
         }
 
         [Subscribe]

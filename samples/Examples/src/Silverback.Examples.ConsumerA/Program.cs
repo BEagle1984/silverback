@@ -14,7 +14,6 @@ namespace Silverback.Examples.ConsumerA
 
             while (true)
             {
-                Console.WriteLine(".");
                 Thread.Sleep(5000);
             }
         }

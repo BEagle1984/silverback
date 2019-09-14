@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await _connector.RelayMessage(outboundMessage);
             await _queue.Commit();
 
-            _queue.Length.Should().Be(1);
+            (await _queue.GetLength()).Should().Be(1);
             var queued = (await _queue.Dequeue(1)).First();
             queued.Endpoint.Should().Be(outboundMessage.Endpoint);
             queued.Headers.Count().Should().Be(3);
@@ -64,7 +64,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await _connector.RelayMessage(outboundMessage);
             await _transactionManager.OnTransactionAborted(new TransactionAbortedEvent());
 
-            _queue.Length.Should().Be(1);
+            (await _queue.GetLength()).Should().Be(1);
         }
     }
 }

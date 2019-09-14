@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.LargeMessages
@@ -17,15 +18,15 @@ namespace Silverback.Messaging.LargeMessages
             _store = store;
         }
 
-        public byte[] JoinIfComplete(IInboundMessage message)
+        public async Task<byte[]> JoinIfComplete(IInboundMessage message)
         {
             var (messageId, chunkId, chunksCount) = ExtractHeadersValues(message);
 
-            var count = _store.CountChunks(messageId);
+            var count = await _store.CountChunks(messageId);
 
             if (count >= chunksCount - 1)
             {
-                var chunks = _store.GetChunks(messageId);
+                var chunks = await _store.GetChunks(messageId);
                 if (chunks.ContainsKey(chunkId))
                     return null;
 
@@ -33,13 +34,13 @@ namespace Silverback.Messaging.LargeMessages
 
                 var completeMessage = Join(chunks);
 
-                _store.Cleanup(messageId);
+                await _store.Cleanup(messageId);
 
                 return completeMessage;
             }
             else
             {
-                _store.Store(messageId, chunkId, chunksCount, message.RawContent);
+                await _store.Store(messageId, chunkId, chunksCount, message.RawContent);
                 return null;
             }
         }
@@ -64,9 +65,9 @@ namespace Silverback.Messaging.LargeMessages
             return (messageId, chunkId.Value, chunksCount.Value);
         }
 
-        public void Commit() => _store.Commit();
+        public Task Commit() => _store.Commit();
 
-        public void Rollback() => _store.Rollback();
+        public Task Rollback() => _store.Rollback();
 
         private static byte[] Join(Dictionary<int, byte[]> chunks)
         {

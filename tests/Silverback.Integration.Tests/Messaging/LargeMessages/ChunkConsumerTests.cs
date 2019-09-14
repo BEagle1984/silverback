@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
@@ -19,7 +20,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         private readonly IMessageSerializer _serializer = new JsonMessageSerializer();
 
         [Fact]
-        public void JoinIfComplete_AllChunks_Joined()
+        public async Task JoinIfComplete_AllChunks_Joined()
         {
             var headers = new MessageHeaderCollection();
             var originalMessage = new BinaryMessage
@@ -59,11 +60,11 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 },
                 null, TestEndpoint.Default, true);
 
-            var result = new ChunkConsumer(_store).JoinIfComplete(chunks[0]);
+            var result = await new ChunkConsumer(_store).JoinIfComplete(chunks[0]);
             result.Should().BeNull();
-            result = new ChunkConsumer(_store).JoinIfComplete(chunks[1]);
+            result = await new ChunkConsumer(_store).JoinIfComplete(chunks[1]);
             result.Should().BeNull();
-            result = new ChunkConsumer(_store).JoinIfComplete(chunks[2]);
+            result = await new ChunkConsumer(_store).JoinIfComplete(chunks[2]);
             result.Should().NotBeNull();
 
             var deserializedResult = (BinaryMessage)_serializer.Deserialize(result, headers);

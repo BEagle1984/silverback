@@ -55,6 +55,6 @@ namespace Silverback.Messaging.Connectors.Repositories
             await DbContext.SaveChangesAsync();
         }
 
-        public int Length => DbSet.Count(m => m.Produced == null);
+        public Task<int> GetLength() => DbSet.CountAsync(m => m.Produced == null);
     }
 }

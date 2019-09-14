@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Batch;
@@ -22,9 +23,9 @@ namespace Silverback.Messaging.Connectors
         private readonly IErrorPolicy _errorPolicy;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
-        private readonly Action<IServiceProvider> _commitHandler;
-        private readonly Action<IServiceProvider> _rollbackHandler;
+        private readonly Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> _messagesHandler;
+        private readonly Func<IServiceProvider, Task> _commitHandler;
+        private readonly Func<IServiceProvider, Task> _rollbackHandler;
 
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
@@ -34,21 +35,23 @@ namespace Silverback.Messaging.Connectors
         public InboundConsumer(IBroker broker,
             IEndpoint endpoint,
             InboundConnectorSettings settings,
-            Action<IEnumerable<IInboundMessage>, IServiceProvider> messagesHandler,
-            Action<IServiceProvider> commitHandler,
-            Action<IServiceProvider> rollbackHandler,
+            Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> messagesHandler,
+            Func<IServiceProvider, Task> commitHandler,
+            Func<IServiceProvider, Task> rollbackHandler,
             IErrorPolicy errorPolicy,
             IServiceProvider serviceProvider)
         {
-            _endpoint = endpoint;
-            _settings = settings;
+            if (broker == null) throw new ArgumentNullException(nameof(broker));
+
+            _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _errorPolicy = errorPolicy;
 
-            _messagesHandler = messagesHandler;
-            _commitHandler = commitHandler;
-            _rollbackHandler = rollbackHandler;
+            _messagesHandler = messagesHandler ?? throw new ArgumentNullException(nameof(messagesHandler));
+            _commitHandler = commitHandler ?? throw new ArgumentNullException(nameof(commitHandler));
+            _rollbackHandler = rollbackHandler ?? throw new ArgumentNullException(nameof(rollbackHandler));
 
-            _serviceProvider = serviceProvider;
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = serviceProvider.GetRequiredService<ILogger<InboundConsumer>>();
             _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
 
@@ -66,9 +69,8 @@ namespace Silverback.Messaging.Connectors
             if (_settings.Batch.Size > 1)
             {
                 var batch = new MessageBatch(
-                    _endpoint,
                     _settings.Batch,
-                     _messagesHandler,
+                    _messagesHandler,
                     Commit,
                     _rollbackHandler,
                     _errorPolicy,
@@ -91,43 +93,40 @@ namespace Silverback.Messaging.Connectors
                 _settings.UnwrapMessages
             );
 
-        private void ProcessSingleMessage(IInboundMessage message)
-        {
-            _errorPolicyHelper.TryProcess(
-                new []{ message },
+        private async Task ProcessSingleMessage(IInboundMessage message) =>
+            await _errorPolicyHelper.TryProcessAsync(
+                new[] { message },
                 _errorPolicy,
-                messages =>
+                async messages =>
                 {
                     using (var scope = _serviceProvider.CreateScope())
                     {
-                        RelayAndCommitSingleMessage(messages, scope.ServiceProvider);
+                        await RelayAndCommitSingleMessage(messages, scope.ServiceProvider);
                     }
                 });
-        }
 
-        private void RelayAndCommitSingleMessage(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
+        private async Task RelayAndCommitSingleMessage(IEnumerable<IInboundMessage> messages,
+            IServiceProvider serviceProvider)
         {
             try
             {
-                _messagesHandler(messages, serviceProvider);
-                Commit(messages.Select(m => m.Offset), serviceProvider);
+                await _messagesHandler(messages, serviceProvider);
+                await Commit(messages.Select(m => m.Offset), serviceProvider);
             }
             catch (Exception)
             {
-                Rollback(serviceProvider);
+                await Rollback(serviceProvider);
                 throw;
             }
         }
 
-        private void Commit(IEnumerable<IOffset> offsets, IServiceProvider serviceProvider)
+        private async Task Commit(IEnumerable<IOffset> offsets, IServiceProvider serviceProvider)
         {
-            _commitHandler?.Invoke(serviceProvider);
-            _consumer.Acknowledge(offsets);
+            await _commitHandler.Invoke(serviceProvider);
+            await _consumer.Acknowledge(offsets);
         }
 
-        private void Rollback(IServiceProvider serviceProvider)
-        {
-            _rollbackHandler?.Invoke(serviceProvider);
-        }
+        private Task Rollback(IServiceProvider serviceProvider) =>
+            _rollbackHandler.Invoke(serviceProvider);
     }
 }

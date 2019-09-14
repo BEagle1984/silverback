@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Connectors.Repositories
@@ -12,17 +13,21 @@ namespace Silverback.Messaging.Connectors.Repositories
         private static readonly Dictionary<string, IOffset> LatestOffsets = new Dictionary<string, IOffset>();
         private readonly Dictionary<string, IOffset> _uncommittedOffsets = new Dictionary<string, IOffset>();
 
-        public void Store(IOffset offset)
+        public Task Store(IOffset offset)
         {
             lock (_uncommittedOffsets)
             {
                 _uncommittedOffsets[offset.Key] = offset;
             }
-        }
-        public IOffset GetLatestValue(string key) =>
-            LatestOffsets.Union(_uncommittedOffsets).Where(o => o.Key == key).Select(o => o.Value).Max();
 
-        public void Commit()
+            return Task.CompletedTask;
+        }
+
+        public Task<IOffset> GetLatestValue(string key) =>
+            Task.FromResult(
+                LatestOffsets.Union(_uncommittedOffsets).Where(o => o.Key == key).Select(o => o.Value).Max());
+
+        public Task Commit()
         {
             lock (_uncommittedOffsets)
             {
@@ -40,14 +45,18 @@ namespace Silverback.Messaging.Connectors.Repositories
 
                 _uncommittedOffsets.Clear();
             }
+
+            return Task.CompletedTask;
         }
 
-        public void Rollback()
+        public Task Rollback()
         {
             lock (_uncommittedOffsets)
             {
                 _uncommittedOffsets.Clear();
             }
+
+            return Task.CompletedTask;
         }
 
         public int Count => LatestOffsets.Count;

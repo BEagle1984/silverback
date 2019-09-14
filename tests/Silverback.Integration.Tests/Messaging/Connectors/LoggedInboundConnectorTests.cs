@@ -51,20 +51,20 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
-        public void Bind_PushMessages_MessagesReceived()
+        public async Task Bind_PushMessages_MessagesReceived()
         {
             _connector.Bind(TestEndpoint.Default);
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
-            consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
+            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(2);
         }
 
         [Fact]
-        public void Bind_PushMessages_EachIsConsumedOnce()
+        public async Task Bind_PushMessages_EachIsConsumedOnce()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
@@ -73,17 +73,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e1);
-            consumer.TestPush(e2);
-            consumer.TestPush(e1);
-            consumer.TestPush(e2);
-            consumer.TestPush(e1);
+            await consumer.TestPush(e1);
+            await consumer.TestPush(e2);
+            await consumer.TestPush(e1);
+            await consumer.TestPush(e2);
+            await consumer.TestPush(e1);
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(2);
         }
 
         [Fact]
-        public void Bind_PushMessages_WrittenToLog()
+        public async Task Bind_PushMessages_WrittenToLog()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
@@ -92,17 +92,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e1);
-            consumer.TestPush(e2);
-            consumer.TestPush(e1);
-            consumer.TestPush(e2);
-            consumer.TestPush(e1);
+            await consumer.TestPush(e1);
+            await consumer.TestPush(e2);
+            await consumer.TestPush(e1);
+            await consumer.TestPush(e2);
+            await consumer.TestPush(e1);
 
-            _serviceProvider.GetRequiredService<IInboundLog>().Length.Should().Be(2);
+            (await _serviceProvider.GetRequiredService<IInboundLog>().GetLength()).Should().Be(2);
         }
 
         [Fact]
-        public void Bind_PushMessagesInBatch_EachIsConsumedOnce()
+        public async Task Bind_PushMessagesInBatch_EachIsConsumedOnce()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
@@ -117,17 +117,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e1);
-            consumer.TestPush(e2);
-            consumer.TestPush(e1);
-            consumer.TestPush(e2);
-            consumer.TestPush(e1);
+            await consumer.TestPush(e1);
+            await consumer.TestPush(e2);
+            await consumer.TestPush(e1);
+            await consumer.TestPush(e2);
+            await consumer.TestPush(e1);
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(6);
         }
 
         [Fact]
-        public void Bind_PushMessagesInBatch_WrittenToLog()
+        public async Task Bind_PushMessagesInBatch_WrittenToLog()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
@@ -142,17 +142,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            consumer.TestPush(e1);
-            consumer.TestPush(e2);
-            consumer.TestPush(e1);
-            consumer.TestPush(e2);
-            consumer.TestPush(e1);
+            await consumer.TestPush(e1);
+            await consumer.TestPush(e2);
+            await consumer.TestPush(e1);
+            await consumer.TestPush(e2);
+            await consumer.TestPush(e1);
 
-            _serviceProvider.GetRequiredService<IInboundLog>().Length.Should().Be(2);
+            (await _serviceProvider.GetRequiredService<IInboundLog>().GetLength()).Should().Be(2);
         }
 
         [Fact]
-        public void Bind_PushMessagesInBatch_OnlyCommittedBatchWrittenToLog()
+        public async Task Bind_PushMessagesInBatch_OnlyCommittedBatchWrittenToLog()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
@@ -172,16 +172,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var consumer = _broker.Consumers.First();
 
-            try { consumer.TestPush(e1); } catch { }
-            try { consumer.TestPush(e2); } catch { }
-            try { consumer.TestPush(e3); } catch { }
-            try { consumer.TestPush(e4); } catch { }
+            try { await consumer.TestPush(e1); } catch { }
+            try { await consumer.TestPush(e2); } catch { }
+            try { await consumer.TestPush(e3); } catch { }
+            try { await consumer.TestPush(e4); } catch { }
 
-            _serviceProvider.GetRequiredService<IInboundLog>().Length.Should().Be(2);
+            (await _serviceProvider.GetRequiredService<IInboundLog>().GetLength()).Should().Be(2);
         }
 
         [Fact]
-        public void Bind_PushMessagesInBatchToMultipleConsumers_OnlyCommittedBatchWrittenToLog()
+        public async Task Bind_PushMessagesInBatchToMultipleConsumers_OnlyCommittedBatchWrittenToLog()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
@@ -205,26 +205,26 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var tasks = new[]
             {
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
                     try
                     {
-                        consumer1.TestPush(e1);
-                        consumer1.TestPush(e2);
+                        await consumer1.TestPush(e1);
+                        await consumer1.TestPush(e2);
                     }
                     catch (Exception)
                     { }
                 }),
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
-                    consumer2.TestPush(e3);
-                    consumer2.TestPush(e4);
+                    await consumer2.TestPush(e3);
+                    await consumer2.TestPush(e4);
                 })
             };
 
-            Task.WaitAll(tasks);
+            await Task.WhenAll(tasks);
 
-            _serviceProvider.GetRequiredService<IInboundLog>().Length.Should().Be(2);
+            (await _serviceProvider.GetRequiredService<IInboundLog>().GetLength()).Should().Be(2);
         }
     }
 }

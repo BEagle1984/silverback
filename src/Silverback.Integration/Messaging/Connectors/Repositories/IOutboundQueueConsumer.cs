@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public interface IOutboundQueueConsumer
     {
-        int Length { get; }
+        Task<int> GetLength();
 
         Task<IEnumerable<QueuedMessage>> Dequeue(int count);
 

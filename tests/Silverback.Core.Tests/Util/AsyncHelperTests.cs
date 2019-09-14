@@ -61,12 +61,12 @@ namespace Silverback.Tests.Core.Util
         {
             Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
 
-            act.Should().Throw<AggregateException>();
+            act.Should().Throw<NotSupportedException>();
 
             async Task AsyncMethod()
             {
                 await Task.Delay(50);
-                throw new Exception("test");
+                throw new NotSupportedException("test");
             }
         }
 
@@ -75,12 +75,12 @@ namespace Silverback.Tests.Core.Util
         {
             Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
 
-            act.Should().Throw<AggregateException>();
+            act.Should().Throw<NotSupportedException>();
 
             async Task<int> AsyncMethod()
             {
                 await Task.Delay(50);
-                throw new Exception("test");
+                throw new NotSupportedException("test");
             }
         }
     }

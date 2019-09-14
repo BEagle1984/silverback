@@ -17,7 +17,9 @@ namespace Silverback.Util
             Func<T, TResult> selector, int? maxDegreeOfParallelism = null)
         {
             var values = new ConcurrentBag<TResult>();
-            Parallel.ForEach(source, s => values.Add(selector(s)));
+            Parallel.ForEach(source,
+                new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism ?? -1 },
+                s => values.Add(selector(s)));
             return values;
         }
 
@@ -86,6 +88,18 @@ namespace Silverback.Util
         {
             var results = await ParallelSelectAsync(source, selector, maxDegreeOfParallelism);
             return results.SelectMany(r => r);
+        }
+
+        public static async Task<IEnumerable<T>> WhereAsync<T>(this IEnumerable<T> source,
+            Func<T, Task<bool>> predicate)
+        {
+            var results = new List<T>();
+            await source.ForEachAsync(async s =>
+            {
+                if (await predicate(s))
+                    results.Add(s);
+            });
+            return results;
         }
     }
 }

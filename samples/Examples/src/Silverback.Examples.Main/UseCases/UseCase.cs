@@ -8,7 +8,6 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Main.Menu;
@@ -85,7 +84,7 @@ namespace Silverback.Examples.Main.UseCases
         {
             using (var scope = serviceProvider.CreateScope())
             {
-                ConfigureNLog(scope.ServiceProvider);
+                Configuration.SetupSerilog();
 
                 scope.ServiceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
 
@@ -93,13 +92,6 @@ namespace Silverback.Examples.Main.UseCases
 
                 PreExecute(scope.ServiceProvider);
             }
-        }
-
-        private static void ConfigureNLog(IServiceProvider serviceProvider)
-        {
-            serviceProvider.GetRequiredService<ILoggerFactory>()
-                .AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
-            NLog.LogManager.LoadConfiguration("nlog.config");
         }
 
         private void CreateScopeAndExecute(IServiceProvider serviceProvider)

@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Silverback.Integration.Kafka.Messages;
@@ -54,7 +55,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
             _broker.Disconnect();
         }
 
-        private static void OnMessageReceived(object sender, MessageReceivedEventArgs args)
+        private static async Task OnMessageReceived(object sender, MessageReceivedEventArgs args)
         {
             if (!(args.Endpoint.Serializer.Deserialize(args.Message, new MessageHeaderCollection(args.Headers)) is TestMessage testMessage))
             {
@@ -79,7 +80,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
                 }
             }
 
-            _consumer.Acknowledge(args.Offset);
+            await _consumer.Acknowledge(args.Offset);
         }
 
         private static void PrintHeader()

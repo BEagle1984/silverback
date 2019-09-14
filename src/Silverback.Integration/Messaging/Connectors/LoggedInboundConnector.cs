@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
@@ -22,27 +23,27 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        protected override bool MustProcess(IInboundMessage message, IServiceProvider serviceProvider)
+        protected override async Task<bool> MustProcess(IInboundMessage message, IServiceProvider serviceProvider)
         {
             var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
 
-            if (inboundLog.Exists(message.Content, message.Endpoint))
+            if (await inboundLog.Exists(message.Content, message.Endpoint))
                 return false;
 
-            inboundLog.Add(message.Content, message.Endpoint);
+            await inboundLog.Add(message.Content, message.Endpoint);
             return true;
         }
 
-        protected override void Commit(IServiceProvider serviceProvider)
+        protected override async Task Commit(IServiceProvider serviceProvider)
         {
-            base.Commit(serviceProvider);
-            serviceProvider.GetRequiredService<IInboundLog>().Commit();
+            await base.Commit(serviceProvider);
+            await serviceProvider.GetRequiredService<IInboundLog>().Commit();
         }
 
-        protected override void Rollback(IServiceProvider serviceProvider)
+        protected override async Task Rollback(IServiceProvider serviceProvider)
         {
-            base.Rollback(serviceProvider);
-            serviceProvider.GetRequiredService<IInboundLog>().Rollback();
+            await base.Rollback(serviceProvider);
+            await serviceProvider.GetRequiredService<IInboundLog>().Rollback();
         }
     }
 }

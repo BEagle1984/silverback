@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,20 +13,20 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Timer = System.Timers.Timer;
 
 namespace Silverback.Messaging.Batch
 {
     // TODO: Test? (or implicitly tested with InboundConnector?)
     public class MessageBatch
     {
-        private readonly IEndpoint _endpoint;
         private readonly BatchSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly Action<IEnumerable<IInboundMessage>, IServiceProvider> _messagesHandler;
-        private readonly Action<IEnumerable<IOffset>, IServiceProvider> _commitHandler;
-        private readonly Action<IServiceProvider> _rollbackHandler;
+        private readonly Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> _messagesHandler;
+        private readonly Func<IEnumerable<IOffset>, IServiceProvider, Task> _commitHandler;
+        private readonly Func<IServiceProvider, Task> _rollbackHandler;
 
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
@@ -32,19 +34,18 @@ namespace Silverback.Messaging.Batch
 
         private readonly List<IInboundMessage> _messages;
         private readonly Timer _waitTimer;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
         private Exception _processingException;
 
-        public MessageBatch(IEndpoint endpoint,
+        public MessageBatch(
             BatchSettings settings,
-            Action<IEnumerable<IInboundMessage>, IServiceProvider> messagesHandler,
-            Action<IEnumerable<IOffset>, IServiceProvider> commitHandler,
-            Action<IServiceProvider> rollbackHandler,
+            Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> messagesHandler,
+            Func<IEnumerable<IOffset>, IServiceProvider, Task> commitHandler,
+            Func<IServiceProvider, Task> rollbackHandler,
             IErrorPolicy errorPolicy, 
             IServiceProvider serviceProvider)
         {
-            _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
-
             _messagesHandler = messagesHandler ?? throw new ArgumentNullException(nameof(messagesHandler));
             _commitHandler = commitHandler ?? throw new ArgumentNullException(nameof(commitHandler));
             _rollbackHandler = rollbackHandler ?? throw new ArgumentNullException(nameof(rollbackHandler));
@@ -71,13 +72,15 @@ namespace Silverback.Messaging.Batch
 
         public int CurrentSize => _messages.Count;
 
-        public void AddMessage(IInboundMessage message)
+        public async Task AddMessage(IInboundMessage message)
         {
             // TODO: Check this!
             if (_processingException != null)
                 throw new SilverbackException("Cannot add to the batch because the processing of the previous batch failed. See inner exception for details.", _processingException);
 
-            lock (_messages)
+            await _semaphore.WaitAsync();
+
+            try
             {
                 _messages.Add(message);
 
@@ -90,29 +93,43 @@ namespace Silverback.Messaging.Batch
                 }
                 else if (_messages.Count == _settings.Size)
                 {
-                    ProcessBatch();
+                    await ProcessBatch();
                 }
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
         private void OnWaitTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            lock (_messages)
-            {
-                _waitTimer?.Stop();
+            _waitTimer?.Stop();
 
-                if (_messages.Any())
-                    ProcessBatch();
-            }
+            Task.Run(async () =>
+                {
+                    await _semaphore.WaitAsync();
+
+                    try
+                    {
+                        if (_messages.Any())
+                            await ProcessBatch();
+                    }
+                    finally
+                    {
+                        _semaphore.Release();
+                    }
+                }
+            );
         }
 
-        private void ProcessBatch()
+        private async Task ProcessBatch()
         {
             try
             {
                 AddHeaders(_messages);
 
-                _errorPolicyHelper.TryProcess(
+                await _errorPolicyHelper.TryProcessAsync(
                     _messages,
                     _errorPolicy,
                     ProcessEachMessageAndPublishEvents);
@@ -135,7 +152,7 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private void ProcessEachMessageAndPublishEvents(IEnumerable<IInboundMessage> messages)
+        private async Task ProcessEachMessageAndPublishEvents(IEnumerable<IInboundMessage> messages)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -143,17 +160,17 @@ namespace Silverback.Messaging.Batch
 
                 try
                 {
-                    publisher.Publish(new BatchCompleteEvent(CurrentBatchId, messages));
-                    _messagesHandler(messages, scope.ServiceProvider);
-                    publisher.Publish(new BatchProcessedEvent(CurrentBatchId, messages));
+                    await publisher.PublishAsync(new BatchCompleteEvent(CurrentBatchId, messages));
+                    await _messagesHandler(messages, scope.ServiceProvider);
+                    await publisher.PublishAsync(new BatchProcessedEvent(CurrentBatchId, messages));
 
-                    _commitHandler?.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);
+                    await _commitHandler.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);
                 }
                 catch (Exception ex)
                 {
-                    _rollbackHandler?.Invoke(scope.ServiceProvider);
+                    await _rollbackHandler.Invoke(scope.ServiceProvider);
 
-                    publisher.Publish(new BatchAbortedEvent(CurrentBatchId, messages, ex));
+                    await publisher.PublishAsync(new BatchAbortedEvent(CurrentBatchId, messages, ex));
 
                     throw;
                 }

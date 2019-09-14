@@ -1,18 +1,19 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
     public interface IOffsetStore
     {
-        void Store(IOffset offset);
+        Task Store(IOffset offset);
         
-        void Commit();
+        Task Commit();
 
-        void Rollback();
+        Task Rollback();
 
-        IOffset GetLatestValue(string key);
+        Task<IOffset> GetLatestValue(string key);
     }
 }

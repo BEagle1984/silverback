@@ -5,7 +5,10 @@ using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
+using Serilog;
+using Serilog.Exceptions;
+using Serilog.Sinks.SystemConsole.Themes;
+using Silverback.Examples.Common;
 using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Common.Messages;
@@ -23,6 +26,7 @@ namespace Silverback.Examples.ConsumerA
     public class ConsumerServiceA : ConsumerService
     {
         protected override void ConfigureServices(IServiceCollection services) => services
+            .AddLogging()
             .AddBus(options => options.Observable())
             .AddBroker<KafkaBroker>(options => options
                 //.AddDbLoggedInboundConnector<ExamplesDbContext>()
@@ -34,7 +38,7 @@ namespace Silverback.Examples.ConsumerA
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
         {
-            ConfigureNLog(serviceProvider);
+            Configuration.SetupSerilog();
 
             configurator
                 .Connect(endpoints => endpoints
@@ -131,13 +135,6 @@ namespace Silverback.Examples.ConsumerA
             };
 
             return serializer;
-        }
-
-        private static void ConfigureNLog(IServiceProvider serviceProvider)
-        {
-            serviceProvider.GetRequiredService<ILoggerFactory>()
-                .AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
-            NLog.LogManager.LoadConfiguration("nlog.config");
         }
     }
 }

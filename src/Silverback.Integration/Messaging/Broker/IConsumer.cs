@@ -3,15 +3,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Broker
 {
     public interface IConsumer
     {
-        event EventHandler<MessageReceivedEventArgs> Received;
+        event MessageReceivedHandler Received;
 
-        void Acknowledge(IOffset offset);
+        Task Acknowledge(IOffset offset);
 
-        void Acknowledge(IEnumerable<IOffset> offsets);
+        Task Acknowledge(IEnumerable<IOffset> offsets);
     }
 }

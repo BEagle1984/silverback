@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -23,16 +24,16 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        public void TryProcess(
+        public async Task TryProcessAsync(
             IEnumerable<IInboundMessage> messages, 
             IErrorPolicy errorPolicy,
-            Action<IEnumerable<IInboundMessage>> messagesHandler)
+            Func<IEnumerable<IInboundMessage>, Task> messagesHandler)
         {
             var attempt = GetAttemptNumber(messages);
 
             while (true)
             {
-                var result = HandleMessages(messages, messagesHandler, errorPolicy, attempt);
+                var result = await HandleMessages(messages, messagesHandler, errorPolicy, attempt);
 
                 if (result.IsSuccessful || result.Action == ErrorAction.Skip)
                     return;
@@ -51,16 +52,16 @@ namespace Silverback.Messaging.ErrorHandling
             return minAttempts + 1;
         }
 
-        private MessageHandlerResult HandleMessages(
+        private async Task<MessageHandlerResult> HandleMessages(
             IEnumerable<IInboundMessage> messages,
-            Action<IEnumerable<IInboundMessage>> messagesHandler, 
+            Func<IEnumerable<IInboundMessage>, Task> messagesHandler, 
             IErrorPolicy errorPolicy, int attempt)
         {
             try
             {
                 _messageLogger.LogProcessing(_logger, messages);
 
-                messagesHandler(messages);
+                await messagesHandler(messages);
 
                 return MessageHandlerResult.Success;
             }
@@ -86,6 +87,12 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         private void UpdateFailedAttemptsHeader(IEnumerable<IBrokerMessage> messages, int attempt) => 
-            messages?.ForEach(msg => msg.Headers.AddOrReplace(MessageHeader.FailedAttemptsKey, attempt));
+            messages?.ForEach(msg =>
+            {
+                if (attempt == 0)
+                    msg.Headers.Remove(MessageHeader.FailedAttemptsKey);
+                else
+                    msg.Headers.AddOrReplace(MessageHeader.FailedAttemptsKey, attempt);
+            });
     }
 }

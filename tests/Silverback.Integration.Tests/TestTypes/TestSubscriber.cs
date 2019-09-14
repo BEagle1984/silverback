@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
@@ -22,10 +23,10 @@ namespace Silverback.Tests.Integration.TestTypes
         public TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         [Subscribe]
-        void OnMessageReceived(IMessage message)
+        async Task OnMessageReceived(IMessage message)
         {
             if (Delay > TimeSpan.Zero)
-                Thread.Sleep(Delay);
+                await Task.Delay(Delay);
 
             ReceivedMessages.Add(message);
 

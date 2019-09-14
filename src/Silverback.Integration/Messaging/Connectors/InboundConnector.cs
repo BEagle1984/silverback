@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
@@ -11,6 +12,7 @@ using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -21,14 +23,12 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly IBroker _broker;
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger _logger;
         private readonly List<InboundConsumer> _inboundConsumers = new List<InboundConsumer>();
 
-        public InboundConnector(IBroker broker, IServiceProvider serviceProvider, ILogger<InboundConnector> logger)
+        public InboundConnector(IBroker broker, IServiceProvider serviceProvider)
         {
             _broker = broker ?? throw new ArgumentNullException(nameof(broker));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public virtual IInboundConnector Bind(IEndpoint endpoint, IErrorPolicy errorPolicy = null, InboundConnectorSettings settings = null)
@@ -53,10 +53,12 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        protected void HandleMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
+        protected async Task HandleMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
         {
-            var deserializedMessages = messages
-                .Select(message => HandleChunkedMessage(message, serviceProvider))
+            var deserializedMessages = await messages
+                .SelectAsync(async message => await HandleChunkedMessage(message, serviceProvider));
+                
+            deserializedMessages = deserializedMessages 
                 .Where(args => args != null)
                 .Select(DeserializeRawMessage)
                 .ToList();
@@ -64,22 +66,22 @@ namespace Silverback.Messaging.Connectors
             if (!deserializedMessages.Any())
                 return;
 
-            RelayMessages(deserializedMessages, serviceProvider);
+            await RelayMessages(deserializedMessages, serviceProvider);
         }
 
-        private IInboundMessage HandleChunkedMessage(IInboundMessage message, IServiceProvider serviceProvider)
+        private async Task<IInboundMessage> HandleChunkedMessage(IInboundMessage message, IServiceProvider serviceProvider)
         {
             if (!message.Headers.Contains(MessageHeader.ChunkIdKey))
                 return message;
 
-            var completeMessage = serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(message);
+            var completeMessage = await serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(message);
 
             return completeMessage == null 
                 ? null 
                 : new InboundMessage(completeMessage, message.Headers, message.Offset, message.Endpoint, message.MustUnwrap);
         }
 
-        private static IInboundMessage DeserializeRawMessage(IInboundMessage message)
+        private IInboundMessage DeserializeRawMessage(IInboundMessage message)
         {
             var deserialized =
                 message.Content ?? (((InboundMessage) message).Content =
@@ -95,13 +97,21 @@ namespace Silverback.Messaging.Connectors
             return typedInboundMessage;
         }
 
-        protected virtual void RelayMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider) => 
-            serviceProvider.GetRequiredService<IPublisher>().Publish(messages);
+        protected virtual async Task RelayMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider) => 
+            await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(messages);
 
-        protected virtual void Commit(IServiceProvider serviceProvider) => 
-            serviceProvider.GetService<ChunkConsumer>()?.Commit();
+        protected virtual async Task Commit(IServiceProvider serviceProvider)
+        {
+            var chunkConsumer = serviceProvider.GetService<ChunkConsumer>();
+            if (chunkConsumer != null)
+                await chunkConsumer.Commit();
+        }
 
-        protected virtual void Rollback(IServiceProvider serviceProvider) => 
-            serviceProvider.GetService<ChunkConsumer>()?.Rollback();
+        protected virtual async Task Rollback(IServiceProvider serviceProvider)
+        {
+            var chunkConsumer = serviceProvider.GetService<ChunkConsumer>();
+            if (chunkConsumer != null)
+                await chunkConsumer.Rollback();
+        }
     }
 }

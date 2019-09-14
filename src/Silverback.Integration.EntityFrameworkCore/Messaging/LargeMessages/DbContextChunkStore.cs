@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Infrastructure;
 
@@ -11,18 +13,20 @@ namespace Silverback.Messaging.LargeMessages
 {
     public class DbContextChunkStore : RepositoryBase<TemporaryMessageChunk>, IChunkStore
     {
-        private readonly object _lock = new object();
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
         public DbContextChunkStore(DbContext dbContext) : base(dbContext)
         {
         }
 
-        public void Store(string messageId, int chunkId, int chunksCount, byte[] content)
+        public async Task Store(string messageId, int chunkId, int chunksCount, byte[] content)
         {
-            lock (_lock)
+            await _semaphore.WaitAsync();
+
+            try
             {
                 // TODO: Log?
-                if (DbSet.Any(c => c.OriginalMessageId == messageId && c.ChunkId == chunkId))
+                if (await DbSet.AnyAsync(c => c.OriginalMessageId == messageId && c.ChunkId == chunkId))
                     return;
 
                 DbSet.Add(new TemporaryMessageChunk
@@ -34,30 +38,43 @@ namespace Silverback.Messaging.LargeMessages
                     Received = DateTime.UtcNow
                 });
             }
-        }
-
-        public void Commit()
-        {
-            lock (_lock)
+            finally
             {
-                // Call SaveChanges, in case it isn't called by a subscriber
-                DbContext.SaveChanges();
+                _semaphore.Release();
             }
         }
 
-        public void Rollback()
+        public async Task Commit()
         {
-            // Nothing to do, just not saving the changes made to the DbContext
+            await _semaphore.WaitAsync();
+
+            try
+            {
+                // Call SaveChanges, in case it isn't called by a subscriber
+                await DbContext.SaveChangesAsync();
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
-        public int CountChunks(string messageId) => DbSet.Count(c => c.OriginalMessageId == messageId);
-
-        public Dictionary<int, byte[]> GetChunks(string messageId) =>
-            DbSet.Where(c => c.OriginalMessageId == messageId).ToDictionary(c => c.ChunkId, c => c.Content);
-
-        public void Cleanup(string messageId)
+        public Task Rollback()
         {
-            lock (_lock)
+            // Nothing to do, just not saving the changes made to the DbContext
+            return Task.CompletedTask;
+        }
+
+        public Task<int> CountChunks(string messageId) => DbSet.CountAsync(c => c.OriginalMessageId == messageId);
+
+        public Task<Dictionary<int, byte[]>> GetChunks(string messageId) =>
+            DbSet.Where(c => c.OriginalMessageId == messageId).ToDictionaryAsync(c => c.ChunkId, c => c.Content);
+
+        public async Task Cleanup(string messageId)
+        {
+            await _semaphore.WaitAsync();
+
+            try
             {
                 var entities = DbSet.Local.Where(c => c.OriginalMessageId == messageId).ToList();
 
@@ -65,15 +82,19 @@ namespace Silverback.Messaging.LargeMessages
                 // is in cache it means that we got all of them.
                 if (!entities.Any())
                 {
-                    entities = DbSet
+                    entities = (await DbSet
                         .Where(c => c.OriginalMessageId == messageId)
                         .Select(c => c.ChunkId)
-                        .ToList()
+                        .ToListAsync())
                         .Select(chunkId => new TemporaryMessageChunk {OriginalMessageId = messageId, ChunkId = chunkId})
                         .ToList();
                 }
 
                 DbSet.RemoveRange(entities);
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
     }

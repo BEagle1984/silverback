@@ -27,40 +27,40 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
-        public void EnqueueTest()
+        public async Task EnqueueTest()
         {
             Parallel.For(0, 3, _ =>
             {
                 _queue.Enqueue(_sampleOutboundMessage);
             });
 
-            _queue.Length.Should().Be(0);
+            (await _queue.GetLength()).Should().Be(0);
         }
 
         [Fact]
-        public void EnqueueCommitTest()
+        public async Task EnqueueCommitTest()
         {
             Parallel.For(0, 3, _ =>
             {
                 _queue.Enqueue(_sampleOutboundMessage);
             });
 
-            _queue.Commit();
+            await _queue.Commit();
 
-            _queue.Length.Should().Be(3);
+            (await _queue.GetLength()).Should().Be(3);
         }
 
         [Fact]
-        public void EnqueueRollbackTest()
+        public async Task EnqueueRollbackTest()
         {
             Parallel.For(0, 3, _ =>
             {
                 _queue.Enqueue(_sampleOutboundMessage);
             });
 
-            _queue.Rollback();
+            await _queue.Rollback();
 
-            _queue.Length.Should().Be(0);
+            (await _queue.GetLength()).Should().Be(0);
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             await _queue.Enqueue(_sampleOutboundMessage);
             await _queue.Commit();
 
-            _queue.Length.Should().Be(2);
+            (await _queue.GetLength()).Should().Be(2);
         }
 
         [Theory]
@@ -112,7 +112,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             await _queue.Retry(result[3]);
             await _queue.Acknowledge(result[4]);
 
-            _queue.Length.Should().Be(2);
+            (await _queue.GetLength()).Should().Be(2);
         }
     }
 }

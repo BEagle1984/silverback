@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
@@ -23,61 +24,61 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
-        public void AddTest()
+        public async Task AddTest()
         {
-            _log.Add(new TestEventOne(), TestEndpoint.Default);
-            _log.Add(new TestEventOne(), TestEndpoint.Default);
-            _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.Default);
 
-            _log.Length.Should().Be(0);
+            (await _log.GetLength()).Should().Be(0);
         }
 
         [Fact]
-        public void CommitTest()
+        public async Task CommitTest()
         {
-            _log.Add(new TestEventOne(), TestEndpoint.Default);
-            _log.Add(new TestEventOne(), TestEndpoint.Default);
-            _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.Default);
 
-            _log.Commit();
+            await _log.Commit();
 
-            _log.Length.Should().Be(3);
+            (await _log.GetLength()).Should().Be(3);
         }
 
         [Fact]
-        public void RollbackTest()
+        public async Task RollbackTest()
         {
-            _log.Add(new TestEventOne(), TestEndpoint.Default);
-            _log.Add(new TestEventOne(), TestEndpoint.Default);
-            _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.Default);
 
-            _log.Rollback();
+            await _log.Rollback();
 
-            _log.Length.Should().Be(0);
+            (await _log.GetLength()).Should().Be(0);
         }
 
         [Fact]
-        public void ExistsPositiveTest()
+        public async Task ExistsPositiveTest()
         {
             var messageId = Guid.NewGuid();
-            _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            _log.Add(new TestEventOne { Id = messageId }, TestEndpoint.Default);
-            _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            _log.Commit();
+            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
+            await _log.Add(new TestEventOne { Id = messageId }, TestEndpoint.Default);
+            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
+            await _log.Commit();
 
-            var result = _log.Exists(new TestEventOne{Id = messageId}, TestEndpoint.Default);
+            var result = await _log.Exists(new TestEventOne{Id = messageId}, TestEndpoint.Default);
 
             result.Should().BeTrue();
         }
 
         [Fact]
-        public void ExistsNegativeTest()
+        public async Task ExistsNegativeTest()
         {
-            _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
+            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
+            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
+            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
 
-            var result = _log.Exists(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
+            var result = await _log.Exists(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
 
             result.Should().BeFalse();
         }

@@ -3,6 +3,8 @@
 
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Messages;
@@ -13,16 +15,18 @@ namespace Silverback.Messaging.Connectors.Repositories
     public class DbContextInboundLog : RepositoryBase<InboundMessage>, IInboundLog
     {
         private readonly MessageKeyProvider _messageKeyProvider;
-        private readonly object _lock = new object();
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
         public DbContextInboundLog(DbContext dbContext, MessageKeyProvider messageKeyProvider) : base(dbContext)
         {
             _messageKeyProvider = messageKeyProvider;
         }
 
-        public void Add(object message, IEndpoint endpoint)
+        public async Task Add(object message, IEndpoint endpoint)
         {
-            lock (_lock)
+            await _semaphore.WaitAsync();
+            
+            try
             {
                 DbSet.Add(new InboundMessage
                 {
@@ -32,28 +36,39 @@ namespace Silverback.Messaging.Connectors.Repositories
                     Consumed = DateTime.UtcNow
                 });
             }
-        }
-
-        public void Commit()
-        {
-            lock (_lock)
+            finally
             {
-                // Call SaveChanges, in case it isn't called by a subscriber
-                DbContext.SaveChanges();
+                _semaphore.Release();
             }
         }
 
-        public void Rollback()
+        public async Task Commit()
+        {
+            await _semaphore.WaitAsync();
+
+            try
+            {
+                // Call SaveChanges, in case it isn't called by a subscriber
+                await DbContext.SaveChangesAsync();
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
+        public Task Rollback()
         {
             // Nothing to do, just not saving the changes made to the DbContext
+            return Task.CompletedTask;
         }
 
-        public bool Exists(object message, IEndpoint endpoint)
+        public Task<bool> Exists(object message, IEndpoint endpoint)
         {
             var key = _messageKeyProvider.GetKey(message);
-            return DbSet.Any(m => m.MessageId == key && m.EndpointName == endpoint.Name);
+            return DbSet.AnyAsync(m => m.MessageId == key && m.EndpointName == endpoint.Name);
         }
 
-        public int Length => DbSet.Count();
+        public Task<int> GetLength() => DbSet.CountAsync();
     }
 }

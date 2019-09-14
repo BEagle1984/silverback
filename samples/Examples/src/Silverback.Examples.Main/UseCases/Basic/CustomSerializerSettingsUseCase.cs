@@ -26,7 +26,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(CreateEndpoint("silverback-examples-custom-serializer-events")));
+                .AddOutbound<IIntegrationEvent>(CreateEndpoint("silverback-examples-custom-serializer")));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

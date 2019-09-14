@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 
@@ -64,23 +65,23 @@ namespace Silverback.Messaging.Broker
             Disconnect();
         }
 
-        private void OnMessageReceived(Confluent.Kafka.Message<byte[], byte[]> message, Confluent.Kafka.TopicPartitionOffset tpo)
+        private async Task OnMessageReceived(Confluent.Kafka.Message<byte[], byte[]> message, Confluent.Kafka.TopicPartitionOffset tpo)
         {
             // Checking if the message was sent to the subscribed topic is necessary
             // when reusing the same consumer for multiple topics.
             if (!tpo.Topic.Equals(Endpoint.Name, StringComparison.InvariantCultureIgnoreCase))
                 return;
 
-            TryHandleMessage(message, tpo);
+            await TryHandleMessage(message, tpo);
         }
 
-        private void TryHandleMessage(Confluent.Kafka.Message<byte[], byte[]> message, Confluent.Kafka.TopicPartitionOffset tpo)
+        private async Task TryHandleMessage(Confluent.Kafka.Message<byte[], byte[]> message, Confluent.Kafka.TopicPartitionOffset tpo)
         {
             try
             {
                 _messagesSinceCommit++;
 
-                HandleMessage(
+                await HandleMessage(
                     message.Value, 
                     message?.Headers?.Select(h => h.ToSilverbackHeader()).ToList(), 
                     new KafkaOffset(tpo));
@@ -96,7 +97,7 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        public override void Acknowledge(IEnumerable<IOffset> offsets)
+        public override Task Acknowledge(IEnumerable<IOffset> offsets)
         {
             var lastOffsets = offsets.OfType<KafkaOffset>()
                 .GroupBy(o => o.Key)
@@ -112,6 +113,8 @@ namespace Silverback.Messaging.Broker
 
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 CommitOffsets(lastOffsets);
+
+            return Task.CompletedTask;
         }
 
         private void CommitOffsets(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets)
