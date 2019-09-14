@@ -90,7 +90,7 @@ namespace Silverback.Examples.ConsumerA
                                     })
                                 .Publish(messages => new MessageMovedEvent
                                 {
-                                    Identifiers = messages.Select(x => ((IIntegrationMessage)x.Content).Id),
+                                    Identifiers = messages.Select(x => ((IIntegrationMessage)x?.Content)?.Id ?? Guid.Empty).ToList(),
                                     Source = messages.First().Endpoint.Name,
                                     Destination = "silverback-examples-events"
                                 })))

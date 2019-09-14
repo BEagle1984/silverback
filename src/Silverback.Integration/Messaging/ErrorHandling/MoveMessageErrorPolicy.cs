@@ -58,7 +58,7 @@ namespace Silverback.Messaging.ErrorHandling
         private void PublishToNewEndpoint(IInboundMessage message, Exception exception)
         {
             _producer.Produce(
-                _transformationFunction?.Invoke(message.Content, exception) ?? message.Content,
+                _transformationFunction?.Invoke(message.Content, exception) ?? message.Content ?? message.RawContent,
                 _headersTransformationFunction?.Invoke(message.Headers, exception) ?? message.Headers);
         }
     }

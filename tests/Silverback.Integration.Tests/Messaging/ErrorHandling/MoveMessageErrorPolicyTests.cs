@@ -91,7 +91,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 Encoding.UTF8.GetBytes("hey oh!"),
                 null,
                 null, TestEndpoint.Default, true);
-            message.Content = "hey oh!";
+            message.Content = null;
             message.Headers.Add("key1", "value1");
             message.Headers.Add("key2", "value2");
 

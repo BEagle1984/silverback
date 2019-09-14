@@ -34,6 +34,7 @@ namespace Silverback.Messaging.Broker
 
             _innerConsumer = new InnerConsumerWrapper(
                 Endpoint.Configuration.ConfluentConfig,
+                Endpoint.Configuration.EnableAutoRecovery,
                 _cancellationTokenSource.Token,
                 _logger);
 

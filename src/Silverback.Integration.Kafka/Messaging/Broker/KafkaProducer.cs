@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Broker
         private static readonly ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>> ProducersCache =
             new ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>>(new KafkaClientConfigComparer());
 
-        public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, MessageKeyProvider messageKeyProvider, 
+        public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, MessageKeyProvider messageKeyProvider,
             ILogger<KafkaProducer> logger, MessageLogger messageLogger)
             : base(broker, endpoint, messageKeyProvider, logger, messageLogger)
         {
@@ -29,26 +29,34 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        protected override IOffset Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers) => 
+        protected override IOffset Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers) =>
             AsyncHelper.RunSynchronously(() => ProduceAsync(message, serializedMessage, headers));
 
         protected override async Task<IOffset> ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers)
         {
-            var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
+            try
             {
-                Key = KeyHelper.GetMessageKey(message),
-                Value = serializedMessage
-            };
+                var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
+                {
+                    Key = KeyHelper.GetMessageKey(message),
+                    Value = serializedMessage
+                };
 
-            if (headers != null && headers.Any())
-            {
-                kafkaMessage.Headers = new Confluent.Kafka.Headers();
-                headers.ForEach(h => kafkaMessage.Headers.Add(h.ToConfluentHeader()));
+                if (headers != null && headers.Any())
+                {
+                    kafkaMessage.Headers = new Confluent.Kafka.Headers();
+                    headers.ForEach(h => kafkaMessage.Headers.Add(h.ToConfluentHeader()));
+                }
+
+                var deliveryReport = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage);
+
+                return new KafkaOffset(deliveryReport.TopicPartitionOffset);
             }
-
-            var deliveryReport = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage);
-
-            return new KafkaOffset(deliveryReport.TopicPartitionOffset);
+            catch (Confluent.Kafka.KafkaException)
+            {
+                DisposeInnerProducer();
+                throw;
+            }
         }
 
         private Confluent.Kafka.IProducer<byte[], byte[]> GetInnerProducer() =>
@@ -62,7 +70,7 @@ namespace Silverback.Messaging.Broker
             return new Confluent.Kafka.ProducerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig).Build();
         }
 
-        public void Dispose()
+        private void DisposeInnerProducer()
         {
             // Dispose only if still in cache to avoid ObjectDisposedException
             if (!ProducersCache.TryRemove(Endpoint.Configuration.ConfluentConfig, out _))
@@ -71,6 +79,11 @@ namespace Silverback.Messaging.Broker
             _innerProducer?.Flush(TimeSpan.FromSeconds(10));
             _innerProducer?.Dispose();
             _innerProducer = null;
+        }
+
+        public void Dispose()
+        {
+            DisposeInnerProducer();
         }
     }
 }

@@ -18,10 +18,16 @@ namespace Silverback.Messaging
         public int CommitOffsetEach { get; set; } = -1;
 
         /// <summary>
-        /// Gets a boo loan value indicating whether autocommit is enabled according to the explicit configuration and
+        /// Gets a boolean value indicating whether autocommit is enabled according to the explicit configuration and
         /// Kafka defaults.
         /// </summary>
         public bool IsAutoCommitEnabled => EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled;
+
+        /// <summary>
+        /// Specifies whether the consumer has to be automatically restarted if a KafkaException occurs while
+        /// polling/consuming.
+        /// </summary>
+        public bool EnableAutoRecovery { get; set; } = true;
 
         public void Validate()
         {
