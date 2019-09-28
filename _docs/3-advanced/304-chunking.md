@@ -25,7 +25,7 @@ new KafkaProducerEndpoint("silverback-examples-events")
 
 ## Consumer configuration
 
-The `DbContextChunkStore` will temporary store the chunks into a database table and the inbound connector will rebuild the original message as soon as all chunks have been received.
+The `DbChunkStore` will temporary store the chunks into a database table and the inbound connector will rebuild the original message as soon as all chunks have been received.
 
 **Note:** The `DbContext` must include a `DbSet<TemporaryMessageChunk>`.
 {: .notice--info}
@@ -34,9 +34,10 @@ The `DbContextChunkStore` will temporary store the chunks into a database table 
 public void ConfigureServices(IServiceCollection services)
 {
     services
-        .AddBus()
-        .AddBroker<KafkaBroker>(options => options
-            .AddDbChunkStore<MyDbContext>());
+        .AddSilverback()
+        .UseDbContext<MyDbContext>()
+        .WithConnectionTo<KafkaBroker>(options => options
+            .AddDbChunkStore());
 }
 ``` 
 

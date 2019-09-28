@@ -20,8 +20,8 @@ The basic `InboundConnector` is very simple and just forwards the consumed messa
 public void ConfigureServices(IServiceCollection services)
 {
     services
-        .AddBus()
-        .AddBroker<KafkaBroker>(options => options
+        .AddSilverback()
+        .WithConnectionTo<KafkaBroker>(options => options
             .AddInboundConnector());
 }
 
@@ -52,9 +52,10 @@ The `DbOffsetStoredInboundConnector` will store the offset of the latest process
 public void ConfigureServices(IServiceCollection services)
 {
     services
-        .AddBus()
-        .AddBroker<KafkaBroker>(options => options
-            .AddDbOffsetStoredConnector<MyDbContext>());
+        .AddSilverback()
+        .UseDbContext<MyDbContext>()
+        .WithConnectionTo<KafkaBroker>(options => options
+            .AddDbOffsetStoredInboundConnector());
 }
 ``` 
 
@@ -69,9 +70,10 @@ The `DbLoggedInboundConnector` will store all the processed messages into a data
 public void ConfigureServices(IServiceCollection services)
 {
     services
-        .AddBus()
-        .AddBroker<KafkaBroker>(options => options
-            .AddDbLoggedInboundConnector<MyDbContext>());
+        .AddSilverback()
+        .UseDbContext<MyDbContext>()
+        .WithConnectionTo<KafkaBroker>(options => options
+            .AddDbLoggedInboundConnector());
 }
 ```
 
@@ -81,7 +83,7 @@ You can easily implement your own storage for the offsets or the messages, simpl
 It is then suggested to create an extension method for the `BrokerOptionsBuilder` to register your own types.
 
 ```c#
-public static BrokerOptionsBuilder AddMyCustomLoggedInboundConnector<TDbContext>(this BrokerOptionsBuilder builder)
+public static BrokerOptionsBuilder AddMyCustomLoggedInboundConnector(this BrokerOptionsBuilder builder)
 {
     builder.AddInboundConnector<LoggedInboundConnector>();
     builder.Services.AddScoped<IInboundLog, MyCustomInboundLog>();
@@ -89,7 +91,7 @@ public static BrokerOptionsBuilder AddMyCustomLoggedInboundConnector<TDbContext>
     return builder;
 }
 
-public static BrokerOptionsBuilder AddMyCustomOffsetStoredInboundConnector<TDbContext>(this BrokerOptionsBuilder builder)
+public static BrokerOptionsBuilder AddMyCustomOffsetStoredInboundConnector(this BrokerOptionsBuilder builder)
 {
     builder.AddInboundConnector<OffsetStoredInboundConnector>();
     builder.Services.AddScoped<IOffsetStore, MyCustomOffsetStore>();

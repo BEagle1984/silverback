@@ -18,7 +18,7 @@ In order to be able to use the messages and publisher variations in this article
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddBus(options => options.UseModel());
+    services.AddSilverback().UseModel();
 ```
 
 ## Internal Messages

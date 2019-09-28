@@ -22,11 +22,11 @@ public class InMemoryBrokerTests
         services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-        // Enable the bus as usual
-        services.AddBus();
-
-        // Register the InMemoryBroker instead of any real broker (e.g. Kafka)
-        services.AddBroker<InMemoryBroker>();
+        services
+            // Register Silverback as usual
+            .AddSilverback()
+            // Register the InMemoryBroker instead of any real broker (e.g. Kafka)
+            .WithConnectionTo<InMemoryBroker>();
 
         _serviceProvider = services.BuildServiceProvider();
     }

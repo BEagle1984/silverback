@@ -31,7 +31,7 @@ public class ValidationBehavior : IBehavior
 public void ConfigureServices(IServiceCollection services)
 {
     services
-        .AddBus()
+        .AddSilverback()
         .AddScoped<IBehavior, ValidationBehavior>();
 ```
 

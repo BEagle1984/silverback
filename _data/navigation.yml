@@ -59,6 +59,8 @@ docs:
         url: /docs/configuration/multiple
       - title: External Configurations
         url: /docs/configuration/external
+      - title: Producer and consumer in the same process
+        url: /docs/configuration/same-process
   - title: Advanced Topics
     children:
       - title: Observable Bus
@@ -73,14 +75,16 @@ docs:
         url: /docs/advanced/custom-serializer
       - title: Message Keys
         url: /docs/advanced/message-keys
-  - title: Special Use Cases
+      - title: IInboundMessage
+        url: /docs/advanced/iinboundmessage
+  - title: Extras
     children:
-      - title: Producer and consumer in the same process
-        url: /docs/special/same-process
-  - title: Extra
+      - title: Distributed Background Services
+        url: /docs/extras/background-services
+  - title: Source Code
     children:
       - title: Samples
-        url: /docs/extra/samples
+        url: /docs/source/samples
       - title: Source Code
-        url: /docs/extra/source
+        url: /docs/source/github
 

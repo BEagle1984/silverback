@@ -1,10 +1,10 @@
 ---
 title: Producer and consumer in the same process
-permalink: /docs/special/same-process
+permalink: /docs/configuration/same-process
 toc: false
 ---
 
-Silverback is meant to be used to integrate different microservices but you still may want to leverage the message broker to transport messages that are consumed by the same service and therefore potentially the same process.
+Silverback is primarly meant to be used to integrate different microservices but you still may want to leverage the message broker to transport messages that are consumed by the same service and therefore potentially the same process.
 
 Subscribing in the regular way would result in a sort of short circuit because both the outbound and inbound messages are being published to the same internal bus, causing them to be forwarded to the subscribers twice (before producing and after having consumed the message).
 

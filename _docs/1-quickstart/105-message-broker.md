@@ -13,8 +13,8 @@ The following example is very simple and there are of course many more configura
 public void ConfigureServices(IServiceCollection services)
 {
     services
-        .AddBus()
-        .AddBroker<KafkaBroker>(options => options
+        .AddSilverback()
+        .WithConnectionTo<KafkaBroker>(options => options
             .AddInboundConnector()
             .AddOutboundConnector());
 }
@@ -62,9 +62,9 @@ public void Configure(BusConfigurator busConfigurator)
 It is important to properly close the consumers using the `Disconnect` method before exiting. The offsets have to be committed and the broker has to be notified (it will then proceed to reassign the partitions as needed).
 
 ```c#
-public void Configure(BusConfigurator busConfigurator, IBroker broker)
+public void Configure(BusConfigurator busConfigurator)
 {
-    busConfigurator.Connect(...);
+    var broker = busConfigurator.Connect(...);
 
     appLifetime.ApplicationStopping.Register(() => broker.Disconnect());
 ```

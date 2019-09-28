@@ -1,6 +1,6 @@
 ---
 title: Source Code
-permalink: /docs/extra/source
+permalink: /docs/source/github
 excerpt: The full source code is on GitHub.
 toc: false
 
