@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>Silverback.Tests.EventSourcing</RootNamespace>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -13,6 +13,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="NSubstitute" Version="4.2.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -23,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Silverback.Core.EntityFrameworkCore\Silverback.Core.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\Silverback.EventSourcing\Silverback.EventSourcing.csproj" />
   </ItemGroup>
 

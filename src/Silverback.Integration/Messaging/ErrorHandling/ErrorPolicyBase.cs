@@ -173,11 +173,9 @@ namespace Silverback.Messaging.ErrorHandling
 
             if (MessageToPublishFactory != null)
             {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                     scope.ServiceProvider.GetRequiredService<IPublisher>()
-                        .Publish(MessageToPublishFactory.Invoke(messages));
-                }
+                using var scope = _serviceProvider.CreateScope();
+                scope.ServiceProvider.GetRequiredService<IPublisher>()
+                    .Publish(MessageToPublishFactory.Invoke(messages));
             }
 
             return result;

@@ -45,7 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _serviceProvider = services.BuildServiceProvider();
             _broker = (TestBroker)_serviceProvider.GetService<IBroker>();
             _connector = new LoggedInboundConnector(_broker, _serviceProvider, new NullLogger<LoggedInboundConnector>(),
-                new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })));
+                new MessageLogger());
 
             InMemoryInboundLog.Clear();
         }

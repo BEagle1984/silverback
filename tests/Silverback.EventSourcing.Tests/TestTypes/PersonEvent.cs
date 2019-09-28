@@ -6,11 +6,9 @@ using Silverback.EventStore;
 
 namespace Silverback.Tests.EventSourcing.TestTypes
 {
-    public class PersonEventStore : EventStoreEntity<PersonEvent>
+    public class PersonEvent : EventEntity
     {
         [Key]
-        public int Id { get; set; }
-
-        public string Ssn { get; set; }
+        public int Id { get; private set; }
     }
 }

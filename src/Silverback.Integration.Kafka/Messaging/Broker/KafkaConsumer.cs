@@ -51,6 +51,7 @@ namespace Silverback.Messaging.Broker
                 return;
 
             _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
 
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 _innerConsumer.CommitAll();

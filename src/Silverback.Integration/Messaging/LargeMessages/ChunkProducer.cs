@@ -36,9 +36,11 @@ namespace Silverback.Messaging.LargeMessages
 
             for (var i = 0; i < chunksCount; i++)
             {
-                var messageChunk = new OutboundMessage(message.Content, message.Headers, message.Endpoint);
-
-                messageChunk.RawContent = span.Slice(offset, Math.Min(chunkSize, message.RawContent.Length - offset)).ToArray();
+                var messageChunk = new OutboundMessage(message.Content, message.Headers, message.Endpoint)
+                {
+                    RawContent =
+                        span.Slice(offset, Math.Min(chunkSize, message.RawContent.Length - offset)).ToArray()
+                };
 
                 messageChunk.Headers.AddOrReplace(MessageHeader.ChunkIdKey, i);
                 messageChunk.Headers.AddOrReplace(MessageHeader.ChunksCountKey, chunksCount);

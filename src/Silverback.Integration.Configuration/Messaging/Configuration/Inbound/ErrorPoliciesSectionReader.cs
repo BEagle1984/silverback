@@ -13,15 +13,11 @@ namespace Silverback.Messaging.Configuration.Inbound
 {
     public class ErrorPoliciesSectionReader
     {
-        private readonly TypeFinder _typeFinder;
         private readonly CustomActivator _customActivator;
-        private readonly EndpointSectionReader _endpointSectionReader;
 
-        public ErrorPoliciesSectionReader(TypeFinder typeFinder, CustomActivator customActivator, EndpointSectionReader endpointSectionReader)
+        public ErrorPoliciesSectionReader(CustomActivator customActivator)
         {
-            _typeFinder = typeFinder;
             _customActivator = customActivator;
-            _endpointSectionReader = endpointSectionReader;
         }
 
         public IEnumerable<ErrorPolicyBase> GetErrorPolicies(IConfigurationSection configSection) =>

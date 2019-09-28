@@ -20,7 +20,7 @@ namespace Silverback.Tests.Core.EntityFrameworkCore.TestTypes.Base.Domain
 
         protected void AddEvent(IDomainEvent domainEvent)
         {
-            _domainEvents = _domainEvents ?? new List<IDomainEvent>();
+            _domainEvents ??= new List<IDomainEvent>();
 
             domainEvent.Source = this;
 

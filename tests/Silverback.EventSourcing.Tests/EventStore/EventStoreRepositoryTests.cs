@@ -17,7 +17,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void Store_EntityWithSomeEvents_EventsSaved()
         {
-            var repo = new PersonEventStoreRepository();
+            var repo = new PersonInMemoryEventStoreRepository();
             var person = new Person();
             person.ChangeName("Sergio");
             person.ChangeAge(35);
@@ -31,7 +31,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public async Task StoreAsync_EntityWithSomeEvents_EventsSaved()
         {
-            var repo = new PersonEventStoreRepository();
+            var repo = new PersonInMemoryEventStoreRepository();
             var person = new Person();
             person.ChangeName("Sergio");
             person.ChangeAge(35);
@@ -45,8 +45,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void Store_ExistingEntity_NewEventsSaved()
         {
-            var eventStore = new PersonEventStore { PersonId = 12, EntityVersion = 1 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12, EntityVersion = 1 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -54,7 +54,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}"
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var person = repo.GetById(12);
 
@@ -70,8 +70,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public async Task StoreAsync_ExistingEntity_NewEventsSaved()
         {
-            var eventStore = new PersonEventStore { PersonId = 12, EntityVersion = 1 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12, EntityVersion = 1 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -79,7 +79,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}"
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var person = repo.GetById(12);
 
@@ -99,7 +99,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void Store_EntityWithSomeEvents_VersionCalculated()
         {
-            var repo = new PersonEventStoreRepository();
+            var repo = new PersonInMemoryEventStoreRepository();
             var person = new Person();
             person.ChangeName("Sergio");
             person.ChangeAge(35);
@@ -112,7 +112,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public async Task StoreAsync_EntityWithSomeEvents_VersionCalculated()
         {
-            var repo = new PersonEventStoreRepository();
+            var repo = new PersonInMemoryEventStoreRepository();
             var person = new Person();
             person.ChangeName("Sergio");
             person.ChangeAge(35);
@@ -125,8 +125,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void Store_ExistingEntity_VersionIncremented()
         {
-            var eventStore = new PersonEventStore { PersonId = 12, EntityVersion = 1 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12, EntityVersion = 1 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -134,7 +134,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}"
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var person = repo.GetById(12);
 
@@ -149,8 +149,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public async Task StoreAsync_ExistingEntity_VersionIncremented()
         {
-            var eventStore = new PersonEventStore { PersonId = 12, EntityVersion = 1 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12, EntityVersion = 1 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -158,7 +158,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}"
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var person = repo.GetById(12);
 
@@ -173,8 +173,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void Store_ConcurrentlyModifyExistingEntity_ExceptionThrown()
         {
-            var eventStore = new PersonEventStore { PersonId = 12, EntityVersion = 1 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12, EntityVersion = 1 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -182,7 +182,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}"
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var person = repo.GetById(12);
             var person2 = repo.GetById(12);
@@ -201,8 +201,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public async Task StoreAsync_ConcurrentlyModifyExistingEntity_ExceptionThrown()
         {
-            var eventStore = new PersonEventStore { PersonId = 12, EntityVersion = 1 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12, EntityVersion = 1 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -210,7 +210,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}"
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var person = repo.GetById(12);
             var person2 = repo.GetById(12);
@@ -233,8 +233,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void GetAggregateEntity_ExistingId_EntityRecreated()
         {
-            var eventStore = new PersonEventStore{PersonId = 12};
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore{Id = 12};
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -242,7 +242,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}"
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var entity = repo.GetById(12);
 
@@ -252,15 +252,15 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void GetAggregateEntity_ExistingId_EventsApplied()
         {
-            var eventStore = new PersonEventStore { PersonId = 12 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
                                   "\"NewName\": \"Silverback\"" +
                                   "}"
             });
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+AgeChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -268,7 +268,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}"
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var entity = repo.GetById(12);
 
@@ -279,8 +279,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void GetAggregateEntity_ExistingId_EventsAppliedInRightOrder()
         {
-            var eventStore = new PersonEventStore { PersonId = 12 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -288,7 +288,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}",
                 Timestamp = DateTime.Parse("2000-05-05")
             });
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -296,7 +296,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}",
                 Timestamp = DateTime.Parse("2000-03-01")
             });
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var entity = repo.GetById(12);
 
@@ -306,7 +306,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void GetAggregateEntity_NonExistingId_NullReturned()
         {
-            var repo = new PersonEventStoreRepository();
+            var repo = new PersonInMemoryEventStoreRepository();
 
             var entity = repo.GetById(11);
 
@@ -316,8 +316,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void GetAggregateEntity_ExistingIdWithPastSnapshot_OnlyRelevantEventsApplied()
         {
-            var eventStore = new PersonEventStore { PersonId = 12 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -325,7 +325,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}",
                 Timestamp = DateTime.Parse("2000-05-05")
             });
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -333,7 +333,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}",
                 Timestamp = DateTime.Parse("2000-03-01")
             });
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+AgeChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -341,7 +341,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}",
                 Timestamp = DateTime.Parse("2000-02-01")
             });
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+AgeChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -350,7 +350,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                 Timestamp = DateTime.Parse("2019-07-06")
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var entity = repo.GetSnapshotById(12, DateTime.Parse("2000-03-01"));
 
@@ -365,8 +365,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void Remove_ExistingEntity_EntityDeleted()
         {
-            var eventStore = new PersonEventStore { PersonId = 12 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -374,7 +374,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}"
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var entity = repo.GetById(12);
             entity.Should().NotBeNull();
@@ -388,8 +388,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public async Task RemoveAsync_ExistingEntity_EntityDeleted()
         {
-            var eventStore = new PersonEventStore { PersonId = 12 };
-            eventStore.Events.Add(new PersonEventStore.PersonEvent
+            var eventStore = new PersonEventStore { Id = 12 };
+            eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
                                   "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.Person+NameChangedEvent, Silverback.EventSourcing.Tests\"," +
@@ -397,7 +397,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
                                   "}"
             });
 
-            var repo = new PersonEventStoreRepository(eventStore);
+            var repo = new PersonInMemoryEventStoreRepository(eventStore);
 
             var entity = repo.GetById(12);
             entity.Should().NotBeNull();
@@ -411,7 +411,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void Remove_NonExistingEntity_ReturnsNull()
         {
-            var repo = new PersonEventStoreRepository();
+            var repo = new PersonInMemoryEventStoreRepository();
 
             var entity = new Person(123);
 
@@ -423,7 +423,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public async Task RemoveAsync_NonExistingEntity_ReturnsNull()
         {
-            var repo = new PersonEventStoreRepository();
+            var repo = new PersonInMemoryEventStoreRepository();
 
             var entity = new Person(123);
 

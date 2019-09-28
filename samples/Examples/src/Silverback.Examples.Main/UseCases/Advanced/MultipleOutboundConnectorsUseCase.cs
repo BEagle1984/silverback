@@ -24,8 +24,8 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             .AddBus(options => options.UseModel())
             .AddBroker<KafkaBroker>(options => options
                 .AddOutboundConnector()
-                .AddDbOutboundConnector<ExamplesDbContext>()
-                .AddDbOutboundWorker<ExamplesDbContext>());
+                .AddDbOutboundConnector()
+                .AddDbOutboundWorker());
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints

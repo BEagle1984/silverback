@@ -38,10 +38,8 @@ namespace Silverback.Messaging.Connectors
         {
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    await ProcessQueue(scope.ServiceProvider.GetRequiredService<IOutboundQueueConsumer>(), stoppingToken);
-                }
+                using var scope = _serviceProvider.CreateScope();
+                await ProcessQueue(scope.ServiceProvider.GetRequiredService<IOutboundQueueConsumer>(), stoppingToken);
             }
             catch (Exception ex)
             {

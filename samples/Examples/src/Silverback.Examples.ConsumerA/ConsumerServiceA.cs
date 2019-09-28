@@ -24,11 +24,12 @@ namespace Silverback.Examples.ConsumerA
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddLogging()
             .AddBus(options => options.Observable())
+            .AddDbContextAbstraction<ExamplesDbContext>()
             .AddBroker<KafkaBroker>(options => options
-                //.AddDbLoggedInboundConnector<ExamplesDbContext>()
-                .AddDbOffsetStoredInboundConnector<ExamplesDbContext>()
+                //.AddDbLoggedInboundConnector()
+                .AddDbOffsetStoredInboundConnector()
                 .AddInboundConnector()
-                .AddDbChunkStore<ExamplesDbContext>())
+                .AddDbChunkStore())
             .AddScoped<ISubscriber, SubscriberService>()
             .AddScoped<IBehavior, LogHeadersBehavior>();
 

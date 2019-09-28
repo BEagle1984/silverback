@@ -26,7 +26,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         {
             _queue = new InMemoryOutboundQueue();
             _connector = new DeferredOutboundConnector(_queue, new NullLogger<DeferredOutboundConnector>(),
-                new MessageLogger(new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()})));
+                new MessageLogger());
             _transactionManager = new DeferredOutboundConnectorTransactionManager(_queue);
             InMemoryOutboundQueue.Clear();
         }

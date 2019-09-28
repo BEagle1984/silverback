@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Messages
 
         protected virtual void AddEvent(TBaseEvent @event)
         {
-            _events = _events ?? new List<TBaseEvent>();
+            _events ??= new List<TBaseEvent>();
 
             if (@event is IMessageWithSource messageWithSource)
                 messageWithSource.Source = this;

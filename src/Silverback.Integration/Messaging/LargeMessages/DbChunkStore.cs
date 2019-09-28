@@ -6,16 +6,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Silverback.Database;
 using Silverback.Infrastructure;
 
 namespace Silverback.Messaging.LargeMessages
 {
-    public class DbContextChunkStore : RepositoryBase<TemporaryMessageChunk>, IChunkStore
+    public class DbChunkStore : RepositoryBase<TemporaryMessageChunk>, IChunkStore
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
-        public DbContextChunkStore(DbContext dbContext) : base(dbContext)
+        public DbChunkStore(IDbContext dbContext) : base(dbContext)
         {
         }
 
@@ -26,7 +26,7 @@ namespace Silverback.Messaging.LargeMessages
             try
             {
                 // TODO: Log?
-                if (await DbSet.AnyAsync(c => c.OriginalMessageId == messageId && c.ChunkId == chunkId))
+                if (await DbSet.AsQueryable().AnyAsync(c => c.OriginalMessageId == messageId && c.ChunkId == chunkId))
                     return;
 
                 DbSet.Add(new TemporaryMessageChunk
@@ -65,10 +65,10 @@ namespace Silverback.Messaging.LargeMessages
             return Task.CompletedTask;
         }
 
-        public Task<int> CountChunks(string messageId) => DbSet.CountAsync(c => c.OriginalMessageId == messageId);
+        public Task<int> CountChunks(string messageId) => DbSet.AsQueryable().CountAsync(c => c.OriginalMessageId == messageId);
 
         public Task<Dictionary<int, byte[]>> GetChunks(string messageId) =>
-            DbSet.Where(c => c.OriginalMessageId == messageId).ToDictionaryAsync(c => c.ChunkId, c => c.Content);
+            DbSet.AsQueryable().ToDictionaryAsync(x => x.Where(c => c.OriginalMessageId == messageId), c => c.ChunkId, c => c.Content);
 
         public async Task Cleanup(string messageId)
         {
@@ -76,17 +76,19 @@ namespace Silverback.Messaging.LargeMessages
 
             try
             {
-                var entities = DbSet.Local.Where(c => c.OriginalMessageId == messageId).ToList();
+                var entities = DbSet.GetLocalCache().Where(c => c.OriginalMessageId == messageId).ToList();
 
                 // Chunks are always loaded all together for the message, therefore if any
                 // is in cache it means that we got all of them.
                 if (!entities.Any())
                 {
                     entities = (await DbSet
-                        .Where(c => c.OriginalMessageId == messageId)
-                        .Select(c => c.ChunkId)
-                        .ToListAsync())
-                        .Select(chunkId => new TemporaryMessageChunk {OriginalMessageId = messageId, ChunkId = chunkId})
+                        .AsQueryable()
+                        .ToListAsync(x => x
+                            .Where(c => c.OriginalMessageId == messageId)
+                            .Select(c => c.ChunkId)))
+                        .Select(chunkId => new TemporaryMessageChunk
+                            { OriginalMessageId = messageId, ChunkId = chunkId })
                         .ToList();
                 }
 

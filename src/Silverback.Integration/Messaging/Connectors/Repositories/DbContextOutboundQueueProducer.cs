@@ -4,16 +4,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Silverback.Database;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Messages;
 using OutboundMessage = Silverback.Messaging.Connectors.Model.OutboundMessage;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public class DbContextOutboundQueueProducer : RepositoryBase<OutboundMessage>, IOutboundQueueProducer
+    public class DbOutboundQueueProducer : RepositoryBase<OutboundMessage>, IOutboundQueueProducer
     {
-        public DbContextOutboundQueueProducer(DbContext dbContext) : base(dbContext)
+        public DbOutboundQueueProducer(IDbContext dbContext) : base(dbContext)
         {
         }
 

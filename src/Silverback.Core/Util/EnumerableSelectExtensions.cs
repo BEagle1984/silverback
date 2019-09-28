@@ -33,23 +33,22 @@ namespace Silverback.Util
             if (maxDegreeOfParallelism == 1)
                 return await source.SelectAsync(selector);
 
-            using (var semaphore = new SemaphoreSlim(maxDegreeOfParallelism.Value))
-            {
-                var tasks = source.ParallelSelect(async s =>
-                {
-                    await semaphore.WaitAsync();
-                    try
-                    {
-                        return await selector(s);
-                    }
-                    finally
-                    {
-                        semaphore.Release();
-                    }
-                });
+            using var semaphore = new SemaphoreSlim(maxDegreeOfParallelism.Value);
 
-                return await Task.WhenAll(tasks);
-            }
+            var tasks = source.ParallelSelect(async s =>
+            {
+                await semaphore.WaitAsync();
+                try
+                {
+                    return await selector(s);
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
+
+            return await Task.WhenAll(tasks);
         }
 
         public static async Task<IEnumerable<TResult>> SelectAsync<T, TResult>(this IEnumerable<T> source,

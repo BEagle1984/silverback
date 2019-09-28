@@ -57,10 +57,10 @@ namespace Silverback.Domain
         {
             EventsApplier.Apply(@event, this);
 
-            _newEvents = _newEvents ?? new List<IEntityEvent>();
+            _newEvents ??= new List<IEntityEvent>();
             _newEvents.Add(@event);
 
-            if (@event.Timestamp == default(DateTime))
+            if (@event.Timestamp == default)
                 @event.Timestamp = DateTime.UtcNow;
 
             if (@event.Sequence <= 0)

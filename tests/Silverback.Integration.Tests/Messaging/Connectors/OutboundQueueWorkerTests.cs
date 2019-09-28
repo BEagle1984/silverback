@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
 
-            _worker = new OutboundQueueWorker(serviceProvider, _broker, new NullLogger<OutboundQueueWorker>(), new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })), true, 100); // TODO: Test order not enforced
+            _worker = new OutboundQueueWorker(serviceProvider, _broker, new NullLogger<OutboundQueueWorker>(), new MessageLogger(), true, 100); // TODO: Test order not enforced
 
             InMemoryOutboundQueue.Clear();
 

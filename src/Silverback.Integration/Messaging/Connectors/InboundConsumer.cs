@@ -99,10 +99,8 @@ namespace Silverback.Messaging.Connectors
                 _errorPolicy,
                 async messages =>
                 {
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        await RelayAndCommitSingleMessage(messages, scope.ServiceProvider);
-                    }
+                    using var scope = _serviceProvider.CreateScope();
+                    await RelayAndCommitSingleMessage(messages, scope.ServiceProvider);
                 });
 
         private async Task RelayAndCommitSingleMessage(IEnumerable<IInboundMessage> messages,

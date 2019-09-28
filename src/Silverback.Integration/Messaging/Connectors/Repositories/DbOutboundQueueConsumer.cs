@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Silverback.Database;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Messages;
 using OutboundMessage = Silverback.Messaging.Connectors.Model.OutboundMessage;
@@ -13,21 +13,21 @@ using OutboundMessage = Silverback.Messaging.Connectors.Model.OutboundMessage;
 namespace Silverback.Messaging.Connectors.Repositories
 {
     // TODO: Test
-    public class DbContextOutboundQueueConsumer : RepositoryBase<OutboundMessage>, IOutboundQueueConsumer
+    public class DbOutboundQueueConsumer : RepositoryBase<OutboundMessage>, IOutboundQueueConsumer
     {
         private readonly bool _removeProduced;
 
-        public DbContextOutboundQueueConsumer(DbContext dbContext, bool removeProduced) : base(dbContext)
+        public DbOutboundQueueConsumer(IDbContext dbContext, bool removeProduced) : base(dbContext)
         {
             _removeProduced = removeProduced;
         }
 
         public async Task<IEnumerable<QueuedMessage>> Dequeue(int count) =>
-            (await DbSet
-                .Where(m => m.Produced == null)
-                .OrderBy(m => m.Id)
-                .Take(count)
-                .ToListAsync())
+            (await DbSet.AsQueryable()
+                .ToListAsync(x => x
+                    .Where(m => m.Produced == null)
+                    .OrderBy(m => m.Id)
+                    .Take(count)))
             .Select(message => new DbQueuedMessage(
                 message.Id,
                 message.Content,
@@ -55,6 +55,6 @@ namespace Silverback.Messaging.Connectors.Repositories
             await DbContext.SaveChangesAsync();
         }
 
-        public Task<int> GetLength() => DbSet.CountAsync(m => m.Produced == null);
+        public Task<int> GetLength() => DbSet.AsQueryable().CountAsync(m => m.Produced == null);
     }
 }

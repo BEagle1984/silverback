@@ -11,13 +11,6 @@ namespace Silverback.Messaging.Messages
     // TODO: Test
     public class MessageLogger
     {
-        private readonly MessageKeyProvider _messageKeyProvider;
-
-        public MessageLogger(MessageKeyProvider messageKeyProvider)
-        {
-            _messageKeyProvider = messageKeyProvider;
-        }
-
         #region Generic
 
         public void LogTrace(ILogger logger, string logMessage, IBrokerMessage message) =>

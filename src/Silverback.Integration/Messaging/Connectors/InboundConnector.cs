@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Connectors
 
         public virtual IInboundConnector Bind(IEndpoint endpoint, IErrorPolicy errorPolicy = null, InboundConnectorSettings settings = null)
         {
-            settings = settings ?? new InboundConnectorSettings();
+            settings ??= new InboundConnectorSettings();
 
             for (var i = 0; i < settings.Consumers; i++)
             {

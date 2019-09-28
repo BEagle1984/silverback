@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.TestTypes
             : base(broker, endpoint,
                 new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()}),
                 new NullLogger<TestProducer>(),
-                new MessageLogger(new MessageKeyProvider(Enumerable.Empty<IMessageKeyProvider>())))
+                new MessageLogger())
         {
             ProducedMessages = broker.ProducedMessages;
         }

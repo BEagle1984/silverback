@@ -4,19 +4,19 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Silverback.Database;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Messages;
 using InboundMessage = Silverback.Messaging.Connectors.Model.InboundMessage;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public class DbContextInboundLog : RepositoryBase<InboundMessage>, IInboundLog
+    public class DbInboundLog : RepositoryBase<InboundMessage>, IInboundLog
     {
         private readonly MessageKeyProvider _messageKeyProvider;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
-        public DbContextInboundLog(DbContext dbContext, MessageKeyProvider messageKeyProvider) : base(dbContext)
+        public DbInboundLog(IDbContext dbContext, MessageKeyProvider messageKeyProvider) : base(dbContext)
         {
             _messageKeyProvider = messageKeyProvider;
         }
@@ -65,9 +65,9 @@ namespace Silverback.Messaging.Connectors.Repositories
         public Task<bool> Exists(object message, IEndpoint endpoint)
         {
             var key = _messageKeyProvider.GetKey(message);
-            return DbSet.AnyAsync(m => m.MessageId == key && m.EndpointName == endpoint.Name);
+            return DbSet.AsQueryable().AnyAsync(m => m.MessageId == key && m.EndpointName == endpoint.Name);
         }
 
-        public Task<int> GetLength() => DbSet.CountAsync();
+        public Task<int> GetLength() => DbSet.AsQueryable().CountAsync();
     }
 }

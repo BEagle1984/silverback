@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
         public SkipMessageErrorPolicyTests()
         {
-            _policy = new SkipMessageErrorPolicy(null, new NullLogger<SkipMessageErrorPolicy>(), new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })));
+            _policy = new SkipMessageErrorPolicy(null, new NullLogger<SkipMessageErrorPolicy>(), new MessageLogger());
         }
 
         [Theory]

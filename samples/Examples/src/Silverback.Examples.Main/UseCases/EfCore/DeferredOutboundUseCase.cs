@@ -24,9 +24,10 @@ namespace Silverback.Examples.Main.UseCases.EfCore
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus(options => options.UseModel())
+            .AddDbContextAbstraction<ExamplesDbContext>()
             .AddBroker<KafkaBroker>(options => options
-                .AddDbOutboundConnector<ExamplesDbContext>()
-                .AddDbOutboundWorker<ExamplesDbContext>())
+                .AddDbOutboundConnector()
+                .AddDbOutboundWorker())
             .AddScoped<IBehavior, CustomHeadersBehavior>();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>

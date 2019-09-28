@@ -4,23 +4,22 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Background.Model;
+using Silverback.Database;
 
 namespace Silverback.Background
 {
-    public class DbContextDistributedLockManager<TDbContext> : IDistributedLockManager
-        where TDbContext : DbContext
+    public class DbDistributedLockManager : IDistributedLockManager
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
 
-        public DbContextDistributedLockManager(IServiceProvider serviceProvider)
+        public DbDistributedLockManager(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _logger = serviceProvider.GetRequiredService<ILogger<DbContextDistributedLockManager<TDbContext>>>();
+            _logger = serviceProvider.GetRequiredService<ILogger<DbDistributedLockManager>>();
         }
 
         public Task<DistributedLock> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default) =>
@@ -47,10 +46,8 @@ namespace Silverback.Background
         {
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    await SendHeartbeat(resourceName, scope.ServiceProvider);
-                }
+                using var scope = _serviceProvider.CreateScope();
+                await SendHeartbeat(resourceName, scope.ServiceProvider);
             }
             catch (Exception ex)
             {
@@ -64,10 +61,8 @@ namespace Silverback.Background
         {
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    await Release(resourceName, scope.ServiceProvider);
-                }
+                using var scope = _serviceProvider.CreateScope();
+                await Release(resourceName, scope.ServiceProvider);
             }
             catch (Exception ex)
             {
@@ -79,10 +74,8 @@ namespace Silverback.Background
         {
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    return await AcquireLock(resourceName, heartbeatTimeout, scope.ServiceProvider);
-                }
+                using var scope = _serviceProvider.CreateScope();
+                return await AcquireLock(resourceName, heartbeatTimeout, scope.ServiceProvider);
             }
             catch (Exception ex)
             {
@@ -99,7 +92,7 @@ namespace Silverback.Background
 
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            if (await dbSet.AnyAsync(l => l.Name == resourceName && l.Heartbeat >= heartbeatThreshold))
+            if (await dbSet.AsQueryable().AnyAsync(l => l.Name == resourceName && l.Heartbeat >= heartbeatThreshold))
                 return false;
 
             await WriteLock(resourceName, dbSet, dbContext);
@@ -107,10 +100,10 @@ namespace Silverback.Background
             return true;
         }
 
-        private async Task WriteLock(string resourceName, DbSet<Lock> dbSet, TDbContext dbContext)
+        private async Task WriteLock(string resourceName, IDbSet<Lock> dbSet, IDbContext dbContext)
         {
-            var entity = await dbSet.FirstOrDefaultAsync(e => e.Name == resourceName)
-                         ?? dbSet.Add(new Lock { Name = resourceName }).Entity;
+            var entity = await dbSet.AsQueryable().FirstOrDefaultAsync(e => e.Name == resourceName)
+                         ?? dbSet.Add(new Lock { Name = resourceName });
 
             entity.Heartbeat = entity.Created = DateTime.UtcNow;
 
@@ -121,7 +114,7 @@ namespace Silverback.Background
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            var lockRecord = await dbSet.FirstOrDefaultAsync(l => l.Name == resourceName);
+            var lockRecord = await dbSet.AsQueryable().FirstOrDefaultAsync(l => l.Name == resourceName);
 
             if (lockRecord == null)
                 return;
@@ -135,7 +128,7 @@ namespace Silverback.Background
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            var lockRecord = await dbSet.FirstOrDefaultAsync(l => l.Name == resourceName);
+            var lockRecord = await dbSet.AsQueryable().FirstOrDefaultAsync(l => l.Name == resourceName);
 
             if (lockRecord == null)
                 return;
@@ -145,11 +138,10 @@ namespace Silverback.Background
             await dbContext.SaveChangesAsync();
         }
 
-        private (DbSet<Lock> dbSet, TDbContext dbContext) GetDbSet(IServiceProvider serviceProvider)
+        private (IDbSet<Lock> dbSet, IDbContext dbContext) GetDbSet(IServiceProvider serviceProvider)
         {
-            var dbContext = serviceProvider.GetRequiredService<TDbContext>();
-            var dbSet = serviceProvider.GetRequiredService<TDbContext>().Set<Lock>()
-                   ?? throw new SilverbackException($"The DbContext doesn't contain a DbSet<{typeof(Lock).FullName}>.");
+            var dbContext = serviceProvider.GetRequiredService<IDbContext>();
+            var dbSet = dbContext.GetDbSet<Lock>();
 
             return (dbSet, dbContext);
         }

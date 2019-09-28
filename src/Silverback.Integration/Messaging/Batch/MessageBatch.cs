@@ -154,26 +154,24 @@ namespace Silverback.Messaging.Batch
 
         private async Task ProcessEachMessageAndPublishEvents(IEnumerable<IInboundMessage> messages)
         {
-            using (var scope = _serviceProvider.CreateScope())
+            using var scope = _serviceProvider.CreateScope();
+            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+
+            try
             {
-                var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+                await publisher.PublishAsync(new BatchCompleteEvent(CurrentBatchId, messages));
+                await _messagesHandler(messages, scope.ServiceProvider);
+                await publisher.PublishAsync(new BatchProcessedEvent(CurrentBatchId, messages));
 
-                try
-                {
-                    await publisher.PublishAsync(new BatchCompleteEvent(CurrentBatchId, messages));
-                    await _messagesHandler(messages, scope.ServiceProvider);
-                    await publisher.PublishAsync(new BatchProcessedEvent(CurrentBatchId, messages));
+                await _commitHandler.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);
+            }
+            catch (Exception ex)
+            {
+                await _rollbackHandler.Invoke(scope.ServiceProvider);
 
-                    await _commitHandler.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);
-                }
-                catch (Exception ex)
-                {
-                    await _rollbackHandler.Invoke(scope.ServiceProvider);
+                await publisher.PublishAsync(new BatchAbortedEvent(CurrentBatchId, messages, ex));
 
-                    await publisher.PublishAsync(new BatchAbortedEvent(CurrentBatchId, messages, ex));
-
-                    throw;
-                }
+                throw;
             }
         }
     }

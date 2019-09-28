@@ -46,12 +46,10 @@ function Get-Sources()
         ("Silverback.Core.Rx", "..\src\Silverback.Core.Rx\bin\$global:buildConfiguration"),
         ("Silverback.Core.Model", "..\src\Silverback.Core.Model\bin\$global:buildConfiguration"),
         ("Silverback.Integration", "..\src\Silverback.Integration\bin\$global:buildConfiguration"),
-        ("Silverback.Integration.EntityFrameworkCore", "..\src\Silverback.Integration.EntityFrameworkCore\bin\$global:buildConfiguration"),
         ("Silverback.Integration.Kafka", "..\src\Silverback.Integration.Kafka\bin\$global:buildConfiguration"),
         ("Silverback.Integration.InMemory", "..\src\Silverback.Integration.InMemory\bin\$global:buildConfiguration"),
         ("Silverback.Integration.Configuration", "..\src\Silverback.Integration.Configuration\bin\$global:buildConfiguration"),
-        ("Silverback.EventSourcing", "..\src\Silverback.EventSourcing\bin\$global:buildConfiguration"),
-        ("Silverback.EventSourcing.EntityFrameworkCore", "..\src\Silverback.EventSourcing.EntityFrameworkCore\bin\$global:buildConfiguration")
+        ("Silverback.EventSourcing", "..\src\Silverback.EventSourcing\bin\$global:buildConfiguration")
 
     return $sources
 }
@@ -146,7 +144,7 @@ function Show-Summary([string]$path)
         $key = $source[0]
         
         Write-Host "`t[" -NoNewline
-        Write-Host "$($hashtable[$key].major).$($hashtable[$key].minor).$($hashtable[$key].revision).$($hashtable[$key].patch)" -NoNewline -ForegroundColor Green
+        Write-Host "$($hashtable[$key].major).$($hashtable[$key].minor).$($hashtable[$key].patch)$($hashtable[$key].suffix)" -NoNewline -ForegroundColor Green
         Write-Host "] $($key)"
     }
 }
@@ -156,11 +154,11 @@ function Add-Version([string]$path, [hashtable]$hashtable)
     $name = ""
     $major = 0
     $minor = 0
-    $revision = 0
     $patch = 0
+    $suffix = ""
     $versionTokenIndex = 0
 
-    foreach ($token in $path.Split("."))
+    foreach ($token in $path.Replace("-", ".").Split("."))
     {
         if ($token -match "^\d+$")
         {
@@ -174,20 +172,17 @@ function Add-Version([string]$path, [hashtable]$hashtable)
             }
             elseif ($versionTokenIndex -eq 2)
             {
-                $revision = [int]$token
-            }
-            elseif ($versionTokenIndex -eq 3)
-            {
                 $patch = [int]$token
             }
 
-            $versionTokenIndex++;
+            $versionTokenIndex++
         }
         else
         {
-            if ($versionTokenIndex -gt 0)
+            if ($versionTokenIndex -gt 0 -And $token -ne "nupkg")
             {
-                break;
+                $suffix = "-" + $token
+                break
             }
 
             if ($name.Length -gt 0)
@@ -201,12 +196,12 @@ function Add-Version([string]$path, [hashtable]$hashtable)
 
     if ($hashtable.ContainsKey($name))
     {
-        $previousVersion = $hashtable[$name];
+        $previousVersion = $hashtable[$name]
 
         if ($previousVersion.major -gt $major -Or 
             ($previousVersion.major -eq $major -And $previousVersion.minor -gt $minor) -Or
-            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.revision -gt $revision) -Or
-            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.revision -eq $revision -And $previousVersion.patch -gt $patch))
+            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -gt $patch) -Or 
+            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -eq $patch -And ($previousVersion.suffix -eq "" -Or $previousVersion.suffix -gt $suffix )))
         {
             return;
         }
@@ -215,8 +210,8 @@ function Add-Version([string]$path, [hashtable]$hashtable)
     $hashtable[$name] = @{ 
         major = $major
         minor = $minor
-        revision = $revision
         patch = $patch
+        suffix = $suffix
     }
 }
 

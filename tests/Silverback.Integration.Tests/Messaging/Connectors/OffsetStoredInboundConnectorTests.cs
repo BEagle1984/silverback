@@ -46,7 +46,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
             _broker = (TestBroker)_serviceProvider.GetService<IBroker>();
             _connector = new OffsetStoredInboundConnector(_broker, _serviceProvider, new NullLogger<OffsetStoredInboundConnector>(),
-                new MessageLogger(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() })));
+                new MessageLogger());
 
             _scopedServiceProvider = _serviceProvider.CreateScope().ServiceProvider;
 

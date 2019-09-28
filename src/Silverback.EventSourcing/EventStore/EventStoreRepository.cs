@@ -70,7 +70,7 @@ namespace Silverback.EventStore
         {
             var newEvents = aggregateEntity.GetNewEvents();
 
-            eventStore.EntityVersion = eventStore.EntityVersion + newEvents.Count();
+            eventStore.EntityVersion += newEvents.Count();
 
             if (eventStore.EntityVersion != aggregateEntity.GetVersion())
                 throw new SilverbackConcurrencyException(

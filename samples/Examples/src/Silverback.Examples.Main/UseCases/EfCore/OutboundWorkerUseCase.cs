@@ -26,10 +26,11 @@ namespace Silverback.Examples.Main.UseCases.EfCore
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddBus(options => options.UseModel())
-            .AddDbDistributedLockManager<ExamplesDbContext>()
+            .AddDbContextAbstraction<ExamplesDbContext>()
+            .AddDbDistributedLockManager()
             .AddBroker<KafkaBroker>(options => options
-                .AddDbOutboundConnector<ExamplesDbContext>()
-                .AddDbOutboundWorker<ExamplesDbContext>(
+                .AddDbOutboundConnector()
+                .AddDbOutboundWorker(
                     interval: TimeSpan.FromMilliseconds(100),
                     distributedLockSettings: new DistributedLockSettings
                     {

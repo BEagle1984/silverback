@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Background;
+using Silverback.Database;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
@@ -179,6 +180,78 @@ namespace Silverback.Messaging.Configuration
 
             return this;
         }
+
+        /// <summary>
+        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
+        /// This implementation logs the incoming messages in the database and prevents duplicated processing of the same message.
+        /// </summary>
+        public BrokerOptionsBuilder AddDbLoggedInboundConnector() =>
+            AddLoggedInboundConnector(s =>
+                new DbInboundLog(s.GetRequiredService<IDbContext>(),
+                    s.GetRequiredService<MessageKeyProvider>()));
+
+        /// <summary>
+        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
+        /// This implementation stores the offset of the latest consumed messages in the database and prevents duplicated processing of the same message.
+        /// </summary>
+        public BrokerOptionsBuilder AddDbOffsetStoredInboundConnector() =>
+            AddOffsetStoredInboundConnector(s =>
+                new DbOffsetStore(s.GetRequiredService<IDbContext>()));
+
+        /// <summary>
+        /// Adds a connector to publish the integration messages to the configured message broker.
+        /// This implementation stores the outbound messages into an intermediate queue in the database and
+        /// it is therefore fully transactional.
+        /// </summary>
+        public BrokerOptionsBuilder AddDbOutboundConnector() =>
+            AddDeferredOutboundConnector(s =>
+                new DbOutboundQueueProducer(s.GetRequiredService<IDbContext>()));
+
+        /// <summary>
+        /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        /// </summary>
+        /// <param name="interval">The interval between each run (default is 500ms).</param>
+        /// <param name="enforceMessageOrder">if set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
+        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
+        /// <param name="removeProduced">if set to <c>true</c> the messages will be removed from the database immediately after being produced.</param>
+        public BrokerOptionsBuilder AddDbOutboundWorker(TimeSpan? interval = null,
+            bool enforceMessageOrder = true, int readPackageSize = 100, bool removeProduced = true)
+        {
+            return AddDbOutboundWorker(new DistributedLockSettings(), interval,
+                enforceMessageOrder, readPackageSize, removeProduced);
+        }
+
+        /// <summary>
+        /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        /// </summary>
+        /// <param name="distributedLockSettings">The settings for the locking mechanism.</param>
+        /// <param name="interval">The interval between each run (default is 500ms).</param>
+        /// <param name="enforceMessageOrder">if set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
+        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
+        /// <param name="removeProduced">if set to <c>true</c> the messages will be removed from the database immediately after being produced.</param>
+        public BrokerOptionsBuilder AddDbOutboundWorker(DistributedLockSettings distributedLockSettings,
+            TimeSpan? interval = null, bool enforceMessageOrder = true, int readPackageSize = 100,
+            bool removeProduced = true)
+        {
+            if (distributedLockSettings == null) throw new ArgumentNullException(nameof(distributedLockSettings));
+
+            if (string.IsNullOrEmpty(distributedLockSettings.ResourceName))
+                distributedLockSettings.ResourceName = "DbOutboundQueueWorker";
+
+            AddOutboundWorker(
+                s => new DbOutboundQueueConsumer(s.GetRequiredService<IDbContext>(), removeProduced),
+                distributedLockSettings, interval,
+                enforceMessageOrder, readPackageSize);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a chunk store to temporary save the message chunks until the full message has been received.
+        /// This implementation stores the message chunks in the database.
+        /// </summary>
+        public BrokerOptionsBuilder AddDbChunkStore() =>
+            AddChunkStore(s => new DbChunkStore(s.GetRequiredService<IDbContext>()));
 
         #region Defaults
 

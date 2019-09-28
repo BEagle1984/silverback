@@ -76,23 +76,15 @@ namespace Silverback.Messaging.Serialization
             return JsonConvert.DeserializeObject(json, type, Settings);
         }
 
-        protected System.Text.Encoding GetEncoding()
-        {
-            switch (Encoding)
-            {
-                case MessageEncoding.Default:
-                    return System.Text.Encoding.Default;
-                case MessageEncoding.ASCII:
-                    return System.Text.Encoding.ASCII;
-                case MessageEncoding.UTF8:
-                    return System.Text.Encoding.UTF8;
-                case MessageEncoding.UTF32:
-                    return System.Text.Encoding.UTF32;
-                case MessageEncoding.Unicode:
-                    return System.Text.Encoding.Unicode;
-                default:
-                    throw new InvalidOperationException("Unhandled encoding.");
-            }
-        }
+        protected System.Text.Encoding GetEncoding() =>
+            Encoding switch
+                {
+                MessageEncoding.Default => System.Text.Encoding.Default,
+                MessageEncoding.ASCII => System.Text.Encoding.ASCII,
+                MessageEncoding.UTF8 => System.Text.Encoding.UTF8,
+                MessageEncoding.UTF32 => System.Text.Encoding.UTF32,
+                MessageEncoding.Unicode => System.Text.Encoding.Unicode,
+                _ => throw new InvalidOperationException("Unhandled encoding.")
+                };
     }
 }

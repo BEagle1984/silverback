@@ -3,20 +3,20 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Silverback.Database;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors.Model;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public class DbContextOffsetStore : RepositoryBase<StoredOffset>, IOffsetStore
+    public class DbOffsetStore : RepositoryBase<StoredOffset>, IOffsetStore
     {
         private static readonly JsonSerializerSettings SerializerSettings;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
-        static DbContextOffsetStore()
+        static DbOffsetStore()
         {
             SerializerSettings = new JsonSerializerSettings
             {
@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             };
         }
 
-        public DbContextOffsetStore(DbContext dbContext) : base(dbContext)
+        public DbOffsetStore(IDbContext dbContext) : base(dbContext)
         {
         }
 
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                              DbSet.Add(new StoredOffset
                              {
                                  Key = offset.Key
-                             }).Entity;
+                             });
 
                 entity.Offset = JsonConvert.SerializeObject(offset, typeof(IOffset), SerializerSettings);
             }

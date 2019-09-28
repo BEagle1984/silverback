@@ -22,14 +22,14 @@ namespace Silverback.Messaging.Broker
         public int CompareTo(InMemoryOffset other)
         {
             if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
+            if (other is null) return 1;
             return Offset.CompareTo(other.Offset);
         }
 
         public int CompareTo(IOffset obj)
         {
             if (ReferenceEquals(this, obj)) return 0;
-            if (ReferenceEquals(null, obj)) return 1;
+            if (obj is null) return 1;
             return obj is InMemoryOffset other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(InMemoryOffset)}");
         }
 

@@ -82,24 +82,21 @@ namespace Silverback.Examples.Main.UseCases
 
         private void CreateScopeAndConfigure(IServiceProvider serviceProvider)
         {
-            using (var scope = serviceProvider.CreateScope())
-            {
-                Configuration.SetupSerilog();
+            using var scope = serviceProvider.CreateScope();
 
-                scope.ServiceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
+            Configuration.SetupSerilog();
 
-                Configure(scope.ServiceProvider.GetService<BusConfigurator>(), scope.ServiceProvider);
+            scope.ServiceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
 
-                PreExecute(scope.ServiceProvider);
-            }
+            Configure(scope.ServiceProvider.GetService<BusConfigurator>(), scope.ServiceProvider);
+
+            PreExecute(scope.ServiceProvider);
         }
 
         private void CreateScopeAndExecute(IServiceProvider serviceProvider)
         {
-            using (var scope = serviceProvider.CreateScope())
-            {
-                Execute(scope.ServiceProvider).Wait();
-            }
+            using var scope = serviceProvider.CreateScope();
+            Execute(scope.ServiceProvider).Wait();
         }
 
         private void CreateScopeAndPostExecute(IServiceProvider serviceProvider)

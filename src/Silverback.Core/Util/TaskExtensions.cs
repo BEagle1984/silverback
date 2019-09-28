@@ -13,9 +13,7 @@ namespace Silverback.Util
 
             var resultProperty = task.GetType().GetProperty("Result");
 
-            return resultProperty != null
-                ? resultProperty.GetValue(task)
-                : null;
+            return resultProperty?.GetValue(task);
         }
     }
 }

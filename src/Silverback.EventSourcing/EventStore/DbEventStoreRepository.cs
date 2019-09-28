@@ -5,24 +5,26 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Silverback.Database;
 
 namespace Silverback.EventStore
 {
-    public abstract class DbContextEventStoreRepository<TAggregateEntity, TKey, TEventStoreEntity, TEventEntity>
+    public abstract class DbEventStoreRepository<TAggregateEntity, TKey, TEventStoreEntity, TEventEntity>
         : EventStoreRepository<TAggregateEntity, TEventStoreEntity, TEventEntity>
         where TAggregateEntity : IEventSourcingAggregate<TKey>
         where TEventStoreEntity : EventStoreEntity<TEventEntity>
         where TEventEntity : IEventEntity, new()
     {
-        private readonly DbSet<TEventStoreEntity> _dbSet;
+        private readonly IDbSet<TEventStoreEntity> _dbSet;
 
-        protected DbContextEventStoreRepository(DbContext dbContext)
+        protected DbEventStoreRepository(IDbContext dbContext)
         {
-            _dbSet = dbContext.Set<TEventStoreEntity>();
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+
+            _dbSet = dbContext.GetDbSet<TEventStoreEntity>();
         }
 
-        protected IQueryable<TEventStoreEntity> EventStores => _dbSet.Include(s => s.Events);
+        protected IDbQueryable<TEventStoreEntity> EventStores => _dbSet.AsQueryable().Include(s => s.Events);
 
         /// <summary>
         /// Gets the aggregate entity folding the events from the specified event store.
@@ -93,7 +95,7 @@ namespace Silverback.EventStore
             if (eventStore == null)
                 return default;
 
-            return _dbSet.Remove(eventStore)?.Entity;
+            return _dbSet.Remove(eventStore);
         }
 
         protected abstract TEventStoreEntity GetNewEventStoreEntity(TAggregateEntity aggregateEntity);

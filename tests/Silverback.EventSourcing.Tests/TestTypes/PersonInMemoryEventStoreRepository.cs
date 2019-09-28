@@ -8,35 +8,35 @@ using System.Threading.Tasks;
 
 namespace Silverback.Tests.EventSourcing.TestTypes
 {
-    public class PersonEventStoreRepository : InMemoryEventStoreRepository<Person, PersonEventStore, PersonEventStore.PersonEvent>
+    public class PersonInMemoryEventStoreRepository : InMemoryEventStoreRepository<Person, PersonEventStore, PersonEvent>
     {
-        public PersonEventStoreRepository()
+        public PersonInMemoryEventStoreRepository()
         {
         }
 
-        public PersonEventStoreRepository(params PersonEventStore[] eventStoreEntities)
+        public PersonInMemoryEventStoreRepository(params PersonEventStore[] eventStoreEntities)
             : this(eventStoreEntities.AsEnumerable())
         {
         }
 
-        public PersonEventStoreRepository(IEnumerable<PersonEventStore> eventStoreEntities)
+        public PersonInMemoryEventStoreRepository(IEnumerable<PersonEventStore> eventStoreEntities)
         {
             EventStores.AddRange(eventStoreEntities);
         }
 
-        public Person GetById(int id) => GetAggregateEntity(EventStores.FirstOrDefault(x => x.PersonId == id));
+        public Person GetById(int id) => GetAggregateEntity(EventStores.FirstOrDefault(x => x.Id == id));
 
         public Person GetBySsn(string ssn) => GetAggregateEntity(EventStores.FirstOrDefault(x => x.Ssn == ssn));
 
-        public Person GetSnapshotById(int id, DateTime snapshot) => GetAggregateEntity(EventStores.FirstOrDefault(x => x.PersonId == id), snapshot);
+        public Person GetSnapshotById(int id, DateTime snapshot) => GetAggregateEntity(EventStores.FirstOrDefault(x => x.Id == id), snapshot);
 
         protected override PersonEventStore GetEventStoreEntity(Person aggregateEntity, bool addIfNotFound)
         {
-            var store = EventStores.FirstOrDefault(s => s.PersonId == aggregateEntity.Id);
+            var store = EventStores.FirstOrDefault(s => s.Id == aggregateEntity.Id);
 
             if (store == null && addIfNotFound)
             {
-                store = new PersonEventStore {PersonId = aggregateEntity.Id, Ssn = aggregateEntity.Ssn};
+                store = new PersonEventStore {Id = aggregateEntity.Id, Ssn = aggregateEntity.Ssn};
                 EventStores.Add(store);
             }
 
