@@ -22,7 +22,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         private IPublisher GetPublisher(Action<BusConfigurator> configAction, params ISubscriber[] subscribers)
         {
             var services = new ServiceCollection();
-            services.AddBus(o => o.Observable());
+            services.AddSilverback().AsObservable();
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));

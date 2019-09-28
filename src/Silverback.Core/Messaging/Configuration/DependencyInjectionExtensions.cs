@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
@@ -11,26 +10,31 @@ using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static partial class DependencyInjectionExtensions
+    public static class DependencyInjectionExtensions
     {
-        public static IServiceCollection AddBus(this IServiceCollection services, Action<BusPluginOptions> optionsAction = null)
+        /// <summary>
+        /// Adds the minimum essential Silverback services to the specified <see cref="IServiceCollection" />. Additional services
+        /// including broker support, inbound/outbound connectors and database bindings must be added separately using the 
+        /// <see cref="ISilverbackBuilder"/> returned from this method.
+        /// </summary>
+        /// <returns></returns>
+        public static ISilverbackBuilder AddSilverback(this IServiceCollection services)
         {
-
-            var pluginOptions = new BusPluginOptions(services);
-            optionsAction?.Invoke(pluginOptions);
-
-            return services
+            services
                 .AddSingleton<BusOptions>()
                 .AddSingleton<BusConfigurator>()
+                .AddScoped<IPublisher, Publisher>()
                 .AddScoped<SubscribedMethodInvoker>()
-                .AddScoped<SubscribedMethodArgumentsResolver>()
-                .AddScoped<IArgumentResolver, EnumerableMessageArgumentResolver>()
-                .AddScoped<IArgumentResolver, SingleMessageArgumentResolver>()
-                .AddScoped<IArgumentResolver, ServiceProviderAdditionalArgumentResolver>()
+                .AddScoped<ArgumentsResolver>()
                 .AddScoped<ReturnValueHandler>()
-                .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
+                // Note: resolvers and handlers will be evaluated in reverse order
+                .AddScoped<IArgumentResolver, ServiceProviderAdditionalArgumentResolver>()
+                .AddScoped<IArgumentResolver, SingleMessageArgumentResolver>()
+                .AddScoped<IArgumentResolver, EnumerableMessageArgumentResolver>()
                 .AddScoped<IReturnValueHandler, SingleMessageReturnValueHandler>()
-                .AddScoped<IPublisher, Publisher>();
+                .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>();
+
+            return new SilverbackBuilder(services);
         }
     }
 }

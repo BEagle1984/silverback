@@ -34,7 +34,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
         private static void Connect()
         {
             var messageKeyProvider = new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()});
-            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger(messageKeyProvider));
+            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger());
 
             _consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
             {

@@ -5,14 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Silverback.Messaging.Configuration
 {
-    // TODO: Test
-    public class BusPluginOptions
+    internal class SilverbackBuilder : ISilverbackBuilder
     {
-        public BusPluginOptions(IServiceCollection services)
+        public SilverbackBuilder(IServiceCollection services)
         {
             Services = services;
         }
 
-        internal IServiceCollection Services { get; }
+        public IServiceCollection Services { get; }
     }
 }

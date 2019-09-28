@@ -12,7 +12,7 @@ namespace Silverback.Tests.Core.TestTypes
         public static void Wait(Func<bool> breakCondition, int timeoutInMilliseconds = 1000)
         {
             const int sleep = 10;
-            for (int i = 0; i < timeoutInMilliseconds; i = i + sleep)
+            for (int i = 0; i < timeoutInMilliseconds; i += sleep)
             {
                 if (breakCondition())
                     break;

@@ -19,7 +19,7 @@ public void ConfigureServices(IServiceCollection services)
     ...
 
     services
-        .AddBus()
+        .AddSilverback()
         .AddBroker<KafkaBroker>(options => options
             .AddOutboundConnector());
     ...
@@ -37,9 +37,9 @@ public void Configure(BusConfigurator busConfigurator)
 
 ### Deferred
 
-The `DeferredOutboundConnector` will store the outbound messages into a database table and produce them asynchronously. This allows to take advantage of database transactions, preventing inconsistencies. And in addition allows the system to retry indefinitely if the message broker is not available.
+The `DbOutboundConnector` will store the outbound messages into a database table and produce them asynchronously. This allows to take advantage of database transactions, preventing inconsistencies. And in addition allows the system to retry indefinitely if the message broker is not available.
 
-The **Silverback.Integration.EntityFrameworkCore** package contains an implementation that allows to store the outbound messages into a DbSet, being therefore implicitly saved in the same transaction used to save changes to the local data.
+When using entity framework (`UseDbContext<TDbContext>`) the outbound messages are stored into a DbSet and are therefore implicitly saved in the same transaction used to save all other changes.
 
 The `DbContext` must include a `DbSet<OutboundMessage>` and an `OutboundWorker` is to be started to process the outbound queue.
 
@@ -52,22 +52,26 @@ public void ConfigureServices(IServiceCollection services)
     ...
 
     services
-        .AddBus()
+        .AddSilverback()
+
+        // Initialize Silverback to use MyDbContext as database storage.
+        .UseDbContext<MyDbContext>()
 
         // Setup the lock manager using the database
         // to handle the distributed locks.
         // If this line is omitted the OutboundWorker will still
         // work without locking. 
-        .AddDbDistributedLockManager<MyDbContext>()
+        .AddDbDistributedLockManager()
 
-        .AddBroker<KafkaBroker>(options => options
-            .AddDbOutboundConnector<MyDbContext>()
+        .WithConnectionTo<KafkaBroker>(options => options
+            // Use a deferred outbound connector
+            .AddDbOutboundConnector()
 
             // Add the IHostedService processing the outbound queue:
             // -> sleep 500 milliseconds when the queue is empty
             // -> check if the lock is gone every 1 second
             //    (= the running instance was stopped and we need to take over)
-            .AddDbOutboundWorker<MyDbContext>(
+            .AddDbOutboundWorker(
                 interval: TimeSpan.FromMilliseconds(500),
                 distributedLockSettings: new DistributedLockSettings
                 {
@@ -91,7 +95,7 @@ public static BrokerOptionsBuilder AddMyCustomOutboundConnector(this BrokerOptio
     return builder;
 }
 
-public static BrokerOptionsBuilder AddMyCustomOutboundWorker<TDbContext>(this BrokerOptionsBuilder builder,
+public static BrokerOptionsBuilder AddMyCustomOutboundWorker(this BrokerOptionsBuilder builder,
     bool enforceMessageOrder = true, int readPackageSize = 100)
 {
     builder.AddOutboundWorker(enforceMessageOrder, readPackageSize);
@@ -100,4 +104,3 @@ public static BrokerOptionsBuilder AddMyCustomOutboundWorker<TDbContext>(this Br
     return builder;
 }
 ```
-

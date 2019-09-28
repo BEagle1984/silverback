@@ -14,10 +14,10 @@ namespace Silverback.Messaging.Subscribers
     // TODO: Test
     public class SubscribedMethodInvoker
     {
-        private readonly SubscribedMethodArgumentsResolver _argumentsResolver;
+        private readonly ArgumentsResolver _argumentsResolver;
         private readonly ReturnValueHandler _returnValueHandler;
 
-        public SubscribedMethodInvoker(SubscribedMethodArgumentsResolver argumentsResolver,
+        public SubscribedMethodInvoker(ArgumentsResolver argumentsResolver,
             ReturnValueHandler returnValueHandler)
         {
             _argumentsResolver = argumentsResolver ?? throw new ArgumentNullException(nameof(argumentsResolver));

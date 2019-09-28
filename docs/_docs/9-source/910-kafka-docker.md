@@ -1,6 +1,6 @@
 ---
 title: Kafka deployment on Docker
-permalink: /docs/extra/kafka-docker
+permalink: /docs/source/kafka-docker
 ---
 
 ## Single node basic deployment on Docker (on Windows)

@@ -32,8 +32,7 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
             services
-                .AddBus()
-                .AddBroker<TestBroker>();
+                .AddSilverback().WithConnectionTo<TestBroker>();
 
             _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
             _scopedServiceProvider = _serviceProvider.CreateScope().ServiceProvider;

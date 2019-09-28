@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
 using System;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Silverback.Database
 {

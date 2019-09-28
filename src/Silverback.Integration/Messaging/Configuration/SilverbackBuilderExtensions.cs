@@ -9,23 +9,30 @@ using Silverback.Messaging.Messages;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class DependencyInjectionExtensions
+    public static class SilverbackBuilderExtensions
     {
-        public static IServiceCollection AddBroker<T>(this IServiceCollection services, Action<BrokerOptionsBuilder> optionsAction = null)
+        /// <summary>
+        /// Registers the message broker of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of the message broker implementation.</typeparam>
+        /// <param name="builder"></param>
+        /// <param name="optionsAction">Additional options (such as connectors).</param>
+        /// <returns></returns>
+        public static ISilverbackBuilder WithConnectionTo<T>(this ISilverbackBuilder builder, Action<BrokerOptionsBuilder> optionsAction = null)
             where T : class, IBroker
         {
-            services
+            builder.Services
                 .AddSingleton<IBroker, T>()
                 .AddSingleton<ErrorPolicyBuilder>()
                 .AddSingleton<IMessageKeyProvider, DefaultPropertiesMessageKeyProvider>()
                 .AddSingleton<MessageKeyProvider>()
                 .AddSingleton<MessageLogger>();
 
-            var options = new BrokerOptionsBuilder(services);
+            var options = new BrokerOptionsBuilder(builder.Services);
             optionsAction?.Invoke(options);
             options.CompleteWithDefaults();
 
-            return services;
+            return builder;
         }
 
         // TODO: Support & Test

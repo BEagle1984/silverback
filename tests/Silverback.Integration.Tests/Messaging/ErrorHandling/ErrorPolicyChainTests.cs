@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var services = new ServiceCollection();
 
-            services.AddBus().AddBroker<TestBroker>();
+            services.AddSilverback().WithConnectionTo<TestBroker>();
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));

@@ -24,18 +24,22 @@ namespace Silverback.Examples.Main.UseCases.EfCore
         {
         }
 
-        protected override void ConfigureServices(IServiceCollection services) => services
-            .AddBus(options => options.UseModel())
-            .AddDbContextAbstraction<ExamplesDbContext>()
-            .AddDbDistributedLockManager()
-            .AddBroker<KafkaBroker>(options => options
-                .AddDbOutboundConnector()
-                .AddDbOutboundWorker(
-                    interval: TimeSpan.FromMilliseconds(100),
-                    distributedLockSettings: new DistributedLockSettings
-                    {
-                        AcquireRetryInterval = TimeSpan.FromSeconds(1)
-                    }));
+        protected override void ConfigureServices(IServiceCollection services)
+        {
+            services
+                .AddSilverback()
+                .UseModel()
+                .UseDbContext<ExamplesDbContext>()
+                .AddDbDistributedLockManager()
+                .WithConnectionTo<KafkaBroker>(options => options
+                    .AddDbOutboundConnector()
+                    .AddDbOutboundWorker(
+                        interval: TimeSpan.FromMilliseconds(100),
+                        distributedLockSettings: new DistributedLockSettings
+                        {
+                            AcquireRetryInterval = TimeSpan.FromSeconds(1)
+                        }));
+        }
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
         {

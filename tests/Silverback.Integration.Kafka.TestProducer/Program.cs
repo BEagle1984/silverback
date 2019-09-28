@@ -31,7 +31,7 @@ namespace Silverback.Integration.Kafka.TestProducer
         private static void Connect()
         {
             var messageKeyProvider = new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() });
-            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger(messageKeyProvider));
+            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger());
             _broker.Connect();
 
             _producer = _broker.GetProducer(new KafkaProducerEndpoint("Topic1")

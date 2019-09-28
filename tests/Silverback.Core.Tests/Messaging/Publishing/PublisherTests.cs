@@ -47,7 +47,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         private IPublisher GetPublisher(Action<BusConfigurator> configAction, IBehavior[] behaviors, params ISubscriber[] subscribers)
         {
             var services = new ServiceCollection();
-            services.AddBus();
+            services.AddSilverback();
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));

@@ -36,9 +36,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-            services.AddBus();
-
-            services.AddBroker<TestBroker>();
+            services.AddSilverback().WithConnectionTo<TestBroker>();
 
             services.AddScoped<IInboundLog, InMemoryInboundLog>();
 

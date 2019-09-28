@@ -8,13 +8,15 @@ using System.Reflection;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
-    public class SubscribedMethodArgumentsResolver
+    public class ArgumentsResolver
     {
         private readonly IEnumerable<IArgumentResolver> _argumentResolvers;
 
-        public SubscribedMethodArgumentsResolver(IEnumerable<IArgumentResolver> argumentResolvers)
+        public ArgumentsResolver(IEnumerable<IArgumentResolver> argumentResolvers)
         {
-            _argumentResolvers = argumentResolvers;
+            // Revert the resolvers order, to give priority to the ones added after the 
+            // default ones.
+            _argumentResolvers = argumentResolvers.Reverse();
         }
 
         public (IMessageArgumentResolver resolver, Type messageType) GetMessageArgumentResolver(SubscribedMethod method)

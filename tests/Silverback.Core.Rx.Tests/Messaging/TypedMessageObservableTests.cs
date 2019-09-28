@@ -32,7 +32,7 @@ namespace Silverback.Tests.Core.Rx.Messaging
             _messageObservable = new MessageObservable<IEvent>(observable);
 
             var services = new ServiceCollection();
-            services.AddBus();
+            services.AddSilverback();
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));

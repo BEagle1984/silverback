@@ -4,6 +4,30 @@ permalink: /docs/releases
 toc: false
 ---
 
+## 1.0.0
+
+**What's new**
+* Message size optimization (no wrappers anymore)
+* Better headers usage: identifiers, types, chunks information, etc. are now all sent in the headers
+* Reviewed severity of some log entries
+* Cleaner internal implementation
+* Better exception handling (flattening of `AggregateException`)
+* Update to [Confluent.Kafka 1.2.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.1.0)
+* The Kafka consumer automatically recovers from fatal errors (can be disabled via Endpoint configuration)
+* Support for .Net Core 3.0 and Entity Framework Core 3.0
+* Refactored packages (EF binding logic is now in a single package, versioned after the related EF version)
+
+**Breaking Changes**
+* The messages produced with version < 0.11 may not be compatible with the new consumer from this version of Silverback.Integration.
+* Some changes in `IInboundMessage` and `IOutboundMessage` interfaces
+* Changes to the schema of the outbox table (`Silverback.Messaging.Connectors.Model.OutboundMessage`)
+* The configuration fluent API changed quite a bit, refer to the current documentation.
+* Silverback.Integration.EntityFrameworkCore and Silverback.EventSourcing.EntityFrameworkCore have been deprecated. (Silverback.Core.EntityFrameworkCore contains all the necessary logic to use EF as store)
+
+**Fixes**
+* Fixed issue requiring types not implementing `IMessage` to be registered with `HandleMessagesOfType<T>` to consume them [[#33](https://github.com/BEagle1984/silverback/issues/33)]
+* Other small fixes to improve stability and reliability
+
 ## 0.10.0
 
 **What's new**

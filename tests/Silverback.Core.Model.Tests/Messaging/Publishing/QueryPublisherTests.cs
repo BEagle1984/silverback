@@ -21,7 +21,7 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         public QueryPublisherTests()
         {
             var services = new ServiceCollection();
-            services.AddBus(options => options.UseModel());
+            services.AddSilverback().UseModel();
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));

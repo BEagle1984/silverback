@@ -44,9 +44,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-            services.AddBus();
 
-            services.AddBroker<TestBroker>(options => options.AddChunkStore(_ => new InMemoryChunkStore()));
+            services.AddSilverback()
+                .WithConnectionTo<TestBroker>(options => options
+                    .AddChunkStore(_ => new InMemoryChunkStore()));
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
             {

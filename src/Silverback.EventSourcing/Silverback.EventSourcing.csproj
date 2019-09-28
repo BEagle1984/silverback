@@ -7,7 +7,7 @@
     <Version>1.0.0-rc1</Version>
     <Authors>BEagle1984</Authors>
     <Company>BEagle1984</Company>
-    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package contains the event store abstraction.</Description>
+    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package contains an implementation of an event store that perfectly integrates within the Silverback ecosystem</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
     <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>

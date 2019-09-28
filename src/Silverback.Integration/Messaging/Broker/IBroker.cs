@@ -8,14 +8,31 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public interface IBroker
     {
+        /// <summary>
+        /// Returns an <see cref="IProducer"/> to be used to produce to
+        /// the specified endpoint.
+        /// </summary>
         IProducer GetProducer(IEndpoint endpoint);
 
+        /// <summary>
+        /// Returns an <see cref="IConsumer"/> to be used to consume from
+        /// the specified endpoint.
+        /// </summary>
         IConsumer GetConsumer(IEndpoint endpoint);
 
+        /// <summary>
+        /// A boolean value indicating whether this instance is currently connected.
+        /// </summary>
         bool IsConnected { get; }
 
+        /// <summary>
+        /// Connect to the message broker to start consuming.
+        /// </summary>
         void Connect();
-        
+
+        /// <summary>
+        /// Disconnect from the message broker to stop consuming.
+        /// </summary>
         void Disconnect();
     }
 }

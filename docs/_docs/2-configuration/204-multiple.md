@@ -12,9 +12,10 @@ In the following example different inbound connectors are mixed. Silverback will
 protected override void ConfigureServices(IServiceCollection services)
 {
     services
-        .AddBus()
-        .AddBroker<KafkaBroker>(options => options
-            .AddDbInboundConnector<MyDbContext>()
+        .AddSilverback()
+        .UseDbContext<MyDbContext>()
+        .WithConnectionTo<KafkaBroker>(options => options
+            .AddDbInboundConnector()
             .AddInboundConnector());
 }
 

@@ -37,8 +37,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 .AddSingleton<ILoggerFactory, NullLoggerFactory>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
                 .AddSingleton<IOutboundQueueConsumer, InMemoryOutboundQueue>()
-                .AddBus()
-                .AddBroker<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
+                .AddSilverback().WithConnectionTo<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 

@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services = new ServiceCollection();
 
-            _services.AddBus();
+            _services.AddSilverback();
 
             _testSubscriber = new TestSubscriber();
             _services.AddSingleton<ISubscriber>(_testSubscriber);
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public void AddBroker_BrokerRegisteredForDI()
         {
-            _services.AddBroker<TestBroker>(options => { });
+            _services.AddSilverback().WithConnectionTo<TestBroker>(options => { });
 
             GetServiceProvider().GetService<IBroker>().Should().NotBeNull();
         }
@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public void AddOutboundConnector_PublishMessages_MessagesProduced()
         {
-            _services.AddBroker<TestBroker>(options => options.AddOutboundConnector());
+            _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddOutboundConnector());
             GetBusConfigurator().Connect(endpoints =>
                 endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.Default));
 
@@ -83,7 +83,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public async Task AddDeferredOutboundConnector_PublishMessages_MessagesQueued()
         {
-            _services.AddBroker<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
+            _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
             GetBusConfigurator().Connect(endpoints => 
                 endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.Default));
 
@@ -100,7 +100,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public async Task AddDeferredOutboundConnector_Rollback_MessagesNotQueued()
         {
-            _services.AddBroker<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
+            _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
             GetBusConfigurator().Connect(endpoints =>
                 endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.Default));
 
@@ -118,7 +118,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public void AddOutbound_MultipleRoutes_MessagesCorrectlyRouted()
         {
-            _services.AddBroker<TestBroker>(options => options.AddOutboundConnector());
+            _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddOutboundConnector());
 
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
@@ -143,7 +143,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public async Task AddInboundConnector_PushMessages_MessagesReceived()
         {
-            _services.AddBroker<TestBroker>(options => options.AddInboundConnector());
+            _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddInboundConnector());
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
                     .AddInbound(TestEndpoint.Default));
@@ -161,7 +161,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public async Task AddInboundConnector_CalledMultipleTimes_EachMessageReceivedOnce()
         {
-            _services.AddBroker<TestBroker>(options => options.AddInboundConnector().AddInboundConnector());
+            _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddInboundConnector().AddInboundConnector());
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
                     .AddInbound(TestEndpoint.Default));
@@ -178,7 +178,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public async Task AddLoggedInboundConnector_PushMessages_MessagesReceived()
         {
-            _services.AddBroker<TestBroker>(options => options.AddLoggedInboundConnector(s => new InMemoryInboundLog(s.GetRequiredService<MessageKeyProvider>())));
+            _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddLoggedInboundConnector(s => new InMemoryInboundLog(s.GetRequiredService<MessageKeyProvider>())));
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
                     .AddInbound(TestEndpoint.Default));
@@ -197,7 +197,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public async Task AddOffsetStoredInboundConnector_PushMessages_MessagesReceived()
         {
-            _services.AddBroker<TestBroker>(options => options.AddOffsetStoredInboundConnector(_ => new InMemoryOffsetStore()));
+            _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddOffsetStoredInboundConnector(_ => new InMemoryOffsetStore()));
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
                     .AddInbound(TestEndpoint.Default));

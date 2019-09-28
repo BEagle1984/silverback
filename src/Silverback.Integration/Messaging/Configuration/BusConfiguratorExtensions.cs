@@ -9,9 +9,15 @@ using Silverback.Messaging.Connectors;
 
 namespace Silverback.Messaging.Configuration
 {
-    public static class EndpointsBusConfiguratorExtensions
+    public static class BusConfiguratorExtensions
     {
-        public static BusConfigurator Connect(this BusConfigurator configurator,
+        /// <summary>
+        /// Configures the message broker bindings and starts consuming.
+        /// </summary>
+        /// <param name="configurator"></param>
+        /// <param name="endpointsConfigurationAction">The inbound/outbound endpoints configuration.</param>
+        /// <returns></returns>
+        public static IBroker Connect(this BusConfigurator configurator,
             Action<IEndpointsConfigurationBuilder> endpointsConfigurationAction)
         {
             if (endpointsConfigurationAction == null)
@@ -22,9 +28,11 @@ namespace Silverback.Messaging.Configuration
                 configurator.ServiceProvider.GetRequiredService<IEnumerable<IInboundConnector>>(),
                 configurator.ServiceProvider.GetRequiredService<ErrorPolicyBuilder>()));
 
-            configurator.ServiceProvider.GetRequiredService<IBroker>().Connect();
+            var broker = configurator.ServiceProvider.GetRequiredService<IBroker>();
 
-            return configurator;
+            broker.Connect();
+
+            return broker;
         }
     }
 }

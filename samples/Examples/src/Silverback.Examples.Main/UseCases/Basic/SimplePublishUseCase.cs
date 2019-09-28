@@ -20,8 +20,9 @@ namespace Silverback.Examples.Main.UseCases.Basic
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
-            .AddBus(options => options.UseModel())
-            .AddBroker<KafkaBroker>();
+            .AddSilverback()
+            .UseModel()
+            .WithConnectionTo<KafkaBroker>();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints

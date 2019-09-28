@@ -32,9 +32,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _outboundQueue = new InMemoryOutboundQueue();
 
-            services
-                .AddBus()
-                .AddBroker<TestBroker>(options => options
+            services.AddSilverback()
+                .WithConnectionTo<TestBroker>(options => options
                     .AddDeferredOutboundConnector(_ => _outboundQueue)
                     .AddOutboundConnector());
 

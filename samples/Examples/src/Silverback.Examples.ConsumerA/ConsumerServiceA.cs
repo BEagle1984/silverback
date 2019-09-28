@@ -21,23 +21,29 @@ namespace Silverback.Examples.ConsumerA
 {
     public class ConsumerServiceA : ConsumerService
     {
-        protected override void ConfigureServices(IServiceCollection services) => services
-            .AddLogging()
-            .AddBus(options => options.Observable())
-            .AddDbContextAbstraction<ExamplesDbContext>()
-            .AddBroker<KafkaBroker>(options => options
-                //.AddDbLoggedInboundConnector()
-                .AddDbOffsetStoredInboundConnector()
-                .AddInboundConnector()
-                .AddDbChunkStore())
-            .AddScoped<ISubscriber, SubscriberService>()
-            .AddScoped<IBehavior, LogHeadersBehavior>();
+        protected override void ConfigureServices(IServiceCollection services)
+        {
+            services
+                .AddLogging()
+                .AddScoped<ISubscriber, SubscriberService>()
+                .AddScoped<IBehavior, LogHeadersBehavior>();
+
+            services
+                .AddSilverback()
+                .AsObservable()
+                .UseDbContext<ExamplesDbContext>()
+                .WithConnectionTo<KafkaBroker>(options => options
+                    //.AddDbLoggedInboundConnector()
+                    .AddDbOffsetStoredInboundConnector()
+                    .AddInboundConnector()
+                    .AddDbChunkStore());
+        }
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
         {
             Configuration.SetupSerilog();
 
-            configurator
+            var broker = configurator
                 .Connect(endpoints => endpoints
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-events"))
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-batch"),
@@ -102,7 +108,7 @@ namespace Silverback.Examples.ConsumerA
 
             Console.CancelKeyPress += (_, __) =>
             {
-                serviceProvider.GetService<IBroker>().Disconnect();
+                broker.Disconnect();
             };
         }
 
