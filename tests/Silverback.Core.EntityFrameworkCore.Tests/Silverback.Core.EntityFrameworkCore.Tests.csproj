@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Silverback.Core.EntityFrameworkCore\Silverback.Core.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Core.EFCore30\Silverback.Core.EFCore30.csproj" />
   </ItemGroup>
 
 </Project>

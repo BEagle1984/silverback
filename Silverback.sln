@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Core", "src\Silverback.Core\Silverback.Core.csproj", "{FE7472E6-E52F-4352-82AD-AFB700397B20}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Core.EntityFrameworkCore", "src\Silverback.Core.EntityFrameworkCore\Silverback.Core.EntityFrameworkCore.csproj", "{E9F19C4E-3743-4E22-BE04-9BBD6B447177}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6AFB87A3-501B-4A87-B94C-205AEB118D97}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Core.Tests", "tests\Silverback.Core.Tests\Silverback.Core.Tests.csproj", "{BD4F624F-6C41-4F7B-B7FA-7DB7B329F044}"
@@ -29,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration", "src\Silverback.Integration\Silverback.Integration.csproj", "{A020E8B3-4903-46D4-A376-D06B226B2036}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.S3", "src\Silverback.Integration.S3\Silverback.Integration.S3.csproj", "{18E494BE-85DF-4D2D-9D4B-ED75AC2F400D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Kafka", "src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj", "{779B491E-66DD-4BC5-BF01-63633D00E4CA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Kafka.Tests", "tests\Silverback.Integration.Kafka.Tests\Silverback.Integration.Kafka.Tests.csproj", "{4A247BE9-6655-4939-AC04-028AC0A3C9A7}"
@@ -51,6 +47,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.EventSourcing", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.EventSourcing.Tests", "tests\Silverback.EventSourcing.Tests\Silverback.EventSourcing.Tests.csproj", "{AB4EC3F2-A116-439E-B715-78ED415A96CC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Core.EFCore22", "src\Silverback.Core.EFCore22\Silverback.Core.EFCore22.csproj", "{F879AE2D-914F-4A74-B675-E604866C00CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Core.EFCore30", "src\Silverback.Core.EFCore30\Silverback.Core.EFCore30.csproj", "{3C38A77C-3C8B-4BB8-B60C-D4E541B8358F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,10 +61,6 @@ Global
 		{FE7472E6-E52F-4352-82AD-AFB700397B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE7472E6-E52F-4352-82AD-AFB700397B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE7472E6-E52F-4352-82AD-AFB700397B20}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E9F19C4E-3743-4E22-BE04-9BBD6B447177}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9F19C4E-3743-4E22-BE04-9BBD6B447177}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E9F19C4E-3743-4E22-BE04-9BBD6B447177}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9F19C4E-3743-4E22-BE04-9BBD6B447177}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BD4F624F-6C41-4F7B-B7FA-7DB7B329F044}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BD4F624F-6C41-4F7B-B7FA-7DB7B329F044}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD4F624F-6C41-4F7B-B7FA-7DB7B329F044}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -105,10 +101,6 @@ Global
 		{A020E8B3-4903-46D4-A376-D06B226B2036}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A020E8B3-4903-46D4-A376-D06B226B2036}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A020E8B3-4903-46D4-A376-D06B226B2036}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18E494BE-85DF-4D2D-9D4B-ED75AC2F400D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18E494BE-85DF-4D2D-9D4B-ED75AC2F400D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18E494BE-85DF-4D2D-9D4B-ED75AC2F400D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18E494BE-85DF-4D2D-9D4B-ED75AC2F400D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{779B491E-66DD-4BC5-BF01-63633D00E4CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{779B491E-66DD-4BC5-BF01-63633D00E4CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{779B491E-66DD-4BC5-BF01-63633D00E4CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -145,6 +137,14 @@ Global
 		{AB4EC3F2-A116-439E-B715-78ED415A96CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB4EC3F2-A116-439E-B715-78ED415A96CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB4EC3F2-A116-439E-B715-78ED415A96CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F879AE2D-914F-4A74-B675-E604866C00CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F879AE2D-914F-4A74-B675-E604866C00CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F879AE2D-914F-4A74-B675-E604866C00CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F879AE2D-914F-4A74-B675-E604866C00CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C38A77C-3C8B-4BB8-B60C-D4E541B8358F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C38A77C-3C8B-4BB8-B60C-D4E541B8358F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C38A77C-3C8B-4BB8-B60C-D4E541B8358F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C38A77C-3C8B-4BB8-B60C-D4E541B8358F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

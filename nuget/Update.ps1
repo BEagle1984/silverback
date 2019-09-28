@@ -41,15 +41,15 @@ function Check-Args([string[]]$argsArray)
 function Get-Sources() 
 {
     $sources = 
-        ("Silverback.Core", "..\src\Silverback.Core\bin\$global:buildConfiguration"),
-        ("Silverback.Core.EntityFrameworkCore", "..\src\Silverback.Core.EntityFrameworkCore\bin\$global:buildConfiguration"),
-        ("Silverback.Core.Rx", "..\src\Silverback.Core.Rx\bin\$global:buildConfiguration"),
-        ("Silverback.Core.Model", "..\src\Silverback.Core.Model\bin\$global:buildConfiguration"),
-        ("Silverback.Integration", "..\src\Silverback.Integration\bin\$global:buildConfiguration"),
-        ("Silverback.Integration.Kafka", "..\src\Silverback.Integration.Kafka\bin\$global:buildConfiguration"),
-        ("Silverback.Integration.InMemory", "..\src\Silverback.Integration.InMemory\bin\$global:buildConfiguration"),
-        ("Silverback.Integration.Configuration", "..\src\Silverback.Integration.Configuration\bin\$global:buildConfiguration"),
-        ("Silverback.EventSourcing", "..\src\Silverback.EventSourcing\bin\$global:buildConfiguration")
+        ("Silverback.Core", ("..\src\Silverback.Core\bin\$global:buildConfiguration")),
+        ("Silverback.Core.EntityFrameworkCore", ("..\src\Silverback.Core.EFCore30\bin\$global:buildConfiguration", "..\src\Silverback.Core.EFCore22\bin\$global:buildConfiguration")),
+        ("Silverback.Core.Rx", ("..\src\Silverback.Core.Rx\bin\$global:buildConfiguration")),
+        ("Silverback.Core.Model", ("..\src\Silverback.Core.Model\bin\$global:buildConfiguration")),
+        ("Silverback.Integration", ("..\src\Silverback.Integration\bin\$global:buildConfiguration")),
+        ("Silverback.Integration.Kafka", ("..\src\Silverback.Integration.Kafka\bin\$global:buildConfiguration")),
+        ("Silverback.Integration.InMemory", ("..\src\Silverback.Integration.InMemory\bin\$global:buildConfiguration")),
+        ("Silverback.Integration.Configuration", ("..\src\Silverback.Integration.Configuration\bin\$global:buildConfiguration")),
+        ("Silverback.EventSourcing", ("..\src\Silverback.EventSourcing\bin\$global:buildConfiguration"))
 
     return $sources
 }
@@ -85,9 +85,17 @@ function Copy-All()
     foreach ($source in Get-Sources)
     {
         $name = $source[0]
-        $sourcePath = Join-Path $source[1] "*.nupkg"
 
-        Copy-Package $name $sourcePath
+        Write-Host "`t$name..." -NoNewline
+
+        foreach ($sourcePath in $source[1])
+        {
+            $sourcePath = Join-Path $sourcePath "*.nupkg"
+
+            Copy-Item $sourcePath -Destination $destination -Recurse
+        }
+
+        Write-Host "OK" -ForegroundColor Green
     }
 
     if ($global:clearCache)
@@ -99,15 +107,6 @@ function Copy-All()
     
     # Show-Files $destination
     Show-Summary $destination
-}
-
-function Copy-Package([string]$name, [string]$sourcePath)
-{
-    Write-Host "`t$name..." -NoNewline
-
-    Copy-Item $sourcePath -Destination $destination -Recurse
-
-    Write-Host "OK" -ForegroundColor Green
 }
 
 function Ensure-Folder-Exists([string]$path)

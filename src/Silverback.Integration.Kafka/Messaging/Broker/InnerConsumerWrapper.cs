@@ -141,7 +141,7 @@ namespace Silverback.Messaging.Broker
                 }
                 catch (OperationCanceledException)
                 {
-                    _logger.LogTrace("Consuming cancelled.");
+                    _logger.LogTrace("Consuming canceled.");
                 }
                 catch (Confluent.Kafka.KafkaException ex)
                 {
@@ -192,10 +192,7 @@ namespace Silverback.Messaging.Broker
 
         public void Dispose()
         {
-            _innerConsumer?.Close();
-            _innerConsumer?.Dispose();
-
-            _innerConsumer = null;
+            DisposeInnerConsumer();
         }
     }
 }

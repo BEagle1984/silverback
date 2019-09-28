@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>BEagle1984</Authors>
+    <Company></Company>
+    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package adds the ability to use a DbContext as store and fire the domain events as part of the EntityFramework's SaveChanges transaction.</Description>
+    <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Version>2.2.0-rc1</Version>
+    <RootNamespace>Silverback</RootNamespace>
+    <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
+    <LangVersion>latest</LangVersion>
+    <NoWarn>1701;1702;CS1591</NoWarn>
+    <PackageId>Silverback.Core.EntityFrameworkCore</PackageId>
+    <Product>Silverback.Core.EntityFrameworkCore</Product>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Core.EntityFrameworkCore.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\Silverback.Core.EntityFrameworkCore.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Silverback.Core.EFCore30\Database\DependencyInjectionExtensions.cs" Link="Database\DependencyInjectionExtensions.cs" />
+    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreDbContext.cs" Link="Database\EfCoreDbContext.cs" />
+    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreDbSet.cs" Link="Database\EfCoreDbSet.cs" />
+    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreQueryable.cs" Link="Database\EfCoreQueryable.cs" />
+    <Compile Include="..\Silverback.Core.EFCore30\EntityFrameworkCore\DbContextEventsPublisher.cs" Link="EntityFrameworkCore\DbContextEventsPublisher.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
+    <PackageReference Include="Silverback.Core" Version="1.0.0-rc1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Database\" />
+    <Folder Include="EntityFrameworkCore\" />
+  </ItemGroup>
+
+</Project>

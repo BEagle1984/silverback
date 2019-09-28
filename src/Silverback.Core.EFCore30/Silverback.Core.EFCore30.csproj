@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>BEagle1984</Authors>
     <Company></Company>
-    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package adds the ability to fire the domain events as part of the EntityFramework's SaveChanges transaction.</Description>
+    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package adds the ability to use a DbContext as store and fire the domain events as part of the EntityFramework's SaveChanges transaction.</Description>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>3.0.0-rc1</Version>
@@ -13,6 +13,8 @@
     <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
     <LangVersion>latest</LangVersion>
     <NoWarn>1701;1702;CS1591</NoWarn>
+    <PackageId>Silverback.Core.EntityFrameworkCore</PackageId>
+    <Product>Silverback.Core.EntityFrameworkCore</Product>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
