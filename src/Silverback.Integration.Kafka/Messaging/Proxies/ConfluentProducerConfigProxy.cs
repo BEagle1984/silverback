@@ -40,8 +40,8 @@ namespace Silverback.Messaging.Proxies
         ///<summary> Maximum total message size sum allowed on the producer queue. This queue is shared by all topics and partitions. This property has higher priority than queue.buffering.max.messages. default: 1048576 importance: high </summary>
         public int? QueueBufferingMaxKbytes { get => ConfluentConfig.QueueBufferingMaxKbytes; set => ConfluentConfig.QueueBufferingMaxKbytes = value; }
 
-        ///<summary> Delay in milliseconds to wait for messages in the producer queue to accumulate before constructing message batches (MessageSets) to transmit to brokers. A higher value allows larger and more effective (less overhead, improved compression) batches of messages to accumulate at the expense of increased message delivery latency. default: 0 importance: high </summary>
-        public int? LingerMs { get => ConfluentConfig.LingerMs; set => ConfluentConfig.LingerMs = value; }
+        ///<summary> Delay in milliseconds to wait for messages in the producer queue to accumulate before constructing message batches (MessageSets) to transmit to brokers. A higher value allows larger and more effective (less overhead, improved compression) batches of messages to accumulate at the expense of increased message delivery latency. default: 0.5 importance: high </summary>
+        public double? LingerMs { get => ConfluentConfig.LingerMs; set => ConfluentConfig.LingerMs = value; }
 
         ///<summary> How many times to retry sending a failing Message. **Note:** retrying may cause reordering unless `enable.idempotence` is set to true. default: 2 importance: high </summary>
         public int? MessageSendMaxRetries { get => ConfluentConfig.MessageSendMaxRetries; set => ConfluentConfig.MessageSendMaxRetries = value; }
@@ -85,7 +85,7 @@ namespace Silverback.Messaging.Proxies
         ///<summary> Non-topic request timeout in milliseconds. This is for metadata requests, etc. default: 60000 importance: low </summary>
         public int? MetadataRequestTimeoutMs { get => ConfluentConfig.MetadataRequestTimeoutMs; set => ConfluentConfig.MetadataRequestTimeoutMs = value; }
 
-        ///<summary> Topic metadata refresh interval in milliseconds. The metadata is automatically refreshed on error and connect. Use -1 to disable the intervalled refresh. default: 300000 importance: low </summary>
+        ///<summary> Period of time in milliseconds at which topic and broker metadata is refreshed in order to proactively discover any new brokers, topics, partitions or partition leader changes. Use -1 to disable the intervalled refresh (not recommended). If there are no locally referenced topics (no topic objects created, no messages produced, no subscription or no assignment) then only the broker list will be refreshed every interval but no more often than every 10s. default: 300000 importance: low </summary>
         public int? TopicMetadataRefreshIntervalMs { get => ConfluentConfig.TopicMetadataRefreshIntervalMs; set => ConfluentConfig.TopicMetadataRefreshIntervalMs = value; }
 
         ///<summary> Metadata cache max age. Defaults to topic.metadata.refresh.interval.ms * 3 default: 900000 importance: low </summary>
@@ -175,13 +175,19 @@ namespace Silverback.Messaging.Proxies
         ///<summary> Path to client's private key (PEM) used for authentication. default: '' importance: low </summary>
         public string SslKeyLocation { get => ConfluentConfig.SslKeyLocation; set => ConfluentConfig.SslKeyLocation = value; }
 
-        ///<summary> Private key passphrase default: '' importance: low </summary>
+        ///<summary> Private key passphrase (for use with `ssl.key.location` and `set_ssl_cert()`) default: '' importance: low </summary>
         public string SslKeyPassword { get => ConfluentConfig.SslKeyPassword; set => ConfluentConfig.SslKeyPassword = value; }
+
+        ///<summary> Client's private key string (PEM format) used for authentication. default: '' importance: low </summary>
+        public string SslKeyPem { get => ConfluentConfig.SslKeyPem; set => ConfluentConfig.SslKeyPem = value; }
 
         ///<summary> Path to client's public key (PEM) used for authentication. default: '' importance: low </summary>
         public string SslCertificateLocation { get => ConfluentConfig.SslCertificateLocation; set => ConfluentConfig.SslCertificateLocation = value; }
 
-        ///<summary> File or directory path to CA certificate(s) for verifying the broker's key. default: '' importance: medium </summary>
+        ///<summary> Client's public key string (PEM format) used for authentication. default: '' importance: low </summary>
+        public string SslCertificatePem { get => ConfluentConfig.SslCertificatePem; set => ConfluentConfig.SslCertificatePem = value; }
+
+        ///<summary> File or directory path to CA certificate(s) for verifying the broker's key. default: '' importance: low </summary>
         public string SslCaLocation { get => ConfluentConfig.SslCaLocation; set => ConfluentConfig.SslCaLocation = value; }
 
         ///<summary> Path to CRL for verifying broker's certificate validity. default: '' importance: low </summary>
@@ -193,19 +199,25 @@ namespace Silverback.Messaging.Proxies
         ///<summary> Client's keystore (PKCS#12) password. default: '' importance: low </summary>
         public string SslKeystorePassword { get => ConfluentConfig.SslKeystorePassword; set => ConfluentConfig.SslKeystorePassword = value; }
 
+        ///<summary> Enable OpenSSL's builtin broker (server) certificate verification. This verification can be extended by the application by implementing a certificate_verify_cb. default: true importance: low </summary>
+        public bool? EnableSslCertificateVerification { get => ConfluentConfig.EnableSslCertificateVerification; set => ConfluentConfig.EnableSslCertificateVerification = value; }
+
+        ///<summary> Endpoint identification algorithm to validate broker hostname using broker certificate. https - Server (broker) hostname verification as specified in RFC2818. none - No endpoint verification. OpenSSL &gt;= 1.0.2 required. default: none importance: low </summary>
+        public Confluent.Kafka.SslEndpointIdentificationAlgorithm? SslEndpointIdentificationAlgorithm { get => ConfluentConfig.SslEndpointIdentificationAlgorithm; set => ConfluentConfig.SslEndpointIdentificationAlgorithm = value; }
+
         ///<summary> Kerberos principal name that Kafka runs as, not including /hostname@REALM default: kafka importance: low </summary>
         public string SaslKerberosServiceName { get => ConfluentConfig.SaslKerberosServiceName; set => ConfluentConfig.SaslKerberosServiceName = value; }
 
         ///<summary> This client's Kerberos principal name. (Not supported on Windows, will use the logon user's principal). default: kafkaclient importance: low </summary>
         public string SaslKerberosPrincipal { get => ConfluentConfig.SaslKerberosPrincipal; set => ConfluentConfig.SaslKerberosPrincipal = value; }
 
-        ///<summary> Full kerberos kinit command string, %{config.prop.name} is replaced by corresponding config object value, %{broker.name} returns the broker's hostname. default: kinit -S "%{sasl.kerberos.service.name}/%{broker.name}" -k -t "%{sasl.kerberos.keytab}" %{sasl.kerberos.principal} importance: low </summary>
+        ///<summary> Shell command to refresh or acquire the client's Kerberos ticket. This command is executed on client creation and every sasl.kerberos.min.time.before.relogin (0=disable). %{config.prop.name} is replaced by corresponding config object value. default: kinit -R -t "%{sasl.kerberos.keytab}" -k %{sasl.kerberos.principal} || kinit -t "%{sasl.kerberos.keytab}" -k %{sasl.kerberos.principal} importance: low </summary>
         public string SaslKerberosKinitCmd { get => ConfluentConfig.SaslKerberosKinitCmd; set => ConfluentConfig.SaslKerberosKinitCmd = value; }
 
-        ///<summary> Path to Kerberos keytab file. Uses system default if not set.**NOTE**: This is not automatically used but must be added to the template in sasl.kerberos.kinit.cmd as ` ... -t %{sasl.kerberos.keytab}`. default: '' importance: low </summary>
+        ///<summary> Path to Kerberos keytab file. This configuration property is only used as a variable in `sasl.kerberos.kinit.cmd` as ` ... -t "%{sasl.kerberos.keytab}"`. default: '' importance: low </summary>
         public string SaslKerberosKeytab { get => ConfluentConfig.SaslKerberosKeytab; set => ConfluentConfig.SaslKerberosKeytab = value; }
 
-        ///<summary> Minimum time in milliseconds between key refresh attempts. default: 60000 importance: low </summary>
+        ///<summary> Minimum time in milliseconds between key refresh attempts. Disable automatic key refresh by setting this property to 0. default: 60000 importance: low </summary>
         public int? SaslKerberosMinTimeBeforeRelogin { get => ConfluentConfig.SaslKerberosMinTimeBeforeRelogin; set => ConfluentConfig.SaslKerberosMinTimeBeforeRelogin = value; }
 
         ///<summary> SASL username for use with the PLAIN and SASL-SCRAM-.. mechanisms default: '' importance: high </summary>
@@ -213,6 +225,11 @@ namespace Silverback.Messaging.Proxies
 
         ///<summary> SASL password for use with the PLAIN and SASL-SCRAM-.. mechanism default: '' importance: high </summary>
         public string SaslPassword { get => ConfluentConfig.SaslPassword; set => ConfluentConfig.SaslPassword = value; }
+
+        public string SaslOauthbearerConfig { get => ConfluentConfig.SaslOauthbearerConfig; set => ConfluentConfig.SaslOauthbearerConfig = value; }
+
+        ///<summary> Enable the builtin unsecure JWT OAUTHBEARER token handler if no oauthbearer_refresh_cb has been set. This builtin handler should only be used for development or testing, and not in production. default: false importance: low </summary>
+        public bool? EnableSaslOauthbearerUnsecureJwt { get => ConfluentConfig.EnableSaslOauthbearerUnsecureJwt; set => ConfluentConfig.EnableSaslOauthbearerUnsecureJwt = value; }
 
         ///<summary> List of plugin libraries to load (; separated). The library search path is platform dependent (see dlopen(3) for Unix and LoadLibrary() for Windows). If no filename extension is specified the platform-specific extension (such as .dll or .so) will be appended automatically. default: '' importance: low </summary>
         public string PluginLibraryPaths { get => ConfluentConfig.PluginLibraryPaths; set => ConfluentConfig.PluginLibraryPaths = value; }
