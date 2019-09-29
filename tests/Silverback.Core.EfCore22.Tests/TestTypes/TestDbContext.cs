@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Core.EFCore22.TestTypes.Model;
 
-namespace Silverback.Tests.Core.EntityFrameworkCore.TestTypes
+namespace Silverback.Tests.Core.EFCore22.TestTypes
 {
     public class TestDbContext : DbContext
     {
         private readonly DbContextEventsPublisher _eventsPublisher;
-
-        public DbSet<TestAggregateRoot> TestAggregates { get; set; }
 
         public TestDbContext(IPublisher publisher)
         {
@@ -25,6 +24,10 @@ namespace Silverback.Tests.Core.EntityFrameworkCore.TestTypes
         {
             _eventsPublisher = new DbContextEventsPublisher(publisher, this);
         }
+
+        public DbSet<TestAggregateRoot> TestAggregates { get; set; }
+
+        public DbSet<Person> Persons { get; set; }
 
         public override int SaveChanges()
             => SaveChanges(true);

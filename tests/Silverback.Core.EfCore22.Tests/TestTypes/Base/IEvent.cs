@@ -3,7 +3,7 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Core.EntityFrameworkCore.TestTypes.Base
+namespace Silverback.Tests.Core.EFCore22.TestTypes.Base
 {
     public interface IEvent : IMessage
     {

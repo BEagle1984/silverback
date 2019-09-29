@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Core.EntityFrameworkCore.TestTypes.Base.Domain
+namespace Silverback.Tests.Core.EFCore22.TestTypes.Base.Domain
 {
     public abstract class DomainEntity : IMessagesSource
     {

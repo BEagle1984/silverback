@@ -5,29 +5,36 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.EntityFrameworkCore.TestTypes;
+using Silverback.Tests.Core.EFCore22.TestTypes;
+using Silverback.Tests.Core.EFCore22.TestTypes.Model;
 using Xunit;
 
-namespace Silverback.Tests.Core.EntityFrameworkCore
+namespace Silverback.Tests.Core.EFCore22
 {
-    public class DbContextEventsPublisherTests
+    public class DbContextEventsPublisherTests : IDisposable
     {
         private readonly TestDbContext _dbContext;
         private readonly IPublisher _publisher;
+        private readonly SqliteConnection _connection;
 
         public DbContextEventsPublisherTests()
         {
             _publisher = Substitute.For<IPublisher>();
 
+            _connection = new SqliteConnection("DataSource=:memory:");
+            _connection.Open();
             var dbOptions = new DbContextOptionsBuilder<TestDbContext>()
-                .UseInMemoryDatabase("TestDbContext")
+                .UseSqlite(_connection)
                 .Options;
 
             _dbContext = new TestDbContext(dbOptions, _publisher);
+
+            _dbContext.Database.EnsureCreated();
         }
 
         [Fact]
@@ -140,6 +147,11 @@ namespace Silverback.Tests.Core.EntityFrameworkCore
 
             await _publisher.Received(1).PublishAsync(Arg.Any<TransactionStartedEvent>());
             await _publisher.Received(1).PublishAsync(Arg.Any<TransactionAbortedEvent>());
+        }
+
+        public void Dispose()
+        {
+            _connection?.Dispose();
         }
     }
 }

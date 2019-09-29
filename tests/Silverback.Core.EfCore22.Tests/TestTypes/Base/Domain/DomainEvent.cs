@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Tests.Core.EntityFrameworkCore.TestTypes.Base.Domain
+namespace Silverback.Tests.Core.EFCore22.TestTypes.Base.Domain
 {
     public abstract class DomainEvent<TEntity> : IDomainEvent<TEntity>
     {
