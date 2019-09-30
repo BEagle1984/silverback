@@ -20,6 +20,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder UseDbContext<TDbContext>(this ISilverbackBuilder builder)
             where TDbContext : DbContext
         {
+            SilverbackQueryableExtensions.Implementation = new EfCoreQueryableExtensions();
+
             builder.Services
                 .AddScoped<IDbContext>(s => new EfCoreDbContext<TDbContext>(s.GetRequiredService<TDbContext>()));
 

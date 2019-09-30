@@ -68,7 +68,9 @@ namespace Silverback.Messaging.LargeMessages
         public Task<int> CountChunks(string messageId) => DbSet.AsQueryable().CountAsync(c => c.OriginalMessageId == messageId);
 
         public Task<Dictionary<int, byte[]>> GetChunks(string messageId) =>
-            DbSet.AsQueryable().ToDictionaryAsync(x => x.Where(c => c.OriginalMessageId == messageId), c => c.ChunkId, c => c.Content);
+            DbSet.AsQueryable()
+                .Where(c => c.OriginalMessageId == messageId)
+                .ToDictionaryAsync(c => c.ChunkId, c => c.Content);
 
         public async Task Cleanup(string messageId)
         {
@@ -83,12 +85,12 @@ namespace Silverback.Messaging.LargeMessages
                 if (!entities.Any())
                 {
                     entities = (await DbSet
-                        .AsQueryable()
-                        .ToListAsync(x => x
+                            .AsQueryable()
                             .Where(c => c.OriginalMessageId == messageId)
-                            .Select(c => c.ChunkId)))
+                            .Select(c => c.ChunkId)
+                            .ToListAsync())
                         .Select(chunkId => new TemporaryMessageChunk
-                            { OriginalMessageId = messageId, ChunkId = chunkId })
+                            {OriginalMessageId = messageId, ChunkId = chunkId})
                         .ToList();
                 }
 

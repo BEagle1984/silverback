@@ -10,7 +10,7 @@
     <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\DependencyInjectionExtensions.cs" Link="TestTypes\Database\DependencyInjectionExtensions.cs" />
     <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreDbContext.cs" Link="TestTypes\Database\EfCoreDbContext.cs" />
     <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreDbSet.cs" Link="TestTypes\Database\EfCoreDbSet.cs" />
-    <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreQueryable.cs" Link="TestTypes\Database\EfCoreQueryable.cs" />
+    <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreQueryableExtensions.cs" Link="TestTypes\Database\EfCoreQueryableExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

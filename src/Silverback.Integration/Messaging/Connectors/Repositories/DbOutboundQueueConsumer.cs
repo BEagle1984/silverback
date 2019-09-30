@@ -24,10 +24,10 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public async Task<IEnumerable<QueuedMessage>> Dequeue(int count) =>
             (await DbSet.AsQueryable()
-                .ToListAsync(x => x
                     .Where(m => m.Produced == null)
                     .OrderBy(m => m.Id)
-                    .Take(count)))
+                    .Take(count)
+                    .ToListAsync())
             .Select(message => new DbQueuedMessage(
                 message.Id,
                 message.Content,

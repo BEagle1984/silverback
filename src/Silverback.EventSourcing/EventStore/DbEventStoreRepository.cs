@@ -24,7 +24,8 @@ namespace Silverback.EventStore
             _dbSet = dbContext.GetDbSet<TEventStoreEntity>();
         }
 
-        protected IDbQueryable<TEventStoreEntity> EventStores => _dbSet.AsQueryable().Include(s => s.Events);
+        protected IQueryable<TEventStoreEntity> EventStores => 
+            _dbSet.AsQueryable().Include(s => s.Events).AsNoTracking();
 
         /// <summary>
         /// Gets the aggregate entity folding the events from the specified event store.
@@ -32,7 +33,7 @@ namespace Silverback.EventStore
         /// <param name="predicate">The predicate applied to get the desired event store.</param>
         /// <returns></returns>
         public TAggregateEntity Get(Expression<Func<TEventStoreEntity, bool>> predicate) =>
-            GetAggregateEntity(EventStores.AsNoTracking().FirstOrDefault(predicate));
+            GetAggregateEntity(EventStores.FirstOrDefault(predicate));
 
         /// <summary>
         /// Gets the aggregate entity folding the events from the specified event store.
@@ -40,7 +41,7 @@ namespace Silverback.EventStore
         /// <param name="predicate">The predicate applied to get the desired event store.</param>
         /// <returns></returns>
         public async Task<TAggregateEntity> GetAsync(Expression<Func<TEventStoreEntity, bool>> predicate) =>
-            GetAggregateEntity(await EventStores.AsNoTracking().FirstOrDefaultAsync(predicate));
+            GetAggregateEntity(await EventStores.FirstOrDefaultAsync(predicate));
 
         /// <summary>
         /// Gets the aggregate entity folding the events from the specified event store.
@@ -51,7 +52,7 @@ namespace Silverback.EventStore
         /// <param name="snapshot">The snapshot date and time.</param>
         /// <returns></returns>
         public TAggregateEntity GetSnapshot(Expression<Func<TEventStoreEntity, bool>> predicate, DateTime snapshot) =>
-            GetAggregateEntity(EventStores.AsNoTracking().FirstOrDefault(predicate), snapshot);
+            GetAggregateEntity(EventStores.FirstOrDefault(predicate), snapshot);
 
         /// <summary>
         /// Gets the aggregate entity folding the events from the specified event store.
@@ -62,7 +63,7 @@ namespace Silverback.EventStore
         /// <param name="snapshot">The snapshot date and time.</param>
         /// <returns></returns>
         public async Task<TAggregateEntity> GetSnapshotAsync(Expression<Func<TEventStoreEntity, bool>> predicate, DateTime snapshot) =>
-            GetAggregateEntity(await EventStores.AsNoTracking().FirstOrDefaultAsync(predicate), snapshot);
+            GetAggregateEntity(await EventStores.FirstOrDefaultAsync(predicate), snapshot);
 
         protected override TEventStoreEntity GetEventStoreEntity(TAggregateEntity aggregateEntity, bool addIfNotFound)
         {

@@ -25,6 +25,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             _dbContext = new TestDbContext(new DbContextOptionsBuilder().UseSqlite(_conn).Options);
             _dbContext.Database.EnsureCreated();
+
+            SilverbackQueryableExtensions.Implementation = new EfCoreQueryableExtensions();
         }
 
         #region Store (Basics)
@@ -116,7 +118,6 @@ namespace Silverback.Tests.EventSourcing.EventStore
         }
 
         #endregion
-
 
         #region Store (Concurrency)
 

@@ -18,19 +18,14 @@ namespace Silverback.Tests.Core.EFCore30.Database
 {
     public class EfCoreDbSetTests : IDisposable
     {
+        private readonly TestDbContextInitializer _dbInitializer;
         private readonly TestDbContext _dbContext;
         private readonly EfCoreDbContext<TestDbContext> _efCoreDbContext;
-        private readonly SqliteConnection _connection;
 
         public EfCoreDbSetTests()
         {
-            _connection = new SqliteConnection("DataSource=:memory:");
-            _connection.Open();
-            var dbOptions = new DbContextOptionsBuilder<TestDbContext>()
-                .UseSqlite(_connection)
-                .Options;
-            _dbContext = new TestDbContext(dbOptions, Substitute.For<IPublisher>());
-            _dbContext.Database.EnsureCreated();
+            _dbInitializer = new TestDbContextInitializer();
+            _dbContext = _dbInitializer.GetTestDbContext();
             _efCoreDbContext = new EfCoreDbContext<TestDbContext>(_dbContext);
         }
 
@@ -92,12 +87,12 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
         
         [Fact]
-        public void AsQueryable_EfCoreQueryableIsReturned()
+        public void AsQueryable_EfCoreDbSetQueryableIsReturned()
         {
             var queryable = _efCoreDbContext.GetDbSet<Person>().AsQueryable();
 
             queryable.Should().NotBeNull();
-            queryable.Should().BeOfType<EfCoreQueryable<Person>>();
+            queryable.Should().BeAssignableTo<IQueryable<Person>>();
         }
 
         [Fact]
@@ -114,7 +109,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
         public void Dispose()
         {
-            _connection?.Dispose();
+            _dbInitializer?.Dispose();
         }
     }
 }

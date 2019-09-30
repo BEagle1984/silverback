@@ -1,26 +1,22 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using NSubstitute;
+﻿using System;
+using FluentAssertions;
 using Silverback.Database;
-using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.EFCore30.TestTypes;
 using Silverback.Tests.Core.EFCore30.TestTypes.Model;
 using Xunit;
 
 namespace Silverback.Tests.Core.EFCore30.Database
 {
-    public class EfCoreDbContextTests
+    public class EfCoreDbContextTests : IDisposable
     {
+        private readonly TestDbContextInitializer _dbInitializer;
         private readonly TestDbContext _dbContext;
         private readonly EfCoreDbContext<TestDbContext> _efCoreDbContext;
 
         public EfCoreDbContextTests()
         {
-            var dbOptions = new DbContextOptionsBuilder<TestDbContext>()
-                .UseSqlite("DataSource=:memory:")
-                .Options;
-
-            _dbContext = new TestDbContext(dbOptions, Substitute.For<IPublisher>());
+            _dbInitializer = new TestDbContextInitializer();
+            _dbContext = _dbInitializer.GetTestDbContext();
             _efCoreDbContext = new EfCoreDbContext<TestDbContext>(_dbContext);
         }
 
@@ -31,6 +27,11 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             dbSet.Should().NotBeNull();
             dbSet.Should().BeOfType<EfCoreDbSet<Person>>();
+        }
+
+        public void Dispose()
+        {
+            _dbInitializer?.Dispose();
         }
     }
 }

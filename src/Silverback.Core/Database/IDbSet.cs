@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Silverback.Database
@@ -19,7 +20,7 @@ namespace Silverback.Database
 
         Task<TEntity> FindAsync(params object[] keyValues);
 
-        IDbQueryable<TEntity> AsQueryable();
+        IQueryable<TEntity> AsQueryable();
 
         IEnumerable<TEntity> GetLocalCache();
     }

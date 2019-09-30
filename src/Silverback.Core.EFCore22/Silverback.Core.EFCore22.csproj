@@ -29,7 +29,7 @@
     <Compile Include="..\Silverback.Core.EFCore30\Database\DependencyInjectionExtensions.cs" Link="Database\DependencyInjectionExtensions.cs" />
     <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreDbContext.cs" Link="Database\EfCoreDbContext.cs" />
     <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreDbSet.cs" Link="Database\EfCoreDbSet.cs" />
-    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreQueryable.cs" Link="Database\EfCoreQueryable.cs" />
+    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreQueryableExtensions.cs" Link="Database\EfCoreQueryableExtensions.cs" />
     <Compile Include="..\Silverback.Core.EFCore30\EntityFrameworkCore\DbContextEventsPublisher.cs" Link="EntityFrameworkCore\DbContextEventsPublisher.cs" />
   </ItemGroup>
 
@@ -39,7 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Database\" />
     <Folder Include="EntityFrameworkCore\" />
   </ItemGroup>
 

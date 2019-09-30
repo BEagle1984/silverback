@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,7 +28,7 @@ namespace Silverback.Database
 
         public async Task<TEntity> FindAsync(params object[] keyValues) => await _dbSet.FindAsync(keyValues);
 
-        public IDbQueryable<TEntity> AsQueryable() => new EfCoreQueryable<TEntity>(_dbSet);
+        public IQueryable<TEntity> AsQueryable() => _dbSet;
 
         public IEnumerable<TEntity> GetLocalCache() => _dbSet.Local;
     }

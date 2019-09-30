@@ -6,11 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using NSubstitute;
 using Silverback.Database;
-using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.EFCore30.TestTypes;
 using Silverback.Tests.Core.EFCore30.TestTypes.Model;
 using Xunit;
@@ -19,20 +15,17 @@ namespace Silverback.Tests.Core.EFCore30.Database
 {
     public class EfCoreQueryableTests : IDisposable
     {
+        private readonly TestDbContextInitializer _dbInitializer;
         private readonly TestDbContext _dbContext;
         private readonly EfCoreDbContext<TestDbContext> _efCoreDbContext;
-        private readonly SqliteConnection _connection;
 
         public EfCoreQueryableTests()
         {
-            _connection = new SqliteConnection("DataSource=:memory:");
-            _connection.Open();
-            var dbOptions = new DbContextOptionsBuilder<TestDbContext>()
-                .UseSqlite(_connection)
-                .Options;
-            _dbContext = new TestDbContext(dbOptions, Substitute.For<IPublisher>());
-            _dbContext.Database.EnsureCreated();
+            _dbInitializer = new TestDbContextInitializer();
+            _dbContext = _dbInitializer.GetTestDbContext();
             _efCoreDbContext = new EfCoreDbContext<TestDbContext>(_dbContext);
+
+            SilverbackQueryableExtensions.Implementation = new EfCoreQueryableExtensions();
         }
 
         [Fact]
@@ -109,8 +102,8 @@ namespace Silverback.Tests.Core.EFCore30.Database
         [Fact]
         public async Task FirstOrDefaultAsync_NotMatchingPredicate_NullIsReturned()
         {
-            _dbContext.Persons.Add(new Person {Age = 20});
-            _dbContext.Persons.Add(new Person {Age = 30});
+            _dbContext.Persons.Add(new Person { Age = 20 });
+            _dbContext.Persons.Add(new Person { Age = 30 });
             _dbContext.SaveChanges();
 
             var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
@@ -118,7 +111,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             result.Should().BeNull();
         }
-        
+
         [Fact]
         public async Task FirstOrDefaultAsync_MatchingPredicate_FirstEntityIsReturned()
         {
@@ -155,7 +148,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             result.Should().Be(2);
         }
-        
+
         [Fact]
         public async Task CountAsync_WithPredicate_CorrectCountIsReturned()
         {
@@ -169,9 +162,9 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             result.Should().Be(1);
         }
-        
+
         [Fact]
-        public async Task ToListAsync_ApplyingWhereClause_ListIsReturned()
+        public async Task ToListAsync_NotEmptySet_ListIsReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 15 });
             _dbContext.Persons.Add(new Person { Age = 17 });
@@ -179,11 +172,48 @@ namespace Silverback.Tests.Core.EFCore30.Database
             _dbContext.SaveChanges();
 
             var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .ToListAsync(query => query.Where(p => p.Age <= 18));
+                .ToListAsync();
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<List<Person>>();
+            result.Count.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task ToListAsync_ApplyingWhereClause_FilteredListIsReturned()
+        {
+            _dbContext.Persons.Add(new Person { Age = 15 });
+            _dbContext.Persons.Add(new Person { Age = 17 });
+            _dbContext.Persons.Add(new Person { Age = 30 });
+            _dbContext.SaveChanges();
+
+            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+                .Where(p => p.Age <= 18)
+                .ToListAsync();
 
             result.Should().NotBeNull();
             result.Should().BeOfType<List<Person>>();
             result.Count.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task ToDictionaryAsync_NotEmptySet_DictionaryIsReturned()
+        {
+            _dbContext.Persons.Add(new Person { Age = 15 });
+            _dbContext.Persons.Add(new Person { Age = 17 });
+            _dbContext.Persons.Add(new Person { Age = 30 });
+            _dbContext.SaveChanges();
+
+            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+                .ToDictionaryAsync(
+                    p => p.Id,
+                    p => p.Age);
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<Dictionary<int, int>>();
+            result.Count.Should().Be(3);
+            result.First().Key.Should().Be(1);
+            result.First().Value.Should().Be(15);
         }
 
         [Fact]
@@ -195,9 +225,9 @@ namespace Silverback.Tests.Core.EFCore30.Database
             _dbContext.SaveChanges();
 
             var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+                .Where(p => p.Age <= 18)
                 .ToDictionaryAsync(
-                    query => query.Where(p => p.Age <= 18), 
-                    p => p.Id, 
+                    p => p.Id,
                     p => p.Age);
 
             result.Should().NotBeNull();
@@ -209,7 +239,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
         public void Dispose()
         {
-            _connection?.Dispose();
+            _dbInitializer?.Dispose();
         }
     }
 }

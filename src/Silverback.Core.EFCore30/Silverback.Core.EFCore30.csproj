@@ -11,10 +11,11 @@
     <Version>3.0.0-rc1</Version>
     <RootNamespace>Silverback</RootNamespace>
     <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8</LangVersion>
     <NoWarn>1701;1702;CS1591</NoWarn>
     <PackageId>Silverback.Core.EntityFrameworkCore</PackageId>
     <Product>Silverback.Core.EntityFrameworkCore</Product>
+    <AssemblyName>Silverback.Core.EFCore30</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
