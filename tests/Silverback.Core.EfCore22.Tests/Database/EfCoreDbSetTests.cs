@@ -65,8 +65,8 @@ namespace Silverback.Tests.Core.EFCore22.Database
         [Fact]
         public void Find_ExistingKey_EntityIsReturned()
         {
-            _dbContext.Persons.Add(new Person() { Name = "Sergio" });
-            _dbContext.Persons.Add(new Person() { Name = "Mandy" });
+            _dbContext.Persons.Add(new Person { Name = "Sergio" });
+            _dbContext.Persons.Add(new Person { Name = "Mandy" });
             _dbContext.SaveChanges();
 
             var person = _efCoreDbContext.GetDbSet<Person>().Find(2);
@@ -77,8 +77,8 @@ namespace Silverback.Tests.Core.EFCore22.Database
         [Fact]
         public async Task FindAsync_ExistingKey_EntityIsReturned()
         {
-            _dbContext.Persons.Add(new Person() { Name = "Sergio" });
-            _dbContext.Persons.Add(new Person() { Name = "Mandy" });
+            _dbContext.Persons.Add(new Person { Name = "Sergio" });
+            _dbContext.Persons.Add(new Person { Name = "Mandy" });
             _dbContext.SaveChanges();
 
             var person = await _efCoreDbContext.GetDbSet<Person>().FindAsync(2);
@@ -98,8 +98,8 @@ namespace Silverback.Tests.Core.EFCore22.Database
         [Fact]
         public void GetLocalCache_LocalEntitiesAreReturned()
         {
-            _dbContext.Persons.Add(new Person() { Name = "Sergio" });
-            _dbContext.Persons.Add(new Person() { Name = "Mandy" });
+            _dbContext.Persons.Add(new Person { Name = "Sergio" });
+            _dbContext.Persons.Add(new Person { Name = "Mandy" });
 
             var local = _efCoreDbContext.GetDbSet<Person>().GetLocalCache();
 

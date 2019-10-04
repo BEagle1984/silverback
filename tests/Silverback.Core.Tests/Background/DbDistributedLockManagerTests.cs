@@ -3,16 +3,11 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using NSubstitute;
 using Silverback.Background;
-using Silverback.Tests.Core.TestTypes;
-using Silverback.Tests.Core.TestTypes.Background;
 using Silverback.Tests.Core.TestTypes.Database;
 using Xunit;
 
