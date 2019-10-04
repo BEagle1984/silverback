@@ -31,6 +31,11 @@ namespace Silverback.Messaging.Subscribers
             if (messageArgumentResolver == null)
                 return Enumerable.Empty<object>();
 
+            messages = messages.OfType(messageType);
+
+            if (!messages.Any())
+                return Enumerable.Empty<object>();
+
             var parameterValues = GetShiftedParameterValuesArray(method);
 
             IEnumerable<object> returnValues;
@@ -39,7 +44,6 @@ namespace Silverback.Messaging.Subscribers
             {
                 case ISingleMessageArgumentResolver singleResolver:
                     returnValues = (await messages
-                            .OfType(messageType)
                             .SelectAsync(
                                 message =>
                                 {
@@ -51,7 +55,7 @@ namespace Silverback.Messaging.Subscribers
                         .ToList();
                     break;
                 case IEnumerableMessageArgumentResolver enumerableResolver:
-                    parameterValues[0] = enumerableResolver.GetValue(messages, messageType);
+                    parameterValues[0] = enumerableResolver.GetValue(messages);
 
                     returnValues = new[] {await Invoke(method, parameterValues, executeAsync)};
                     break;

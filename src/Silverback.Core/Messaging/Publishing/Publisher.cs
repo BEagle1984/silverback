@@ -21,7 +21,6 @@ namespace Silverback.Messaging.Publishing
         private readonly IEnumerable<IBehavior> _behaviors;
         private readonly IServiceProvider _serviceProvider;
 
-        private IEnumerable<SubscribedMethod> _subscribedMethods;
         private SubscribedMethodInvoker _methodInvoker;
 
         public Publisher(BusOptions options, IServiceProvider serviceProvider, ILogger<Publisher> logger)
@@ -100,16 +99,15 @@ namespace Silverback.Messaging.Publishing
                 .Where(method => method.Info.IsExclusive)
                 .SelectManyAsync(method => GetMethodInvoker().Invoke(method, messages, executeAsync));
 
-        private Task<IEnumerable<object>> InvokeNonExclusiveMethods(IEnumerable<object> messagesList, bool executeAsync) =>
+        private Task<IEnumerable<object>> InvokeNonExclusiveMethods(IEnumerable<object> messages, bool executeAsync) =>
             GetSubscribedMethods()
                 .Where(method => !method.Info.IsExclusive)
-                .ParallelSelectManyAsync(method => GetMethodInvoker().Invoke(method, messagesList, executeAsync));
+                .ParallelSelectManyAsync(method => GetMethodInvoker().Invoke(method, messages, executeAsync));
 
         private IEnumerable<SubscribedMethod> GetSubscribedMethods() =>
-            _subscribedMethods ?? (_subscribedMethods = _options
-                .Subscriptions
+            _options.Subscriptions
                 .SelectMany(s => s.GetSubscribedMethods(_serviceProvider))
-                .ToList());
+                .ToList();
 
         private SubscribedMethodInvoker GetMethodInvoker() =>
             _methodInvoker ?? (_methodInvoker = _serviceProvider.GetRequiredService<SubscribedMethodInvoker>());

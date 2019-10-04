@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AsObservable(this ISilverbackBuilder builder)
         {
             builder.Services
-                .AddScoped<IArgumentResolver, ObservableMessageArgumentResolver>()
+                .AddSingleton<IArgumentResolver, ObservableMessageArgumentResolver>()
                 .AddScoped<IReturnValueHandler, ObservableMessagesReturnValueHandler>()
                 .AddSingleton<MessageObservable, MessageObservable>()
                 .AddSingleton<ISubscriber, MessageObservable>()

@@ -8,6 +8,6 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
     public interface IEnumerableMessageArgumentResolver : IMessageArgumentResolver
     {
-        object GetValue(IEnumerable<object> messages, Type targetMessageType);
+        object GetValue(IEnumerable<object> messages);
     }
 }

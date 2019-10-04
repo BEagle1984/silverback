@@ -39,12 +39,29 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             _asyncEnumerableSubscriber = new TestAsyncEnumerableSubscriber();
         }
 
-        private IPublisher GetPublisher(params ISubscriber[] subscribers) => GetPublisher(null, subscribers);
+        private IPublisher GetPublisher(params ISubscriber[] subscribers) => 
+            GetPublisher(null, subscribers);
 
         private IPublisher GetPublisher(Action<BusConfigurator> configAction, params ISubscriber[] subscribers) =>
             GetPublisher(configAction, null, subscribers);
 
-        private IPublisher GetPublisher(Action<BusConfigurator> configAction, IBehavior[] behaviors, params ISubscriber[] subscribers)
+        private IPublisher GetPublisher(Action<BusConfigurator> configAction, IBehavior[] behaviors, params ISubscriber[] subscribers) =>
+            GetPublisher(services =>
+            {
+                if (behaviors != null)
+                {
+                    foreach (var behavior in behaviors)
+                        services.AddSingleton<IBehavior>(behavior);
+                }
+
+                foreach (var sub in subscribers)
+                    services.AddSingleton<ISubscriber>(sub);
+            }, configAction);
+
+        private IPublisher GetPublisher(Action<ServiceCollection> registrationAction, Action<BusConfigurator> configAction = null) => 
+            GetServiceProvider(registrationAction, configAction).GetRequiredService<IPublisher>();
+
+        private IServiceProvider GetServiceProvider(Action<ServiceCollection> registrationAction, Action<BusConfigurator> configAction = null)
         {
             var services = new ServiceCollection();
             services.AddSilverback();
@@ -52,20 +69,13 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-            if (behaviors != null)
-            {
-                foreach (var behavior in behaviors)
-                    services.AddSingleton<IBehavior>(behavior);
-            }
-
-            foreach (var sub in subscribers)
-                services.AddSingleton<ISubscriber>(sub);
+            registrationAction(services);
 
             var serviceProvider = services.BuildServiceProvider();
 
             configAction?.Invoke(serviceProvider.GetRequiredService<BusConfigurator>());
 
-            return serviceProvider.GetRequiredService<IPublisher>();
+            return serviceProvider;
         }
 
         [Fact]
@@ -955,6 +965,184 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             publisher.Publish(new TestEventOne());
 
             subscriber.ReceivedMessagesCount.Should().Be(2);
+        }
+
+        [Fact]
+        public void Publish_SubscriberWithSingleMessageParameter_MethodInvokedForMatchingMessages()
+        {
+            var calls = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((TestEventOne x) => calls++));
+
+            publisher.Publish(new object[] {new TestEventOne(), new TestEventTwo(), new TestEventOne()});
+
+            calls.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task PublishAsync_SubscriberWithSingleMessageParameter_MethodInvokedForMatchingMessages()
+        {
+            var calls = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((TestEventOne x) => calls++));
+
+            await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            calls.Should().Be(2);
+        }
+
+        [Fact]
+        public void Publish_SubscriberWithSingleMessageParameterOfAncestorType_MethodInvoked()
+        {
+            var calls = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((IEvent x) => calls++));
+
+            publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            calls.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task PublishAsync_SubscriberWithSingleMessageParameterOfAncestorType_MethodInvoked()
+        {
+            var calls = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((IEvent x) => calls++));
+
+            await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            calls.Should().Be(3);
+        }
+
+        [Fact]
+        public void Publish_SubscriberWithSingleMessageParameterOfNotMatchingType_MethodNotInvoked()
+        {
+            var calls = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((ICommand x) => calls++));
+
+            publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            calls.Should().Be(0);
+        }
+
+        [Fact]
+        public async Task PublishAsync_SubscriberWithSingleMessageParameterOfNotMatchingType_MethodNotInvoked()
+        {
+            var calls = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((ICommand x) => calls++));
+
+            await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            calls.Should().Be(0);
+        }
+
+        [Fact]
+        public void Publish_SubscriberWithEnumerableParameter_MethodInvokedForMatchingMessages()
+        {
+            var receivedMessages = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((IEnumerable<TestEventOne> x) => receivedMessages += x.Count()));
+
+            publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            receivedMessages.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task PublishAsync_SubscriberWithEnumerableParameter_MethodInvokedForMatchingMessages()
+        {
+            var receivedMessages = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((IEnumerable<TestEventOne> x) => receivedMessages += x.Count()));
+
+            await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            receivedMessages.Should().Be(2);
+        }
+
+        [Fact]
+        public void Publish_SubscriberWithEnumerableParameterOfAncestorType_MethodInvoked()
+        {
+            var receivedMessages = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((IEnumerable<IEvent> x) => receivedMessages += x.Count()));
+
+            publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            receivedMessages.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task PublishAsync_SubscriberWithEnumerableParameterOfAncestorType_MethodInvoked()
+        {
+            var receivedMessages = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((IEnumerable<IEvent> x) => receivedMessages += x.Count()));
+
+            await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            receivedMessages.Should().Be(3);
+        }
+
+        [Fact]
+        public void Publish_NoMessagesMatchingEnumerableType_MethodNotInvoked()
+        {
+            var calls = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((IEnumerable<ICommand> x) => calls++));
+
+            publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            calls.Should().Be(0);
+        }
+
+        [Fact]
+        public async Task PublishAsync_NoMessagesMatchingEnumerableType_MethodNotInvoked()
+        {
+            var calls = 0;
+
+            var publisher = GetPublisher(config => config.Subscribe((IEnumerable<ICommand> x) => calls++));
+
+            await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
+
+            calls.Should().Be(0);
+        }
+
+        [Fact]
+        public void Publish_MultipleRegisteredSubscribers_OnlyMatchingSubscribersAreResolved()
+        {
+            var resolved = 0;
+
+            var serviceProvider = GetServiceProvider(services => services
+                .AddTransient<ISubscriber>(_ =>
+                {
+                    resolved++;
+                    return new TestServiceOne();
+                })
+                .AddTransient<ISubscriber>(_ =>
+                {
+                    resolved++;
+                    return new TestServiceTwo();
+                }));
+
+            using (var scope = serviceProvider.CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<IPublisher>().Publish(new object[] {new TestCommandOne()});
+            }
+
+            resolved.Should().Be(2); // First time is accepted to resolve all
+
+            resolved = 0;
+
+            using (var scope = serviceProvider.CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<IPublisher>().Publish(new object[] { new TestCommandOne() });
+            }
+
+            resolved.Should().Be(1); // We should know which service is to be resolved
         }
     }
 }

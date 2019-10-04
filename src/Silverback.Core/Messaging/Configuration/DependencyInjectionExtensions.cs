@@ -29,8 +29,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<ReturnValueHandler>()
                 // Note: resolvers and handlers will be evaluated in reverse order
                 .AddScoped<IArgumentResolver, ServiceProviderAdditionalArgumentResolver>()
-                .AddScoped<IArgumentResolver, SingleMessageArgumentResolver>()
-                .AddScoped<IArgumentResolver, EnumerableMessageArgumentResolver>()
+                .AddSingleton<IArgumentResolver, SingleMessageArgumentResolver>()
+                .AddSingleton<IArgumentResolver, EnumerableMessageArgumentResolver>()
                 .AddScoped<IReturnValueHandler, SingleMessageReturnValueHandler>()
                 .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>();
 

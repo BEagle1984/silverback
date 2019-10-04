@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         public Type GetMessageType(Type parameterType) =>
             parameterType.GetGenericArguments()[0];
 
-        public object GetValue(IEnumerable<object> messages, Type targetMessageType) =>
-            messages.ToObservable().OfType(targetMessageType);
+        public object GetValue(IEnumerable<object> messages) =>
+            messages.ToObservable();
     }
 }
