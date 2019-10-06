@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Core.Model.TestTypes.Messages;
 using Silverback.Tests.Core.Model.TestTypes.Subscribers;
 using Xunit;
@@ -21,12 +20,13 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         public QueryPublisherTests()
         {
             var services = new ServiceCollection();
-            services.AddSilverback().UseModel();
+            services
+                .AddSilverback()
+                .UseModel()
+                .AddSingletonSubscriber(_ => new QueriesHandler());
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-
-            services.AddSingleton<ISubscriber>(_ => new QueriesHandler());
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 

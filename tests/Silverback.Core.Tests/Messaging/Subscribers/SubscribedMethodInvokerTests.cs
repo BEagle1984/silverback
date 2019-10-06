@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2018-2019 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,10 +29,12 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod = new DelegateSubscription((Action<TestEventOne>) Method1, new SubscriptionOptions());
 
-            await new SubscribedMethodInvoker(resolver, handler)
+            var messages = new object[] {new TestEventOne(), new TestEventTwo(), new TestEventOne()};
+            
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
                 .Invoke(
                     subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
-                    new object[] {new TestEventOne(), new TestEventTwo(), new TestEventOne()},
+                    messages,
                     true);
 
             calls.Should().Be(2);
@@ -44,11 +49,13 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod = new DelegateSubscription((Action<IEvent>)Method1, new SubscriptionOptions());
+            
+            var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
-            await new SubscribedMethodInvoker(resolver, handler)
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
                 .Invoke(
                     subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
-                    new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() },
+                    messages,
                     true);
 
             calls.Should().Be(3);
@@ -64,10 +71,12 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod = new DelegateSubscription((Action<TestCommandOne>)Method1, new SubscriptionOptions());
 
-            await new SubscribedMethodInvoker(resolver, handler)
+            var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
+
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
                 .Invoke(
                     subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
-                    new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() },
+                    messages,
                     true);
 
             calls.Should().Be(0);
@@ -83,10 +92,12 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod = new DelegateSubscription((Action<IEnumerable<TestEventOne>>)Method1, new SubscriptionOptions());
 
-            await new SubscribedMethodInvoker(resolver, handler)
+            var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
+
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
                 .Invoke(
                     subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
-                    new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() },
+                    messages,
                     true);
 
             receivedMessages.Should().Be(2);
@@ -102,10 +113,12 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod = new DelegateSubscription((Action<IEnumerable<IEvent>>)Method1, new SubscriptionOptions());
 
-            await new SubscribedMethodInvoker(resolver, handler)
+            var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
+
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
                 .Invoke(
                     subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
-                    new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() },
+                    messages,
                     true);
 
             receivedMessages.Should().Be(3);
@@ -121,10 +134,12 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod = new DelegateSubscription((Action<IEnumerable<TestCommandOne>>)Method1, new SubscriptionOptions());
 
-            await new SubscribedMethodInvoker(resolver, handler)
+            var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
+
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
                 .Invoke(
                     subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
-                    new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() },
+                    messages,
                     true);
 
             calls.Should().Be(0);

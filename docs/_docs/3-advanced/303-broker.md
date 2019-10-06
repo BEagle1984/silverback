@@ -14,7 +14,7 @@ The only required service is the broker.
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddBroker<KafkaBroker>();
+    services.AddSilverback().WithConnectionTo<KafkaBroker>();
 }
 ```
 

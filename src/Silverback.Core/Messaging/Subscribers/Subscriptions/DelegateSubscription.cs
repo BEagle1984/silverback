@@ -14,10 +14,15 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
         {
             if (handler == null) throw new ArgumentNullException(nameof(handler));
 
-            _method = new SubscribedMethod(handler.Target, new SubscribedMethodInfo(handler.Method, options?.Exclusive, options?.Parallel, options?.MaxDegreeOfParallelism));
+            _method = new SubscribedMethod(
+                _ => handler.Target, 
+                handler.Method, 
+                options?.Exclusive, 
+                options?.Parallel, 
+                options?.MaxDegreeOfParallelism);
         }
 
-        public IEnumerable<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
+        public IEnumerable<SubscribedMethod> GetSubscribedMethods(IServiceProvider _) =>
             new[] { _method };
     }
 }

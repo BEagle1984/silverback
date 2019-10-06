@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
@@ -17,21 +16,20 @@ namespace Silverback.Messaging.Publishing
     {
         private readonly ILogger _logger;
 
-        private readonly BusOptions _options;
         private readonly IEnumerable<IBehavior> _behaviors;
         private readonly IServiceProvider _serviceProvider;
 
         private SubscribedMethodInvoker _methodInvoker;
+        private SubscribedMethodsLoader _methodsLoader;
 
-        public Publisher(BusOptions options, IServiceProvider serviceProvider, ILogger<Publisher> logger)
+        public Publisher(IServiceProvider serviceProvider, ILogger<Publisher> logger)
         {
-            _options = options ?? throw new ArgumentNullException(nameof(options));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
             _logger = logger;
             _behaviors = serviceProvider.GetServices<IBehavior>();
         }
-
+        
         public void Publish(object message) => 
             Publish(new[] { message });
 
@@ -95,21 +93,22 @@ namespace Silverback.Messaging.Publishing
         }
 
         private Task<IEnumerable<object>> InvokeExclusiveMethods(IEnumerable<object> messages, bool executeAsync) =>
-            GetSubscribedMethods()
-                .Where(method => method.Info.IsExclusive)
-                .SelectManyAsync(method => GetMethodInvoker().Invoke(method, messages, executeAsync));
+            GetMethodsLoader().GetSubscribedMethods()
+                .Where(method => method.IsExclusive)
+                .SelectManyAsync(method =>
+                    GetMethodInvoker().Invoke(method, messages, executeAsync));
 
         private Task<IEnumerable<object>> InvokeNonExclusiveMethods(IEnumerable<object> messages, bool executeAsync) =>
-            GetSubscribedMethods()
-                .Where(method => !method.Info.IsExclusive)
-                .ParallelSelectManyAsync(method => GetMethodInvoker().Invoke(method, messages, executeAsync));
+            GetMethodsLoader().GetSubscribedMethods()
+                .Where(method => !method.IsExclusive)
+                .ParallelSelectManyAsync(method =>
+                    GetMethodInvoker().Invoke(method, messages, executeAsync));
 
-        private IEnumerable<SubscribedMethod> GetSubscribedMethods() =>
-            _options.Subscriptions
-                .SelectMany(s => s.GetSubscribedMethods(_serviceProvider))
-                .ToList();
 
         private SubscribedMethodInvoker GetMethodInvoker() =>
             _methodInvoker ?? (_methodInvoker = _serviceProvider.GetRequiredService<SubscribedMethodInvoker>());
+
+        private SubscribedMethodsLoader GetMethodsLoader() =>
+            _methodsLoader ?? (_methodsLoader = _serviceProvider.GetRequiredService<SubscribedMethodsLoader>());
     }
 }

@@ -22,19 +22,14 @@ namespace Silverback.Examples.Main.UseCases.EfCore
         {
         }
 
-        protected override void ConfigureServices(IServiceCollection services)
-        {
-            services
-                .AddSilverback()
-                .UseModel()
-                .UseDbContext<ExamplesDbContext>()
-                .WithConnectionTo<KafkaBroker>(options => options
-                    .AddDbOutboundConnector()
-                    .AddDbOutboundWorker());
-                
-            services
-                .AddScoped<IBehavior, CustomHeadersBehavior>();
-        }
+        protected override void ConfigureServices(IServiceCollection services) => services
+            .AddSilverback()
+            .UseModel()
+            .UseDbContext<ExamplesDbContext>()
+            .WithConnectionTo<KafkaBroker>(options => options
+                .AddDbOutboundConnector()
+                .AddDbOutboundWorker())
+            .AddSingletonBehavior<CustomHeadersBehavior>();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints

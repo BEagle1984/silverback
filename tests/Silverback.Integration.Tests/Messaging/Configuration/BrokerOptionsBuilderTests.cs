@@ -13,7 +13,6 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -21,7 +20,7 @@ using Xunit;
 namespace Silverback.Tests.Integration.Messaging.Configuration
 {
     [Collection("StaticInMemory")]
-    public class DependencyInjectionExtensionsTests
+    public class BrokerOptionsBuilderTests
     {
         private readonly IServiceCollection _services;
         private readonly TestSubscriber _testSubscriber;
@@ -37,15 +36,16 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         private BusConfigurator GetBusConfigurator() => GetServiceProvider().GetService<BusConfigurator>();
         private InMemoryOutboundQueue GetOutboundQueue() => (InMemoryOutboundQueue)GetScopedServiceProvider().GetService<IOutboundQueueProducer>();
 
-        public DependencyInjectionExtensionsTests()
+        public BrokerOptionsBuilderTests()
         {
+            _testSubscriber = new TestSubscriber();
+
             _services = new ServiceCollection();
 
-            _services.AddSilverback();
-
-            _testSubscriber = new TestSubscriber();
-            _services.AddSingleton<ISubscriber>(_testSubscriber);
-
+            _services
+                .AddSilverback()
+                .AddSingletonSubscriber(_testSubscriber);
+            
             _services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             _services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
@@ -54,14 +54,6 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             InMemoryInboundLog.Clear();
             InMemoryOutboundQueue.Clear();
-        }
-
-        [Fact]
-        public void AddBroker_BrokerRegisteredForDI()
-        {
-            _services.AddSilverback().WithConnectionTo<TestBroker>(options => { });
-
-            GetServiceProvider().GetService<IBroker>().Should().NotBeNull();
         }
 
         [Fact]

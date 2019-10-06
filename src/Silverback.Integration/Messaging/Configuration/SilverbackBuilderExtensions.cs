@@ -28,25 +28,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<MessageKeyProvider>()
                 .AddSingleton<MessageLogger>();
 
-            var options = new BrokerOptionsBuilder(builder.Services);
+            var options = new BrokerOptionsBuilder(builder);
             optionsAction?.Invoke(options);
             options.CompleteWithDefaults();
 
             return builder;
         }
-
-        // TODO: Support & Test
-        //public static IServiceCollection AddSecondaryBroker<T>(this IServiceCollection services, Action<BrokerOptionsBuilder> optionsAction = null)
-        //    where T : class, IBroker
-        //{
-        //    services
-        //        .AddSingleton<IBroker, T>();
-
-        //    var options = new BrokerOptionsBuilder(services);
-        //    optionsAction?.Invoke(options);
-        //    options.CompleteWithDefaults();
-
-        //    return services;
-        //}
     }
 }

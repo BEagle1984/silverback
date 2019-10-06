@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Main.Menu;

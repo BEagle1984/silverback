@@ -13,7 +13,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -34,18 +33,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var services = new ServiceCollection();
 
             _testSubscriber = new TestSubscriber();
-            services.AddSingleton<ISubscriber>(_testSubscriber);
-
             _inboundSubscriber = new WrappedInboundMessageSubscriber();
-            services.AddSingleton<ISubscriber>(_inboundSubscriber);
-
             _someUnhandledMessageSubscriber = new SomeUnhandledMessageSubscriber();
-            services.AddSingleton<ISubscriber>(_someUnhandledMessageSubscriber);
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-            services.AddSilverback()
+            services
+                .AddSilverback()
+                .AddSingletonSubscriber(_testSubscriber)
+                .AddSingletonSubscriber(_inboundSubscriber)
+                .AddSingletonSubscriber(_someUnhandledMessageSubscriber)
                 .WithConnectionTo<TestBroker>(options => options
                     .AddChunkStore(_ => new InMemoryChunkStore()));
 

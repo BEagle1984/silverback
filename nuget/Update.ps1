@@ -216,7 +216,7 @@ function Add-Version([string]$path, [hashtable]$hashtable)
 
 function Delete-Cache([string]$name)
 {
-    Write-Host "`tClearing cache..." -NoNewline
+    Write-Host "`tClearing cache..."
 
     dotnet nuget locals all --clear
 }

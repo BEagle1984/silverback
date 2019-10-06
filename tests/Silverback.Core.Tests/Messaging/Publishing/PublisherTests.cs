@@ -39,6 +39,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             _asyncEnumerableSubscriber = new TestAsyncEnumerableSubscriber();
         }
 
+        #region GetPublisher
+
         private IPublisher GetPublisher(params ISubscriber[] subscribers) => 
             GetPublisher(null, subscribers);
 
@@ -46,30 +48,33 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             GetPublisher(configAction, null, subscribers);
 
         private IPublisher GetPublisher(Action<BusConfigurator> configAction, IBehavior[] behaviors, params ISubscriber[] subscribers) =>
-            GetPublisher(services =>
-            {
-                if (behaviors != null)
+            GetPublisher(builder =>
                 {
-                    foreach (var behavior in behaviors)
-                        services.AddSingleton<IBehavior>(behavior);
-                }
+                    if (behaviors != null)
+                    {
+                        foreach (var behavior in behaviors)
+                            builder.AddSingletonBehavior(behavior);
+                    }
 
-                foreach (var sub in subscribers)
-                    services.AddSingleton<ISubscriber>(sub);
-            }, configAction);
+                    foreach (var sub in subscribers)
+                    {
+                        builder.AddSingletonSubscriber(sub.GetType(), sub);
+                    }
+                },
+                configAction);
 
-        private IPublisher GetPublisher(Action<ServiceCollection> registrationAction, Action<BusConfigurator> configAction = null) => 
-            GetServiceProvider(registrationAction, configAction).GetRequiredService<IPublisher>();
+        private IPublisher GetPublisher(Action<ISilverbackBuilder> buildAction, Action<BusConfigurator> configAction = null) => 
+            GetServiceProvider(buildAction, configAction).GetRequiredService<IPublisher>();
 
-        private IServiceProvider GetServiceProvider(Action<ServiceCollection> registrationAction, Action<BusConfigurator> configAction = null)
+        private IServiceProvider GetServiceProvider(Action<ISilverbackBuilder> buildAction, Action<BusConfigurator> configAction = null)
         {
             var services = new ServiceCollection();
-            services.AddSilverback();
+            var builder = services.AddSilverback();
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-            registrationAction(services);
+            buildAction(builder);
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -77,6 +82,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             return serviceProvider;
         }
+
+        #endregion
 
         [Fact]
         public void Publish_SomeMessages_Received()
@@ -1116,13 +1123,13 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var resolved = 0;
 
-            var serviceProvider = GetServiceProvider(services => services
-                .AddTransient<ISubscriber>(_ =>
+            var serviceProvider = GetServiceProvider(builder => builder
+                .AddScopedSubscriber(_ =>
                 {
                     resolved++;
                     return new TestServiceOne();
                 })
-                .AddTransient<ISubscriber>(_ =>
+                .AddScopedSubscriber(_ =>
                 {
                     resolved++;
                     return new TestServiceTwo();
@@ -1130,19 +1137,110 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             using (var scope = serviceProvider.CreateScope())
             {
-                scope.ServiceProvider.GetRequiredService<IPublisher>().Publish(new object[] {new TestCommandOne()});
+                scope.ServiceProvider.GetRequiredService<IPublisher>()
+                    .Publish(new object[] {new TestCommandOne()});
             }
 
-            resolved.Should().Be(2); // First time is accepted to resolve all
+            resolved.Should().Be(3); // The first time it is allowed to resolve all subscribers
 
-            resolved = 0;
+            for (var i = 0; i < 3; i++)
+            {
+                resolved = 0;
+
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    scope.ServiceProvider.GetRequiredService<IPublisher>()
+                        .Publish(new object[] {new TestCommandOne()});
+                }
+
+                resolved.Should().Be(1); // From the second time we expect everything to be cached
+            }
+        }
+        
+        [Fact]
+        public async Task PublishAsync_MultipleRegisteredSubscribers_OnlyMatchingSubscribersAreResolvedAfterFirstPublish()
+        {
+            var resolved = 0;
+
+            var serviceProvider = GetServiceProvider(builder => builder
+                .AddScopedSubscriber(_ =>
+                {
+                    resolved++;
+                    return new TestServiceOne();
+                })
+                .AddScopedSubscriber(_ =>
+                {
+                    resolved++;
+                    return new TestServiceTwo();
+                }));
 
             using (var scope = serviceProvider.CreateScope())
             {
-                scope.ServiceProvider.GetRequiredService<IPublisher>().Publish(new object[] { new TestCommandOne() });
+                await scope.ServiceProvider.GetRequiredService<IPublisher>()
+                    .PublishAsync(new object[] { new TestCommandOne() });
             }
 
-            resolved.Should().Be(1); // We should know which service is to be resolved
+            resolved.Should().Be(3); // The first time it is allowed to resolve all subscribers
+
+            for (var i = 0; i < 3; i++)
+            {
+                resolved = 0;
+
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    await scope.ServiceProvider.GetRequiredService<IPublisher>()
+                        .PublishAsync(new object[] { new TestCommandOne() });
+                }
+
+                resolved.Should().Be(1); // From the second time we expect everything to be cached
+            }
+        }
+
+        [Fact]
+        public async Task PublishAsync_MultipleRegisteredSubscribersWithPreloading_OnlyMatchingSubscribersAreResolved()
+        {
+            var resolved = 0;
+
+            var serviceProvider = GetServiceProvider(builder => builder
+                .AddScopedSubscriber(_ =>
+                {
+                    resolved++;
+                    return new TestServiceOne();
+                })
+                .AddScopedSubscriber(_ =>
+                {
+                    resolved++;
+                    return new TestServiceTwo();
+                }));
+
+            serviceProvider.GetRequiredService<BusConfigurator>()
+                .ScanSubscribers();
+
+            resolved.Should().Be(2);
+
+            for (var i = 0; i < 3; i++)
+            {
+                resolved = 0;
+
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    await scope.ServiceProvider.GetRequiredService<IPublisher>()
+                        .PublishAsync(new object[] { new TestCommandOne() });
+                }
+
+                resolved.Should().Be(1);
+            }
+        }
+
+        [Fact]
+        public void Publish_SubscriberNotRegisteredAsSelf_InvalidOperationExceptionIsThrown()
+        {
+            var publisher = GetPublisher(builder => builder
+                .Services.AddScoped<ISubscriber>(_ => new TestServiceOne()));
+            
+            Action act = () => publisher.Publish(new object[] { new TestCommandOne() });
+
+            act.Should().Throw<InvalidOperationException>();
         }
     }
 }

@@ -14,17 +14,16 @@ using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Configuration
 {
     public class BrokerOptionsBuilder
     {
-        internal readonly IServiceCollection Services;
+        internal readonly ISilverbackBuilder SilverbackBuilder;
 
-        public BrokerOptionsBuilder(IServiceCollection services)
+        public BrokerOptionsBuilder(ISilverbackBuilder silverbackBuilder)
         {
-            Services = services;
+            SilverbackBuilder = silverbackBuilder;
         }
 
         /// <summary>
@@ -32,13 +31,13 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public BrokerOptionsBuilder AddInboundConnector<TConnector>() where TConnector : class, IInboundConnector
         {
-            Services.AddSingleton<IInboundConnector, TConnector>();
+            SilverbackBuilder.Services.AddSingleton<IInboundConnector, TConnector>();
 
-            if (Services.All(s => s.ImplementationType != typeof(InboundMessageUnwrapper)))
-                Services.AddScoped<ISubscriber, InboundMessageUnwrapper>();
+            if (SilverbackBuilder.Services.All(s => s.ImplementationType != typeof(InboundMessageUnwrapper)))
+                SilverbackBuilder.AddScopedSubscriber<InboundMessageUnwrapper>();
 
-            if (Services.All(s => s.ImplementationType != typeof(ErrorPolicyHelper)))
-                Services.AddSingleton<ErrorPolicyHelper>();
+            if (SilverbackBuilder.Services.All(s => s.ImplementationType != typeof(ErrorPolicyHelper)))
+                SilverbackBuilder.Services.AddSingleton<ErrorPolicyHelper>();
 
             return this;
         }
@@ -55,7 +54,7 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddLoggedInboundConnector(Func<IServiceProvider, IInboundLog> inboundLogFactory)
         {
             AddInboundConnector<LoggedInboundConnector>();
-            Services.AddScoped<IInboundLog>(inboundLogFactory);
+            SilverbackBuilder.Services.AddScoped<IInboundLog>(inboundLogFactory);
             return this;
         }
         
@@ -66,7 +65,7 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddOffsetStoredInboundConnector(Func<IServiceProvider, IOffsetStore> offsetStoreFactory)
         {
             AddInboundConnector<OffsetStoredInboundConnector>();
-            Services.AddScoped<IOffsetStore>(offsetStoreFactory);
+            SilverbackBuilder.Services.AddScoped<IOffsetStore>(offsetStoreFactory);
             return this;
         }
 
@@ -75,13 +74,13 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public BrokerOptionsBuilder AddOutboundConnector<TConnector>() where TConnector : class, IOutboundConnector
         {
-            if (Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
+            if (SilverbackBuilder.Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
             {
-                Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
-                Services.AddScoped<ISubscriber, OutboundConnectorRouter>();
+                SilverbackBuilder.Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
+                SilverbackBuilder.AddScopedSubscriber<OutboundConnectorRouter>();
             }
 
-            Services.AddScoped<IOutboundConnector, TConnector>();
+            SilverbackBuilder.Services.AddScoped<IOutboundConnector, TConnector>();
 
             return this;
         }
@@ -98,15 +97,15 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddDeferredOutboundConnector(Func<IServiceProvider, IOutboundQueueProducer> outboundQueueProducerFactory)
         {
             AddOutboundConnector<DeferredOutboundConnector>();
-            Services.AddScoped<ISubscriber, DeferredOutboundConnectorTransactionManager>();
-            Services.AddScoped<IOutboundQueueProducer>(outboundQueueProducerFactory);
+            SilverbackBuilder.AddScopedSubscriber<DeferredOutboundConnectorTransactionManager>();
+            SilverbackBuilder.Services.AddScoped<IOutboundQueueProducer>(outboundQueueProducerFactory);
 
             return this;
         }
 
         internal BrokerOptionsBuilder AddOutboundWorker(TimeSpan interval, DistributedLockSettings distributedLockSettings, bool enforceMessageOrder, int readPackageSize)
         {
-            Services
+            SilverbackBuilder.Services
                 .AddSingleton<IOutboundQueueWorker>(s => new OutboundQueueWorker(
                     s.GetRequiredService<IServiceProvider>(),
                     s.GetRequiredService<IBroker>(),
@@ -160,7 +159,7 @@ namespace Silverback.Messaging.Configuration
                 enforceMessageOrder,
                 readPackageSize);
 
-            Services
+            SilverbackBuilder.Services
                 .AddScoped<IOutboundQueueConsumer>(outboundQueueConsumerFactory);
 
             return this;
@@ -171,12 +170,12 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public BrokerOptionsBuilder AddChunkStore(Func<IServiceProvider, IChunkStore> chunkStoreFactory)
         {
-            if (Services.All(s => s.ServiceType != typeof(ChunkConsumer)))
+            if (SilverbackBuilder.Services.All(s => s.ServiceType != typeof(ChunkConsumer)))
             {
-                Services.AddScoped<ChunkConsumer>();
+                SilverbackBuilder.Services.AddScoped<ChunkConsumer>();
             }
 
-            Services.AddScoped<IChunkStore>(chunkStoreFactory);
+            SilverbackBuilder.Services.AddScoped<IChunkStore>(chunkStoreFactory);
 
             return this;
         }
@@ -263,10 +262,10 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         protected virtual void SetDefaults()
         {
-            if (Services.All(s => s.ServiceType != typeof(IInboundConnector)))
+            if (SilverbackBuilder.Services.All(s => s.ServiceType != typeof(IInboundConnector)))
                 AddInboundConnector();
 
-            if (Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
+            if (SilverbackBuilder.Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
                 AddOutboundConnector();
         }
 

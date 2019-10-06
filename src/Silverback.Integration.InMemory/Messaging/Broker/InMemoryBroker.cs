@@ -27,8 +27,7 @@ namespace Silverback.Messaging.Broker
             new InMemoryProducer(this, endpoint, _messageKeyProvider, LoggerFactory.CreateLogger<InMemoryProducer>(), _messageLogger);
 
         protected override Consumer InstantiateConsumer(IEndpoint endpoint) =>
-            GetTopic(endpoint.Name).Subscribe(
-                new InMemoryConsumer(this, endpoint));
+            GetTopic(endpoint.Name).Subscribe(new InMemoryConsumer(this, endpoint));
 
         protected override void Connect(IEnumerable<IConsumer> consumers)
         {

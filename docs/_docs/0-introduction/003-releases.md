@@ -12,10 +12,12 @@ toc: false
 * Reviewed severity of some log entries
 * Cleaner internal implementation
 * Better exception handling (flattening of `AggregateException`)
-* Update to [Confluent.Kafka 1.2.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.1.0)
+* Update to [Confluent.Kafka 1.2.1](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.2.1)
 * The Kafka consumer automatically recovers from fatal errors (can be disabled via Endpoint configuration)
 * Support for .Net Core 3.0 and Entity Framework Core 3.0
 * Refactored packages (EF binding logic is now in a single package, versioned after the related EF version)
+* Better and cleaner configuration API (see for example [Using the Bus]({{ site.baseurl }}/docs/quickstart/bus) and [Behaviors]{{ site.baseurl }}/docs/quickstart/behaviors)
+* Some performance improvements and optimizations (including [[#37](https://github.com/BEagle1984/silverback/issues/37)])
 
 **Breaking Changes**
 * The messages produced with version < 0.11 may not be compatible with the new consumer from this version of Silverback.Integration.

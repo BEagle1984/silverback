@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="Silverback.Integration" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Integration.Kafka" Version="1.0.0-rc1" />
   </ItemGroup>
 
 </Project>

@@ -25,8 +25,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<IArgumentResolver, ObservableMessageArgumentResolver>()
                 .AddScoped<IReturnValueHandler, ObservableMessagesReturnValueHandler>()
                 .AddSingleton<MessageObservable, MessageObservable>()
-                .AddSingleton<ISubscriber, MessageObservable>()
                 .AddSingleton(typeof(IMessageObservable<>), typeof(MessageObservable<>));
+            
+            builder
+                .AddSingletonSubscriber<MessageObservable>();
 
             return builder;
         }

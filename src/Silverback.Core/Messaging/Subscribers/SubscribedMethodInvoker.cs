@@ -11,17 +11,17 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers
 {
-    // TODO: Test
     public class SubscribedMethodInvoker
     {
         private readonly ArgumentsResolver _argumentsResolver;
         private readonly ReturnValueHandler _returnValueHandler;
+        private readonly IServiceProvider _serviceProvider;
 
-        public SubscribedMethodInvoker(ArgumentsResolver argumentsResolver,
-            ReturnValueHandler returnValueHandler)
+        public SubscribedMethodInvoker(ArgumentsResolver argumentsResolver, ReturnValueHandler returnValueHandler, IServiceProvider serviceProvider)
         {
             _argumentsResolver = argumentsResolver ?? throw new ArgumentNullException(nameof(argumentsResolver));
             _returnValueHandler = returnValueHandler ?? throw new ArgumentNullException(nameof(returnValueHandler));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public async Task<IEnumerable<object>> Invoke(SubscribedMethod method, IEnumerable<object> messages, bool executeAsync)
@@ -36,6 +36,7 @@ namespace Silverback.Messaging.Subscribers
             if (!messages.Any())
                 return Enumerable.Empty<object>();
 
+            var target = method.ResolveTargetType(_serviceProvider);
             var parameterValues = GetShiftedParameterValuesArray(method);
 
             IEnumerable<object> returnValues;
@@ -44,20 +45,21 @@ namespace Silverback.Messaging.Subscribers
             {
                 case ISingleMessageArgumentResolver singleResolver:
                     returnValues = (await messages
+                            .OfType(messageType)
                             .SelectAsync(
                                 message =>
                                 {
                                     parameterValues[0] = singleResolver.GetValue(message);
-                                    return Invoke(method, parameterValues, executeAsync);
+                                    return Invoke(target, method, parameterValues, executeAsync);
                                 },
-                                method.Info.IsParallel,
-                                method.Info.MaxDegreeOfParallelism))
+                                method.IsParallel,
+                                method.MaxDegreeOfParallelism))
                         .ToList();
                     break;
                 case IEnumerableMessageArgumentResolver enumerableResolver:
-                    parameterValues[0] = enumerableResolver.GetValue(messages);
+                    parameterValues[0] = enumerableResolver.GetValue(messages, messageType);
 
-                    returnValues = new[] {await Invoke(method, parameterValues, executeAsync)};
+                    returnValues = new[] {await Invoke(target, method, parameterValues, executeAsync)};
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -66,34 +68,34 @@ namespace Silverback.Messaging.Subscribers
             return await _returnValueHandler.HandleReturnValues(returnValues, executeAsync);
         }
 
-        private object[] GetShiftedParameterValuesArray(SubscribedMethod method) =>
+        private object[] GetShiftedParameterValuesArray(SubscribedMethod methodInfo) =>
             new object[1].Concat(
-                    _argumentsResolver.GetAdditionalParameterValues(method))
+                    _argumentsResolver.GetAdditionalParameterValues(methodInfo))
                 .ToArray();
         
-        private Task<object> Invoke(SubscribedMethod method, object[] parameters, bool executeAsync) =>
+        private Task<object> Invoke(object target, SubscribedMethod method, object[] parameters, bool executeAsync) =>
             executeAsync 
-                ? InvokeAsync(method, parameters) 
-                : Task.FromResult(InvokeSync(method, parameters));
+                ? InvokeAsync(target, method, parameters) 
+                : Task.FromResult(InvokeSync(target, method, parameters));
 
-        private object InvokeSync(SubscribedMethod method, object[] parameters)
+        private object InvokeSync(object target, SubscribedMethod method, object[] parameters)
         {
-            if (!method.Info.MethodInfo.ReturnsTask())
-                return method.Info.MethodInfo.Invoke(method.Target, parameters);
+            if (!method.MethodInfo.ReturnsTask())
+                return method.MethodInfo.Invoke(target, parameters);
 
             return AsyncHelper.RunSynchronously<object>(() =>
             {
-                var result = (Task)method.Info.MethodInfo.Invoke(method.Target, parameters);
+                var result = (Task)method.MethodInfo.Invoke(target, parameters);
                 return result.GetReturnValue();
             });
         }
 
-        private Task<object> InvokeAsync(SubscribedMethod method, object[] parameters)
+        private Task<object> InvokeAsync(object target, SubscribedMethod method, object[] parameters)
         {
-            if (!method.Info.MethodInfo.ReturnsTask())
-                return Task.Run(() => method.Info.MethodInfo.Invoke(method.Target, parameters));
+            if (!method.MethodInfo.ReturnsTask())
+                return Task.Run(() => method.MethodInfo.Invoke(target, parameters));
 
-            var result = method.Info.MethodInfo.Invoke(method.Target, parameters);
+            var result = method.MethodInfo.Invoke(target, parameters);
             return ((Task) result).GetReturnValue();
         }
     }

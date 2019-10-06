@@ -12,7 +12,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -33,11 +32,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var services = new ServiceCollection();
 
             _testSubscriber = new TestSubscriber();
-            services.AddSingleton<ISubscriber>(_testSubscriber);
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-            services.AddSilverback().WithConnectionTo<TestBroker>();
+            services
+                .AddSilverback()
+                .WithConnectionTo<TestBroker>()
+                .AddSingletonSubscriber(_testSubscriber);
 
             services.AddScoped<IOffsetStore, InMemoryOffsetStore>();
 

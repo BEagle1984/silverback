@@ -13,9 +13,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
-using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.ConsumerA
 {
@@ -24,9 +22,7 @@ namespace Silverback.Examples.ConsumerA
         protected override void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddLogging()
-                .AddScoped<ISubscriber, SubscriberService>()
-                .AddScoped<IBehavior, LogHeadersBehavior>();
+                .AddLogging();
 
             services
                 .AddSilverback()
@@ -36,7 +32,9 @@ namespace Silverback.Examples.ConsumerA
                     //.AddDbLoggedInboundConnector()
                     .AddDbOffsetStoredInboundConnector()
                     .AddInboundConnector()
-                    .AddDbChunkStore());
+                    .AddDbChunkStore())
+                .AddScopedSubscriber<SubscriberService>()
+                .AddScopedBehavior<LogHeadersBehavior>();
         }
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)

@@ -25,6 +25,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<BusConfigurator>()
                 .AddScoped<IPublisher, Publisher>()
                 .AddScoped<SubscribedMethodInvoker>()
+                .AddScoped<SubscribedMethodsLoader>()
                 .AddScoped<ArgumentsResolver>()
                 .AddScoped<ReturnValueHandler>()
                 // Note: resolvers and handlers will be evaluated in reverse order

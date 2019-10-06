@@ -11,7 +11,6 @@ using Silverback.Examples.Common.Data;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Examples.Main.UseCases.EfCore

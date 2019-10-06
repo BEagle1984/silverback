@@ -30,12 +30,12 @@ namespace Silverback.Tests.Core.Rx.Messaging
             _messageObservable = new MessageObservable();
 
             var services = new ServiceCollection();
-            services.AddSilverback();
+            services
+                .AddSilverback()
+                .AddSingletonSubscriber(_messageObservable);
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-
-            services.AddSingleton<ISubscriber>(_messageObservable);
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
