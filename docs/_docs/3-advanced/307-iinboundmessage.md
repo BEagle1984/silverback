@@ -16,7 +16,6 @@ using Silverback.Messaging.Subscribers;
 
 public class SubscribingService : ISubscriber
 {
-    [Subscribe]
     public async Task OnMessageReceived(IInboundMessage<SampleMessage> message)
     {
         // ...your message handling loging...

@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Connectors
 
         public OutboundQueueWorkerService(IMyService _myService, IDistributedLockManager distributedLockManager, ILogger<OutboundQueueWorkerService> logger)
             : base(
-                TimeSpan.FromSeconds(300), // interval
+                TimeSpan.FromMinutes(5), // interval
                 new DistributedLockSettings
                 {
                     AcquireRetryInterval = TimeSpan.FromMinutes(5)
@@ -29,7 +29,8 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) => _myService.DoWork(stoppingToken);
+        protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) => 
+            _myService.DoWork(stoppingToken);
     }
 }
 ```
