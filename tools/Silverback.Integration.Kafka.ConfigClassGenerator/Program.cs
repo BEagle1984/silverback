@@ -16,14 +16,30 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
                     Assembly.GetAssembly(typeof(Confluent.Kafka.ClientConfig)).Location),
                 "Confluent.Kafka.xml");
 
-            var consumerConfig = new ProxyClassGenerator(typeof(Confluent.Kafka.ConsumerConfig), "ConfluentConsumerConfigProxy", xmlDocumentationPath).Generate();
-            Console.Write(consumerConfig);
+            Console.Write(new ProxyClassGenerator(
+                    typeof(Confluent.Kafka.ClientConfig),
+                    "ConfluentClientConfigProxy",
+                    null,
+                    xmlDocumentationPath, false)
+                .Generate());
 
             Console.WriteLine();
+
+            Console.Write(new ProxyClassGenerator(
+                    typeof(Confluent.Kafka.ConsumerConfig),
+                    "ConfluentConsumerConfigProxy",
+                    "ConfluentClientConfigProxy",
+                    xmlDocumentationPath, false)
+                .Generate());
+
             Console.WriteLine();
 
-            var producerConfig = new ProxyClassGenerator(typeof(Confluent.Kafka.ProducerConfig), "ConfluentProducerConfigProxy", xmlDocumentationPath).Generate();
-            Console.Write(producerConfig);
+            Console.Write(new ProxyClassGenerator(
+                    typeof(Confluent.Kafka.ProducerConfig),
+                    "ConfluentProducerConfigProxy",
+                    "ConfluentClientConfigProxy",
+                    xmlDocumentationPath, false)
+                .Generate());
         }
     }
 }
