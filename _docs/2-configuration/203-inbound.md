@@ -184,7 +184,6 @@ public void Configure(BusConfigurator busConfigurator)
                 )));
 }
 
-[Subscribe]
 public void OnProcessingFailed(ProcessingFailedEvent @event)
 {
     _processingStatusService.SetFailed(@event.Message.Id);
@@ -246,19 +245,23 @@ public class InventoryService : ISubscriber
         _db = db;
     }
 
-    [Subscribe]
-    void OnBatchReady(BatchReadyEvent message)
+    public void OnBatchReady(BatchReadyEvent message)
     {
         _logger.LogInformation($"Batch '{message.BatchId} ready ({message.BatchSize} messages)");
     }
 
-    [Subscribe]
-    void OnMessageReceived(MyMessage message)
+    public async Task OnMessageReceived(IEnumerable<InventoryUpdateEvent> events)
     {
-        ...
+        // Process all items
+        foreach (var event in events)
+        {
+            ...
+        }
+        
+        // Commit all changes in a single transaction
+        await _db.SaveChangesAsync();
     }
 
-    [Subscribe]
     void OnBatchProcessed(BatchProcessedEvent message)
     {
         _db.SaveChanges();
