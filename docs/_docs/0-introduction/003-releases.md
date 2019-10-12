@@ -17,7 +17,7 @@ toc: false
 * Support for .Net Core 3.0 and Entity Framework Core 3.0
 * Refactored packages (EF binding logic is now in a single package, versioned after the related EF version)
 * Better and cleaner configuration API (see for example [Using the Bus]({{ site.baseurl }}/docs/quickstart/bus) and [Behaviors]{{ site.baseurl }}/docs/quickstart/behaviors)
-* Some performance improvements and optimizations (including [[#37](https://github.com/BEagle1984/silverback/issues/37)])
+* Some performance improvements and optimizations (including [#37](https://github.com/BEagle1984/silverback/issues/37))
 
 **Breaking Changes**
 * The messages produced with version < 0.11 may not be compatible with the new consumer from this version of Silverback.Integration.
