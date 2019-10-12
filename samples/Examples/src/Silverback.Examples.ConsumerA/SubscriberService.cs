@@ -50,12 +50,9 @@ namespace Silverback.Examples.ConsumerA
             await DoFail();
         }
 
-        private async Task DoFail()
+        private Task DoFail()
         {
             throw new AggregateException(new Exception("Bad message!", new Exception("Inner reason...")));
-
-            //throw new TaskCanceledException();
-            //throw new Exception("Bad message!", new Exception("Inner reason..."));
         }
 
         [Subscribe]
