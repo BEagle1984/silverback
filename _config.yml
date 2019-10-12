@@ -12,7 +12,7 @@ footer:
       icon: "fab fa-fw fa-github"
       url: "https://github.com/BEagle1984"
 
-remote_theme: "mmistakes/minimal-mistakes@4.14.1"
+#remote_theme: "mmistakes/minimal-mistakes@4.14.1"
 
 baseurl: /silverback
 
