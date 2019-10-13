@@ -30,7 +30,12 @@ public class SampleMessageKeyProvider : IMessageKeyProvider
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddSingleton<IMessageKeyProvider, SampleMessageKeyProvider>();
-    
-    services.AddBus();
+    ...
+
+    services
+        .AddSilverback()
+        .WithConnectionTo<KafkaBroker>(options => options
+            .AddMessageKeyProvider<SampleMessageKeyProvider>());
+    ...
+}
 ```

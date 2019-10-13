@@ -24,7 +24,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services
                 .AddSingleton<IBroker, T>()
                 .AddSingleton<ErrorPolicyBuilder>()
-                .AddSingleton<IMessageKeyProvider, DefaultPropertiesMessageKeyProvider>()
                 .AddSingleton<MessageKeyProvider>()
                 .AddSingleton<MessageLogger>();
 

@@ -45,7 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 .AddSingletonSubscriber(_inboundSubscriber)
                 .AddSingletonSubscriber(_someUnhandledMessageSubscriber)
                 .WithConnectionTo<TestBroker>(options => options
-                    .AddChunkStore(_ => new InMemoryChunkStore()));
+                    .AddChunkStore<InMemoryChunkStore>());
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
             {
