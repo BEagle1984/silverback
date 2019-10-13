@@ -117,8 +117,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = "key", Value = "value2" } });
 
             var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
-            inboundMessages.First().Headers.First().Value.Should().Be("value1");
-            inboundMessages.Skip(1).First().Headers.First().Value.Should().Be("value2");
+            var firstMessage = inboundMessages.First();
+            firstMessage.Headers.Count.Should().Be(2);
+            firstMessage.Headers.Select(h => h.Key).Should().BeEquivalentTo("key", "x-message-type");
+            firstMessage.Headers.GetValue("key").Should().Be("value1");
+            var secondMessage = inboundMessages.Skip(1).First();
+            secondMessage.Headers.Count.Should().Be(2);
+            secondMessage.Headers.Select(h => h.Key).Should().BeEquivalentTo("key", "x-message-type");
+            secondMessage.Headers.GetValue("key").Should().Be("value2");
         }
 
         [Fact]

@@ -42,9 +42,6 @@ namespace Silverback.Messaging.Messages
         public InboundMessage(IInboundMessage message)
             : base(message.RawContent, message.Headers, message.Offset, message.Endpoint, message.MustUnwrap)
         {
-            if (message.Headers != null)
-                Headers.AddRange(message.Headers);
-
             if (message.Content != null)
                 Content = (TContent)message.Content;
         }
