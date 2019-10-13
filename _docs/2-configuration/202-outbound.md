@@ -20,7 +20,7 @@ public void ConfigureServices(IServiceCollection services)
 
     services
         .AddSilverback()
-        .AddBroker<KafkaBroker>(options => options
+        .WithConnectionTo<KafkaBroker>(options => options
             .AddOutboundConnector());
     ...
 }
