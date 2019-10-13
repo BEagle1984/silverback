@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>8</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\ConsumerServiceA.cs" Link="ConsumerServiceA.cs" />
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\LogHeadersBehavior.cs" Link="LogHeadersBehavior.cs" />
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\Program.cs" Link="Program.cs" />
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\SubscriberService.cs" Link="SubscriberService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Silverback.Core" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="2.2.0-rc1" />
+    <PackageReference Include="Silverback.Core.Model" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Core.Rx" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Integration" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Integration.Kafka" Version="1.0.0-rc1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Examples.Common\Silverback.Examples.Common.csproj" />
+  </ItemGroup>
+
+</Project>
