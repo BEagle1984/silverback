@@ -17,23 +17,20 @@ namespace Silverback.Messaging.Broker
         private readonly Confluent.Kafka.ConsumerConfig _config;
         private readonly bool _enableAutoRecovery;
         private readonly ILogger _logger;
-        private readonly CancellationToken _cancellationToken;
+        private CancellationTokenSource _cancellationTokenSource;
 
         private readonly TimeSpan _recoveryDelay = TimeSpan.FromSeconds(5);
 
         private Confluent.Kafka.IConsumer<byte[], byte[]> _innerConsumer;
 
-        private bool _consumed;
-        private bool _started;
+        private bool _consuming;
+        private bool _consumedAtLeastOnce;
 
-        public InnerConsumerWrapper(Confluent.Kafka.ConsumerConfig config, bool enableAutoRecovery, CancellationToken cancellationToken, ILogger logger)
+        public InnerConsumerWrapper(Confluent.Kafka.ConsumerConfig config, bool enableAutoRecovery, ILogger logger)
         {
             _config = config;
             _enableAutoRecovery = enableAutoRecovery;
-            _cancellationToken = cancellationToken;
             _logger = logger;
-
-            _innerConsumer = BuildConfluentConsumer(config);
         }
 
         public event KafkaMessageReceivedHandler Received;
@@ -41,8 +38,6 @@ namespace Silverback.Messaging.Broker
         public void Subscribe(KafkaConsumerEndpoint endpoint)
         {
             _endpoints.Add(endpoint);
-
-            Subscribe();
         }
 
         public void Commit(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets) => 
@@ -53,7 +48,7 @@ namespace Silverback.Messaging.Broker
         
         public void CommitAll()
         {
-            if (!_consumed) return;
+            if (!_consumedAtLeastOnce) return;
 
             _innerConsumer.Commit();
         }
@@ -62,19 +57,41 @@ namespace Silverback.Messaging.Broker
 
         public void StartConsuming()
         {
-            if (_started)
+            if (_consuming)
                 return;
 
-            Task.Run(Consume, _cancellationToken);
+            _cancellationTokenSource = new CancellationTokenSource();
 
-            _started = true;
+            InitInnerConsumer();
+
+            Task.Run(Consume, _cancellationTokenSource.Token);
+        }
+
+        public void StopConsuming()
+        {
+            if (!_consuming)
+                return;
+
+            _cancellationTokenSource.Cancel();
+            
+            // Wait until stopped for real before returning to avoid
+            // exceptions when the process exits prematurely
+            while (_consuming) Thread.Sleep(100);
+
+            _cancellationTokenSource.Dispose();
+        }
+
+        private void InitInnerConsumer()
+        {
+            _innerConsumer = BuildConfluentConsumer();
+            Subscribe();
         }
 
         private void Subscribe() => _innerConsumer.Subscribe(_endpoints.Select(e => e.Name));
 
-        private Confluent.Kafka.IConsumer<byte[], byte[]> BuildConfluentConsumer(Confluent.Kafka.ConsumerConfig config)
+        private Confluent.Kafka.IConsumer<byte[], byte[]> BuildConfluentConsumer()
         {
-            return new Confluent.Kafka.ConsumerBuilder<byte[], byte[]>(config)
+            return new Confluent.Kafka.ConsumerBuilder<byte[], byte[]>(_config)
                 .SetPartitionsAssignedHandler((_, partitions) =>
                 {
                     partitions.ForEach(partition =>
@@ -109,6 +126,11 @@ namespace Silverback.Messaging.Broker
                 })
                 .SetErrorHandler((_, e) =>
                 {
+                    // Ignore errors if not consuming anymore
+                    // (lidrdkafka randomly throws some "brokers are down"
+                    // while disconnecting)
+                    if (!_consuming) return;
+
                     _logger.Log(e.IsFatal ? LogLevel.Critical : LogLevel.Error,
                             "Error in Kafka consumer: {reason}.", e.Reason);
                 })
@@ -121,23 +143,13 @@ namespace Silverback.Messaging.Broker
 
         private async Task Consume()
         {
-            while (!_cancellationToken.IsCancellationRequested)
+            _consuming = true;
+
+            while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 try
                 {
-                    var result = _innerConsumer.Consume(_cancellationToken);
-                    _consumed = true;
-
-                    if (result.IsPartitionEOF)
-                    {
-                        _logger.LogInformation("Partition EOF reached: {topic} {partition} @{offset}", result.Topic, result.Partition, result.Offset);
-                        continue;
-                    }
-
-                    _logger.LogTrace("Consuming message: {topic} {partition} @{offset}", result.Topic, result.Partition, result.Offset);
-
-                    if (Received != null)
-                        await Received.Invoke(result.Message, result.TopicPartitionOffset);
+                    await ReceiveMessage();
                 }
                 catch (OperationCanceledException)
                 {
@@ -145,18 +157,8 @@ namespace Silverback.Messaging.Broker
                 }
                 catch (Confluent.Kafka.KafkaException ex)
                 {
-                    if (_enableAutoRecovery)
-                    {
-                        _logger.LogWarning(ex, "KafkaException occurred. The consumer will try to recover.");
-                        ResetConsumer();
-                    }
-                    else
-                    {
-                        _logger.LogCritical(ex, "Fatal error occurred consuming a message. The consumer will be stopped. " +
-                                                "Enable auto recovery to allow Silverback to automatically try to reconnect " +
-                                                "(EnableAutoRecovery=true in the endpoint configuration).");
+                    if (!AutoRecoveryIfEnabled(ex))
                         break;
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -164,21 +166,67 @@ namespace Silverback.Messaging.Broker
                     break;
                 }
             }
+
+            _consuming = false;
         }
 
-        private void ResetConsumer()
+        private async Task ReceiveMessage()
         {
-            try
+            var result = _innerConsumer.Consume(_cancellationTokenSource.Token);
+
+            if (result == null)
+                return;
+
+            if (result.IsPartitionEOF)
             {
-                DisposeInnerConsumer();
-                _innerConsumer = BuildConfluentConsumer(_config);
-                Subscribe();
+                _logger.LogInformation("Partition EOF reached: {topic} {partition} @{offset}", result.Topic, result.Partition,
+                    result.Offset);
+                return;
             }
-            catch (Exception ex)
+
+            _consumedAtLeastOnce = true;
+            _logger.LogTrace("Consuming message: {topic} {partition} @{offset}", result.Topic, result.Partition, result.Offset);
+
+            if (Received != null)
+                await Received.Invoke(result.Message, result.TopicPartitionOffset);
+        }
+
+        private bool AutoRecoveryIfEnabled(Confluent.Kafka.KafkaException ex)
+        {
+            if (_enableAutoRecovery)
             {
-                _logger.LogCritical(ex, $"Failed to recover from consumer exception. Will retry in {_recoveryDelay.TotalSeconds} seconds.");
-                Thread.Sleep(_recoveryDelay);
-                ResetConsumer();
+                _logger.LogWarning(ex, "KafkaException occurred. The consumer will try to recover.");
+                ResetInnerConsumer();
+            }
+            else
+            {
+                _logger.LogCritical(ex, "Fatal error occurred consuming a message. The consumer will be stopped. " +
+                                        "Enable auto recovery to allow Silverback to automatically try to reconnect " +
+                                        "(EnableAutoRecovery=true in the endpoint configuration).");
+            }
+
+            return _enableAutoRecovery;
+        }
+
+        private void ResetInnerConsumer()
+        {
+            while (true)
+            {
+                try
+                {
+                    DisposeInnerConsumer();
+                    InitInnerConsumer();
+
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical(ex,
+                        "Failed to recover from consumer exception. " +
+                        $"Will retry in {_recoveryDelay.TotalSeconds} seconds.");
+
+                    Thread.Sleep(_recoveryDelay);
+                }
             }
         }
 
@@ -186,13 +234,14 @@ namespace Silverback.Messaging.Broker
         {
             _innerConsumer?.Close();
             _innerConsumer?.Dispose();
-
             _innerConsumer = null;
         }
 
         public void Dispose()
         {
+            StopConsuming();
             DisposeInnerConsumer();
+            _cancellationTokenSource?.Dispose();
         }
     }
 }

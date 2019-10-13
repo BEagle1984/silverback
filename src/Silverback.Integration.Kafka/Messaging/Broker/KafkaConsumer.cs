@@ -35,7 +35,6 @@ namespace Silverback.Messaging.Broker
             _innerConsumer = new InnerConsumerWrapper(
                 Endpoint.Configuration.ConfluentConfig,
                 Endpoint.Configuration.EnableAutoRecovery,
-                _cancellationTokenSource.Token,
                 _logger);
 
             _innerConsumer.Subscribe(Endpoint);
@@ -50,8 +49,7 @@ namespace Silverback.Messaging.Broker
             if (_innerConsumer == null)
                 return;
 
-            _cancellationTokenSource.Cancel();
-            _cancellationTokenSource.Dispose();
+            _innerConsumer.StopConsuming();
 
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 _innerConsumer.CommitAll();
@@ -95,7 +93,7 @@ namespace Silverback.Messaging.Broker
                     "The consumer will be stopped.",
                     tpo.Topic, tpo.Partition, tpo.Offset);
 
-                _cancellationTokenSource.Cancel();
+                Disconnect();
             }
         }
 
