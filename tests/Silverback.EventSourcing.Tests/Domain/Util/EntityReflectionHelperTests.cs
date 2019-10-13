@@ -70,7 +70,7 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             public class TestEntityEvent2 : TestEntityEvent { }
             public class TestEntityEvent3 : TestEntityEvent { }
 
-            public int Calls { get; private set; } = 0;
+            public int Calls { get; private set; }
 
             public void Apply(TestEntityEvent1 event1) => Calls++;
 

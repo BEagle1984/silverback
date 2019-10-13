@@ -360,7 +360,7 @@ namespace Silverback.Messaging.Configuration
             where TBehavior : class, IBehavior;
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> with a
+        /// Adds a scoped behavior with a
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
@@ -390,7 +390,7 @@ namespace Silverback.Messaging.Configuration
             where TBehavior : class, IBehavior;
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> with a
+        /// Adds a scoped behavior with a
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>

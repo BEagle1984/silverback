@@ -28,7 +28,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
             foreach (var sub in subscribers)
-                services.AddScoped<ISubscriber>(_ => sub);
+                services.AddScoped(_ => sub);
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
@@ -107,8 +107,8 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             int count = 0;
             var publisher = GetPublisher(config =>
                     config
-                        .Subscribe<TestCommandOne>((TestCommandOne msg) => new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
-                        .Subscribe<TestCommandTwo>((TestCommandTwo _) => count++));
+                        .Subscribe((TestCommandOne msg) => new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
+                        .Subscribe((TestCommandTwo _) => count++));
 
             publisher.Publish(new TestCommandOne());
 

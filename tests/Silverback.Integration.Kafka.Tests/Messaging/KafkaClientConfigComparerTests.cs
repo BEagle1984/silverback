@@ -11,7 +11,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
 {
     public class KafkaClientConfigComparerTests
     {
-        private ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper> _dictionary;
+        private readonly ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper> _dictionary;
 
         public KafkaClientConfigComparerTests()
         {

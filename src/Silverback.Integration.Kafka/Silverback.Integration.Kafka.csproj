@@ -13,7 +13,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Silverback is a simple framework to build reactive, event-driven, microservices.  This package contains an implementation of Silverback.Integration for the popular Apache Kafka message broker.</Description>
     <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8</LangVersion>
     <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 

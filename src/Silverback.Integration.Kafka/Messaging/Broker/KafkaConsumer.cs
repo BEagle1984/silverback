@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -13,11 +12,10 @@ namespace Silverback.Messaging.Broker
 {
     public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint>, IDisposable
     {
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly ILogger<KafkaConsumer> _logger;
 
         private InnerConsumerWrapper _innerConsumer;
-        private int _messagesSinceCommit = 0;
+        private int _messagesSinceCommit;
 
         public KafkaConsumer(IBroker broker, KafkaConsumerEndpoint endpoint, ILogger<KafkaConsumer> logger)
             : base(broker, endpoint)
@@ -83,7 +81,7 @@ namespace Silverback.Messaging.Broker
 
                 await HandleMessage(
                     message.Value, 
-                    message?.Headers?.Select(h => h.ToSilverbackHeader()).ToList(), 
+                    message.Headers?.Select(h => h.ToSilverbackHeader()).ToList(), 
                     new KafkaOffset(tpo));
             }
             catch (Exception ex)

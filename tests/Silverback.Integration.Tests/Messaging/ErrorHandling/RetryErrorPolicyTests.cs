@@ -17,7 +17,6 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
     public class RetryErrorPolicyTests
     {
         private readonly ErrorPolicyBuilder _errorPolicyBuilder;
-        private readonly IBroker _broker;
 
         public RetryErrorPolicyTests()
         {
@@ -32,8 +31,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
 
-            _broker = serviceProvider.GetRequiredService<IBroker>();
-            _broker.Connect();
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            broker.Connect();
         }
 
         [Theory]

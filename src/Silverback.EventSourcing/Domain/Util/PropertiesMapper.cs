@@ -51,7 +51,7 @@ namespace Silverback.Domain.Util
                 throw new SilverbackException(
                     $"Couldn't map property {sourcePropertyInfo.DeclaringType.Name}.{sourcePropertyInfo.Name} " +
                     $"to  {destPropertyInfo.DeclaringType.Name}.{destPropertyInfo.Name}." +
-                    $"See inner exception for details.", ex);
+                    "See inner exception for details.", ex);
             }
         }
     }

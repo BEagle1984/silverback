@@ -79,7 +79,7 @@ namespace Silverback.Tests.Core.Background
             Func<Task> act = () => new DbDistributedLockManager(_servicesProvider)
                 .Acquire("test.resource", TimeSpan.FromMilliseconds(100));
 
-            act.Should().ThrowAsync<TimeoutException>();
+            await act.Should().ThrowAsync<TimeoutException>();
         }
 
         [Fact]

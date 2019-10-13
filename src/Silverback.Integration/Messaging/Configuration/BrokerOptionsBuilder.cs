@@ -56,7 +56,7 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddLoggedInboundConnector(Func<IServiceProvider, IInboundLog> inboundLogFactory)
         {
             AddInboundConnector<LoggedInboundConnector>();
-            SilverbackBuilder.Services.AddScoped<IInboundLog>(inboundLogFactory);
+            SilverbackBuilder.Services.AddScoped(inboundLogFactory);
             return this;
         }
         
@@ -67,7 +67,7 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddOffsetStoredInboundConnector(Func<IServiceProvider, IOffsetStore> offsetStoreFactory)
         {
             AddInboundConnector<OffsetStoredInboundConnector>();
-            SilverbackBuilder.Services.AddScoped<IOffsetStore>(offsetStoreFactory);
+            SilverbackBuilder.Services.AddScoped(offsetStoreFactory);
             return this;
         }
 
@@ -121,7 +121,7 @@ namespace Silverback.Messaging.Configuration
         {
             AddOutboundConnector<DeferredOutboundConnector>();
             SilverbackBuilder.AddScopedSubscriber<DeferredOutboundConnectorTransactionManager>();
-            SilverbackBuilder.Services.AddScoped<IOutboundQueueProducer>(outboundQueueProducerFactory);
+            SilverbackBuilder.Services.AddScoped(outboundQueueProducerFactory);
 
             return this;
         }
@@ -191,7 +191,7 @@ namespace Silverback.Messaging.Configuration
                 readPackageSize);
 
             SilverbackBuilder.Services
-                .AddScoped<IOutboundQueueConsumer>(outboundQueueConsumerFactory);
+                .AddScoped(outboundQueueConsumerFactory);
 
             return this;
         }
@@ -270,6 +270,12 @@ namespace Silverback.Messaging.Configuration
 
         #region AddMessageKeyProvider
 
+        /// <summary>
+        /// Adds a message key provider of type <typeparamref name="TProvider"/> to be used
+        /// to auto-generate the unique id of the integration messages.
+        /// </summary>
+        /// <typeparam name="TProvider">The type of the <see cref="IMessageKeyProvider"/> to add.</typeparam>
+        /// <returns></returns>
         public BrokerOptionsBuilder AddMessageKeyProvider<TProvider>() where TProvider : class, IMessageKeyProvider
         {
             SilverbackBuilder.Services.AddSingleton<IMessageKeyProvider, TProvider>();

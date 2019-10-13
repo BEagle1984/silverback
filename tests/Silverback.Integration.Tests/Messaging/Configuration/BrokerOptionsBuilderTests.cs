@@ -27,8 +27,8 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         private IServiceProvider _serviceProvider;
         private IServiceScope _serviceScope;
 
-        private IServiceProvider GetServiceProvider() => _serviceProvider ?? (_serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true }));
-        private IServiceProvider GetScopedServiceProvider() => (_serviceScope ?? (_serviceScope = GetServiceProvider().CreateScope())).ServiceProvider;
+        private IServiceProvider GetServiceProvider() => _serviceProvider ??= _services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+        private IServiceProvider GetScopedServiceProvider() => (_serviceScope ??= GetServiceProvider().CreateScope()).ServiceProvider;
 
         private TestBroker GetBroker() => (TestBroker) GetServiceProvider().GetService<IBroker>();
         private IPublisher GetPublisher() => GetScopedServiceProvider().GetService<IPublisher>();

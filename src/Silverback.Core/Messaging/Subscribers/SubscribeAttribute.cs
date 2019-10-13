@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Subscribers
     /// The decorated method must have a single input parameter of type <see cref="IMessage"/>
     /// or derived type. The methods can be async (returning a Task).
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Method)]
     public class SubscribeAttribute : Attribute
     {
         private int _maxDegreeOfParallelism = int.MaxValue;

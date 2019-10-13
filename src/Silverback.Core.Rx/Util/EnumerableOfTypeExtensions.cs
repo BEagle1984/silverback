@@ -7,9 +7,10 @@ using System.Reflection;
 
 namespace Silverback.Util
 {
-    // TOOD: Test
+    // TODO: Test
     internal static class ObservableOfTypeExtensions
     {
+        // ReSharper disable once PossibleNullReferenceException
         public static IObservable<object> OfType(this IObservable<object> source, Type type) =>
             typeof(Observable)
                     .GetMethod("OfType", BindingFlags.Static | BindingFlags.Public)

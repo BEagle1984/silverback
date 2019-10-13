@@ -83,7 +83,7 @@ namespace Silverback.Messaging.Subscribers
             if (!method.MethodInfo.ReturnsTask())
                 return method.MethodInfo.Invoke(target, parameters);
 
-            return AsyncHelper.RunSynchronously<object>(() =>
+            return AsyncHelper.RunSynchronously(() =>
             {
                 var result = (Task)method.MethodInfo.Invoke(target, parameters);
                 return result.GetReturnValue();

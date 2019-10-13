@@ -33,7 +33,7 @@ namespace Silverback.Tests.Integration.TestTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj is TestEndpoint && Equals((TestEndpoint)obj);
+            return obj is TestEndpoint endpoint && Equals(endpoint);
         }
 
         public override int GetHashCode()

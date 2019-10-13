@@ -9,10 +9,6 @@ namespace Silverback.Domain
     {
         public TEntity Source { get; set; }
 
-        protected DomainEvent()
-        {
-        }
-
         object IMessageWithSource.Source
         {
             get => Source;

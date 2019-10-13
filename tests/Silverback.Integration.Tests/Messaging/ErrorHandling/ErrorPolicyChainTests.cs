@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(5, 2)]
         public void HandleError_MultiplePoliciesWithSetMaxFailedAttempts_CorrectPolicyApplied(int failedAttempts, int expectedAppliedPolicy)
         {
-            var policies = new ErrorPolicyBase[]
+            var policies = new[]
             {
                 new TestErrorPolicy().MaxFailedAttempts(2),
                 new TestErrorPolicy().MaxFailedAttempts(2),
@@ -102,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     null, TestEndpoint.Default, true)
             }, new Exception("test"));
 
-            for (int i = 0; i < policies.Length; i++)
+            for (var i = 0; i < policies.Length; i++)
             {
                 policies[i].As<TestErrorPolicy>().Applied.Should().Be(i == expectedAppliedPolicy);
             }

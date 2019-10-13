@@ -22,6 +22,8 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Tests.Core.TestTypes.Subscribers;
 using Xunit;
 
+// ReSharper disable InconsistentNaming
+
 namespace Silverback.Tests.Core.Messaging.Publishing
 {
     public class PublisherTests
@@ -548,8 +550,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ITestMessage>((ITestMessage msg) => receivedMessagesCount++)
-                    .Subscribe<ITestMessage>(async (ITestMessage msg) =>
+                    .Subscribe((ITestMessage msg) => receivedMessagesCount++)
+                    .Subscribe(async (ITestMessage msg) =>
                     {
                         await Task.Delay(1);
                         asyncReceivedMessagesCount++;
@@ -568,8 +570,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ITestMessage>((ITestMessage msg) => receivedMessagesCount++)
-                    .Subscribe<ITestMessage>(async (ITestMessage msg) =>
+                    .Subscribe((ITestMessage msg) => receivedMessagesCount++)
+                    .Subscribe(async (ITestMessage msg) =>
                     {
                         await Task.Delay(1);
                         asyncReceivedMessagesCount++;
@@ -588,8 +590,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ITestMessage>((IEnumerable<ITestMessage> msg) => receivedMessagesCount += msg.Count())
-                    .Subscribe<ITestMessage>(async (IEnumerable<ITestMessage> msg) =>
+                    .Subscribe((IEnumerable<ITestMessage> msg) => receivedMessagesCount += msg.Count())
+                    .Subscribe(async (IEnumerable<ITestMessage> msg) =>
                     {
                         await Task.Delay(1);
                         asyncReceivedMessagesCount += msg.Count();
@@ -608,8 +610,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ITestMessage>((IEnumerable<ITestMessage> msg) => receivedMessagesCount += msg.Count())
-                    .Subscribe<ITestMessage>(async (IEnumerable<ITestMessage> msg) =>
+                    .Subscribe((IEnumerable<ITestMessage> msg) => receivedMessagesCount += msg.Count())
+                    .Subscribe(async (IEnumerable<ITestMessage> msg) =>
                     {
                         await Task.Delay(1);
                         asyncReceivedMessagesCount += msg.Count();
@@ -627,8 +629,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var subscriber = new TestSubscriber();
             var publisher = GetPublisher(config =>
                     config
-                        .Subscribe<TestCommandTwo>((TestCommandTwo msg) => new TestCommandOne())
-                        .Subscribe<TestCommandTwo>(async (TestCommandTwo msg) =>
+                        .Subscribe((TestCommandTwo msg) => new TestCommandOne())
+                        .Subscribe(async (TestCommandTwo msg) =>
                         {
                             await Task.Delay(1);
                             return new TestCommandOne();
@@ -691,9 +693,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         (ICommand _) => parallel.DoWork())
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         async (ICommand _) => await parallel.DoWorkAsync(),
                         new SubscriptionOptions {Exclusive = true}));
 
@@ -709,10 +711,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         (ICommand _) => parallel.DoWork(),
                         new SubscriptionOptions {Exclusive = false})
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         (ICommand _) => parallel.DoWorkAsync(),
                         new SubscriptionOptions {Exclusive = false}));
 
@@ -758,10 +760,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         (ICommand _) => parallel.DoWork(),
                         new SubscriptionOptions {Parallel = false})
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         async (ICommand _) => await parallel.DoWorkAsync(),
                         new SubscriptionOptions {Parallel = false}));
 
@@ -781,10 +783,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         (ICommand _) => parallel.DoWork(),
                         new SubscriptionOptions {Parallel = true})
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         async (ICommand _) => await parallel.DoWorkAsync(),
                         new SubscriptionOptions {Parallel = true}));
 
@@ -835,10 +837,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         (ICommand _) => parallel.DoWork(),
                         new SubscriptionOptions {Parallel = true, MaxDegreeOfParallelism = 2})
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         async (ICommand _) => await parallel.DoWorkAsync(),
                         new SubscriptionOptions {Parallel = true, MaxDegreeOfParallelism = 2}));
 
@@ -859,10 +861,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher = GetPublisher(config =>
                 config
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         (ICommand _) => parallel.DoWork(),
                         new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 })
-                    .Subscribe<ICommand>(
+                    .Subscribe(
                         async (ICommand _) => await parallel.DoWorkAsync(),
                         new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 }));
 

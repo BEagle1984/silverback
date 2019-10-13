@@ -13,7 +13,7 @@ namespace Silverback.EventStore
         IEnumerable<IEntityEvent> GetNewEvents();
     }
 
-    public interface IEventSourcingAggregate<TKey> : IEventSourcingAggregate
+    public interface IEventSourcingAggregate<out TKey> : IEventSourcingAggregate
     {
         TKey Id { get; }
     }

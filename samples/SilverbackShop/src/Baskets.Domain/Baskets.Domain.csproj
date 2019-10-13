@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SilverbackShop.Baskets.Domain</AssemblyName>
     <RootNamespace>SilverbackShop.Baskets.Domain</RootNamespace>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

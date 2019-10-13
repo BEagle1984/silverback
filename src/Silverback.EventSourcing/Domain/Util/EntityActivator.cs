@@ -12,7 +12,7 @@ namespace Silverback.Domain.Util
         {
             try
             {
-                var entity = (TEntity) Activator.CreateInstance(typeof(TEntity), new object[] {events});
+                var entity = (TEntity) Activator.CreateInstance(typeof(TEntity), events);
 
                 PropertiesMapper.Map(eventStoreEntity, entity);
 
@@ -22,7 +22,7 @@ namespace Silverback.Domain.Util
             {
                 throw new SilverbackException(
                     $"The type {typeof(TEntity).Name} doesn't have a public constructor " +
-                    $"with a single parameter of type IEnumerable<IEntityEvent>.", ex);
+                    "with a single parameter of type IEnumerable<IEntityEvent>.", ex);
             }
         }
     }

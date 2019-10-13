@@ -463,7 +463,7 @@ namespace Silverback.Messaging.Configuration
             AddTransientBehavior(typeof(TBehavior));
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> with a
+        /// Adds a scoped behavior with a
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
@@ -508,7 +508,7 @@ namespace Silverback.Messaging.Configuration
             AddScopedBehavior(typeof(TBehavior));
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> with a
+        /// Adds a scoped behavior with a
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>

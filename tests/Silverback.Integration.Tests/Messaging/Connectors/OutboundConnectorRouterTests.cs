@@ -16,6 +16,8 @@ using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
 
+// ReSharper disable InconsistentNaming
+
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
     [Collection("StaticInMemory")]

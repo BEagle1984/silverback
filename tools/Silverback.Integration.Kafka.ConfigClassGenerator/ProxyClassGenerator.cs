@@ -57,12 +57,12 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
 
             if (_baseClassName == null)
             {
-                _builder.Append($"        internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }}\r\n");
+                _builder.Append("        internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }}\r\n");
             }
             else
             {
-                _builder.Append($"        internal override Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }} = new {_proxiedType.FullName}();\r\n");
-                _builder.Append($"        internal {_proxiedType.FullName} ConfluentConfig => ({_proxiedType.FullName}) ConfluentBaseConfig;\r\n");
+                _builder.Append($"        internal override Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }} = new {proxiedTypeName}();\r\n");
+                _builder.Append($"        internal {proxiedTypeName} ConfluentConfig => ({proxiedTypeName}) ConfluentBaseConfig;\r\n");
             }
         }
 

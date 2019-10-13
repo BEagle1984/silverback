@@ -24,7 +24,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         private readonly TestSubscriber _testSubscriber;
         private readonly IInboundConnector _connector;
         private readonly TestBroker _broker;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IServiceProvider _scopedServiceProvider;
 
         public OffsetStoredInboundConnectorTests()
@@ -42,12 +41,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             services.AddScoped<IOffsetStore, InMemoryOffsetStore>();
 
-            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-            _broker = (TestBroker)_serviceProvider.GetService<IBroker>();
-            _connector = new OffsetStoredInboundConnector(_broker, _serviceProvider, new NullLogger<OffsetStoredInboundConnector>(),
+            IServiceProvider serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+            _broker = (TestBroker)serviceProvider.GetService<IBroker>();
+            _connector = new OffsetStoredInboundConnector(_broker, serviceProvider, new NullLogger<OffsetStoredInboundConnector>(),
                 new MessageLogger());
 
-            _scopedServiceProvider = _serviceProvider.CreateScope().ServiceProvider;
+            _scopedServiceProvider = serviceProvider.CreateScope().ServiceProvider;
 
             InMemoryOffsetStore.Clear();
         }

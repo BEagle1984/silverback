@@ -12,7 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Domain
 {
-    public abstract class EventSourcingDomainEntity<TKey> : EventSourcingDomainEntity<TKey, object>, IEventSourcingAggregate<TKey>
+    public abstract class EventSourcingDomainEntity<TKey> : EventSourcingDomainEntity<TKey, object>
     {
         protected EventSourcingDomainEntity()
         {

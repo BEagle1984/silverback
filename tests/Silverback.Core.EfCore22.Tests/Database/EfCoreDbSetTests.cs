@@ -106,6 +106,7 @@ namespace Silverback.Tests.Core.EFCore22.Database
 
         public void Dispose()
         {
+            _dbContext?.Dispose();
             _dbInitializer?.Dispose();
         }
     }

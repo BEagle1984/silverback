@@ -14,8 +14,8 @@ namespace Silverback.Messaging.Broker
             Headers = headers;
         }
 
-        public byte[] Message { get; private set; }
+        public byte[] Message { get; }
 
-        public IEnumerable<MessageHeader> Headers { get; private set; }
+        public IEnumerable<MessageHeader> Headers { get; }
     }
 }

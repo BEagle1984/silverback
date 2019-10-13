@@ -27,14 +27,18 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
             var headers = new MessageHeaderCollection();
             var serializedMessage = _serializer.Serialize(message, headers);
-            var outboundMessage = new OutboundMessage(message, headers, new TestProducerEndpoint("test")
-            {
-                Chunk = new ChunkSettings
+            var outboundMessage =
+                new OutboundMessage(message, headers,
+                    new TestProducerEndpoint("test")
+                    {
+                        Chunk = new ChunkSettings
+                        {
+                            Size = 500
+                        }
+                    })
                 {
-                    Size = 500
-                }
-            });
-            outboundMessage.RawContent = serializedMessage;
+                    RawContent = serializedMessage
+                };
 
             var chunks = ChunkProducer.ChunkIfNeeded(outboundMessage);
 
@@ -56,14 +60,18 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
 
             var serializedMessage = _serializer.Serialize(message, headers);
-            var outboundMessage = new OutboundMessage(message, headers, new TestProducerEndpoint("test")
-            {
-                Chunk = new ChunkSettings
+            var outboundMessage =
+                new OutboundMessage(message, headers,
+                    new TestProducerEndpoint("test")
+                    {
+                        Chunk = new ChunkSettings
+                        {
+                            Size = 500
+                        }
+                    })
                 {
-                    Size = 500
-                }
-            });
-            outboundMessage.RawContent = serializedMessage;
+                    RawContent = serializedMessage
+                };
 
             var chunks = ChunkProducer.ChunkIfNeeded(outboundMessage);
 

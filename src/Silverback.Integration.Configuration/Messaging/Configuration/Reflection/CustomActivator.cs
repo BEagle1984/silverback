@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Configuration.Reflection
         }
 
         public T Activate<T>(string typeName, IConfigurationSection configSection) =>
-            Activate<T>(configSection, new[] { typeName });
+            Activate<T>(configSection, typeName);
 
         public T Activate<T>(IConfigurationSection configSection, params string[] typeNames)
         {
@@ -52,7 +52,7 @@ namespace Silverback.Messaging.Configuration.Reflection
                 throw new SilverbackConfigurationException(
                     $"Couldn't activate type {type.FullName}: " +
                     $"unable to find a value for the constructor parameter '{parameter.Name}' " +
-                    $"neither in the configuration nor in the registered services.");
+                    "neither in the configuration nor in the registered services.");
             }
 
             return value;

@@ -9,7 +9,7 @@ namespace Silverback.Tests.Core.TestTypes
 {
     public class ParallelTestingUtil
     {
-        private int _lastStep = 0;
+        private int _lastStep;
         public List<int> Steps { get; } = new List<int>();
 
         public void DoWork()

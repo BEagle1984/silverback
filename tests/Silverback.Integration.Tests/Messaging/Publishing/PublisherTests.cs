@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
 {
     /// <summary>
     /// The purpose of this class is to ensure that the publisher is still working when
-    /// the broker subsribers are added.
+    /// the broker subscribers are added.
     /// </summary>
     public class PublisherTests
     {

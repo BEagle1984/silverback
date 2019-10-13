@@ -34,6 +34,7 @@ namespace Silverback.Background
                 $"Starting background service {GetType().FullName}. Waiting for lock '{_distributedLockSettings.ResourceName}'...");
 
             // Run another task to avoid deadlocks
+            // ReSharper disable once MethodSupportsCancellation
             return Task.Run(async () =>
             {
                 try

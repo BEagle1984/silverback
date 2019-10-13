@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+// ReSharper disable InconsistentNaming
 namespace Silverback.Messaging.Serialization
 {
     public enum MessageEncoding

@@ -64,7 +64,7 @@ namespace Silverback.Messaging.Broker
 
             InitInnerConsumer();
 
-            Task.Run(Consume, _cancellationTokenSource.Token);
+            Task.Run(Consume);
         }
 
         public void StopConsuming()

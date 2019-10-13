@@ -151,6 +151,7 @@ namespace Silverback.Tests.Core.EFCore30
 
         public void Dispose()
         {
+            _dbContext?.Dispose();
             _connection?.Dispose();
         }
     }

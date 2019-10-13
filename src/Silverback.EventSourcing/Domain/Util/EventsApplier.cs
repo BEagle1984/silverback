@@ -36,7 +36,7 @@ namespace Silverback.Domain.Util
         {
             try
             {
-                var parametersCount = methodInfo.GetParameters().Count();
+                var parametersCount = methodInfo.GetParameters().Length;
 
                 switch (parametersCount)
                 {

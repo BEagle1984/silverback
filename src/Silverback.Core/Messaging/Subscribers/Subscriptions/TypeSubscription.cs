@@ -23,11 +23,10 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
         public Type SubscribedType { get; }
 
         public IEnumerable<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
-            _subscribedMethods ?? (_subscribedMethods =
-                serviceProvider
-                    .GetServices(SubscribedType)
-                    .SelectMany(GetSubscribedMethods)
-                    .ToList());
+            _subscribedMethods ??= serviceProvider
+                .GetServices(SubscribedType)
+                .SelectMany(GetSubscribedMethods)
+                .ToList();
 
         private IEnumerable<SubscribedMethod> GetSubscribedMethods(object subscriber)
         {

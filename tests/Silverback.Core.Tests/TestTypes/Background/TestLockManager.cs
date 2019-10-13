@@ -13,7 +13,7 @@ namespace Silverback.Tests.Core.TestTypes.Background
     {
         private readonly List<string> _locks = new List<string>();
 
-        public int Heartbeats { get; set; } = 0;
+        public int Heartbeats { get; set; }
 
         public Task<DistributedLock> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default) =>
             Acquire(settings.ResourceName, settings.AcquireTimeout, settings.AcquireRetryInterval);

@@ -451,8 +451,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
             _builder.Received(1).AddInbound(
                 Arg.Any<KafkaConsumerEndpoint>(),
                 typeof(LoggedInboundConnector),
-                Arg.Is<Func<ErrorPolicyBuilder, IErrorPolicy>>(f => f.Invoke(null) == null),
-                null);
+                Arg.Is<Func<ErrorPolicyBuilder, IErrorPolicy>>(f => f.Invoke(null) == null));
         }
 
         [Fact]

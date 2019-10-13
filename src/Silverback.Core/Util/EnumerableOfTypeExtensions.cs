@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Silverback.Util
 {
-    // TOOD: Test
+    // TODO: Test
     internal static class EnumerableOfTypeExtensions
     {
         public static IEnumerable<object> OfType(this IEnumerable<object> source, Type type) =>

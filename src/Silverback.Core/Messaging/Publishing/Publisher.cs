@@ -106,9 +106,9 @@ namespace Silverback.Messaging.Publishing
 
 
         private SubscribedMethodInvoker GetMethodInvoker() =>
-            _methodInvoker ?? (_methodInvoker = _serviceProvider.GetRequiredService<SubscribedMethodInvoker>());
+            _methodInvoker ??= _serviceProvider.GetRequiredService<SubscribedMethodInvoker>();
 
         private SubscribedMethodsLoader GetMethodsLoader() =>
-            _methodsLoader ?? (_methodsLoader = _serviceProvider.GetRequiredService<SubscribedMethodsLoader>());
+            _methodsLoader ??= _serviceProvider.GetRequiredService<SubscribedMethodsLoader>();
     }
 }

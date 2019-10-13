@@ -174,7 +174,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = GetServiceProvider(services => services
                 .AddSilverback()
-                .AddTransientSubscriber<TestSubscriber>(_ => new TestSubscriber()));
+                .AddTransientSubscriber(_ => new TestSubscriber()));
 
             using var scope = serviceProvider.CreateScope();
             serviceProvider = scope.ServiceProvider;
@@ -334,7 +334,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = GetServiceProvider(services => services
                 .AddSilverback()
-                .AddScopedSubscriber<TestSubscriber>(_ => new TestSubscriber()));
+                .AddScopedSubscriber(_ => new TestSubscriber()));
 
             using var scope = serviceProvider.CreateScope();
             serviceProvider = scope.ServiceProvider;
@@ -494,7 +494,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = GetServiceProvider(services => services
                 .AddSilverback()
-                .AddSingletonSubscriber<TestSubscriber>(_ => new TestSubscriber()));
+                .AddSingletonSubscriber(_ => new TestSubscriber()));
 
             using var scope = serviceProvider.CreateScope();
             serviceProvider = scope.ServiceProvider;
@@ -572,7 +572,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = GetServiceProvider(services => services
                 .AddSilverback()
-                .AddSingletonSubscriber<TestSubscriber>(new TestSubscriber()));
+                .AddSingletonSubscriber(new TestSubscriber()));
 
             using var scope = serviceProvider.CreateScope();
             serviceProvider = scope.ServiceProvider;

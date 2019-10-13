@@ -12,12 +12,13 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void Add_SomeHeaders_HeadersAdded()
         {
-            var collection = new MessageHeaderCollection();
-
-            collection.Add("one", "1");
-            collection.Add("two", "2");
-            collection.Add(new MessageHeader("three", "3"));
-
+            var collection = new MessageHeaderCollection
+            {
+                {"one", "1"},
+                {"two", "2"},
+                {"three", "3"}
+            };
+            
             collection.Should().BeEquivalentTo(
                 new MessageHeader("one", "1"),
                 new MessageHeader("two", "2"),
@@ -27,9 +28,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void AddOrReplace_ExistingHeader_ValueReplaced()
         {
-            var collection = new MessageHeaderCollection();
-            collection.Add("one", "1");
-            collection.Add("two", "2");
+            var collection = new MessageHeaderCollection
+            {
+                {"one", "1"}, 
+                {"two", "2"}
+            };
 
             collection.AddOrReplace("one", "1(2)");
 
@@ -42,9 +45,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void AddOrReplace_NewHeader_HeaderAdded()
         {
-            var collection = new MessageHeaderCollection();
-            collection.Add("one", "1");
-            collection.Add("two", "2");
+            var collection = new MessageHeaderCollection
+            {
+                {"one", "1"}, 
+                {"two", "2"}
+            };
 
             collection.AddOrReplace("three", "3");
 

@@ -14,28 +14,28 @@ namespace Silverback.Tests.Core.Util
         [Fact]
         public void IsAsync_ReturnsTrue_IfAsyncWithTask()
         {
-            MethodInfo methodInfo = GetType().GetMethod(nameof(AsyncWithTask), BindingFlags.Static | BindingFlags.NonPublic); ;
+            var methodInfo = GetType().GetMethod(nameof(AsyncWithTask), BindingFlags.Static | BindingFlags.NonPublic);
             methodInfo.ReturnsTask().Should().BeTrue();
         }
 
         [Fact]
         public void IsAsync_ReturnsFalse_IfAsyncWithoutTask()
         {
-            MethodInfo methodInfo = GetType().GetMethod(nameof(AsyncWithoutTask), BindingFlags.Static | BindingFlags.NonPublic); ;
+            var methodInfo = GetType().GetMethod(nameof(AsyncWithoutTask), BindingFlags.Static | BindingFlags.NonPublic);
             methodInfo.ReturnsTask().Should().BeFalse();
         }
 
         [Fact]
         public void IsAsync_ReturnsFalse_IfNotAsyncWithVoid()
         {
-            MethodInfo methodInfo = GetType().GetMethod(nameof(NotAsyncWithVoid), BindingFlags.Static | BindingFlags.NonPublic); ;
+            var methodInfo = GetType().GetMethod(nameof(NotAsyncWithVoid), BindingFlags.Static | BindingFlags.NonPublic);
             methodInfo.ReturnsTask().Should().BeFalse();
         }
 
         [Fact]
-        public void ReturnsTaskc_ReturnsTrue_IfNotAsyncWithTask()
+        public void ReturnsTask_ReturnsTrue_IfNotAsyncWithTask()
         {
-            MethodInfo methodInfo = GetType().GetMethod(nameof(NotAsyncWithTask), BindingFlags.Static | BindingFlags.NonPublic); ;
+            var methodInfo = GetType().GetMethod(nameof(NotAsyncWithTask), BindingFlags.Static | BindingFlags.NonPublic);
             methodInfo.ReturnsTask().Should().BeTrue();
         }
 

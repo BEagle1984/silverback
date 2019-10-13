@@ -10,7 +10,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
     <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8</LangVersion>
     <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 

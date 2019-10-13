@@ -7,7 +7,7 @@ using Silverback.Messaging.Configuration;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static partial class SilverbackBuilderExtensions
+    public static class SilverbackBuilderExtensions
     {
         /// <summary>
         /// Adds the <see cref="IDistributedLockManager"/> implementation and uses the specified DbContext to
