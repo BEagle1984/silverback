@@ -50,12 +50,19 @@ namespace Silverback.Messaging.Broker
 
                 var deliveryReport = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage);
 
+                if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)
+                {
+                    CheckPersistenceStatus(deliveryReport);
+                }
+
                 return new KafkaOffset(deliveryReport.TopicPartitionOffset);
             }
-            catch (Confluent.Kafka.KafkaException)
+            catch (Confluent.Kafka.KafkaException ex)
             {
+                // Disposing and re-creating the producer will maybe fix the issue
                 DisposeInnerProducer();
-                throw;
+
+                throw new ProduceException("Error occurred producing the message. See inner exception for details.", ex);
             }
         }
 
@@ -67,6 +74,32 @@ namespace Silverback.Messaging.Broker
             _logger.LogTrace("Creating Confluent.Kafka.Producer...");
 
             return new Confluent.Kafka.ProducerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig).Build();
+        }
+
+        private void CheckPersistenceStatus(Confluent.Kafka.DeliveryResult<byte[], byte[]> deliveryReport)
+        {
+            switch (deliveryReport.Status)
+            {
+                case Confluent.Kafka.PersistenceStatus.PossiblyPersisted
+                    when Endpoint.Configuration.ThrowIfNotAcknowledged:
+                {
+                    throw new ProduceException(
+                        "The message was transmitted to broker, but no acknowledgement was received.");
+                }
+                case Confluent.Kafka.PersistenceStatus.PossiblyPersisted:
+                {
+                    _logger.LogWarning(
+                        "The message was transmitted to broker, but no acknowledgement was received.");
+                    break;
+                }
+                case Confluent.Kafka.PersistenceStatus.NotPersisted:
+                {
+                    throw new ProduceException(
+                        "The message was never transmitted to the broker, " +
+                        "or failed with an error indicating it was not written " +
+                        "to the log.'");
+                }
+            }
         }
 
         private void DisposeInnerProducer()

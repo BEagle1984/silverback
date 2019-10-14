@@ -9,8 +9,41 @@ namespace Silverback.Messaging
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public sealed class KafkaProducerConfig : ConfluentProducerConfigProxy, IEquatable<KafkaProducerConfig>
     {
+        private const bool KafkaDefaultEnableDeliveryReports = true;
+
+        /// <summary>
+        /// Gets a boolean value indicating whether delivery reports are enabled according
+        /// to the explicit configuration and Kafka defaults.
+        /// </summary>
+        public bool AreDeliveryReportsEnabled => EnableDeliveryReports ?? KafkaDefaultEnableDeliveryReports;
+
+        /// <summary>
+        /// Gets a boolean value indicating whether the persistence status will be returned
+        /// as part of the delivery reports according to the explicit configuration
+        /// and Kafka defaults.
+        /// </summary>
+        internal bool ArePersistenceStatusReportsEnabled =>
+            AreDeliveryReportsEnabled &&
+            (string.IsNullOrEmpty(DeliveryReportFields) ||
+             DeliveryReportFields == "all" ||
+             DeliveryReportFields.Contains("status"));
+
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether an exception must be thrown
+        /// by the producer if the persistence is not acknowledge by the broker.
+        /// </summary>
+        public bool ThrowIfNotAcknowledged { get; set; } = true;
+
         public void Validate()
         {
+            if (ThrowIfNotAcknowledged && !ArePersistenceStatusReportsEnabled)
+            {
+                throw new EndpointConfigurationException(
+                    "Configuration.ThrowIfNotAcknowledged cannot be set to true delivery reports are not " +
+                    "enabled and the status field isn't included. " +
+                    "Set Configuration.EnableDeliveryReports and Configuration.DeliveryReportFields" +
+                    "accordingly or set Configuration.ThrowIfNotAcknowledged to false.");
+            }
         }
 
         #region IEquatable
