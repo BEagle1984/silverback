@@ -1,6 +1,7 @@
 ﻿$repositoryLocation = "."
 [bool]$global:clearCache = $FALSE
 [bool]$global:build = $TRUE
+[bool]$global:buildSolution = $TRUE
 $global:buildConfiguration = "Release"
 
 # function Check-Location()
@@ -35,21 +36,25 @@ function Check-Args([string[]]$argsArray)
         {
            $global:build = $FALSE
         }
+        elseif ($arg -eq "--build-projects" -Or $arg -eq "-p")
+        {
+           $global:buildSolution = $FALSE
+        }
     }
 }
 
 function Get-Sources() 
 {
     $sources = 
-        ("Silverback.Core", ("..\src\Silverback.Core\bin\$global:buildConfiguration")),
-        ("Silverback.Core.EntityFrameworkCore", ("..\src\Silverback.Core.EFCore30\bin\$global:buildConfiguration", "..\src\Silverback.Core.EFCore22\bin\$global:buildConfiguration")),
-        ("Silverback.Core.Rx", ("..\src\Silverback.Core.Rx\bin\$global:buildConfiguration")),
-        ("Silverback.Core.Model", ("..\src\Silverback.Core.Model\bin\$global:buildConfiguration")),
-        ("Silverback.Integration", ("..\src\Silverback.Integration\bin\$global:buildConfiguration")),
-        ("Silverback.Integration.Kafka", ("..\src\Silverback.Integration.Kafka\bin\$global:buildConfiguration")),
-        ("Silverback.Integration.InMemory", ("..\src\Silverback.Integration.InMemory\bin\$global:buildConfiguration")),
-        ("Silverback.Integration.Configuration", ("..\src\Silverback.Integration.Configuration\bin\$global:buildConfiguration")),
-        ("Silverback.EventSourcing", ("..\src\Silverback.EventSourcing\bin\$global:buildConfiguration"))
+        ("Silverback.Core", ("..\src\Silverback.Core\")),
+        ("Silverback.Core.EntityFrameworkCore", ("..\src\Silverback.Core.EFCore30\", "..\src\Silverback.Core.EFCore22\")),
+        ("Silverback.Core.Rx", ("..\src\Silverback.Core.Rx\")),
+        ("Silverback.Core.Model", ("..\src\Silverback.Core.Model\")),
+        ("Silverback.Integration", ("..\src\Silverback.Integration\")),
+        ("Silverback.Integration.Kafka", ("..\src\Silverback.Integration.Kafka\")),
+        ("Silverback.Integration.InMemory", ("..\src\Silverback.Integration.InMemory\")),
+        ("Silverback.Integration.Configuration", ("..\src\Silverback.Integration.Configuration\")),
+        ("Silverback.EventSourcing", ("..\src\Silverback.EventSourcing\"))
 
     return $sources
 }
@@ -58,9 +63,28 @@ function Build()
 {
     if ($global:build)
     {
-        Write-Host "Building ($global:buildConfiguration)...`n" -ForegroundColor Yellow
-        dotnet build -c $global:buildConfiguration -v q ../Silverback.sln
-        Write-Host "" -ForegroundColor Yellow
+        if ($global:buildSolution)
+        {
+            Write-Host "Building ($global:buildConfiguration)...`n" -ForegroundColor Yellow
+            dotnet build -c $global:buildConfiguration -v q ../Silverback.sln
+            Write-Host "" -ForegroundColor Yellow
+        }
+        else
+        {
+            foreach ($source in Get-Sources)
+            {
+                $name = $source[0]
+
+                Write-Host "Building $name..."  -ForegroundColor Yellow
+
+                foreach ($sourcePath in $source[1])
+                {
+                    dotnet build -c $global:buildConfiguration $sourcePath/.
+                }
+
+                Write-Host ""
+            }
+        }
     }
 }
 
@@ -90,7 +114,7 @@ function Copy-All()
 
         foreach ($sourcePath in $source[1])
         {
-            $sourcePath = Join-Path $sourcePath "*.nupkg"
+            $sourcePath = Join-Path $sourcePath "bin\$global:buildConfiguration\*.nupkg"
 
             Copy-Item $sourcePath -Destination $destination -Recurse
         }
