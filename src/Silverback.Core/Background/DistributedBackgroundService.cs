@@ -19,19 +19,27 @@ namespace Silverback.Background
         private readonly DistributedLockSettings _distributedLockSettings;
         private readonly IDistributedLockManager _distributedLockManager;
         private readonly ILogger<DistributedBackgroundService> _logger;
-        private DistributedLock _acquiredLock;
+
+        protected DistributedLock Lock;
+
+        protected DistributedBackgroundService(IDistributedLockManager distributedLockManager, ILogger<DistributedBackgroundService> logger)
+            : this(null, distributedLockManager, logger)
+        {
+        }
 
         protected DistributedBackgroundService(DistributedLockSettings distributedLockSettings, IDistributedLockManager distributedLockManager, ILogger<DistributedBackgroundService> logger)
         {
-            _distributedLockSettings = distributedLockSettings ?? throw new ArgumentNullException(nameof(distributedLockSettings));
+            _distributedLockSettings = distributedLockSettings ?? new DistributedLockSettings();
             _distributedLockManager = distributedLockManager ?? throw new ArgumentNullException(nameof(distributedLockManager));
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            if (string.IsNullOrEmpty(_distributedLockSettings.ResourceName))
+                _distributedLockSettings.ResourceName = GetType().FullName;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation(
-                $"Starting background service {GetType().FullName}. Waiting for lock '{_distributedLockSettings.ResourceName}'...");
+            _logger.LogInformation($"Starting background service {GetType().FullName}...");
 
             // Run another task to avoid deadlocks
             // ReSharper disable once MethodSupportsCancellation
@@ -39,7 +47,7 @@ namespace Silverback.Background
             {
                 try
                 {
-                    _acquiredLock = await _distributedLockManager.Acquire(_distributedLockSettings, stoppingToken);
+                    Lock = await _distributedLockManager.Acquire(_distributedLockSettings, stoppingToken);
 
                     _logger.LogInformation($"Lock acquired, executing background service {GetType().FullName}.");
 
@@ -55,8 +63,8 @@ namespace Silverback.Background
                 }
                 finally
                 {
-                    if (_acquiredLock != null)
-                        await _acquiredLock.Release();
+                    if (Lock != null)
+                        await Lock.Release();
                 }
             });
         }

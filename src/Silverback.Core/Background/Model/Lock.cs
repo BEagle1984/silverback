@@ -11,6 +11,9 @@ namespace Silverback.Background.Model
         [Key, MaxLength(500)]
         public string Name { get; set; }
 
+        [MaxLength(200)]
+        public string UniqueId { get; set; }
+
         public DateTime Created { get; set; }
 
         public DateTime Heartbeat { get; set; }

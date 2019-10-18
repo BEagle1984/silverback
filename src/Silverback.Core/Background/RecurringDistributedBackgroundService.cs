@@ -13,6 +13,11 @@ namespace Silverback.Background
         private readonly TimeSpan _interval;
         private readonly ILogger<RecurringDistributedBackgroundService> _logger;
 
+        protected RecurringDistributedBackgroundService(TimeSpan interval, IDistributedLockManager distributedLockManager, ILogger<RecurringDistributedBackgroundService> logger)
+            : this(interval, null, distributedLockManager, logger)
+        {
+        }
+
         protected RecurringDistributedBackgroundService(TimeSpan interval, DistributedLockSettings distributedLockSettings, IDistributedLockManager distributedLockManager, ILogger<RecurringDistributedBackgroundService> logger)
             : base(distributedLockSettings, distributedLockManager, logger)
         {
@@ -24,6 +29,8 @@ namespace Silverback.Background
         {
             while (!stoppingToken.IsCancellationRequested)
             {
+                await Lock.Renew();
+
                 await ExecuteRecurringAsync(stoppingToken);
 
                 if (stoppingToken.IsCancellationRequested)
@@ -32,7 +39,7 @@ namespace Silverback.Background
                 await Sleep(stoppingToken);
             }
 
-            _logger.LogInformation("OutboundQueueWorker processing stopped.");
+            _logger.LogInformation($"Background service {GetType().FullName} stopped.");
         }
 
         protected abstract Task ExecuteRecurringAsync(CancellationToken stoppingToken);
@@ -42,7 +49,8 @@ namespace Silverback.Background
             if (_interval <= TimeSpan.Zero)
                 return;
 
-            _logger.LogTrace($"Sleeping for {_interval.TotalMilliseconds} milliseconds.");
+            _logger.LogTrace($"Background service {GetType().FullName} " +
+                             $"sleeping for {_interval.TotalMilliseconds} milliseconds.");
 
             await Task.Delay(_interval, stoppingToken);
         }

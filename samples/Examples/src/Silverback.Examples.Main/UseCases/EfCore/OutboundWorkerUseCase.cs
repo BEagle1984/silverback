@@ -33,11 +33,10 @@ namespace Silverback.Examples.Main.UseCases.EfCore
                 .WithConnectionTo<KafkaBroker>(options => options
                     .AddDbOutboundConnector()
                     .AddDbOutboundWorker(
-                        interval: TimeSpan.FromMilliseconds(100),
-                        distributedLockSettings: new DistributedLockSettings
-                        {
-                            AcquireRetryInterval = TimeSpan.FromSeconds(1)
-                        }));
+                        new DistributedLockSettings(
+                            acquireRetryInterval: TimeSpan.FromSeconds(1),
+                            heartbeatTimeout: TimeSpan.FromSeconds(10),
+                            heartbeatInterval: TimeSpan.FromSeconds(1))));
         }
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)

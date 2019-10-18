@@ -9,12 +9,14 @@ namespace Silverback.Background
 {
     public interface IDistributedLockManager
     {
+        Task<DistributedLock> Acquire(string resourceName, string uniqueId, TimeSpan? acquireTimeout = null, TimeSpan? acquireRetryInterval = null, TimeSpan? heartbeatTimeout = null, CancellationToken cancellationToken = default);
+
         Task<DistributedLock> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default);
+        
+        Task<bool> CheckIsStillLocked(DistributedLockSettings settings);
 
-        Task<DistributedLock> Acquire(string resourceName, TimeSpan? acquireTimeout = null, TimeSpan? acquireRetryInterval = null, TimeSpan? heartbeatTimeout = null, CancellationToken cancellationToken = default);
+        Task<bool> SendHeartbeat(DistributedLockSettings settings);
 
-        Task SendHeartbeat(string resourceName);
-
-        Task Release(string resourceName);
+        Task Release(DistributedLockSettings settings);
     }
 }

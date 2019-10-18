@@ -1,40 +1,85 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Background
 {
     public class DistributedLock
     {
-        private readonly string _name;
+        private readonly DistributedLockSettings _settings;
         private readonly IDistributedLockManager _lockManager;
-        private readonly int _heartbeatIntervalInMilliseconds;
-        private bool _released;
 
-        public DistributedLock(string name, IDistributedLockManager lockManager, int heartbeatIntervalInMilliseconds = 1000)
+        public DistributedLock(DistributedLockSettings settings, IDistributedLockManager lockManager)
         {
-            _name = name;
-            _lockManager = lockManager;
-            _heartbeatIntervalInMilliseconds = heartbeatIntervalInMilliseconds;
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _lockManager = lockManager ?? throw new ArgumentNullException(nameof(lockManager));
+
+            Status = DistributedLockStatus.Acquired;
 
             Task.Run(SendHeartbeats);
         }
 
-        private async Task SendHeartbeats()
-        {
-            while (!_released)
-            {
-                await _lockManager.SendHeartbeat(_name);
+        public DistributedLockStatus Status { get; private set; }
 
-                await Task.Delay(_heartbeatIntervalInMilliseconds);
+        /// <summary>
+        /// Ensures that the lock is still valid, otherwise tries to re-acquire it.
+        /// </summary>
+        /// <returns></returns>
+        public async Task Renew(CancellationToken cancellationToken = default)
+        {
+            if (Status == DistributedLockStatus.Released)
+                throw new InvalidOperationException("This lock was explicitly released and cannot be renewed.");
+
+            await CheckIsStillLocked();
+
+            if (Status == DistributedLockStatus.Acquired)
+            {
+                await _lockManager.SendHeartbeat(_settings);
+            }
+            else
+            {
+                await _lockManager.Acquire(_settings, cancellationToken);
+                Status = DistributedLockStatus.Acquired;
             }
         }
 
         public async Task Release()
         {
-            _released = true;
-            await _lockManager.Release(_name);
+            Status = DistributedLockStatus.Released;
+            await _lockManager.Release(_settings);
+        }
+
+        private async Task CheckIsStillLocked()
+        {
+            if (Status != DistributedLockStatus.Acquired)
+                return;
+
+            if (!await _lockManager.CheckIsStillLocked(_settings))
+                Status = DistributedLockStatus.Lost;
+        }
+
+        private async Task SendHeartbeats()
+        {
+            var failedHeartbeats = 0;
+
+            while (Status != DistributedLockStatus.Released)
+            {
+                if (Status == DistributedLockStatus.Acquired)
+                {
+                    failedHeartbeats =
+                        !await _lockManager.SendHeartbeat(_settings)
+                            ? failedHeartbeats + 1
+                            : 0;
+                      
+                    if (failedHeartbeats >= _settings.FailedHeartbeatsThreshold)
+                        await CheckIsStillLocked();
+                }
+
+                await Task.Delay(_settings.HeartbeatInterval);
+            }
         }
     }
 }

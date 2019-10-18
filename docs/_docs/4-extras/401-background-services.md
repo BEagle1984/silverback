@@ -18,13 +18,9 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly IMyService _myService;
 
-        public OutboundQueueWorkerService(IMyService _myService, IDistributedLockManager distributedLockManager, ILogger<OutboundQueueWorkerService> logger)
+        public MyBackroundService(IMyService _myService, IDistributedLockManager distributedLockManager, ILogger<OutboundQueueWorkerService> logger)
             : base(
                 TimeSpan.FromMinutes(5), // interval
-                new DistributedLockSettings
-                {
-                    AcquireRetryInterval = TimeSpan.FromMinutes(5)
-                }, 
                 distributedLockManager, logger)
         {
         }
@@ -34,3 +30,6 @@ namespace Silverback.Messaging.Connectors
     }
 }
 ```
+
+**Note:** A `DistributedLockSettings` object can be passed to the constructor of the base class to customize lock timeout, heartbeat interval, etc.
+{: .notice--info}

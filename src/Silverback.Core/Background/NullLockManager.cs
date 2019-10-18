@@ -12,11 +12,18 @@ namespace Silverback.Background
         public Task<DistributedLock> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default) =>
             Task.FromResult<DistributedLock>(null);
 
-        public Task<DistributedLock> Acquire(string resourceName, TimeSpan? acquireTimeout = null, TimeSpan? acquireRetryInterval = null, TimeSpan? heartbeatTimeout = null, CancellationToken cancellationToken = default) =>
+        public Task<DistributedLock> Acquire(string resourceName, string uniqueId, TimeSpan? acquireTimeout = null,
+            TimeSpan? acquireRetryInterval = null, TimeSpan? heartbeatTimeout = null,
+            CancellationToken cancellationToken = default) =>
             Task.FromResult<DistributedLock>(null);
 
-        public Task SendHeartbeat(string resourceName) => Task.CompletedTask;
+        public Task<bool> CheckIsStillLocked(DistributedLockSettings settings) => 
+            Task.FromResult(true);
 
-        public Task Release(string resourceName) => Task.CompletedTask;
+        public Task<bool> SendHeartbeat(DistributedLockSettings settings) =>
+            Task.FromResult(true);
+
+        public Task Release(DistributedLockSettings settings) =>
+            Task.CompletedTask;
     }
 }

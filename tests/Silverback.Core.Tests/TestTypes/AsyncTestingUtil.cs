@@ -9,7 +9,7 @@ namespace Silverback.Tests.Core.TestTypes
 {
     public static class AsyncTestingUtil
     {
-        public static void Wait(Func<bool> breakCondition, int timeoutInMilliseconds = 1000)
+        public static void Wait(Func<bool> breakCondition, int timeoutInMilliseconds = 2000)
         {
             const int sleep = 10;
             for (int i = 0; i < timeoutInMilliseconds; i += sleep)
@@ -21,7 +21,7 @@ namespace Silverback.Tests.Core.TestTypes
             }
         }
 
-        public static async Task WaitAsync(Func<bool> breakCondition, int timeoutInMilliseconds = 1000)
+        public static async Task WaitAsync(Func<bool> breakCondition, int timeoutInMilliseconds = 2000)
         {
             const int sleep = 10;
             for (int i = 0; i < timeoutInMilliseconds; i = i + sleep)

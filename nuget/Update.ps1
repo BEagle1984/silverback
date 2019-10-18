@@ -1,7 +1,7 @@
 ﻿$repositoryLocation = "."
 [bool]$global:clearCache = $FALSE
 [bool]$global:build = $TRUE
-[bool]$global:buildSolution = $TRUE
+[bool]$global:buildSolution = $FALSE
 $global:buildConfiguration = "Release"
 
 # function Check-Location()
@@ -36,9 +36,9 @@ function Check-Args([string[]]$argsArray)
         {
            $global:build = $FALSE
         }
-        elseif ($arg -eq "--build-projects" -Or $arg -eq "-p")
+        elseif ($arg -eq "--build-solution" -Or $arg -eq "-s")
         {
-           $global:buildSolution = $FALSE
+           $global:buildSolution = $TRUE
         }
     }
 }
@@ -79,7 +79,7 @@ function Build()
 
                 foreach ($sourcePath in $source[1])
                 {
-                    dotnet build -c $global:buildConfiguration $sourcePath/.
+                    dotnet build -c $global:buildConfiguration -v q $sourcePath/.
                 }
 
                 Write-Host ""

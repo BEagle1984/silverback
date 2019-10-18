@@ -5,17 +5,32 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Silverback.Background;
 using Silverback.Tests.Core.TestTypes;
-using Silverback.Tests.Core.TestTypes.Background;
+using Silverback.Tests.Core.TestTypes.Database;
 using Xunit;
 
 namespace Silverback.Tests.Core.Background
 {
     public class DistributedBackgroundServiceTests
     {
+        private readonly IServiceProvider _servicesProvider;
+
+        public DistributedBackgroundServiceTests()
+        {
+            var services = new ServiceCollection();
+
+            services.AddDbContext<TestDbContext>(opt => opt
+                .UseInMemoryDatabase("TestDbContext"));
+            services.AddSilverback().UseDbContext<TestDbContext>();
+
+            _servicesProvider = services.BuildServiceProvider();
+        }
+
         [Fact]
         public async Task StartAsync_NullLockManager_TaskIsExecuted()
         {
@@ -34,7 +49,7 @@ namespace Silverback.Tests.Core.Background
         }
 
         [Fact]
-        public async Task StartAsync_WithTestLockManager_TaskIsExecuted()
+        public async Task StartAsync_WithDbLockManager_TaskIsExecuted()
         {
             bool executed = false;
 
@@ -42,7 +57,7 @@ namespace Silverback.Tests.Core.Background
             {
                 executed = true;
                 return Task.CompletedTask;
-            }, new TestLockManager());
+            }, new DbDistributedLockManager(_servicesProvider));
             await service.StartAsync(CancellationToken.None);
 
             AsyncTestingUtil.Wait(() => executed);
@@ -51,9 +66,8 @@ namespace Silverback.Tests.Core.Background
         }
         
         [Fact]
-        public async Task StartAsync_WithTestLockManager_OnlyOneTaskIsExecutedSimultaneously()
+        public async Task StartAsync_WithDbLockManager_OnlyOneTaskIsExecutedSimultaneously()
         {
-            var lockManager = new TestLockManager();
             bool executed1 = false;
             bool executed2 = false;
 
@@ -65,7 +79,7 @@ namespace Silverback.Tests.Core.Background
                     {
                         await Task.Delay(10, stoppingToken);
                     }
-                }, lockManager);
+                }, new DbDistributedLockManager(_servicesProvider));
             await service1.StartAsync(CancellationToken.None);
 
             await AsyncTestingUtil.WaitAsync(() => executed1);
@@ -74,7 +88,7 @@ namespace Silverback.Tests.Core.Background
             {
                 executed2 = true;
                 return Task.CompletedTask;
-            }, lockManager);
+            }, new DbDistributedLockManager(_servicesProvider));
             await service2.StartAsync(CancellationToken.None);
 
             await AsyncTestingUtil.WaitAsync(() => executed2, 100);
@@ -92,8 +106,17 @@ namespace Silverback.Tests.Core.Background
         {
             private readonly Func<CancellationToken, Task> _task;
 
-            public TestDistributedBackgroundService(Func<CancellationToken, Task> task, IDistributedLockManager lockManager) 
-                : base(new DistributedLockSettings("test"), lockManager, Substitute.For<ILogger<DistributedBackgroundService>>())
+            public TestDistributedBackgroundService(Func<CancellationToken, Task> task, IDistributedLockManager lockManager)
+                : base(
+                    new DistributedLockSettings(
+                        "test",
+                        "unique",
+                        TimeSpan.FromMilliseconds(500),
+                        TimeSpan.FromMilliseconds(100),
+                        TimeSpan.FromSeconds(1),
+                        TimeSpan.FromMilliseconds(100)),
+                    lockManager,
+                    Substitute.For<ILogger<DistributedBackgroundService>>())
             {
                 _task = task;
             }
