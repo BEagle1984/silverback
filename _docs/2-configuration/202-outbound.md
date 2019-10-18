@@ -67,16 +67,9 @@ public void ConfigureServices(IServiceCollection services)
             // Use a deferred outbound connector
             .AddDbOutboundConnector()
 
-            // Add the IHostedService processing the outbound queue:
-            // -> sleep 500 milliseconds when the queue is empty
-            // -> check if the lock is gone every 1 second
-            //    (= the running instance was stopped and we need to take over)
-            .AddDbOutboundWorker(
-                interval: TimeSpan.FromMilliseconds(500),
-                distributedLockSettings: new DistributedLockSettings
-                {
-                    AcquireRetryInterval = TimeSpan.FromSeconds(1)
-                });
+            // Add the IHostedService processing the outbound queue
+            // (overloads are available to specify custom interval, lock timeout, etc.)
+            .AddDbOutboundWorker();
     ...
 }
 ```
