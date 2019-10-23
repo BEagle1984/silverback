@@ -45,10 +45,6 @@ You can configuratively specify the error handling policies for each inbound con
 * Move: move the message to another topic/queue (or re-enqueue it at the end of the same one)
 We believe that combining this three policies you will be able to implement pretty much all use cases.
 
-## External configuration
-
-The message broker connected endpoints can be configured through a fluent API or externalized through `Microsoft.Extensions.Configuration`, supporting of course all usual providers (appsettings.json, environment variables, ...).
-
 ## Modularity
 
-Silverback is splitted into multiple packages to allow you to depend only on the parts you plan to use.
+Silverback is modular and shipped in multiple nuget packages to allow you to depend only on the parts you want to use.

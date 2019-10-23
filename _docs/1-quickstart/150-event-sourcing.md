@@ -3,7 +3,7 @@ title: Event Sourcing
 permalink: /docs/quickstart/event-sourcing
 ---
 
-_Silverback.EventSourcing_ is a basic implementation of an event store that perfectly integrates within the Silverback ecosystem. At the moment only a version using Entity Framework Core is implemented, allowing to store the events in a database but other implementations may be added in the future.
+`Silverback.EventSourcing` is a basic implementation of an event store that perfectly integrates within the Silverback ecosystem. At the moment only a version using Entity Framework Core is implemented, allowing to store the events in a database but other implementations may be added in the future.
 
 ## Configuration
 

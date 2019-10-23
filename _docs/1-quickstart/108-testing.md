@@ -4,7 +4,7 @@ permalink: /docs/quickstart/testing
 toc: false
 ---
 
-The _Silverback.Integration.InMemory_ package allows to perform end-to-end tests without having to integrate with a real message broker.
+The `Silverback.Integration.InMemory` package allows to perform end-to-end tests without having to integrate with a real message broker.
 
 Here an example of an xUnit test build leveraging the `InMemoryBroker`.
 

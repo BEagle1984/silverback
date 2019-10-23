@@ -3,11 +3,11 @@ title: Model
 permalink: /docs/quickstart/model
 ---
 
-A hierarchy of interfaces is available in _Silverback.Core.Model_ to help specify the meaning of each message and produce in better, cleaner and more readable code.
+A hierarchy of interfaces is available in `Silverback.Core.Model` to help specify the meaning of each message and produce in better, cleaner and more readable code.
 
 The _internal messages_ are being sent through the internal in-memory bus and don't leave the service scope, while the _integration messages_ are those messages exchanged between different microservices, through a message broker like Apache Kafka.
 
-Event though strongly suggested, it's not mandatory to use the proposed hierarchy from _Silverback.Core.Model_ and everything can be achieved using POCO classes as messages and using the generic `IPublisher` to publish them.
+Event though strongly suggested, it's not mandatory to use the proposed hierarchy from `Silverback.Core.Model` and everything can be achieved using POCO classes as messages and using the generic `IPublisher` to publish them.
 
 In the following chapters you will find an overview of the different message types and their meaning.
 
