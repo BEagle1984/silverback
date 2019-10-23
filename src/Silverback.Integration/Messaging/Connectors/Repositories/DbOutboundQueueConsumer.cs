@@ -22,6 +22,20 @@ namespace Silverback.Messaging.Connectors.Repositories
             _removeProduced = removeProduced;
         }
 
+        public async Task<TimeSpan> GetMaxAge()
+        {
+            var oldestCreated = await DbSet.AsQueryable()
+                .Where(m => m.Produced == null)
+                .Select(m => m.Created)
+                .DefaultIfEmpty(default)
+                .MinAsync();
+
+            if (oldestCreated == default)
+                return TimeSpan.Zero;
+
+            return DateTime.UtcNow - oldestCreated;
+        }
+
         public async Task<IEnumerable<QueuedMessage>> Dequeue(int count) =>
             (await DbSet.AsQueryable()
                     .Where(m => m.Produced == null)

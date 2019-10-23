@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace Silverback.Messaging.Connectors
 {
-    public class OutboundRoutingConfiguration : IOutboundRoutingConfiguration // TODO: Unit test this?
+    public class OutboundRoutingConfiguration : IOutboundRoutingConfiguration
     {
         private readonly List<OutboundRoute> _routes = new List<OutboundRoute>();
 
-        public IReadOnlyCollection<OutboundRoute> Routes => _routes.AsReadOnly();
+        public IEnumerable<IOutboundRoute> Routes => _routes.AsReadOnly();
 
         public IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint, Type outboundConnectorType) =>
             Add(typeof(TMessage), endpoint, outboundConnectorType);
@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        public IEnumerable<IOutboundRoute> GetRoutes(object message) =>
+        public IEnumerable<IOutboundRoute> GetRoutesForMessage(object message) =>
             _routes.Where(r => r.MessageType.IsInstanceOfType(message)).ToList();
 
         public class OutboundRoute : IOutboundRoute

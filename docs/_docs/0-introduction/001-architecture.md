@@ -71,7 +71,11 @@ Includes a mocked message broker to be used for testing only.
 
 [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Configuration.svg)](https://www.nuget.org/packages/Silverback.Integration.Configuration/)
 **Silverback.Integration.Configuration**<br/>
-Contains the logic to read the broker endpoints configuration from the IConfiguration from Microsoft.Extensions.Configuration (appsettings.json, environment variables, etc.)
+Contains the logic to read the broker endpoints configuration from the IConfiguration from `Microsoft.Extensions.Configuration` (appsettings.json, environment variables, etc.)
+
+[![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.HealthChecks.svg)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks/)
+**Silverback.Integration**<br/>
+Contains the extensions for `Microsoft.Extensions.Diagnostics.HealthChecks` to monitor the connection to the message broker.
 
 ### Event Sourcing
 

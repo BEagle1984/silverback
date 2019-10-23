@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ namespace Silverback.Messaging.Connectors.Repositories
     public interface IOutboundQueueConsumer
     {
         Task<int> GetLength();
+
+        Task<TimeSpan> GetMaxAge();
 
         Task<IEnumerable<QueuedMessage>> Dequeue(int count);
 

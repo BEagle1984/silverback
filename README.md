@@ -12,7 +12,6 @@ Its main features are:
 * Apache Kafka integration
 * DDD, Domain Events and Transactional Messaging
 * Built-in error handling policies for consumers
-* Configuration through fluent API or external configuration (`Microsoft.Extensions.Configuration`)
 
 ## Installation
 
@@ -28,6 +27,8 @@ Silverback.Integration | [![NuGet](http://img.shields.io/nuget/v/Silverback.Inte
 Silverback.Integration.EntityFrameworkCore | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Integration.EntityFrameworkCore/)
 Silverback.Integration.Kafka | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Kafka.svg)](https://www.nuget.org/packages/Silverback.Integration.Kafka/)
 Silverback.Integration.Configuration | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Configuration.svg)](https://www.nuget.org/packages/Silverback.Integration.Configuration/)
+Silverback.Integration.HealthChecks | [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.HealthChecks.svg)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks/)
+
 
 ## Usage
 

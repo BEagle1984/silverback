@@ -11,10 +11,12 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public interface IOutboundRoutingConfiguration
     {
+        IEnumerable<IOutboundRoute> Routes { get; }
+
         IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null);
 
         IOutboundRoutingConfiguration Add(Type messageType, IEndpoint endpoint, Type outboundConnectorType = null);
 
-        IEnumerable<IOutboundRoute> GetRoutes(object message);
+        IEnumerable<IOutboundRoute> GetRoutesForMessage(object message);
     }
 }

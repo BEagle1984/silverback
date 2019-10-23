@@ -3,11 +3,11 @@ title: Connecting to a Message Broker
 permalink: /docs/quickstart/message-broker
 ---
 
-To connect Silverback to a message broker we need a reference to _Silverback.Integration_, plus the concrete implementation (_Silverback.Integration.Kafka_ in this example). We can then add the broker to the DI and configure the connected endpoints. 
+To connect Silverback to a message broker we need a reference to `Silverback.Integration`, plus the concrete implementation (`Silverback.Integration.Kafka` in this example). We can then add the broker to the DI and configure the connected endpoints. 
 
 ## Sample configuration
 
-The following example is very simple and there are of course many more configurations and possibilities. Some more details are given in the dedicated _Broker Configuration Explained_ section.
+The following example is very simple and there are of course many more configurations and possibilities. Some more details are given in the dedicated [Broker Configuration Explained]({ site.baseurl }}/docs/configuration/endpoint) section.
 
 ```c#
 public void ConfigureServices(IServiceCollection services)
@@ -68,3 +68,37 @@ public void Configure(BusConfigurator busConfigurator)
 
     appLifetime.ApplicationStopping.Register(() => broker.Disconnect());
 ```
+
+## Health Monitoring
+
+The `Silverback.Integration.HealthChecks` package contains some extensions for `Microsoft.Extensions.Diagnostics.HealthChecks` that can be used to monitor the connection to the message broker.
+
+Currently two checks exists:
+* `AddOutboundEndpointsCheck`: Adds an health check that sends a ping message to all the outbound endpoints.
+* `AddOutboundQueueCheck`: Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.
+
+The usage is very simple, you just need to configure the checks in the Startup.cs, as shown in the following example.
+
+```c#
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        ...
+        services.AddHealthChecks()
+            .AddOutboundEndpointsCheck()
+            .AddOutboundQueueCheck();
+        ...
+    }
+
+    public void Configure(IApplicationBuilder app)
+    {
+        ...
+        app.UseHealthChecks("/health");
+        ...
+    }
+}
+```
+
+
+

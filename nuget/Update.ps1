@@ -48,12 +48,13 @@ function Get-Sources()
     $sources = 
         ("Silverback.Core", ("..\src\Silverback.Core\")),
         ("Silverback.Core.EntityFrameworkCore", ("..\src\Silverback.Core.EFCore30\", "..\src\Silverback.Core.EFCore22\")),
-        ("Silverback.Core.Rx", ("..\src\Silverback.Core.Rx\")),
         ("Silverback.Core.Model", ("..\src\Silverback.Core.Model\")),
+        ("Silverback.Core.Rx", ("..\src\Silverback.Core.Rx\")),
         ("Silverback.Integration", ("..\src\Silverback.Integration\")),
-        ("Silverback.Integration.Kafka", ("..\src\Silverback.Integration.Kafka\")),
-        ("Silverback.Integration.InMemory", ("..\src\Silverback.Integration.InMemory\")),
         ("Silverback.Integration.Configuration", ("..\src\Silverback.Integration.Configuration\")),
+        ("Silverback.Integration.HealthChecks", ("..\src\Silverback.Integration.HealthChecks\")),
+        ("Silverback.Integration.InMemory", ("..\src\Silverback.Integration.InMemory\")),
+        ("Silverback.Integration.Kafka", ("..\src\Silverback.Integration.Kafka\")),
         ("Silverback.EventSourcing", ("..\src\Silverback.EventSourcing\"))
 
     return $sources

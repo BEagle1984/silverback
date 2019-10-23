@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018-2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,6 +44,8 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         #region Reader
 
+        public Task<TimeSpan> GetMaxAge() => Task.FromResult(TimeSpan.Zero);
+        
         public Task<IEnumerable<QueuedMessage>> Dequeue(int count) => Task.FromResult(Entries.Take(count).ToArray().AsEnumerable());
 
         public Task Retry(QueuedMessage queuedMessage)

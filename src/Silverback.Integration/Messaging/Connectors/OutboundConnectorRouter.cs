@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Connectors
         [Subscribe]
         public Task OnMessageReceived(object message) =>
             _publisher.PublishAsync(
-                _routing.GetRoutes(message)
+                _routing.GetRoutesForMessage(message)
                     .Select(route => WrapOutboundMessage(message, route)));
 
         private IOutboundMessage WrapOutboundMessage(object message, IOutboundRoute route)

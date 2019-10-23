@@ -6,7 +6,7 @@ toc: false
 
 One of the core features of Silverback is the ability to publish the domain events as part of the `DbContext` save changes transaction in order to guarantee consistency.
 
-The _Silverback.Core.Model_ package contains a sample implementation of a `DomainEntity` but you can also implement you own type. 
+The `Silverback.Core.Model` package contains a sample implementation of a `DomainEntity` but you can also implement you own type. 
 
 **Important!** In case of a custom implementation the only constraint is that you must implement the `IMessagesSource` interface in order for Silverback to be able to access the associated events.
 {: .notice--warning}
@@ -53,7 +53,7 @@ namespace Sample
 
 The `AddEvent<TEvent>()` method adds the domain event to the events collection, to be published when the entity is saved.
 
-To enable this mechanism we just need to override the various `SaveChanges` methods to plug-in the `DbContextEventsPublisher` contained in the _Silverback.Core.EntityFrameworkCore_ package.
+To enable this mechanism we just need to override the various `SaveChanges` methods to plug-in the `DbContextEventsPublisher` contained in the `Silverback.Core.EntityFrameworkCore` package.
 
 ```c#
 public class MyDbContext : DbContext
