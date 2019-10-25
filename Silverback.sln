@@ -53,7 +53,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Core.EFCore22.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Core.EFCore30.Tests", "tests\Silverback.Core.EfCore30.Tests\Silverback.Core.EFCore30.Tests.csproj", "{B610078C-57F5-40F3-9095-6626BC135800}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.HealthChecks", "src\Silverback.Integration.HealthChecks\Silverback.Integration.HealthChecks.csproj", "{E26E63E2-9571-46A5-88EB-C2CA40052022}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.HealthChecks", "src\Silverback.Integration.HealthChecks\Silverback.Integration.HealthChecks.csproj", "{E26E63E2-9571-46A5-88EB-C2CA40052022}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C177137F-A084-4178-805F-890F0A175A56}"
+	ProjectSection(SolutionItems) = preProject
+		azure-pipelines.yml = azure-pipelines.yml
+		Directory.Build.props = Directory.Build.props
+		nuget.config = nuget.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,18 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Silverback</RootNamespace>
+    <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
+    <RootNamespace>$(RootNamespace)</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0-rc1</Version>
-    <Authors>BEagle1984</Authors>
-    <Company>BEagle1984</Company>
-    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package contains an implementation of an event store that perfectly integrates within the Silverback ecosystem</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
-    <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
-    <LangVersion>8</LangVersion>
-    <NoWarn>1701;1702;CS1591</NoWarn>
+    <Version>$(BaseVersion)</Version>
+    <Authors>$(Authors)</Authors>
+    <Company>$(Company)</Company>
+    <Description>$(Description)
+This package contains an implementation of an event store that perfectly integrates within the Silverback ecosystem</Description>
+    <PackageLicenseExpression>$(License)</PackageLicenseExpression>
+    <Copyright>$(Copyright)</Copyright>
+    <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
+    <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
+    <RepositoryType>$(RepositoryType)</RepositoryType>
+    <PackageIconUrl>$(IconUrl)</PackageIconUrl>
+    <Tags>$(Tags)</Tags>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <NoWarn>$(NoWarn)</NoWarn>
+    <PackageId>Silverback.EventSourcing</PackageId>
+    <Product>Silverback.EventSourcing</Product>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,6 +32,6 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Silverback.Core" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
   </ItemGroup>
 </Project>

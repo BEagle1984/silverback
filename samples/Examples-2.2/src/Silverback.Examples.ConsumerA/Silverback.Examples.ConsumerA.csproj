@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <LangVersion>8</LangVersion>
+    <LangVersion>$(LangVersion)</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,12 +21,17 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="Silverback.Core" Version="1.0.0-rc1" />
-    <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="2.2.0-rc1" />
-    <PackageReference Include="Silverback.Core.Model" Version="1.0.0-rc1" />
-    <PackageReference Include="Silverback.Core.Rx" Version="1.0.0-rc1" />
-    <PackageReference Include="Silverback.Integration" Version="1.0.0-rc1" />
-    <PackageReference Include="Silverback.Integration.Kafka" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)"
+ />
+    <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="2.2.0$(VersionSuffix)" />
+    <PackageReference Include="Silverback.Core.Model" Version="$(BaseVersion)"
+ />
+    <PackageReference Include="Silverback.Core.Rx" Version="$(BaseVersion)"
+ />
+    <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)"
+ />
+    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)"
+ />
   </ItemGroup>
 
   <ItemGroup>

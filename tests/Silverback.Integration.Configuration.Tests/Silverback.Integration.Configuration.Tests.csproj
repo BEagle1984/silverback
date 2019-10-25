@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <RootNamespace>Silverback.Tests.Integration.Configuration</RootNamespace>
-    <LangVersion>8</LangVersion>
+    <LangVersion>$(LangVersion)</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +22,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Silverback.Integration.Kafka" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)"
+ />
   </ItemGroup>
 
   <ItemGroup>

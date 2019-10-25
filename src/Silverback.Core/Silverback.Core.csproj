@@ -1,24 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Silverback</RootNamespace>
-    <Authors>BEagle1984</Authors>
-    <Company></Company>
-    <Product></Product>
-    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This core package provides a very simple in-memory message bus.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
-    <Copyright></Copyright>
+    <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
+    <RootNamespace>$(RootNamespace)</RootNamespace>
+    <Authors>$(Authors)</Authors>
+    <Company>$(Company)</Company>
+    <Description>$(Description)
+This core package provides a very simple in-memory message bus.</Description>
+    <PackageLicenseExpression>$(License)</PackageLicenseExpression>
+    <Copyright>$(Copyright)</Copyright>
+    <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
+    <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
+    <RepositoryType>$(RepositoryType)</RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0-rc1</Version>
+    <Version>$(BaseVersion)</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <RepositoryUrl></RepositoryUrl>
-    <RepositoryType></RepositoryType>
-    <PackageTags></PackageTags>
-    <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
-    <LangVersion>8</LangVersion>
-    <NoWarn>1701;1702;CS1591</NoWarn>
+    <PackageIconUrl>$(IconUrl)</PackageIconUrl>
+    <Tags>$(Tags)</Tags>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <NoWarn>$(NoWarn)</NoWarn>
+    <PackageId>Silverback.Core</PackageId>
+    <Product>Silverback.Core</Product>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

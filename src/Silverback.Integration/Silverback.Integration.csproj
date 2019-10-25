@@ -1,21 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Silverback</RootNamespace>
+    <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
+    <RootNamespace>$(RootNamespace)</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>BEagle1984</Authors>
-    <Company></Company>
-    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package contains the message broker and connectors abstractions.</Description>
-    <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
-    <RepositoryUrl></RepositoryUrl>
-    <RepositoryType />
-    <Version>1.0.0-rc1</Version>
+    <Authors>$(Authors)</Authors>
+    <Company>$(Company)</Company>
+    <Description>$(Description)
+This package contains the message broker and connectors abstractions.</Description>
+    <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
+    <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
+    <RepositoryType>$(RepositoryType)</RepositoryType>
+    <Version>$(BaseVersion)</Version>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
-    <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
-    <LangVersion>8</LangVersion>
-    <NoWarn>1701;1702;CS1591</NoWarn>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>$(IconUrl)</PackageIconUrl>
+    <Tags>$(Tags)</Tags>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <NoWarn>$(NoWarn)</NoWarn>
+    <PackageLicenseExpression>$(License)</PackageLicenseExpression>
+    <Copyright>$(Copyright)</Copyright>
+    <PackageId>Silverback.Integration</PackageId>
+    <Product>Silverback.Integration</Product>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -29,7 +34,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Silverback.Core" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
     <PackageReference Include="System.Memory" Version="4.5.2" />
   </ItemGroup>
 </Project>

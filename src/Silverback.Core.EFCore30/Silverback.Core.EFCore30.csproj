@@ -3,19 +3,23 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>BEagle1984</Authors>
-    <Company></Company>
-    <Description>Silverback is a simple framework to build reactive, event-driven, microservices. This package adds the ability to use a DbContext as store and fire the domain events as part of the EntityFramework's SaveChanges transaction.</Description>
-    <PackageProjectUrl>https://github.com/BEagle1984/silverback/</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>3.0.0-rc1</Version>
-    <RootNamespace>Silverback</RootNamespace>
-    <PackageIconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</PackageIconUrl>
-    <LangVersion>8</LangVersion>
-    <NoWarn>1701;1702;CS1591</NoWarn>
+    <Authors>$(Authors)</Authors>
+    <Company>$(Company)</Company>
+    <Description>$(Description)
+This package adds the ability to use a DbContext as store and fire the domain events as part of the EntityFramework's SaveChanges transaction.</Description>
+    <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
+    <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
+    <RepositoryType>$(RepositoryType)</RepositoryType>
+    <PackageLicenseExpression>$(License)</PackageLicenseExpression>
+    <Copyright>$(Copyright)</Copyright>
+    <Version>3.0.0$(VersionSuffix)</Version>
+    <RootNamespace>$(RootNamespace)</RootNamespace>
+    <PackageIconUrl>$(IconUrl)</PackageIconUrl>
+    <Tags>$(Tags)</Tags>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <NoWarn>$(NoWarn)</NoWarn>
     <PackageId>Silverback.Core.EntityFrameworkCore</PackageId>
     <Product>Silverback.Core.EntityFrameworkCore</Product>
-    <AssemblyName>Silverback.Core.EFCore30</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,7 +32,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
-    <PackageReference Include="Silverback.Core" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
   </ItemGroup>
 
 </Project>

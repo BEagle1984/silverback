@@ -20,7 +20,8 @@
     <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
     <PackageReference Include="NLog" Version="4.6.4" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.5.1" />
-    <PackageReference Include="Silverback.Core" Version="1.0.0-rc1" />
+    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)"
+ />
   </ItemGroup>
 
   <ItemGroup>
