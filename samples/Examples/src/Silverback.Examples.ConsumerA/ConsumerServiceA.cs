@@ -64,7 +64,7 @@ namespace Silverback.Examples.ConsumerA
                                 {
                                     Configuration = new KafkaProducerConfig
                                     {
-                                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                                        BootstrapServers = "PLAINTEXT://localhost:9092",
                                         ClientId = "consumer-service-a"
                                     }
                                 })
@@ -74,7 +74,7 @@ namespace Silverback.Examples.ConsumerA
                                 {
                                     Configuration = new KafkaProducerConfig
                                     {
-                                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                                        BootstrapServers = "PLAINTEXT://localhost:9092",
                                         ClientId = "consumer-service-a"
                                     }
                                 })
@@ -116,7 +116,7 @@ namespace Silverback.Examples.ConsumerA
             {
                 Configuration = new KafkaConsumerConfig
                 {
-                    BootstrapServers = "PLAINTEXT://kafka:9092",
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
                     ClientId = "consumer-service-a",
                     GroupId = "silverback-examples"
                 }

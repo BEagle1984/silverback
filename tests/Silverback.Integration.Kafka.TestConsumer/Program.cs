@@ -40,7 +40,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
             {
                 Configuration = new KafkaConsumerConfig
                 {
-                    BootstrapServers = "PLAINTEXT://kafka:9092",
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
                     GroupId = "silverback-consumer",
                     AutoOffsetReset = Confluent.Kafka.AutoOffsetReset.Earliest
                 }
