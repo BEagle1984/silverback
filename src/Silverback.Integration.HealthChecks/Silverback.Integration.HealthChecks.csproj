@@ -14,7 +14,7 @@ This package contains the extensions for Microsoft.Extensions.Diagnostics.Health
     <Version>$(BaseVersion)</Version>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
-    <Tags>$(Tags)</Tags>
+    <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
     <NoWarn>$(NoWarn)</NoWarn>
     <PackageLicenseExpression>$(License)</PackageLicenseExpression>

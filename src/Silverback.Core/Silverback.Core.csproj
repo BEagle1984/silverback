@@ -16,7 +16,7 @@ This core package provides a very simple in-memory message bus.</Description>
     <Version>$(BaseVersion)</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
-    <Tags>$(Tags)</Tags>
+    <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
     <NoWarn>$(NoWarn)</NoWarn>
     <PackageId>Silverback.Core</PackageId>

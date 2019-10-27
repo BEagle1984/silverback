@@ -15,7 +15,7 @@ This package contains an implementation of an event store that perfectly integra
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
-    <Tags>$(Tags)</Tags>
+    <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
     <NoWarn>$(NoWarn)</NoWarn>
     <PackageId>Silverback.EventSourcing</PackageId>

@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>$(LangVersion)</LangVersion>
+    <RootNamespace>Silverback.Examples.Main</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,19 +15,13 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)"
- />
+    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="3.0.0$(VersionSuffix)" />
-    <PackageReference Include="Silverback.Core.Model" Version="$(BaseVersion)"
- />
-    <PackageReference Include="Silverback.Core.Rx" Version="$(BaseVersion)"
- />
-    <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)"
- />
-    <PackageReference Include="Silverback.Integration.Configuration" Version="$(BaseVersion)"
- />
-    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)"
- />
+    <PackageReference Include="Silverback.Core.Model" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Core.Rx" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Integration.Configuration" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />

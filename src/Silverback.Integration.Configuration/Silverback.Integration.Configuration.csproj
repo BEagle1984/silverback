@@ -15,7 +15,7 @@ This package contains the logic to read the broker endpoints configuration from 
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
-    <Tags>$(Tags)</Tags>
+    <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
     <NoWarn>$(NoWarn)</NoWarn>
     <PackageId>Silverback.Integration.Configuration</PackageId>

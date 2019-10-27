@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2019 Sergio Aquilini
+﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 // Note: These proxies are generated using Silverback.Integration.Kafka.ConfigClassGenerator

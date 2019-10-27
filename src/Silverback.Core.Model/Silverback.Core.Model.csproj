@@ -15,7 +15,7 @@ This package contains the default messages interfaces and domain entity implemen
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
-    <Tags>$(Tags)</Tags>
+    <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
     <NoWarn>$(NoWarn)</NoWarn>
     <PackageId>Silverback.Core.Model</PackageId>

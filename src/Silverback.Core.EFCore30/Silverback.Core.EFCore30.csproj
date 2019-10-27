@@ -15,7 +15,7 @@ This package adds the ability to use a DbContext as store and fire the domain ev
     <Version>3.0.0$(VersionSuffix)</Version>
     <RootNamespace>$(RootNamespace)</RootNamespace>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
-    <Tags>$(Tags)</Tags>
+    <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
     <NoWarn>$(NoWarn)</NoWarn>
     <PackageId>Silverback.Core.EntityFrameworkCore</PackageId>
