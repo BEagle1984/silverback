@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Confluent.Kafka;
 using Silverback.Messaging.Proxies;
 
 namespace Silverback.Messaging
@@ -24,7 +25,7 @@ namespace Silverback.Messaging
         public bool IsAutoCommitEnabled => EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled;
 
         /// <summary>
-        /// Specifies whether the consumer has to be automatically restarted if a KafkaException occurs while
+        /// Specifies whether the consumer has to be automatically restarted if a <see cref="KafkaException"/>
         /// polling/consuming.
         /// </summary>
         public bool EnableAutoRecovery { get; set; } = true;

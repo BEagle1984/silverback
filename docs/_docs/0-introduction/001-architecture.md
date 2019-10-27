@@ -49,11 +49,11 @@ It contains some interfaces that will help organize the messages and write clean
 
 [![NuGet](http://img.shields.io/nuget/v/Silverback.Core.EntityFrameworkCore.svg)](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore/)
 **Silverback.Core.EntityFrameworkCore**<br/>
-Adds the ability to fire the domain events as part of the SaveChanges transaction.
+It contains the storage implementation to integrate Silverback with Entity Framework Core. It is needed to use a `DbContext` as storage for (temporary) data and to fire the domain events as part of the `SaveChanges` transaction.
 
 [![NuGet](http://img.shields.io/nuget/v/Silverback.Core.Rx.svg)](https://www.nuget.org/packages/Silverback.Core.Rx/)
 **Silverback.Core.Rx**<br/>
-Adds the possibility to create an Rx Observable over the internal bus.
+Adds the possibility to create an Rx `Observable` over the internal bus.
 
 ### Integration
 
@@ -63,7 +63,7 @@ Contains the message broker and connectors abstraction. Inbound and outbound con
 
 [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Kafka.svg)](https://www.nuget.org/packages/Silverback.Integration.Kafka/)
 **Silverback.Integration.Kafka**<br/>
-An implementation of Silverback.Integration for the popular Apache Kafka message broker. It internally uses the Confluent.Kafka client.
+An implementation of `Silverback.Integration` for the popular Apache Kafka message broker. It internally uses the `Confluent.Kafka` client.
 
 [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.InMemory.svg)](https://www.nuget.org/packages/Silverback.Integration.InMemory/)
 **Silverback.Integration.InMemory**<br/>
@@ -71,7 +71,7 @@ Includes a mocked message broker to be used for testing only.
 
 [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.Configuration.svg)](https://www.nuget.org/packages/Silverback.Integration.Configuration/)
 **Silverback.Integration.Configuration**<br/>
-Contains the logic to read the broker endpoints configuration from the IConfiguration from `Microsoft.Extensions.Configuration` (appsettings.json, environment variables, etc.)
+Contains the logic to read the broker endpoints configuration from the `IConfiguration` from `Microsoft.Extensions.Configuration` (appsettings.json, environment variables, etc.)
 
 [![NuGet](http://img.shields.io/nuget/v/Silverback.Integration.HealthChecks.svg)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks/)
 **Silverback.Integration**<br/>

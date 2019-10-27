@@ -6,7 +6,7 @@
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>
     <Description>$(Description)
-This package adds the ability to use a DbContext as store and fire the domain events as part of the EntityFramework's SaveChanges transaction.</Description>
+This package It contains the storage implementation to integrate Silverback with Entity Framework Core. It is needed to use a DbContext as storage for (temporary) data and to fire the domain events as part of the SaveChanges transaction.</Description>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>

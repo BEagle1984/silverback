@@ -37,7 +37,8 @@ namespace Silverback.Messaging.Serialization
 
     public class JsonMessageSerializer : IMessageSerializer
     {
-        [DefaultValue("UTF8")] public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
+        [DefaultValue("UTF8")]
+        public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
 
         public JsonSerializerSettings Settings { get; } = new JsonSerializerSettings
         {

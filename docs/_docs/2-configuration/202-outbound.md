@@ -24,6 +24,7 @@ public void ConfigureServices(IServiceCollection services)
             .AddOutboundConnector());
     ...
 }
+
 public void Configure(BusConfigurator busConfigurator)
 {
     busConfigurator
@@ -33,6 +34,8 @@ public void Configure(BusConfigurator busConfigurator)
                 {
                     ...
                 }));
+    ...
+}
 ```
 
 ### Deferred
