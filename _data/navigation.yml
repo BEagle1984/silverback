@@ -63,6 +63,8 @@ docs:
         url: /docs/configuration/same-process
   - title: Advanced Topics
     children:
+      - title: Serialization
+        url: /docs/advanced/serialization
       - title: Observable Bus
         url: /docs/advanced/rx
       - title: Kafka Partitioning
@@ -71,8 +73,6 @@ docs:
         url: /docs/advanced/broker
       - title: Chunking
         url: /docs/advanced/chunking
-      - title: Custom Serializer
-        url: /docs/advanced/custom-serializer
       - title: Message Keys
         url: /docs/advanced/message-keys
       - title: IInboundMessage

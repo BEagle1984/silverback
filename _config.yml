@@ -14,6 +14,7 @@ footer:
 
 #remote_theme: "mmistakes/minimal-mistakes@4.14.1"
 
+minimal_mistakes_skin: "silverback"
 baseurl: /silverback
 
 paginate: 5

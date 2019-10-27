@@ -15,12 +15,12 @@ Used for outbound endpoints, exposes the following properties:
 
 Property | Description
 :-- | :--
-Name | The name of the topic. This is set in the constructor.
-Serializer | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. (see also [Custom Serializer]({{ site.baseurl }}/docs/advanced/chunking))
-Configuration | An instance of `KafkaProducerConfig`, that's just an extension of `Confluent.Kafka.ProducerConfig`.
-Configuration.BootstrapServers, ...| All properties inherited from `Confluent.Kafka.ProducerConfig`. See [confluent-kafka-dotnet project](https://github.com/confluentinc/confluent-kafka-dotnet) for details.
-Configuration.ThrowIfNotAcknowledged | When set to `true` an exception will be thrown in the producer if no acknowledge is received by the broker (`Status=PersistenceStatus.PossiblyPersisted`). The default is `true`.
-Chunk | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
+`Name` | The name of the topic. This is set in the constructor.
+`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. (see also [Custom Serializer]({{ site.baseurl }}/docs/advanced/chunking))
+`Configuration` | An instance of `KafkaProducerConfig`, that's just an extension of `Confluent.Kafka.ProducerConfig`.
+`Configuration.BootstrapServers`, ...| All properties inherited from `Confluent.Kafka.ProducerConfig`. See [confluent-kafka-dotnet project](https://github.com/confluentinc/confluent-kafka-dotnet) for details.
+`Configuration.ThrowIfNotAcknowledged` | When set to `true` an exception will be thrown in the producer if no acknowledge is received by the broker (`PersistenceStatus.PossiblyPersisted`). The default is `true`.
+`Chunk` | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
 
 ```c#
 new KafkaProducerEndpoint("silverback-examples-events")
@@ -39,11 +39,12 @@ Used for inbound endpoints, exposes the following properties:
 
 Property | Description
 :-- | :--
-Names | The name of the topics to be consumed. This is set in the constructor.
-Serializer | The `IMessageSerializer` to be used to serialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding.
-Configuration | An instance of `KafkaConsumerConfig`, that's just an extension of `Confluent.Kafka.ConsumerConfig`.
-Configuration.BootstrapServers, Configuration.EnableAutoCommit, ...| All properties inherited from `Confluent.Kafka.ConsumerConfig`. See [confluent-kafka-dotnet project](https://github.com/confluentinc/confluent-kafka-dotnet) for details.
-Configuration.CommitOffsetEach | When auto-commit is disable, defines the number of message processed before committing the offset to the server. The most reliable level is 1 but it reduces throughput.
+`Names` | The name of the topics to be consumed. This is set in the constructor.
+`Serializer` | The `IMessageSerializer` to be used to serialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding.
+`Configuration` | An instance of `KafkaConsumerConfig`, that's just an extension of `Confluent.Kafka.ConsumerConfig`.
+`Configuration.BootstrapServers`, `Configuration.GroupId`, ...| All properties inherited from `Confluent.Kafka.ConsumerConfig`. See [confluent-kafka-dotnet project](https://github.com/confluentinc/confluent-kafka-dotnet) for details.
+`Configuration.CommitOffsetEach` | When auto-commit is disable, defines the number of message processed before committing the offset to the server. The most reliable level is 1 but it reduces throughput.
+`EnableAutoRecovery` | When set to `true` the consumer will be automatically restarted if a `KafkaException` is thrown while polling/consuming. The default is `true`.
 
 ```c#
 new KafkaConsumerEndpoint("silverback-examples-events", "silverback-examples-something")

@@ -106,10 +106,10 @@ If an exceptions is thrown by the methods consuming the incoming messages (subsc
 
 Policy | Description
 :-- | :--
-Skip | This is the simplest policy: just ignore the message and go ahead.
-Retry | Define how many times and at which interval to retry to process the message. Be aware that this will block the consumer.
-Move | Used to re-publish the message to the specified endpoint, this policy is very flexible and allow quite a few scenarios: move to same topic to retry later on without blocking, move to a retry topic to delay the retry or move to a failed messages topic. The message can also be transformed, to allow adding useful information (e.g. source, error type, etc.) that will allow for better handling while reprocessing.
-Chain | Combine different policies, for example to move the message to a dead letter after some retries.
+`Skip` | This is the simplest policy: just ignore the message and go ahead.
+`Retry` | Define how many times and at which interval to retry to process the message. Be aware that this will block the consumer.
+`Move` | Used to re-publish the message to the specified endpoint, this policy is very flexible and allow quite a few scenarios: move to same topic to retry later on without blocking, move to a retry topic to delay the retry or move to a failed messages topic. The message can also be transformed, to allow adding useful information (e.g. source, error type, etc.) that will allow for better handling while reprocessing.
+`Chain` | Combine different policies, for example to move the message to a dead letter after some retries.
 
 ```c#
 public void Configure(BusConfigurator busConfigurator)
@@ -131,12 +131,12 @@ public void Configure(BusConfigurator busConfigurator)
 }
 ```
 
-**Important!** If the processing still fails after the last policy is applied the inbound connector will return the exception to the consumer, causing it to stop. A _Retry_ (with limited amount of attempts) alone is therefore not recommendend and it should be combined with _Skip_ or _Move_.
+**Important!** If the processing still fails after the last policy is applied the inbound connector will return the exception to the consumer, causing it to stop. A `Retry` (with limited amount of attempts) alone is therefore not recommendend and it should be combined with `Skip` or `Move`.
 {: .notice--warning}
 
 ### Retries
 
-_Retry_ and _Move_ policies can be used to retry over and over the same message. Use `MaxFailedAttempts` to limit the number of attempts.
+`Retry` and `Move` policies can be used to retry over and over the same message. Use `MaxFailedAttempts` to limit the number of attempts.
 
 ```c#
 policy.Chain(
@@ -147,7 +147,7 @@ policy.Chain(
 **Note:** A message can be moved to the same topic to simply be moved to the end of the queue.
 {: .notice--info}
 
-**Important!** The Retry policy will prevent the message broker to be polled for the entire comulative duration of the attempts and it could lead to timeouts. With Kafka you should for example set the _max.poll.interval.ms_ settings to an higher value.
+**Important!** The Retry policy will prevent the message broker to be polled for the entire comulative duration of the attempts and it could lead to timeouts. With Kafka you should for example set the `max.poll.interval.ms` settings to an higher value.
 {: .notice--warning}
 
 ### Apply rules
@@ -198,9 +198,9 @@ The inbound connector can be configured to process the messages in batches.
 
 Property | Description
 :-- | :--
-Batch.Size | The number of messages to be processed in batch. The default is 1.
-Batch.MaxWaitTime | The maximum amount of time to wait for the batch to be filled. After this time the batch will be processed even if the desired Size is not reached. Set it to `TimeSpan.MaxValue` to disable this feature. The default is `TimeSpan.MaxValue`.
-Batch.MaxDegreeOfParallelism | The maximum number of parallel threads used to process the messages in the batch. The default is 1.
+`Batch.Size` | The number of messages to be processed in batch. The default is 1.
+`Batch.MaxWaitTime` | The maximum amount of time to wait for the batch to be filled. After this time the batch will be processed even if the desired Size is not reached. Set it to `TimeSpan.MaxValue` to disable this feature. The default is `TimeSpan.MaxValue`.
+`Batch.MaxDegreeOfParallelism` | The maximum number of parallel threads used to process the messages in the batch. The default is 1.
 
 ```c#
 public void Configure(BusConfigurator busConfigurator)
@@ -230,8 +230,8 @@ Two additional events are published to the internal bus when batch processing:
 
 Event | Description
 :-- | :--
-BatchReadyEvent | Fired when the batch has been filled and is ready to be processed. This event can be subscribed to perform some operations before the messages are processed or to implement all sorts of custom logics, having access to the entire batch.
-BatchProcessedEvent | Fired after all messages have been successfully processed. It can tipically be used to commit the transaction.
+`BatchReadyEvent` | Fired when the batch has been filled and is ready to be processed. This event can be subscribed to perform some operations before the messages are processed or to implement all sorts of custom logics, having access to the entire batch.
+`BatchProcessedEvent` | Fired after all messages have been successfully processed. It can tipically be used to commit the transaction.
 
 The usage should be similar to the following example.
 
