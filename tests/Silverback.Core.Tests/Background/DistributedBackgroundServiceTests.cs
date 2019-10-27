@@ -65,7 +65,7 @@ namespace Silverback.Tests.Core.Background
             executed.Should().BeTrue();
         }
         
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public async Task StartAsync_WithDbLockManager_OnlyOneTaskIsExecutedSimultaneously()
         {
             bool executed1 = false;

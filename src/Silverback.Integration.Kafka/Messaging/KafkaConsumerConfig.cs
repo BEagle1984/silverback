@@ -25,8 +25,8 @@ namespace Silverback.Messaging
         public bool IsAutoCommitEnabled => EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled;
 
         /// <summary>
-        /// Specifies whether the consumer has to be automatically restarted if a <see cref="KafkaException"/>
-        /// polling/consuming.
+        /// Specifies whether the consumer has to be automatically restarted if a <see cref="KafkaException"/> is thrown
+        /// while polling/consuming.
         /// </summary>
         public bool EnableAutoRecovery { get; set; } = true;
 
