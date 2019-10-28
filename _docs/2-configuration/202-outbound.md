@@ -71,7 +71,8 @@ public void ConfigureServices(IServiceCollection services)
             .AddDbOutboundConnector()
 
             // Add the IHostedService processing the outbound queue
-            // (overloads are available to specify custom interval, lock timeout, etc.)
+            // (overloads are available to specify custom interval,
+            // lock timeout, etc.)
             .AddDbOutboundWorker();
     ...
 }
@@ -83,7 +84,8 @@ You can easily create another implementation targeting another kind of storage, 
 It is then suggested to create an extension method for the `BrokerOptionsBuilder` to register your own types.
 
 ```c#
-public static BrokerOptionsBuilder AddMyCustomOutboundConnector(this BrokerOptionsBuilder builder)
+public static BrokerOptionsBuilder AddMyCustomOutboundConnector(
+    this BrokerOptionsBuilder builder)
 {
     builder.AddOutboundConnector<DeferredOutboundConnector>();
     builder.Services.AddScoped<IOutboundQueueProducer, MyCustomQueueProducer>();
@@ -91,8 +93,10 @@ public static BrokerOptionsBuilder AddMyCustomOutboundConnector(this BrokerOptio
     return builder;
 }
 
-public static BrokerOptionsBuilder AddMyCustomOutboundWorker(this BrokerOptionsBuilder builder,
-    bool enforceMessageOrder = true, int readPackageSize = 100)
+public static BrokerOptionsBuilder AddMyCustomOutboundWorker(
+    this BrokerOptionsBuilder builder,
+    bool enforceMessageOrder = true, 
+    int readPackageSize = 100)
 {
     builder.AddOutboundWorker(enforceMessageOrder, readPackageSize);
     builder.Services.AddScoped<IOutboundQueueConsumer, MyCustomQueueConsumer>();

@@ -101,9 +101,20 @@ It can also receive an additional boolean parameter (`isReplaying`) that will le
 The events are just models inheriting from `EntityEvent` (or another custom class implementing `IEntityEvent`).
 
 ```c#
-public class NameChangedEvent : EntityEvent { public string NewName { get; set; } }
-public class AgeChangedEvent : EntityEvent { public int NewAge { get; set; } }
-public class PhoneNumberChangedEvent : EntityEvent { public string NewPhoneNumber { get; set; } }
+public class NameChangedEvent : EntityEvent 
+{ 
+    public string NewName { get; set; } 
+}
+
+public class AgeChangedEvent : EntityEvent 
+{ 
+    public int NewAge { get; set; } 
+}
+
+public class PhoneNumberChangedEvent : EntityEvent 
+{ 
+    public string NewPhoneNumber { get; set; } 
+}
 ```
 
 ### Event Store model
@@ -158,13 +169,16 @@ The repository must inherit from `DbContextEventStoreRepository` and the 4 gener
 The only thing left to implement is the mapping between the aggregate entity and the event store entity.
 
 ```c#
-public class PersonEventStoreRepository : DbContextEventStoreRepository<Person, int, PersonEventStore, PersonEvent>
+public class PersonEventStoreRepository
+    : DbContextEventStoreRepository<Person, int, PersonEventStore, PersonEvent>
 {
-    public PersonEventStoreRepository(DbContext dbContext) : base(dbContext)
+    public PersonEventStoreRepository(DbContext dbContext)
+        : base(dbContext)
     {
     }
 
-    protected override PersonEventStore GetNewEventStoreEntity(Person aggregateEntity) =>
+    protected override PersonEventStore GetNewEventStoreEntity(
+        Person aggregateEntity) =>
         new PersonEventStore
         {
             Id = aggregateEntity.Id,
@@ -181,7 +195,8 @@ Using the `EventStoreRepository` to store and retrieve aggregate entities is fai
 public class PersonService
 {
     private readonly MyDbContext _dbContext;
-    private readonly PersonEventStoreRepository _repository = new PersonEventStoreRepository(_dbContext);
+    private readonly PersonEventStoreRepository _repository =
+        new PersonEventStoreRepository(_dbContext);
 
     public async Task<Person> CreatePerson(string name, int age)
     {
@@ -195,7 +210,9 @@ public class PersonService
         return person;
     }
 
-    public async Task<Person> ChangePhoneNumber(int personId, string newPhoneNumber)
+    public async Task<Person> ChangePhoneNumber(
+        int personId,
+        string newPhoneNumber)
     {
         var person = repo.Get(p => p.Id == personId);
 
@@ -217,7 +234,9 @@ You may need to merge events coming from different sources and/or being received
 private void Apply(NameChangedEvent @event, bool isReplaying)
 {
     // Skip if a newer event exists
-    if (!isReplaying && Events.Any(e => e is NameChangedEvent && e.Timestamp > @event.Timestamp))
+    if (!isReplaying && Events.Any(e => 
+        e is NameChangedEvent &&
+        e.Timestamp > @event.Timestamp))
     {
         return;
     }

@@ -14,18 +14,23 @@ using Silverback.Background;
 
 namespace Silverback.Messaging.Connectors
 {
-    public class MyBackroundService : RecurringDistributedBackgroundService
+    public class MyBackroundService
+        : RecurringDistributedBackgroundService
     {
         private readonly IMyService _myService;
 
-        public MyBackroundService(IMyService _myService, IDistributedLockManager distributedLockManager, ILogger<OutboundQueueWorkerService> logger)
+        public MyBackroundService(
+            IMyService _myService, 
+            IDistributedLockManager distributedLockManager, 
+            ILogger<OutboundQueueWorkerService> logger)
             : base(
                 TimeSpan.FromMinutes(5), // interval
                 distributedLockManager, logger)
         {
         }
 
-        protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) => 
+        protected override Task ExecuteRecurringAsync(
+            CancellationToken stoppingToken) => 
             _myService.DoWork(stoppingToken);
     }
 }

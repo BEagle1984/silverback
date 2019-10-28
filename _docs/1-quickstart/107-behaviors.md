@@ -13,7 +13,9 @@ using Silverback.Messaging.Subscribers;
 
 public class ValidationBehavior : IBehavior
 {
-    public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
+    public async Task<IEnumerable<object>> Handle(
+        IEnumerable<object> messages, 
+        MessagesHandler next)
     {
         foreach (var validatedMessage in messages.OfType(IValidatedMessage))
         {
@@ -44,12 +46,18 @@ The behaviors can be quite useful to get and set the message headers for inbound
 ```c#
 public class CustomHeadersBehavior : IBehavior
 {
-    public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
+    public async Task<IEnumerable<object>> Handle(
+        IEnumerable<object> messages, 
+        MessagesHandler next)
     {
         foreach (var message in messages.OfType<IOutboundMessage>())
         {
-            message.Headers.Add("generated-by", "silverback");
-            message.Headers.Add("timestamp", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            message.Headers.Add(
+                "generated-by", 
+                "silverback");
+            message.Headers.Add(
+                "timestamp", 
+                DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
         }
 
         return await next(messages);
@@ -66,7 +74,9 @@ public class LogHeadersBehavior : IBehavior
         _logger = logger;
     }
 
-    public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
+    public async Task<IEnumerable<object>> Handle(
+        IEnumerable<object> messages, 
+        MessagesHandler next)
     {
         foreach (var message in messages.OfType<IInboundMessage>())
         {
@@ -74,7 +84,8 @@ public class LogHeadersBehavior : IBehavior
             {
                 _logger.LogInformation(
                     "Headers: {headers}",
-                    string.Join(", ", message.Headers.Select(h => $"{h.Key}={h.Value}")));
+                    string.Join(", ", 
+                        message.Headers.Select(h => $"{h.Key}={h.Value}")));
             }
         }
 
