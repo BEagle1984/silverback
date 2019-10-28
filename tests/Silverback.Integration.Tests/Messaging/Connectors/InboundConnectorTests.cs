@@ -61,7 +61,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_MessagesReceived()
         {
-            _connector.Bind(TestEndpoint.Default);
+            _connector.Bind(TestEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -78,7 +78,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         // Test for issue  #33: messages don't have to be registered with HandleMessagesOfType to be unwrapped and received
         public async Task Bind_PushUnhandledMessages_MessagesUnwrappedAndReceived()
         {
-            _connector.Bind(TestEndpoint.Default);
+            _connector.Bind(TestEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -92,7 +92,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_WrappedInboundMessagesReceived()
         {
-            _connector.Bind(TestEndpoint.Default);
+            _connector.Bind(TestEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -109,7 +109,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_HeadersReceivedWithInboundMessages()
         {
-            _connector.Bind(TestEndpoint.Default);
+            _connector.Bind(TestEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -130,7 +130,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_FailedAttemptsReceivedWithInboundMessages()
         {
-            _connector.Bind(TestEndpoint.Default);
+            _connector.Bind(TestEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -145,7 +145,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_MessagesReceived()
         {
-            _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
+            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new BatchSettings
                 {
@@ -171,7 +171,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInMultipleBatches_MessagesReceived()
         {
-            _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
+            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new BatchSettings
                 {
@@ -203,7 +203,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesToMultipleConsumers_MessagesReceived()
         {
-            _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
+            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Consumers = 5
             });
@@ -224,7 +224,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesToMultipleConsumersInBatch_MessagesReceived()
         {
-            _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
+            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new BatchSettings
                 {
@@ -264,7 +264,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessageChunks_FullMessagesReceived()
         {
-            _connector.Bind(TestEndpoint.Default);
+            _connector.Bind(TestEndpoint.GetDefault());
             _broker.Connect();
 
             var buffer = Convert.FromBase64String(
@@ -307,7 +307,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessageChunksInRandomOrder_FullMessagesReceived()
         {
-            _connector.Bind(TestEndpoint.Default);
+            _connector.Bind(TestEndpoint.GetDefault());
             _broker.Connect();
 
             var buffer = Convert.FromBase64String(
@@ -350,7 +350,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessageChunksWithDuplicates_FullMessagesReceived()
         {
-            _connector.Bind(TestEndpoint.Default);
+            _connector.Bind(TestEndpoint.GetDefault());
             _broker.Connect();
 
             var buffer = Convert.FromBase64String(
@@ -411,7 +411,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_Acknowledged()
         {
-            _connector.Bind(TestEndpoint.Default);
+            _connector.Bind(TestEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -427,7 +427,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_Acknowledged()
         {
-            _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
+            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new BatchSettings
                 {
@@ -453,7 +453,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInMultipleBatches_Acknowledged()
         {
-            _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
+            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new BatchSettings
                 {
@@ -484,7 +484,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesToMultipleConsumers_Acknowledged()
         {
-            _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
+            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Consumers = 5
             });
@@ -508,7 +508,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesToMultipleConsumersInBatch_Acknowledged()
         {
-            _connector.Bind(TestEndpoint.Default, settings: new InboundConnectorSettings
+            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new BatchSettings
                 {
@@ -552,7 +552,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithRetryErrorPolicy_RetriedAndReceived()
         {
             _testSubscriber.MustFailCount = 3;
-            _connector.Bind(TestEndpoint.Default, _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
+            _connector.Bind(TestEndpoint.GetDefault(), _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -631,7 +631,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithChainedErrorPolicy_RetriedAndMoved()
         {
             _testSubscriber.MustFailCount = 3;
-            _connector.Bind(TestEndpoint.Default, _errorPolicyBuilder.Chain(
+            _connector.Bind(TestEndpoint.GetDefault(), _errorPolicyBuilder.Chain(
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(1),
                 _errorPolicyBuilder.Move(new TestEndpoint("bad"))));
             _broker.Connect();
@@ -650,7 +650,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithChainedErrorPolicy_OneAndOnlyOneFailedAttemptsHeaderIsAdded()
         {
             _testSubscriber.MustFailCount = 3;
-            _connector.Bind(TestEndpoint.Default, _errorPolicyBuilder.Chain(
+            _connector.Bind(TestEndpoint.GetDefault(), _errorPolicyBuilder.Chain(
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(1),
                 _errorPolicyBuilder.Move(new TestEndpoint("bad"))));
             _broker.Connect();
@@ -667,7 +667,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithRetryErrorPolicy_RetriedAndReceivedInBatch()
         {
             _testSubscriber.MustFailCount = 3;
-            _connector.Bind(TestEndpoint.Default,
+            _connector.Bind(TestEndpoint.GetDefault(),
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(3),
                 new InboundConnectorSettings
                 {

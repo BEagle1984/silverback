@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public IMessageSerializer Serializer { get; set; } = new JsonMessageSerializer();
 
-        public static TestEndpoint Default = new TestEndpoint("test");
+        public static TestEndpoint GetDefault() => new TestEndpoint("test");
 
         #region IEquatable
 

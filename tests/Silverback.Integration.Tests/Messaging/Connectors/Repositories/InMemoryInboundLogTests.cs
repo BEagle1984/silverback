@@ -26,9 +26,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task AddTest()
         {
-            await _log.Add(new TestEventOne(), TestEndpoint.Default);
-            await _log.Add(new TestEventOne(), TestEndpoint.Default);
-            await _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.GetDefault());
+            await _log.Add(new TestEventOne(), TestEndpoint.GetDefault());
+            await _log.Add(new TestEventOne(), TestEndpoint.GetDefault());
 
             (await _log.GetLength()).Should().Be(0);
         }
@@ -36,9 +36,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task CommitTest()
         {
-            await _log.Add(new TestEventOne(), TestEndpoint.Default);
-            await _log.Add(new TestEventOne(), TestEndpoint.Default);
-            await _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.GetDefault());
+            await _log.Add(new TestEventOne(), TestEndpoint.GetDefault());
+            await _log.Add(new TestEventOne(), TestEndpoint.GetDefault());
 
             await _log.Commit();
 
@@ -48,9 +48,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task RollbackTest()
         {
-            await _log.Add(new TestEventOne(), TestEndpoint.Default);
-            await _log.Add(new TestEventOne(), TestEndpoint.Default);
-            await _log.Add(new TestEventOne(), TestEndpoint.Default);
+            await _log.Add(new TestEventOne(), TestEndpoint.GetDefault());
+            await _log.Add(new TestEventOne(), TestEndpoint.GetDefault());
+            await _log.Add(new TestEventOne(), TestEndpoint.GetDefault());
 
             await _log.Rollback();
 
@@ -61,12 +61,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         public async Task ExistsPositiveTest()
         {
             var messageId = Guid.NewGuid();
-            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            await _log.Add(new TestEventOne { Id = messageId }, TestEndpoint.Default);
-            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
+            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.GetDefault());
+            await _log.Add(new TestEventOne { Id = messageId }, TestEndpoint.GetDefault());
+            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.GetDefault());
             await _log.Commit();
 
-            var result = await _log.Exists(new TestEventOne{Id = messageId}, TestEndpoint.Default);
+            var result = await _log.Exists(new TestEventOne{Id = messageId}, TestEndpoint.GetDefault());
 
             result.Should().BeTrue();
         }
@@ -74,11 +74,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task ExistsNegativeTest()
         {
-            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
-            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
+            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.GetDefault());
+            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.GetDefault());
+            await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.GetDefault());
 
-            var result = await _log.Exists(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.Default);
+            var result = await _log.Exists(new TestEventOne { Id = Guid.NewGuid() }, TestEndpoint.GetDefault());
 
             result.Should().BeFalse();
         }

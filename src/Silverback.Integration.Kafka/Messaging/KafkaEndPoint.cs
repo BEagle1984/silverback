@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Newtonsoft.Json;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging
@@ -33,7 +34,9 @@ namespace Silverback.Messaging
 
         #region Equality
 
-        protected bool Equals(KafkaEndpoint other) => string.Equals(Name, other.Name, StringComparison.InvariantCulture) && Equals(Serializer, other.Serializer);
+        protected bool Equals(KafkaEndpoint other) => 
+            string.Equals(Name, other.Name, StringComparison.InvariantCulture) &&
+            Equals(GetJsonString(Serializer), GetJsonString(other.Serializer));
 
         public override bool Equals(object obj)
         {
@@ -43,6 +46,14 @@ namespace Silverback.Messaging
         }
 
         public override int GetHashCode()=> Name != null ? StringComparer.InvariantCulture.GetHashCode(Name) : 0;
+
+        private string GetJsonString(object obj) =>
+            JsonConvert.SerializeObject(
+                obj,
+                new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.Auto
+                });
 
         #endregion
     }

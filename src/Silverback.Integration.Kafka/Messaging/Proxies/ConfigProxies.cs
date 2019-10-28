@@ -273,7 +273,15 @@ namespace Silverback.Messaging.Proxies
         public bool? EnableDeliveryReports { get => ConfluentConfig.EnableDeliveryReports; set => ConfluentConfig.EnableDeliveryReports = value; }
 
         ///<summary> A comma separated list of fields that may be optionally set in delivery reports. Disabling delivery report fields that you do not require will improve maximum throughput and reduce memory usage. Allowed values: key, value, timestamp, headers, all, none. default: all importance: low </summary>
-        public string DeliveryReportFields { get => ConfluentConfig.DeliveryReportFields; set => ConfluentConfig.DeliveryReportFields = value ?? ""; }
+        public string DeliveryReportFields
+        {
+            get => ConfluentConfig.DeliveryReportFields;
+            set
+            {
+                if (value != null)
+                    ConfluentConfig.DeliveryReportFields = value;
+            }
+        }
 
         ///<summary> The ack timeout of the producer request in milliseconds. This value is only enforced by the broker and relies on `request.required.acks` being != 0. default: 5000 importance: medium </summary>
         public int? RequestTimeoutMs { get => ConfluentConfig.RequestTimeoutMs; set => ConfluentConfig.RequestTimeoutMs = value; }

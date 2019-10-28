@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                     new MessageHeader("header1", "value1"),
                     new MessageHeader("header2", "value2")
                 },
-                TestEndpoint.Default);
+                TestEndpoint.GetDefault());
             outboundMessage.RawContent = new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers);
 
             await _connector.RelayMessage(outboundMessage);
@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne(), null, TestEndpoint.Default);
+            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne(), null, TestEndpoint.GetDefault());
  
             await _connector.RelayMessage(outboundMessage);
             await _transactionManager.OnTransactionCompleted(new TransactionCompletedEvent());

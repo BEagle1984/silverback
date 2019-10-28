@@ -42,7 +42,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
             serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>()
-                .Add<IIntegrationMessage>(TestEndpoint.Default);
+                .Add<IIntegrationMessage>(TestEndpoint.GetDefault());
 
             _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
@@ -52,7 +52,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             InMemoryOutboundQueue.Clear();
 
             _sampleOutboundMessage = new OutboundMessage<TestEventOne>(
-                new TestEventOne { Content = "Test" }, null, TestEndpoint.Default);
+                new TestEventOne { Content = "Test" }, null, TestEndpoint.GetDefault());
             _sampleOutboundMessage.RawContent =
                 new JsonMessageSerializer().Serialize(_sampleOutboundMessage.Content, _sampleOutboundMessage.Headers);
         }

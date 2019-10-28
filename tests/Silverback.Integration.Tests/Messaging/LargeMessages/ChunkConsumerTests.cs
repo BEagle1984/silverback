@@ -40,7 +40,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     new MessageHeader(MessageHeader.ChunkIdKey, "0"),
                     new MessageHeader(MessageHeader.ChunksCountKey, "3"),
                 },
-                null, TestEndpoint.Default, true);
+                null, TestEndpoint.GetDefault(), true);
             chunks[1] = new InboundMessage(
                 originalSerializedMessage.AsMemory().Slice(300, 300).ToArray(),
                 new[]
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     new MessageHeader(MessageHeader.ChunkIdKey, "1"),
                     new MessageHeader(MessageHeader.ChunksCountKey, "3"),
                 },
-                null, TestEndpoint.Default, true);
+                null, TestEndpoint.GetDefault(), true);
             chunks[2] = new InboundMessage(
                 originalSerializedMessage.AsMemory().Slice(600).ToArray(),
                 new[]
@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     new MessageHeader(MessageHeader.ChunkIdKey, "2"),
                     new MessageHeader(MessageHeader.ChunksCountKey, "3"),
                 },
-                null, TestEndpoint.Default, true);
+                null, TestEndpoint.GetDefault(), true);
 
             var result = await new ChunkConsumer(_store).JoinIfComplete(chunks[0]);
             result.Should().BeNull();

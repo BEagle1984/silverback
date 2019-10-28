@@ -11,57 +11,57 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Broker
 {
-    public class BrokerTest
+    public class BrokerTests
     {
         private readonly TestBroker _broker = new TestBroker();
 
         [Fact]
-        public void GetProducer_ReturnInstance()
+        public void GetProducer_SomeEndpoint_ProducerIsReturned()
         {
-            var producer = _broker.GetProducer(TestEndpoint.Default);
+            var producer = _broker.GetProducer(TestEndpoint.GetDefault());
 
             producer.Should().NotBeNull();
         }
 
         [Fact]
-        public void GetProducer_SameEndpoint_ReturnCachedInstance()
+        public void GetProducer_SameEndpoint_SameInstanceIsReturned()
         {
-            var producer = _broker.GetProducer(TestEndpoint.Default);
-            var producer2 = _broker.GetProducer(TestEndpoint.Default);
+            var producer = _broker.GetProducer(TestEndpoint.GetDefault());
+            var producer2 = _broker.GetProducer(TestEndpoint.GetDefault());
 
             producer2.Should().BeSameAs(producer);
         }
 
         [Fact]
-        public void GetProducer_DifferentEndpoint_ReturnNewInstance()
+        public void GetProducer_DifferentEndpoint_DifferentInstanceIsReturned()
         {
-            var producer = _broker.GetProducer(TestEndpoint.Default);
+            var producer = _broker.GetProducer(TestEndpoint.GetDefault());
             var producer2 = _broker.GetProducer(new TestEndpoint("test2"));
 
             producer2.Should().NotBeSameAs(producer);
         }
 
         [Fact]
-        public void GetConsumer_ReturnInstance()
+        public void GetConsumer_SomeEndpoint_ConsumerIsReturned()
         {
-            var consumer = _broker.GetConsumer(TestEndpoint.Default);
+            var consumer = _broker.GetConsumer(TestEndpoint.GetDefault());
 
             consumer.Should().NotBeNull();
         }
 
         [Fact]
-        public void GetConsumer_SameEndpoint_ReturnCachedInstance()
+        public void GetConsumer_SameEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(TestEndpoint.Default);
+            var consumer = _broker.GetConsumer(TestEndpoint.GetDefault());
             var consumer2 = _broker.GetConsumer(new TestEndpoint("test2"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }
 
         [Fact]
-        public void GetConsumer_DifferentEndpoint_ReturnNewInstance()
+        public void GetConsumer_DifferentEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(TestEndpoint.Default);
+            var consumer = _broker.GetConsumer(TestEndpoint.GetDefault());
             var consumer2 = _broker.GetConsumer(new TestEndpoint("test2"));
 
             consumer2.Should().NotBeSameAs(consumer);
@@ -70,7 +70,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public void Produce_IntegrationMessage_IdIsSet()
         {
-            var producer = _broker.GetProducer(TestEndpoint.Default);
+            var producer = _broker.GetProducer(TestEndpoint.GetDefault());
 
             var message = new TestEventOne();
 
@@ -82,7 +82,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public async Task ProduceAsync_IntegrationMessage_IdIsSet()
         {
-            var producer = _broker.GetProducer(TestEndpoint.Default);
+            var producer = _broker.GetProducer(TestEndpoint.GetDefault());
 
             var message = new TestEventOne();
 

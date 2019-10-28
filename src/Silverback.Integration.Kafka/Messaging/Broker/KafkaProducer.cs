@@ -71,7 +71,7 @@ namespace Silverback.Messaging.Broker
 
         private Confluent.Kafka.IProducer<byte[], byte[]> CreateInnerProducer()
         {
-            _logger.LogTrace("Creating Confluent.Kafka.Producer...");
+            _logger.LogDebug("Creating Confluent.Kafka.Producer...");
 
             return new Confluent.Kafka.ProducerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig).Build();
         }

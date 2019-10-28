@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundMessage(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
-                    null, TestEndpoint.Default, true)
+                    null, TestEndpoint.GetDefault(), true)
             }, new Exception("test"));
 
             canHandle.Should().Be(expectedResult);

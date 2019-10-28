@@ -23,6 +23,7 @@ namespace Silverback.Messaging.Connectors
 
         private readonly int _readPackageSize;
         private readonly bool _enforceMessageOrder;
+
         public OutboundQueueWorker(IServiceProvider serviceProvider, IBroker broker, ILogger<OutboundQueueWorker> logger,
             MessageLogger messageLogger, bool enforceMessageOrder, int readPackageSize)
         {
@@ -58,7 +59,7 @@ namespace Silverback.Messaging.Connectors
 
             for (var i = 0; i < messages.Count; i++)
             {
-                _logger.LogTrace($"Processing message {i + 1} of {messages.Count}.");
+                _logger.LogDebug($"Processing message {i + 1} of {messages.Count}.");
                 await ProcessMessage(messages[i], queue);
 
                 if (stoppingToken.IsCancellationRequested)

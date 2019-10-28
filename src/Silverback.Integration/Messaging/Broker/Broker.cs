@@ -32,7 +32,8 @@ namespace Silverback.Messaging.Broker
         {
             return _producers.GetOrAdd(endpoint, _ =>
             {
-                _logger.LogInformation("Creating new producer for endpoint {endpointName}.", endpoint.Name);
+                _logger.LogInformation("Creating new producer for endpoint {endpointName}. " +
+                                       $"(Total producers: {_producers.Count + 1})", endpoint.Name);
                 return InstantiateProducer(endpoint);
             });
         }
