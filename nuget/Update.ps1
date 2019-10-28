@@ -53,8 +53,8 @@ function Get-Sources()
         ("Silverback.Integration", ("..\src\Silverback.Integration\")),
         ("Silverback.Integration.Configuration", ("..\src\Silverback.Integration.Configuration\")),
         ("Silverback.Integration.HealthChecks", ("..\src\Silverback.Integration.HealthChecks\")),
-        ("Silverback.Integration.InMemory", ("..\src\Silverback.Integration.InMemory\")),
         ("Silverback.Integration.Kafka", ("..\src\Silverback.Integration.Kafka\")),
+        ("Silverback.Integration.InMemory", ("..\src\Silverback.Integration.InMemory\")),
         ("Silverback.EventSourcing", ("..\src\Silverback.EventSourcing\"))
 
     return $sources
@@ -76,7 +76,7 @@ function Build()
             {
                 $name = $source[0]
 
-                Write-Host "Building $name..."  -ForegroundColor Yellow
+                Write-Host "Building $name ($global:buildConfiguration)...`n" -ForegroundColor Yellow
 
                 foreach ($sourcePath in $source[1])
                 {
@@ -84,6 +84,10 @@ function Build()
                 }
 
                 Write-Host ""
+
+                Copy-Package $source
+
+                Write-Separator
             }
         }
     }
@@ -98,40 +102,37 @@ function Delete-All()
     Out-Null
 
     Write-Host "OK" -ForegroundColor Green
+
+    Write-Separator
+}
+
+function Copy-Package($source) 
+{
+    $name = $source[0]
+
+    Write-Host "Copying $name..." -NoNewline
+
+    foreach ($sourcePath in $source[1])
+    {
+        $sourcePath = Join-Path $sourcePath "bin\$global:buildConfiguration\*.nupkg"
+
+        Copy-Item $sourcePath -Destination $repositoryLocation -Recurse
+    }
+
+    Write-Host "OK" -ForegroundColor Green    
 }
 
 function Copy-All()
 {
-    $destination = $repositoryLocation
-    Ensure-Folder-Exists $destination
-
-    Write-Host "Copying packages..." -ForegroundColor Yellow
+    if ($global:buildSolution -eq $false)
+    {   
+       return
+    }
 
     foreach ($source in Get-Sources)
     {
-        $name = $source[0]
-
-        Write-Host "`t$name..." -NoNewline
-
-        foreach ($sourcePath in $source[1])
-        {
-            $sourcePath = Join-Path $sourcePath "bin\$global:buildConfiguration\*.nupkg"
-
-            Copy-Item $sourcePath -Destination $destination -Recurse
-        }
-
-        Write-Host "OK" -ForegroundColor Green
+        Copy-Package($source)
     }
-
-    if ($global:clearCache)
-    {
-        Delete-Cache $name
-    }
-
-    Write-Host "`nAvailable packages:" -ForegroundColor Yellow
-    
-    # Show-Files $destination
-    Show-Summary $destination
 }
 
 function Ensure-Folder-Exists([string]$path)
@@ -151,11 +152,13 @@ function Show-Files([string]$path)
     }
 }
 
-function Show-Summary([string]$path)
+function Show-Summary()
 {
+    Write-Host "Available packages:`n" -ForegroundColor Yellow
+    
     $hashtable = @{}
 
-    $files = Get-ChildItem $path -Recurse -Filter *.nupkg
+    $files = Get-ChildItem $repositoryLocation -Recurse -Filter *.nupkg
 
     foreach ($file in $files)
     {
@@ -167,10 +170,12 @@ function Show-Summary([string]$path)
     {
         $key = $source[0]
         
-        Write-Host "`t[" -NoNewline
+        Write-Host "[" -NoNewline
         Write-Host "$($hashtable[$key].major).$($hashtable[$key].minor).$($hashtable[$key].patch)$($hashtable[$key].suffix)" -NoNewline -ForegroundColor Green
         Write-Host "] $($key)"
     }
+    
+    Write-Separator
 }
 
 function Add-Version([string]$path, [hashtable]$hashtable)
@@ -227,7 +232,7 @@ function Add-Version([string]$path, [hashtable]$hashtable)
             ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -gt $patch) -Or 
             ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -eq $patch -And ($previousVersion.suffix -eq "" -Or $previousVersion.suffix -gt $suffix )))
         {
-            return;
+            return
         }
     }
 
@@ -241,13 +246,29 @@ function Add-Version([string]$path, [hashtable]$hashtable)
 
 function Delete-Cache([string]$name)
 {
-    Write-Host "`tClearing cache..."
+    if ($global:clearCache -eq $false)
+    {
+        return
+    }
+
+    Write-Host "Clearing cache..." -ForegroundColor Yellow
 
     dotnet nuget locals all --clear
+
+    Write-Separator
 }
+
+function Write-Separator()
+{
+    Write-Host "`n---------------------------------------------------------------`n" -ForegroundColor Yellow
+}
+
+Write-Separator
 
 Check-Args $args
 # Check-Location
-Build
 Delete-All
+Delete-Cache
+Build
 Copy-All
+Show-Summary
