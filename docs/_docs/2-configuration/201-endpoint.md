@@ -47,7 +47,9 @@ Property | Description
 `EnableAutoRecovery` | When set to `true` the consumer will be automatically restarted if a `KafkaException` is thrown while polling/consuming. The default is `true`.
 
 ```c#
-new KafkaConsumerEndpoint("silverback-examples-events", "silverback-examples-something")
+new KafkaConsumerEndpoint(
+    "silverback-examples-events", 
+    "silverback-examples-something")
 {
     ConsumerThreads = 3,
     Configuration = new KafkaConsumerConfig

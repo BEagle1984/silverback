@@ -83,7 +83,8 @@ You can easily implement your own storage for the offsets or the messages, simpl
 It is then suggested to create an extension method for the `BrokerOptionsBuilder` to register your own types.
 
 ```c#
-public static BrokerOptionsBuilder AddMyCustomLoggedInboundConnector(this BrokerOptionsBuilder builder)
+public static BrokerOptionsBuilder AddMyCustomLoggedInboundConnector(
+    this BrokerOptionsBuilder builder)
 {
     builder.AddInboundConnector<LoggedInboundConnector>();
     builder.Services.AddScoped<IInboundLog, MyCustomInboundLog>();
@@ -91,7 +92,8 @@ public static BrokerOptionsBuilder AddMyCustomLoggedInboundConnector(this Broker
     return builder;
 }
 
-public static BrokerOptionsBuilder AddMyCustomOffsetStoredInboundConnector(this BrokerOptionsBuilder builder)
+public static BrokerOptionsBuilder AddMyCustomOffsetStoredInboundConnector(
+    this BrokerOptionsBuilder builder)
 {
     builder.AddInboundConnector<OffsetStoredInboundConnector>();
     builder.Services.AddScoped<IOffsetStore, MyCustomOffsetStore>();
@@ -122,7 +124,7 @@ public void Configure(BusConfigurator busConfigurator)
                     ...
                 },
                 policy => policy.Chain(
-                    policy.Retry(TimeSpan.FromSeconds(10)).MaxFailedAttempts(3),
+                    policy.Retry().MaxFailedAttempts(3),
                     policy.Move(new KafkaProducerEndpoint("bad-messages")
                         {
                             ...
@@ -247,10 +249,13 @@ public class InventoryService : ISubscriber
 
     public void OnBatchReady(BatchReadyEvent message)
     {
-        _logger.LogInformation($"Batch '{message.BatchId} ready ({message.BatchSize} messages)");
+        _logger.LogInformation(
+            $"Batch '{message.BatchId} ready " +
+            $"({message.BatchSize} messages)");
     }
 
-    public async Task OnMessageReceived(IEnumerable<InventoryUpdateEvent> events)
+    public async Task OnMessageReceived(
+        IEnumerable<InventoryUpdateEvent> events)
     {
         // Process all items
         foreach (var event in events)
@@ -266,7 +271,9 @@ public class InventoryService : ISubscriber
     {
         _db.SaveChanges();
 
-        _logger.LogInformation($"Successfully processed batch '{message.BatchId} ({message.BatchSize} messages)");
+        _logger.LogInformation(
+            $"Successfully processed batch '{message.BatchId} " +
+            $"({message.BatchSize} messages)");
     }
 }
 ```

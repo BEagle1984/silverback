@@ -74,14 +74,21 @@ public class MyDbContext : DbContext
     public override int SaveChanges()
         => SaveChanges(true);
 
-    public override int SaveChanges(bool acceptAllChangesOnSuccess)
-        => _eventsPublisher.ExecuteSaveTransaction(() => base.SaveChanges(acceptAllChangesOnSuccess));
+    public override int SaveChanges(
+        bool acceptAllChangesOnSuccess)
+        => _eventsPublisher.ExecuteSaveTransaction(() => 
+            base.SaveChanges(acceptAllChangesOnSuccess));
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(
+        CancellationToken cancellationToken = default)
         => SaveChangesAsync(true, cancellationToken);
 
-    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(
+        bool acceptAllChangesOnSuccess, 
+        CancellationToken cancellationToken = default)
         => _eventsPublisher.ExecuteSaveTransactionAsync(() =>
-            base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
+            base.SaveChangesAsync(
+                acceptAllChangesOnSuccess, 
+                cancellationToken));
 }
 ```
