@@ -8,17 +8,17 @@ Kafka can guarantee ordering only inside the same partition and it is therefore 
 
 To do so you need to specify a key for each message and Kafka will put all messages with the same key in the same partition.
 
-Silverback offers a convenient way to specify the message key. It is enough to decorate the properties that must be part of the key with `KeyMemberAttribute`.
+Silverback offers a convenient way to specify the message key. It is enough to decorate the properties that must be part of the key with `PartitioningKeyMemberAttribute`.
 
 ```c#
 public class MultipleKeyMembersMessage : IIntegrationMessage
 {
     public Guid Id { get; set; }
 
-    [KeyMember]
+    [PartitioningKeyMember]
     public string One { get; set; }
     
-    [KeyMember]
+    [PartitioningKeyMember]
     public string Two { get; set; }
 
     public string Three { get; set; }
