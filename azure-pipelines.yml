@@ -6,6 +6,7 @@
 trigger:
 - master
 - develop
+- feature/*
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -14,10 +15,20 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+# Build nuget packages
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      cd nuget
+      ./Update.ps1 -l
+      cd ..
+# Build and test
 - script: dotnet build Silverback.sln --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
 - script: dotnet test Silverback.sln --logger trx --collect "Code coverage" --filter CI!=false -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:Exclude="[xunit.*]*"
   displayName: 'dotnet test'
+# Publish results
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest
