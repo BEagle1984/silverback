@@ -16,7 +16,7 @@ toc: false
 * The Kafka consumer automatically recovers from fatal errors (can be disabled via Endpoint configuration)
 * Support for .Net Core 3.0 and Entity Framework Core 3.0
 * Refactored packages (EF binding logic is now in a single package, versioned after the related EF version)
-* Better and cleaner configuration API (see for example [Using the Bus]({{ site.baseurl }}/docs/quickstart/bus) and [Behaviors]{{ site.baseurl }}/docs/quickstart/behaviors)
+* Better and cleaner configuration API (see for example [Using the Bus]({{ site.baseurl }}/docs/quickstart/bus) and [Behaviors]({{ site.baseurl }}/docs/quickstart/behaviors))
 * Some performance improvements and optimizations (including [#37](https://github.com/BEagle1984/silverback/issues/37))
 * Improved database locks mechanism (used also to run the `OutboundQueueWorker`)
 
@@ -26,6 +26,7 @@ toc: false
 * Changes to the schema of the outbox table (`Silverback.Messaging.Connectors.Model.OutboundMessage`)
 * The configuration fluent API changed quite a bit, refer to the current documentation
 * `Silverback.Integration.EntityFrameworkCore` and `Silverback.EventSourcing.EntityFrameworkCore` have been deprecated(Silverback.Core.EntityFrameworkCore contains all the necessary logic to use EF as store)
+* `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Partitioning]({{ site.baseurl }}/docs/advanced/partitioning))
 
 **Fixes**
 * Fixed issue requiring types not implementing `IMessage` to be registered with `HandleMessagesOfType<T>` to consume them [[#33](https://github.com/BEagle1984/silverback/issues/33)]
