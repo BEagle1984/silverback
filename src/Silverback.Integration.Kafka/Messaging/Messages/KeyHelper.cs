@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Messages
             var keysDictionary = 
                 message.GetType()
                 .GetProperties()
-                .Where(p => p.IsDefined(typeof(KeyMemberAttribute), true))
+                .Where(p => p.IsDefined(typeof(PartitioningKeyMemberAttribute), true))
                 .ToDictionary(p => p.Name, p => p.GetValue(message, null));
 
             return keysDictionary.Count > 0

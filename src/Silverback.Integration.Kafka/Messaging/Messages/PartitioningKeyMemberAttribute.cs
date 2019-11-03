@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     /// to build a key that will be used to determine the destination partition on Kafka.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class KeyMemberAttribute : Attribute
+    public class PartitioningKeyMemberAttribute : Attribute
     {
     }
 }

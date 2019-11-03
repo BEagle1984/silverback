@@ -4,7 +4,7 @@ permalink: /docs/releases
 toc: false
 ---
 
-## **1.0.0-rc1**
+## **1.0.0-rc2**
 
 **What's new**
 * Message size optimization (no wrappers anymore)
