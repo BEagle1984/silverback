@@ -104,3 +104,23 @@ public static BrokerOptionsBuilder AddMyCustomOutboundWorker(
     return builder;
 }
 ```
+
+### Subscribing locally
+
+The published messages that are routed to an outbound endpoint cannot be subscribed locally (within the same process), unless explicitely desired.
+
+```c#
+public void Configure(BusConfigurator busConfigurator)
+{
+    busConfigurator
+        .Connect(endpoints => endpoints
+            .AddOutbound<IIntegrationEvent>(...)
+            .PublishOutboundMessagesToInternalBus()
+        );
+    ...
+}
+```
+
+**Note:** What said above is only partially true, as you can subscribe to the wrapped message (`IOutboundMessage<TMessage>`) even without calling `PublishOutboundMessagesToInternalBus`.
+{: .notice--info}
+

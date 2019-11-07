@@ -31,7 +31,10 @@ namespace Silverback.Messaging.Connectors
         {
             RelayOutboundMessages(messages);
 
-            await WrapAndRepublishRoutedMessages(messages);
+            var routedMessages = await WrapAndRepublishRoutedMessages(messages);
+
+            if (!_routing.PublishOutboundMessagesToInternalBus)
+                messages = messages.Where(m => !routedMessages.Contains(m)).ToList();
 
             return await next(messages);
         }
@@ -44,7 +47,7 @@ namespace Silverback.Messaging.Connectors
                     .RelayMessage(outboundMessage));
         }
 
-        private async Task WrapAndRepublishRoutedMessages(IEnumerable<object> messages)
+        private async Task<IEnumerable<object>> WrapAndRepublishRoutedMessages(IEnumerable<object> messages)
         {
             var wrappedMessages = messages
                 .Where(message => !(message is IOutboundMessageInternal))
@@ -55,6 +58,8 @@ namespace Silverback.Messaging.Connectors
                 await _serviceProvider
                     .GetRequiredService<IPublisher>()
                     .PublishAsync(wrappedMessages);
+
+            return wrappedMessages.Select(m => m.Content);
         }
         private IOutboundMessage CreateOutboundMessage(object message, IOutboundRoute route)
         {

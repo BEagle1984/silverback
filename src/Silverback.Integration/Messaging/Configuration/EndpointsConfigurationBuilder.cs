@@ -21,41 +21,47 @@ namespace Silverback.Messaging.Configuration
             _errorPolicyBuilder = errorPolicyBuilder;
         }
 
-        public EndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IEndpoint endpoint)
+        public IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IEndpoint endpoint)
             where TConnector : IOutboundConnector
         {
             AddOutbound<TMessage>(endpoint, typeof(TConnector));
             return this;
         }
 
-        public EndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null)
+        public IEndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null)
         {
             AddOutbound(typeof(TMessage), endpoint, outboundConnectorType);
             return this;
         }
 
-        public EndpointsConfigurationBuilder AddOutbound(Type messageType, IEndpoint endpoint, Type outboundConnectorType)
+        public IEndpointsConfigurationBuilder AddOutbound(Type messageType, IEndpoint endpoint, Type outboundConnectorType)
         {
             _outboundRoutingConfiguration.Add(messageType, endpoint, outboundConnectorType);
             return this;
         }
 
-        public EndpointsConfigurationBuilder AddInbound(IEndpoint endpoint, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null, InboundConnectorSettings settings = null)
+        public IEndpointsConfigurationBuilder AddInbound(IEndpoint endpoint, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null, InboundConnectorSettings settings = null)
         {
             AddInbound(endpoint, null, errorPolicyFactory, settings);
             return this;
         }
 
-        public EndpointsConfigurationBuilder AddInbound<TConnector>(IEndpoint endpoint, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null, InboundConnectorSettings settings = null)
+        public IEndpointsConfigurationBuilder AddInbound<TConnector>(IEndpoint endpoint, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null, InboundConnectorSettings settings = null)
             where TConnector : IInboundConnector
         {
             AddInbound(endpoint, typeof(TConnector), errorPolicyFactory, settings);
             return this;
         }
 
-        public EndpointsConfigurationBuilder AddInbound(IEndpoint endpoint, Type inboundConnectorType, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null, InboundConnectorSettings settings = null)
+        public IEndpointsConfigurationBuilder AddInbound(IEndpoint endpoint, Type inboundConnectorType, Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null, InboundConnectorSettings settings = null)
         {
             _inboundConnectors.GetConnectorInstance(inboundConnectorType).Bind(endpoint, errorPolicyFactory?.Invoke(_errorPolicyBuilder), settings);
+            return this;
+        }
+
+        public IEndpointsConfigurationBuilder PublishOutboundMessagesToInternalBus()
+        {
+            _outboundRoutingConfiguration.PublishOutboundMessagesToInternalBus = true;
             return this;
         }
     }

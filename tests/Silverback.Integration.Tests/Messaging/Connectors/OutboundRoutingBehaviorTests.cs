@@ -17,19 +17,17 @@ using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
 
-// ReSharper disable InconsistentNaming
-
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
     [Collection("StaticInMemory")]
-    public class OutboundRoutingBehaviourTests
+    public class OutboundRoutingBehaviorTests
     {
         private readonly OutboundRoutingBehavior _behavior;
         private readonly OutboundRoutingConfiguration _routingConfiguration;
         private readonly InMemoryOutboundQueue _outboundQueue;
         private readonly TestBroker _broker;
 
-        public OutboundRoutingBehaviourTests()
+        public OutboundRoutingBehaviorTests()
         {
             var services = new ServiceCollection();
 
@@ -54,8 +52,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             InMemoryOutboundQueue.Clear();
         }
 
-        [Theory, MemberData(nameof(OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
-        public async Task OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoint(IIntegrationMessage message,
+        [Theory, MemberData(nameof(Handle_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
+        public async Task Handle_MultipleMessages_CorrectlyRoutedToEndpoint(IIntegrationMessage message,
             string[] expectedEndpointNames)
         {
             _routingConfiguration.Add<IIntegrationMessage>(new TestEndpoint("allMessages"), null);
@@ -83,7 +81,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             }
         }
 
-        public static IEnumerable<object[]> OnMessageReceived_MultipleMessages_CorrectlyRoutedToEndpoints_TestData =>
+        public static IEnumerable<object[]> Handle_MultipleMessages_CorrectlyRoutedToEndpoints_TestData =>
             new[]
             {
                 new object[] { new TestEventOne(), new[] { "allMessages", "allEvents", "eventOne" } },
@@ -91,7 +89,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             };
 
         [Fact]
-        public async Task OnMessageReceived_Message_CorrectlyRoutedToDefaultConnector()
+        public async Task Handle_Message_CorrectlyRoutedToDefaultConnector()
         {
             _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), null);
 
@@ -104,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
-        public async Task OnMessageReceived_Message_CorrectlyRoutedToConnector()
+        public async Task Handle_Message_CorrectlyRoutedToConnector()
         {
             _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), typeof(OutboundConnector));
 
@@ -117,8 +115,30 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
+        public async Task Handle_Messages_RoutedMessageIsFiltered()
+        {
+            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), typeof(OutboundConnector));
+
+            var messages = await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
+
+            messages.Count().Should().Be(1);
+            messages.First().Should().NotBeOfType<TestEventOne>();
+        }
+        
+        [Fact]
+        public async Task Handle_MessagesWithPublishToInternBusOption_RoutedMessageIsNotFiltered()
+        {
+            _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
+            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), typeof(OutboundConnector));
+
+            var messages = await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
+
+            messages.Count().Should().Be(2);
+        }
+
+        [Fact]
         // Test for possible issue similar to #33: messages don't have to be registered with HandleMessagesOfType to be relayed
-        public async Task OnMessageReceived_UnhandledMessageType_CorrectlyRelayed()
+        public async Task Handle_UnhandledMessageType_CorrectlyRelayed()
         {
             var message = new SomeUnhandledMessage { Content = "abc" };
             _routingConfiguration.Add<SomeUnhandledMessage>(new TestEndpoint("eventOne"), typeof(OutboundConnector));

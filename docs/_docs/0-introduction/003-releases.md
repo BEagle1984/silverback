@@ -22,6 +22,7 @@ toc: false
 
 **Breaking Changes**
 * The messages produced with version < 0.11 may not be compatible with the new consumer from this version of `Silverback.Integration`
+* By default the messages published via `IPublisher` that are routed to an outbound endpoint are not sent through to the internal bus and cannot therfore be subscribed locally (within the same process). (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
 * Some changes in `IInboundMessage` and `IOutboundMessage` interfaces
 * Changes to the schema of the outbox table (`Silverback.Messaging.Connectors.Model.OutboundMessage`)
 * The configuration fluent API changed quite a bit, refer to the current documentation

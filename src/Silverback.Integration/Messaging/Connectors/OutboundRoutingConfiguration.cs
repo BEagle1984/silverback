@@ -11,6 +11,8 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly List<OutboundRoute> _routes = new List<OutboundRoute>();
 
+        public bool PublishOutboundMessagesToInternalBus { get; set; }
+
         public IEnumerable<IOutboundRoute> Routes => _routes.AsReadOnly();
 
         public IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint, Type outboundConnectorType) =>
