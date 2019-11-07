@@ -59,8 +59,6 @@ docs:
         url: /docs/configuration/multiple
       - title: External Configurations
         url: /docs/configuration/external
-      - title: Producer and consumer in the same process
-        url: /docs/configuration/same-process
   - title: Advanced Topics
     children:
       - title: Serialization
