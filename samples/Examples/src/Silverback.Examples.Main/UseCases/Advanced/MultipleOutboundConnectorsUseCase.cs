@@ -23,6 +23,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddSilverback()
             .UseModel()
+            .UseDbContext<ExamplesDbContext>()
             .WithConnectionTo<KafkaBroker>(options => options
                 .AddOutboundConnector()
                 .AddDbOutboundConnector()
