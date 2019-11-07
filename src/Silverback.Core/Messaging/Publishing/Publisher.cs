@@ -14,11 +14,10 @@ namespace Silverback.Messaging.Publishing
 {
     public class Publisher : IPublisher
     {
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
 
-        private readonly IEnumerable<IBehavior> _behaviors;
-        private readonly IServiceProvider _serviceProvider;
-
+        private IEnumerable<IBehavior> _behaviors;
         private SubscribedMethodInvoker _methodInvoker;
         private SubscribedMethodsLoader _methodsLoader;
 
@@ -27,9 +26,6 @@ namespace Silverback.Messaging.Publishing
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
             _logger = logger;
-            _behaviors =
-                serviceProvider.GetServices<ISilverbackBehavior>()
-                    .Union(serviceProvider.GetServices<IBehavior>());
         }
 
         public void Publish(object message) => 
@@ -80,7 +76,7 @@ namespace Silverback.Messaging.Publishing
             if (messagesList == null || !messagesList.Any())
                 return Enumerable.Empty<object>();
 
-            return await ExecutePipeline(_behaviors, messagesList, async m =>
+            return await ExecutePipeline(GetBehaviors(), messagesList, async m =>
                 (await InvokeExclusiveMethods(m, executeAsync))
                 .Union(await InvokeNonExclusiveMethods(m, executeAsync))
                 .ToList());
@@ -105,7 +101,11 @@ namespace Silverback.Messaging.Publishing
                 .Where(method => !method.IsExclusive)
                 .ParallelSelectManyAsync(method =>
                     GetMethodInvoker().Invoke(method, messages, executeAsync));
-        
+
+        private IEnumerable<IBehavior> GetBehaviors() =>
+            _behaviors ??= _serviceProvider.GetServices<ISilverbackBehavior>()
+                .Union(_serviceProvider.GetServices<IBehavior>());
+
         private SubscribedMethodInvoker GetMethodInvoker() =>
             _methodInvoker ??= _serviceProvider.GetRequiredService<SubscribedMethodInvoker>();
 
