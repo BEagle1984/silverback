@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -21,14 +22,14 @@ using Xunit;
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
     [Collection("StaticInMemory")]
-    public class OutboundConnectorRouterTests
+    public class OutboundRoutingBehaviourTests
     {
-        private readonly OutboundConnectorRouter _connectorRouter;
+        private readonly OutboundRoutingBehavior _behavior;
         private readonly OutboundRoutingConfiguration _routingConfiguration;
         private readonly InMemoryOutboundQueue _outboundQueue;
         private readonly TestBroker _broker;
 
-        public OutboundConnectorRouterTests()
+        public OutboundRoutingBehaviourTests()
         {
             var services = new ServiceCollection();
 
@@ -44,8 +45,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _connectorRouter = (OutboundConnectorRouter) serviceProvider.GetServices<ISubscriber>()
-                .First(s => s is OutboundConnectorRouter);
+            _behavior = (OutboundRoutingBehavior) serviceProvider.GetServices<ISilverbackBehavior>()
+                .First(s => s is OutboundRoutingBehavior);
             _routingConfiguration =
                 (OutboundRoutingConfiguration) serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
             _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
@@ -62,7 +63,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), null);
             _routingConfiguration.Add<TestEventTwo>(new TestEndpoint("eventTwo"), null);
 
-            await _connectorRouter.OnMessageReceived(message);
+            await _behavior.Handle(new[] {message}, Task.FromResult);
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(100);
@@ -94,7 +95,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         {
             _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), null);
 
-            await _connectorRouter.OnMessageReceived(new TestEventOne());
+            await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult);
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(1);
@@ -107,7 +108,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         {
             _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), typeof(OutboundConnector));
 
-            await _connectorRouter.OnMessageReceived(new TestEventOne());
+            await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult);
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(1);
@@ -122,7 +123,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var message = new SomeUnhandledMessage { Content = "abc" };
             _routingConfiguration.Add<SomeUnhandledMessage>(new TestEndpoint("eventOne"), typeof(OutboundConnector));
 
-            await _connectorRouter.OnMessageReceived(message);
+            await _behavior.Handle(new[] { message }, Task.FromResult);
 
             _broker.ProducedMessages.Count.Should().Be(1);
         }

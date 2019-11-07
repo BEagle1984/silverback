@@ -14,6 +14,7 @@ using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -100,7 +101,7 @@ namespace Silverback.Messaging.Configuration
             if (SilverbackBuilder.Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
             {
                 SilverbackBuilder.Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
-                SilverbackBuilder.AddScopedSubscriber<OutboundConnectorRouter>();
+                SilverbackBuilder.Services.AddScoped<ISilverbackBehavior, OutboundRoutingBehavior>();
             }
 
             SilverbackBuilder.Services.AddScoped<IOutboundConnector, TConnector>();

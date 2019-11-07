@@ -4,7 +4,7 @@ permalink: /docs/releases
 toc: false
 ---
 
-## **1.0.0-rc2**
+## **1.0.0-rc3**
 
 **What's new**
 * Message size optimization (no wrappers anymore)
@@ -25,7 +25,7 @@ toc: false
 * Some changes in `IInboundMessage` and `IOutboundMessage` interfaces
 * Changes to the schema of the outbox table (`Silverback.Messaging.Connectors.Model.OutboundMessage`)
 * The configuration fluent API changed quite a bit, refer to the current documentation
-* `Silverback.Integration.EntityFrameworkCore` and `Silverback.EventSourcing.EntityFrameworkCore` have been deprecated(Silverback.Core.EntityFrameworkCore contains all the necessary logic to use EF as store)
+* `Silverback.Integration.EntityFrameworkCore` and `Silverback.EventSourcing.EntityFrameworkCore` have been deprecated (`Silverback.Core.EntityFrameworkCore` contains all the necessary logic to use EF as store)
 * `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Partitioning]({{ site.baseurl }}/docs/advanced/partitioning))
 
 **Fixes**

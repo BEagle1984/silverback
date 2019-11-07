@@ -27,9 +27,11 @@ namespace Silverback.Messaging.Publishing
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
             _logger = logger;
-            _behaviors = serviceProvider.GetServices<IBehavior>();
+            _behaviors =
+                serviceProvider.GetServices<ISilverbackBehavior>()
+                    .Union(serviceProvider.GetServices<IBehavior>());
         }
-        
+
         public void Publish(object message) => 
             Publish(new[] { message });
 
@@ -103,8 +105,7 @@ namespace Silverback.Messaging.Publishing
                 .Where(method => !method.IsExclusive)
                 .ParallelSelectManyAsync(method =>
                     GetMethodInvoker().Invoke(method, messages, executeAsync));
-
-
+        
         private SubscribedMethodInvoker GetMethodInvoker() =>
             _methodInvoker ??= _serviceProvider.GetRequiredService<SubscribedMethodInvoker>();
 
