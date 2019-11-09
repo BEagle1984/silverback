@@ -14,7 +14,7 @@ protected override void ConfigureServices(IServiceCollection services)
     services
         .AddSilverback()
         .UseDbContext<MyDbContext>()
-        .WithConnectionTo<KafkaBroker>(options => options
+        .WithConnectionToKafka(options => options
             .AddDbInboundConnector()
             .AddInboundConnector());
 }

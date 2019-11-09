@@ -4,7 +4,7 @@ permalink: /docs/releases
 toc: false
 ---
 
-## **1.0.0-rc3**
+## **1.0.0-rc4**
 
 **What's new**
 * Message size optimization (no wrappers anymore)
@@ -22,10 +22,10 @@ toc: false
 
 **Breaking Changes**
 * The messages produced with version < 0.11 may not be compatible with the new consumer from this version of `Silverback.Integration`
-* By default the messages published via `IPublisher` that are routed to an outbound endpoint are not sent through to the internal bus and cannot therfore be subscribed locally (within the same process). (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
+* By default the messages published via `IPublisher` that are routed to an outbound endpoint are not sent through to the internal bus and cannot therfore be subscribed locally, within the same process (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
 * Some changes in `IInboundMessage` and `IOutboundMessage` interfaces
 * Changes to the schema of the outbox table (`Silverback.Messaging.Connectors.Model.OutboundMessage`)
-* The configuration fluent API changed quite a bit, refer to the current documentation
+* The configuration fluent API changed quite a bit, refer to the current documentation (e.g. [Using the Bus]({{ site.baseurl }}/docs/quickstart/bus) and [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 * `Silverback.Integration.EntityFrameworkCore` and `Silverback.EventSourcing.EntityFrameworkCore` have been deprecated (`Silverback.Core.EntityFrameworkCore` contains all the necessary logic to use EF as store)
 * `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Partitioning]({{ site.baseurl }}/docs/advanced/partitioning))
 
@@ -33,6 +33,7 @@ toc: false
 * Fixed issue requiring types not implementing `IMessage` to be registered with `HandleMessagesOfType<T>` to consume them [[#33](https://github.com/BEagle1984/silverback/issues/33)]
 * Mitigated issue causing the `DistributedBackgroundService` to sometime fail to acquire the database lock [[#39](https://github.com/BEagle1984/silverback/issues/39)]
 * Other small fixes to improve stability and reliability
+* Fixing partition key value being lost when using the `DeferredOutboundConnector`
 
 ## 0.10.0
 

@@ -34,7 +34,7 @@ public void ConfigureServices(IServiceCollection services)
 
     services
         .AddSilverback()
-        .WithConnectionTo<KafkaBroker>(options => options
+        .WithConnectionToKafka(options => options
             .AddMessageKeyProvider<SampleMessageKeyProvider>());
     ...
 }
