@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Broker
             GetOutboundMessages(message, headers)
                 .ForEach(x =>
                 {
-                    x.Offset = Produce(x.Content, x.RawContent, x.Headers);
+                    x.Offset = Produce(x.RawContent, x.Headers);
                     Trace(x);
                 });
 
@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Broker
             GetOutboundMessages(message, headers)
                 .ForEachAsync(async x =>
                 {
-                    x.Offset = await ProduceAsync(x.Content, x.RawContent, x.Headers);
+                    x.Offset = await ProduceAsync(x.RawContent, x.Headers);
                     Trace(x);
                 });
 
@@ -56,9 +56,9 @@ namespace Silverback.Messaging.Broker
         private void Trace(IOutboundMessage message) => 
             _messageLogger.LogInformation(_logger, "Message produced.", message);
 
-        protected abstract IOffset Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers);
+        protected abstract IOffset Produce(byte[] serializedMessage, IEnumerable<MessageHeader> headers);
 
-        protected abstract Task<IOffset> ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers);
+        protected abstract Task<IOffset> ProduceAsync(byte[] serializedMessage, IEnumerable<MessageHeader> headers);
     }
 
     public abstract class Producer<TBroker, TEndpoint> : Producer

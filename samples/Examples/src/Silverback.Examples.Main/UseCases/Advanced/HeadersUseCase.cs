@@ -24,7 +24,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddSilverback()
             .UseModel()
-            .WithConnectionTo<KafkaBroker>()
+            .WithConnectionToKafka()
             .AddSingletonBehavior<CustomHeadersBehavior>();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>

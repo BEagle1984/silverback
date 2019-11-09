@@ -23,7 +23,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddSilverback()
             .UseModel()
-            .WithConnectionTo<KafkaBroker>()
+            .WithConnectionToKafka()
             .AddScopedSubscriber<TranslateUseCase>();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>

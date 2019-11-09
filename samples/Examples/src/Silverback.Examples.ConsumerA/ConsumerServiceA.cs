@@ -28,7 +28,7 @@ namespace Silverback.Examples.ConsumerA
                 .AddSilverback()
                 .AsObservable()
                 .UseDbContext<ExamplesDbContext>()
-                .WithConnectionTo<KafkaBroker>(options => options
+                .WithConnectionToKafka(options => options
                     //.AddDbLoggedInboundConnector()
                     .AddDbOffsetStoredInboundConnector()
                     .AddInboundConnector()

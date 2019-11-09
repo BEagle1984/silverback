@@ -24,7 +24,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             .AddSilverback()
             .UseModel()
             .UseDbContext<ExamplesDbContext>()
-            .WithConnectionTo<KafkaBroker>(options => options
+            .WithConnectionToKafka(options => options
                 .AddOutboundConnector()
                 .AddDbOutboundConnector()
                 .AddDbOutboundWorker());

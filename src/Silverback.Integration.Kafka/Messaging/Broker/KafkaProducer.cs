@@ -14,6 +14,8 @@ namespace Silverback.Messaging.Broker
 {
     public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
+        internal const string PartitioningKeyHeaderKey = "x-kafka-partitioning-key";
+
         private readonly ILogger _logger;
         private Confluent.Kafka.IProducer<byte[], byte[]> _innerProducer;
 
@@ -29,16 +31,16 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        protected override IOffset Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsync(message, serializedMessage, headers));
+        protected override IOffset Produce(byte[] serializedMessage, IEnumerable<MessageHeader> headers) =>
+            AsyncHelper.RunSynchronously(() => ProduceAsync(serializedMessage, headers));
 
-        protected override async Task<IOffset> ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers)
+        protected override async Task<IOffset> ProduceAsync(byte[] serializedMessage, IEnumerable<MessageHeader> headers)
         {
             try
             {
                 var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
                 {
-                    Key = KeyHelper.GetMessageKey(message),
+                    Key = GetPartitioningKey(headers),
                     Value = serializedMessage
                 };
 
@@ -64,6 +66,17 @@ namespace Silverback.Messaging.Broker
 
                 throw new ProduceException("Error occurred producing the message. See inner exception for details.", ex);
             }
+        }
+
+        private byte[] GetPartitioningKey(IEnumerable<MessageHeader> headers)
+        {
+            var headerValue = headers
+                ?.FirstOrDefault(h => h.Key == PartitioningKeyHeaderKey)
+                ?.Value;
+
+            return headerValue == null 
+                ? null 
+                : Convert.FromBase64String(headerValue);
         }
 
         private Confluent.Kafka.IProducer<byte[], byte[]> GetInnerProducer() =>

@@ -30,7 +30,7 @@ namespace Silverback.Examples.Main.UseCases.EfCore
                 .UseModel()
                 .UseDbContext<ExamplesDbContext>()
                 .AddDbDistributedLockManager()
-                .WithConnectionTo<KafkaBroker>(options => options
+                .WithConnectionToKafka(options => options
                     .AddDbOutboundConnector()
                     .AddDbOutboundWorker(
                         new DistributedLockSettings(

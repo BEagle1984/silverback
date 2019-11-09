@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Examples.Common.Data;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -14,22 +13,18 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
-namespace Silverback.Examples.Main.UseCases.EfCore
+namespace Silverback.Examples.Main.UseCases.Advanced
 {
-    public class DeferredOutboundUseCase : UseCase
+    public class PartitioningUseCase : UseCase
     {
-        public DeferredOutboundUseCase() : base("Deferred publish (DbOutbound)", 10)
+        public PartitioningUseCase() : base("Kafka partitioning (partition key)", 60)
         {
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddSilverback()
             .UseModel()
-            .UseDbContext<ExamplesDbContext>()
-            .WithConnectionToKafka(options => options
-                .AddDbOutboundConnector()
-                .AddDbOutboundWorker())
-            .AddSingletonBehavior<CustomHeadersBehavior>();
+            .WithConnectionToKafka();
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
@@ -46,23 +41,9 @@ namespace Silverback.Examples.Main.UseCases.EfCore
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent {Content = DateTime.Now.ToString("HH:mm:ss.fff")});
-
-            var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
-            await dbContext.SaveChangesAsync();
-        }
-        
-        public class CustomHeadersBehavior : IBehavior
-        {
-            public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
-            {
-                foreach (var message in messages.OfType<IOutboundMessage>())
-                {
-                    message.Headers.Add("was-created", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                }
-
-                return await next(messages);
-            }
+            await publisher.PublishAsync(new SimpleIntegrationEvent { Key = "A", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new SimpleIntegrationEvent { Key = "B", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new SimpleIntegrationEvent { Key = "C", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }
     }
 }

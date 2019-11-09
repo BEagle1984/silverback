@@ -16,10 +16,10 @@ namespace Silverback.Messaging.Broker
         {
         }
 
-        protected override IOffset Produce(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers) => 
+        protected override IOffset Produce(byte[] serializedMessage, IEnumerable<MessageHeader> headers) => 
             Broker.GetTopic(Endpoint.Name).Publish(serializedMessage, headers);
 
-        protected override Task<IOffset> ProduceAsync(object message, byte[] serializedMessage, IEnumerable<MessageHeader> headers) => 
+        protected override Task<IOffset> ProduceAsync(byte[] serializedMessage, IEnumerable<MessageHeader> headers) => 
             Broker.GetTopic(Endpoint.Name).PublishAsync(serializedMessage, headers);
     }
 }
