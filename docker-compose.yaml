@@ -1,0 +1,43 @@
+version: "3.3"
+services:
+ 
+  mssql:
+    container_name: mssql
+    image: microsoft/mssql-server-linux:2017-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=mssql2017.
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    ports:
+      - "2181:2181"
+  kafka:
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    image: confluentinc/cp-kafka:latest
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_NUM_PARTITIONS=3
+      - CONFLUENT_SUPPORT_METRICS_ENABLE=0
+    ports:
+      - "9092:9092"
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.100.1.1/24
