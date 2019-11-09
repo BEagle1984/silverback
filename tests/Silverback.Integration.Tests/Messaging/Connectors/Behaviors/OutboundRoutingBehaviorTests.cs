@@ -11,13 +11,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Connectors.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Connectors
+namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 {
     [Collection("StaticInMemory")]
     public class OutboundRoutingBehaviorTests
@@ -43,7 +44,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _behavior = (OutboundRoutingBehavior) serviceProvider.GetServices<ISilverbackBehavior>()
+            _behavior = (OutboundRoutingBehavior) serviceProvider.GetServices<IBehavior>()
                 .First(s => s is OutboundRoutingBehavior);
             _routingConfiguration =
                 (OutboundRoutingConfiguration) serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();

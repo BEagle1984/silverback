@@ -102,9 +102,23 @@ namespace Silverback.Messaging.Publishing
                 .ParallelSelectManyAsync(method =>
                     GetMethodInvoker().Invoke(method, messages, executeAsync));
 
-        private IEnumerable<IBehavior> GetBehaviors() =>
-            _behaviors ??= _serviceProvider.GetServices<ISilverbackBehavior>()
-                .Union(_serviceProvider.GetServices<IBehavior>());
+        private IEnumerable<IBehavior> GetBehaviors()
+        {
+            if (_behaviors == null)
+            {
+                var behaviors = _serviceProvider.GetServices<IBehavior>();
+                var sortedBehaviors = behaviors.OfType<ISortedBehavior>().OrderBy(b => b.SortIndex).ToList();
+                behaviors = behaviors.Where(b => !(b is ISortedBehavior)).ToList();
+
+                _behaviors =
+                    sortedBehaviors.Where(b => b.SortIndex <= 0)
+                        .Union(behaviors)
+                        .Union(sortedBehaviors.Where(b => b.SortIndex > 0))
+                        .ToList();
+            }
+
+            return _behaviors;
+        }
 
         private SubscribedMethodInvoker GetMethodInvoker() =>
             _methodInvoker ??= _serviceProvider.GetRequiredService<SubscribedMethodInvoker>();

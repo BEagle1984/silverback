@@ -7,30 +7,23 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Tests.Core.TestTypes.Behaviors
 {
-    public class TestBehavior : IBehavior
+    public class TestSortedBehavior : ISortedBehavior
     {
         private readonly List<string> _calls;
 
-        public TestBehavior(List<string> calls = null)
+        public TestSortedBehavior(int sortIndex, List<string> calls)
         {
             _calls = calls;
+            SortIndex = sortIndex;
         }
 
-        public int EnterCount { get; private set; }
-
-        public int ExitCount { get; private set; }
+        public int SortIndex { get; }
 
         public Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
         {
-            _calls?.Add("unsorted");
+            _calls.Add(SortIndex.ToString());
 
-            EnterCount++;
-
-            var result = next(messages);
-
-            ExitCount++;
-
-            return result;
+            return next(messages);
         }
     }
 }

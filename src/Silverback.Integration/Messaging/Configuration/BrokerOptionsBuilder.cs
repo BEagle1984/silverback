@@ -10,6 +10,7 @@ using Silverback.Background;
 using Silverback.Database;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Connectors.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.LargeMessages;
@@ -101,7 +102,8 @@ namespace Silverback.Messaging.Configuration
             if (SilverbackBuilder.Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
             {
                 SilverbackBuilder.Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
-                SilverbackBuilder.Services.AddScoped<ISilverbackBehavior, OutboundRoutingBehavior>();
+                SilverbackBuilder.AddScopedBehavior<OutboundProducingBehavior>();
+                SilverbackBuilder.AddScopedBehavior<OutboundRoutingBehavior> ();
             }
 
             SilverbackBuilder.Services.AddScoped<IOutboundConnector, TConnector>();

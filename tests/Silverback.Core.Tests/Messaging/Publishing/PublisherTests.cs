@@ -10,6 +10,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -879,7 +880,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public void Publish_SomeMessagesWithBehaviors_MessagesReceived()
+        public void Publish_WithBehaviors_MessagesReceived()
         {
             var publisher = GetPublisher(null, new[] { new TestBehavior(), new TestBehavior() }, _asyncSubscriber);
 
@@ -890,7 +891,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public async Task PublishAsync_SomeMessagesWithBehaviors_MessagesReceived()
+        public async Task PublishAsync_WithBehaviors_MessagesReceived()
         {
             var publisher = GetPublisher(null, new[] { new TestBehavior(), new TestBehavior() }, _asyncSubscriber);
 
@@ -901,7 +902,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public void Publish_SomeMessagesWithBehaviors_BehaviorsExecuted()
+        public void Publish_WithBehaviors_BehaviorsExecuted()
         {
             var behavior1 = new TestBehavior();
             var behavior2 = new TestBehavior();
@@ -916,7 +917,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public async Task PublishAsync_SomeMessagesWithBehaviors_BehaviorsExecuted()
+        public async Task PublishAsync_WithBehaviors_BehaviorsExecuted()
         {
             var behavior1 = new TestBehavior();
             var behavior2 = new TestBehavior();
@@ -928,6 +929,57 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             behavior1.EnterCount.Should().Be(2);
             behavior2.EnterCount.Should().Be(2);
+        }
+
+        [Fact]
+        public void Publish_WithSortedBehaviors_BehaviorsExecutedInExpectedOrder()
+        {
+            var callsSequence = new List<string>();
+            var behavior1 = new TestSortedBehavior(100, callsSequence);
+            var behavior2 = new TestSortedBehavior(50, callsSequence);
+            var behavior3 = new TestSortedBehavior(-50, callsSequence);
+            var behavior4 = new TestSortedBehavior(-100, callsSequence);
+            var behavior5 = new TestBehavior(callsSequence);
+
+            var publisher = GetPublisher(null, new IBehavior[] { behavior1, behavior2, behavior3, behavior4, behavior5 }, _asyncSubscriber);
+
+            publisher.Publish(new TestCommandOne());
+
+            callsSequence.Should().BeEquivalentTo(
+                new []{"-100", "-50", "unsorted", "50", "100"}, 
+                opt => opt.WithStrictOrdering());
+        }
+
+        [Fact]
+        public async Task PublishAsync_WithSortedBehaviors_BehaviorsExecuted()
+        {
+            var callsSequence = new List<string>();
+            var behavior1 = new TestSortedBehavior(100, callsSequence);
+            var behavior2 = new TestSortedBehavior(50, callsSequence);
+            var behavior3 = new TestSortedBehavior(-50, callsSequence);
+            var behavior4 = new TestSortedBehavior(-100, callsSequence);
+            var behavior5 = new TestBehavior(callsSequence);
+
+            var publisher = GetPublisher(null, new IBehavior[] { behavior1, behavior2, behavior3, behavior4, behavior5 }, _asyncSubscriber);
+
+            await publisher.PublishAsync(new TestCommandOne());
+
+            callsSequence.Should().BeEquivalentTo(
+                new[] { "-100", "-50", "unsorted", "50", "100" },
+                opt => opt.WithStrictOrdering());
+        }
+
+        [Fact]
+        public void Publish_MessageChangingBehavior_BehaviorExecuted()
+        {
+            var behavior = new ChangeMessageBehavior<TestCommandOne>(_ => new[] { new TestCommandTwo(), new TestCommandTwo(), new TestCommandTwo() });
+
+            var publisher = GetPublisher(null, new[] { behavior }, _asyncSubscriber);
+
+            publisher.Publish(new TestCommandOne());
+            publisher.Publish(new TestCommandTwo());
+
+            _asyncSubscriber.ReceivedMessagesCount.Should().Be(4);
         }
 
         [Fact]

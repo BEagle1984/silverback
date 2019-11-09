@@ -8,43 +8,32 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Connectors.Behaviors
 {
-    public class OutboundRoutingBehavior : ISilverbackBehavior
+    public class OutboundRoutingBehavior : ISortedBehavior
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IOutboundRoutingConfiguration _routing;
-        private readonly IEnumerable<IOutboundConnector> _outboundConnectors;
         private readonly MessageKeyProvider _messageKeyProvider;
 
         public OutboundRoutingBehavior(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _routing = serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
-            _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>();
             _messageKeyProvider = serviceProvider.GetRequiredService<MessageKeyProvider>();
         }
 
+        public int SortIndex { get; } = 100;
+
         public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
         {
-            RelayOutboundMessages(messages);
-
             var routedMessages = await WrapAndRepublishRoutedMessages(messages);
 
             if (!_routing.PublishOutboundMessagesToInternalBus)
                 messages = messages.Where(m => !routedMessages.Contains(m)).ToList();
 
             return await next(messages);
-        }
-
-        private void RelayOutboundMessages(IEnumerable<object> messages)
-        {
-            messages.OfType<IOutboundMessageInternal>()
-                .ForEach(outboundMessage => _outboundConnectors
-                    .GetConnectorInstance(outboundMessage.Route.OutboundConnectorType)
-                    .RelayMessage(outboundMessage));
         }
 
         private async Task<IEnumerable<object>> WrapAndRepublishRoutedMessages(IEnumerable<object> messages)

@@ -3,8 +3,8 @@
 
 namespace Silverback.Messaging.Publishing
 {
-    internal interface ISilverbackBehavior : IBehavior
+    internal interface ISortedBehavior : IBehavior
     {
-
+        int SortIndex { get; }
     }
 }
