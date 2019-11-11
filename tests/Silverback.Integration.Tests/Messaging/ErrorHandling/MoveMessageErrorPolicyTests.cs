@@ -176,5 +176,34 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var newHeaders = producer.ProducedMessages[0].Headers;
             newHeaders.Count.Should().Be(4); // message-id, message-type, key, error
         }
+
+
+        [Fact]
+        public void HandleError_InboundMessage_SourceEndpointHeaderIsSet()
+        {
+            var policy = _errorPolicyBuilder.Move(TestEndpoint.GetDefault());
+
+            var message = new InboundMessage(
+                Encoding.UTF8.GetBytes("hey oh!"),
+                null,
+                null, new TestEndpoint("source-endpoint"), true)
+            {
+                Content = "hey oh!",
+                Headers =
+                {
+                    {"key1", "value1"},
+                    {"key2", "value2"}
+                }
+            };
+            policy.HandleError(new[] { message }, new Exception("test"));
+
+            var producer = (TestProducer)_broker.GetProducer(TestEndpoint.GetDefault());
+
+            producer.ProducedMessages.Last()
+                .Headers
+                .Should().ContainEquivalentOf(new MessageHeader(
+                    MessageHeader.SourceEndpointKey, 
+                    "source-endpoint"));
+        }
     }
 }

@@ -14,6 +14,7 @@ namespace Silverback.Messaging.Messages
         public const string ChunksCountKey = "x-chunks-count";
         public const string BatchIdKey = "x-batch-id";
         public const string BatchSizeKey = "x-batch-size";
+        public const string SourceEndpointKey = "x-source-endpoint";
 
         public MessageHeader()
         {
