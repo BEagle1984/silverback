@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Messages
                 properties.Add(("id", "messageId", firstMessage.Headers.GetValue(MessageHeader.MessageIdKey)));
 
                 if (firstMessage.Offset != null)
-                    properties.Add(("offset", "offset", $"{firstMessage.Offset.Key}@{firstMessage.Offset.Value}"));
+                    properties.Add(("offset", "offset", $"{firstMessage.Offset.Value}"));
             }
 
             properties.Add(("batchId", "batchId", firstMessage.Headers.GetValue(MessageHeader.BatchIdKey)));

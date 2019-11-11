@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Broker
             Offset = offset;
 
             Key = $"{topic}[{partition}]";
-            Value = offset.ToString();
+            Value = $"{partition}@{offset}";
         }
 
         public KafkaOffset(Confluent.Kafka.TopicPartitionOffset topicPartitionOffset)
@@ -56,5 +56,10 @@ namespace Silverback.Messaging.Broker
         public Confluent.Kafka.TopicPartitionOffset AsTopicPartitionOffset() =>
             new Confluent.Kafka.TopicPartitionOffset(Topic, new Confluent.Kafka.Partition(Partition),
                 new Confluent.Kafka.Offset(Offset));
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }
