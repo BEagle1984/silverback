@@ -41,9 +41,9 @@ namespace Silverback.Examples.Main.UseCases.Advanced
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent { Key = "A", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
-            await publisher.PublishAsync(new SimpleIntegrationEvent { Key = "B", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
-            await publisher.PublishAsync(new SimpleIntegrationEvent { Key = "C", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new PartitionedSimpleIntegrationEvent { Key = "AAAAAAAAAA", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new PartitionedSimpleIntegrationEvent { Key = "zzzzzzzzzz", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new PartitionedSimpleIntegrationEvent { Key = "0000000000", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }
     }
 }
