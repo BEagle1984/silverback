@@ -4,20 +4,21 @@
 [bool]$global:buildSolution = $FALSE
 $global:buildConfiguration = "Release"
 
-# function Check-Location()
-# {
-#     [string]$currentLocation = Get-Location
+function Check-Location()
+{
+    [string]$currentLocation = Get-Location
 
-#     if ($currentLocation -ne $repositoryLocation)
-#     {
-#         Write-Host "This script is supposed to run in $repositoryLocation!" -ForegroundColor Red
-#         $choice = Read-Host "Wanna swith to $repositoryLocation ? [Y/n]"
-#         if ($choice -ne "n")
-#         {
-#             cd $repositoryLocation
-#         }
-#     }
-# }
+    if ($currentLocation -NotLike "*\nuget*" -Or -Not (Test-Path "./Update.ps1"))
+    {
+        Write-Host "This script is supposed to run in the /nuget folder of the main Silverback repository!" -ForegroundColor Red
+        Exit
+        # $choice = Read-Host "Wanna swith to $repositoryLocation ? [Y/n]"
+        # if ($choice -ne "n")
+        # {
+        #     cd $repositoryLocation
+        # }
+    }
+}
 
 function Check-Args([string[]]$argsArray)
 {
@@ -214,6 +215,11 @@ function Add-Version([string]$path, [hashtable]$hashtable)
                 break
             }
 
+            if ($token -eq "nupkg")
+            {
+                break
+            }
+
             if ($name.Length -gt 0)
             {
                 $name += "."
@@ -230,7 +236,7 @@ function Add-Version([string]$path, [hashtable]$hashtable)
         if ($previousVersion.major -gt $major -Or 
             ($previousVersion.major -eq $major -And $previousVersion.minor -gt $minor) -Or
             ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -gt $patch) -Or 
-            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -eq $patch -And ($previousVersion.suffix -eq "" -Or $previousVersion.suffix -gt $suffix )))
+            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -eq $patch -And $suffix -ne "" -And ($previousVersion.suffix -eq "" -Or $previousVersion.suffix -gt $suffix)))
         {
             return
         }
@@ -266,7 +272,7 @@ function Write-Separator()
 Write-Separator
 
 Check-Args $args
-# Check-Location
+Check-Location
 Delete-All
 Delete-Cache
 Build
