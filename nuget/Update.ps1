@@ -8,7 +8,7 @@ function Check-Location()
 {
     [string]$currentLocation = Get-Location
 
-    if ($currentLocation -NotLike "*\nuget*" -Or -Not (Test-Path "./Update.ps1"))
+    if (-Not (Test-Path "./Update.ps1"))
     {
         Write-Host "This script is supposed to run in the /nuget folder of the main Silverback repository!" -ForegroundColor Red
         Exit
