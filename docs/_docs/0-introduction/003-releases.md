@@ -12,7 +12,7 @@ toc: false
 * Reviewed severity of some log entries
 * Cleaner internal implementation
 * Better exception handling (flattening of `AggregateException`)
-* Update to [Confluent.Kafka 1.2.1](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.2.1)
+* Upgrade to [Confluent.Kafka 1.2.2](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.2.2)
 * The Kafka consumer automatically recovers from fatal errors (can be disabled via Endpoint configuration)
 * Support for .Net Core 3.0 and Entity Framework Core 3.0
 * Refactored packages (EF binding logic is now in a single package, versioned after the related EF version)
