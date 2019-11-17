@@ -4,7 +4,7 @@ permalink: /docs/releases
 toc: false
 ---
 
-## **1.0.0**
+## [1.0.0](https://github.com/BEagle1984/silverback/releases/tag/1.0.0)
 
 **What's new**
 * Message size optimization (no wrappers anymore)
@@ -34,7 +34,7 @@ toc: false
 * Fixed partition key value being lost when using the `DeferredOutboundConnector`
 * Other small fixes to improve stability and reliability
 
-## 0.10.0
+## [0.10.0](https://github.com/BEagle1984/silverback/releases/tag/0.10.0)
 
 **What's new**
 * Better error handling: now all exceptions, including the ones thrown by the `MessageSerializer` can be handled through the error policies
