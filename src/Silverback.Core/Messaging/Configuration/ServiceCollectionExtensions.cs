@@ -2,21 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
 
-namespace Silverback.Messaging.Configuration
+// ReSharper disable once CheckNamespace
+namespace Microsoft.Extensions.DependencyInjection
 {
-    internal class SilverbackBuilder : ISilverbackBuilder
+    public static class ServiceCollectionExtensions
     {
-        public SilverbackBuilder(IServiceCollection services)
-        {
-            Services = services;
-        }
-
-        public IServiceCollection Services { get; }
-
         #region Subscribers
 
         #region AddTransientSubscriber
@@ -25,13 +18,20 @@ namespace Silverback.Messaging.Configuration
         /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientSubscriber(Type baseType, Type subscriberType)
+        public static IServiceCollection AddTransientSubscriber(this IServiceCollection services, Type baseType, Type subscriberType)
         {
-            Services.AddTransientSubscriber(baseType, subscriberType);
-            return this;
+            if (baseType == null) throw new ArgumentNullException(nameof(baseType));
+            if (subscriberType == null) throw new ArgumentNullException(nameof(subscriberType));
+
+            services
+                .AddTransient(subscriberType)
+                .AddTransient(baseType, subscriberType);
+
+            return services;
         }
 
         /// <summary>
@@ -39,12 +39,10 @@ namespace Silverback.Messaging.Configuration
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientSubscriber(Type subscriberType)
-        {
-            Services.AddTransientSubscriber(subscriberType);
-            return this;
-        }
+        public static IServiceCollection AddTransientSubscriber(this IServiceCollection services, Type subscriberType) =>
+            AddTransientSubscriber(services, typeof(ISubscriber), subscriberType);
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
@@ -52,43 +50,47 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientSubscriber<TBase, TSubscriber>()
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddTransientSubscriber<TBase, TSubscriber>();
-            return this;
-        }
+        public static IServiceCollection AddTransientSubscriber<TBase, TSubscriber>(this IServiceCollection services)
+            where TSubscriber : class, ISubscriber =>
+            AddTransientSubscriber(services, typeof(TBase), typeof(TSubscriber));
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientSubscriber<TSubscriber>()
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddTransientSubscriber<TSubscriber>();
-            return this;
-        }
+        public static IServiceCollection AddTransientSubscriber<TSubscriber>(this IServiceCollection services)
+            where TSubscriber : class, ISubscriber =>
+            AddTransientSubscriber<ISubscriber, TSubscriber>(services);
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientSubscriber(
+        public static IServiceCollection AddTransientSubscriber(this IServiceCollection services, 
             Type baseType,
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            Services.AddTransientSubscriber(baseType, subscriberType, implementationFactory);
-            return this;
+            if (baseType == null) throw new ArgumentNullException(nameof(baseType));
+            if (subscriberType == null) throw new ArgumentNullException(nameof(subscriberType));
+            if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
+
+            services
+                .AddTransient(subscriberType, implementationFactory)
+                .AddTransient(baseType, implementationFactory);
+
+            return services;
         }
 
         /// <summary>
@@ -96,16 +98,15 @@ namespace Silverback.Messaging.Configuration
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientSubscriber(
+        public static IServiceCollection AddTransientSubscriber(
+            this IServiceCollection services, 
             Type subscriberType,
-            Func<IServiceProvider, ISubscriber> implementationFactory)
-        {
-            Services.AddTransientSubscriber(subscriberType, implementationFactory);
-            return this;
-        }
+            Func<IServiceProvider, ISubscriber> implementationFactory) =>
+            AddTransientSubscriber(services, typeof(ISubscriber), subscriberType, implementationFactory);
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
@@ -114,15 +115,14 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientSubscriber<TBase, TSubscriber>(
+        public static IServiceCollection AddTransientSubscriber<TBase, TSubscriber>(
+            this IServiceCollection services,
             Func<IServiceProvider, TSubscriber> implementationFactory)
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddTransientSubscriber<TBase, TSubscriber>(implementationFactory);
-            return this;
-        }
+            where TSubscriber : class, ISubscriber =>
+            AddTransientSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationFactory);
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
@@ -130,15 +130,14 @@ namespace Silverback.Messaging.Configuration
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientSubscriber<TSubscriber>(
+        public static IServiceCollection AddTransientSubscriber<TSubscriber>(
+            this IServiceCollection services,
             Func<IServiceProvider, TSubscriber> implementationFactory)
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddTransientSubscriber<TSubscriber>(implementationFactory);
-            return this;
-        }
+            where TSubscriber : class, ISubscriber =>
+            AddTransientSubscriber<ISubscriber, TSubscriber>(services, implementationFactory);
 
         #endregion
 
@@ -148,26 +147,31 @@ namespace Silverback.Messaging.Configuration
         /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedSubscriber(Type baseType, Type subscriberType)
+        public static IServiceCollection AddScopedSubscriber(this IServiceCollection services, Type baseType, Type subscriberType)
         {
-            Services.AddScopedSubscriber(baseType, subscriberType);
-            return this;
+            if (baseType == null) throw new ArgumentNullException(nameof(baseType));
+            if (subscriberType == null) throw new ArgumentNullException(nameof(subscriberType));
+
+            services
+                .AddScoped(subscriberType)
+                .AddScoped(baseType, subscriberType);
+
+            return services;
         }
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedSubscriber(Type subscriberType)
-        {
-            Services.AddScopedSubscriber(subscriberType);
-            return this;
-        }
+        public static IServiceCollection AddScopedSubscriber(this IServiceCollection services, Type subscriberType) =>
+            AddScopedSubscriber(services, typeof(ISubscriber), subscriberType);
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
@@ -175,43 +179,47 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedSubscriber<TBase, TSubscriber>()
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddScopedSubscriber<TBase, TSubscriber>();
-            return this;
-        }
+        public static IServiceCollection AddScopedSubscriber<TBase, TSubscriber>(this IServiceCollection services)
+            where TSubscriber : class, ISubscriber =>
+            AddScopedSubscriber(services, typeof(TBase), typeof(TSubscriber));
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedSubscriber<TSubscriber>()
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddScopedSubscriber<TSubscriber>();
-            return this;
-        }
+        public static IServiceCollection AddScopedSubscriber<TSubscriber>(this IServiceCollection services)
+            where TSubscriber : class, ISubscriber =>
+            AddScopedSubscriber<ISubscriber, TSubscriber>(services);
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedSubscriber(
+        public static IServiceCollection AddScopedSubscriber(this IServiceCollection services, 
             Type baseType,
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            Services.AddScopedSubscriber(baseType, subscriberType, implementationFactory);
-            return this;
+            if (baseType == null) throw new ArgumentNullException(nameof(baseType));
+            if (subscriberType == null) throw new ArgumentNullException(nameof(subscriberType));
+            if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
+
+            services
+                .AddScoped(subscriberType, implementationFactory)
+                .AddScoped(baseType, implementationFactory);
+
+            return services;
         }
 
         /// <summary>
@@ -219,16 +227,15 @@ namespace Silverback.Messaging.Configuration
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedSubscriber(
+        public static IServiceCollection AddScopedSubscriber(
+            this IServiceCollection services, 
             Type subscriberType,
-            Func<IServiceProvider, ISubscriber> implementationFactory)
-        {
-            Services.AddScopedSubscriber(subscriberType, implementationFactory);
-            return this;
-        }
+            Func<IServiceProvider, ISubscriber> implementationFactory) =>
+            AddScopedSubscriber(services, typeof(ISubscriber), subscriberType, implementationFactory);
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
@@ -237,15 +244,14 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedSubscriber<TBase, TSubscriber>(
+        public static IServiceCollection AddScopedSubscriber<TBase, TSubscriber>(
+            this IServiceCollection services,
             Func<IServiceProvider, TSubscriber> implementationFactory)
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddScopedSubscriber(implementationFactory);
-            return this;
-        }
+            where TSubscriber : class, ISubscriber =>
+            AddScopedSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationFactory);
 
         /// <summary>
         /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
@@ -253,15 +259,14 @@ namespace Silverback.Messaging.Configuration
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedSubscriber<TSubscriber>(
+        public static IServiceCollection AddScopedSubscriber<TSubscriber>(
+            this IServiceCollection services,
             Func<IServiceProvider, TSubscriber> implementationFactory)
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddScopedSubscriber<TSubscriber>(implementationFactory);
-            return this;
-        }
+            where TSubscriber : class, ISubscriber =>
+            AddScopedSubscriber<ISubscriber, TSubscriber>(services, implementationFactory);
 
         #endregion
 
@@ -271,26 +276,31 @@ namespace Silverback.Messaging.Configuration
         /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber(Type baseType, Type subscriberType)
+        public static IServiceCollection AddSingletonSubscriber(this IServiceCollection services, Type baseType, Type subscriberType)
         {
-            Services.AddSingletonSubscriber(baseType, subscriberType);
-            return this;
+            if (baseType == null) throw new ArgumentNullException(nameof(baseType));
+            if (subscriberType == null) throw new ArgumentNullException(nameof(subscriberType));
+
+            services
+                .AddSingleton(subscriberType)
+                .AddSingleton(baseType, subscriberType);
+
+            return services;
         }
 
         /// <summary>
         /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber(Type subscriberType)
-        {
-            Services.AddSingletonSubscriber(subscriberType);
-            return this;
-        }
+        public static IServiceCollection AddSingletonSubscriber(this IServiceCollection services, Type subscriberType) =>
+            AddSingletonSubscriber(services, typeof(ISubscriber), subscriberType);
 
         /// <summary>
         /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
@@ -299,12 +309,9 @@ namespace Silverback.Messaging.Configuration
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber<TBase, TSubscriber>()
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddSingletonSubscriber<TBase, TSubscriber>();
-            return this;
-        }
+        public static IServiceCollection AddSingletonSubscriber<TBase, TSubscriber>(this IServiceCollection services)
+            where TSubscriber : class, ISubscriber =>
+            AddSingletonSubscriber(services, typeof(TBase), typeof(TSubscriber));
 
         /// <summary>
         /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
@@ -312,29 +319,35 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber<TSubscriber>()
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddSingletonSubscriber<TSubscriber>();
-            return this;
-        }
+        public static IServiceCollection AddSingletonSubscriber<TSubscriber>(this IServiceCollection services)
+            where TSubscriber : class, ISubscriber =>
+            AddSingletonSubscriber<ISubscriber, TSubscriber>(services);
 
         /// <summary>
         /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber(
+        public static IServiceCollection AddSingletonSubscriber(
+            this IServiceCollection services, 
             Type baseType,
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            Services.AddSingletonSubscriber(baseType, subscriberType, implementationFactory);
-            return this;
+            if (baseType == null) throw new ArgumentNullException(nameof(baseType));
+            if (subscriberType == null) throw new ArgumentNullException(nameof(subscriberType));
+            if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
+
+            services
+                .AddSingleton(subscriberType, implementationFactory)
+                .AddSingleton(baseType, implementationFactory);
+
+            return services;
         }
 
         /// <summary>
@@ -342,16 +355,15 @@ namespace Silverback.Messaging.Configuration
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber(
+        public static IServiceCollection AddSingletonSubscriber(
+            this IServiceCollection services, 
             Type subscriberType,
-            Func<IServiceProvider, ISubscriber> implementationFactory)
-        {
-            Services.AddSingletonSubscriber(subscriberType, implementationFactory);
-            return this;
-        }
+            Func<IServiceProvider, ISubscriber> implementationFactory) =>
+            AddSingletonSubscriber(services, typeof(ISubscriber), subscriberType, implementationFactory);
 
         /// <summary>
         /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
@@ -360,15 +372,14 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber<TBase, TSubscriber>(
+        public static IServiceCollection AddSingletonSubscriber<TBase, TSubscriber>(
+            this IServiceCollection services,
             Func<IServiceProvider, TSubscriber> implementationFactory)
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddSingletonSubscriber<TBase, TSubscriber>(implementationFactory);
-            return this;
-        }
+            where TSubscriber : class, ISubscriber =>
+            AddSingletonSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationFactory);
 
         /// <summary>
         /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
@@ -376,32 +387,38 @@ namespace Silverback.Messaging.Configuration
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber<TSubscriber>(
+        public static IServiceCollection AddSingletonSubscriber<TSubscriber>(
+            this IServiceCollection services,
             Func<IServiceProvider, TSubscriber> implementationFactory)
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddSingletonSubscriber<TSubscriber>(implementationFactory);
-            return this;
-        }
+            where TSubscriber : class, ISubscriber =>
+            AddSingletonSubscriber<ISubscriber, TSubscriber>(services, implementationFactory);
 
         /// <summary>
         /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
         /// instance specified in <paramref name="implementationInstance" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber(
+        public static IServiceCollection AddSingletonSubscriber(
+            this IServiceCollection services, 
             Type baseType,
             Type subscriberType,
             ISubscriber implementationInstance)
         {
-            Services.AddSingletonSubscriber(baseType, subscriberType, implementationInstance);
-            return this;
+            if (implementationInstance == null) throw new ArgumentNullException(nameof(implementationInstance));
+
+            services
+                .AddSingleton(subscriberType, implementationInstance)
+                .AddSingleton(baseType, implementationInstance);
+
+            return services;
         }
 
         /// <summary>
@@ -409,14 +426,12 @@ namespace Silverback.Messaging.Configuration
         /// instance specified in <paramref name="implementationInstance" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber(Type subscriberType, ISubscriber implementationInstance)
-        {
-            Services.AddSingletonSubscriber(subscriberType, implementationInstance);
-            return this;
-        }
+        public static IServiceCollection AddSingletonSubscriber(this IServiceCollection services, Type subscriberType, ISubscriber implementationInstance) =>
+            AddSingletonSubscriber(services, typeof(ISubscriber), subscriberType, implementationInstance);
 
         /// <summary>
         /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
@@ -425,28 +440,26 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to register.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber<TBase, TSubscriber>(TSubscriber implementationInstance)
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddSingletonSubscriber(implementationInstance);
-            return this;
-        }
+        public static IServiceCollection AddSingletonSubscriber<TBase, TSubscriber>(
+            this IServiceCollection services, TSubscriber implementationInstance)
+            where TSubscriber : class, ISubscriber =>
+            AddSingletonSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationInstance);
 
         /// <summary>
         /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
         /// instance specified in <paramref name="implementationInstance" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonSubscriber<TSubscriber>(TSubscriber implementationInstance)
-            where TSubscriber : class, ISubscriber
-        {
-            Services.AddSingletonSubscriber<TSubscriber>(implementationInstance);
-            return this;
-        }
+        public static IServiceCollection AddSingletonSubscriber<TSubscriber>(
+            this IServiceCollection services, TSubscriber implementationInstance)
+            where TSubscriber : class, ISubscriber =>
+            AddSingletonSubscriber(services, typeof(ISubscriber), typeof(TSubscriber), implementationInstance);
 
         #endregion
 
@@ -460,12 +473,16 @@ namespace Silverback.Messaging.Configuration
         /// Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientBehavior(Type behaviorType)
+        public static IServiceCollection AddTransientBehavior(this IServiceCollection services, Type behaviorType)
         {
-            Services.AddTransientBehavior(behaviorType);
-            return this;
+            if (behaviorType == null) throw new ArgumentNullException(nameof(behaviorType));
+
+            services.AddTransient(typeof(IBehavior), behaviorType);
+
+            return services;
         }
 
         /// <summary>
@@ -473,25 +490,29 @@ namespace Silverback.Messaging.Configuration
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientBehavior<TBehavior>()
-            where TBehavior : class, IBehavior
-        {
-            Services.AddTransientBehavior<TBehavior>();
-            return this;
-        }
+        public static IServiceCollection AddTransientBehavior<TBehavior>(this IServiceCollection services)
+            where TBehavior : class, IBehavior =>
+            AddTransientBehavior(services, typeof(TBehavior));
 
         /// <summary>
         /// Adds a scoped behavior with a
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddTransientBehavior(Func<IServiceProvider, IBehavior> implementationFactory)
+        public static IServiceCollection AddTransientBehavior(
+            this IServiceCollection services, 
+            Func<IServiceProvider, IBehavior> implementationFactory)
         {
-            Services.AddTransientBehavior(implementationFactory);
-            return this;
+            if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
+
+            services.AddTransient(typeof(IBehavior), implementationFactory);
+
+            return services;
         }
 
         #endregion
@@ -502,38 +523,46 @@ namespace Silverback.Messaging.Configuration
         /// Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedBehavior(Type behaviorType)
+        public static IServiceCollection AddScopedBehavior(this IServiceCollection services, Type behaviorType)
         {
-            Services.AddScopedBehavior(behaviorType);
-            return this;
+            if (behaviorType == null) throw new ArgumentNullException(nameof(behaviorType));
+
+            services.AddScoped(typeof(IBehavior), behaviorType);
+
+            return services;
         }
 
         /// <summary>
         /// Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedBehavior<TBehavior>()
-            where TBehavior : class, IBehavior
-        {
-            Services.AddScopedBehavior<TBehavior>();
-            return this;
-        }
+        public static IServiceCollection AddScopedBehavior<TBehavior>(this IServiceCollection services)
+            where TBehavior : class, IBehavior =>
+            AddScopedBehavior(services, typeof(TBehavior));
 
         /// <summary>
         /// Adds a scoped behavior with a
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddScopedBehavior(Func<IServiceProvider, IBehavior> implementationFactory)
+        public static IServiceCollection AddScopedBehavior(
+            this IServiceCollection services, 
+            Func<IServiceProvider, IBehavior> implementationFactory)
         {
-            Services.AddScopedBehavior(implementationFactory);
-            return this;
+            if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
+
+            services.AddScoped(typeof(IBehavior), implementationFactory);
+
+            return services;
         }
 
         #endregion
@@ -544,12 +573,16 @@ namespace Silverback.Messaging.Configuration
         /// Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonBehavior(Type behaviorType)
+        public static IServiceCollection AddSingletonBehavior(this IServiceCollection services, Type behaviorType)
         {
-            Services.AddSingletonBehavior(behaviorType);
-            return this;
+            if (behaviorType == null) throw new ArgumentNullException(nameof(behaviorType));
+
+            services.AddSingleton(typeof(IBehavior), behaviorType);
+
+            return services;
         }
 
         /// <summary>
@@ -557,25 +590,29 @@ namespace Silverback.Messaging.Configuration
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonBehavior<TBehavior>()
-            where TBehavior : class, IBehavior
-        {
-            Services.AddSingletonBehavior<TBehavior>();
-            return this;
-        }
+        public static IServiceCollection AddSingletonBehavior<TBehavior>(this IServiceCollection services)
+            where TBehavior : class, IBehavior =>
+            AddSingletonBehavior(services, typeof(TBehavior));
 
         /// <summary>
         /// Adds a singleton behavior with a
         /// factory specified in <paramref name="implementationFactory" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public ISilverbackBuilder AddSingletonBehavior(Func<IServiceProvider, IBehavior> implementationFactory)
+        public static IServiceCollection AddSingletonBehavior(
+            this IServiceCollection services, 
+            Func<IServiceProvider, IBehavior> implementationFactory)
         {
-            Services.AddSingletonBehavior(implementationFactory);
-            return this;
+            if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
+
+            services.AddSingleton(typeof(IBehavior), implementationFactory);
+
+            return services;
         }
 
         /// <summary>
@@ -583,13 +620,17 @@ namespace Silverback.Messaging.Configuration
         /// instance specified in <paramref name="implementationInstance" /> to the
         /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
+        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
-        public ISilverbackBuilder AddSingletonBehavior(IBehavior implementationInstance)
+        public static IServiceCollection AddSingletonBehavior(this IServiceCollection services, IBehavior implementationInstance)
         {
-            Services.AddSingletonBehavior(implementationInstance);
-            return this;
+            if (implementationInstance == null) throw new ArgumentNullException(nameof(implementationInstance));
+
+            services.AddSingleton(typeof(IBehavior), implementationInstance);
+
+            return services;
         }
 
         #endregion

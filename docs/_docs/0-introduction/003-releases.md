@@ -1,7 +1,7 @@
 ---
 title:  Releases
 permalink: /docs/releases
-toc: false
+toc: true
 ---
 
 ## [1.0.0](https://github.com/BEagle1984/silverback/releases/tag/1.0.0)
@@ -33,6 +33,11 @@ toc: false
 * Mitigated issue causing the `DistributedBackgroundService` to sometime fail to acquire the database lock [[#39](https://github.com/BEagle1984/silverback/issues/39)]
 * Fixed partition key value being lost when using the `DeferredOutboundConnector`
 * Other small fixes to improve stability and reliability
+
+### Patches
+
+**Silverback.Core 1.0.1**
+* Reintroduced `Add*Subscriber` and `Add*Behavior` as `IServiceCollection` extension methods (for backward compatibility and greater flexibility).
 
 ## [0.10.0](https://github.com/BEagle1984/silverback/releases/tag/0.10.0)
 
