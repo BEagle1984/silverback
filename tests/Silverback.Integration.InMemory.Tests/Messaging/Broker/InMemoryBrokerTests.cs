@@ -30,7 +30,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-            services.AddSilverback().WithConnectionTo<InMemoryBroker>();
+            services.AddSilverback().WithInMemoryBroker();
 
             _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
         }

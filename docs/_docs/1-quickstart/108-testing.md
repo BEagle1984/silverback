@@ -29,7 +29,7 @@ public class InMemoryBrokerTests
             .AddSilverback()
             // Register the InMemoryBroker instead of 
             // the real broker (e.g. KafkaBroker)
-            .WithConnectionTo<InMemoryBroker>()
+            .WithInMemoryBroker()
             // Register the subscriber under test
             .AddScopedSubscriber<MySubscriber>();
 
@@ -82,7 +82,7 @@ public class IntegrationTests
             {
                 // Replace the usual broker (e.g. KafkaBroker) 
                 // with the InMemoryBroker
-                services.AddSingleton<IBroker, InMemoryBroker>();
+                services.OverrideWithInMemoryBroker();
             });
         };
     }
