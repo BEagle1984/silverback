@@ -9,7 +9,6 @@ using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;

@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;

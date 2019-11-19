@@ -15,7 +15,6 @@ using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Configuration
 {

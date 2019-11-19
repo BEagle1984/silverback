@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Silverback.Background;
 using Silverback.Examples.Common.Data;
 using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 

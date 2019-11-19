@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
@@ -32,7 +32,6 @@ This package includes a mocked message broker to be used for testing only.</Desc
 
   <ItemGroup>
     <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />
-    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
   </ItemGroup>
 
 </Project>

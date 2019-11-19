@@ -2,12 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.Behaviors;
-using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
 using Xunit;

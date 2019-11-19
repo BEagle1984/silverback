@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -12,7 +10,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Behaviors;
-using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
