@@ -4,6 +4,13 @@ permalink: /docs/releases
 toc: true
 ---
 
+## [1.0.2](https://github.com/BEagle1984/silverback/releases/tag/1.0.2)
+
+### Fixes
+* Reintroduced `Add*Subscriber` and `Add*Behavior` as `IServiceCollection` extension methods (for backward compatibility and greater flexibility) [[#41](https://github.com/BEagle1984/silverback/issues/41)]
+* Added `WithInMemoryBroker` and `OverrideWithInMemoryBroker` extension methods (see [Testing]({{ site.baseurl }}/docs/quickstart/testing))
+
+
 ## [1.0.0](https://github.com/BEagle1984/silverback/releases/tag/1.0.0)
 
 ### What's new
@@ -33,14 +40,6 @@ toc: true
 * The configuration fluent API changed quite a bit, refer to the current documentation (e.g. [Using the Bus]({{ site.baseurl }}/docs/quickstart/bus) and [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 * `Silverback.Integration.EntityFrameworkCore` and `Silverback.EventSourcing.EntityFrameworkCore` have been deprecated (`Silverback.Core.EntityFrameworkCore` contains all the necessary logic to use EF as store)
 * `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Partitioning]({{ site.baseurl }}/docs/advanced/partitioning))
-
-### Patches
-
-#### Silverback.Core 1.0.1
-* Reintroduced `Add*Subscriber` and `Add*Behavior` as `IServiceCollection` extension methods (for backward compatibility and greater flexibility) [[#41](https://github.com/BEagle1984/silverback/issues/41)]
-
-#### Silverback.Integration.InMemory 1.0.1
-* Added `WithInMemoryBroker` and `OverrideWithInMemoryBroker` extension methods (see [Testing]({{ site.baseurl }}/docs/quickstart/testing))
 
 ## [0.10.0](https://github.com/BEagle1984/silverback/releases/tag/0.10.0)
 
