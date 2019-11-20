@@ -65,8 +65,8 @@ docs:
         url: /docs/advanced/serialization
       - title: Observable Bus
         url: /docs/advanced/rx
-      - title: Kafka Partitioning
-        url: /docs/advanced/partitioning
+      - title: Kafka Message Key (Partitioning)
+        url: /docs/advanced/kafka-message-key
       - title: Using IBroker
         url: /docs/advanced/broker
       - title: Chunking

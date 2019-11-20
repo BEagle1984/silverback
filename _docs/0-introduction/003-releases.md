@@ -4,6 +4,12 @@ permalink: /docs/releases
 toc: true
 ---
 
+## [1.0.3](https://github.com/BEagle1984/silverback/releases/tag/1.0.3)
+
+### Fixes
+* Kafka message key is not hashed anymore to avoid possible collisions and simplify debugging
+* Not really a fix but `PartitioningKeyMemberAttribute` has been deprecated in favor of `KafkaKeyMemberAttribute`, since the message key isn't used just for partitioning (see [Kafka Message Key]({{ site.baseurl }}/docs/advanced/kafka-message-key))
+
 ## [1.0.2](https://github.com/BEagle1984/silverback/releases/tag/1.0.2)
 
 ### Fixes
@@ -38,8 +44,12 @@ toc: true
 * Some changes in `IInboundMessage` and `IOutboundMessage` interfaces
 * Changes to the schema of the outbox table (`Silverback.Messaging.Connectors.Model.OutboundMessage`)
 * The configuration fluent API changed quite a bit, refer to the current documentation (e.g. [Using the Bus]({{ site.baseurl }}/docs/quickstart/bus) and [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
+
+**Important!** `WithConnectionTo<KafkaBroker>` has to be replaced with `WithConnectionToKafka` in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see [Kafka Message Key]({{ site.baseurl }}/docs/advanced/kafka-message-key))
+{: .notice--warning}
+
 * `Silverback.Integration.EntityFrameworkCore` and `Silverback.EventSourcing.EntityFrameworkCore` have been deprecated (`Silverback.Core.EntityFrameworkCore` contains all the necessary logic to use EF as store)
-* `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Partitioning]({{ site.baseurl }}/docs/advanced/partitioning))
+* `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Message Key]({{ site.baseurl }}/docs/advanced/kafka-message-key))
 
 ## [0.10.0](https://github.com/BEagle1984/silverback/releases/tag/0.10.0)
 
