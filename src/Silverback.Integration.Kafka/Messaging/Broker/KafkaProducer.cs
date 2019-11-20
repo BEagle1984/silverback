@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -76,7 +77,7 @@ namespace Silverback.Messaging.Broker
 
             return headerValue == null 
                 ? null 
-                : Convert.FromBase64String(headerValue);
+                : Encoding.UTF8.GetBytes(headerValue);
         }
 
         private Confluent.Kafka.IProducer<byte[], byte[]> GetInnerProducer() =>

@@ -7,11 +7,11 @@ namespace Silverback.Messaging.Messages
 {
     /// <summary>
     /// The properties decorated with this attribute will be used
-    /// to build a key that will determine the destination partition on Kafka.
+    /// to build the message key that will used by Kafka
+    /// (for partitioning, compacting, etc.).
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    [Obsolete("PartitioningKeyMemberAttribute is deprecated, use KafkaKeyMemberAttribute instead.")]
-    public class PartitioningKeyMemberAttribute : Attribute
+    public class KafkaKeyMemberAttribute : Attribute
     {
     }
 }

@@ -9,9 +9,9 @@ namespace Silverback.Tests.Integration.Kafka.TestTypes.Messages
     public class MultipleKeyMembersMessage : IMessage
     {
         public Guid Id { get; set; }
-        [PartitioningKeyMember]
+        [KafkaKeyMember]
         public string One { get; set; }
-        [PartitioningKeyMember]
+        [KafkaKeyMember]
         public string Two { get; set; }
         public string Three { get; set; }
     }
