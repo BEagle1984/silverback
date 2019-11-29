@@ -41,8 +41,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
                 Serializer = GetSerializer(),
                 Configuration = new KafkaProducerConfig
                 {
-                    BootstrapServers = "PLAINTEXT://localhost:9092",
-                    ClientId = GetType().FullName
+                    BootstrapServers = "PLAINTEXT://localhost:9092"
                 }
             };
 

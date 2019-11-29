@@ -36,8 +36,7 @@ namespace Silverback.Examples.Main.UseCases.EfCore
                 {
                     Configuration = new KafkaProducerConfig
                     {
-                        BootstrapServers = "PLAINTEXT://localhost:9092",
-                        ClientId = GetType().FullName
+                        BootstrapServers = "PLAINTEXT://localhost:9092"
                     }
                 }));
 

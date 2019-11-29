@@ -34,8 +34,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    BootstrapServers = "PLAINTEXT://localhost:9092",
-                    ClientId = GetType().FullName
+                    BootstrapServers = "PLAINTEXT://localhost:9092"
                 },
                 Chunk = new ChunkSettings
                 {
