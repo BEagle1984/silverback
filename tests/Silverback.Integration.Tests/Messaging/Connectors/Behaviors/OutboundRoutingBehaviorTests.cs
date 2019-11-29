@@ -12,6 +12,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -146,6 +147,28 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             await _behavior.Handle(new[] { message }, Task.FromResult);
 
             _broker.ProducedMessages.Count.Should().Be(1);
+        }
+        
+        
+        [Fact]
+        public async Task Handle_InboundMessages_AreIgnored()
+        {
+            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), null);
+
+            var messages = new[] { new TestEventOne(), new TestEventOne() };
+            var wrappedMessages = messages.Select(message =>
+                new InboundMessage<TestEventOne>(null, null, null, null, true)
+                {
+                    Content = message
+                }).ToList();
+            
+            await _behavior.Handle(wrappedMessages, Task.FromResult);
+            await _behavior.Handle(messages, Task.FromResult);
+            await _outboundQueue.Commit();
+
+            var queued = await _outboundQueue.Dequeue(1);
+            queued.Count().Should().Be(0);
+            _broker.ProducedMessages.Count.Should().Be(0);
         }
     }
 }

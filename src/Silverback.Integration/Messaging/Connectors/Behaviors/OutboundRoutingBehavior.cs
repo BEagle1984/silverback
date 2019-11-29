@@ -2,12 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Behaviors
 {
@@ -16,6 +18,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
         private readonly IServiceProvider _serviceProvider;
         private readonly IOutboundRoutingConfiguration _routing;
         private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly ConcurrentBag<object> _inboundMessagesCache = new ConcurrentBag<object>();
 
         public OutboundRoutingBehavior(IServiceProvider serviceProvider)
         {
@@ -28,8 +31,10 @@ namespace Silverback.Messaging.Connectors.Behaviors
 
         public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
         {
-            var routedMessages = await WrapAndRepublishRoutedMessages(messages);
+            messages.OfType<IInboundMessage>().ForEach(message => _inboundMessagesCache.Add(message.Content));
 
+            var routedMessages = await WrapAndRepublishRoutedMessages(messages);
+            
             if (!_routing.PublishOutboundMessagesToInternalBus)
                 messages = messages.Where(m => !routedMessages.Contains(m)).ToList();
 
@@ -39,9 +44,13 @@ namespace Silverback.Messaging.Connectors.Behaviors
         private async Task<IEnumerable<object>> WrapAndRepublishRoutedMessages(IEnumerable<object> messages)
         {
             var wrappedMessages = messages
-                .Where(message => !(message is IOutboundMessageInternal))
-                .SelectMany(message => _routing.GetRoutesForMessage(message)
-                    .Select(route => CreateOutboundMessage(message, route)));
+                .Where(message => !(message is IOutboundMessageInternal) &&
+                                  !_inboundMessagesCache.Contains(message))
+                .SelectMany(message =>
+                    _routing
+                        .GetRoutesForMessage(message)
+                        .Select(route => 
+                            CreateOutboundMessage(message, route)));
 
             if (wrappedMessages.Any())
                 await _serviceProvider

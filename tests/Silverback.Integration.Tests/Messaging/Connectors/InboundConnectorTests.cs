@@ -75,7 +75,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
-        // Test for issue  #33: messages don't have to be registered with HandleMessagesOfType to be unwrapped and received
+        // Test for issue #33: messages don't have to be registered with HandleMessagesOfType to be unwrapped and received
         public async Task Bind_PushUnhandledMessages_MessagesUnwrappedAndReceived()
         {
             _connector.Bind(TestEndpoint.GetDefault());
