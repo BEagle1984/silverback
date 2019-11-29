@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Silverback.Database
 {
-    public class EfCoreDbContext<TDbContext> :IDbContext
+    public class EfCoreDbContext<TDbContext> : IDbContext
         where TDbContext : DbContext
     {
         private readonly TDbContext _dbContext;

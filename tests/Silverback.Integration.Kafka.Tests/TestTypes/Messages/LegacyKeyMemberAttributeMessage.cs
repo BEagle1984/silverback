@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Messages;
+#pragma warning disable 618
 
 namespace Silverback.Tests.Integration.Kafka.TestTypes.Messages
 {

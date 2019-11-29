@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
@@ -56,8 +57,10 @@ namespace Silverback.Examples.Main.UseCases
             }
         }
 
+        [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
         private IServiceProvider BuildServiceProvider(IServiceCollection services)
         {
+#pragma warning disable 162
             if (UseAutofac)
             {
                 return ConfigureAutofac(services);
@@ -69,6 +72,7 @@ namespace Silverback.Examples.Main.UseCases
                     ValidateScopes = true
                 });
             }
+#pragma warning restore 162
         }
 
         private IServiceProvider ConfigureAutofac(IServiceCollection services)

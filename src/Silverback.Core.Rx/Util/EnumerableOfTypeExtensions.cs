@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Linq;
 using System.Reflection;
 
@@ -10,7 +11,7 @@ namespace Silverback.Util
     // TODO: Test
     internal static class ObservableOfTypeExtensions
     {
-        // ReSharper disable once PossibleNullReferenceException
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static IObservable<object> OfType(this IObservable<object> source, Type type) =>
             typeof(Observable)
                     .GetMethod("OfType", BindingFlags.Static | BindingFlags.Public)

@@ -5,9 +5,9 @@ using Silverback.Examples.Main.Menu;
 
 namespace Silverback.Examples.Main
 {
-    class Program
+    static class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             new MenuNavigator().RenderCategories();
         }

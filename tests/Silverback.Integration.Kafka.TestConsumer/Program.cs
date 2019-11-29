@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
         private static IBroker _broker;
         private static IConsumer _consumer;
 
+        [SuppressMessage("ReSharper", "FunctionNeverReturns")]
         private static void Main()
         {
             Console.Clear();

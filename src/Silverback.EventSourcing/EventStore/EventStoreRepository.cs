@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Silverback.Domain;
 using Silverback.Domain.Util;
 using Silverback.Messaging.Messages;
-using Silverback.Util;
 
 namespace Silverback.EventStore
 {
@@ -68,7 +67,7 @@ namespace Silverback.EventStore
 
         private TEventStoreEntity Store(TAggregateEntity aggregateEntity, TEventStoreEntity eventStore)
         {
-            var newEvents = aggregateEntity.GetNewEvents();
+            var newEvents = aggregateEntity.GetNewEvents().ToList();
 
             eventStore.EntityVersion += newEvents.Count();
 

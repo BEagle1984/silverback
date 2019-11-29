@@ -1,13 +1,15 @@
 ﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Silverback.Examples.ConsumerA
 {
-    public class Program
+    static class Program
     {
-        static void Main(string[] args)
+        [SuppressMessage("ReSharper", "FunctionNeverReturns")]
+        static void Main()
         {
             new ConsumerServiceA().Init();
 

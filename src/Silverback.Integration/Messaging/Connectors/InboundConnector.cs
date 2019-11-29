@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,8 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly IBroker _broker;
         private readonly IServiceProvider _serviceProvider;
+        
+        [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")] 
         private readonly List<InboundConsumer> _inboundConsumers = new List<InboundConsumer>();
 
         public InboundConnector(IBroker broker, IServiceProvider serviceProvider)

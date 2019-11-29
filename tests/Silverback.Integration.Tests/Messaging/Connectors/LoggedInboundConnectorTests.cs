@@ -15,6 +15,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
+// ReSharper disable EmptyGeneralCatchClause
 
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {

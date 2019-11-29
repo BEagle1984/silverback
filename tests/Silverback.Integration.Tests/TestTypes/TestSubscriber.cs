@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
@@ -22,6 +23,7 @@ namespace Silverback.Tests.Integration.TestTypes
         public TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         [Subscribe]
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         async Task OnMessageReceived(IMessage message)
         {
             if (Delay > TimeSpan.Zero)

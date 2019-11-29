@@ -31,10 +31,18 @@ This package It contains the storage implementation to integrate Silverback with
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Silverback.Core.EFCore30\Database\DependencyInjectionExtensions.cs" Link="Database\DependencyInjectionExtensions.cs" />
-    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreDbContext.cs" Link="Database\EfCoreDbContext.cs" />
-    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreDbSet.cs" Link="Database\EfCoreDbSet.cs" />
-    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreQueryableExtensions.cs" Link="Database\EfCoreQueryableExtensions.cs" />
+    <Compile Include="..\Silverback.Core.EFCore30\Database\DependencyInjectionExtensions.cs">
+      <Link>Database\DependencyInjectionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreDbContext.cs">
+      <Link>Database\EfCoreDbContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreDbSet.cs">
+      <Link>Database\EfCoreDbSet.cs</Link>
+    </Compile>
+    <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreQueryableExtensions.cs">
+      <Link>Database\EfCoreQueryableExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Silverback.Core.EFCore30\EntityFrameworkCore\DbContextEventsPublisher.cs" Link="EntityFrameworkCore\DbContextEventsPublisher.cs" />
   </ItemGroup>
 

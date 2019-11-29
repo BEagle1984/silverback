@@ -42,9 +42,9 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
 
             await service.PingAllEndpoints();
 
-            producer1.ReceivedWithAnyArgs(1).ProduceAsync(null, null);
-            producer2.ReceivedWithAnyArgs(1).ProduceAsync(null, null);
-            producer3.ReceivedWithAnyArgs(1).ProduceAsync(null, null);
+            await producer1.ReceivedWithAnyArgs(1).ProduceAsync(null);
+            await producer2.ReceivedWithAnyArgs(1).ProduceAsync(null);
+            await producer3.ReceivedWithAnyArgs(1).ProduceAsync(null);
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             broker.IsConnected.Returns(true);
             var producer1 = Substitute.For<IProducer>();
             var producer2 = Substitute.For<IProducer>();
-            producer2.ProduceAsync(null, null).ThrowsForAnyArgs<ProduceException>();
+            producer2.ProduceAsync(null).ThrowsForAnyArgs<ProduceException>();
             var producer3 = Substitute.For<IProducer>();
             broker.GetProducer(new TestEndpoint("endpoint1")).Returns(producer1);
             broker.GetProducer(new TestEndpoint("endpoint2")).Returns(producer2);

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -21,6 +22,7 @@ using Xunit;
 namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 {
     [Collection("StaticInMemory")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class OutboundRoutingBehaviorTests
     {
         private readonly OutboundRoutingBehavior _behavior;

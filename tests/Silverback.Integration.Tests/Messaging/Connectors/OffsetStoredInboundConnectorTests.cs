@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -19,6 +20,7 @@ using Xunit;
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
     [Collection("StaticInMemory")]
+    [SuppressMessage("ReSharper", "EmptyGeneralCatchClause")]
     public class OffsetStoredInboundConnectorTests
     {
         private readonly TestSubscriber _testSubscriber;

@@ -136,7 +136,7 @@ namespace Silverback.Messaging.Configuration
             Func<IServiceProvider, TSubscriber> implementationFactory)
             where TSubscriber : class, ISubscriber
         {
-            Services.AddTransientSubscriber<TSubscriber>(implementationFactory);
+            Services.AddTransientSubscriber(implementationFactory);
             return this;
         }
 
@@ -259,7 +259,7 @@ namespace Silverback.Messaging.Configuration
             Func<IServiceProvider, TSubscriber> implementationFactory)
             where TSubscriber : class, ISubscriber
         {
-            Services.AddScopedSubscriber<TSubscriber>(implementationFactory);
+            Services.AddScopedSubscriber(implementationFactory);
             return this;
         }
 
@@ -382,7 +382,7 @@ namespace Silverback.Messaging.Configuration
             Func<IServiceProvider, TSubscriber> implementationFactory)
             where TSubscriber : class, ISubscriber
         {
-            Services.AddSingletonSubscriber<TSubscriber>(implementationFactory);
+            Services.AddSingletonSubscriber(implementationFactory);
             return this;
         }
 
@@ -444,7 +444,7 @@ namespace Silverback.Messaging.Configuration
         public ISilverbackBuilder AddSingletonSubscriber<TSubscriber>(TSubscriber implementationInstance)
             where TSubscriber : class, ISubscriber
         {
-            Services.AddSingletonSubscriber<TSubscriber>(implementationInstance);
+            Services.AddSingletonSubscriber(implementationInstance);
             return this;
         }
 

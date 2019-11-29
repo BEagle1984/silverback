@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
@@ -42,7 +43,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
             await publisher.PublishAsync(new SimpleEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }
 
-        [Subscribe]
-        IMessage OnSimpleEvent(SimpleEvent message) => new SimpleIntegrationEvent {Content = message.Content};
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public IMessage OnSimpleEvent(SimpleEvent message) => new SimpleIntegrationEvent {Content = message.Content};
     }
 }

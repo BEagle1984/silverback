@@ -1,10 +1,9 @@
 ﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -17,12 +16,13 @@ namespace Silverback.Messaging.Behaviors
     {
         public int SortIndex { get; } = 200;
 
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         public Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
         {
             messages.OfType<IOutboundMessage>().ForEach(SetPartitioningKey);
             return next(messages);
         }
-
+        
         private void SetPartitioningKey(IOutboundMessage outboundMessage)
         {
             var key = KafkaKeyHelper.GetMessageKey(outboundMessage.Content);

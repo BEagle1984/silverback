@@ -1,11 +1,14 @@
 ﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Core.TestTypes.Messages;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public class TestSubscriber : ITestSubscriber, ISubscriber
     {
         public int ReceivedMessagesCount { get; private set; }

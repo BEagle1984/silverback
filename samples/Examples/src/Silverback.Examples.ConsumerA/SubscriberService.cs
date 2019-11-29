@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.ConsumerA
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class SubscriberService : ISubscriber
     {
         private readonly ILogger<SubscriberService> _logger;
@@ -22,13 +24,13 @@ namespace Silverback.Examples.ConsumerA
         }
 
         [Subscribe(Parallel = true)]
-        void OnIntegrationEventReceived(IntegrationEvent message)
+        private void OnIntegrationEventReceived(IntegrationEvent message)
         {
             _logger.LogInformation($"Received IntegrationEvent '{message.Content}'");
         }
 
         [Subscribe(Parallel = true)]
-        void OnIntegrationEventBatchReceived(IEnumerable<IntegrationEvent> messages)
+        private void OnIntegrationEventBatchReceived(IEnumerable<IntegrationEvent> messages)
         {
             if (messages.Count() <= 1) return;
 
@@ -36,14 +38,14 @@ namespace Silverback.Examples.ConsumerA
         }
 
         [Subscribe(Parallel = true)]
-        void OnIntegrationEventReceived(IObservable<IntegrationEvent> messages) =>
+        private void OnIntegrationEventReceived(IObservable<IntegrationEvent> messages) =>
             messages.Subscribe(message =>
             {
                 _logger.LogInformation($"Observed IntegrationEvent '{message.Content}'");
             });
 
         [Subscribe]
-        async Task OnBadEventReceived(BadIntegrationEvent message)
+        private async Task OnBadEventReceived(BadIntegrationEvent message)
         {
             _logger.LogInformation($"Message '{message.Content}' is BAD...throwing exception!");
 
@@ -56,25 +58,25 @@ namespace Silverback.Examples.ConsumerA
         }
 
         [Subscribe]
-        void OnLegacyMessageReceived(LegacyMessage message)
+        private void OnLegacyMessageReceived(LegacyMessage message)
         {
             _logger.LogInformation($"Received legacy message '{message.Content}'");
         }
 
         [Subscribe]
-        void OnBatchComplete(BatchCompleteEvent message)
+        private void OnBatchComplete(BatchCompleteEvent message)
         {
             _logger.LogInformation($"Batch '{message.BatchId} ready ({message.BatchSize} messages)");
         }
 
         [Subscribe]
-        void OnBatchProcessed(BatchProcessedEvent message)
+        private void OnBatchProcessed(BatchProcessedEvent message)
         {
             _logger.LogInformation($"Successfully processed batch '{message.BatchId} ({message.BatchSize} messages)");
         }
 
         [Subscribe]
-        void OnMessageMoved(MessageMovedEvent @event)
+        private void OnMessageMoved(MessageMovedEvent @event)
         {
             foreach (var id in @event.Identifiers)
             {

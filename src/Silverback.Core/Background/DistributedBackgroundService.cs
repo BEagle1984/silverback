@@ -42,7 +42,6 @@ namespace Silverback.Background
             _logger.LogInformation($"Starting background service {GetType().FullName}...");
 
             // Run another task to avoid deadlocks
-            // ReSharper disable once MethodSupportsCancellation
             return Task.Run(async () =>
             {
                 try

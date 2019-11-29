@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Silverback.Domain.Util;
 using Xunit;
@@ -47,11 +48,11 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             act.Should().NotThrow();
         }
 
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Book
         {
             public int Id { get; private set; }
             public string Title { get; private set; }
-            public string Author { get; private set; }
             public DateTime Published { get; set; }
             public int? Pages { get; set; }
         }

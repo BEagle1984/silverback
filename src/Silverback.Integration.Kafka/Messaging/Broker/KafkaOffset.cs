@@ -56,10 +56,5 @@ namespace Silverback.Messaging.Broker
         public Confluent.Kafka.TopicPartitionOffset AsTopicPartitionOffset() =>
             new Confluent.Kafka.TopicPartitionOffset(Topic, new Confluent.Kafka.Partition(Partition),
                 new Confluent.Kafka.Offset(Offset));
-
-        public override string ToString()
-        {
-            return base.ToString();
-        }
     }
 }

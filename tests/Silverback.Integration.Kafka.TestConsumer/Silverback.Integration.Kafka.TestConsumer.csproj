@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <LangVersion>$(LangVersion)</LangVersion>
+    <RootNamespace>Silverback.Integration.Kafka.TestConsumer</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

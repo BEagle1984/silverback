@@ -9,7 +9,7 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var xmlDocumentationPath = Path.Combine(
                 Path.GetDirectoryName(

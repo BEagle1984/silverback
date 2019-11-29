@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -22,10 +23,10 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Tests.Core.TestTypes.Subscribers;
 using Xunit;
 
-// ReSharper disable InconsistentNaming
-
 namespace Silverback.Tests.Core.Messaging.Publishing
 {
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+    [SuppressMessage("ReSharper", "CoVariantArrayConversion")]
     public class PublisherTests
     {
         private readonly TestSubscriber _syncSubscriber;
@@ -249,6 +250,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             service2.ReceivedMessagesCount.Should().Be(expectedEventTwo * 2);
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public static IEnumerable<object[]> Publish_SubscribedMessage_ReceivedRepublishedMessages_TestData =>
             new List<object[]>
             {

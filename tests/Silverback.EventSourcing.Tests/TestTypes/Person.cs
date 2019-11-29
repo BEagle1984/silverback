@@ -2,11 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Domain;
 
 namespace Silverback.Tests.EventSourcing.TestTypes
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
     public class Person : EventSourcingDomainEntity<int, Person.PersonDomainEvent>
     {
         public class NameChangedEvent : EntityEvent { public string NewName { get; set; } }
@@ -55,6 +57,7 @@ namespace Silverback.Tests.EventSourcing.TestTypes
         public IEnumerable<IEntityEvent> MergeEvents(IEnumerable<IEntityEvent> events) =>
             events.Select(AddAndApplyEvent).ToList();
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private void Apply(NameChangedEvent @event, bool isReplaying)
         {
             // Skip if a newer event exists (just to show how it can be done)
@@ -64,8 +67,10 @@ namespace Silverback.Tests.EventSourcing.TestTypes
             Name = @event.NewName;
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private void Apply(AgeChangedEvent @event) => Age = @event.NewAge;
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private void Apply(PhoneNumberChangedEvent @event, bool isReplaying)
         {
             PhoneNumber = @event.NewPhoneNumber;

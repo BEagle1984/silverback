@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Silverback.Messaging.Serialization;
 
@@ -45,6 +46,7 @@ namespace Silverback.Messaging
             return obj is KafkaEndpoint other && Equals(other);
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()=> Name != null ? StringComparer.InvariantCulture.GetHashCode(Name) : 0;
 
         private string GetJsonString(object obj) =>

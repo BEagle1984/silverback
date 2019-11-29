@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace Silverback.Messaging.Broker
         protected override IOffset Produce(byte[] serializedMessage, IEnumerable<MessageHeader> headers) =>
             AsyncHelper.RunSynchronously(() => ProduceAsync(serializedMessage, headers));
 
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         protected override async Task<IOffset> ProduceAsync(byte[] serializedMessage, IEnumerable<MessageHeader> headers)
         {
             try

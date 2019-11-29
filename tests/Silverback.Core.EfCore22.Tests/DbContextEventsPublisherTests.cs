@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
@@ -16,6 +17,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore22
 {
+    [SuppressMessage("ReSharper", "EmptyGeneralCatchClause")]
     public class DbContextEventsPublisherTests : IDisposable
     {
         private readonly TestDbContext _dbContext;

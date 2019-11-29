@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Silverback.Messaging.LargeMessages
 {
@@ -30,6 +31,7 @@ namespace Silverback.Messaging.LargeMessages
             return Equals((ChunkSettings) obj);
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode() => Size;
     }
 }

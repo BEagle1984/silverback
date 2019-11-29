@@ -2,11 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Silverback.Messaging
 {
-    // TODO: Test
     internal class KafkaClientConfigComparer : IEqualityComparer<Confluent.Kafka.ClientConfig>
     {
         public bool Equals(Confluent.Kafka.ClientConfig x, Confluent.Kafka.ClientConfig y)
@@ -24,6 +24,7 @@ namespace Silverback.Messaging
             }
         }
 
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         public static bool Compare(Confluent.Kafka.ClientConfig x, Confluent.Kafka.ClientConfig y)
         {
             if (x == null || y == null) return false;

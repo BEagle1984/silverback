@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -12,10 +13,9 @@ using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
 
-// ReSharper disable InconsistentNaming
-
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class ErrorPolicyBaseTests
     {
         [Theory, MemberData(nameof(ApplyTo_TestData))]

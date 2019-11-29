@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Silverback.Domain;
 using Silverback.Domain.Util;
@@ -63,6 +64,8 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             action.Should().Throw<SilverbackException>();
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private class TestEntity : EventSourcingDomainEntity<TestEntity.TestEntityEvent>
         {
             public abstract class TestEntityEvent : EntityEvent { }
