@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
 using Silverback.Examples.Main.UseCases;
 
 namespace Silverback.Examples.Main.Menu
@@ -14,80 +15,35 @@ namespace Silverback.Examples.Main.Menu
             {
                 var categories = MenuItem.GetAll<UseCaseCategory>();
 
-                ShowSplash();
-                Console.WriteLine("Categories:");
-                for (var i = 0; i < categories.Length; i++)
-                {
-                    Console.WriteLine($" {i+1}. {categories[i].Name}");
-                }
-                Console.WriteLine(" Q. Quit");
-                Console.WriteLine();
-                Console.Write("? ");
+                var selected = MenuHelper.Choice("Choose a category (or press ESC to exit):",
+                    categories.Select((category, i) => $"{i+1}. {category.Name}").ToArray());
 
-                var input = Console.ReadLine();
-
-                if (input.ToLower() == "q")
+                if (selected < 0)
                     return;
 
-                if (int.TryParse(input, out var categoryIndex)
-                    && categoryIndex >= 1 && categoryIndex <= categories.Length)
-                {
-                    RenderUseCases(categories[categoryIndex - 1]);
-                }
+                RenderUseCases(categories[selected]);
             }
         }
 
         public void RenderUseCases(UseCaseCategory category)
         {
+            var useCases = category.GetUseCases();
+
             while (true)
             {
-                var useCases = category.GetUseCases();
+                var selected = MenuHelper.Choice($"Choose a use cases in category '{category.Name}' (or press ESC to return to the categories list):",
+                    useCases.Select((useCase, i) => $"{i+1}. {useCase.Name}").ToArray());
 
-                ShowSplash();
-                Console.WriteLine($"Use cases in category '{category.Name}':");
-                for (var i = 0; i < useCases.Length; i++)
-                {
-                    Console.WriteLine($" {i+1}. {useCases[i].Name}");
-                }
-
-                Console.WriteLine(" Q. Quit to categories list");
-                Console.WriteLine();
-                Console.Write("? ");
-
-                var input = Console.ReadLine();
-
-                if (input.ToLower() == "q")
+                if (selected < 0)
                     return;
 
-                if (int.TryParse(input, out var useCaseIndex)
-                    && useCaseIndex >= 1 && useCaseIndex <= useCases.Length)
-                {
-                    Console.Clear();
-
-                    useCases[useCaseIndex - 1].Execute();
-
-                    Console.ReadLine();
-                }
+                Console.Clear();
+                useCases[selected].Execute();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write("\r\nPress any key to continue...");
+                Console.ResetColor();
+                Console.ReadLine();
             }
-        }
-
-        private void ShowSplash()
-        {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-
-            Console.WriteLine(@" _____ _ _                _                _      _____                          _");
-            Console.WriteLine(@"/  ___(_) |              | |              | |    |  ___|                        | |");
-            Console.WriteLine(@"\ `--. _| |_   _____ _ __| |__   __ _  ___| | __ | |____  ____ _ _ __ ___  _ __ | | ___  ___");
-            Console.WriteLine(@" `--. \ | \ \ / / _ \ '__| '_ \ / _` |/ __| |/ / |  __\ \/ / _` | '_ ` _ \| '_ \| |/ _ \/ __|");
-            Console.WriteLine(@"/\__/ / | |\ V /  __/ |  | |_) | (_| | (__|   < _| |___>  < (_| | | | | | | |_) | |  __/\__ \");
-            Console.WriteLine(@"\____/|_|_| \_/ \___|_|  |_.__/ \__,_|\___|_|\_(_)____/_/\_\__,_|_| |_| |_| .__/|_|\___||___/");
-            Console.WriteLine(@"                                                                          | |                ");
-            Console.WriteLine(@"                                                                          |_|                ");
-            Console.WriteLine();
-            Console.WriteLine();
-
-            Console.ResetColor();
         }
     }
 }
