@@ -4,6 +4,13 @@ permalink: /docs/releases
 toc: true
 ---
 
+## [1.0.4](https://github.com/BEagle1984/silverback/releases/tag/1.0.4)
+
+### Fixes
+* It is finally safe to consume and produce the same type of messages from within the same process (in a natural way, without any extra configuration)
+    * Since version [1.0.0](#100) the messages routed to an endpoint aren't forwarded to any subscriber directly
+    * Now the inbound connector has been fixed as well, preventing the inbound messages to be immediately routed once again to the outbound endpoint and eliminating all possible causes of mortal loops
+
 ## [1.0.3](https://github.com/BEagle1984/silverback/releases/tag/1.0.3)
 
 ### Fixes
