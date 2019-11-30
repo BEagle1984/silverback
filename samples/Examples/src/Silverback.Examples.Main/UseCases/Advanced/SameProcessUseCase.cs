@@ -57,12 +57,12 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             await publisher.PublishAsync(new SimpleIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
             await publisher.PublishAsync(new SimpleIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
             await publisher.PublishAsync(new SimpleIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+
+            Console.WriteLine("Waiting for the messages to be consumed (press ESC to abort)...");
             
             while (Console.ReadKey(false).Key != ConsoleKey.Escape)
             {
             }
-
-            Console.WriteLine("Canceling...");
         }
     }
 }

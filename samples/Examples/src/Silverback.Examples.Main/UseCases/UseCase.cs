@@ -29,7 +29,7 @@ namespace Silverback.Examples.Main.UseCases
 
         public void Execute()
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.ForegroundColor = Constants.PrimaryColor;
             Console.WriteLine($"Executing use case '{Name}'");
             Console.WriteLine();
             Console.ResetColor();

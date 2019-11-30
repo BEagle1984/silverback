@@ -39,7 +39,7 @@ namespace Silverback.Examples.Main.Menu
 
                 Console.Clear();
                 useCases[selected].Execute();
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = Constants.PrimaryColor;
                 Console.Write("\r\nPress any key to continue...");
                 Console.ResetColor();
                 Console.ReadLine();

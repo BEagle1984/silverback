@@ -27,7 +27,7 @@ public class MenuHelper
             {
                 if (i == selected)
                 {
-                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    Console.BackgroundColor = Constants.PrimaryColor;
                     Console.ForegroundColor = ConsoleColor.Black;
                 }
 
@@ -72,7 +72,7 @@ public class MenuHelper
     private static void ShowSplash()
     {
         Console.Clear();
-        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.ForegroundColor = Constants.PrimaryColor;
 
         Console.WriteLine(@" _____ _ _                _                _      _____                          _");
         Console.WriteLine(@"/  ___(_) |              | |              | |    |  ___|                        | |");
@@ -82,7 +82,6 @@ public class MenuHelper
         Console.WriteLine(@"\____/|_|_| \_/ \___|_|  |_.__/ \__,_|\___|_|\_(_)____/_/\_\__,_|_| |_| |_| .__/|_|\___||___/");
         Console.WriteLine(@"                                                                          | |                ");
         Console.WriteLine(@"                                                                          |_|                ");
-        Console.WriteLine();
         Console.WriteLine();
 
         Console.ResetColor();
