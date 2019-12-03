@@ -9,12 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
+    public class KafkaProducer : DiagnosticsProducer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
         internal const string PartitioningKeyHeaderKey = "x-kafka-partitioning-key";
 
