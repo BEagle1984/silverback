@@ -7,6 +7,9 @@ namespace Silverback.Messaging.Messages
 {
     public class MessageHeader
     {
+        private string _key;
+        private string _value;
+
         public const string MessageIdKey = "x-message-id";
         public const string MessageTypeKey = "x-message-type";
         public const string FailedAttemptsKey = "x-failed-attempts";
@@ -26,8 +29,16 @@ namespace Silverback.Messaging.Messages
             Value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public string Key { get; set; }
+        public string Key
+        {
+            get => _key;
+            set => _key = value ?? throw new ArgumentNullException(nameof(Key));
+        }
 
-        public string Value { get; set; }
+        public string Value
+        {
+            get => _value;
+            set =>  _value = value ?? throw new ArgumentNullException(nameof(Value));
+        }
     }
 }

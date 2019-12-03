@@ -2,15 +2,16 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 using Silverback.Integration.Kafka.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Integration.Kafka.TestConsumer
 {
@@ -22,12 +23,20 @@ namespace Silverback.Integration.Kafka.TestConsumer
         [SuppressMessage("ReSharper", "FunctionNeverReturns")]
         private static void Main()
         {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+            var activity = new Activity("Main");
+            activity.Start();
+
             Console.Clear();
             
             PrintHeader();
 
             Connect();
-            Console.CancelKeyPress += (_, e) => { Disconnect(); };
+            Console.CancelKeyPress += (_, e) =>
+            {
+                Disconnect();
+                activity.Stop();
+            };
 
             while (true)
                 Console.ReadLine();
@@ -45,7 +54,8 @@ namespace Silverback.Integration.Kafka.TestConsumer
                     BootstrapServers = "PLAINTEXT://localhost:9092",
                     GroupId = "silverback-consumer",
                     AutoOffsetReset = Confluent.Kafka.AutoOffsetReset.Earliest
-                }
+                },
+                Serializer = new JsonMessageSerializer<TestMessage>()
             });
 
             _consumer.Received += OnMessageReceived;
@@ -59,13 +69,9 @@ namespace Silverback.Integration.Kafka.TestConsumer
 
         private static async Task OnMessageReceived(object sender, MessageReceivedEventArgs args)
         {
-            if (!(args.Endpoint.Serializer.Deserialize(args.Message, new MessageHeaderCollection(args.Headers)) is TestMessage testMessage))
-            {
-                Console.WriteLine("Received a weird message!");
-                return;
-            }
-
-            Console.WriteLine($"[{testMessage.Id}] {testMessage.Text}");
+            var testMessage = (TestMessage)args.Endpoint.Serializer.Deserialize(args.Message, new MessageHeaderCollection(args.Headers));
+            
+            Console.WriteLine($"[{testMessage.Id}] [{Activity.Current.Id}] {testMessage.Text}");
 
             var text = testMessage.Text.ToLower().Trim();
             if (text == "bad")
@@ -73,7 +79,8 @@ namespace Silverback.Integration.Kafka.TestConsumer
                 Console.WriteLine("--> Bad message, throwing exception!");
                 throw new Exception("Bad!");
             }
-            else if (text.StartsWith("delay"))
+
+            if (text.StartsWith("delay"))
             {
                 if (int.TryParse(text.Substring(5), out int delay) && delay > 0)
                 {
@@ -100,11 +107,13 @@ namespace Silverback.Integration.Kafka.TestConsumer
 
         private static ILoggerFactory GetLoggerFactory()
         {
-            var loggerFactory = new LoggerFactory()
-                .AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
-            NLog.LogManager.LoadConfiguration("nlog.config");
-
-            return loggerFactory;
+            return LoggerFactory.Create(builder =>
+                {
+                    builder.AddFilter("*", LogLevel.Warning)
+                        .AddFilter("Silverback.*", LogLevel.Trace)
+                        .AddConsole();
+                }
+            );
         }
     }
 }

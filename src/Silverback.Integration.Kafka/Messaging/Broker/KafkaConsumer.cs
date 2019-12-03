@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
-    public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint>, IDisposable
+    public class KafkaConsumer : DiagnosticsConsumer<KafkaBroker, KafkaConsumerEndpoint>, IDisposable
     {
         private readonly ILogger<KafkaConsumer> _logger;
 
@@ -58,10 +59,7 @@ namespace Silverback.Messaging.Broker
             _logger.LogTrace("Disconnected consumer from topic {topic}. (BootstrapServers=\"{bootstrapServers}\")", Endpoint.Name, Endpoint.Configuration.BootstrapServers);
         }
 
-        public void Dispose()
-        {
-            Disconnect();
-        }
+        public void Dispose() => Disconnect();
 
         private async Task OnMessageReceived(Confluent.Kafka.Message<byte[], byte[]> message, Confluent.Kafka.TopicPartitionOffset tpo)
         {
