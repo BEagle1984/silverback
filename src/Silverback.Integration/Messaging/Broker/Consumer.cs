@@ -21,10 +21,11 @@ namespace Silverback.Messaging.Broker
 
         public abstract Task Acknowledge(IEnumerable<IOffset> offsets);
 
-        protected async Task HandleMessage(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset)
+        protected virtual async Task HandleMessage(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset)
         {
             if (Received == null)
-                throw new InvalidOperationException("A message was received but no handler is configured, please attach to the Received event.");
+                throw new InvalidOperationException(
+                    "A message was received but no handler is configured, please attach to the Received event.");
 
             await Received.Invoke(this, new MessageReceivedEventArgs(message, headers, offset, Endpoint));
         }

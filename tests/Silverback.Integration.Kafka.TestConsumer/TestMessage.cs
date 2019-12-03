@@ -11,8 +11,6 @@ namespace Silverback.Integration.Kafka.Messages
     {
         public Guid Id { get; set; }
 
-        public string Type { get; set; }
-
         public string Text { get; set; }
     }
 }

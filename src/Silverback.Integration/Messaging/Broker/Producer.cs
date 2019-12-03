@@ -27,19 +27,22 @@ namespace Silverback.Messaging.Broker
 
         public void Produce(object message, IEnumerable<MessageHeader> headers = null) =>
             GetOutboundMessages(message, headers)
-                .ForEach(x =>
-                {
-                    x.Offset = Produce(x.RawContent, x.Headers);
-                    Trace(x);
-                });
+                .ForEach(InternalProduce);
 
         public Task ProduceAsync(object message, IEnumerable<MessageHeader> headers = null) =>
             GetOutboundMessages(message, headers)
-                .ForEachAsync(async x =>
-                {
-                    x.Offset = await ProduceAsync(x.RawContent, x.Headers);
-                    Trace(x);
-                });
+                .ForEachAsync(async outboundMessage => await InternalProduceAsync(outboundMessage));
+
+        protected virtual void InternalProduce(OutboundMessage outboundMessage)
+        {
+            outboundMessage.Offset = Produce(outboundMessage.RawContent, outboundMessage.Headers);
+            Trace(outboundMessage);
+        }
+        
+        protected virtual async Task InternalProduceAsync(OutboundMessage outboundMessage)
+        {
+            outboundMessage.Offset = await ProduceAsync(outboundMessage.RawContent, outboundMessage.Headers);
+        }
 
         private IEnumerable<OutboundMessage> GetOutboundMessages(object message, IEnumerable<MessageHeader> headers)
         {
@@ -53,7 +56,7 @@ namespace Silverback.Messaging.Broker
             return ChunkProducer.ChunkIfNeeded(outboundMessage);
         }
 
-        private void Trace(IOutboundMessage message) => 
+        private void Trace(IOutboundMessage message) =>
             _messageLogger.LogInformation(_logger, "Message produced.", message);
 
         protected abstract IOffset Produce(byte[] serializedMessage, IEnumerable<MessageHeader> headers);
@@ -66,7 +69,7 @@ namespace Silverback.Messaging.Broker
         where TEndpoint : class, IEndpoint
     {
         protected Producer(IBroker broker, IEndpoint endpoint, MessageKeyProvider messageKeyProvider,
-            ILogger<Producer> logger, MessageLogger messageLogger) 
+            ILogger<Producer> logger, MessageLogger messageLogger)
             : base(broker, endpoint, messageKeyProvider, logger, messageLogger)
         {
         }

@@ -2,9 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 using Silverback.Integration.Kafka.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -19,6 +19,12 @@ namespace Silverback.Integration.Kafka.TestProducer
 
         private static void Main()
         {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+            var activity = new Activity("Main");
+            activity.AddBaggage("MyItem1", "someValue1");
+            activity.AddBaggage("MyItem2", "someValue2");
+            activity.Start();
+
             Console.Clear();
 
             Connect();
@@ -26,11 +32,13 @@ namespace Silverback.Integration.Kafka.TestProducer
 
             PrintUsage();
             HandleInput(_producer);
+
+            activity.Stop();
         }
 
         private static void Connect()
         {
-            var messageKeyProvider = new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() });
+            var messageKeyProvider = new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()});
             _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger());
             _broker.Connect();
 
@@ -80,8 +88,7 @@ namespace Silverback.Integration.Kafka.TestProducer
             producer.Produce(new TestMessage
             {
                 Id = Guid.NewGuid(),
-                Text = text,
-                Type = "TestMessage"
+                Text = text
             });
         }
 
@@ -102,11 +109,13 @@ namespace Silverback.Integration.Kafka.TestProducer
 
         private static ILoggerFactory GetLoggerFactory()
         {
-            var loggerFactory = new LoggerFactory()
-                .AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
-            NLog.LogManager.LoadConfiguration("nlog.config");
-
-            return loggerFactory;
+            return LoggerFactory.Create(builder =>
+                {
+                    builder.AddFilter("*", LogLevel.Warning)
+                        .AddFilter("Silverback.*", LogLevel.Trace)
+                        .AddConsole();
+                }
+            );
         }
     }
 }
