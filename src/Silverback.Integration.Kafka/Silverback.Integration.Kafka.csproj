@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
@@ -31,7 +31,7 @@ This package contains an implementation of Silverback.Integration for the popula
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.2.2" />
+    <PackageReference Include="Confluent.Kafka" Version="1.3.0" />
     <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />
   </ItemGroup>
 

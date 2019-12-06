@@ -4,6 +4,7 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -12,6 +13,7 @@ using System.Xml;
 
 namespace Silverback.Integration.Kafka.ConfigClassGenerator
 {
+    [SuppressMessage("ReSharper", "RedundantStringInterpolation")]
     class ProxyClassGenerator
     {
         private readonly Type _proxiedType;
@@ -51,18 +53,22 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
             var abstractModifier = _baseClassName == null ? " abstract " : "";
 
             if (_generateNamespace)
-                _builder.Append("namespace Silverback.Messaging.Proxies\r\n{\r\n");
+            {
+                _builder.AppendLine("namespace Silverback.Messaging.Proxies");
+                _builder.AppendLine("{");
+            }
 
-            _builder.Append($"    public{abstractModifier} class {_generatedClassName}{baseClass}\r\n    {{\r\n");
+            _builder.AppendLine($"    public{abstractModifier} class {_generatedClassName}{baseClass}");
+            _builder.AppendLine($"    {{");
 
             if (_baseClassName == null)
             {
-                _builder.Append("        internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }}\r\n");
+                _builder.AppendLine($"        internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }}");
             }
             else
             {
-                _builder.Append($"        internal override Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }} = new {proxiedTypeName}();\r\n");
-                _builder.Append($"        internal {proxiedTypeName} ConfluentConfig => ({proxiedTypeName}) ConfluentBaseConfig;\r\n");
+                _builder.AppendLine($"        internal override Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }} = new {proxiedTypeName}();");
+                _builder.AppendLine($"        internal {proxiedTypeName} ConfluentConfig => ({proxiedTypeName}) ConfluentBaseConfig;");
             }
         }
 
@@ -81,17 +87,26 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
                 var summary = GetSummary(property);
 
                 if (summary != null)
-                    _builder.Append($"        ///{summary}\r\n");
+                    _builder.AppendLine($"        ///{summary}");
 
-                _builder.Append($"        public {propertyType} {property.Name} {{ ");
+                _builder.AppendLine($"        public {propertyType} {property.Name}");
+                _builder.AppendLine($"        {{");
 
                 if (property.GetGetMethod() != null)
-                    _builder.Append($"get => {confluentConfigPropertyName}.{property.Name}; ");
+                    _builder.AppendLine($"            get => {confluentConfigPropertyName}.{property.Name};");
 
-                if (property.GetSetMethod() != null)
-                    _builder.Append($"set => {confluentConfigPropertyName}.{property.Name} = value; ");
+                if (property.Name == "DeliveryReportFields")
+                {
+                    _builder.AppendLine($"            set");
+                    _builder.AppendLine($"            {{");
+                    _builder.AppendLine($"                if (value != null)");
+                    _builder.AppendLine($"                    {confluentConfigPropertyName}.{property.Name} = value;");
+                    _builder.AppendLine($"            }}");
+                }
+                else if (property.GetSetMethod() != null)
+                    _builder.AppendLine($"            set => {confluentConfigPropertyName}.{property.Name} = value;");
 
-                _builder.Append("}\r\n");
+                _builder.AppendLine($"        }}");
             }
         }
 
@@ -107,7 +122,7 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
 
         private void GenerateFooter()
         {
-            _builder.Append("    }\r\n");
+            _builder.AppendLine("    }");
 
             if (_generateNamespace)
                 _builder.Append("}");
