@@ -4,9 +4,13 @@ permalink: /docs/source/samples
 toc: false
 ---
 
-A solution containing a few examples can be found [here on GitHub](https://github.com/BEagle1984/silverback/tree/develop/samples/Examples).
+A solution containing a few examples can be found under the `samples/Examples` directory of the [Silverback repository](https://github.com/BEagle1984/silverback/tree/develop/samples/Examples). The same solution, targeting .NET Core 2.2 can be found in `samples/Examples-2.2`.
 
 It includes a sample consumer (`Silverback.Examples.ConsumerA`) and a sample producer (`Silverback.Examples.Main`) implementing several common use cases. Just run both console applications to see the samples in action.
+
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/samples.png"><img src="{{ site.baseurl }}/assets/images/samples.png"></a>
+</figure>
 
 ## Environment
 
