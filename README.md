@@ -28,10 +28,13 @@ Silverback.Integration.Kafka | [![NuGet](http://img.shields.io/nuget/vpre/Silver
 Silverback.Integration.Configuration | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.Configuration.svg)](https://www.nuget.org/packages/Silverback.Integration.Configuration/)
 Silverback.Integration.HealthChecks | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.HealthChecks.svg)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks/)
 
-
 ## Usage
 
 Have a look at the [project's website](https://beagle1984.github.io/silverback/docs/architecture) for usage details, snippets and examples.
+
+## Contributing
+
+You are encouraged to contribute to Silverback! Please check out the [how to contribute](CONTRIBUTING.md) guide for guidelines about how to proceed.
 
 ## License
 

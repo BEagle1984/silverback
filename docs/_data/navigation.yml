@@ -81,8 +81,8 @@ docs:
         url: /docs/extras/background-services
   - title: Source Code
     children:
+      - title: Contributing
+        url: /docs/source/contributing
       - title: Samples
         url: /docs/source/samples
-      - title: Source Code
-        url: /docs/source/github
 
