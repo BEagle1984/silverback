@@ -26,9 +26,9 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
             var oldestCreated = await DbSet.AsQueryable()
                 .Where(m => m.Produced == null)
+                .OrderBy(m => m.Created)
                 .Select(m => m.Created)
-                .DefaultIfEmpty(default)
-                .MinAsync();
+                .FirstOrDefaultAsync();
 
             if (oldestCreated == default)
                 return TimeSpan.Zero;
