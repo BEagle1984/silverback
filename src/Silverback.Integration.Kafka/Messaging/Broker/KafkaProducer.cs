@@ -65,7 +65,8 @@ namespace Silverback.Messaging.Broker
             catch (Confluent.Kafka.KafkaException ex)
             {
                 // Disposing and re-creating the producer will maybe fix the issue
-                DisposeInnerProducer();
+                if (Endpoint.Configuration.DisposeOnException)
+                    DisposeInnerProducer();
 
                 throw new ProduceException("Error occurred producing the message. See inner exception for details.", ex);
             }

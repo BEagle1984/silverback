@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Confluent.Kafka;
 using Silverback.Messaging.Proxies;
 
 namespace Silverback.Messaging
@@ -33,6 +34,12 @@ namespace Silverback.Messaging
         /// by the producer if the persistence is not acknowledge by the broker.
         /// </summary>
         public bool ThrowIfNotAcknowledged { get; set; } = true;
+        
+        /// <summary>
+        /// Specifies whether the producer has to be disposed and recreated if a
+        /// <see cref="KafkaException"/> is thrown (default is <c>false</c>).<br/>
+        /// </summary>
+        public bool DisposeOnException { get; set; } = true;
 
         public void Validate()
         {
