@@ -4,6 +4,15 @@ permalink: /docs/releases
 toc: true
 ---
 
+## [1.0.5](https://github.com/BEagle1984/silverback/releases/tag/1.0.5)
+
+### What's new
+* Upgrade to [Confluent.Kafka 1.3.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.3.0)
+
+### Fixes
+* Fixed `OutboundQueueHealthCheck` [[#43](https://github.com/BEagle1984/silverback/issues/43)]
+* The `KafkaProducer` is not disposed by default anymore when a `KafkaException` in thrown (creating too many instances of the producer over a short time span could lead to too many active TCP connections)
+
 ## [1.0.4](https://github.com/BEagle1984/silverback/releases/tag/1.0.4)
 
 ### Fixes
