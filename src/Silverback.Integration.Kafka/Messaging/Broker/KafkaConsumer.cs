@@ -67,7 +67,7 @@ namespace Silverback.Messaging.Broker
         {
             // Checking if the message was sent to the subscribed topic is necessary
             // when reusing the same consumer for multiple topics.
-            if (!tpo.Topic.Equals(Endpoint.Name, StringComparison.InvariantCultureIgnoreCase))
+            if (!Endpoint.Names.Any(endpointName => tpo.Topic.Equals(endpointName, StringComparison.InvariantCultureIgnoreCase)))
                 return;
 
             await TryHandleMessage(message, tpo);

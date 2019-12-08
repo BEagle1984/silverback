@@ -30,7 +30,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
                 .AddOutbound<IIntegrationEvent>(CreateEndpoint()));
 
         private KafkaEndpoint CreateEndpoint() =>
-            new KafkaProducerEndpoint("silverback-examples-events")
+            new KafkaProducerEndpoint("silverback-examples-events-chunked")
             {
                 Configuration = new KafkaProducerConfig
                 {

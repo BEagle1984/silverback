@@ -7,7 +7,10 @@ namespace Silverback.Examples.Main.Menu
 {
 public class MenuHelper
 {
-    public static int Choice(string title, params string[] options)
+    public static int Choice(string title, params string[] options) =>
+        Choice(() => Console.WriteLine(title + Environment.NewLine), options);
+
+    public static int Choice(Action headerAction, params string[] options)
     {
         var selected = 0;
 
@@ -19,9 +22,8 @@ public class MenuHelper
         {
             Console.Clear();
             ShowSplash();
-            
-            Console.WriteLine(title);
-            Console.WriteLine();
+
+            headerAction?.Invoke();
 
             for (var i = 0; i < options.Length; i++)
             {
@@ -56,8 +58,6 @@ public class MenuHelper
                         selected++;
                     break;
                 }
-                case ConsoleKey.Backspace:
-                case ConsoleKey.LeftArrow:
                 case ConsoleKey.Escape:
                 {
                     return -1;

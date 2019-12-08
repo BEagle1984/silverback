@@ -87,7 +87,7 @@ namespace Silverback.Messaging.Broker
             Subscribe();
         }
 
-        private void Subscribe() => _innerConsumer.Subscribe(_endpoints.Select(e => e.Name));
+        private void Subscribe() => _innerConsumer.Subscribe(_endpoints.SelectMany(e => e.Names));
 
         private Confluent.Kafka.IConsumer<byte[], byte[]> BuildConfluentConsumer()
         {

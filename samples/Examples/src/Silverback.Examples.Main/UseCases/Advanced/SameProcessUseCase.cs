@@ -32,19 +32,19 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             configurator
                 .Subscribe((SimpleIntegrationEvent message) => logger.LogInformation($"Received SimpleIntegrationEvent '{message.Content}"))
                 .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
+                    .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events-sp")
                     {
                         Configuration = new KafkaProducerConfig
                         {
                             BootstrapServers = "PLAINTEXT://localhost:9092"
                         }
                     })
-                    .AddInbound(new KafkaConsumerEndpoint("silverback-examples-events")
+                    .AddInbound(new KafkaConsumerEndpoint("silverback-examples-events-sp")
                     {
                         Configuration = new KafkaConsumerConfig
                         {
                             BootstrapServers = "PLAINTEXT://localhost:9092",
-                            GroupId = "SameProcessUseCase",
+                            GroupId = "same-process-uc",
                             AutoOffsetReset = AutoOffsetReset.Earliest
                         }
                     }));

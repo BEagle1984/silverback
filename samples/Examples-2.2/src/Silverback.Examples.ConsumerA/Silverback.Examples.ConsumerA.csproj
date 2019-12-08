@@ -8,13 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\ConsumerServiceA.cs" Link="ConsumerServiceA.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\LogHeadersBehavior.cs" Link="LogHeadersBehavior.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\Program.cs" Link="Program.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\SubscriberService.cs" Link="SubscriberService.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.2.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
@@ -32,6 +25,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Examples.Common\Silverback.Examples.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\ConsumerServiceA.cs">
+      <Link>ConsumerServiceA.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\LogHeadersBehavior.cs">
+      <Link>LogHeadersBehavior.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\Program.cs">
+      <Link>Program.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.ConsumerA\SubscriberService.cs">
+      <Link>SubscriberService.cs</Link>
+    </Compile>
   </ItemGroup>
 
 </Project>

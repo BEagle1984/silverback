@@ -8,32 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\Menu\MenuItem.cs" Link="Menu\MenuItem.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\Menu\MenuNavigator.cs" Link="Menu\MenuNavigator.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\Program.cs" Link="Program.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\AdvancedCategory.cs" Link="UseCases\Advanced\AdvancedCategory.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\BatchConsumerUseCase.cs" Link="UseCases\Advanced\BatchConsumerUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\ChunkingUseCase.cs" Link="UseCases\Advanced\ChunkingUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\HeadersUseCase.cs" Link="UseCases\Advanced\HeadersUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\InteroperableMessageUseCase.cs" Link="UseCases\Advanced\InteroperableMessageUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\MultipleOutboundConnectorsUseCase.cs" Link="UseCases\Advanced\MultipleOutboundConnectorsUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\BasicCategory.cs" Link="UseCases\Basic\BasicCategory.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\CustomSerializerSettingsUseCase.cs" Link="UseCases\Basic\CustomSerializerSettingsUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\DomainEventsUseCase.cs" Link="UseCases\Basic\DomainEventsUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\ExternalConfigUseCase.cs" Link="UseCases\Basic\ExternalConfigUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\SimplePublishUseCase.cs" Link="UseCases\Basic\SimplePublishUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\TranslatePublishSubscribe.cs" Link="UseCases\Basic\TranslatePublishSubscribe.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\EfCore\DeferredOutboundUseCase.cs" Link="UseCases\EfCore\DeferredOutboundUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\EfCore\EfCoreCategory.cs" Link="UseCases\EfCore\EfCoreCategory.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\EfCore\OutboundWorkerUseCase.cs" Link="UseCases\EfCore\OutboundWorkerUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\ErrorHandling\ErrorHandlingCategory.cs" Link="UseCases\ErrorHandling\ErrorHandlingCategory.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\ErrorHandling\RetryAndMoveErrorPolicyUseCase.cs" Link="UseCases\ErrorHandling\RetryAndMoveErrorPolicyUseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\ErrorHandling\RetryAndMoveErrorPolicyUseCase2.cs" Link="UseCases\ErrorHandling\RetryAndMoveErrorPolicyUseCase2.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\UseCase.cs" Link="UseCases\UseCase.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\UseCaseCategory.cs" Link="UseCases\UseCaseCategory.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
@@ -58,17 +32,99 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Menu\" />
-    <Folder Include="UseCases\Advanced\" />
-    <Folder Include="UseCases\Basic\" />
-    <Folder Include="UseCases\EfCore\" />
-    <Folder Include="UseCases\ErrorHandling\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\Constants.cs">
+      <Link>Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\Menu\MenuHelper.cs">
+      <Link>Menu\MenuHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\Menu\MenuItem.cs">
+      <Link>Menu\MenuItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\Menu\MenuNavigator.cs">
+      <Link>Menu\MenuNavigator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\Program.cs">
+      <Link>Program.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\AdvancedCategory.cs">
+      <Link>UseCases\Advanced\AdvancedCategory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\BatchConsumerUseCase.cs">
+      <Link>UseCases\Advanced\BatchConsumerUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\ChunkingUseCase.cs">
+      <Link>UseCases\Advanced\ChunkingUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\HeadersUseCase.cs">
+      <Link>UseCases\Advanced\HeadersUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\InteroperableMessageUseCase.cs">
+      <Link>UseCases\Advanced\InteroperableMessageUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\MultipleOutboundConnectorsUseCase.cs">
+      <Link>UseCases\Advanced\MultipleOutboundConnectorsUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\PartitioningUseCase.cs">
+      <Link>UseCases\Advanced\PartitioningUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Advanced\SameProcessUseCase.cs">
+      <Link>UseCases\Advanced\SameProcessUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\BasicCategory.cs">
+      <Link>UseCases\Basic\BasicCategory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\CustomSerializerSettingsUseCase.cs">
+      <Link>UseCases\Basic\CustomSerializerSettingsUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\ExternalConfigUseCase.cs">
+      <Link>UseCases\Basic\ExternalConfigUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\SimplePublishUseCase.cs">
+      <Link>UseCases\Basic\SimplePublishUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\Basic\TranslatePublishSubscribe.cs">
+      <Link>UseCases\Basic\TranslatePublishSubscribe.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\EfCore\DeferredOutboundUseCase.cs">
+      <Link>UseCases\EfCore\DeferredOutboundUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\EfCore\EfCoreCategory.cs">
+      <Link>UseCases\EfCore\EfCoreCategory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\EfCore\OutboundWorkerUseCase.cs">
+      <Link>UseCases\EfCore\OutboundWorkerUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\ErrorHandling\ErrorHandlingCategory.cs">
+      <Link>UseCases\ErrorHandling\ErrorHandlingCategory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\ErrorHandling\RetryAndMoveErrorPolicyUseCase.cs">
+      <Link>UseCases\ErrorHandling\RetryAndMoveErrorPolicyUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\ErrorHandling\RetryAndMoveErrorPolicyUseCase2.cs">
+      <Link>UseCases\ErrorHandling\RetryAndMoveErrorPolicyUseCase2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\HealthCheck\HealthCheckCategory.cs">
+      <Link>UseCases\HealthCheck\HealthCheckCategory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\HealthCheck\OutboundEndpointsHealthUseCase.cs">
+      <Link>UseCases\HealthCheck\OutboundEndpointsHealthUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\HealthCheck\OutboundQueueHealthUseCase.cs">
+      <Link>UseCases\HealthCheck\OutboundQueueHealthUseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\UseCase.cs">
+      <Link>UseCases\UseCase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Main\UseCases\UseCaseCategory.cs">
+      <Link>UseCases\UseCaseCategory.cs</Link>
+    </Compile>
   </ItemGroup>
 
 </Project>

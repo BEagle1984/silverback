@@ -42,7 +42,7 @@ namespace Silverback.Examples.ConsumerA
 
             var broker = configurator
                 .Connect(endpoints => endpoints
-                    .AddInbound(CreateConsumerEndpoint("silverback-examples-events"))
+                    .AddInbound(CreateConsumerEndpoint("silverback-examples-events", "silverback-examples-events-chunked", "silverback-examples-events-sp"))
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-batch"),
                         settings: new InboundConnectorSettings
                         {
@@ -108,8 +108,14 @@ namespace Silverback.Examples.ConsumerA
         }
 
         private static KafkaConsumerEndpoint CreateConsumerEndpoint(string name, IMessageSerializer messageSerializer = null)
-        {
-            var endpoint = new KafkaConsumerEndpoint(name)
+            => CreateConsumerEndpoint(new[] { name }, messageSerializer);
+
+        private static KafkaConsumerEndpoint CreateConsumerEndpoint(params string[] names)
+            => CreateConsumerEndpoint(names, null);
+
+        private static KafkaConsumerEndpoint CreateConsumerEndpoint(string[] names, IMessageSerializer messageSerializer)
+            {
+            var endpoint = new KafkaConsumerEndpoint(names)
             {
                 Configuration = new KafkaConsumerConfig
                 {

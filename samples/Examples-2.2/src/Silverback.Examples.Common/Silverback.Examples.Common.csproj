@@ -7,11 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Configuration.cs" Link="Configuration.cs" />
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Configuration.cs">
+      <Link>Configuration.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Consumer\ConsumerService.cs" Link="Consumer\ConsumerService.cs" />
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Data\Customer.cs" Link="Data\Customer.cs" />
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Data\ExamplesDbContext.cs" Link="Data\ExamplesDbContext.cs" />
-    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\DependencyInjectionHelper.cs" Link="DependencyInjectionHelper.cs" />
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\DependencyInjectionHelper.cs">
+      <Link>DependencyInjectionHelper.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Messages\BadIntegrationEvent.cs" Link="Messages\BadIntegrationEvent.cs" />
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Messages\BatchProcessedEvent.cs" Link="Messages\BatchProcessedEvent.cs" />
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Messages\CustomSerializedIntegrationEvent.cs" Link="Messages\CustomSerializedIntegrationEvent.cs" />
@@ -20,6 +24,9 @@
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Messages\IntegrationEventB.cs" Link="Messages\IntegrationEventB.cs" />
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Messages\LegacyMessage.cs" Link="Messages\LegacyMessage.cs" />
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Messages\MessageMoved.cs" Link="Messages\MessageMoved.cs" />
+    <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Messages\PartitionedSimpleIntegrationEvent.cs">
+      <Link>Messages\PartitionedSimpleIntegrationEvent.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Messages\SimpleEvent.cs" Link="Messages\SimpleEvent.cs" />
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Messages\SimpleIntegrationEvent.cs" Link="Messages\SimpleIntegrationEvent.cs" />
     <Compile Include="..\..\..\Examples\src\Silverback.Examples.Common\Serialization\LegacyMessageSerializer.cs" Link="Serialization\LegacyMessageSerializer.cs" />
@@ -45,13 +52,6 @@
     <PackageReference Include="Silverback.Core.Rx" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Consumer\" />
-    <Folder Include="Data\" />
-    <Folder Include="Messages\" />
-    <Folder Include="Serialization\" />
   </ItemGroup>
 
 </Project>

@@ -15,10 +15,13 @@ namespace Silverback.Examples.Main.Menu
             {
                 var categories = MenuItem.GetAll<UseCaseCategory>();
 
-                var selected = MenuHelper.Choice("Choose a category (or press ESC to exit):",
-                    categories.Select((category, i) => $"{i+1}. {category.Name}").ToArray());
+                var selected = MenuHelper.Choice("Choose a category:",
+                    categories
+                        .Select((category, i) => $"{i+1}. {category.Name}")
+                        .Append("<- Exit")
+                        .ToArray());
 
-                if (selected < 0)
+                if (selected < 0|| selected >= categories.Length)
                     return;
 
                 RenderUseCases(categories[selected]);
@@ -31,10 +34,22 @@ namespace Silverback.Examples.Main.Menu
 
             while (true)
             {
-                var selected = MenuHelper.Choice($"Choose a use cases in category '{category.Name}' (or press ESC to return to the categories list):",
-                    useCases.Select((useCase, i) => $"{i+1}. {useCase.Name}").ToArray());
+                var selected = MenuHelper.Choice(
+                    () =>
+                    {
+                        Console.Write("Choose a use cases in category '");
+                        Console.ForegroundColor = Constants.PrimaryColor;
+                        Console.Write(category.Name);
+                        Console.ResetColor();
+                        Console.WriteLine("':");
+                        Console.WriteLine();
+                    },
+                    useCases
+                        .Select((useCase, i) => $"{i + 1}. {useCase.Name}")
+                        .Append("<- Back")
+                        .ToArray());
 
-                if (selected < 0)
+                if (selected < 0 || selected >= useCases.Length)
                     return;
 
                 Console.Clear();
