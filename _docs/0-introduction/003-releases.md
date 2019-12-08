@@ -12,6 +12,7 @@ toc: true
 ### Fixes
 * Fixed `OutboundQueueHealthCheck` [[#43](https://github.com/BEagle1984/silverback/issues/43)]
 * The `KafkaProducer` is not disposed by default anymore when a `KafkaException` in thrown (creating too many instances of the producer over a short time span could lead to too many active TCP connections)
+* Fixed the bug preventing a `KafkaConsumerEndpoint` pointing to multiple topics to be successfully subscribed
 
 ## [1.0.4](https://github.com/BEagle1984/silverback/releases/tag/1.0.4)
 
