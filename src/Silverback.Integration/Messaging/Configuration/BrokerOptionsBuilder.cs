@@ -60,12 +60,13 @@ namespace Silverback.Messaging.Configuration
             SilverbackBuilder.Services.AddScoped(inboundLogFactory);
             return this;
         }
-        
+
         /// <summary>
         /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
         /// This implementation stores the offset of the latest consumed messages and prevents duplicated processing of the same message.
         /// </summary>
-        public BrokerOptionsBuilder AddOffsetStoredInboundConnector(Func<IServiceProvider, IOffsetStore> offsetStoreFactory)
+        public BrokerOptionsBuilder AddOffsetStoredInboundConnector(
+            Func<IServiceProvider, IOffsetStore> offsetStoreFactory)
         {
             AddInboundConnector<OffsetStoredInboundConnector>();
             SilverbackBuilder.Services.AddScoped(offsetStoreFactory);
@@ -102,7 +103,7 @@ namespace Silverback.Messaging.Configuration
             {
                 SilverbackBuilder.Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
                 SilverbackBuilder.AddScopedBehavior<OutboundProducingBehavior>();
-                SilverbackBuilder.AddScopedBehavior<OutboundRoutingBehavior> ();
+                SilverbackBuilder.AddScopedBehavior<OutboundRoutingBehavior>();
             }
 
             SilverbackBuilder.Services.AddScoped<IOutboundConnector, TConnector>();
@@ -119,7 +120,8 @@ namespace Silverback.Messaging.Configuration
         /// Adds a connector to publish the integration messages to the configured message broker.
         /// This implementation stores the outbound messages into an intermediate queue.
         /// </summary>
-        public BrokerOptionsBuilder AddDeferredOutboundConnector(Func<IServiceProvider, IOutboundQueueProducer> outboundQueueProducerFactory)
+        public BrokerOptionsBuilder AddDeferredOutboundConnector(
+            Func<IServiceProvider, IOutboundQueueProducer> outboundQueueProducerFactory)
         {
             AddOutboundConnector<DeferredOutboundConnector>();
             SilverbackBuilder.AddScopedSubscriber<DeferredOutboundConnectorTransactionManager>();
@@ -163,8 +165,11 @@ namespace Silverback.Messaging.Configuration
         /// <param name="enforceMessageOrder">If set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
         /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
         // TODO: Test
-        public BrokerOptionsBuilder AddOutboundWorker(Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory, TimeSpan? interval = null, bool enforceMessageOrder = true, int readPackageSize = 100) =>
-            AddOutboundWorker(outboundQueueConsumerFactory, new DistributedLockSettings(), interval, enforceMessageOrder, readPackageSize);
+        public BrokerOptionsBuilder AddOutboundWorker(
+            Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory, TimeSpan? interval = null,
+            bool enforceMessageOrder = true, int readPackageSize = 100) =>
+            AddOutboundWorker(outboundQueueConsumerFactory, new DistributedLockSettings(), interval,
+                enforceMessageOrder, readPackageSize);
 
         /// <summary>
         /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
@@ -177,18 +182,19 @@ namespace Silverback.Messaging.Configuration
         // TODO: Test
         public BrokerOptionsBuilder AddOutboundWorker(
             Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
-            DistributedLockSettings distributedLockSettings, TimeSpan? interval = null, 
+            DistributedLockSettings distributedLockSettings, TimeSpan? interval = null,
             bool enforceMessageOrder = true, int readPackageSize = 100)
         {
-            if (outboundQueueConsumerFactory == null) throw new ArgumentNullException(nameof(outboundQueueConsumerFactory));
+            if (outboundQueueConsumerFactory == null)
+                throw new ArgumentNullException(nameof(outboundQueueConsumerFactory));
             if (distributedLockSettings == null) throw new ArgumentNullException(nameof(distributedLockSettings));
 
             if (string.IsNullOrEmpty(distributedLockSettings.ResourceName))
                 distributedLockSettings.ResourceName = "OutboundQueueWorker";
 
             AddOutboundWorker(
-                interval ?? TimeSpan.FromMilliseconds(500), 
-                distributedLockSettings, 
+                interval ?? TimeSpan.FromMilliseconds(500),
+                distributedLockSettings,
                 enforceMessageOrder,
                 readPackageSize);
 
@@ -198,7 +204,8 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        internal BrokerOptionsBuilder AddOutboundWorker(TimeSpan interval, DistributedLockSettings distributedLockSettings, bool enforceMessageOrder, int readPackageSize)
+        internal BrokerOptionsBuilder AddOutboundWorker(TimeSpan interval,
+            DistributedLockSettings distributedLockSettings, bool enforceMessageOrder, int readPackageSize)
         {
             SilverbackBuilder.Services
                 .AddSingleton<IOutboundQueueWorker>(s => new OutboundQueueWorker(
@@ -281,6 +288,23 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddMessageKeyProvider<TProvider>() where TProvider : class, IMessageKeyProvider
         {
             SilverbackBuilder.Services.AddSingleton<IMessageKeyProvider, TProvider>();
+
+            return this;
+        }
+
+        #endregion
+
+        #region RegisterConfigurator
+
+        /// <summary>
+        /// Registers an <see cref="IEndpointsConfigurator"/> to be used
+        /// to setup the broker endpoints.
+        /// </summary>
+        /// <typeparam name="TConfigurator">The type of the <see cref="IEndpointsConfigurator"/> to add.</typeparam>
+        /// <returns></returns>
+        public BrokerOptionsBuilder RegisterConfigurator<TConfigurator>() where TConfigurator : class, IEndpointsConfigurator
+        {
+            SilverbackBuilder.Services.AddTransient<IEndpointsConfigurator, TConfigurator>();
 
             return this;
         }

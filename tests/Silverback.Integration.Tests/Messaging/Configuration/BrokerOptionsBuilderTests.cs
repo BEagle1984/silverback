@@ -216,5 +216,43 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(5);
         }
+
+        [Fact]
+        public void Connect_WithSomeEndpointConfigurators_EndpointsAreAdded()
+        {
+            _services
+                .AddSilverback()
+                .WithConnectionTo<TestBroker>(options => options
+                    .RegisterConfigurator<TestConfiguratorOne>());
+
+            _services.AddEndpointsConfigurator<TestConfiguratorTwo>();
+
+            GetBusConfigurator().Connect();
+            
+            GetPublisher().Publish(new TestEventOne());
+            GetPublisher().Publish(new TestEventOne());
+
+            GetPublisher().Publish(new TestEventTwo());
+            GetPublisher().Publish(new TestEventTwo());
+            GetPublisher().Publish(new TestEventTwo());
+
+            GetBroker().ProducedMessages.Count.Should().Be(5);
+        }
+
+        private class TestConfiguratorOne : IEndpointsConfigurator
+        {
+            public void Configure(IEndpointsConfigurationBuilder builder)
+            {
+                builder.AddOutbound<TestEventOne>(TestEndpoint.GetDefault());
+            }
+        }
+
+        private class TestConfiguratorTwo : IEndpointsConfigurator
+        {
+            public void Configure(IEndpointsConfigurationBuilder builder)
+            {
+                builder.AddOutbound<TestEventTwo>(TestEndpoint.GetDefault());
+            }
+        }
     }
 }

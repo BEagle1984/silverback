@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -15,19 +16,28 @@ namespace Silverback.Messaging.Configuration
         /// Configures the message broker bindings and starts consuming.
         /// </summary>
         /// <param name="configurator"></param>
+        /// <returns></returns>
+        public static IBroker Connect(this BusConfigurator configurator) =>
+            Connect(configurator, null);
+        
+        /// <summary>
+        /// Configures the message broker bindings and starts consuming.
+        /// </summary>
+        /// <param name="configurator"></param>
         /// <param name="endpointsConfigurationAction">The inbound/outbound endpoints configuration.</param>
         /// <returns></returns>
         public static IBroker Connect(this BusConfigurator configurator,
             Action<IEndpointsConfigurationBuilder> endpointsConfigurationAction)
         {
-            if (endpointsConfigurationAction == null)
-                throw new ArgumentNullException(nameof(endpointsConfigurationAction));
-
-            endpointsConfigurationAction.Invoke(new EndpointsConfigurationBuilder(
+            var endpointsConfigurationBuilder = new EndpointsConfigurationBuilder(
                 configurator.ServiceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
                 configurator.ServiceProvider.GetRequiredService<IEnumerable<IInboundConnector>>(),
-                configurator.ServiceProvider.GetRequiredService<ErrorPolicyBuilder>()));
+                configurator.ServiceProvider.GetRequiredService<ErrorPolicyBuilder>());
+            endpointsConfigurationAction?.Invoke(endpointsConfigurationBuilder);
 
+            configurator.ServiceProvider.GetServices<IEndpointsConfigurator>().ForEach(c => 
+                c.Configure(endpointsConfigurationBuilder));
+            
             var broker = configurator.ServiceProvider.GetRequiredService<IBroker>();
 
             broker.Connect();
