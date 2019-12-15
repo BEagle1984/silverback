@@ -8,6 +8,9 @@ namespace Silverback.Messaging.Connectors
 {
     public class InboundConnectorSettings
     {
+        /// <summary>
+        /// The batch settings. Can be used to enable and setup batch processing.
+        /// </summary>
         public BatchSettings Batch { get; set; } = new BatchSettings();
         
         /// <summary>

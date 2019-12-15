@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Configuration
     public static class BusConfiguratorExtensions
     {
         /// <summary>
-        /// Configures the message broker bindings and starts consuming.
+        /// Configures the message broker endpoints and start consuming.
         /// </summary>
         /// <param name="configurator"></param>
         /// <returns></returns>
@@ -21,10 +21,10 @@ namespace Silverback.Messaging.Configuration
             Connect(configurator, null);
         
         /// <summary>
-        /// Configures the message broker bindings and starts consuming.
+        /// Configures the message broker endpoints and start consuming.
         /// </summary>
         /// <param name="configurator"></param>
-        /// <param name="endpointsConfigurationAction">The inbound/outbound endpoints configuration.</param>
+        /// <param name="endpointsConfigurationAction">The inbound/outbound endpoints configuration action.</param>
         /// <returns></returns>
         public static IBroker Connect(this BusConfigurator configurator,
             Action<IEndpointsConfigurationBuilder> endpointsConfigurationAction)

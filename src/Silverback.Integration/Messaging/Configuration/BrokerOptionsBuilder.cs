@@ -297,8 +297,7 @@ namespace Silverback.Messaging.Configuration
         #region RegisterConfigurator
 
         /// <summary>
-        /// Registers an <see cref="IEndpointsConfigurator"/> to be used
-        /// to setup the broker endpoints.
+        /// Registers an <see cref="IEndpointsConfigurator"/> to be used to setup the broker endpoints.
         /// </summary>
         /// <typeparam name="TConfigurator">The type of the <see cref="IEndpointsConfigurator"/> to add.</typeparam>
         /// <returns></returns>
@@ -309,6 +308,30 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        /// <summary>
+        /// Registers an <see cref="IEndpointsConfigurator"/> to be used to setup the broker endpoints.
+        /// </summary>
+        /// <param name="configuratorType">The type of the <see cref="IEndpointsConfigurator"/> to add.</param>
+        /// <returns></returns>
+        public BrokerOptionsBuilder RegisterConfigurator(Type configuratorType)
+        {
+            SilverbackBuilder.Services.AddTransient(typeof(IEndpointsConfigurator), configuratorType);
+
+            return this;
+        }
+        
+        /// <summary>
+        /// Registers an <see cref="IEndpointsConfigurator"/> to be used to setup the broker endpoints.
+        /// </summary>
+        /// <param name="implementationFactory">The factory that creates the <see cref="IEndpointsConfigurator"/> to add.</param>
+        /// <returns></returns>
+        public BrokerOptionsBuilder RegisterConfigurator(Func<IServiceProvider, IEndpointsConfigurator> implementationFactory)
+        {
+            SilverbackBuilder.Services.AddTransient(implementationFactory);
+
+            return this;
+        }
+        
         #endregion
 
         #region Defaults
