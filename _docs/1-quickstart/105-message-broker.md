@@ -92,7 +92,7 @@ public class Startup
     {
         services
             .AddSilverback()
-            .WithConnectionTo<TestBroker>(options => options
+            .WithConnectionToKafka(options => options
                 .RegisterConfigurator<MyFeatureConfigurator>());
     }
 }
