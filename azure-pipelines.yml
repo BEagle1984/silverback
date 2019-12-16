@@ -4,10 +4,10 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- master
-- develop
-- feature/*
-
+  - master
+  - develop
+  - feature/*
+  
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -15,25 +15,39 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-# Build nuget packages
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: |
-      cd nuget
-      ./Update.ps1 -l
-      cd ..
-# Build and test
-- script: dotnet build Silverback.sln --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
-- script: dotnet test Silverback.sln --logger trx --collect "Code coverage" --filter CI!=false -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:Exclude="[xunit.*]*"
-  displayName: 'dotnet test'
-# Publish results
-- task: PublishTestResults@2
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
-- task: PublishCodeCoverageResults@1
-  inputs:
-    summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml
-    codecoverageTool: cobertura
+  # Install .net core sdk
+  - task: UseDotNet@2
+    displayName: 'Install sdk 2.2.x'
+    inputs:
+      packageType: 'sdk'
+      version: '2.2.x'
+  - task: UseDotNet@2
+    displayName: 'Install sdk 3.1.x'
+    inputs:
+      packageType: 'sdk'
+      version: '3.1.x'
+  # Build nuget packages
+  - task: PowerShell@2
+    displayName: 'Build nuget packages (nuget/Update.ps1)'
+    inputs:
+      targetType: 'inline'
+      script: |
+        cd nuget
+        ./Update.ps1 -l
+        cd ..
+  # Build and test
+  - script: dotnet build Silverback.sln --configuration $(buildConfiguration)
+    displayName: 'Build (dotnet build $(buildConfiguration))'
+  - script: dotnet test Silverback.sln --logger trx --collect "Code coverage" --filter CI!=false -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:Exclude="[xunit.*]*"
+    displayName: 'Test: (dotnet test)'
+  # Publish results
+  - task: PublishTestResults@2
+    displayName: 'Publish test results'
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage results'
+    inputs:
+      summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml
+      codecoverageTool: cobertura
