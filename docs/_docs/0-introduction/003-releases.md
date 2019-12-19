@@ -4,11 +4,15 @@ permalink: /docs/releases
 toc: true
 ---
 
+## [1.1.0-rc2](https://github.com/BEagle1984/silverback/releases/tag/1.1.0-rc2)
+
+### What's new
+* Added support for distributed tracing (based on standard [System.Diagnostics.DiagnosticSource](https://www.nuget.org/packages/System.Diagnostics.DiagnosticSource/))
+
 ## [1.1.0-rc1](https://github.com/BEagle1984/silverback/releases/tag/1.1.0-rc1)
 
 ### What's new
 * Added `IEndpointsConfigurator` interface to allow splitting the endpoints configuration across multiple types (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker#using-iendpointsconfigurator))
-
 
 ## [1.0.5](https://github.com/BEagle1984/silverback/releases/tag/1.0.5)
 
