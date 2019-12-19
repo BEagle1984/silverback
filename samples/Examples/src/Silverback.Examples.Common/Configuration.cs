@@ -5,6 +5,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Sinks.SystemConsole.Themes;
+using Silverback.Examples.Common.Logging;
 
 namespace Silverback.Examples.Common
 {
@@ -17,12 +18,13 @@ namespace Silverback.Examples.Common
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console(
                     theme: AnsiConsoleTheme.Code,
-                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} <s:{SourceContext}>{NewLine}{Exception}")
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}) {Message:lj} {Exception} {Properties}{NewLine}")
                 .MinimumLevel.Warning()
                 .MinimumLevel.Override("Silverback", LogEventLevel.Verbose)
                 .Enrich.FromLogContext()
                 .Enrich.WithExceptionDetails()
                 .Enrich.WithDemystifiedStackTraces()
+                .Enrich.WithActivityId()
                 .CreateLogger();
         }
     }
