@@ -7,7 +7,7 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Tests.Core.TestTypes.Behaviors
 {
-    public class TestSortedBehavior : ISortedBehavior
+    public class TestSortedBehavior : IBehavior, ISorted
     {
         private readonly List<string> _calls;
 

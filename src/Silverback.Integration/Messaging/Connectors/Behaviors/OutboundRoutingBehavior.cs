@@ -13,7 +13,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Behaviors
 {
-    public class OutboundRoutingBehavior : ISortedBehavior
+    public class OutboundRoutingBehavior : IBehavior, ISorted
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IOutboundRoutingConfiguration _routing;

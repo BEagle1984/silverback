@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Util
 {
-    public class EnumerableForEachExtensions
+    public class EnumerableForEachExtensionsTests
     {
         [Fact]
         public void ForEachTest()

@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Messaging.Publishing
+namespace Silverback
 {
-    public interface ISortedBehavior : IBehavior
+    public interface ISorted
     {
         int SortIndex { get; }
     }

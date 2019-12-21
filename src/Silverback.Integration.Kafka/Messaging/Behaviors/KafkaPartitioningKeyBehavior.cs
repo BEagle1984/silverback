@@ -12,7 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Behaviors
 {
-    public class KafkaPartitioningKeyBehavior : ISortedBehavior
+    public class KafkaPartitioningKeyBehavior : IBehavior, ISorted
     {
         public int SortIndex { get; } = 200;
 

@@ -12,7 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Behaviors
 {
-    public class OutboundProducingBehavior : ISortedBehavior
+    public class OutboundProducingBehavior : IBehavior, ISorted
     {
         private readonly IEnumerable<IOutboundConnector> _outboundConnectors;
 
