@@ -4,12 +4,14 @@ permalink: /docs/quickstart/behaviors
 toc: false
 ---
 
-Behaviors can be used to build a custom pipeline (similar to the asp.net pipeline), easily adding your cross-cutting functionalities such as logging, validation, etc.
+The behaviors can be used to build a custom pipeline (similar to the asp.net pipeline), easily adding your cross-cutting functionalities such as logging, validation, etc.
+
+## IBehavior
 
 A behavior must implement the `IBehavior` interface and be registered for dependency injection.
 
 ```c#
-using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Publishing;
 
 public class ValidationBehavior : IBehavior
 {
@@ -43,7 +45,7 @@ public void ConfigureServices(IServiceCollection services)
 
 At every call to `IPublisher.Publish` the `Handle` method of each registered behavior is called, passing in the array of messages and the delegate to the next step in the pipeline. This gives you the flexibility to execute any sort of code before and after the messages have been actually published (before or after calling the `next()` step). You can for example modify the messages before publishing them, validate them (like in the above example), add some logging / tracing, etc.
 
-## Message headers
+### Example: Message headers
 
 The behaviors can be quite useful to get and set the message headers for inbound/outbound messages.
 
@@ -100,3 +102,7 @@ public class LogHeadersBehavior : IBehavior
 
 **Note:** `IInboundMessage` and `IOutboundMessage` are internally used by Silverback to wrap the messages being sent to or received from the message broker.
 {: .notice--info}
+
+## IProducerBehavior and IConsumerBehavior
+
+The `IProducerBehavior` and `IConsumerBehavior` are similar to the `IBehavior` but work at a lower level, much closer to the message broker. You should be able to accomplish most tasks with the normal `IBehavior`.

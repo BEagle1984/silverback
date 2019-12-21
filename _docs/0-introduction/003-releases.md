@@ -4,11 +4,15 @@ permalink: /docs/releases
 toc: true
 ---
 
-## [1.1.0-rc2](https://github.com/BEagle1984/silverback/releases/tag/1.1.0-rc2)
+## [1.1.0-rc3](https://github.com/BEagle1984/silverback/releases/tag/1.1.0-rc3)
 
 ### What's new
 * Added `IEndpointsConfigurator` interface to allow splitting the endpoints configuration across multiple types (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker#using-iendpointsconfigurator))
 * Added support for distributed tracing (based on standard [System.Diagnostics.DiagnosticSource](https://www.nuget.org/packages/System.Diagnostics.DiagnosticSource/))
+* Added `IProducerBehavior` and `IConsumerBehavior` to create an extension point closer to the actual message broker logic (see [Behaviors]({{ site.baseurl }}/docs/quickstart/behaviors))
+
+### Breaking Changes
+* `ISortedBehavior` was removed and replaced by a generic `ISorted` interface
 
 ## [1.0.5](https://github.com/BEagle1984/silverback/releases/tag/1.0.5)
 
