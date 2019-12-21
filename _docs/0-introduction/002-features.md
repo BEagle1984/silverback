@@ -45,6 +45,10 @@ You can configuratively specify the error handling policies for each inbound con
 * Move: move the message to another topic/queue (or re-enqueue it at the end of the same one)
 We believe that combining this three policies you will be able to implement pretty much all use cases.
 
+## Distributed tracing
+
+Silverback integrates with `System.Diagnostics` to ensure the entire flow can easily be traced, also when involving a message broker.
+
 ## Modularity
 
 Silverback is modular and shipped in multiple nuget packages to allow you to depend only on the parts you want to use.

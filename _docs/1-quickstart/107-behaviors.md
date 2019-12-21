@@ -45,7 +45,7 @@ public void ConfigureServices(IServiceCollection services)
 
 At every call to `IPublisher.Publish` the `Handle` method of each registered behavior is called, passing in the array of messages and the delegate to the next step in the pipeline. This gives you the flexibility to execute any sort of code before and after the messages have been actually published (before or after calling the `next()` step). You can for example modify the messages before publishing them, validate them (like in the above example), add some logging / tracing, etc.
 
-### Example: Message headers
+### Example1: Modifying outbound message headers
 
 The behaviors can be quite useful to get and set the message headers for inbound/outbound messages.
 
@@ -70,6 +70,9 @@ public class CustomHeadersBehavior : IBehavior
     }
 }
 ```
+
+### Example2: Logging inbound message headers
+
 ```c#
 public class LogHeadersBehavior : IBehavior
 {
@@ -106,3 +109,6 @@ public class LogHeadersBehavior : IBehavior
 ## IProducerBehavior and IConsumerBehavior
 
 The `IProducerBehavior` and `IConsumerBehavior` are similar to the `IBehavior` but work at a lower level, much closer to the message broker. You should be able to accomplish most tasks with the normal `IBehavior`.
+
+**Note:** Because of the way the Silverback's broker integration works `IProducerBehavior` and `IConsumerBehavior` implementations can only be registered as singleton.
+{: .notice--info}
