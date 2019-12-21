@@ -3,14 +3,17 @@ repository: beagle1984/silverback
 title: Silverback
 description: "A framework to build reactive, event-driven, microservices with .net core"
 
-name: &name "BEagle1984"
-author: *name
+name: &name "Sergio Aquilini"
+author: BEagle1984
 
 footer:
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/BEagle1984"
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope"
+      url: mailto:silverback-project@outlook.com
 
 #remote_theme: "mmistakes/minimal-mistakes@4.14.1"
 
