@@ -7,7 +7,7 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public sealed class TestEndpoint : IEndpoint, IEquatable<TestEndpoint>
+    public class TestEndpoint : IEndpoint, IEquatable<TestEndpoint>
     {
         public TestEndpoint(string name)
         {

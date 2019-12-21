@@ -27,8 +27,8 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
             var headers = new MessageHeaderCollection();
             var serializedMessage = _serializer.Serialize(message, headers);
-            var outboundMessage =
-                new OutboundMessage(message, headers,
+            var rawBrokerMessage =
+                new RawBrokerMessage(message, headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings
@@ -40,10 +40,10 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     RawContent = serializedMessage
                 };
 
-            var chunks = ChunkProducer.ChunkIfNeeded(outboundMessage);
+            var chunks = ChunkProducer.ChunkIfNeeded(rawBrokerMessage);
 
             chunks.Should().HaveCount(1);
-            chunks.First().Should().BeEquivalentTo(outboundMessage);
+            chunks.First().Should().BeEquivalentTo(rawBrokerMessage);
         }
 
         [Fact]
@@ -60,8 +60,8 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
 
             var serializedMessage = _serializer.Serialize(message, headers);
-            var outboundMessage =
-                new OutboundMessage(message, headers,
+            var rawBrokerMessage =
+                new RawBrokerMessage(message, headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings
@@ -73,7 +73,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     RawContent = serializedMessage
                 };
 
-            var chunks = ChunkProducer.ChunkIfNeeded(outboundMessage);
+            var chunks = ChunkProducer.ChunkIfNeeded(rawBrokerMessage);
 
             chunks.Should().HaveCount(4);
             chunks.Should().Match(c => c.All(m => m.RawContent.Length < 1000));

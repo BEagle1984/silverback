@@ -13,10 +13,8 @@ namespace Silverback.Messaging.Messages
         public static bool Contains(this IEnumerable<MessageHeader> headers, string key) =>
             headers.Any(h => h.Key == key);
 
-        public static string GetValue(this IEnumerable<MessageHeader> headers, string key)
-         {
-            return headers.FirstOrDefault(h => h.Key == key)?.Value;
-         }
+        public static string GetValue(this IEnumerable<MessageHeader> headers, string key) => 
+            headers.FirstOrDefault(h => h.Key == key)?.Value;
 
         public static T? GetValue<T>(this IEnumerable<MessageHeader> headers, string key)
             where T : struct
@@ -37,9 +35,7 @@ namespace Silverback.Messaging.Messages
         }
 
         public static T GetValueOrDefault<T>(this IEnumerable<MessageHeader> headers, string key)
-            where T : struct
-        {
-            return GetValue<T>(headers, key) ?? default;
-        }
+            where T : struct =>
+            GetValue<T>(headers, key) ?? default;
     }
 }

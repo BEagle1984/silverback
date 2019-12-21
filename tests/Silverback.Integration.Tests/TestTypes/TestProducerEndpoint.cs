@@ -4,20 +4,14 @@
 using System;
 using Silverback.Messaging;
 using Silverback.Messaging.LargeMessages;
-using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public sealed class TestProducerEndpoint : IProducerEndpoint, IEquatable<TestProducerEndpoint>
+    public sealed class TestProducerEndpoint : TestEndpoint, IProducerEndpoint, IEquatable<TestProducerEndpoint>
     {
-        public TestProducerEndpoint(string name)
+        public TestProducerEndpoint(string name) : base(name)
         {
-            Name = name;
         }
-
-        public string Name { get; }
-
-        public IMessageSerializer Serializer { get; set; } = new JsonMessageSerializer();
 
         public ChunkSettings Chunk { get; set; } = new ChunkSettings();
         

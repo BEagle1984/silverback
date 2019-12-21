@@ -98,7 +98,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
             _dbContext.Persons.Add(new Person { Name = "Sergio" });
             _dbContext.Persons.Add(new Person { Name = "Mandy" });
 
-            var local = _efCoreDbContext.GetDbSet<Person>().GetLocalCache();
+            var local = _efCoreDbContext.GetDbSet<Person>().GetLocalCache().ToList();
 
             local.Should().NotBeNull();
             local.Count().Should().Be(2);

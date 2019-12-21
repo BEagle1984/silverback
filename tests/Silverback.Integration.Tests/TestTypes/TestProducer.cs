@@ -10,28 +10,31 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestProducer : Producer
+    public class TestProducer : Producer<TestBroker, TestEndpoint>
     {
         public List<TestBroker.ProducedMessage> ProducedMessages { get; }
 
-        public TestProducer(TestBroker broker, IEndpoint endpoint)
-            : base(broker, endpoint,
+        public TestProducer(TestBroker broker, IEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors)
+            : base(
+                broker,
+                endpoint,
                 new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()}),
+                behaviors,
                 new NullLogger<TestProducer>(),
                 new MessageLogger())
         {
             ProducedMessages = broker.ProducedMessages;
         }
 
-        protected override IOffset Produce(byte[] serializedMessage, IEnumerable<MessageHeader> headers)
+        protected override IOffset Produce(RawBrokerMessage message)
         {
-            ProducedMessages.Add(new TestBroker.ProducedMessage(serializedMessage, headers, Endpoint));
+            ProducedMessages.Add(new TestBroker.ProducedMessage(message.RawContent, message.Headers, Endpoint));
             return null;
         }
 
-        protected override Task<IOffset> ProduceAsync(byte[] serializedMessage, IEnumerable<MessageHeader> headers)
+        protected override Task<IOffset> ProduceAsync(RawBrokerMessage message)
         {
-            Produce(serializedMessage, headers);
+            Produce(message.RawContent, message.Headers);
             return Task.FromResult<IOffset>(null);
         }
     }

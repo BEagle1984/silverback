@@ -17,19 +17,33 @@ namespace Silverback.Messaging.Broker
         private readonly ILoggerFactory _loggerFactory;
         private readonly MessageLogger _messageLogger;
 
-        public KafkaBroker(MessageKeyProvider messageKeyProvider, ILoggerFactory loggerFactory,
-            MessageLogger messageLogger) : base(loggerFactory)
+        public KafkaBroker(
+            MessageKeyProvider messageKeyProvider,
+            IEnumerable<IBrokerBehavior> behaviors,
+            ILoggerFactory loggerFactory,
+            MessageLogger messageLogger) 
+            : base(behaviors, loggerFactory)
         {
             _messageKeyProvider = messageKeyProvider;
             _loggerFactory = loggerFactory;
             _messageLogger = messageLogger;
         }
 
-        protected override Producer InstantiateProducer(IEndpoint endpoint) =>
-            new KafkaProducer(this, (KafkaProducerEndpoint) endpoint, _messageKeyProvider, _loggerFactory.CreateLogger<KafkaProducer>(), _messageLogger);
+        protected override Producer InstantiateProducer(IEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors) =>
+            new KafkaProducer(
+                this,
+                (KafkaProducerEndpoint) endpoint,
+                _messageKeyProvider,
+                behaviors,
+                _loggerFactory.CreateLogger<KafkaProducer>(),
+                _messageLogger);
 
-        protected override Consumer InstantiateConsumer(IEndpoint endpoint) =>
-            new KafkaConsumer(this, (KafkaConsumerEndpoint) endpoint, _loggerFactory.CreateLogger<KafkaConsumer>());
+        protected override Consumer InstantiateConsumer(IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors) =>
+            new KafkaConsumer(
+                this,
+                (KafkaConsumerEndpoint) endpoint,
+                behaviors,
+                _loggerFactory.CreateLogger<KafkaConsumer>());
 
         protected override void Connect(IEnumerable<IConsumer> consumers) =>
             consumers.Cast<KafkaConsumer>().ToList().ForEach(c => c.Connect());

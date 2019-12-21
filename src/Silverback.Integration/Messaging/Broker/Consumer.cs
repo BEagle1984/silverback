@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -10,9 +11,12 @@ namespace Silverback.Messaging.Broker
 {
     public abstract class Consumer : EndpointConnectedObject, IConsumer
     {
-        protected Consumer(IBroker broker, IEndpoint endpoint)
+        private readonly IEnumerable<IConsumerBehavior> _behaviors;
+
+        protected Consumer(IBroker broker, IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors)
             : base(broker, endpoint)
         {
+            _behaviors = behaviors;
         }
 
         public event MessageReceivedHandler Received;
@@ -27,7 +31,22 @@ namespace Silverback.Messaging.Broker
                 throw new InvalidOperationException(
                     "A message was received but no handler is configured, please attach to the Received event.");
 
-            await Received.Invoke(this, new MessageReceivedEventArgs(message, headers, offset, Endpoint));
+            await ExecutePipeline(
+                _behaviors, 
+                new RawBrokerMessage(message, headers, Endpoint, offset),
+                m => Received.Invoke(this, new MessageReceivedEventArgs(m)));
+        }
+        
+        private async Task ExecutePipeline(IEnumerable<IConsumerBehavior> behaviors, RawBrokerMessage message, RawBrokerMessageHandler finalAction)
+        {
+            if (behaviors != null && behaviors.Any())
+            {
+                await behaviors.First().Handle(message, m => ExecutePipeline(behaviors.Skip(1), m, finalAction));
+            }
+            else
+            {
+                await finalAction(message);
+            }
         }
     }
 
@@ -35,8 +54,8 @@ namespace Silverback.Messaging.Broker
         where TBroker : class, IBroker
         where TEndpoint : class, IEndpoint
     {
-        protected Consumer(IBroker broker, IEndpoint endpoint)
-            : base(broker, endpoint)
+        protected Consumer(IBroker broker, IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors)
+            : base(broker, endpoint, behaviors)
         {
         }
 

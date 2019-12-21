@@ -12,10 +12,10 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestConsumer : Consumer
+    public class TestConsumer : Consumer<TestBroker, TestEndpoint>
     {
-        public TestConsumer(IBroker broker, IEndpoint endpoint)
-            : base(broker, endpoint)
+        public TestConsumer(IBroker broker, IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors)
+            : base(broker, endpoint, behaviors)
         {
         }
 

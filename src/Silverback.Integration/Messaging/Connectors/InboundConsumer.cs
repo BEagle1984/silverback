@@ -85,13 +85,7 @@ namespace Silverback.Messaging.Connectors
         }
 
         private IInboundMessage CreateInboundMessage(MessageReceivedEventArgs args) =>
-            new InboundMessage(
-                args.Message,
-                args.Headers,
-                args.Offset,
-                args.Endpoint,
-                _settings.UnwrapMessages
-            );
+            new InboundMessage(args.Message, _settings.UnwrapMessages);
 
         private async Task ProcessSingleMessage(IInboundMessage message) =>
             await _errorPolicyHelper.TryProcessAsync(

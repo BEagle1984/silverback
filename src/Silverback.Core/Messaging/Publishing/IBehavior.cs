@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Publishing
         /// Process, handles or transforms the messages being published to the internal bus.
         /// </summary>
         /// <param name="messages">The messages being published.</param>
-        /// <param name="next">The next handler down the pipeline.</param>
+        /// <param name="next">The next behavior in the pipeline.</param>
         /// <returns>The actual messages to be published.</returns>
         Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next);
     }

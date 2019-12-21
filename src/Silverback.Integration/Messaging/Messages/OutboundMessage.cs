@@ -7,9 +7,9 @@ using Silverback.Messaging.Connectors;
 
 namespace Silverback.Messaging.Messages
 {
-    public class OutboundMessage : IOutboundMessageInternal
+    internal class OutboundMessage : IOutboundMessageInternal
     {
-        public OutboundMessage(object content, IEnumerable<MessageHeader> headers, IOutboundRoute route)
+        internal OutboundMessage(object content, IEnumerable<MessageHeader> headers, IOutboundRoute route)
             : this(content, headers, route?.DestinationEndpoint)
         {
             Route = route;

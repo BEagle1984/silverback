@@ -12,7 +12,9 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestBroker : Broker
     {
-        public TestBroker() : base(NullLoggerFactory.Instance)
+
+        public TestBroker(IEnumerable<IBrokerBehavior> behaviors = null)
+            : base(behaviors, NullLoggerFactory.Instance)
         {
         }
 
@@ -20,11 +22,12 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public List<ProducedMessage> ProducedMessages { get; } = new List<ProducedMessage>();
 
-        protected override Producer InstantiateProducer(IEndpoint endpoint) => new TestProducer(this, endpoint);
+        protected override Producer InstantiateProducer(IEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors) => 
+            new TestProducer(this, endpoint, behaviors);
 
-        protected override Consumer InstantiateConsumer(IEndpoint endpoint)
+        protected override Consumer InstantiateConsumer(IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors)
         {
-            var consumer = new TestConsumer(this, endpoint);
+            var consumer = new TestConsumer(this, endpoint, behaviors);
             Consumers.Add(consumer);
             return consumer;
         }

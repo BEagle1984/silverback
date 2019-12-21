@@ -9,13 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    public class KafkaProducer : DiagnosticsProducer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
+    public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
         internal const string PartitioningKeyHeaderKey = "x-kafka-partitioning-key";
 
@@ -25,33 +24,38 @@ namespace Silverback.Messaging.Broker
         private static readonly ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>> ProducersCache =
             new ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>>(new KafkaClientConfigComparer());
 
-        public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, MessageKeyProvider messageKeyProvider,
-            ILogger<KafkaProducer> logger, MessageLogger messageLogger)
-            : base(broker, endpoint, messageKeyProvider, logger, messageLogger)
+        public KafkaProducer(
+            KafkaBroker broker, 
+            KafkaProducerEndpoint endpoint,
+            MessageKeyProvider messageKeyProvider,
+            IEnumerable<IProducerBehavior> behaviors,
+            ILogger<KafkaProducer> logger, 
+            MessageLogger messageLogger)
+            : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
         {
             _logger = logger;
 
             Endpoint.Validate();
         }
 
-        protected override IOffset Produce(byte[] serializedMessage, IEnumerable<MessageHeader> headers) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsync(serializedMessage, headers));
+        protected override IOffset Produce(RawBrokerMessage message) =>
+            AsyncHelper.RunSynchronously(() => ProduceAsync(message));
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        protected override async Task<IOffset> ProduceAsync(byte[] serializedMessage, IEnumerable<MessageHeader> headers)
+        protected override async Task<IOffset> ProduceAsync(RawBrokerMessage message)
         {
             try
             {
                 var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
                 {
-                    Key = GetPartitioningKey(headers),
-                    Value = serializedMessage
+                    Key = GetPartitioningKey(message.Headers),
+                    Value = message.RawContent
                 };
 
-                if (headers != null && headers.Any())
+                if (message.Headers != null && message.Headers.Any())
                 {
                     kafkaMessage.Headers = new Confluent.Kafka.Headers();
-                    headers.ForEach(h => kafkaMessage.Headers.Add(h.ToConfluentHeader()));
+                    message.Headers.ForEach(h => kafkaMessage.Headers.Add(h.ToConfluentHeader()));
                 }
 
                 var deliveryReport = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage);

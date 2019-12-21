@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Confluent.Kafka;
@@ -231,6 +232,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
         }
 
         [Fact]
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public void Read_CompleteInbound_ErrorPolicyConstructorParameterSet()
         {
             var reader =

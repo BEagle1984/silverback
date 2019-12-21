@@ -5,7 +5,8 @@ namespace Silverback.Messaging.Configuration
 {
     /// <summary>
     /// This interface can be implemented to split the message broker endpoints configuration across different types.
-    /// The types implementing <see cref="IEndpointsConfigurator"/> must be registered using <c>RegisterConfigurator 
+    /// The types implementing <see cref="IEndpointsConfigurator"/> must be registered using
+    /// <c>RegisterConfigurator</c> or <c>AddEndpointConfigurator</c>. 
     /// </summary>
     public interface IEndpointsConfigurator
     {

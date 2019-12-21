@@ -14,7 +14,7 @@ namespace Silverback.Util
         public static IEnumerable<object> OfType(this IEnumerable<object> source, Type type) =>
             typeof(Enumerable)
                     .GetMethod("OfType", BindingFlags.Static | BindingFlags.Public)
-                    .MakeGenericMethod(type)
+                    ?.MakeGenericMethod(type)
                     .Invoke(null, new object[] {source})
                 as IEnumerable<object> ?? Enumerable.Empty<object>();
     }

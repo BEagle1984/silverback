@@ -1,11 +1,8 @@
 ﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
-using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.TestTypes.Behaviors;
-using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
 
@@ -38,6 +35,7 @@ namespace Silverback.Tests.Core.Util
             );
         }
 
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Item
         {
             public Item(string id) => Id = id;

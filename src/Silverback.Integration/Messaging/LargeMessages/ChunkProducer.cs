@@ -9,7 +9,7 @@ namespace Silverback.Messaging.LargeMessages
 {
     internal static class ChunkProducer
     {
-        public static IEnumerable<OutboundMessage> ChunkIfNeeded(OutboundMessage message)
+        public static IEnumerable<RawBrokerMessage> ChunkIfNeeded(RawBrokerMessage message)
         {
             var messageId = message.Headers.GetValue(MessageHeader.MessageIdKey);
             var settings = (message.Endpoint as IProducerEndpoint)?.Chunk;
@@ -36,11 +36,8 @@ namespace Silverback.Messaging.LargeMessages
 
             for (var i = 0; i < chunksCount; i++)
             {
-                var messageChunk = new OutboundMessage(message.Content, message.Headers, message.Endpoint)
-                {
-                    RawContent =
-                        span.Slice(offset, Math.Min(chunkSize, message.RawContent.Length - offset)).ToArray()
-                };
+                var slice = span.Slice(offset, Math.Min(chunkSize, message.RawContent.Length - offset)).ToArray();
+                var messageChunk = new RawBrokerMessage(slice, message.Headers, message.Endpoint);
 
                 messageChunk.Headers.AddOrReplace(MessageHeader.ChunkIdKey, i);
                 messageChunk.Headers.AddOrReplace(MessageHeader.ChunksCountKey, chunksCount);

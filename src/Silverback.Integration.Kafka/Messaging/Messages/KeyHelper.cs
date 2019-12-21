@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
+
 #pragma warning disable 618
 
 namespace Silverback.Messaging.Messages

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace Silverback.Util
         }
 
         // http://blog.briandrupieski.com/throttling-asynchronous-methods-in-csharp
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
         public static async Task<IEnumerable<TResult>> ParallelSelectAsync<T, TResult>(this IEnumerable<T> source,
             Func<T, Task<TResult>> selector, int? maxDegreeOfParallelism = null)
         {

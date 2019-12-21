@@ -13,44 +13,44 @@ namespace Silverback.Messaging.Messages
     {
         #region Generic
 
-        public void LogTrace(ILogger logger, string logMessage, IBrokerMessage message) =>
+        public void LogTrace(ILogger logger, string logMessage, IRawBrokerMessage message) =>
             Log(logger, LogLevel.Trace, null, logMessage, new[]{ message });
-        public void LogTrace(ILogger logger, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+        public void LogTrace(ILogger logger, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>
             Log(logger, LogLevel.Trace, null, logMessage, messages);
 
-        public void LogInformation(ILogger logger, string logMessage, IBrokerMessage message) =>
+        public void LogInformation(ILogger logger, string logMessage, IRawBrokerMessage message) =>
             Log(logger, LogLevel.Information, null, logMessage, new[] { message });
-        public void LogInformation(ILogger logger, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+        public void LogInformation(ILogger logger, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>
             Log(logger, LogLevel.Information, null, logMessage, messages);
 
-        public void LogWarning(ILogger logger, string logMessage, IBrokerMessage message) =>
+        public void LogWarning(ILogger logger, string logMessage, IRawBrokerMessage message) =>
             Log(logger, LogLevel.Warning, null, logMessage, new[] { message });
-        public void LogWarning(ILogger logger, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+        public void LogWarning(ILogger logger, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>
             Log(logger, LogLevel.Warning, null, logMessage, messages);
-        public void LogWarning(ILogger logger, Exception exception, string logMessage, IBrokerMessage message) =>
+        public void LogWarning(ILogger logger, Exception exception, string logMessage, IRawBrokerMessage message) =>
             Log(logger, LogLevel.Warning, exception, logMessage, new[] { message });
-        public void LogWarning(ILogger logger, Exception exception, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+        public void LogWarning(ILogger logger, Exception exception, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>
             Log(logger, LogLevel.Warning, exception, logMessage, messages);
 
-        public void LogError(ILogger logger, string logMessage, IBrokerMessage message) =>
+        public void LogError(ILogger logger, string logMessage, IRawBrokerMessage message) =>
             Log(logger, LogLevel.Error, null, logMessage, new[] { message });
-        public void LogError(ILogger logger, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+        public void LogError(ILogger logger, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>
             Log(logger, LogLevel.Error, null, logMessage, messages);
-        public void LogError(ILogger logger, Exception exception, string logMessage, IBrokerMessage message) =>
+        public void LogError(ILogger logger, Exception exception, string logMessage, IRawBrokerMessage message) =>
             Log(logger, LogLevel.Error, exception, logMessage, new[] { message });
-        public void LogError(ILogger logger, Exception exception, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+        public void LogError(ILogger logger, Exception exception, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>
             Log(logger, LogLevel.Error, exception, logMessage, messages);
 
-        public void LogCritical(ILogger logger, string logMessage, IBrokerMessage message) =>
+        public void LogCritical(ILogger logger, string logMessage, IRawBrokerMessage message) =>
             Log(logger, LogLevel.Critical, null, logMessage, new[] { message });
-        public void LogCritical(ILogger logger, string logMessage, IEnumerable<IBrokerMessage> messages) =>
+        public void LogCritical(ILogger logger, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>
             Log(logger, LogLevel.Critical, null, logMessage, messages);
-        public void LogCritical(ILogger logger, Exception exception, string logMessage, IInboundMessage message) =>
+        public void LogCritical(ILogger logger, Exception exception, string logMessage, IRawBrokerMessage message) =>
             Log(logger, LogLevel.Critical, exception, logMessage, new[] { message });
-        public void LogCritical(ILogger logger, Exception exception, string logMessage, IEnumerable<IInboundMessage> messages) =>
+        public void LogCritical(ILogger logger, Exception exception, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>
             Log(logger, LogLevel.Critical, exception, logMessage, messages);
 
-        private void Log(ILogger logger, LogLevel logLevel, Exception exception, string logMessage, IEnumerable<IBrokerMessage> messages)
+        private void Log(ILogger logger, LogLevel logLevel, Exception exception, string logMessage, IEnumerable<IRawBrokerMessage> messages)
         {
             var properties = new List<(string, string, string)>();
 
@@ -87,14 +87,14 @@ namespace Silverback.Messaging.Messages
 
         #region Specific
 
-        public void LogProcessing(ILogger logger, IEnumerable<IBrokerMessage> messages) =>
+        public void LogProcessing(ILogger logger, IEnumerable<IRawBrokerMessage> messages) =>
             LogInformation(logger,
                 messages.Count() > 1
                     ? $"Processing the batch of {messages.Count()} inbound messages."
                     : "Processing inbound message.",
                 messages);
 
-        public void LogProcessingError(ILogger logger, IEnumerable<IBrokerMessage> messages, Exception exception) =>
+        public void LogProcessingError(ILogger logger, IEnumerable<IRawBrokerMessage> messages, Exception exception) =>
             LogWarning(logger,
                 exception,
                 messages.Count() > 1

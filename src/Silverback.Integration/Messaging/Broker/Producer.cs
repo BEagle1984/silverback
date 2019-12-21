@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.LargeMessages;
@@ -13,64 +15,80 @@ namespace Silverback.Messaging.Broker
     public abstract class Producer : EndpointConnectedObject, IProducer
     {
         private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly IEnumerable<IProducerBehavior> _behaviors;
         private readonly MessageLogger _messageLogger;
         private readonly ILogger<Producer> _logger;
 
-        protected Producer(IBroker broker, IEndpoint endpoint, MessageKeyProvider messageKeyProvider,
-            ILogger<Producer> logger, MessageLogger messageLogger)
+        protected Producer(
+            IBroker broker, 
+            IEndpoint endpoint, 
+            MessageKeyProvider messageKeyProvider,
+            IEnumerable<IProducerBehavior> behaviors,
+            ILogger<Producer> logger, 
+            MessageLogger messageLogger)
             : base(broker, endpoint)
         {
             _messageKeyProvider = messageKeyProvider;
+            _behaviors = behaviors;
             _logger = logger;
             _messageLogger = messageLogger;
         }
 
         public void Produce(object message, IEnumerable<MessageHeader> headers = null) =>
-            GetOutboundMessages(message, headers)
-                .ForEach(InternalProduce);
+            GetRawMessages(message, headers)
+                .ForEach(rawMessage =>
+                    ExecutePipeline(_behaviors, rawMessage, x =>
+                    {
+                        x.Offset = Produce(x);
+                        return Task.CompletedTask;
+                    }).Wait());
 
         public Task ProduceAsync(object message, IEnumerable<MessageHeader> headers = null) =>
-            GetOutboundMessages(message, headers)
-                .ForEachAsync(async outboundMessage => await InternalProduceAsync(outboundMessage));
+            GetRawMessages(message, headers)
+                .ForEachAsync(async rawMessage =>
+                    await ExecutePipeline(_behaviors, rawMessage, async x => 
+                        x.Offset = await ProduceAsync(x)));
 
-        protected virtual void InternalProduce(OutboundMessage outboundMessage)
+        private IEnumerable<RawBrokerMessage> GetRawMessages(object content, IEnumerable<MessageHeader> headers)
         {
-            outboundMessage.Offset = Produce(outboundMessage.RawContent, outboundMessage.Headers);
-            Trace(outboundMessage);
-        }
-        
-        protected virtual async Task InternalProduceAsync(OutboundMessage outboundMessage)
-        {
-            outboundMessage.Offset = await ProduceAsync(outboundMessage.RawContent, outboundMessage.Headers);
-        }
+            var headersCollection = new MessageHeaderCollection(headers);
+            _messageKeyProvider.EnsureKeyIsInitialized(content, headersCollection);
+            var rawMessage = new RawBrokerMessage(content, headersCollection, Endpoint);
 
-        private IEnumerable<OutboundMessage> GetOutboundMessages(object message, IEnumerable<MessageHeader> headers)
-        {
-            var outboundMessage = new OutboundMessage(message, headers, Endpoint);
-
-            _messageKeyProvider.EnsureKeyIsInitialized(outboundMessage);
-
-            outboundMessage.RawContent = Endpoint.Serializer
-                .Serialize(outboundMessage.Content, outboundMessage.Headers);
-
-            return ChunkProducer.ChunkIfNeeded(outboundMessage);
+            return ChunkProducer.ChunkIfNeeded(rawMessage);
         }
 
-        private void Trace(IOutboundMessage message) =>
-            _messageLogger.LogInformation(_logger, "Message produced.", message);
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        private async Task ExecutePipeline(IEnumerable<IProducerBehavior> behaviors, RawBrokerMessage message, RawBrokerMessageHandler finalAction)
+        {
+            if (behaviors != null && behaviors.Any())
+            {
+                await behaviors.First().Handle(message, m => ExecutePipeline(behaviors.Skip(1), m, finalAction));
+            }
+            else
+            {
+                await finalAction(message);
+                _messageLogger.LogInformation(_logger, "Message produced.", message);
+            }
+        }
 
-        protected abstract IOffset Produce(byte[] serializedMessage, IEnumerable<MessageHeader> headers);
+        protected abstract IOffset Produce(RawBrokerMessage message);
 
-        protected abstract Task<IOffset> ProduceAsync(byte[] serializedMessage, IEnumerable<MessageHeader> headers);
+        protected abstract Task<IOffset> ProduceAsync(RawBrokerMessage message);
     }
 
     public abstract class Producer<TBroker, TEndpoint> : Producer
         where TBroker : class, IBroker
         where TEndpoint : class, IEndpoint
     {
-        protected Producer(IBroker broker, IEndpoint endpoint, MessageKeyProvider messageKeyProvider,
-            ILogger<Producer> logger, MessageLogger messageLogger)
-            : base(broker, endpoint, messageKeyProvider, logger, messageLogger)
+        protected Producer(
+            IBroker broker, 
+            IEndpoint endpoint, 
+            MessageKeyProvider messageKeyProvider,
+            IEnumerable<IProducerBehavior> behaviors,
+            ILogger<Producer> logger, 
+            MessageLogger messageLogger)
+            : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
         {
         }
 

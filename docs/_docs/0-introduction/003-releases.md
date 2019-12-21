@@ -8,7 +8,7 @@ toc: true
 
 ### What's new
 * Added `IEndpointsConfigurator` interface to allow splitting the endpoints configuration across multiple types (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker#using-iendpointsconfigurator))
-* Added support for distributed tracing (based on standard [System.Diagnostics.DiagnosticSource](https://www.nuget.org/packages/System.Diagnostics.DiagnosticSource/))
+* Added support for distributed tracing (based on [System.Diagnostics](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=netcore-3.1))
 * Added `IProducerBehavior` and `IConsumerBehavior` to create an extension point closer to the actual message broker logic (see [Behaviors]({{ site.baseurl }}/docs/quickstart/behaviors))
 
 ### Breaking Changes

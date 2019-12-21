@@ -13,16 +13,20 @@ namespace Silverback.Messaging.Broker
     public abstract class Broker : IBroker, IDisposable
     {
         private readonly ILogger _logger;
+        private readonly IEnumerable<IProducerBehavior> _producerBehaviors;
+        private readonly IEnumerable<IConsumerBehavior> _consumerBehaviors;
 
         private ConcurrentDictionary<IEndpoint, Producer> _producers = new ConcurrentDictionary<IEndpoint, Producer>();
         private List<Consumer> _consumers = new List<Consumer>();
 
         protected readonly ILoggerFactory LoggerFactory;
 
-        protected Broker(ILoggerFactory loggerFactory)
+        protected Broker(IEnumerable<IBrokerBehavior> behaviors, ILoggerFactory loggerFactory)
         {
-            LoggerFactory = loggerFactory;
+            _producerBehaviors = behaviors?.OfType<IProducerBehavior>() ?? Enumerable.Empty<IProducerBehavior>();
+            _consumerBehaviors = behaviors?.OfType<IConsumerBehavior>() ?? Enumerable.Empty<IConsumerBehavior>();
 
+            LoggerFactory = loggerFactory;
             _logger = loggerFactory.CreateLogger(GetType());
         }
 
@@ -34,11 +38,11 @@ namespace Silverback.Messaging.Broker
             {
                 _logger.LogInformation("Creating new producer for endpoint {endpointName}. " +
                                        $"(Total producers: {_producers.Count + 1})", endpoint.Name);
-                return InstantiateProducer(endpoint);
+                return InstantiateProducer(endpoint, _producerBehaviors);
             });
         }
 
-        protected abstract Producer InstantiateProducer(IEndpoint endpoint);
+        protected abstract Producer InstantiateProducer(IEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors);
 
         public virtual IConsumer GetConsumer(IEndpoint endpoint)
         {
@@ -47,7 +51,7 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogInformation("Creating new consumer for endpoint {endpointName}.", endpoint.Name);
 
-            var consumer = InstantiateConsumer(endpoint);
+            var consumer = InstantiateConsumer(endpoint, _consumerBehaviors);
 
             lock (_consumers)
             {
@@ -57,7 +61,7 @@ namespace Silverback.Messaging.Broker
             return consumer;
         }
 
-        protected abstract Consumer InstantiateConsumer(IEndpoint endpoint);
+        protected abstract Consumer InstantiateConsumer(IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors);
 
         #endregion
 
@@ -124,8 +128,8 @@ namespace Silverback.Messaging.Broker
     public abstract class Broker<TEndpoint> : Broker
         where TEndpoint : class, IEndpoint
     {
-        protected Broker(ILoggerFactory loggerFactory)
-            : base(loggerFactory)
+        protected Broker(IEnumerable<IBrokerBehavior> behaviors, ILoggerFactory loggerFactory)
+            : base(behaviors, loggerFactory)
         {
         }
 

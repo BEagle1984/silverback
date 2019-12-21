@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
 #pragma warning disable 1998
-            consumer.Received += async (_, e) => receivedMessages.Add(e.Endpoint.Serializer.Deserialize(e.Message, new MessageHeaderCollection(e.Headers)));
+            consumer.Received += async (_, e) => receivedMessages.Add(e.Message.Endpoint.Serializer.Deserialize(e.Message.RawContent, new MessageHeaderCollection(e.Message.Headers)));
 #pragma warning restore 1998
 
             producer.Produce(new TestMessage { Content = "hello!" });
@@ -87,7 +87,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
 #pragma warning disable 1998
-            consumer.Received += async (_, e) => receivedMessages.Add(e.Endpoint.Serializer.Deserialize(e.Message, new MessageHeaderCollection(e.Headers)));
+            consumer.Received += async (_, e) => receivedMessages.Add(e.Message.Endpoint.Serializer.Deserialize(e.Message.RawContent, new MessageHeaderCollection(e.Message.Headers)));
 #pragma warning restore 1998
 
             producer.Produce(new TestMessage { Content = "hello!" });
@@ -106,7 +106,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
 #pragma warning disable 1998
-            consumer.Received += async (_, e) => receivedHeaders.Add(e.Headers);
+            consumer.Received += async (_, e) => receivedHeaders.Add(e.Message.Headers);
 #pragma warning restore 1998
 
             producer.Produce(

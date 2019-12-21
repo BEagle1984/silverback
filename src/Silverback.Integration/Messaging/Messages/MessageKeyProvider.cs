@@ -32,11 +32,11 @@ namespace Silverback.Messaging.Messages
             return provider.GetKey(message);
         }
 
-        public void EnsureKeyIsInitialized(IOutboundMessage message)
+        public void EnsureKeyIsInitialized(object message, MessageHeaderCollection headers)
         {
-            var key = _providers.FirstOrDefault(p => p.CanHandle(message.Content))?.EnsureKeyIsInitialized(message.Content);
+            var key = _providers.FirstOrDefault(p => p.CanHandle(message))?.EnsureKeyIsInitialized(message);
 
-            message.Headers.AddOrReplace(MessageHeader.MessageIdKey, key ?? Guid.NewGuid().ToString().ToLower());
+            headers.AddOrReplace(MessageHeader.MessageIdKey, key ?? Guid.NewGuid().ToString().ToLower());
         }
     }
 }

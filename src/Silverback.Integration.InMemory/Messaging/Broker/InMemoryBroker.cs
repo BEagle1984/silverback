@@ -14,7 +14,12 @@ namespace Silverback.Messaging.Broker
         private readonly MessageLogger _messageLogger;
         private readonly ConcurrentDictionary<string, InMemoryTopic> _topics = new ConcurrentDictionary<string, InMemoryTopic>();
 
-        public InMemoryBroker(MessageKeyProvider messageKeyProvider, ILoggerFactory loggerFactory, MessageLogger messageLogger) : base(loggerFactory)
+        public InMemoryBroker(
+            MessageKeyProvider messageKeyProvider,
+            IEnumerable<IBrokerBehavior> behaviors,
+            ILoggerFactory loggerFactory,
+            MessageLogger messageLogger)
+            : base(behaviors, loggerFactory)
         {
             _messageKeyProvider = messageKeyProvider;
             _messageLogger = messageLogger;
@@ -23,11 +28,17 @@ namespace Silverback.Messaging.Broker
         internal InMemoryTopic GetTopic(string name) =>
             _topics.GetOrAdd(name, _ => new InMemoryTopic(name));
 
-        protected override Producer InstantiateProducer(IEndpoint endpoint) =>
-            new InMemoryProducer(this, endpoint, _messageKeyProvider, LoggerFactory.CreateLogger<InMemoryProducer>(), _messageLogger);
+        protected override Producer InstantiateProducer(IEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors) =>
+            new InMemoryProducer(
+                this, 
+                endpoint, 
+                _messageKeyProvider,
+                behaviors,
+                LoggerFactory.CreateLogger<InMemoryProducer>(),
+                _messageLogger);
 
-        protected override Consumer InstantiateConsumer(IEndpoint endpoint) =>
-            GetTopic(endpoint.Name).Subscribe(new InMemoryConsumer(this, endpoint));
+        protected override Consumer InstantiateConsumer(IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors) =>
+            GetTopic(endpoint.Name).Subscribe(new InMemoryConsumer(this, endpoint, behaviors));
 
         protected override void Connect(IEnumerable<IConsumer> consumers)
         {

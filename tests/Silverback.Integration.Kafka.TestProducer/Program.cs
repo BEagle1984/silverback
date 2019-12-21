@@ -4,44 +4,53 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Integration.Kafka.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Integration.Kafka.TestProducer
 {
     internal static class Program
     {
-        private static KafkaBroker _broker;
+        private static IBroker _broker;
         private static IProducer _producer;
+        private static Activity _activity;
 
         private static void Main()
         {
-            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
-            var activity = new Activity("Main");
-            activity.AddBaggage("MyItem1", "someValue1");
-            activity.AddBaggage("MyItem2", "someValue2");
-            activity.Start();
-
             Console.Clear();
 
+            ConfigureServices();
+            StartActivity();
             Connect();
-            Console.CancelKeyPress += (_, e) => { Disconnect(); };
-
             PrintUsage();
-            HandleInput(_producer);
+            HandleInput();
 
-            activity.Stop();
+            _activity.Stop();
+        }
+
+        private static void StartActivity()
+        {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+            _activity = new Activity("Main");
+            _activity.AddBaggage("MyItem1", "someValue1");
+            _activity.AddBaggage("MyItem2", "someValue2");
+            _activity.Start();
+        }
+
+        private static void ConfigureServices()
+        {
+            var services = new ServiceCollection();
+            services.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace))
+                .AddSilverback().WithConnectionToKafka();
+
+            _broker = services.BuildServiceProvider().GetRequiredService<IBroker>();
         }
 
         private static void Connect()
         {
-            var messageKeyProvider = new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()});
-            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger());
-            _broker.Connect();
-
             _producer = _broker.GetProducer(new KafkaProducerEndpoint("Topic1")
             {
                 Configuration = new KafkaProducerConfig
@@ -49,15 +58,13 @@ namespace Silverback.Integration.Kafka.TestProducer
                     BootstrapServers = "PLAINTEXT://localhost:9092"
                 }
             });
+
+            _broker.Connect();
+
+            Console.CancelKeyPress += (_, e) => { _broker.Disconnect(); };
         }
 
-        private static void Disconnect()
-        {
-            _broker.Disconnect();
-            _broker.Dispose();
-        }
-
-        private static void HandleInput(IProducer producer)
+        private static void HandleInput()
         {
             while (true)
             {
@@ -74,23 +81,17 @@ namespace Silverback.Integration.Kafka.TestProducer
                     break;
                 }
 
-                if (text == null)
-                {
-                    continue;
-                }
-
-                Produce(producer, text);
+                if (text != null)
+                    Produce(text);
             }
         }
 
-        private static void Produce(IProducer producer, string text)
-        {
-            producer.Produce(new TestMessage
+        private static void Produce(string text) =>
+            _producer.Produce(new TestMessage
             {
                 Id = Guid.NewGuid(),
                 Text = text
             });
-        }
 
         private static void PrintUsage()
         {
@@ -102,20 +103,11 @@ namespace Silverback.Integration.Kafka.TestProducer
             Console.WriteLine(@" | . \ (_| | | |   < (_| | | |   | | | (_) | (_| | |_| | (_|  __/ |   ");
             Console.WriteLine(@" |_|\_\__,_|_| |_|\_\__,_| |_|   |_|  \___/ \__,_|\__,_|\___\___|_|   ");
             Console.ResetColor();
-            Console.WriteLine("\nTo post a message:");
+            Console.WriteLine("");
+            Console.WriteLine("To post a message:");
             Console.WriteLine("> message<Enter>");
-            Console.WriteLine("Ctrl-C to quit.\n");
-        }
-
-        private static ILoggerFactory GetLoggerFactory()
-        {
-            return LoggerFactory.Create(builder =>
-                {
-                    builder.AddFilter("*", LogLevel.Warning)
-                        .AddFilter("Silverback.*", LogLevel.Trace)
-                        .AddConsole();
-                }
-            );
+            Console.WriteLine("Press Ctrl-C to quit.");
+            Console.WriteLine("");
         }
     }
 }

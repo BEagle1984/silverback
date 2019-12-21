@@ -10,8 +10,9 @@ namespace Silverback.Util
     {
         public static IEnumerable<T> SortBySortIndex<T>(this IEnumerable<T> items)
         {
-            var sorted = items.OfType<ISorted>().OrderBy(b => b.SortIndex).ToList();
-            var unsortable = items.Where(b => !(b is ISorted)).ToList();
+            var list = items.ToList();
+            var sorted = list.OfType<ISorted>().OrderBy(b => b.SortIndex).ToList();
+            var unsortable = list.Where(b => !(b is ISorted)).ToList();
 
             return sorted
                 .Where(b => b.SortIndex <= 0).Cast<T>()

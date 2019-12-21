@@ -8,7 +8,12 @@ namespace Silverback.Messaging.Messages
 {
     internal class InboundMessage : IInboundMessage
     {
-         public InboundMessage(byte[] rawContent, IEnumerable<MessageHeader> headers, IOffset offset, IEndpoint endpoint, bool mustUnwrap)
+        public InboundMessage(RawBrokerMessage message, bool mustUnwrap)
+            : this(message.RawContent, message.Headers, message.Offset, message.Endpoint, mustUnwrap)
+        {
+        }
+
+        public InboundMessage(byte[] rawContent, IEnumerable<MessageHeader> headers, IOffset offset, IEndpoint endpoint, bool mustUnwrap)
         {
             if (headers != null)
                 Headers.AddRange(headers);

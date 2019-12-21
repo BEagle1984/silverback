@@ -59,14 +59,14 @@ namespace Silverback.Messaging
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            return KafkaClientConfigComparer.Compare(this.ConfluentConfig, other.ConfluentConfig);
+            return KafkaClientConfigComparer.Compare(ConfluentConfig, other.ConfluentConfig);
         }
 
         public override bool Equals(object obj)
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((KafkaProducerConfig)obj);
         }
 

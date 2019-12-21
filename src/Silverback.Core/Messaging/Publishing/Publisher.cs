@@ -84,10 +84,10 @@ namespace Silverback.Messaging.Publishing
 
         private Task<IEnumerable<object>> ExecutePipeline(IEnumerable<IBehavior> behaviors, IEnumerable<object> messages, Func<IEnumerable<object>, Task<IEnumerable<object>>> finalAction)
         {
-            if (behaviors == null || !behaviors.Any())
-                return finalAction(messages);
+            if (behaviors != null && behaviors.Any())
+                return behaviors.First().Handle(messages, m => ExecutePipeline(behaviors.Skip(1), m, finalAction));
 
-            return behaviors.First().Handle(messages, m => ExecutePipeline(behaviors.Skip(1), m, finalAction));
+            return finalAction(messages);
         }
 
         private Task<IEnumerable<object>> InvokeExclusiveMethods(IEnumerable<object> messages, bool executeAsync) =>

@@ -10,16 +10,21 @@ namespace Silverback.Messaging.Broker
 {
     public class InMemoryProducer : Producer<InMemoryBroker, IEndpoint>
     {
-        public InMemoryProducer(IBroker broker, IEndpoint endpoint, MessageKeyProvider messageKeyProvider,
-            ILogger<Producer> logger, MessageLogger messageLogger)
-            : base(broker, endpoint, messageKeyProvider, logger, messageLogger)
+        public InMemoryProducer(
+            IBroker broker,
+            IEndpoint endpoint,
+            MessageKeyProvider messageKeyProvider,
+            IEnumerable<IProducerBehavior> behaviors,
+            ILogger<Producer> logger,
+            MessageLogger messageLogger)
+            : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
         {
         }
 
-        protected override IOffset Produce(byte[] serializedMessage, IEnumerable<MessageHeader> headers) => 
-            Broker.GetTopic(Endpoint.Name).Publish(serializedMessage, headers);
+        protected override IOffset Produce(RawBrokerMessage message) => 
+            Broker.GetTopic(Endpoint.Name).Publish(message.RawContent, message.Headers);
 
-        protected override Task<IOffset> ProduceAsync(byte[] serializedMessage, IEnumerable<MessageHeader> headers) => 
-            Broker.GetTopic(Endpoint.Name).PublishAsync(serializedMessage, headers);
+        protected override Task<IOffset> ProduceAsync(RawBrokerMessage message) => 
+            Broker.GetTopic(Endpoint.Name).PublishAsync(message.RawContent, message.Headers);
     }
 }

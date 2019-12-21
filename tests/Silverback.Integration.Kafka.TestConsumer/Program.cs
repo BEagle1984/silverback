@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Integration.Kafka.Messages;
 using Silverback.Messaging;
@@ -17,36 +18,42 @@ namespace Silverback.Integration.Kafka.TestConsumer
 {
     internal static class Program
     {
+        private static Activity _activity;
         private static IBroker _broker;
         private static IConsumer _consumer;
 
         [SuppressMessage("ReSharper", "FunctionNeverReturns")]
         private static void Main()
         {
-            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
-            var activity = new Activity("Main");
-            activity.Start();
-
             Console.Clear();
-            
-            PrintHeader();
 
+            StartActivity();
+            PrintHeader();
+            ConfigureServices();
             Connect();
-            Console.CancelKeyPress += (_, e) =>
-            {
-                Disconnect();
-                activity.Stop();
-            };
 
             while (true)
                 Console.ReadLine();
         }
 
+        private static void StartActivity()
+        {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+            _activity = new Activity("Main");
+            _activity.Start();
+        }
+
+        private static void ConfigureServices()
+        {
+            var services = new ServiceCollection();
+            services.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace))
+                .AddSilverback().WithConnectionToKafka();
+
+            _broker = services.BuildServiceProvider().GetRequiredService<IBroker>();
+        }
+        
         private static void Connect()
         {
-            var messageKeyProvider = new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()});
-            _broker = new KafkaBroker(messageKeyProvider, GetLoggerFactory(), new MessageLogger());
-
             _consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
             {
                 Configuration = new KafkaConsumerConfig
@@ -61,15 +68,19 @@ namespace Silverback.Integration.Kafka.TestConsumer
             _consumer.Received += OnMessageReceived;
 
             _broker.Connect();
-        }
-        private static void Disconnect()
-        {
-            _broker.Disconnect();
+            
+            Console.CancelKeyPress += (_, e) =>
+            {
+                _broker.Disconnect();
+                _activity.Stop();
+            };
         }
 
         private static async Task OnMessageReceived(object sender, MessageReceivedEventArgs args)
         {
-            var testMessage = (TestMessage)args.Endpoint.Serializer.Deserialize(args.Message, new MessageHeaderCollection(args.Headers));
+            var testMessage = (TestMessage) args.Message.Endpoint.Serializer.Deserialize(
+                args.Message.RawContent,
+                new MessageHeaderCollection(args.Message.Headers));
             
             Console.WriteLine($"[{testMessage.Id}] [{Activity.Current.Id}] {testMessage.Text}");
 
@@ -89,7 +100,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
                 }
             }
 
-            await _consumer.Acknowledge(args.Offset);
+            await _consumer.Acknowledge(args.Message.Offset);
         }
 
         private static void PrintHeader()
@@ -103,17 +114,6 @@ namespace Silverback.Integration.Kafka.TestConsumer
             Console.WriteLine(@" |_|\_\__,_|_| |_|\_\__,_|\_____\___/|_| |_|___/\__,_|_| |_| |_|\___|_|   ");
             Console.ResetColor();
             Console.WriteLine("\nCtrl-C to quit.\n");
-        }
-
-        private static ILoggerFactory GetLoggerFactory()
-        {
-            return LoggerFactory.Create(builder =>
-                {
-                    builder.AddFilter("*", LogLevel.Warning)
-                        .AddFilter("Silverback.*", LogLevel.Trace)
-                        .AddConsole();
-                }
-            );
         }
     }
 }

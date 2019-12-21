@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Behaviors
 {
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public class OutboundRoutingBehavior : IBehavior, ISorted
     {
         private readonly IServiceProvider _serviceProvider;
@@ -31,6 +33,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
 
         public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
         {
+            
             messages.OfType<IInboundMessage>().ForEach(message => _inboundMessagesCache.Add(message.Content));
 
             var routedMessages = await WrapAndRepublishRoutedMessages(messages);
@@ -65,7 +68,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
                 typeof(OutboundMessage<>).MakeGenericType(message.GetType()),
                 message, null, route);
 
-            _messageKeyProvider.EnsureKeyIsInitialized(wrapper);
+            _messageKeyProvider.EnsureKeyIsInitialized(wrapper.Content, wrapper.Headers);
 
             return wrapper;
         }
