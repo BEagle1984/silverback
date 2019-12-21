@@ -18,7 +18,6 @@ Its main features are:
 * Apache Kafka integration
 * DDD, Domain Events and Transactional Messaging
 * Built-in error handling policies for consumers
-* Configuration through fluent API or external configuration (`Microsoft.Extensions.Configuration`)
 
 # License
 
@@ -35,4 +34,4 @@ Silverback uses the following libraries under the hood:
 A very big thank you to my friends and colleagues:
 * [Fabio](https://github.com/ppx80) for the help with Kafka
 * [Laurent](https://github.com/lbovet) for constantly challenging, pushing and bringing new ideas and feedbacks
-* [Marc](https://github.com/msallin) for the testing and the valuable feedbacks
+* [Marc](https://github.com/msallin) for its contributions and the valuable feedbacks
