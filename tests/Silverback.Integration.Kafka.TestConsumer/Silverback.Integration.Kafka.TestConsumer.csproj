@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
     <LangVersion>$(LangVersion)</LangVersion>
     <RootNamespace>Silverback.Integration.Kafka.TestConsumer</RootNamespace>
   </PropertyGroup>
