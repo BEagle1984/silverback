@@ -33,6 +33,14 @@ services:
       - CONFLUENT_SUPPORT_METRICS_ENABLE=0
     ports:
       - "9092:9092"
+        
+  # management console http://localhost:15672/#/ (login guest/guest)
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
 
 networks:
   default:
@@ -40,4 +48,4 @@ networks:
     ipam:
       driver: default
       config:
-      - subnet: 10.101.1.1/24
+      - subnet: 10.200.1.1/24
