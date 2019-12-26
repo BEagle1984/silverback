@@ -61,6 +61,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		nuget.config = nuget.config
 		Silverback.sln.DotSettings = Silverback.sln.DotSettings
+		CONTRIBUTING.md = CONTRIBUTING.md
+		docker-compose.yaml = docker-compose.yaml
+		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
