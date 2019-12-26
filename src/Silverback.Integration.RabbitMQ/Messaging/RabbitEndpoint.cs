@@ -8,15 +8,15 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging
 {
-    public abstract class KafkaEndpoint : IEndpoint
+    public class RabbitEndpoint : IEndpoint
     {
-        protected KafkaEndpoint(string name)
+        protected RabbitEndpoint(string name)
         {
             Name = name;
         }
 
         /// <summary>
-        /// Gets the topic name(s).
+        /// Gets the queue name.
         /// </summary>
         public string Name { get; protected set; }
 
@@ -35,7 +35,7 @@ namespace Silverback.Messaging
 
         #region Equality
 
-        protected bool Equals(KafkaEndpoint other) => 
+        protected bool Equals(RabbitEndpoint other) => 
             string.Equals(Name, other.Name, StringComparison.InvariantCulture) &&
             Equals(GetJsonString(Serializer), GetJsonString(other.Serializer));
 
@@ -43,7 +43,7 @@ namespace Silverback.Messaging
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj is KafkaEndpoint other && Equals(other);
+            return obj is RabbitEndpoint other && Equals(other);
         }
 
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
@@ -57,6 +57,6 @@ namespace Silverback.Messaging
                     TypeNameHandling = TypeNameHandling.Auto
                 });
 
-        #endregion
+        #endregion    
     }
 }
