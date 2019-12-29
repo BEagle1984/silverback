@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Silverback.Messaging.Broker
 {
-    public sealed class KafkaOffset : IOffset, IComparable<KafkaOffset>
+    public sealed class KafkaOffset : IComparableOffset
     {
         [JsonConstructor]
         public KafkaOffset(string topic, int partition, long offset)

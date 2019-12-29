@@ -7,7 +7,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
-    public class InMemoryConsumer : Consumer<InMemoryBroker, IConsumerEndpoint>
+    public class InMemoryConsumer : Consumer
     {
         public InMemoryConsumer(InMemoryBroker broker, IConsumerEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors) 
             : base(broker, endpoint, behaviors)
@@ -15,7 +15,14 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer"/>
-        public override Task Acknowledge(IEnumerable<IOffset> offsets)
+        public override Task Commit(IEnumerable<IOffset> offsets)
+        {
+            // Do nothing
+            return Task.CompletedTask;
+        }
+        
+        /// <inheritdoc cref="Consumer"/>
+        public override Task Rollback(IEnumerable<IOffset> offsets)
         {
             // Do nothing
             return Task.CompletedTask;

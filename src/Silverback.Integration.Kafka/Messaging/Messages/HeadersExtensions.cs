@@ -1,7 +1,10 @@
 ﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
@@ -9,10 +12,18 @@ namespace Silverback.Messaging.Messages
     {
         private static readonly Encoding Encoding = Encoding.UTF8;
 
-        public static Confluent.Kafka.Header ToConfluentHeader(this MessageHeader header) =>
-            new Confluent.Kafka.Header(header.Key, Encoding.GetBytes(header.Value));
+        public static Confluent.Kafka.Headers ToConfluentHeaders(this IEnumerable<MessageHeader> headers)
+        {
+            var kafkaHeaders = new Confluent.Kafka.Headers();
+            headers.ForEach(header => kafkaHeaders.Add(header.Key, Encoding.GetBytes(header.Value)));
+            return kafkaHeaders;
+        }
 
-        public static MessageHeader ToSilverbackHeader(this Confluent.Kafka.IHeader header) =>
-            new MessageHeader(header.Key, Encoding.GetString(header.GetValueBytes()));
+        public static IEnumerable<MessageHeader> ToSilverbackHeaders(this Confluent.Kafka.Headers kafkaHeaders) => 
+            kafkaHeaders.Select(kafkaHeader => 
+                new MessageHeader(
+                    kafkaHeader.Key, 
+                    Encoding.GetString(kafkaHeader.GetValueBytes())))
+                .ToList();
     }
 }

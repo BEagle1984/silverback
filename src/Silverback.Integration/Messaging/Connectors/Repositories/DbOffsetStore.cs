@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        public async Task Store(IOffset offset)
+        public async Task Store(IComparableOffset offset)
         {
             await _semaphore.WaitAsync();
 
@@ -73,12 +73,12 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        public async Task<IOffset> GetLatestValue(string key)
+        public async Task<IComparableOffset> GetLatestValue(string key)
         {
             var storedOffset = await DbSet.FindAsync(key);
 
             return storedOffset?.Offset != null 
-                ? JsonConvert.DeserializeObject<IOffset>(storedOffset.Offset, SerializerSettings)
+                ? JsonConvert.DeserializeObject<IComparableOffset>(storedOffset.Offset, SerializerSettings)
                 : null;
         }
     }

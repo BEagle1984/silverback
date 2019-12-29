@@ -7,7 +7,7 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Examples.Common.Consumer
 {
-    public abstract class ConsumerService
+    public abstract class ConsumerApp
     {
         private IServiceProvider _serviceProvider;
 

@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Broker
             _messageLogger = messageLogger;
         }
 
-        /// <inheritdoc cref="Producer"/>
+        /// <inheritdoc cref="Broker"/>
         protected override IProducer InstantiateProducer(
             IProducerEndpoint endpoint,
             IEnumerable<IProducerBehavior> behaviors) =>
@@ -42,13 +42,16 @@ namespace Silverback.Messaging.Broker
                 _loggerFactory.CreateLogger<RabbitProducer>(),
                 _messageLogger);
 
-        /// <inheritdoc cref="Producer"/>
+        /// <inheritdoc cref="Broker"/>
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors)
-        {
-            throw new System.NotImplementedException();
-        }
+            IEnumerable<IConsumerBehavior> behaviors) =>
+            new RabbitConsumer(
+                this,
+                (RabbitConsumerEndpoint) endpoint,
+                behaviors,
+                _connectionFactory,
+                _loggerFactory.CreateLogger<RabbitConsumer>());
 
         protected override void Dispose(bool disposing)
         {

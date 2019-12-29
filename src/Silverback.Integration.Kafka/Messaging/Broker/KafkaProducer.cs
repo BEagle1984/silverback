@@ -55,8 +55,7 @@ namespace Silverback.Messaging.Broker
 
                 if (message.Headers != null && message.Headers.Any())
                 {
-                    kafkaMessage.Headers = new Confluent.Kafka.Headers();
-                    message.Headers.ForEach(h => kafkaMessage.Headers.Add(h.ToConfluentHeader()));
+                    kafkaMessage.Headers = message.Headers.ToConfluentHeaders();
                 }
 
                 var deliveryReport = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage);

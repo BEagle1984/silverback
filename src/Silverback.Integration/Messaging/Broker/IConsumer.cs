@@ -14,18 +14,36 @@ namespace Silverback.Messaging.Broker
         event MessageReceivedHandler Received;
 
         /// <summary>
-        /// Commits the specified offset.
+        /// <param>Confirms that the message at the specified offset has been successfully processed.</param>
+        /// <param>The acknowledgement will be sent to the message broker and the message will never be processed again
+        /// (by the same logical consumer / consumer group).</param>
         /// </summary>
-        /// <param name="offset"></param>
-        /// <returns></returns>
-        Task Acknowledge(IOffset offset);
+        /// <param name="offset">The offset to be committed.</param>
+        Task Commit(IOffset offset);
 
         /// <summary>
-        /// Commits the specified offsets.
+        /// <param>Confirms that the messages at the specified offsets have been successfully processed.</param>
+        /// <param>The acknowledgement will be sent to the message broker and the message will never be processed again
+        /// (by the same logical consumer / consumer group).</param>
         /// </summary>
-        /// <param name="offsets"></param>
-        /// <returns></returns>
-        Task Acknowledge(IEnumerable<IOffset> offsets);
+        /// <param name="offsets">The offsets to be committed.</param>
+        Task Commit(IEnumerable<IOffset> offsets);
+        
+        /// <summary>
+        /// <param>Notifies that an error occured while processing the message at the specified offset.</param>
+        /// <param>If necessary the information will be sent to the message broker to ensure that the message will be
+        /// re-processed.</param>
+        /// </summary>
+        /// <param name="offset">The offset to be rolled back.</param>
+        Task Rollback(IOffset offset);
+
+        /// <summary>
+        /// <param>Notifies that an error occured while processing the messages at the specified offsets.</param>
+        /// <param>If necessary the information will be sent to the message broker to ensure that the message will be
+        /// re-processed.</param>
+        /// </summary>
+        /// <param name="offsets">The offsets to be rolled back.</param>
+        Task Rollback(IEnumerable<IOffset> offsets);
 
         /// <summary>
         /// Connects and starts consuming.

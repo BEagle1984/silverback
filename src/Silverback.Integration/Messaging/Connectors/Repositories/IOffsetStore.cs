@@ -8,12 +8,12 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public interface IOffsetStore
     {
-        Task Store(IOffset offset);
+        Task Store(IComparableOffset offset);
         
         Task Commit();
 
         Task Rollback();
 
-        Task<IOffset> GetLatestValue(string key);
+        Task<IComparableOffset> GetLatestValue(string key);
     }
 }

@@ -11,6 +11,7 @@ using InboundMessage = Silverback.Messaging.Connectors.Model.InboundMessage;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
+    // TODO: Test
     public class DbInboundLog : RepositoryBase<InboundMessage>, IInboundLog
     {
         private readonly MessageKeyProvider _messageKeyProvider;

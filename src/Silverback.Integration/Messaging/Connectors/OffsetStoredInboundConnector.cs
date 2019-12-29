@@ -21,19 +21,19 @@ namespace Silverback.Messaging.Connectors
 
         protected override async Task<bool> MustProcess(IInboundMessage message, IServiceProvider serviceProvider)
         {
-            if (message.Offset == null)
+            if (message.Offset == null || !(message.Offset is IComparableOffset comparableOffset))
                 throw new InvalidOperationException(
-                    "The message broker implementation doesn't seem to support offsets. " +
+                    "The message broker implementation doesn't seem to support comparable offsets. " +
                     "The OffsetStoredInboundConnector cannot be used, please resort to LoggedInboundConnector " +
                     "to ensure exactly-once delivery.");
             
             var offsetStore = serviceProvider.GetRequiredService<IOffsetStore>();
 
             var latest = await offsetStore.GetLatestValue(message.Offset.Key);
-            if (latest != null && message.Offset.CompareTo(latest) <= 0)
+            if (latest != null && latest.CompareTo(comparableOffset) >= 0)
                 return false;
 
-            await offsetStore.Store(message.Offset);
+            await offsetStore.Store(comparableOffset);
             return true;
         }
 

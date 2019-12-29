@@ -101,7 +101,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
                 }
             }
 
-            await _consumer.Acknowledge(args.Message.Offset);
+            await _consumer.Commit(args.Message.Offset);
         }
 
         private static void PrintHeader()

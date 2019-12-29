@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
-namespace Silverback.Examples.ConsumerA
+namespace Silverback.Examples.Common.Consumer
 {
     public class LogHeadersBehavior : IBehavior
     {

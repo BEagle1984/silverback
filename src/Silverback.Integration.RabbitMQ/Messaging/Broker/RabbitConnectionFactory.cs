@@ -45,6 +45,38 @@ namespace Silverback.Messaging.Broker
             return channel;
         }
         
+        public (IModel channel, string queueName) GetChannel(RabbitConsumerEndpoint endpoint)
+        {
+            var channel = GetConnection(endpoint.Connection).CreateModel();
+            string queueName;
+            
+            switch (endpoint)
+            {
+                case RabbitQueueConsumerEndpoint queueEndpoint:
+                    queueName = channel.QueueDeclare(
+                        queueEndpoint.Name,
+                        queueEndpoint.Queue.IsDurable,
+                        queueEndpoint.Queue.IsExclusive,
+                        queueEndpoint.Queue.IsAutoDeleteEnabled,
+                        queueEndpoint.Queue.Arguments).QueueName;
+                    break;
+                case RabbitExchangeConsumerEndpoint exchangeEndpoint:
+                    channel.ExchangeDeclare(
+                        exchangeEndpoint.Name,
+                        exchangeEndpoint.Exchange.ExchangeType,
+                        exchangeEndpoint.Exchange.IsDurable,
+                        exchangeEndpoint.Exchange.IsAutoDeleteEnabled,
+                        exchangeEndpoint.Exchange.Arguments);
+
+                    queueName = channel.QueueDeclare().QueueName;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
+            return (channel, queueName);
+        }
+
         public IConnection GetConnection(RabbitConnectionConfig connectionConfig)
         {
             if (connectionConfig == null) throw new ArgumentNullException(nameof(connectionConfig));
@@ -55,8 +87,13 @@ namespace Silverback.Messaging.Broker
 
         private IConnection CreateConnection(RabbitConnectionConfig connectionConfig)
         {
-            var factory = new ConnectionFactory();
+            var factory = new ConnectionFactory
+            {
+                DispatchConsumersAsync = true
+            };
+            
             factory.ApplyConfiguration(connectionConfig);
+            
             return factory.CreateConnection();
         }
 

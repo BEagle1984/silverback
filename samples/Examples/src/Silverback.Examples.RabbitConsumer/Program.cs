@@ -4,14 +4,14 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
-namespace Silverback.Examples.ConsumerA
+namespace Silverback.Examples.RabbitConsumer
 {
     static class Program
     {
         [SuppressMessage("ReSharper", "FunctionNeverReturns")]
         static void Main()
         {
-            new ConsumerServiceA().Init();
+            new RabbitConsumerApp().Init();
 
             while (true)
             {
