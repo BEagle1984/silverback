@@ -42,7 +42,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
             serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>()
-                .Add<IIntegrationMessage>(TestEndpoint.GetDefault());
+                .Add<IIntegrationMessage>(TestProducerEndpoint.GetDefault());
 
             _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
@@ -52,7 +52,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             InMemoryOutboundQueue.Clear();
 
             _sampleOutboundMessage = new OutboundMessage<TestEventOne>(
-                new TestEventOne { Content = "Test" }, null, TestEndpoint.GetDefault());
+                new TestEventOne { Content = "Test" }, null, TestProducerEndpoint.GetDefault());
             _sampleOutboundMessage.RawContent =
                 new JsonMessageSerializer().Serialize(_sampleOutboundMessage.Content, _sampleOutboundMessage.Headers);
         }
@@ -62,10 +62,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         {
             await _queue.Enqueue(new OutboundMessage<TestEventOne>(
                 new TestEventOne { Content = "Test" }, null,
-                new TestEndpoint("topic1")));
+                new TestProducerEndpoint("topic1")));
             await _queue.Enqueue(new OutboundMessage<TestEventOne>(
                 new TestEventOne { Content = "Test" }, null,
-                new TestEndpoint("topic2")));
+                new TestProducerEndpoint("topic2")));
             await _queue.Commit();
 
             await _worker.ProcessQueue(CancellationToken.None);

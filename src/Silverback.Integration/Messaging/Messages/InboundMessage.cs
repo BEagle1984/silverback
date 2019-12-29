@@ -6,31 +6,18 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
-    internal class InboundMessage : IInboundMessage
+    internal class InboundMessage : RawInboundMessage, IInboundMessage
     {
         public InboundMessage(RawBrokerMessage message, bool mustUnwrap)
-            : this(message.RawContent, message.Headers, message.Offset, message.Endpoint, mustUnwrap)
+            : this(message.RawContent, message.Headers, message.Offset, (IConsumerEndpoint)message.Endpoint, mustUnwrap)
         {
         }
 
-        public InboundMessage(byte[] rawContent, IEnumerable<MessageHeader> headers, IOffset offset, IEndpoint endpoint, bool mustUnwrap)
+        public InboundMessage(byte[] rawContent, IEnumerable<MessageHeader> headers, IOffset offset, IConsumerEndpoint endpoint, bool mustUnwrap) 
+            : base(rawContent, headers, endpoint, offset)
         {
-            if (headers != null)
-                Headers.AddRange(headers);
-
-            Offset = offset;
-            Endpoint = endpoint;
-            RawContent = rawContent;
             MustUnwrap = mustUnwrap;
         }
-
-        public MessageHeaderCollection Headers { get; } = new MessageHeaderCollection();
-
-        public IOffset Offset { get; }
-
-        public IEndpoint Endpoint { get; }
-
-        public byte[] RawContent { get; }
 
         public object Content { get; set; }
 
@@ -39,7 +26,7 @@ namespace Silverback.Messaging.Messages
 
     internal class InboundMessage<TContent> : InboundMessage, IInboundMessage<TContent>
     {
-        public InboundMessage(byte[] rawContent, IEnumerable<MessageHeader> headers, IOffset offset, IEndpoint endpoint, bool mustUnwrap)
+        public InboundMessage(byte[] rawContent, IEnumerable<MessageHeader> headers, IOffset offset, IConsumerEndpoint endpoint, bool mustUnwrap)
             : base(rawContent, headers, offset, endpoint, mustUnwrap)
         {
         }

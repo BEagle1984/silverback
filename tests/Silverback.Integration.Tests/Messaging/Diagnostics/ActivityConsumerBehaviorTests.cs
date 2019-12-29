@@ -25,13 +25,13 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public async Task Handle_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
         {
-            var rawMessage = new RawBrokerMessage(
+            var rawMessage = new RawInboundMessage(
                 "123",
                 new MessageHeaderCollection
                 {
                     { DiagnosticsConstants.TraceIdHeaderKey, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
-                TestEndpoint.GetDefault());
+                TestConsumerEndpoint.GetDefault());
 
             var entered = false;
             await new ActivityConsumerBehavior().Handle(rawMessage, _ =>
@@ -51,13 +51,13 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public void Handle_WithoutActivityHeaders_NewActivityIsStarted()
         {
-            var rawMessage = new RawBrokerMessage(
+            var rawMessage = new RawInboundMessage(
                 "123",
                 new MessageHeaderCollection
                 {
                     { DiagnosticsConstants.TraceIdHeaderKey, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
-                TestEndpoint.GetDefault());
+                TestConsumerEndpoint.GetDefault());
 
             var entered = false;
             new ActivityConsumerBehavior().Handle(rawMessage, _ =>
@@ -84,15 +84,15 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             var serviceProvider = services.BuildServiceProvider();
             var broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
             
-            var rawMessage = new RawBrokerMessage(
+            var rawMessage = new RawInboundMessage(
                 "123",
                 new MessageHeaderCollection
                 {
                     { DiagnosticsConstants.TraceIdHeaderKey, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
-                TestEndpoint.GetDefault());
+                TestConsumerEndpoint.GetDefault());
 
-            var consumer = (TestConsumer) broker.GetConsumer(TestEndpoint.GetDefault());
+            var consumer = (TestConsumer) broker.GetConsumer(TestConsumerEndpoint.GetDefault());
             var entered = false;
             consumer.Received += (sender, args) =>
             {

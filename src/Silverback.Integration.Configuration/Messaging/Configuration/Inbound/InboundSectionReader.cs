@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Common;
 using Silverback.Messaging.Configuration.Reflection;
 using Silverback.Messaging.Connectors;
@@ -33,7 +34,7 @@ namespace Silverback.Messaging.Configuration.Inbound
             {
                 return new ConfiguredInbound(
                     GetConnectorType(configSection),
-                    GetEndpoint(configSection),
+                    GetEndpoint<IConsumerEndpoint>(configSection),
                     GetErrorPolicies(configSection),
                     GetSettings(configSection));
             }

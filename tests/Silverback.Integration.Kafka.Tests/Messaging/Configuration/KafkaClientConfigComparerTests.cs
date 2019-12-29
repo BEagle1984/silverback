@@ -5,9 +5,10 @@ using System.Collections.Concurrent;
 using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging
+namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
 {
     public class KafkaClientConfigComparerTests
     {

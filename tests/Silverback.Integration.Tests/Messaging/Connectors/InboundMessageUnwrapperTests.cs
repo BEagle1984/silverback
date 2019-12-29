@@ -9,6 +9,7 @@ using NSubstitute;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
 
@@ -31,7 +32,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 });
             
             var message = new TestEventOne();
-            var wrappedMessage = new InboundMessage<TestEventOne>(null, null, null, null, true)
+            var wrappedMessage = new InboundMessage<TestEventOne>(new byte[1], null, null, TestConsumerEndpoint.GetDefault(), true)
             {
                 Content = message
             };

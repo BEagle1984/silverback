@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -152,6 +153,7 @@ namespace Silverback.Messaging.Batch
             }
         }
 
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private async Task ProcessEachMessageAndPublishEvents(IEnumerable<IInboundMessage> messages)
         {
             using var scope = _serviceProvider.CreateScope();

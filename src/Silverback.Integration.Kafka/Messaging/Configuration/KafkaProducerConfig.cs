@@ -3,9 +3,8 @@
 
 using System;
 using Confluent.Kafka;
-using Silverback.Messaging.Proxies;
 
-namespace Silverback.Messaging
+namespace Silverback.Messaging.Configuration
 {
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public sealed class KafkaProducerConfig : ConfluentProducerConfigProxy, IEquatable<KafkaProducerConfig>
@@ -41,7 +40,7 @@ namespace Silverback.Messaging
         /// </summary>
         public bool DisposeOnException { get; set; } = true;
 
-        public void Validate()
+        public override void Validate()
         {
             if (ThrowIfNotAcknowledged && !ArePersistenceStatusReportsEnabled)
             {
@@ -53,7 +52,7 @@ namespace Silverback.Messaging
             }
         }
 
-        #region IEquatable
+        #region Equality
 
         public bool Equals(KafkaProducerConfig other)
         {

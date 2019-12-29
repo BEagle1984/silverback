@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration.Inbound
 {
     public class ConfiguredInbound
     {
-        public ConfiguredInbound(Type connectorType, IEndpoint endpoint, IEnumerable<ErrorPolicyBase> errorPolicies, InboundConnectorSettings settings)
+        public ConfiguredInbound(Type connectorType, IConsumerEndpoint endpoint, IEnumerable<ErrorPolicyBase> errorPolicies, InboundConnectorSettings settings)
         {
             ConnectorType = connectorType;
             Endpoint = endpoint;
@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Configuration.Inbound
         }
 
         public Type ConnectorType { get; }
-        public IEndpoint Endpoint { get; }
+        public IConsumerEndpoint Endpoint { get; }
         public ErrorPolicyBase[] ErrorPolicies { get; }
         public InboundConnectorSettings Settings { get; }
     }

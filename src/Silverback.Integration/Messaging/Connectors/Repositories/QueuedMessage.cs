@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public class QueuedMessage
     {
-        public QueuedMessage(byte[] content, IEnumerable<MessageHeader> headers, IEndpoint endpoint)
+        public QueuedMessage(byte[] content, IEnumerable<MessageHeader> headers, IProducerEndpoint endpoint)
         {
             Content = content;
             Headers = headers;
@@ -19,6 +19,6 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public IEnumerable<MessageHeader> Headers { get; }
 
-        public IEndpoint Endpoint { get; }
+        public IProducerEndpoint Endpoint { get; }
     }
 }

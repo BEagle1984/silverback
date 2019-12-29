@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public class DbQueuedMessage : QueuedMessage
     {
-        public DbQueuedMessage(int id, byte[] content, IEnumerable<MessageHeader> headers, IEndpoint endpoint) 
+        public DbQueuedMessage(int id, byte[] content, IEnumerable<MessageHeader> headers, IProducerEndpoint endpoint) 
             : base(content, headers, endpoint)
         {
             Id = id;

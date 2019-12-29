@@ -10,9 +10,9 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    /// A <see cref="Broker"/> implementation for Apache Kafka.
+    /// An <see cref="IBroker"/> implementation for Apache Kafka.
     /// </summary>
-    public class KafkaBroker : Broker<KafkaEndpoint>
+    public class KafkaBroker : Broker
     {
         private readonly MessageKeyProvider _messageKeyProvider;
         private readonly IServiceProvider _serviceProvider;
@@ -33,7 +33,10 @@ namespace Silverback.Messaging.Broker
             _messageLogger = messageLogger;
         }
 
-        protected override Producer InstantiateProducer(IEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors) =>
+        /// <inheritdoc cref="Broker"/>
+        protected override IProducer InstantiateProducer(
+            IProducerEndpoint endpoint,
+            IEnumerable<IProducerBehavior> behaviors) =>
             new KafkaProducer(
                 this,
                 (KafkaProducerEndpoint) endpoint,
@@ -42,18 +45,15 @@ namespace Silverback.Messaging.Broker
                 _loggerFactory.CreateLogger<KafkaProducer>(),
                 _messageLogger);
 
-        protected override Consumer InstantiateConsumer(IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors) =>
+        /// <inheritdoc cref="Broker"/>
+        protected override IConsumer InstantiateConsumer(
+            IConsumerEndpoint endpoint,
+            IEnumerable<IConsumerBehavior> behaviors) =>
             new KafkaConsumer(
                 this,
                 (KafkaConsumerEndpoint) endpoint,
                 behaviors,
                 _serviceProvider,
                 _loggerFactory.CreateLogger<KafkaConsumer>());
-
-        protected override void Connect(IEnumerable<IConsumer> consumers) =>
-            consumers.Cast<KafkaConsumer>().ToList().ForEach(c => c.Connect());
-
-        protected override void Disconnect(IEnumerable<IConsumer> consumers) =>
-            consumers.Cast<KafkaConsumer>().ToList().ForEach(c => c.Disconnect());
     }
 }

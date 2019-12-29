@@ -7,7 +7,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public interface IInboundLog
     {
-        Task Add(object message, IEndpoint endpoint);
+        Task Add(object message, IConsumerEndpoint endpoint);
 
         Task Commit();
 
@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// Returns a boolean value indicating whether a message with the same id and endpoint
         /// has already been processed.
         /// </summary>
-        Task<bool> Exists(object message, IEndpoint endpoint);
+        Task<bool> Exists(object message, IConsumerEndpoint endpoint);
 
         Task<int> GetLength();
     }

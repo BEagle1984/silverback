@@ -35,7 +35,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
             await publisher.PublishAsync(new CustomSerializedIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }
 
-        private IEndpoint CreateEndpoint(string name) =>
+        private KafkaProducerEndpoint CreateEndpoint(string name) =>
             new KafkaProducerEndpoint(name)
             {
                 Serializer = GetSerializer(),

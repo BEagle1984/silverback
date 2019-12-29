@@ -54,7 +54,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_MessagesReceived()
         {
-            _connector.Bind(TestEndpoint.GetDefault());
+            _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -70,7 +70,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
 
-            _connector.Bind(TestEndpoint.GetDefault());
+            _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -89,7 +89,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
 
-            _connector.Bind(TestEndpoint.GetDefault());
+            _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -108,7 +108,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
 
-            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
+            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new Silverback.Messaging.Batch.BatchSettings
                 {
@@ -133,7 +133,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
             var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
 
-            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
+            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new Silverback.Messaging.Batch.BatchSettings
                 {
@@ -160,7 +160,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var e3 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
             var e4 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
 
-            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
+            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new Silverback.Messaging.Batch.BatchSettings
                 {
@@ -189,7 +189,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var e3 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
             var e4 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
 
-            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
+            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new Silverback.Messaging.Batch.BatchSettings
                 {

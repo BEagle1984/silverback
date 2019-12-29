@@ -10,6 +10,9 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public interface IInboundConnector
     {
-        IInboundConnector Bind(IEndpoint endpoint, IErrorPolicy errorPolicy = null, InboundConnectorSettings settings = null);
+        IInboundConnector Bind(
+            IConsumerEndpoint endpoint,
+            IErrorPolicy errorPolicy = null, 
+            InboundConnectorSettings settings = null);
     }
 }

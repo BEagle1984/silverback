@@ -15,8 +15,13 @@ namespace Silverback.Messaging.Broker
             Value = offset.ToString();
         }
 
+        /// <inheritdoc cref="IOffset"/>
         public string Key { get; }
+
+        /// <inheritdoc cref="IOffset"/>
         public string Value { get; }
+        
+        /// <inheritdoc cref="IOffset"/>
         public int Offset { get; }
 
         public int CompareTo(InMemoryOffset other)

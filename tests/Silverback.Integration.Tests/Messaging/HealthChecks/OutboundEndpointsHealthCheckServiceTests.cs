@@ -27,15 +27,15 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             var producer1 = Substitute.For<IProducer>();
             var producer2 = Substitute.For<IProducer>();
             var producer3 = Substitute.For<IProducer>();
-            broker.GetProducer(new TestEndpoint("endpoint1")).Returns(producer1);
-            broker.GetProducer(new TestEndpoint("endpoint2")).Returns(producer2);
-            broker.GetProducer(new TestEndpoint("endpoint3")).Returns(producer3);
+            broker.GetProducer(new TestProducerEndpoint("endpoint1")).Returns(producer1);
+            broker.GetProducer(new TestProducerEndpoint("endpoint2")).Returns(producer2);
+            broker.GetProducer(new TestProducerEndpoint("endpoint3")).Returns(producer3);
             var configuration = Substitute.For<IOutboundRoutingConfiguration>();
             configuration.Routes.Returns(new List<IOutboundRoute>
             {
-                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventOne), new TestEndpoint("endpoint1"), typeof(OutboundConnector) ),
-                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventTwo), new TestEndpoint("endpoint2"), typeof(OutboundConnector) ),
-                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventThree), new TestEndpoint("endpoint3"), typeof(OutboundConnector) ),
+                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventOne), new TestProducerEndpoint("endpoint1"), typeof(OutboundConnector) ),
+                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventTwo), new TestProducerEndpoint("endpoint2"), typeof(OutboundConnector) ),
+                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventThree), new TestProducerEndpoint("endpoint3"), typeof(OutboundConnector) ),
             });
 
             var service = new OutboundEndpointsHealthCheckService(configuration, broker);
@@ -55,15 +55,15 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             var producer1 = Substitute.For<IProducer>();
             var producer2 = Substitute.For<IProducer>();
             var producer3 = Substitute.For<IProducer>();
-            broker.GetProducer(new TestEndpoint("endpoint1")).Returns(producer1);
-            broker.GetProducer(new TestEndpoint("endpoint2")).Returns(producer2);
-            broker.GetProducer(new TestEndpoint("endpoint3")).Returns(producer3);
+            broker.GetProducer(new TestProducerEndpoint("endpoint1")).Returns(producer1);
+            broker.GetProducer(new TestProducerEndpoint("endpoint2")).Returns(producer2);
+            broker.GetProducer(new TestProducerEndpoint("endpoint3")).Returns(producer3);
             var configuration = Substitute.For<IOutboundRoutingConfiguration>();
             configuration.Routes.Returns(new List<IOutboundRoute>
             {
-                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventOne), new TestEndpoint("endpoint1"), typeof(OutboundConnector) ),
-                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventTwo), new TestEndpoint("endpoint2"), typeof(OutboundConnector) ),
-                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventThree), new TestEndpoint("endpoint3"), typeof(OutboundConnector) ),
+                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventOne), new TestProducerEndpoint("endpoint1"), typeof(OutboundConnector) ),
+                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventTwo), new TestProducerEndpoint("endpoint2"), typeof(OutboundConnector) ),
+                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventThree), new TestProducerEndpoint("endpoint3"), typeof(OutboundConnector) ),
             });
 
             var service = new OutboundEndpointsHealthCheckService(configuration, broker);
@@ -82,15 +82,15 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             var producer2 = Substitute.For<IProducer>();
             producer2.ProduceAsync(null).ThrowsForAnyArgs<ProduceException>();
             var producer3 = Substitute.For<IProducer>();
-            broker.GetProducer(new TestEndpoint("endpoint1")).Returns(producer1);
-            broker.GetProducer(new TestEndpoint("endpoint2")).Returns(producer2);
-            broker.GetProducer(new TestEndpoint("endpoint3")).Returns(producer3);
+            broker.GetProducer(new TestProducerEndpoint("endpoint1")).Returns(producer1);
+            broker.GetProducer(new TestProducerEndpoint("endpoint2")).Returns(producer2);
+            broker.GetProducer(new TestProducerEndpoint("endpoint3")).Returns(producer3);
             var configuration = Substitute.For<IOutboundRoutingConfiguration>();
             configuration.Routes.Returns(new List<IOutboundRoute>
             {
-                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventOne), new TestEndpoint("endpoint1"), typeof(OutboundConnector) ),
-                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventTwo), new TestEndpoint("endpoint2"), typeof(OutboundConnector) ),
-                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventThree), new TestEndpoint("endpoint3"), typeof(OutboundConnector) ),
+                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventOne), new TestProducerEndpoint("endpoint1"), typeof(OutboundConnector) ),
+                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventTwo), new TestProducerEndpoint("endpoint2"), typeof(OutboundConnector) ),
+                new OutboundRoutingConfiguration.OutboundRoute(typeof(TestEventThree), new TestProducerEndpoint("endpoint3"), typeof(OutboundConnector) ),
             });
 
             var service = new OutboundEndpointsHealthCheckService(configuration, broker);

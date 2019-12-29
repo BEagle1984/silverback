@@ -26,5 +26,15 @@ namespace Silverback.Messaging.Broker
         /// <param name="offsets"></param>
         /// <returns></returns>
         Task Acknowledge(IEnumerable<IOffset> offsets);
+
+        /// <summary>
+        /// Connects and starts consuming.
+        /// </summary>
+        void Connect();
+
+        /// <summary>
+        /// Disconnects and stops consuming.
+        /// </summary>
+        void Disconnect();
     }
 }

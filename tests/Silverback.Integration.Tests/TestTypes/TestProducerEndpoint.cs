@@ -5,35 +5,33 @@ using System;
 using Silverback.Messaging;
 using Silverback.Messaging.LargeMessages;
 
+#pragma warning disable 659
+
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public sealed class TestProducerEndpoint : TestEndpoint, IProducerEndpoint, IEquatable<TestProducerEndpoint>
+    public sealed class TestProducerEndpoint : ProducerEndpoint, IEquatable<TestProducerEndpoint>
     {
         public TestProducerEndpoint(string name) : base(name)
         {
         }
 
-        public ChunkSettings Chunk { get; set; } = new ChunkSettings();
-        
+        public static TestProducerEndpoint GetDefault() => new TestProducerEndpoint("test");
+
         #region IEquatable
 
         public bool Equals(TestProducerEndpoint other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(Name, other.Name);
+            return base.Equals(other);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj is TestProducerEndpoint endpoint && Equals(endpoint);
-        }
-
-        public override int GetHashCode()
-        {
-            return (Name != null ? Name.GetHashCode() : 0);
+            if (obj.GetType() != GetType()) return false;
+            return Equals((TestProducerEndpoint)obj);
         }
 
         #endregion

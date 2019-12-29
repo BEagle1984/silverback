@@ -21,6 +21,12 @@ namespace Silverback.Messaging.Connectors
 
         protected override async Task<bool> MustProcess(IInboundMessage message, IServiceProvider serviceProvider)
         {
+            if (message.Offset == null)
+                throw new InvalidOperationException(
+                    "The message broker implementation doesn't seem to support offsets. " +
+                    "The OffsetStoredInboundConnector cannot be used, please resort to LoggedInboundConnector " +
+                    "to ensure exactly-once delivery.");
+            
             var offsetStore = serviceProvider.GetRequiredService<IOffsetStore>();
 
             var latest = await offsetStore.GetLatestValue(message.Offset.Key);

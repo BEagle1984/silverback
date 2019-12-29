@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Broker
         private int _messagesSinceCommit;
 
         public KafkaConsumer(
-            IBroker broker,
+            KafkaBroker broker,
             KafkaConsumerEndpoint endpoint,
             IEnumerable<IConsumerBehavior> behaviors,
             IServiceProvider serviceProvider,
@@ -28,11 +28,10 @@ namespace Silverback.Messaging.Broker
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
-
-            Endpoint.Validate();
         }
 
-        internal void Connect()
+        /// <inheritdoc cref="Consumer"/>
+        public override void Connect()
         {
             if (_innerConsumer != null)
                 return;
@@ -50,7 +49,8 @@ namespace Silverback.Messaging.Broker
             _logger.LogTrace("Connected consumer to topic {topic}. (BootstrapServers=\"{bootstrapServers}\")", Endpoint.Name, Endpoint.Configuration.BootstrapServers);
         }
 
-        internal void Disconnect()
+        /// <inheritdoc cref="Consumer"/>
+        public override void Disconnect()
         {
             if (_innerConsumer == null)
                 return;
@@ -100,6 +100,7 @@ namespace Silverback.Messaging.Broker
             }
         }
 
+        /// <inheritdoc cref="Consumer"/>
         public override Task Acknowledge(IEnumerable<IOffset> offsets)
         {
             var lastOffsets = offsets.OfType<KafkaOffset>()

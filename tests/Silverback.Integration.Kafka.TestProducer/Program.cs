@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Integration.Kafka.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Integration.Kafka.TestProducer
 {

@@ -30,7 +30,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundMessage(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
-                    null, TestEndpoint.GetDefault(), true)
+                    null, TestConsumerEndpoint.GetDefault(), true)
             }, new Exception("test"));
 
             action.Should().Be(expectedAction);

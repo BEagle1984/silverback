@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Integration.Kafka.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 

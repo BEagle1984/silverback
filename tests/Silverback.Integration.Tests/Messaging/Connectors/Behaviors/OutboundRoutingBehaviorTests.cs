@@ -59,10 +59,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         public async Task Handle_MultipleMessages_CorrectlyRoutedToEndpoint(IIntegrationMessage message,
             string[] expectedEndpointNames)
         {
-            _routingConfiguration.Add<IIntegrationMessage>(new TestEndpoint("allMessages"), null);
-            _routingConfiguration.Add<IIntegrationEvent>(new TestEndpoint("allEvents"), null);
-            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), null);
-            _routingConfiguration.Add<TestEventTwo>(new TestEndpoint("eventTwo"), null);
+            _routingConfiguration.Add<IIntegrationMessage>(new TestProducerEndpoint("allMessages"), null);
+            _routingConfiguration.Add<IIntegrationEvent>(new TestProducerEndpoint("allEvents"), null);
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), null);
+            _routingConfiguration.Add<TestEventTwo>(new TestProducerEndpoint("eventTwo"), null);
 
             await _behavior.Handle(new[] {message}, Task.FromResult);
             await _outboundQueue.Commit();
@@ -94,7 +94,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         [Fact]
         public async Task Handle_Message_CorrectlyRoutedToDefaultConnector()
         {
-            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), null);
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), null);
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult);
             await _outboundQueue.Commit();
@@ -107,7 +107,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         [Fact]
         public async Task Handle_Message_CorrectlyRoutedToConnector()
         {
-            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), typeof(OutboundConnector));
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult);
             await _outboundQueue.Commit();
@@ -120,7 +120,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         [Fact]
         public async Task Handle_Messages_RoutedMessageIsFiltered()
         {
-            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), typeof(OutboundConnector));
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
 
             var messages = await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
 
@@ -132,7 +132,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         public async Task Handle_MessagesWithPublishToInternBusOption_RoutedMessageIsNotFiltered()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
-            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), typeof(OutboundConnector));
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
 
             var messages = await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
 
@@ -144,7 +144,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         public async Task Handle_UnhandledMessageType_CorrectlyRelayed()
         {
             var message = new SomeUnhandledMessage { Content = "abc" };
-            _routingConfiguration.Add<SomeUnhandledMessage>(new TestEndpoint("eventOne"), typeof(OutboundConnector));
+            _routingConfiguration.Add<SomeUnhandledMessage>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
 
             await _behavior.Handle(new[] { message }, Task.FromResult);
 
@@ -155,11 +155,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         [Fact]
         public async Task Handle_InboundMessages_AreIgnored()
         {
-            _routingConfiguration.Add<TestEventOne>(new TestEndpoint("eventOne"), null);
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), null);
 
             var messages = new[] { new TestEventOne(), new TestEventOne() };
             var wrappedMessages = messages.Select(message =>
-                new InboundMessage<TestEventOne>(null, null, null, null, true)
+                new InboundMessage<TestEventOne>(new byte[1], null, null, TestConsumerEndpoint.GetDefault(), true)
                 {
                     Content = message
                 }).ToList();

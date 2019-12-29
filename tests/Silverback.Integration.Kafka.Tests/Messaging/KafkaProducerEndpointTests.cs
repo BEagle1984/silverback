@@ -4,6 +4,7 @@
 using FluentAssertions;
 using Newtonsoft.Json;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Xunit;
 

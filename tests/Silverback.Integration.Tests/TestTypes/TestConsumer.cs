@@ -12,9 +12,9 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestConsumer : Consumer<TestBroker, TestEndpoint>
+    public class TestConsumer : Consumer<TestBroker, TestConsumerEndpoint>
     {
-        public TestConsumer(IBroker broker, IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors)
+        public TestConsumer(TestBroker broker, TestConsumerEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors)
             : base(broker, endpoint, behaviors)
         {
         }
@@ -52,9 +52,18 @@ namespace Silverback.Tests.Integration.TestTypes
             await HandleMessage(rawMessage, headers, offset);
         }
 
-#pragma warning disable 1998
-        public override async Task Acknowledge(IEnumerable<IOffset> offsets) =>
+        public override Task Acknowledge(IEnumerable<IOffset> offsets)
+        {
             AcknowledgeCount += offsets.Count();
-#pragma warning restore 1998
+            return Task.CompletedTask;
+        }
+
+        public override void Connect()
+        {
+        }
+
+        public override void Disconnect()
+        {
+        }
     }
 }

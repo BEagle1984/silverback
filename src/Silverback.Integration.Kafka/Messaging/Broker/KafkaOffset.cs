@@ -25,10 +25,25 @@ namespace Silverback.Messaging.Broker
         {
         }
 
+        /// <summary>
+        /// Gets the name of the topic.
+        /// </summary>
         public string Topic { get; }
+        
+        /// <summary>
+        /// Gets the partition number.
+        /// </summary>
         public int Partition { get; }
+        
+        /// <summary>
+        /// Gets the offset in the partition.
+        /// </summary>
         public long Offset { get; }
+        
+        /// <inheritdoc cref="IOffset"/>
         public string Key { get; }
+
+        /// <inheritdoc cref="IOffset"/>
         public string Value { get; }
 
         public int CompareTo(KafkaOffset other)
@@ -53,7 +68,7 @@ namespace Silverback.Messaging.Broker
 
         public static bool operator >=(KafkaOffset left, KafkaOffset right) => Comparer<KafkaOffset>.Default.Compare(left, right) >= 0;
 
-        public Confluent.Kafka.TopicPartitionOffset AsTopicPartitionOffset() =>
+        internal Confluent.Kafka.TopicPartitionOffset AsTopicPartitionOffset() =>
             new Confluent.Kafka.TopicPartitionOffset(Topic, new Confluent.Kafka.Partition(Partition),
                 new Confluent.Kafka.Offset(Offset));
     }

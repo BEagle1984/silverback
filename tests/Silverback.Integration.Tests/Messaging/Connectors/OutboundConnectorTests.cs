@@ -26,7 +26,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task OnMessageReceived_SingleMessage_Relayed()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne { Content = "Test" }, null, TestEndpoint.GetDefault());
+            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne { Content = "Test" }, null, TestProducerEndpoint.GetDefault());
 
             await _connector.RelayMessage(outboundMessage);
 
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                     new MessageHeader("header1", "value1"),
                     new MessageHeader("header2", "value2")
                 },
-                TestEndpoint.GetDefault());
+                TestProducerEndpoint.GetDefault());
 
             await _connector.RelayMessage(outboundMessage);
 
@@ -57,7 +57,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.ProducedMessages.First().Endpoint.Should().Be(outboundMessage.Endpoint);
 
             var producedMessage = _broker.ProducedMessages.First();
-            producedMessage.Headers.Should().Contain(outboundMessage.Headers);
+            producedMessage.Headers.Should()
+                .ContainEquivalentOf(new MessageHeader("header1", "value1"))
+                .And.ContainEquivalentOf(new MessageHeader("header2", "value2"));
         }
     }
 }

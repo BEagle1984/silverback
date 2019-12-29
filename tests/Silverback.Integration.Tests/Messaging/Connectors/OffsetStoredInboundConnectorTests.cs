@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_MessagesReceived()
         {
-            _connector.Bind(TestEndpoint.GetDefault());
+            _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -74,7 +74,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var o1 = new TestOffset("a", "1");
             var o2 = new TestOffset("a", "2");
 
-            _connector.Bind(TestEndpoint.GetDefault());
+            _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -94,7 +94,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var o1 = new TestOffset("a", "1");
             var o2 = new TestOffset("b", "1");
 
-            _connector.Bind(TestEndpoint.GetDefault());
+            _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -115,7 +115,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var o2 = new TestOffset("b", "1");
             var o3 = new TestOffset("a", "2");
 
-            _connector.Bind(TestEndpoint.GetDefault());
+            _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
@@ -136,7 +136,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var o2 = new TestOffset("b", "1");
             var o3 = new TestOffset("a", "2");
 
-            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
+            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new Silverback.Messaging.Batch.BatchSettings
                 {
@@ -164,7 +164,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var o2 = new TestOffset("b", "1");
             var o3 = new TestOffset("a", "2");
 
-            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
+            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new Silverback.Messaging.Batch.BatchSettings
                 {
@@ -193,7 +193,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var o3 = new TestOffset("a", "3");
             var o4 = new TestOffset("a", "4");
 
-            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
+            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new Silverback.Messaging.Batch.BatchSettings
                 {
@@ -224,7 +224,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var o3 = new TestOffset("a", "3");
             var o4 = new TestOffset("a", "4");
 
-            _connector.Bind(TestEndpoint.GetDefault(), settings: new InboundConnectorSettings
+            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new Silverback.Messaging.Batch.BatchSettings
                 {

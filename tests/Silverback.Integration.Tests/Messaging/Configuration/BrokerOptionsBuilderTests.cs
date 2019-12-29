@@ -61,7 +61,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddOutboundConnector());
             GetBusConfigurator().Connect(endpoints =>
-                endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.GetDefault()));
+                endpoints.AddOutbound<IIntegrationMessage>(TestProducerEndpoint.GetDefault()));
 
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventTwo());
@@ -77,7 +77,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
             GetBusConfigurator().Connect(endpoints => 
-                endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.GetDefault()));
+                endpoints.AddOutbound<IIntegrationMessage>(TestProducerEndpoint.GetDefault()));
 
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventTwo());
@@ -94,7 +94,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
             GetBusConfigurator().Connect(endpoints =>
-                endpoints.AddOutbound<IIntegrationMessage>(TestEndpoint.GetDefault()));
+                endpoints.AddOutbound<IIntegrationMessage>(TestProducerEndpoint.GetDefault()));
 
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventTwo());
@@ -114,8 +114,8 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
-                    .AddOutbound<TestEventOne>(new TestEndpoint("test1"))
-                    .AddOutbound<IIntegrationEvent>(new TestEndpoint("test2")));
+                    .AddOutbound<TestEventOne>(new TestProducerEndpoint("test1"))
+                    .AddOutbound<IIntegrationEvent>(new TestProducerEndpoint("test2")));
 
             // -> to both endpoints
             GetPublisher().Publish(new TestEventOne());
@@ -138,7 +138,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddInboundConnector());
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
-                    .AddInbound(TestEndpoint.GetDefault()));
+                    .AddInbound(TestConsumerEndpoint.GetDefault()));
 
             var consumer = GetBroker().Consumers.First();
             await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
@@ -156,7 +156,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddInboundConnector().AddInboundConnector());
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
-                    .AddInbound(TestEndpoint.GetDefault()));
+                    .AddInbound(TestConsumerEndpoint.GetDefault()));
 
             var consumer = GetBroker().Consumers.First();
             await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
@@ -173,7 +173,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddLoggedInboundConnector(s => new InMemoryInboundLog(s.GetRequiredService<MessageKeyProvider>())));
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
-                    .AddInbound(TestEndpoint.GetDefault()));
+                    .AddInbound(TestConsumerEndpoint.GetDefault()));
 
             var consumer = GetBroker().Consumers.First();
             var duplicatedId = Guid.NewGuid();
@@ -192,7 +192,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             _services.AddSilverback().WithConnectionTo<TestBroker>(options => options.AddOffsetStoredInboundConnector(_ => new InMemoryOffsetStore()));
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
-                    .AddInbound(TestEndpoint.GetDefault()));
+                    .AddInbound(TestConsumerEndpoint.GetDefault()));
 
             var consumer = GetBroker().Consumers.First();
             await consumer.TestPush(
@@ -243,7 +243,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             public void Configure(IEndpointsConfigurationBuilder builder)
             {
-                builder.AddOutbound<TestEventOne>(TestEndpoint.GetDefault());
+                builder.AddOutbound<TestEventOne>(TestProducerEndpoint.GetDefault());
             }
         }
 
@@ -251,7 +251,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             public void Configure(IEndpointsConfigurationBuilder builder)
             {
-                builder.AddOutbound<TestEventTwo>(TestEndpoint.GetDefault());
+                builder.AddOutbound<TestEventTwo>(TestProducerEndpoint.GetDefault());
             }
         }
     }

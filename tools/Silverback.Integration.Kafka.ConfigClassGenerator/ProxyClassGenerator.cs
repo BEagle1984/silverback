@@ -50,7 +50,7 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
         {
             var proxiedTypeName = _proxiedType.FullName;
             var baseClass = _baseClassName != null ? $" : {_baseClassName}" : "";
-            var abstractModifier = _baseClassName == null ? " abstract " : "";
+            var abstractModifier = _baseClassName == null ? " abstract" : "";
 
             if (_generateNamespace)
             {

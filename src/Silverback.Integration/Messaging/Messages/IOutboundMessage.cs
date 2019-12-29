@@ -5,6 +5,10 @@ namespace Silverback.Messaging.Messages
 {
     public interface IOutboundMessage : IBrokerMessage
     {
+        /// <summary>
+        /// Gets the destination endpoint.
+        /// </summary>
+        new IProducerEndpoint Endpoint { get; }
     }
 
     public interface IOutboundMessage<out TContent> : IOutboundMessage

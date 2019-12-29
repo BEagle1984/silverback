@@ -8,7 +8,10 @@ namespace Silverback.Messaging.LargeMessages
 {
     public class ChunkSettings : IEquatable<ChunkSettings>
     {
-        public int Size { get; set; }
+        /// <summary>
+        /// Get or sets the size of each chunk
+        /// </summary>
+        public int Size { get; set; } = int.MaxValue;
 
         public void Validate()
         {

@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             _messageKeyProvider = messageKeyProvider;
         }
 
-        public async Task Add(object message, IEndpoint endpoint)
+        public async Task Add(object message, IConsumerEndpoint endpoint)
         {
             await _semaphore.WaitAsync();
             
@@ -62,7 +62,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        public Task<bool> Exists(object message, IEndpoint endpoint)
+        public Task<bool> Exists(object message, IConsumerEndpoint endpoint)
         {
             var key = _messageKeyProvider.GetKey(message);
             return DbSet.AsQueryable().AnyAsync(m => m.MessageId == key && m.EndpointName == endpoint.Name);

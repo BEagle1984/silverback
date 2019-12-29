@@ -2,39 +2,55 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.LargeMessages;
+
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
 namespace Silverback.Messaging
 {
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-    public sealed class KafkaProducerEndpoint : RabbitEndpoint, IProducerEndpoint, IEquatable<KafkaProducerEndpoint>
+    public abstract class RabbitProducerEndpoint : ProducerEndpoint
     {
-        public KafkaProducerEndpoint(string name) : base(name)
+        protected RabbitProducerEndpoint(string name) : base(name)
         {
         }
 
-        public ChunkSettings Chunk { get; set; } = new ChunkSettings
-        {
-            Size = int.MaxValue
-        };
+        /// <summary>
+        /// Gets or sets the RabbitMQ connection settings.
+        /// </summary>
+        public RabbitConnectionConfig Connection { get; set; } = new RabbitConnectionConfig();
+      
+        /// <summary>
+        /// Gets or sets the maximum amount of time to wait for the message produce to be acknowledge before
+        /// considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative
+        /// acknowledgment.
+        /// The default is a quite conservative 5 seconds.
+        /// </summary>
+        public TimeSpan? ConfirmationTimeout { get; set; } = TimeSpan.FromSeconds(5);
 
         public override void Validate()
         {
             base.Validate();
 
-            Chunk?.Validate();
+            if (Connection == null)
+                throw new EndpointConfigurationException("Connection cannot be null");
+
+            Connection.Validate();
         }
 
         #region Equality
 
-        public bool Equals(KafkaProducerEndpoint other) => 
-            base.Equals(other) && Equals(Chunk, other?.Chunk);
+        protected bool Equals(RabbitConsumerEndpoint other) => 
+            base.Equals(other) && Equals(Connection, other.Connection);
 
-        public override bool Equals(object obj) => 
-            base.Equals(obj) &&obj is KafkaProducerEndpoint endpoint && Equals(endpoint);
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((RabbitConsumerEndpoint) obj);
+        }
 
         #endregion
     }
-
-#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

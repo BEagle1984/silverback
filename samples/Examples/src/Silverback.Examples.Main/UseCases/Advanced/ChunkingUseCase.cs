@@ -29,7 +29,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             configurator.Connect(endpoints => endpoints
                 .AddOutbound<IIntegrationEvent>(CreateEndpoint()));
 
-        private KafkaEndpoint CreateEndpoint() =>
+        private KafkaProducerEndpoint CreateEndpoint() =>
             new KafkaProducerEndpoint("silverback-examples-events-chunked")
             {
                 Configuration = new KafkaProducerConfig

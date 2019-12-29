@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Connectors
     // TODO: Test? (or implicitly tested with InboundConnector?)
     public class InboundConsumer
     {
-        private readonly IEndpoint _endpoint;
+        private readonly IConsumerEndpoint _endpoint;
         private readonly InboundConnectorSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Connectors
         private readonly IConsumer _consumer;
 
         public InboundConsumer(IBroker broker,
-            IEndpoint endpoint,
+            IConsumerEndpoint endpoint,
             InboundConnectorSettings settings,
             Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> messagesHandler,
             Func<IServiceProvider, Task> commitHandler,
