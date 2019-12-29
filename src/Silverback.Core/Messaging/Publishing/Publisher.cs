@@ -61,7 +61,7 @@ namespace Silverback.Messaging.Publishing
                 }
                 else
                 { 
-                    _logger.LogTrace(
+                    _logger.LogDebug(
                         $"Discarding result of type {result.GetType().FullName} because it doesn't match " +
                         $"the expected return type {typeof(TResult).FullName}.");
                 }

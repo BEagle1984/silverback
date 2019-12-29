@@ -49,7 +49,7 @@ namespace Silverback.Background
             if (_interval <= TimeSpan.Zero)
                 return;
 
-            _logger.LogTrace($"Background service {GetType().FullName} " +
+            _logger.LogDebug($"Background service {GetType().FullName} " +
                              $"sleeping for {_interval.TotalMilliseconds} milliseconds.");
 
             await Task.Delay(_interval, stoppingToken);

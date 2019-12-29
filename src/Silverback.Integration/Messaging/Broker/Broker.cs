@@ -89,12 +89,12 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 return;
 
-            _logger.LogTrace("Connecting to message broker...");
+            _logger.LogDebug("Connecting to message broker...");
 
             Connect(_consumers);
             IsConnected = true;
 
-            _logger.LogTrace("Connected to message broker!");
+            _logger.LogDebug("Connected to message broker!");
         }
 
         /// <summary>
@@ -110,12 +110,12 @@ namespace Silverback.Messaging.Broker
             if (!IsConnected)
                 return;
 
-            _logger.LogTrace("Disconnecting from message broker...");
+            _logger.LogDebug("Disconnecting from message broker...");
 
             Disconnect(_consumers);
             IsConnected = false;
 
-            _logger.LogTrace("Disconnected from message broker!");
+            _logger.LogDebug("Disconnected from message broker!");
         }
 
         /// <summary>

@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Connectors
                 if (await MustProcess(message, serviceProvider))
                     return true;
 
-                _messageLogger.LogTrace(Logger, "Message is being skipped since it was already processed.", message);
+                _messageLogger.LogDebug(Logger, "Message is being skipped since it was already processed.", message);
                 return false;
             });
 

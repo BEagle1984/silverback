@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -18,7 +17,7 @@ namespace Silverback.Messaging.Broker
     internal class InnerConsumerWrapper : IDisposable
     {
         private readonly List<KafkaConsumerEndpoint> _endpoints = new List<KafkaConsumerEndpoint>();
-        private readonly ConsumerConfig _config;
+        private readonly Confluent.Kafka.ConsumerConfig _config;
         private readonly bool _enableAutoRecovery;
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
@@ -26,13 +25,13 @@ namespace Silverback.Messaging.Broker
 
         private readonly TimeSpan _recoveryDelay = TimeSpan.FromSeconds(5);
 
-        private IConsumer<byte[], byte[]> _innerConsumer;
+        private Confluent.Kafka.IConsumer<byte[], byte[]> _innerConsumer;
 
         private bool _consuming;
         private bool _consumedAtLeastOnce;
 
         public InnerConsumerWrapper(
-            ConsumerConfig config,
+            Confluent.Kafka.ConsumerConfig config,
             bool enableAutoRecovery,
             IServiceProvider serviceProvider,
             ILogger logger)
@@ -50,10 +49,10 @@ namespace Silverback.Messaging.Broker
             _endpoints.Add(endpoint);
         }
 
-        public void Commit(IEnumerable<TopicPartitionOffset> offsets) =>
+        public void Commit(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets) =>
             _innerConsumer.Commit(offsets);
 
-        public void StoreOffset(IEnumerable<TopicPartitionOffset> offsets) =>
+        public void StoreOffset(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets) =>
             offsets.ForEach(_innerConsumer.StoreOffset);
 
         public void CommitAll()
@@ -65,23 +64,23 @@ namespace Silverback.Messaging.Broker
                 var offsets = _innerConsumer.Commit();
                 CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(
                     offsets.Select(offset =>
-                            new TopicPartitionOffsetError(
+                            new Confluent.Kafka.TopicPartitionOffsetError(
                                 offset,
-                                new Error(ErrorCode.NoError)))
+                                new Confluent.Kafka.Error(Confluent.Kafka.ErrorCode.NoError)))
                         .ToList()));
             }
-            catch (TopicPartitionOffsetException ex)
+            catch (Confluent.Kafka.TopicPartitionOffsetException ex)
             {
                 CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(ex.Results, ex.Error));
                 throw;
             }
-            catch (KafkaException ex)
+            catch (Confluent.Kafka.KafkaException ex)
             {
                 CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(null, ex.Error));
             }
         }
 
-        public void Seek(TopicPartitionOffset tpo) => _innerConsumer.Seek(tpo);
+        public void Seek(Confluent.Kafka.TopicPartitionOffset tpo) => _innerConsumer.Seek(tpo);
 
         public void StartConsuming()
         {
@@ -117,8 +116,8 @@ namespace Silverback.Messaging.Broker
 
         private void Subscribe() => _innerConsumer.Subscribe(_endpoints.SelectMany(e => e.Names));
 
-        private IConsumer<byte[], byte[]> BuildConfluentConsumer() =>
-            new ConsumerBuilder<byte[], byte[]>(_config)
+        private Confluent.Kafka.IConsumer<byte[], byte[]> BuildConfluentConsumer() =>
+            new Confluent.Kafka.ConsumerBuilder<byte[], byte[]>(_config)
                 .SetPartitionsAssignedHandler((_, partitions) =>
                 {
                     partitions.ForEach(partition =>
@@ -145,10 +144,10 @@ namespace Silverback.Messaging.Broker
                 {
                     foreach (var offset in offsets.Offsets)
                     {
-                        if (offset.Offset == Offset.Unset)
+                        if (offset.Offset == Confluent.Kafka.Offset.Unset)
                             continue;
 
-                        if (offset.Error != null && offset.Error.Code != ErrorCode.NoError)
+                        if (offset.Error != null && offset.Error.Code != Confluent.Kafka.ErrorCode.NoError)
                         {
                             _logger.LogError(
                                 "Error occurred committing the offset {topic} {partition} @{offset}: {errorCode} - {errorReason} ",
@@ -156,7 +155,7 @@ namespace Silverback.Messaging.Broker
                         }
                         else
                         {
-                            _logger.LogTrace("Successfully committed offset {topic} {partition} @{offset}.",
+                            _logger.LogDebug("Successfully committed offset {topic} {partition} @{offset}.",
                                 offset.Topic, offset.Partition, offset.Offset);
                         }
 
@@ -197,7 +196,7 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogTrace("Consuming canceled.");
                 }
-                catch (KafkaException ex)
+                catch (Confluent.Kafka.KafkaException ex)
                 {
                     if (!AutoRecoveryIfEnabled(ex))
                         break;
@@ -228,14 +227,14 @@ namespace Silverback.Messaging.Broker
             }
 
             _consumedAtLeastOnce = true;
-            _logger.LogTrace("Consuming message: {topic} {partition} @{offset}", result.Topic, result.Partition,
-                result.Offset);
+            _logger.LogDebug("Consuming message: {topic} {partition} @{offset}", 
+                result.Topic, result.Partition, result.Offset);
 
             if (Received != null)
                 await Received.Invoke(result.Message, result.TopicPartitionOffset);
         }
 
-        private bool AutoRecoveryIfEnabled(KafkaException ex)
+        private bool AutoRecoveryIfEnabled(Confluent.Kafka.KafkaException ex)
         {
             if (_enableAutoRecovery)
             {

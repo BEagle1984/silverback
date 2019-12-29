@@ -44,7 +44,7 @@ namespace Silverback.Messaging.ErrorHandling
                     return policy.HandleError(messages, exception);
             }
 
-            _messageLogger.LogTrace(_logger, "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.", messages);
+            _messageLogger.LogDebug(_logger, "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.", messages);
             return ErrorAction.StopConsuming;
         }
 
