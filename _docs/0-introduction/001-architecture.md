@@ -63,7 +63,11 @@ Contains the message broker and connectors abstraction. Inbound and outbound con
 
 [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.Kafka.svg)](https://www.nuget.org/packages/Silverback.Integration.Kafka/)
 **Silverback.Integration.Kafka**<br/>
-An implementation of `Silverback.Integration` for the popular Apache Kafka message broker. It internally uses the `Confluent.Kafka` client.
+An implementation of `Silverback.Integration` for the popular Apache Kafka message broker. It internally uses the `Confluent.Kafka` client library.
+
+[![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.RabbitMQ.svg)](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ/)
+**Silverback.Integration.Kafka**<br/>
+An implementation of `Silverback.Integration` for the popular RabbitMQ message broker. It internally uses the `RabbitMQ.Client` library.
 
 [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.InMemory.svg)](https://www.nuget.org/packages/Silverback.Integration.InMemory/)
 **Silverback.Integration.InMemory**<br/>
