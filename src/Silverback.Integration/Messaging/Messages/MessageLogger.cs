@@ -18,6 +18,11 @@ namespace Silverback.Messaging.Messages
         public void LogTrace(ILogger logger, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>
             Log(logger, LogLevel.Trace, null, logMessage, messages);
 
+        public void LogDebug(ILogger logger, string logMessage, IRawBrokerMessage message) =>
+            Log(logger, LogLevel.Debug, null, logMessage, new[]{ message });
+        public void LogDebug(ILogger logger, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>
+            Log(logger, LogLevel.Debug, null, logMessage, messages);
+
         public void LogInformation(ILogger logger, string logMessage, IRawBrokerMessage message) =>
             Log(logger, LogLevel.Information, null, logMessage, new[] { message });
         public void LogInformation(ILogger logger, string logMessage, IEnumerable<IRawBrokerMessage> messages) =>

@@ -20,7 +20,7 @@ namespace Silverback.Examples.Common
                     theme: AnsiConsoleTheme.Code,
                     outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}) {Message:lj} {Exception} {Properties}{NewLine}")
                 .MinimumLevel.Warning()
-                .MinimumLevel.Override("Silverback", LogEventLevel.Verbose)
+                .MinimumLevel.Override("Silverback", LogEventLevel.Debug)
                 .Enrich.FromLogContext()
                 .Enrich.WithExceptionDetails()
                 .Enrich.WithDemystifiedStackTraces()

@@ -73,7 +73,7 @@ namespace Silverback.Messaging.Broker
             }
             catch (OperationCanceledException ex)
             {
-                _logger.LogDebug(ex, "Producer queue processing was cancelled.");
+                _logger.LogTrace(ex, "Producer queue processing was cancelled.");
             }
         }
         
