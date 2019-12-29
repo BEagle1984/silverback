@@ -9,11 +9,10 @@ namespace Silverback.Messaging.Broker
     /// <summary>
     /// <para>Contains the information about the position in the messages stream being produced or consumed.</para>
     /// <para>It can represent a Kafka offset or other similar constructs.</para>
-    /// <para>Being able to determine the offset of the messages being produced is useful for tracing but being
-    /// able to precisely recognize the offset of the message being consumed is crucial to efficiently ensure
-    /// the exactly-one delivery (see <see cref="OffsetStoredInboundConnector"/>).</para>
+    /// <para>The <see cref="IComparableOffset"/> interface should be implemented whenever possible to allow the
+    /// exactly-one delivery using the <see cref="OffsetStoredInboundConnector"/>.</para>
     /// </summary>
-    public interface IOffset : IComparable<IOffset>
+    public interface IOffset
     {
         /// <summary>
         /// The unique key of the queue/topic/partition this offset belongs to.

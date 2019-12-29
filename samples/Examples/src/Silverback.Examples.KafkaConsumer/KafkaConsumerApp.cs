@@ -14,9 +14,9 @@ using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
-namespace Silverback.Examples.ConsumerA
+namespace Silverback.Examples.KafkaConsumer
 {
-    public class ConsumerServiceA : ConsumerService
+    public class KafkaConsumerApp : ConsumerApp
     {
         protected override void ConfigureServices(IServiceCollection services)
         {

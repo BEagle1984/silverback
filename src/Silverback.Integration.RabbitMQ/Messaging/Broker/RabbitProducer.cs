@@ -39,9 +39,11 @@ namespace Silverback.Messaging.Broker
             Task.Run(() => ProcessQueue(_cancellationTokenSource.Token));
         }
 
+        /// <inheritdoc cref="Producer"/>
         protected override IOffset Produce(RawBrokerMessage message)=>
             AsyncHelper.RunSynchronously(() => ProduceAsync(message));
 
+        /// <inheritdoc cref="Producer"/>
         protected override Task<IOffset> ProduceAsync(RawBrokerMessage message)
         {
             var queuedMessage = new QueuedMessage(message);

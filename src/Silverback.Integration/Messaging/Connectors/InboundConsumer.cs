@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -97,17 +98,21 @@ namespace Silverback.Messaging.Connectors
                     await RelayAndCommitSingleMessage(messages, scope.ServiceProvider);
                 });
 
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private async Task RelayAndCommitSingleMessage(IEnumerable<IInboundMessage> messages,
             IServiceProvider serviceProvider)
         {
+            IEnumerable<IOffset> offsets = null;
             try
             {
+                offsets = messages.Select(m => m.Offset).ToList();
+
                 await _messagesHandler(messages, serviceProvider);
-                await Commit(messages.Select(m => m.Offset), serviceProvider);
+                await Commit(offsets, serviceProvider);
             }
             catch (Exception)
             {
-                await Rollback(serviceProvider);
+                await Rollback(offsets, serviceProvider);
                 throw;
             }
         }
@@ -115,10 +120,15 @@ namespace Silverback.Messaging.Connectors
         private async Task Commit(IEnumerable<IOffset> offsets, IServiceProvider serviceProvider)
         {
             await _commitHandler.Invoke(serviceProvider);
-            await _consumer.Acknowledge(offsets);
+            await _consumer.Commit(offsets);
         }
 
-        private Task Rollback(IServiceProvider serviceProvider) =>
-            _rollbackHandler.Invoke(serviceProvider);
+        private async Task Rollback(IEnumerable<IOffset> offsets, IServiceProvider serviceProvider)
+        {
+            if (offsets != null)
+                await _consumer.Rollback(offsets);
+            
+            await _rollbackHandler.Invoke(serviceProvider);
+        }
     }
 }

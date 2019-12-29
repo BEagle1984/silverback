@@ -10,7 +10,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
-    public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint>, IDisposable
+    public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint, KafkaOffset>, IDisposable
     {
         private readonly ILogger<KafkaConsumer> _logger;
         private readonly IServiceProvider _serviceProvider;
@@ -80,30 +80,33 @@ namespace Silverback.Messaging.Broker
 
         private async Task TryHandleMessage(Confluent.Kafka.Message<byte[], byte[]> message, Confluent.Kafka.TopicPartitionOffset tpo)
         {
+            KafkaOffset offset = null;
+
             try
             {
                 _messagesSinceCommit++;
-
+                offset = new KafkaOffset(tpo);
+            
                 await HandleMessage(
                     message.Value, 
-                    message.Headers?.Select(h => h.ToSilverbackHeader()).ToList(), 
-                    new KafkaOffset(tpo));
+                    message.Headers.ToSilverbackHeaders(), 
+                    offset);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex,
-                    "Fatal error occurred consuming the message: {topic} {partition} @{offset}. " +
+                    "Fatal error occurred consuming the message {offset} from endpoint {endpointName}. " +
                     "The consumer will be stopped.",
-                    tpo.Topic, tpo.Partition, tpo.Offset);
+                    offset?.Value, Endpoint.Name);
 
                 Disconnect();
             }
         }
 
-        /// <inheritdoc cref="Consumer"/>
-        public override Task Acknowledge(IEnumerable<IOffset> offsets)
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}"/>
+        protected override Task Commit(IEnumerable<KafkaOffset> offsets)
         {
-            var lastOffsets = offsets.OfType<KafkaOffset>()
+            var lastOffsets = offsets
                 .GroupBy(o => o.Key)
                 .Select(g => g
                     .OrderByDescending(o => o.Value)
@@ -118,6 +121,13 @@ namespace Silverback.Messaging.Broker
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 CommitOffsets(lastOffsets);
 
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}"/>
+        protected override Task Rollback(IEnumerable<KafkaOffset> offsets)
+        {
+            // Nothing to do here. With Kafka the uncommitted messages will be implicitly re-consumed. 
             return Task.CompletedTask;
         }
 

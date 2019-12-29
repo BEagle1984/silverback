@@ -11,7 +11,7 @@ using Silverback.Examples.Common.Messages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
-namespace Silverback.Examples.ConsumerA
+namespace Silverback.Examples.Common.Consumer
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class SubscriberService : ISubscriber

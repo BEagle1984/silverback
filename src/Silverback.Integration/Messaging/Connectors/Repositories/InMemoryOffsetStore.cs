@@ -12,10 +12,10 @@ namespace Silverback.Messaging.Connectors.Repositories
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField")]
     public class InMemoryOffsetStore : IOffsetStore
     {
-        private static readonly Dictionary<string, IOffset> LatestOffsets = new Dictionary<string, IOffset>();
-        private readonly Dictionary<string, IOffset> _uncommittedOffsets = new Dictionary<string, IOffset>();
+        private static readonly Dictionary<string, IComparableOffset> LatestOffsets = new Dictionary<string, IComparableOffset>();
+        private readonly Dictionary<string, IComparableOffset> _uncommittedOffsets = new Dictionary<string, IComparableOffset>();
 
-        public Task Store(IOffset offset)
+        public Task Store(IComparableOffset offset)
         {
             lock (_uncommittedOffsets)
             {
@@ -25,9 +25,12 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        public Task<IOffset> GetLatestValue(string key) =>
+        public Task<IComparableOffset> GetLatestValue(string key) =>
             Task.FromResult(
-                LatestOffsets.Union(_uncommittedOffsets).Where(o => o.Key == key).Select(o => o.Value).Max());
+                LatestOffsets.Union(_uncommittedOffsets)
+                    .Where(o => o.Key == key)
+                    .Select(o => o.Value)
+                    .Max());
 
         public Task Commit()
         {

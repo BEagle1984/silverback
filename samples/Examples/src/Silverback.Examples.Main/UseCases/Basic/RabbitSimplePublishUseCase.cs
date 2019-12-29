@@ -14,7 +14,7 @@ namespace Silverback.Examples.Main.UseCases.Basic
 {
     public class RabbitSimplePublishUseCase : UseCase
     {
-        public RabbitSimplePublishUseCase() : base("RABBIT Simple publish", -10)
+        public RabbitSimplePublishUseCase() : base("RABBIT Simple publish", -10, 3)
         {
         }
 

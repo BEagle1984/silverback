@@ -5,7 +5,7 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestOffset : IOffset
+    public class TestOffset : IComparableOffset
     {
         public TestOffset(string key, string value)
         {
