@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundMessage(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "99") },
-                    null, TestEndpoint.GetDefault(), true),
+                    null, TestConsumerEndpoint.GetDefault(), true),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -55,7 +55,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundMessage(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "99") },
-                    null, TestEndpoint.GetDefault(), true),
+                    null, TestConsumerEndpoint.GetDefault(), true),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -82,7 +82,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundMessage(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "99") },
-                    null, TestEndpoint.GetDefault(), true),
+                    null, TestConsumerEndpoint.GetDefault(), true),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new InboundMessage(
                         new byte[1],
                         new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
-                        null, TestEndpoint.GetDefault(), true),
+                        null, TestConsumerEndpoint.GetDefault(), true),
                     new ArgumentException(),
                     true
                 },
@@ -126,7 +126,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new InboundMessage(
                         new byte[1],
                         new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "6") },
-                        null, TestEndpoint.GetDefault(), true),
+                        null, TestConsumerEndpoint.GetDefault(), true),
                     new ArgumentException(),
                     false
                 },
@@ -135,7 +135,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new InboundMessage(
                         new byte[1],
                         new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
-                        null, TestEndpoint.GetDefault(), true),
+                        null, TestConsumerEndpoint.GetDefault(), true),
                     new ArgumentException("no"),
                     false
                 }
@@ -153,7 +153,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var message = new InboundMessage(
                 new byte[1],
                 new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
-                null, TestEndpoint.GetDefault(), true);
+                null, TestConsumerEndpoint.GetDefault(), true);
 
 
             policy.HandleError(new[] { message }, new ArgumentNullException());

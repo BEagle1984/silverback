@@ -3,12 +3,14 @@
 
 // Note: These proxies are generated using Silverback.Integration.Kafka.ConfigClassGenerator
 //       located under /tools/
-namespace Silverback.Messaging.Proxies
+namespace Silverback.Messaging.Configuration
 {
-    public abstract  class ConfluentClientConfigProxy
+    public abstract class ConfluentClientConfigProxy
     {
         internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig { get; }
 
+        public abstract void Validate();
+        
         ///<summary> SASL mechanism to use for authentication. Supported: GSSAPI, PLAIN, SCRAM-SHA-256, SCRAM-SHA-512. **NOTE**: Despite the name, you may not configure more than one mechanism. </summary>
         public Confluent.Kafka.SaslMechanism? SaslMechanism
         {
@@ -436,7 +438,7 @@ namespace Silverback.Messaging.Proxies
         }
     }
 
-    public class ConfluentConsumerConfigProxy : ConfluentClientConfigProxy
+    public abstract class ConfluentConsumerConfigProxy : ConfluentClientConfigProxy
     {
         internal override Confluent.Kafka.ClientConfig ConfluentBaseConfig { get; } = new Confluent.Kafka.ConsumerConfig();
         internal Confluent.Kafka.ConsumerConfig ConfluentConfig => (Confluent.Kafka.ConsumerConfig) ConfluentBaseConfig;
@@ -595,7 +597,7 @@ namespace Silverback.Messaging.Proxies
         }
     }
 
-    public class ConfluentProducerConfigProxy : ConfluentClientConfigProxy
+    public abstract class ConfluentProducerConfigProxy : ConfluentClientConfigProxy
     {
         internal override Confluent.Kafka.ClientConfig ConfluentBaseConfig { get; } = new Confluent.Kafka.ProducerConfig();
         internal Confluent.Kafka.ProducerConfig ConfluentConfig => (Confluent.Kafka.ProducerConfig) ConfluentBaseConfig;

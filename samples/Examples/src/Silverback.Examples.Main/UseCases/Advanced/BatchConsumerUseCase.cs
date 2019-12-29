@@ -27,7 +27,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
             configurator.Connect(endpoints => endpoints
                 .AddOutbound<SampleBatchProcessedEvent>(CreateEndpoint()));
 
-        private KafkaEndpoint CreateEndpoint() =>
+        private KafkaProducerEndpoint CreateEndpoint() =>
             new KafkaProducerEndpoint("silverback-examples-batch")
             {
                 Configuration = new KafkaProducerConfig

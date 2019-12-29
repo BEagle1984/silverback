@@ -46,7 +46,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                 message.Id,
                 message.Content,
                 DefaultSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
-                DefaultSerializer.Deserialize<IEndpoint>(message.Endpoint)));
+                DefaultSerializer.Deserialize<IProducerEndpoint>(message.Endpoint)));
 
         public Task Retry(QueuedMessage queuedMessage)
         {

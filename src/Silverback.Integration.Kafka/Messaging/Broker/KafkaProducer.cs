@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -34,13 +35,13 @@ namespace Silverback.Messaging.Broker
             : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
         {
             _logger = logger;
-
-            Endpoint.Validate();
         }
 
+        /// <inheritdoc cref="Producer"/>
         protected override IOffset Produce(RawBrokerMessage message) =>
             AsyncHelper.RunSynchronously(() => ProduceAsync(message));
 
+        /// <inheritdoc cref="Producer"/>
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         protected override async Task<IOffset> ProduceAsync(RawBrokerMessage message)
         {

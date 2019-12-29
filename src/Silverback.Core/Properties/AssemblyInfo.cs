@@ -3,10 +3,10 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Silverback.Core.EFCore30")]
-[assembly: InternalsVisibleTo("Silverback.Core.EFCore30.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Core.EFCore22")]
 [assembly: InternalsVisibleTo("Silverback.Core.EFCore22.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Core.EFCore30")]
+[assembly: InternalsVisibleTo("Silverback.Core.EFCore30.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Core.Model")]
 [assembly: InternalsVisibleTo("Silverback.Core.Model.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Core.Rx")]
@@ -22,3 +22,5 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Silverback.Integration.InMemory.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Integration.RabbitMQ")]
+[assembly: InternalsVisibleTo("Silverback.Integration.RabbitMQ.Tests")]

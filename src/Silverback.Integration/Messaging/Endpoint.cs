@@ -1,29 +1,33 @@
 ﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Messaging
 {
-    public abstract class KafkaEndpoint : IEndpoint
+    public abstract class Endpoint : IEndpoint
     {
-        protected KafkaEndpoint(string name)
+        protected Endpoint(string name)
         {
             Name = name;
         }
 
         /// <summary>
-        /// Gets the topic name(s).
+        /// Gets the name of the endpoint (being it a queue, topic, exchange, ...).
         /// </summary>
         public string Name { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets an instance of <see cref="IMessageSerializer"/> to be used to serialize or deserialize
+        /// the messages being produced or consumed.
+        /// </summary>
         public IMessageSerializer Serializer { get; set; } = DefaultSerializer;
 
         public static IMessageSerializer DefaultSerializer { get; } = new JsonMessageSerializer();
 
+        /// <inheritdoc cref="IEndpoint"/>
         public virtual void Validate()
         {
             if (string.IsNullOrEmpty(Name))
@@ -31,31 +35,25 @@ namespace Silverback.Messaging
 
             if (Serializer == null)
                 throw new EndpointConfigurationException("Serializer cannot be null");
+            
         }
 
         #region Equality
 
-        protected bool Equals(KafkaEndpoint other) => 
-            string.Equals(Name, other.Name, StringComparison.InvariantCulture) &&
-            Equals(GetJsonString(Serializer), GetJsonString(other.Serializer));
+        protected bool Equals(Endpoint other) => 
+            Name == other.Name && 
+            ComparisonHelper.JsonEquals(Serializer, other.Serializer);
 
         public override bool Equals(object obj)
         {
-            if (obj is null) return false;
+            if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj is KafkaEndpoint other && Equals(other);
+            if (obj.GetType() != GetType()) return false;
+            return Equals((Endpoint) obj);
         }
 
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
-        public override int GetHashCode() => Name != null ? StringComparer.InvariantCulture.GetHashCode(Name) : 0;
-
-        private string GetJsonString(object obj) =>
-            JsonConvert.SerializeObject(
-                obj,
-                new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.Auto
-                });
+        public override int GetHashCode() => Name != null ? Name.GetHashCode() : 0;
 
         #endregion
     }

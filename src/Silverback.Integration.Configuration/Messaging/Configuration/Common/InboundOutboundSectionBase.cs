@@ -28,14 +28,15 @@ namespace Silverback.Messaging.Configuration.Common
             return _typeFinder.FindClass(typeName);
         }
 
-        protected IEndpoint GetEndpoint(IConfigurationSection configSection)
+        protected TEndpoint GetEndpoint<TEndpoint>(IConfigurationSection configSection)
+            where TEndpoint : IEndpoint
         {
             var endpointConfig = configSection.GetSection("Endpoint");
 
             if (!endpointConfig.Exists())
                 throw new InvalidOperationException($"Missing Endpoint in section {configSection.Path}.");
 
-            return _endpointSectionReader.GetEndpoint(endpointConfig);
+            return (TEndpoint)_endpointSectionReader.GetEndpoint(endpointConfig);
         }
     }
 }

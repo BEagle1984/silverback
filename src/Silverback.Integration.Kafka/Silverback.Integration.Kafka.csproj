@@ -35,4 +35,8 @@ This package contains an implementation of Silverback.Integration for the popula
     <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Messaging\Proxies" />
+  </ItemGroup>
+
 </Project>

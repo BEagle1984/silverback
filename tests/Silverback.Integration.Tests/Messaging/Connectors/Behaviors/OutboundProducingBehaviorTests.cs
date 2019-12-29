@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 new MessageHeader[0],
                 new OutboundRoutingConfiguration.OutboundRoute(
                     typeof(TestEventOne), 
-                    TestEndpoint.GetDefault(),
+                    TestProducerEndpoint.GetDefault(),
                     typeof(OutboundConnector)));
 
             await _behavior.Handle(new[] { outboundMessage, outboundMessage, outboundMessage }, Task.FromResult);
@@ -76,7 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 new MessageHeader[0],
                 new OutboundRoutingConfiguration.OutboundRoute(
                     typeof(TestEventOne),
-                    TestEndpoint.GetDefault(),
+                    TestProducerEndpoint.GetDefault(),
                     typeof(DeferredOutboundConnector)));
 
             await _behavior.Handle(new[] { outboundMessage, outboundMessage, outboundMessage }, Task.FromResult);

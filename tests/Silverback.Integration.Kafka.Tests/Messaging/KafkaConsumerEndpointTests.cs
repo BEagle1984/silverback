@@ -4,6 +4,7 @@
 using FluentAssertions;
 using Newtonsoft.Json;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging

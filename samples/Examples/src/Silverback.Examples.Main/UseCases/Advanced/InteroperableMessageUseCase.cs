@@ -32,7 +32,7 @@ namespace Silverback.Examples.Main.UseCases.Advanced
                 .ProduceAsync(new LegacyMessage { Content = "LEGACY - " + DateTime.Now.ToString("HH:mm:ss.fff") });
         }
 
-        private IEndpoint CreateEndpoint(string name) =>
+        private KafkaProducerEndpoint CreateEndpoint(string name) =>
             new KafkaProducerEndpoint(name)
             {
                 Serializer = new LegacyMessageSerializer(),

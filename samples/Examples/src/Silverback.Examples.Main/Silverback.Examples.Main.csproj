@@ -22,6 +22,7 @@
     <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Integration.Configuration" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Integration.RabbitMQ" Version="$(BaseVersion)" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />

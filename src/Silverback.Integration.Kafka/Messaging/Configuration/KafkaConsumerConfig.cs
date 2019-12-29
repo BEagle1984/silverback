@@ -3,9 +3,8 @@
 
 using System;
 using Confluent.Kafka;
-using Silverback.Messaging.Proxies;
 
-namespace Silverback.Messaging
+namespace Silverback.Messaging.Configuration
 {
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public sealed class KafkaConsumerConfig : ConfluentConsumerConfigProxy, IEquatable<KafkaConsumerConfig>
@@ -30,7 +29,7 @@ namespace Silverback.Messaging
         /// </summary>
         public bool EnableAutoRecovery { get; set; } = true;
 
-        public void Validate()
+        public override void Validate()
         {
             if (IsAutoCommitEnabled && CommitOffsetEach > 0)
             {
@@ -55,7 +54,7 @@ namespace Silverback.Messaging
             EnableAutoOffsetStore = false;
         }
 
-        #region IEquatable
+        #region Equality
 
         public bool Equals(KafkaConsumerConfig other)
         {

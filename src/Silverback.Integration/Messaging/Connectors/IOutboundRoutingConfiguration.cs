@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Connectors
         /// <param name="endpoint">The destination endpoint.</param>
         /// <param name="outboundConnectorType">The type of the <see cref="IOutboundConnector"/> to be used</param>
         /// <returns></returns>
-        IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null);
+        IOutboundRoutingConfiguration Add<TMessage>(IProducerEndpoint endpoint, Type outboundConnectorType = null);
 
         /// <summary>
         /// Add an outbound routing rule.
@@ -39,8 +39,7 @@ namespace Silverback.Messaging.Connectors
         /// <param name="endpoint">The destination endpoint.</param>
         /// <param name="outboundConnectorType">The type of the <see cref="IOutboundConnector"/> to be used</param>
         /// <returns></returns>
-
-        IOutboundRoutingConfiguration Add(Type messageType, IEndpoint endpoint, Type outboundConnectorType = null);
+        IOutboundRoutingConfiguration Add(Type messageType, IProducerEndpoint endpoint, Type outboundConnectorType = null);
 
         /// <summary>
         /// Returns the outbound routes that apply to the specified message.

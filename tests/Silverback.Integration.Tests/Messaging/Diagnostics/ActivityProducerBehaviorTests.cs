@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             var activity = new Activity("test");
             activity.SetParentId("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
             activity.Start();
-            var rawMessage = new RawBrokerMessage("123", null, TestEndpoint.GetDefault());
+            var rawMessage = new RawOutboundMessage("123", null, TestProducerEndpoint.GetDefault());
 
             new ActivityProducerBehavior().Handle(rawMessage, _ => Task.CompletedTask);
             
@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public void Handle_NoStartedActivity_ActivityStartedAndTraceIdHeaderIsSet()
         {
-            var rawMessage = new RawBrokerMessage("123", null, TestEndpoint.GetDefault());
+            var rawMessage = new RawOutboundMessage("123", null, TestProducerEndpoint.GetDefault());
 
             new ActivityProducerBehavior().Handle(rawMessage, _ => Task.CompletedTask);
             
@@ -64,7 +64,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.SetParentId("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
             activity.Start();
 
-            broker.GetProducer(TestEndpoint.GetDefault()).Produce("123");
+            broker.GetProducer(TestProducerEndpoint.GetDefault()).Produce("123");
 
             broker.ProducedMessages.Single().Headers.Should().Contain(
                 h => h.Key == DiagnosticsConstants.TraceIdHeaderKey &&
@@ -86,7 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.SetParentId("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
             activity.Start();
 
-            await broker.GetProducer(TestEndpoint.GetDefault()).ProduceAsync("123");
+            await broker.GetProducer(TestProducerEndpoint.GetDefault()).ProduceAsync("123");
 
             broker.ProducedMessages.Single().Headers.Should().Contain(
                 h => h.Key == DiagnosticsConstants.TraceIdHeaderKey &&

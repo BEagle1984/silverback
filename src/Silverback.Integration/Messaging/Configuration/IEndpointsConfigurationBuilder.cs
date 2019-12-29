@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Configuration
         /// <typeparam name="TMessage">The type of the messages to be published to this endpoint.</typeparam>
         /// <typeparam name="TConnector">The type of the <see cref="IOutboundConnector"/> to be used.</typeparam>
         /// <returns></returns>
-        IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IEndpoint endpoint)
+        IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IProducerEndpoint endpoint)
             where TConnector : IOutboundConnector;
 
         /// <summary>
@@ -27,9 +27,9 @@ namespace Silverback.Messaging.Configuration
         /// If not specified, the default one will be used.</param>
         /// <typeparam name="TMessage">The type of the messages to be published to this endpoint.</typeparam>
         /// <returns></returns>
-        IEndpointsConfigurationBuilder AddOutbound<TMessage>(IEndpoint endpoint, Type outboundConnectorType = null);
+        IEndpointsConfigurationBuilder AddOutbound<TMessage>(IProducerEndpoint endpoint, Type outboundConnectorType = null);
 
-        IEndpointsConfigurationBuilder AddOutbound(Type messageType, IEndpoint endpoint, Type outboundConnectorType);
+        IEndpointsConfigurationBuilder AddOutbound(Type messageType, IProducerEndpoint endpoint, Type outboundConnectorType);
 
         /// <summary>
         /// Adds and inbound endpoint.
@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="settings">The optional additional settings. If not specified, the default settings will be used.</param>
         /// <returns></returns>
         IEndpointsConfigurationBuilder AddInbound(
-            IEndpoint endpoint,
+            IConsumerEndpoint endpoint,
             Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null,
             InboundConnectorSettings settings = null);
 
@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Configuration
         /// <typeparam name="TConnector">The type of the <see cref="IInboundConnector"/> to be used.</typeparam>
         /// <returns></returns>
         IEndpointsConfigurationBuilder AddInbound<TConnector>(
-            IEndpoint endpoint,
+            IConsumerEndpoint endpoint,
             Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null,
             InboundConnectorSettings settings = null)
             where TConnector : IInboundConnector;
@@ -70,7 +70,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="settings">The optional additional settings. If not specified, the default settings will be used.</param>
         /// <returns></returns>
         IEndpointsConfigurationBuilder AddInbound(
-            IEndpoint endpoint, 
+            IConsumerEndpoint endpoint, 
             Type inboundConnectorType,
             Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null, 
             InboundConnectorSettings settings = null);

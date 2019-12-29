@@ -8,7 +8,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
-    public class InMemoryBroker : Broker<IEndpoint>
+    public class InMemoryBroker : Broker
     {
         private readonly MessageKeyProvider _messageKeyProvider;
         private readonly MessageLogger _messageLogger;
@@ -28,7 +28,8 @@ namespace Silverback.Messaging.Broker
         internal InMemoryTopic GetTopic(string name) =>
             _topics.GetOrAdd(name, _ => new InMemoryTopic(name));
 
-        protected override Producer InstantiateProducer(IEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors) =>
+        /// <inheritdoc cref="Broker"/>
+        protected override IProducer InstantiateProducer(IProducerEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors) =>
             new InMemoryProducer(
                 this, 
                 endpoint, 
@@ -37,15 +38,14 @@ namespace Silverback.Messaging.Broker
                 LoggerFactory.CreateLogger<InMemoryProducer>(),
                 _messageLogger);
 
-        protected override Consumer InstantiateConsumer(IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors) =>
+        /// <inheritdoc cref="Broker"/>
+        protected override IConsumer InstantiateConsumer(IConsumerEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors) =>
             GetTopic(endpoint.Name).Subscribe(new InMemoryConsumer(this, endpoint, behaviors));
-
-        protected override void Connect(IEnumerable<IConsumer> consumers)
-        {
-        }
 
         protected override void Disconnect(IEnumerable<IConsumer> consumers)
         {
+            base.Disconnect();
+            
             _topics.Clear();
         }
     }

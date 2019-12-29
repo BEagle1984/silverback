@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Silverback.Messaging
+namespace Silverback.Messaging.Configuration
 {
     internal class KafkaClientConfigComparer : IEqualityComparer<Confluent.Kafka.ClientConfig>
     {

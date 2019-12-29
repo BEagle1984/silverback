@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Configuration.Outbound
                 return new ConfiguredOutbound(
                     GetMessageType(configSection),
                     GetConnectorType(configSection),
-                    GetEndpoint(configSection));
+                    GetEndpoint<IProducerEndpoint>(configSection));
             }
             catch (Exception ex)
             {

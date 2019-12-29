@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Messages
         IOffset Offset { get; }
 
         /// <summary>
-        /// Gets the source endpoint.
+        /// Gets the source or destination endpoint.
         /// </summary>
         IEndpoint Endpoint { get; }
 

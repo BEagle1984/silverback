@@ -7,7 +7,7 @@ namespace Silverback.Messaging.Configuration.Outbound
 {
     public class ConfiguredOutbound
     {
-        public ConfiguredOutbound(Type messageType, Type connectorType, IEndpoint endpoint)
+        public ConfiguredOutbound(Type messageType, Type connectorType, IProducerEndpoint endpoint)
         {
             MessageType = messageType;
             ConnectorType = connectorType;
@@ -16,6 +16,6 @@ namespace Silverback.Messaging.Configuration.Outbound
 
         public Type MessageType { get; }
         public Type ConnectorType { get; }
-        public IEndpoint Endpoint { get; }
+        public IProducerEndpoint Endpoint { get; }
     }
 }

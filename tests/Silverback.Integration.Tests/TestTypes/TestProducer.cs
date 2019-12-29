@@ -10,11 +10,11 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestProducer : Producer<TestBroker, TestEndpoint>
+    public class TestProducer : Producer<TestBroker, TestProducerEndpoint>
     {
         public List<TestBroker.ProducedMessage> ProducedMessages { get; }
 
-        public TestProducer(TestBroker broker, IEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors)
+        public TestProducer(TestBroker broker, TestProducerEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors)
             : base(
                 broker,
                 endpoint,

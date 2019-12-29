@@ -15,10 +15,10 @@ namespace Silverback.Messaging.Connectors
 
         public IEnumerable<IOutboundRoute> Routes => _routes.AsReadOnly();
 
-        public IOutboundRoutingConfiguration Add<TMessage>(IEndpoint endpoint, Type outboundConnectorType) =>
+        public IOutboundRoutingConfiguration Add<TMessage>(IProducerEndpoint endpoint, Type outboundConnectorType) =>
             Add(typeof(TMessage), endpoint, outboundConnectorType);
 
-        public IOutboundRoutingConfiguration Add(Type messageType, IEndpoint endpoint, Type outboundConnectorType)
+        public IOutboundRoutingConfiguration Add(Type messageType, IProducerEndpoint endpoint, Type outboundConnectorType)
         {
             _routes.Add(new OutboundRoute(messageType, endpoint, outboundConnectorType));
             return this;
@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Connectors
 
         public class OutboundRoute : IOutboundRoute
         {
-            public OutboundRoute(Type messageType, IEndpoint destinationEndpoint, Type outboundConnectorType)
+            public OutboundRoute(Type messageType, IProducerEndpoint destinationEndpoint, Type outboundConnectorType)
             {
                 MessageType = messageType;
                 DestinationEndpoint = destinationEndpoint;
@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Connectors
             }
 
             public Type MessageType { get; }
-            public IEndpoint DestinationEndpoint { get; }
+            public IProducerEndpoint DestinationEndpoint { get; }
             public Type OutboundConnectorType { get; }
         }
     }

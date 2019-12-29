@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Connectors
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public virtual IInboundConnector Bind(IEndpoint endpoint, IErrorPolicy errorPolicy = null, InboundConnectorSettings settings = null)
+        public virtual IInboundConnector Bind(IConsumerEndpoint endpoint, IErrorPolicy errorPolicy = null, InboundConnectorSettings settings = null)
         {
             settings ??= new InboundConnectorSettings();
 

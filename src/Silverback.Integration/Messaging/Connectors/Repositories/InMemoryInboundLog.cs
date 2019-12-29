@@ -16,10 +16,10 @@ namespace Silverback.Messaging.Connectors.Repositories
             _messageKeyProvider = messageKeyProvider;
         }
 
-        public Task Add(object message, IEndpoint endpoint) =>
+        public Task Add(object message, IConsumerEndpoint endpoint) =>
             Add(new InMemoryInboundLogEntry(_messageKeyProvider.GetKey(message), endpoint.Name));
         
-        public Task<bool> Exists(object message, IEndpoint endpoint) =>
+        public Task<bool> Exists(object message, IConsumerEndpoint endpoint) =>
             Task.FromResult(Entries.Union(UncommittedEntries).Any(e =>
                 e.MessageId == _messageKeyProvider.GetKey(message) && e.EndpointName == endpoint.Name));
     }
