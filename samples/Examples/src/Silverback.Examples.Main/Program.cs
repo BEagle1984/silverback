@@ -10,7 +10,10 @@ namespace Silverback.Examples.Main
     {
         static void Main()
         {
-            new MenuNavigator().RenderCategories();
+            Console.Clear();
+            Console.CursorVisible = false;
+
+            new MenuApp().Run();
             
             Console.Clear();
         }

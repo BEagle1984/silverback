@@ -3,12 +3,14 @@
 
 using System;
 using System.Linq;
+using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Examples.Common;
 using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
+using Silverback.Examples.Common.Logging;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
@@ -18,12 +20,9 @@ namespace Silverback.Examples.KafkaConsumer
 {
     public class KafkaConsumerApp : ConsumerApp
     {
-        protected override void ConfigureServices(IServiceCollection services)
-        {
+        protected override void ConfigureServices(IServiceCollection services) =>
             services
-                .AddLogging();
-
-            services
+                .AddLogging()
                 .AddSilverback()
                 .AsObservable()
                 .UseDbContext<ExamplesDbContext>()
@@ -34,13 +33,9 @@ namespace Silverback.Examples.KafkaConsumer
                     .AddDbChunkStore())
                 .AddScopedSubscriber<SubscriberService>()
                 .AddScopedBehavior<LogHeadersBehavior>();
-        }
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
-        {
-            Configuration.SetupSerilog();
-
-            var broker = configurator
+        protected override IBroker Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
+            configurator
                 .Connect(endpoints => endpoints
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-events", "silverback-examples-events-chunked", "silverback-examples-events-sp"))
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-batch"),
@@ -101,12 +96,6 @@ namespace Silverback.Examples.KafkaConsumer
                             Encoding = MessageEncoding.ASCII
                         })));
 
-            Console.CancelKeyPress += (_, __) =>
-            {
-                broker.Disconnect();
-            };
-        }
-
         private static KafkaConsumerEndpoint CreateConsumerEndpoint(string name, IMessageSerializer messageSerializer = null)
             => CreateConsumerEndpoint(new[] { name }, messageSerializer);
 
@@ -120,7 +109,8 @@ namespace Silverback.Examples.KafkaConsumer
                 Configuration = new KafkaConsumerConfig
                 {
                     BootstrapServers = "PLAINTEXT://localhost:9092",
-                    GroupId = "silverback-examples"
+                    GroupId = "silverback-examples",
+                    AutoOffsetReset = AutoOffsetReset.Earliest
                 }
             };
 

@@ -6,17 +6,12 @@ using System.Threading;
 
 namespace Silverback.Examples.RabbitConsumer
 {
-    static class Program
+    public static class Program
     {
         [SuppressMessage("ReSharper", "FunctionNeverReturns")]
         static void Main()
         {
-            new RabbitConsumerApp().Init();
-
-            while (true)
-            {
-                Thread.Sleep(5000);
-            }
+            new RabbitConsumerApp().Start();
         }
     }
 }

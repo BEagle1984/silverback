@@ -8,8 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.9.4" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
@@ -30,10 +28,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Examples.Common\Silverback.Examples.Common.csproj" />
+    <ProjectReference Include="..\Silverback.Examples.KafkaConsumer\Silverback.Examples.KafkaConsumer.csproj" />
+    <ProjectReference Include="..\Silverback.Examples.RabbitConsumer\Silverback.Examples.RabbitConsumer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.json">
+    <None Update="appsettings.Kafka.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
