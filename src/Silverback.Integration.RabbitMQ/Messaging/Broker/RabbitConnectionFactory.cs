@@ -58,7 +58,8 @@ namespace Silverback.Messaging.Broker
                         queueEndpoint.Queue.IsDurable,
                         queueEndpoint.Queue.IsExclusive,
                         queueEndpoint.Queue.IsAutoDeleteEnabled,
-                        queueEndpoint.Queue.Arguments).QueueName;
+                        queueEndpoint.Queue.Arguments)
+                        .QueueName;
                     break;
                 case RabbitExchangeConsumerEndpoint exchangeEndpoint:
                     channel.ExchangeDeclare(
@@ -68,7 +69,18 @@ namespace Silverback.Messaging.Broker
                         exchangeEndpoint.Exchange.IsAutoDeleteEnabled,
                         exchangeEndpoint.Exchange.Arguments);
 
-                    queueName = channel.QueueDeclare().QueueName;
+                    queueName = channel.QueueDeclare(
+                        exchangeEndpoint.QueueName,
+                        exchangeEndpoint.Queue.IsDurable,
+                        exchangeEndpoint.Queue.IsExclusive,
+                        exchangeEndpoint.Queue.IsAutoDeleteEnabled,
+                        exchangeEndpoint.Queue.Arguments)
+                        .QueueName;
+                    
+                    channel.QueueBind(
+                        queueName ?? "",
+                        exchangeEndpoint.Name,
+                        exchangeEndpoint.RoutingKey ?? "");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

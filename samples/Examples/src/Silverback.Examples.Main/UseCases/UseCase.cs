@@ -30,7 +30,8 @@ namespace Silverback.Examples.Main.UseCases
         /// </summary>
         public void Run()
         {
-            var services = DependencyInjectionHelper.GetServiceCollection();
+            var services = DependencyInjectionHelper.GetServiceCollection(
+                SqlServerConnectionHelper.GetProducerConnectionString());
 
             ConfigureServices(services);
 

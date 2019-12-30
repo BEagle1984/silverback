@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Configuration
         /// Gets or sets a boolean value indicating whether the queue is used by only one connection and
         /// will be deleted when that connection closes.
         /// </summary>
-        public bool IsExclusive { get; set; }
+        public bool IsExclusive { get; set; } = true;
 
         #region Equality
 

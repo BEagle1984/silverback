@@ -11,9 +11,9 @@ namespace Silverback.Examples.Common
 {
     public static class DependencyInjectionHelper
     {
-        public static IServiceCollection GetServiceCollection() => new ServiceCollection()
+        public static IServiceCollection GetServiceCollection(string sqlServerConnectionString) => new ServiceCollection()
             .AddDbContext<ExamplesDbContext>(options => options
-                .UseSqlServer(Configuration.ConnectionString))
+                .UseSqlServer(sqlServerConnectionString))
             .AddLogging(l => l
                 .SetMinimumLevel(LogLevel.Trace)
                 .AddSerilog());

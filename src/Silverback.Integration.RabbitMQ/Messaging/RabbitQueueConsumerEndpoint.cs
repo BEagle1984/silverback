@@ -15,19 +15,9 @@ namespace Silverback.Messaging
         {
         }
         
-        /// <summary>
-        /// Gets or sets the queue configuration.
-        /// </summary>
-        public RabbitQueueConfig Queue { get; set; } = new RabbitQueueConfig();
-
         public override void Validate()
         {
             base.Validate();
-            
-            if (Queue == null)
-                throw new EndpointConfigurationException("Queue cannot be null");
-
-            Queue.Validate();
         }
 
         #region Equality

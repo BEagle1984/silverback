@@ -4,9 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore.Internal;
 using Silverback.Examples.Common;
-using Silverback.Examples.Main.UseCases;
 
 namespace Silverback.Examples.Main.Menu
 {
@@ -35,7 +33,7 @@ namespace Silverback.Examples.Main.Menu
         private int GetFirstCategoryOrUseCaseIndex(IMenuItemInfo[] options)
         {
             var firstItem = options.FirstOrDefault(item => !(item is IBackMenu));
-            return firstItem != null ? options.IndexOf(firstItem) : 0;
+            return firstItem != null ? Array.IndexOf(options, firstItem) : 0;
         }
 
         private static void WriteOptions(IMenuItemInfo[] options, int selected)

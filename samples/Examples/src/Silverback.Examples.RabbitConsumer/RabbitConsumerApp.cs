@@ -3,9 +3,9 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client;
 using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
-using Silverback.Examples.Common.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -33,9 +33,11 @@ namespace Silverback.Examples.RabbitConsumer
         protected override IBroker Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator
                 .Connect(endpoints => endpoints
-                    .AddInbound(CreateQueueEndpoint("silverback-examples-events")));
+                    .AddInbound(CreateQueueEndpoint("silverback-examples-events-queue"))
+                    .AddInbound(CreateExchangeEndpoint("silverback-examples-events-fanout", ExchangeType.Fanout))
+                );
 
-        private static RabbitQueueConsumerEndpoint CreateQueueEndpoint(
+        private RabbitQueueConsumerEndpoint CreateQueueEndpoint(
             string name,
             bool durable = true,
             bool exclusive = false,
@@ -50,6 +52,37 @@ namespace Silverback.Examples.RabbitConsumer
                     IsDurable = durable,
                     IsExclusive = exclusive,
                     IsAutoDeleteEnabled = autoDelete
+                }
+            };
+
+            if (messageSerializer != null)
+                endpoint.Serializer = messageSerializer;
+
+            return endpoint;
+        }
+        
+        private IConsumerEndpoint CreateExchangeEndpoint(
+            string name,
+            string exchangeType,
+            bool durable = true,
+            bool autoDelete = false,
+            IMessageSerializer messageSerializer = null)
+        {
+            var endpoint = new RabbitExchangeConsumerEndpoint(name)
+            {
+                Connection = GetConnectionConfig(),
+                QueueName = ConsumerGroupName,
+                Queue = new RabbitQueueConfig
+                {
+                    IsDurable = durable,
+                    IsExclusive = false,
+                    IsAutoDeleteEnabled = autoDelete
+                },
+                Exchange = new RabbitExchangeConfig
+                {
+                    IsDurable = durable,
+                    IsAutoDeleteEnabled = autoDelete,
+                    ExchangeType = exchangeType
                 }
             };
 
