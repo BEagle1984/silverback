@@ -61,30 +61,30 @@ namespace Silverback.Messaging.Messages
 
             var firstMessage = messages.First();
 
-            properties.Add(("endpoint", "endpointName", firstMessage.Endpoint?.Name));
+            properties.Add(("Endpoint", "endpointName", firstMessage.Endpoint?.Name));
 
             var failedAttempts = firstMessage.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey);
             if (failedAttempts > 0)
-                properties.Add(("failedAttempts", "failedAttempts", failedAttempts.ToString()));
+                properties.Add(("FailedAttempts", "failedAttempts", failedAttempts.ToString()));
 
             if (messages.Count() == 1)
             {
-                properties.Add(("type", "messageType", firstMessage.Headers.GetValue(MessageHeader.MessageTypeKey)));
-                properties.Add(("id", "messageId", firstMessage.Headers.GetValue(MessageHeader.MessageIdKey)));
+                properties.Add(("Type", "messageType", firstMessage.Headers.GetValue(MessageHeader.MessageTypeKey)));
+                properties.Add(("Id", "messageId", firstMessage.Headers.GetValue(MessageHeader.MessageIdKey)));
 
                 if (firstMessage.Offset != null)
-                    properties.Add(("offset", "offset", $"{firstMessage.Offset.Value}"));
+                    properties.Add(("Offset", "offset", $"{firstMessage.Offset.Value}"));
             }
 
-            properties.Add(("batchId", "batchId", firstMessage.Headers.GetValue(MessageHeader.BatchIdKey)));
-            properties.Add(("batchSize", "batchSize", firstMessage.Headers.GetValue(MessageHeader.BatchSizeKey)));
+            properties.Add(("BatchId", "batchId", firstMessage.Headers.GetValue(MessageHeader.BatchIdKey)));
+            properties.Add(("BatchSize", "batchSize", firstMessage.Headers.GetValue(MessageHeader.BatchSizeKey)));
 
             // Don't log empty values
             properties.RemoveAll(x => string.IsNullOrWhiteSpace(x.Item3));
 
             logger.Log(
                 logLevel, exception,
-                logMessage + string.Join("", properties.Select(p => $" [{p.Item1}={{{p.Item2}}}]")),
+                logMessage + " (" + string.Join(", ", properties.Select(p => $"{p.Item1}: {{{p.Item2}}}")) + ")",
                 properties.Select(p => p.Item3).Cast<object>().ToArray());
         }
 

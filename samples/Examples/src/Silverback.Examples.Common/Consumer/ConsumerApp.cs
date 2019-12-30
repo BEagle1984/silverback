@@ -2,7 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Examples.Common.Logging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 
 namespace Silverback.Examples.Common.Consumer
@@ -10,21 +14,56 @@ namespace Silverback.Examples.Common.Consumer
     public abstract class ConsumerApp
     {
         private IServiceProvider _serviceProvider;
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private IBroker _broker;
 
-        public void Init()
+        public void Start()
         {
-            Console.WriteLine($"Initializing {GetType().Name}...");
+            WriteHeader();
+
+            LoggingConfiguration.Setup();
 
             var services = DependencyInjectionHelper.GetServiceCollection();
             ConfigureServices(services);
 
             _serviceProvider = services.BuildServiceProvider();
 
-            Configure(_serviceProvider.GetService<BusConfigurator>(), _serviceProvider);
+            _broker = Configure(_serviceProvider.GetService<BusConfigurator>(), _serviceProvider);
+
+            Console.CancelKeyPress += OnCancelKeyPress;
+            
+            while (!_cancellationTokenSource.IsCancellationRequested)
+            {
+                try
+                {
+                    Task.Delay(5000, _cancellationTokenSource.Token);
+                }
+                catch (TaskCanceledException)
+                {
+                }
+            }
         }
 
         protected abstract void ConfigureServices(IServiceCollection services);
 
-        protected abstract void Configure(BusConfigurator configurator, IServiceProvider serviceProvider);
+        protected abstract IBroker Configure(BusConfigurator configurator, IServiceProvider serviceProvider);
+        
+        private void OnCancelKeyPress(object _, ConsoleCancelEventArgs args)
+        {
+            args.Cancel = true;
+            _broker?.Disconnect();
+            _cancellationTokenSource.Cancel();
+
+            Console.CancelKeyPress -= OnCancelKeyPress;
+        }
+
+        private void WriteHeader()
+        {
+            Console.WriteLine($"Initializing {GetType().Name}...");
+            Console.ForegroundColor = Constants.SecondaryColor;
+            Console.WriteLine($"(press CTRL-C to exit)");
+            Console.WriteLine();
+            Console.ResetColor();
+        }
     }
 }

@@ -2,28 +2,22 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Examples.Common;
 using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
-using Silverback.Examples.Common.Messages;
+using Silverback.Examples.Common.Logging;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Connectors;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Examples.RabbitConsumer
 {
     public class RabbitConsumerApp : ConsumerApp
     {
-        protected override void ConfigureServices(IServiceCollection services)
-        {
+        protected override void ConfigureServices(IServiceCollection services) =>
             services
-                .AddLogging();
-
-            services
+                .AddLogging()
                 .AddSilverback()
                 .AsObservable()
                 .UseDbContext<ExamplesDbContext>()
@@ -35,21 +29,11 @@ namespace Silverback.Examples.RabbitConsumer
                 )
                 .AddScopedSubscriber<SubscriberService>()
                 .AddScopedBehavior<LogHeadersBehavior>();
-        }
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
-        {
-            Configuration.SetupSerilog();
-
-            var broker = configurator
+        protected override IBroker Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
+            configurator
                 .Connect(endpoints => endpoints
                     .AddInbound(CreateQueueEndpoint("silverback-examples-events")));
-
-            Console.CancelKeyPress += (_, __) =>
-            {
-                broker.Disconnect();
-            };
-        }
 
         private static RabbitQueueConsumerEndpoint CreateQueueEndpoint(
             string name,
@@ -80,7 +64,6 @@ namespace Silverback.Examples.RabbitConsumer
             HostName = "localhost",
             UserName = "guest",
             Password = "guest",
-            
         };
     }
 }
