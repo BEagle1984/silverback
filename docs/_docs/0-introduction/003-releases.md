@@ -4,6 +4,14 @@ permalink: /docs/releases
 toc: true
 ---
 
+## [2.0.0-beta1](https://github.com/BEagle1984/silverback/releases/tag/2.0.0-beta1)
+
+### What's new
+* Created `Silverback.Integration.RabbitMQ` (see XY)
+
+### Breaking Changes
+* The `IBroker`, `IProduer` and `IConsumer` interfaces have been slightly modified (it shouldn't affect you unless you built your own `IBroker` implementation)
+
 ## [1.2.0](https://github.com/BEagle1984/silverback/releases/tag/1.2.0)
 
 ### What's new

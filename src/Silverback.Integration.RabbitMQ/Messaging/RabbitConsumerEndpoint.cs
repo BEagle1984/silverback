@@ -18,7 +18,12 @@ namespace Silverback.Messaging
         /// Gets or sets the RabbitMQ connection settings.
         /// </summary>
         public RabbitConnectionConfig Connection { get; set; } = new RabbitConnectionConfig();
-
+        
+        /// <summary>
+        /// Gets or sets the queue configuration.
+        /// </summary>
+        public RabbitQueueConfig Queue { get; set; } = new RabbitQueueConfig();
+        
         public override void Validate()
         {
             base.Validate();
@@ -27,6 +32,11 @@ namespace Silverback.Messaging
                 throw new EndpointConfigurationException("Connection cannot be null");
 
             Connection.Validate();
+            
+            if (Queue == null)
+                throw new EndpointConfigurationException("Queue cannot be null");
+
+            Queue.Validate();
         }
 
         #region Equality

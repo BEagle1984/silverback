@@ -96,20 +96,20 @@ namespace Silverback.Examples.KafkaConsumer
                             Encoding = MessageEncoding.ASCII
                         })));
 
-        private static KafkaConsumerEndpoint CreateConsumerEndpoint(string name, IMessageSerializer messageSerializer = null)
+        private KafkaConsumerEndpoint CreateConsumerEndpoint(string name, IMessageSerializer messageSerializer = null)
             => CreateConsumerEndpoint(new[] { name }, messageSerializer);
 
-        private static KafkaConsumerEndpoint CreateConsumerEndpoint(params string[] names)
+        private KafkaConsumerEndpoint CreateConsumerEndpoint(params string[] names)
             => CreateConsumerEndpoint(names, null);
 
-        private static KafkaConsumerEndpoint CreateConsumerEndpoint(string[] names, IMessageSerializer messageSerializer)
+        private KafkaConsumerEndpoint CreateConsumerEndpoint(string[] names, IMessageSerializer messageSerializer)
             {
             var endpoint = new KafkaConsumerEndpoint(names)
             {
                 Configuration = new KafkaConsumerConfig
                 {
                     BootstrapServers = "PLAINTEXT://localhost:9092",
-                    GroupId = "silverback-examples",
+                    GroupId = ConsumerGroupName,
                     AutoOffsetReset = AutoOffsetReset.Earliest
                 }
             };

@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
@@ -12,12 +13,13 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Examples.Main.UseCases.Rabbit.Basic
 {
-    public class SimpleQueuePublishUseCase : UseCase
+    public class FanoutPublishUseCase : UseCase
     {
-        public SimpleQueuePublishUseCase()
+        public FanoutPublishUseCase()
         {
-            Title = "Simple publish to a queue";
-            Description = "The simplest way to publish a message to a queue (without using an exchange).";
+            Title = "Simple publish to a fanout exchange";
+            Description = "The simplest way to publish a message to a fanout exchange. The fanout exchange routes " +
+                          "all messages to all queues that are bound to it.";
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
@@ -27,13 +29,13 @@ namespace Silverback.Examples.Main.UseCases.Rabbit.Basic
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new RabbitQueueProducerEndpoint("silverback-examples-events-queue")
+                .AddOutbound<IIntegrationEvent>(new RabbitExchangeProducerEndpoint("silverback-examples-events-fanout")
                 {
-                    Queue = new RabbitQueueConfig
+                    Exchange = new RabbitExchangeConfig
                     {
                         IsDurable = true,
-                        IsExclusive = false,
-                        IsAutoDeleteEnabled = false
+                        IsAutoDeleteEnabled = false,
+                        ExchangeType = ExchangeType.Fanout
                     },
                     Connection = new RabbitConnectionConfig
                     {

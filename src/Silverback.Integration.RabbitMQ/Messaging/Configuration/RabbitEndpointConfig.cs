@@ -12,13 +12,13 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         /// Gets or sets a boolean value indicating whether the queue or the exchange will survive a broker restart.
         /// </summary>
-        public bool IsDurable { get; set; }
+        public bool IsDurable { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a boolean value indicating whether the queue or the exchange will be automatically deleted
         /// when the last consumer unsubscribes.
         /// </summary>
-        public bool IsAutoDeleteEnabled { get; set; }
+        public bool IsAutoDeleteEnabled { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the optional arguments dictionary.
