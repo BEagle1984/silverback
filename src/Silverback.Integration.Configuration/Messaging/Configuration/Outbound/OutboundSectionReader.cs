@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Configuration.Outbound
     {
         private readonly TypeFinder _typeFinder;
 
-        public OutboundSectionReader(TypeFinder typeFinder, EndpointSectionReader endpointSectionReader) 
+        public OutboundSectionReader(TypeFinder typeFinder, EndpointSectionReader endpointSectionReader)
             : base(typeFinder, endpointSectionReader)
         {
             _typeFinder = typeFinder;
@@ -34,7 +34,8 @@ namespace Silverback.Messaging.Configuration.Outbound
             }
             catch (Exception ex)
             {
-                throw new SilverbackConfigurationException("Error in Outbound configuration section. See inner exception for details.", ex);
+                throw new SilverbackConfigurationException(
+                    "Error in Outbound configuration section. See inner exception for details.", ex);
             }
         }
 

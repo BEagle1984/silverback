@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -68,10 +68,21 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private class TestEntity : EventSourcingDomainEntity<TestEntity.TestEntityEvent>
         {
-            public abstract class TestEntityEvent : EntityEvent { }
-            public class TestEntityEvent1 : TestEntityEvent { }
-            public class TestEntityEvent2 : TestEntityEvent { }
-            public class TestEntityEvent3 : TestEntityEvent { }
+            public abstract class TestEntityEvent : EntityEvent
+            {
+            }
+
+            public class TestEntityEvent1 : TestEntityEvent
+            {
+            }
+
+            public class TestEntityEvent2 : TestEntityEvent
+            {
+            }
+
+            public class TestEntityEvent3 : TestEntityEvent
+            {
+            }
 
             public int Calls { get; private set; }
 

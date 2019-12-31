@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,10 +11,13 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
 {
-    public class OffsetStoredInboundConnector: ExactlyOnceInboundConnector
+    public class OffsetStoredInboundConnector : ExactlyOnceInboundConnector
     {
-        public OffsetStoredInboundConnector(IBroker broker, IServiceProvider serviceProvider,
-            ILogger<OffsetStoredInboundConnector> logger, MessageLogger messageLogger) 
+        public OffsetStoredInboundConnector(
+            IBroker broker,
+            IServiceProvider serviceProvider,
+            ILogger<OffsetStoredInboundConnector> logger,
+            MessageLogger messageLogger)
             : base(broker, serviceProvider, logger, messageLogger)
         {
         }
@@ -26,7 +29,7 @@ namespace Silverback.Messaging.Connectors
                     "The message broker implementation doesn't seem to support comparable offsets. " +
                     "The OffsetStoredInboundConnector cannot be used, please resort to LoggedInboundConnector " +
                     "to ensure exactly-once delivery.");
-            
+
             var offsetStore = serviceProvider.GetRequiredService<IOffsetStore>();
 
             var latest = await offsetStore.GetLatestValue(message.Offset.Key);

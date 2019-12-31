@@ -1,17 +1,18 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Collections.Generic;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Messages
 {
     public abstract class RawBrokerMessage : IRawBrokerMessage
     {
-        internal RawBrokerMessage(object content, IEnumerable<MessageHeader> headers, IEndpoint endpoint,
+        internal RawBrokerMessage(
+            object content,
+            IEnumerable<MessageHeader> headers,
+            IEndpoint endpoint,
             IOffset offset = null)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
@@ -23,7 +24,10 @@ namespace Silverback.Messaging.Messages
             RawContent = Endpoint.Serializer.Serialize(content, Headers);
         }
 
-        internal RawBrokerMessage(byte[] rawContent, IEnumerable<MessageHeader> headers, IEndpoint endpoint,
+        internal RawBrokerMessage(
+            byte[] rawContent,
+            IEnumerable<MessageHeader> headers,
+            IEndpoint endpoint,
             IOffset offset = null)
         {
             RawContent = rawContent ?? throw new ArgumentNullException(nameof(rawContent));

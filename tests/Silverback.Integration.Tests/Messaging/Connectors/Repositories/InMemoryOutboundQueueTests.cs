@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
@@ -29,10 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task EnqueueTest()
         {
-            Parallel.For(0, 3, _ =>
-            {
-                _queue.Enqueue(_sampleOutboundMessage);
-            });
+            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundMessage); });
 
             (await _queue.GetLength()).Should().Be(0);
         }
@@ -40,10 +37,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task EnqueueCommitTest()
         {
-            Parallel.For(0, 3, _ =>
-            {
-                _queue.Enqueue(_sampleOutboundMessage);
-            });
+            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundMessage); });
 
             await _queue.Commit();
 
@@ -53,10 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task EnqueueRollbackTest()
         {
-            Parallel.For(0, 3, _ =>
-            {
-                _queue.Enqueue(_sampleOutboundMessage);
-            });
+            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundMessage); });
 
             await _queue.Rollback();
 

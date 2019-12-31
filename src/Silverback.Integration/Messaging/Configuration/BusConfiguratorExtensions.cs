@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -13,20 +13,21 @@ namespace Silverback.Messaging.Configuration
     public static class BusConfiguratorExtensions
     {
         /// <summary>
-        /// Configures the message broker endpoints and start consuming.
+        ///     Configures the message broker endpoints and start consuming.
         /// </summary>
         /// <param name="configurator"></param>
         /// <returns></returns>
         public static IBroker Connect(this BusConfigurator configurator) =>
             Connect(configurator, null);
-        
+
         /// <summary>
-        /// Configures the message broker endpoints and start consuming.
+        ///     Configures the message broker endpoints and start consuming.
         /// </summary>
         /// <param name="configurator"></param>
         /// <param name="endpointsConfigurationAction">The inbound/outbound endpoints configuration action.</param>
         /// <returns></returns>
-        public static IBroker Connect(this BusConfigurator configurator,
+        public static IBroker Connect(
+            this BusConfigurator configurator,
             Action<IEndpointsConfigurationBuilder> endpointsConfigurationAction)
         {
             var endpointsConfigurationBuilder = new EndpointsConfigurationBuilder(
@@ -35,9 +36,9 @@ namespace Silverback.Messaging.Configuration
                 configurator.ServiceProvider.GetRequiredService<ErrorPolicyBuilder>());
             endpointsConfigurationAction?.Invoke(endpointsConfigurationBuilder);
 
-            configurator.ServiceProvider.GetServices<IEndpointsConfigurator>().ForEach(c => 
+            configurator.ServiceProvider.GetServices<IEndpointsConfigurator>().ForEach(c =>
                 c.Configure(endpointsConfigurationBuilder));
-            
+
             var broker = configurator.ServiceProvider.GetRequiredService<IBroker>();
 
             broker.Connect();

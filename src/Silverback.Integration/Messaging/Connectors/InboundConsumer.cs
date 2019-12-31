@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -15,7 +15,6 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
 {
-
     // TODO: Test? (or implicitly tested with InboundConnector?)
     public class InboundConsumer
     {
@@ -33,7 +32,8 @@ namespace Silverback.Messaging.Connectors
 
         private readonly IConsumer _consumer;
 
-        public InboundConsumer(IBroker broker,
+        public InboundConsumer(
+            IBroker broker,
             IConsumerEndpoint endpoint,
             InboundConnectorSettings settings,
             Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> messagesHandler,
@@ -99,7 +99,8 @@ namespace Silverback.Messaging.Connectors
                 });
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        private async Task RelayAndCommitSingleMessage(IEnumerable<IInboundMessage> messages,
+        private async Task RelayAndCommitSingleMessage(
+            IEnumerable<IInboundMessage> messages,
             IServiceProvider serviceProvider)
         {
             IEnumerable<IOffset> offsets = null;
@@ -127,7 +128,7 @@ namespace Silverback.Messaging.Connectors
         {
             if (offsets != null)
                 await _consumer.Rollback(offsets);
-            
+
             await _rollbackHandler.Invoke(serviceProvider);
         }
     }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Concurrent;
@@ -12,7 +12,9 @@ namespace Silverback.Messaging.Broker
     {
         private readonly MessageKeyProvider _messageKeyProvider;
         private readonly MessageLogger _messageLogger;
-        private readonly ConcurrentDictionary<string, InMemoryTopic> _topics = new ConcurrentDictionary<string, InMemoryTopic>();
+
+        private readonly ConcurrentDictionary<string, InMemoryTopic> _topics =
+            new ConcurrentDictionary<string, InMemoryTopic>();
 
         public InMemoryBroker(
             MessageKeyProvider messageKeyProvider,
@@ -28,25 +30,29 @@ namespace Silverback.Messaging.Broker
         internal InMemoryTopic GetTopic(string name) =>
             _topics.GetOrAdd(name, _ => new InMemoryTopic(name));
 
-        /// <inheritdoc cref="Broker"/>
-        protected override IProducer InstantiateProducer(IProducerEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors) =>
+        /// <inheritdoc cref="Broker" />
+        protected override IProducer InstantiateProducer(
+            IProducerEndpoint endpoint,
+            IEnumerable<IProducerBehavior> behaviors) =>
             new InMemoryProducer(
-                this, 
-                endpoint, 
+                this,
+                endpoint,
                 _messageKeyProvider,
                 behaviors,
                 LoggerFactory.CreateLogger<InMemoryProducer>(),
                 _messageLogger);
 
-        /// <inheritdoc cref="Broker"/>
-        protected override IConsumer InstantiateConsumer(IConsumerEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors) =>
+        /// <inheritdoc cref="Broker" />
+        protected override IConsumer InstantiateConsumer(
+            IConsumerEndpoint endpoint,
+            IEnumerable<IConsumerBehavior> behaviors) =>
             GetTopic(endpoint.Name).Subscribe(new InMemoryConsumer(this, endpoint, behaviors));
 
-        /// <inheritdoc cref="Broker"/>
+        /// <inheritdoc cref="Broker" />
         protected override void Disconnect(IEnumerable<IConsumer> consumers)
         {
             base.Disconnect();
-            
+
             _topics.Clear();
         }
     }

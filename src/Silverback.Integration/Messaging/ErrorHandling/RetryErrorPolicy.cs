@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,8 +11,8 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.ErrorHandling
 {
     /// <summary>
-    /// This policy retries the handler method multiple times in case of exception.
-    /// An optional delay can be specified.
+    ///     This policy retries the handler method multiple times in case of exception.
+    ///     An optional delay can be specified.
     /// </summary>
     /// TODO: Exponential backoff variant
     public class RetryErrorPolicy : ErrorPolicyBase
@@ -22,7 +22,12 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
 
-        public RetryErrorPolicy(IServiceProvider serviceProvider, ILogger<RetryErrorPolicy> logger, MessageLogger messageLogger, TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)
+        public RetryErrorPolicy(
+            IServiceProvider serviceProvider,
+            ILogger<RetryErrorPolicy> logger,
+            MessageLogger messageLogger,
+            TimeSpan? initialDelay = null,
+            TimeSpan? delayIncrement = null)
             : base(serviceProvider, logger, messageLogger)
         {
             _initialDelay = initialDelay ?? TimeSpan.Zero;
@@ -42,12 +47,15 @@ namespace Silverback.Messaging.ErrorHandling
 
         private void ApplyDelay(IEnumerable<IInboundMessage> messages)
         {
-            var delay = _initialDelay.Milliseconds + messages.First().Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey) * _delayIncrement.Milliseconds;
+            var delay = _initialDelay.Milliseconds +
+                        messages.First().Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey) *
+                        _delayIncrement.Milliseconds;
 
             if (delay <= 0)
                 return;
 
-            _messageLogger.LogTrace(_logger, $"Waiting {delay} milliseconds before retrying to process the message(s).", messages);
+            _messageLogger.LogTrace(_logger, $"Waiting {delay} milliseconds before retrying to process the message(s).",
+                messages);
             Thread.Sleep(delay);
         }
     }

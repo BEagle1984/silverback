@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -36,7 +36,8 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
             var logger = serviceProvider.GetService<ILogger<SameProcessUseCase>>();
 
             configurator
-                .Subscribe((SimpleIntegrationEvent message) => logger.LogInformation($"Received SimpleIntegrationEvent '{message.Content}"))
+                .Subscribe((SimpleIntegrationEvent message) =>
+                    logger.LogInformation($"Received SimpleIntegrationEvent '{message.Content}"))
                 .Connect(endpoints => endpoints
                     .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events-sp")
                     {
@@ -60,12 +61,15 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
-            await publisher.PublishAsync(new SimpleIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
-            await publisher.PublishAsync(new SimpleIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new SimpleIntegrationEvent
+                { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new SimpleIntegrationEvent
+                { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new SimpleIntegrationEvent
+                { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
 
             Console.WriteLine("Waiting for the messages to be consumed (press ESC to abort)...");
-            
+
             while (Console.ReadKey(false).Key != ConsoleKey.Escape)
             {
             }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -25,7 +25,7 @@ namespace Silverback.Examples.Main.Menu
                 WriteOptions(options, selected);
 
                 WriteSelectionDescription(options[selected]);
-                
+
                 HandleInput(options, ref selected);
             } while (selected != -1);
         }
@@ -129,7 +129,7 @@ namespace Silverback.Examples.Main.Menu
                 }
             }
         }
-        
+
         private void WriteSelectionDescription(IMenuItemInfo option)
         {
             if (string.IsNullOrEmpty(option.Description))
@@ -138,32 +138,40 @@ namespace Silverback.Examples.Main.Menu
             Console.WriteLine();
             Console.ForegroundColor = Constants.SecondaryColor;
             Console.WriteLine($"{option.Description}");
-            
+
             if (!(option is IBackMenu))
             {
                 Console.WriteLine(option is IUseCase
-                        ? "(press ENTER to run the use case)"
-                        : "(press ENTER to explore the category)");
+                    ? "(press ENTER to run the use case)"
+                    : "(press ENTER to explore the category)");
             }
         }
-        
+
         private static void WriteHeader(IEnumerable<IMenuItemInfo> breadcrumbs)
         {
             if (breadcrumbs.IsRoot())
             {
                 Console.ForegroundColor = Constants.PrimaryColor;
-                ConsoleHelper.WriteLineTruncated(@" _____ _ _                _                _      _____                          _");
-                ConsoleHelper.WriteLineTruncated(@"/  ___(_) |              | |              | |    |  ___|                        | |");
-                ConsoleHelper.WriteLineTruncated(@"\ `--. _| |_   _____ _ __| |__   __ _  ___| | __ | |____  ____ _ _ __ ___  _ __ | | ___  ___");
-                ConsoleHelper.WriteLineTruncated(@" `--. \ | \ \ / / _ \ '__| '_ \ / _` |/ __| |/ / |  __\ \/ / _` | '_ ` _ \| '_ \| |/ _ \/ __|");
-                ConsoleHelper.WriteLineTruncated(@"/\__/ / | |\ V /  __/ |  | |_) | (_| | (__|   < _| |___>  < (_| | | | | | | |_) | |  __/\__ \");
-                ConsoleHelper.WriteLineTruncated(@"\____/|_|_| \_/ \___|_|  |_.__/ \__,_|\___|_|\_(_)____/_/\_\__,_|_| |_| |_| .__/|_|\___||___/");
-                ConsoleHelper.WriteLineTruncated(@"                                                                          | |                ");
-                ConsoleHelper.WriteLineTruncated(@"                                                                          |_|                ");
+                ConsoleHelper.WriteLineTruncated(
+                    @" _____ _ _                _                _      _____                          _");
+                ConsoleHelper.WriteLineTruncated(
+                    @"/  ___(_) |              | |              | |    |  ___|                        | |");
+                ConsoleHelper.WriteLineTruncated(
+                    @"\ `--. _| |_   _____ _ __| |__   __ _  ___| | __ | |____  ____ _ _ __ ___  _ __ | | ___  ___");
+                ConsoleHelper.WriteLineTruncated(
+                    @" `--. \ | \ \ / / _ \ '__| '_ \ / _` |/ __| |/ / |  __\ \/ / _` | '_ ` _ \| '_ \| |/ _ \/ __|");
+                ConsoleHelper.WriteLineTruncated(
+                    @"/\__/ / | |\ V /  __/ |  | |_) | (_| | (__|   < _| |___>  < (_| | | | | | | |_) | |  __/\__ \");
+                ConsoleHelper.WriteLineTruncated(
+                    @"\____/|_|_| \_/ \___|_|  |_.__/ \__,_|\___|_|\_(_)____/_/\_\__,_|_| |_| |_| .__/|_|\___||___/");
+                ConsoleHelper.WriteLineTruncated(
+                    @"                                                                          | |                ");
+                ConsoleHelper.WriteLineTruncated(
+                    @"                                                                          |_|                ");
                 Console.ResetColor();
                 Console.WriteLine();
             }
-            
+
             breadcrumbs.WriteBreadcrumbs();
         }
     }

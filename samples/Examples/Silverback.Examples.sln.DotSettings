@@ -1,5 +1,20 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">Copyright (c) 2019 Sergio Aquilini&#xD;
+	<s:Boolean x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=Default_0020Minimal/@EntryIndexRemoved">True</s:Boolean>
+	<s:String x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=Silverback_003A_0020Default_0020Minimal/@EntryIndexedValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;Profile name="Silverback: Default Minimal"&gt;&lt;XAMLCollapseEmptyTags&gt;False&lt;/XAMLCollapseEmptyTags&gt;&lt;CSCodeStyleAttributes ArrangeTypeAccessModifier="False" ArrangeTypeMemberAccessModifier="False" SortModifiers="False" RemoveRedundantParentheses="False" AddMissingParentheses="False" ArrangeBraces="False" ArrangeAttributes="False" ArrangeArgumentsStyle="False" ArrangeCodeBodyStyle="False" ArrangeVarStyle="False" /&gt;&lt;CSMakeFieldReadonly&gt;True&lt;/CSMakeFieldReadonly&gt;&lt;CSArrangeQualifiers&gt;True&lt;/CSArrangeQualifiers&gt;&lt;CSOptimizeUsings&gt;&lt;OptimizeUsings&gt;True&lt;/OptimizeUsings&gt;&lt;EmbraceInRegion&gt;False&lt;/EmbraceInRegion&gt;&lt;RegionName&gt;&lt;/RegionName&gt;&lt;/CSOptimizeUsings&gt;&lt;CSUpdateFileHeader&gt;True&lt;/CSUpdateFileHeader&gt;&lt;IDEA_SETTINGS&gt;&amp;lt;profile version="1.0"&amp;gt;&#xD;
+  &amp;lt;option name="myName" value="Silverback: Default Minimal" /&amp;gt;&#xD;
+&amp;lt;/profile&amp;gt;&lt;/IDEA_SETTINGS&gt;&lt;CSharpFormatDocComments&gt;True&lt;/CSharpFormatDocComments&gt;&lt;CSReformatCode&gt;True&lt;/CSReformatCode&gt;&lt;/Profile&gt;</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeCleanup/SilentCleanupProfile/@EntryValue">Silverback: Default Minimal</s:String>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_CONSTRUCTOR_INITIALIZER_ON_SAME_LINE/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_TYPE_CONSTRAINTS_ON_SAME_LINE/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_AFTER_DECLARATION_LPAR/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_BEFORE_EXTENDS_COLON/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_BEFORE_FIRST_TYPE_PARAMETER_CONSTRAINT/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_PARAMETERS_STYLE/@EntryValue">CHOP_IF_LONG</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=ASCII/@EntryIndexedValue">ASCII</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=UTF/@EntryIndexedValue">UTF</s:String>
+	<s:String x:Key="/Default/Environment/Hierarchy/PsiConfigurationSettingsKey/CustomLocation/@EntryValue">C:\Users\aquil\AppData\Local\JetBrains\Transient\ReSharperPlatformVs15\v09_339000ff\SolutionCaches</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=Default_0020Minimal/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">Copyright (c) 2020 Sergio Aquilini&#xD;
 This code is licensed under MIT license (see LICENSE file for details)</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Aquilini/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Silverback/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

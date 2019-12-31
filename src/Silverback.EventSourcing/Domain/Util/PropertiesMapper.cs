@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -22,16 +22,22 @@ namespace Silverback.Domain.Util
                     continue;
 
                 if (sourceProperty.Name.StartsWith(destTypeName))
-                    if (TryMapProperty(source, destination, sourceProperty, destProperties, sourceProperty.Name.Substring(destTypeName.Length)))
+                    if (TryMapProperty(source, destination, sourceProperty, destProperties,
+                        sourceProperty.Name.Substring(destTypeName.Length)))
                         continue;
 
                 if (sourceProperty.Name.StartsWith("Entity"))
-                    TryMapProperty(source, destination, sourceProperty, destProperties, sourceProperty.Name.Substring("Entity".Length));
+                    TryMapProperty(source, destination, sourceProperty, destProperties,
+                        sourceProperty.Name.Substring("Entity".Length));
             }
         }
 
-        private static bool TryMapProperty(object source, object destination, PropertyInfo sourcePropertyInfo,
-            IEnumerable<PropertyInfo> destPropertiesInfo, string destPropertyName)
+        private static bool TryMapProperty(
+            object source,
+            object destination,
+            PropertyInfo sourcePropertyInfo,
+            IEnumerable<PropertyInfo> destPropertiesInfo,
+            string destPropertyName)
         {
             var destPropertyInfo = destPropertiesInfo.SingleOrDefault(p => p.Name == destPropertyName);
             if (destPropertyInfo == null)
@@ -43,7 +49,7 @@ namespace Silverback.Domain.Util
 
             try
             {
-                setterMethod.Invoke(destination, new[] {sourcePropertyInfo.GetValue(source)});
+                setterMethod.Invoke(destination, new[] { sourcePropertyInfo.GetValue(source) });
                 return true;
             }
             catch (Exception ex)

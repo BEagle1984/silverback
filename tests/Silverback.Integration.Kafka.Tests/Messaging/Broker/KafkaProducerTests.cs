@@ -9,6 +9,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Xunit;
+using NSubstitute;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 {
@@ -17,7 +18,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         private readonly KafkaBroker _broker = new KafkaBroker(
             new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() }),
             Enumerable.Empty<IBrokerBehavior>(), 
-            null, // IServiceProvider
+            Substitute.For<IServiceProvider>(),
             NullLoggerFactory.Instance, 
             new MessageLogger());
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -9,8 +9,8 @@ namespace Silverback.Messaging.Configuration
     public sealed class RabbitQueueConfig : RabbitEndpointConfig, IEquatable<RabbitQueueConfig>
     {
         /// <summary>
-        /// Gets or sets a boolean value indicating whether the queue is used by only one connection and
-        /// will be deleted when that connection closes.
+        ///     Gets or sets a boolean value indicating whether the queue is used by only one connection and
+        ///     will be deleted when that connection closes.
         /// </summary>
         public bool IsExclusive { get; set; } = true;
 

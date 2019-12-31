@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -102,8 +102,8 @@ namespace Silverback.Tests.Core.EFCore22.Database
         [Fact]
         public async Task FirstOrDefaultAsync_NotMatchingPredicate_NullIsReturned()
         {
-            _dbContext.Persons.Add(new Person {Age = 20});
-            _dbContext.Persons.Add(new Person {Age = 30});
+            _dbContext.Persons.Add(new Person { Age = 20 });
+            _dbContext.Persons.Add(new Person { Age = 30 });
             _dbContext.SaveChanges();
 
             var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
@@ -111,7 +111,7 @@ namespace Silverback.Tests.Core.EFCore22.Database
 
             result.Should().BeNull();
         }
-        
+
         [Fact]
         public async Task FirstOrDefaultAsync_MatchingPredicate_FirstEntityIsReturned()
         {
@@ -148,7 +148,7 @@ namespace Silverback.Tests.Core.EFCore22.Database
 
             result.Should().Be(2);
         }
-        
+
         [Fact]
         public async Task CountAsync_WithPredicate_CorrectCountIsReturned()
         {
@@ -226,8 +226,8 @@ namespace Silverback.Tests.Core.EFCore22.Database
 
             var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
                 .Where(p => p.Age <= 18)
-                .ToDictionaryAsync( 
-                    p => p.Id, 
+                .ToDictionaryAsync(
+                    p => p.Id,
                     p => p.Age);
 
             result.Should().NotBeNull();

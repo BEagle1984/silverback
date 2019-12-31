@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -29,7 +29,9 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
             .UseModel()
             .WithConnectionToKafka();
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) { }
+        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
+        {
+        }
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
@@ -47,7 +49,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
                     BootstrapServers = "PLAINTEXT://localhost:9092"
                 }
             };
-        
+
         public class LegacyMessageSerializer : IMessageSerializer
         {
             private readonly JsonSerializerSettings _settings = new JsonSerializerSettings

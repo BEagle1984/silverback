@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -7,7 +7,6 @@ using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Consumer;
 using Silverback.Examples.Common.Data;
-using Silverback.Examples.Common.Logging;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -37,7 +36,8 @@ namespace Silverback.Examples.KafkaConsumer
         protected override IBroker Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator
                 .Connect(endpoints => endpoints
-                    .AddInbound(CreateConsumerEndpoint("silverback-examples-events", "silverback-examples-events-chunked", "silverback-examples-events-sp"))
+                    .AddInbound(CreateConsumerEndpoint("silverback-examples-events",
+                        "silverback-examples-events-chunked", "silverback-examples-events-sp"))
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-batch"),
                         settings: new InboundConnectorSettings
                         {
@@ -83,7 +83,8 @@ namespace Silverback.Examples.KafkaConsumer
                                     })
                                 .Publish(messages => new MessageMovedEvent
                                 {
-                                    Identifiers = messages.Select(x => ((IIntegrationMessage)x?.Content)?.Id ?? Guid.Empty).ToList(),
+                                    Identifiers = messages
+                                        .Select(x => ((IIntegrationMessage) x?.Content)?.Id ?? Guid.Empty).ToList(),
                                     Source = messages.First().Endpoint.Name,
                                     Destination = "silverback-examples-events"
                                 })))
@@ -103,7 +104,7 @@ namespace Silverback.Examples.KafkaConsumer
             => CreateConsumerEndpoint(names, null);
 
         private KafkaConsumerEndpoint CreateConsumerEndpoint(string[] names, IMessageSerializer messageSerializer)
-            {
+        {
             var endpoint = new KafkaConsumerEndpoint(names)
             {
                 Configuration = new KafkaConsumerConfig

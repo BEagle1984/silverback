@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Authentication;
 
 namespace Silverback.Messaging.Configuration
@@ -20,8 +21,8 @@ namespace Silverback.Messaging.Configuration
         //public IList<AuthMechanismFactory> AuthMechanisms { get; set; } = ConnectionFactory.DefaultAuthMechanisms;
 
         /// <summary>
-        /// Set to false to disable automatic connection recovery.
-        /// Defaults to true.
+        ///     Set to false to disable automatic connection recovery.
+        ///     Defaults to true.
         /// </summary>
         public bool? AutomaticRecoveryEnabled { get; set; }
 
@@ -35,19 +36,19 @@ namespace Silverback.Messaging.Configuration
         public string HostName { get; set; }
 
         /// <summary>
-        /// Amount of time client will wait for before re-trying  to recover connection.
+        ///     Amount of time client will wait for before re-trying  to recover connection.
         /// </summary>
         public TimeSpan? NetworkRecoveryInterval { get; set; }
 
         /// <summary>
-        /// Amount of time protocol handshake operations are allowed to take before
-        /// timing out.
+        ///     Amount of time protocol handshake operations are allowed to take before
+        ///     timing out.
         /// </summary>
         public TimeSpan? HandshakeContinuationTimeout { get; set; }
 
         /// <summary>
-        /// Amount of time protocol  operations (e.g. <code>queue.declare</code>) are allowed to take before
-        /// timing out.
+        ///     Amount of time protocol  operations (e.g. <code>queue.declare</code>) are allowed to take before
+        ///     timing out.
         /// </summary>
         public TimeSpan? ContinuationTimeout { get; set; }
 
@@ -64,23 +65,23 @@ namespace Silverback.Messaging.Configuration
         //         (IEndpointResolver) new DefaultEndpointResolver(endpoints));
 
         /// <summary>
-        /// The port to connect on. <see cref="F:RabbitMQ.Client.AmqpTcpEndpoint.UseDefaultPort" />
-        /// indicates the default for the protocol should be used.
+        ///     The port to connect on. <see cref="F:RabbitMQ.Client.AmqpTcpEndpoint.UseDefaultPort" />
+        ///     indicates the default for the protocol should be used.
         /// </summary>
         public int? Port { get; set; }
 
         /// <summary>
-        /// Timeout setting for connection attempts (in milliseconds).
+        ///     Timeout setting for connection attempts (in milliseconds).
         /// </summary>
         public int? RequestedConnectionTimeout { get; set; }
 
         /// <summary>
-        /// Timeout setting for socket read operations (in milliseconds).
+        ///     Timeout setting for socket read operations (in milliseconds).
         /// </summary>
         public int? SocketReadTimeout { get; set; }
 
         /// <summary>
-        /// Timeout setting for socket write operations (in milliseconds).
+        ///     Timeout setting for socket write operations (in milliseconds).
         /// </summary>
         public int? SocketWriteTimeout { get; set; }
 
@@ -88,13 +89,13 @@ namespace Silverback.Messaging.Configuration
         public RabbitSslOption Ssl { get; set; } = new RabbitSslOption();
 
         /// <summary>
-        /// Set to false to make automatic connection recovery not recover topology (exchanges, queues, bindings, etc).
-        /// Defaults to true.
+        ///     Set to false to make automatic connection recovery not recover topology (exchanges, queues, bindings, etc).
+        ///     Defaults to true.
         /// </summary>
         public bool? TopologyRecoveryEnabled { get; set; }
 
         /// <summary>
-        /// Dictionary of client properties to be sent to the server.
+        ///     Dictionary of client properties to be sent to the server.
         /// </summary>
         public IDictionary<string, object> ClientProperties { get; set; } = new Dictionary<string, object>();
 
@@ -108,12 +109,12 @@ namespace Silverback.Messaging.Configuration
         public uint? RequestedFrameMax { get; set; }
 
         /// <summary>
-        /// Heartbeat timeout to use when negotiating with the server (in seconds).
+        ///     Heartbeat timeout to use when negotiating with the server (in seconds).
         /// </summary>
         public ushort? RequestedHeartbeat { get; set; }
 
         /// <summary>
-        /// When set to true, background thread will be used for the I/O loop.
+        ///     When set to true, background thread will be used for the I/O loop.
         /// </summary>
         public bool? UseBackgroundThreadsForIO { get; set; }
 
@@ -124,7 +125,7 @@ namespace Silverback.Messaging.Configuration
         public string VirtualHost { get; set; }
 
         /// <summary>
-        /// Default client provided name to be used for connections.
+        ///     Default client provided name to be used for connections.
         /// </summary>
         public string ClientProvidedName { get; set; }
 
@@ -132,7 +133,7 @@ namespace Silverback.Messaging.Configuration
         {
             // Nothing to validate?
         }
-        
+
         #region Equality
 
         public bool Equals(RabbitConnectionConfig other)
@@ -162,10 +163,11 @@ namespace Silverback.Messaging.Configuration
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((RabbitConnectionConfig) obj);
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             unchecked

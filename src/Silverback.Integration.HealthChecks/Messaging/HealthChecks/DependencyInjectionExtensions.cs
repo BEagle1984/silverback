@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -10,17 +10,21 @@ namespace Silverback.Messaging.HealthChecks
     public static class HealthCheckBuilderExtensions
     {
         /// <summary>
-        /// Adds an health check that sends a ping message to all the outbound endpoints.
+        ///     Adds an health check that sends a ping message to all the outbound endpoints.
         /// </summary>
-        /// <param name="builder">The <see cref="IHealthChecksBuilder"/>.</param>
+        /// <param name="builder">The <see cref="IHealthChecksBuilder" />.</param>
         /// <param name="name">The health check name. If <c>null</c> the name 'OutboundEndpoints' will be used for the name.</param>
         /// <param name="failureStatus">
-        /// The <see cref="HealthStatus"/> that should be reported when the health check fails. Optional. If <c>null</c> then
-        /// the default status of <see cref="HealthStatus.Unhealthy"/> will be reported.
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check fails. Optional. If <c>null</c> then
+        ///     the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
         /// </param>
         /// <param name="tags">A list of tags that can be used to filter sets of health checks. Optional.</param>
-        /// <returns>The <see cref="IHealthChecksBuilder"/>.</returns>
-        public static IHealthChecksBuilder AddOutboundEndpointsCheck(this IHealthChecksBuilder builder, string name = "OutboundEndpoints", HealthStatus? failureStatus = default, IEnumerable<string> tags = default)
+        /// <returns>The <see cref="IHealthChecksBuilder" />.</returns>
+        public static IHealthChecksBuilder AddOutboundEndpointsCheck(
+            this IHealthChecksBuilder builder,
+            string name = "OutboundEndpoints",
+            HealthStatus? failureStatus = default,
+            IEnumerable<string> tags = default)
         {
             builder.Services.AddScoped<IOutboundEndpointsHealthCheckService, OutboundEndpointsHealthCheckService>();
 
@@ -34,17 +38,22 @@ namespace Silverback.Messaging.HealthChecks
         }
 
         /// <summary>
-        /// Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.
+        ///     Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being
+        ///     processed.
         /// </summary>
-        /// <param name="builder">The <see cref="IHealthChecksBuilder"/>.</param>
+        /// <param name="builder">The <see cref="IHealthChecksBuilder" />.</param>
         /// <param name="name">The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.</param>
         /// <param name="failureStatus">
-        /// The <see cref="HealthStatus"/> that should be reported when the health check fails. Optional. If <c>null</c> then
-        /// the default status of <see cref="HealthStatus.Unhealthy"/> will be reported.
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check fails. Optional. If <c>null</c> then
+        ///     the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
         /// </param>
         /// <param name="tags">A list of tags that can be used to filter sets of health checks. Optional.</param>
-        /// <returns>The <see cref="IHealthChecksBuilder"/>.</returns>
-        public static IHealthChecksBuilder AddOutboundQueueCheck(this IHealthChecksBuilder builder, string name = "OutboundQueue", HealthStatus? failureStatus = default, IEnumerable<string> tags = default)
+        /// <returns>The <see cref="IHealthChecksBuilder" />.</returns>
+        public static IHealthChecksBuilder AddOutboundQueueCheck(
+            this IHealthChecksBuilder builder,
+            string name = "OutboundQueue",
+            HealthStatus? failureStatus = default,
+            IEnumerable<string> tags = default)
         {
             builder.Services.AddScoped<IOutboundQueueHealthCheckService, OutboundQueueHealthCheckService>();
 

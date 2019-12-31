@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -33,11 +33,10 @@ namespace Silverback.Messaging.Connectors.Behaviors
 
         public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
         {
-            
             messages.OfType<IInboundMessage>().ForEach(message => _inboundMessagesCache.Add(message.Content));
 
             var routedMessages = await WrapAndRepublishRoutedMessages(messages);
-            
+
             if (!_routing.PublishOutboundMessagesToInternalBus)
                 messages = messages.Where(m => !routedMessages.Contains(m)).ToList();
 
@@ -52,7 +51,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
                 .SelectMany(message =>
                     _routing
                         .GetRoutesForMessage(message)
-                        .Select(route => 
+                        .Select(route =>
                             CreateOutboundMessage(message, route)));
 
             if (wrappedMessages.Any())
@@ -62,9 +61,10 @@ namespace Silverback.Messaging.Connectors.Behaviors
 
             return wrappedMessages.Select(m => m.Content);
         }
+
         private IOutboundMessage CreateOutboundMessage(object message, IOutboundRoute route)
         {
-            var wrapper = (IOutboundMessage)Activator.CreateInstance(
+            var wrapper = (IOutboundMessage) Activator.CreateInstance(
                 typeof(OutboundMessage<>).MakeGenericType(message.GetType()),
                 message, null, route);
 

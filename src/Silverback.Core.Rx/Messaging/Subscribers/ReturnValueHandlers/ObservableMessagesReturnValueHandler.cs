@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -28,12 +28,13 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
             returnValue.GetType().GetInterfaces().Any(
                 i => i.IsGenericType &&
                      i.GetGenericTypeDefinition() == typeof(IObservable<>) &&
-                     _publisherOptions.MessageTypes.Any(messageType => messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
+                     _publisherOptions.MessageTypes.Any(messageType =>
+                         messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 
         public IEnumerable<object> Handle(object returnValue) =>
-             _publisher.Publish<object>(((IObservable<object>)returnValue).ToEnumerable());
+            _publisher.Publish<object>(((IObservable<object>) returnValue).ToEnumerable());
 
         public Task<IEnumerable<object>> HandleAsync(object returnValue) =>
-            _publisher.PublishAsync<object>(((IObservable<object>)returnValue).ToEnumerable());
+            _publisher.PublishAsync<object>(((IObservable<object>) returnValue).ToEnumerable());
     }
 }

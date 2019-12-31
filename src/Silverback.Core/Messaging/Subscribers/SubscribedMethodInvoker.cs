@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -17,14 +17,20 @@ namespace Silverback.Messaging.Subscribers
         private readonly ReturnValueHandler _returnValueHandler;
         private readonly IServiceProvider _serviceProvider;
 
-        public SubscribedMethodInvoker(ArgumentsResolver argumentsResolver, ReturnValueHandler returnValueHandler, IServiceProvider serviceProvider)
+        public SubscribedMethodInvoker(
+            ArgumentsResolver argumentsResolver,
+            ReturnValueHandler returnValueHandler,
+            IServiceProvider serviceProvider)
         {
             _argumentsResolver = argumentsResolver ?? throw new ArgumentNullException(nameof(argumentsResolver));
             _returnValueHandler = returnValueHandler ?? throw new ArgumentNullException(nameof(returnValueHandler));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public async Task<IEnumerable<object>> Invoke(SubscribedMethod method, IEnumerable<object> messages, bool executeAsync)
+        public async Task<IEnumerable<object>> Invoke(
+            SubscribedMethod method,
+            IEnumerable<object> messages,
+            bool executeAsync)
         {
             var (messageArgumentResolver, messageType) = _argumentsResolver.GetMessageArgumentResolver(method);
 
@@ -59,7 +65,7 @@ namespace Silverback.Messaging.Subscribers
                 case IEnumerableMessageArgumentResolver enumerableResolver:
                     parameterValues[0] = enumerableResolver.GetValue(messages, messageType);
 
-                    returnValues = new[] {await Invoke(target, method, parameterValues, executeAsync)};
+                    returnValues = new[] { await Invoke(target, method, parameterValues, executeAsync) };
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -72,10 +78,10 @@ namespace Silverback.Messaging.Subscribers
             new object[1].Concat(
                     _argumentsResolver.GetAdditionalParameterValues(methodInfo))
                 .ToArray();
-        
+
         private Task<object> Invoke(object target, SubscribedMethod method, object[] parameters, bool executeAsync) =>
-            executeAsync 
-                ? InvokeAsync(target, method, parameters) 
+            executeAsync
+                ? InvokeAsync(target, method, parameters)
                 : Task.FromResult(InvokeSync(target, method, parameters));
 
         private object InvokeSync(object target, SubscribedMethod method, object[] parameters)
@@ -85,7 +91,7 @@ namespace Silverback.Messaging.Subscribers
 
             return AsyncHelper.RunSynchronously(() =>
             {
-                var result = (Task)method.MethodInfo.Invoke(target, parameters);
+                var result = (Task) method.MethodInfo.Invoke(target, parameters);
                 return result.GetReturnValue();
             });
         }

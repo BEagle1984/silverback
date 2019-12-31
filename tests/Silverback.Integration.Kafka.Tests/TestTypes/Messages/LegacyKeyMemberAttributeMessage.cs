@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,8 +12,7 @@ namespace Silverback.Tests.Integration.Kafka.TestTypes.Messages
     {
         public Guid Id { get; set; }
 
-        [PartitioningKeyMember]
-        public string One { get; set; }
+        [PartitioningKeyMember] public string One { get; set; }
 
         public string Two { get; set; }
 

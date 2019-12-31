@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -12,8 +12,11 @@ namespace Silverback.Messaging.Connectors.Repositories
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField")]
     public class InMemoryOffsetStore : IOffsetStore
     {
-        private static readonly Dictionary<string, IComparableOffset> LatestOffsets = new Dictionary<string, IComparableOffset>();
-        private readonly Dictionary<string, IComparableOffset> _uncommittedOffsets = new Dictionary<string, IComparableOffset>();
+        private static readonly Dictionary<string, IComparableOffset> LatestOffsets =
+            new Dictionary<string, IComparableOffset>();
+
+        private readonly Dictionary<string, IComparableOffset> _uncommittedOffsets =
+            new Dictionary<string, IComparableOffset>();
 
         public Task Store(IComparableOffset offset)
         {

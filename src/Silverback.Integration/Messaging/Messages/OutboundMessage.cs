@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -16,7 +16,11 @@ namespace Silverback.Messaging.Messages
             Route = route ?? throw new ArgumentNullException(nameof(route));
         }
 
-        public OutboundMessage(object content, IEnumerable<MessageHeader> headers, IProducerEndpoint endpoint, IOffset offset = null)
+        public OutboundMessage(
+            object content,
+            IEnumerable<MessageHeader> headers,
+            IProducerEndpoint endpoint,
+            IOffset offset = null)
             : base(content, headers, endpoint, offset)
         {
             Content = content;
@@ -39,6 +43,6 @@ namespace Silverback.Messaging.Messages
         {
         }
 
-        public new TContent Content => (TContent)base.Content;
+        public new TContent Content => (TContent) base.Content;
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -17,14 +17,14 @@ using Silverback.Util;
 namespace Silverback.Messaging.Connectors
 {
     /// <summary>
-    /// Subscribes to a message broker and forwards the incoming integration messages to the internal bus.
+    ///     Subscribes to a message broker and forwards the incoming integration messages to the internal bus.
     /// </summary>
     public class InboundConnector : IInboundConnector
     {
         private readonly IBroker _broker;
         private readonly IServiceProvider _serviceProvider;
-        
-        [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")] 
+
+        [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
         private readonly List<InboundConsumer> _inboundConsumers = new List<InboundConsumer>();
 
         public InboundConnector(IBroker broker, IServiceProvider serviceProvider)
@@ -33,7 +33,10 @@ namespace Silverback.Messaging.Connectors
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public virtual IInboundConnector Bind(IConsumerEndpoint endpoint, IErrorPolicy errorPolicy = null, InboundConnectorSettings settings = null)
+        public virtual IInboundConnector Bind(
+            IConsumerEndpoint endpoint,
+            IErrorPolicy errorPolicy = null,
+            InboundConnectorSettings settings = null)
         {
             settings ??= new InboundConnectorSettings();
 
@@ -59,8 +62,8 @@ namespace Silverback.Messaging.Connectors
         {
             var deserializedMessages = await messages
                 .SelectAsync(async message => await HandleChunkedMessage(message, serviceProvider));
-                
-            deserializedMessages = deserializedMessages 
+
+            deserializedMessages = deserializedMessages
                 .Where(args => args != null)
                 .Select(DeserializeRawMessage)
                 .ToList();
@@ -71,16 +74,19 @@ namespace Silverback.Messaging.Connectors
             await RelayMessages(deserializedMessages, serviceProvider);
         }
 
-        private async Task<IInboundMessage> HandleChunkedMessage(IInboundMessage message, IServiceProvider serviceProvider)
+        private async Task<IInboundMessage> HandleChunkedMessage(
+            IInboundMessage message,
+            IServiceProvider serviceProvider)
         {
             if (!message.Headers.Contains(MessageHeader.ChunkIdKey))
                 return message;
 
             var completeMessage = await serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(message);
 
-            return completeMessage == null 
-                ? null 
-                : new InboundMessage(completeMessage, message.Headers, message.Offset, message.Endpoint, message.MustUnwrap);
+            return completeMessage == null
+                ? null
+                : new InboundMessage(completeMessage, message.Headers, message.Offset, message.Endpoint,
+                    message.MustUnwrap);
         }
 
         private IInboundMessage DeserializeRawMessage(IInboundMessage message)
@@ -99,7 +105,9 @@ namespace Silverback.Messaging.Connectors
             return typedInboundMessage;
         }
 
-        protected virtual async Task RelayMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider) => 
+        protected virtual async Task RelayMessages(
+            IEnumerable<IInboundMessage> messages,
+            IServiceProvider serviceProvider) =>
             await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(messages);
 
         protected virtual async Task Commit(IServiceProvider serviceProvider)

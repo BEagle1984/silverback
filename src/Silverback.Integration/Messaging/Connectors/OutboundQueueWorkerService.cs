@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -13,8 +13,12 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly IOutboundQueueWorker _outboundQueueWorker;
 
-        public OutboundQueueWorkerService(TimeSpan interval, IOutboundQueueWorker outboundQueueWorker, DistributedLockSettings distributedLockSettings,
-            IDistributedLockManager distributedLockManager, ILogger<OutboundQueueWorkerService> logger)
+        public OutboundQueueWorkerService(
+            TimeSpan interval,
+            IOutboundQueueWorker outboundQueueWorker,
+            DistributedLockSettings distributedLockSettings,
+            IDistributedLockManager distributedLockManager,
+            ILogger<OutboundQueueWorkerService> logger)
             : base(interval, distributedLockSettings, distributedLockManager, logger)
         {
             _outboundQueueWorker = outboundQueueWorker;

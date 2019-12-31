@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -33,18 +33,22 @@ namespace Silverback.Background
             Acquire(new DistributedLockSettings(
                 resourceName, uniqueId, acquireTimeout, acquireRetryInterval, heartbeatTimeout));
 
-        public async Task<DistributedLock> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default)
+        public async Task<DistributedLock> Acquire(
+            DistributedLockSettings settings,
+            CancellationToken cancellationToken = default)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-            _logger.LogInformation("Trying to acquire lock {lockName} ({lockUniqueId})...", settings.ResourceName, settings.UniqueId);
+            _logger.LogInformation("Trying to acquire lock {lockName} ({lockUniqueId})...", settings.ResourceName,
+                settings.UniqueId);
 
             var stopwatch = Stopwatch.StartNew();
             while (settings.AcquireTimeout == null || stopwatch.Elapsed < settings.AcquireTimeout)
             {
                 if (await TryAcquireLock(settings))
                 {
-                    _logger.LogInformation("Acquired lock {lockName} ({lockUniqueId}).", settings.ResourceName, settings.UniqueId);
+                    _logger.LogInformation("Acquired lock {lockName} ({lockUniqueId}).", settings.ResourceName,
+                        settings.UniqueId);
                     return new DistributedLock(settings, this);
                 }
 
@@ -57,12 +61,13 @@ namespace Silverback.Background
             throw new TimeoutException($"Timeout waiting to get the required lock '{settings.ResourceName}'.");
         }
 
-        public async Task<bool> CheckIsStillLocked(DistributedLockSettings settings) 
+        public async Task<bool> CheckIsStillLocked(DistributedLockSettings settings)
         {
             try
             {
                 using var scope = _serviceProvider.CreateScope();
-                return await CheckIsStillLocked(settings.ResourceName, settings.UniqueId, settings.HeartbeatTimeout, scope.ServiceProvider);
+                return await CheckIsStillLocked(settings.ResourceName, settings.UniqueId, settings.HeartbeatTimeout,
+                    scope.ServiceProvider);
             }
             catch (Exception ex)
             {
@@ -74,7 +79,7 @@ namespace Silverback.Background
             return false;
         }
 
-        public async Task<bool> SendHeartbeat(DistributedLockSettings settings) 
+        public async Task<bool> SendHeartbeat(DistributedLockSettings settings)
         {
             try
 
@@ -99,7 +104,8 @@ namespace Silverback.Background
                 using var scope = _serviceProvider.CreateScope();
                 await Release(settings.ResourceName, settings.UniqueId, scope.ServiceProvider);
 
-                _logger.LogInformation("Released lock {lockName} ({lockUniqueId}).", settings.ResourceName, settings.UniqueId);
+                _logger.LogInformation("Released lock {lockName} ({lockUniqueId}).", settings.ResourceName,
+                    settings.UniqueId);
             }
             catch (Exception ex)
             {
@@ -118,7 +124,8 @@ namespace Silverback.Background
             }
             catch (Exception ex)
             {
-                _logger.LogDebug(ex, "Failed to acquire lock {lockName} ({lockUniqueId}). See inner exception for details.",
+                _logger.LogDebug(ex,
+                    "Failed to acquire lock {lockName} ({lockUniqueId}). See inner exception for details.",
                     settings.ResourceName, settings.UniqueId);
             }
 
@@ -130,14 +137,19 @@ namespace Silverback.Background
             var heartbeatThreshold = GetHeartbeatThreshold(settings.HeartbeatTimeout);
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            if (await dbSet.AsQueryable().AnyAsync(l => l.Name == settings.ResourceName && l.Heartbeat >= heartbeatThreshold))
+            if (await dbSet.AsQueryable()
+                .AnyAsync(l => l.Name == settings.ResourceName && l.Heartbeat >= heartbeatThreshold))
                 return false;
 
             return await WriteLock(settings.ResourceName, settings.UniqueId, heartbeatThreshold, dbSet, dbContext);
         }
 
-        private async Task<bool> WriteLock(string resourceName, string uniqueId, DateTime heartbeatThreshold,
-            IDbSet<Lock> dbSet, IDbContext dbContext)
+        private async Task<bool> WriteLock(
+            string resourceName,
+            string uniqueId,
+            DateTime heartbeatThreshold,
+            IDbSet<Lock> dbSet,
+            IDbContext dbContext)
         {
             var entity = await dbSet.AsQueryable().FirstOrDefaultAsync(e => e.Name == resourceName)
                          ?? dbSet.Add(new Lock { Name = resourceName });
@@ -154,7 +166,11 @@ namespace Silverback.Background
             return true;
         }
 
-        private async Task<bool> CheckIsStillLocked(string resourceName, string uniqueId, TimeSpan heartbeatTimeout, IServiceProvider serviceProvider)
+        private async Task<bool> CheckIsStillLocked(
+            string resourceName,
+            string uniqueId,
+            TimeSpan heartbeatTimeout,
+            IServiceProvider serviceProvider)
         {
             var heartbeatThreshold = GetHeartbeatThreshold(heartbeatTimeout);
             var (dbSet, _) = GetDbSet(serviceProvider);
@@ -169,7 +185,8 @@ namespace Silverback.Background
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            var lockRecord = await dbSet.AsQueryable().FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId);
+            var lockRecord = await dbSet.AsQueryable()
+                .FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId);
 
             if (lockRecord == null)
                 return false;
@@ -185,7 +202,8 @@ namespace Silverback.Background
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            var lockRecord = await dbSet.AsQueryable().FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId);
+            var lockRecord = await dbSet.AsQueryable()
+                .FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId);
 
             if (lockRecord == null)
                 return;

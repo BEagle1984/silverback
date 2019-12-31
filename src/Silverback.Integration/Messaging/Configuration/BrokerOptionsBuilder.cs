@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -30,9 +30,11 @@ namespace Silverback.Messaging.Configuration
         #region AddInboundConnector
 
         /// <summary>
-        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
+        ///     bus.
         /// </summary>
-        public BrokerOptionsBuilder AddInboundConnector<TConnector>() where TConnector : class, IInboundConnector
+        public BrokerOptionsBuilder AddInboundConnector<TConnector>()
+            where TConnector : class, IInboundConnector
         {
             SilverbackBuilder.Services.AddSingleton<IInboundConnector, TConnector>();
 
@@ -46,13 +48,14 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
+        ///     bus.
         /// </summary>
         public BrokerOptionsBuilder AddInboundConnector() => AddInboundConnector<InboundConnector>();
 
         /// <summary>
-        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
-        /// This implementation logs the incoming messages and prevents duplicated processing of the same message.
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
+        ///     bus. This implementation logs the incoming messages and prevents duplicated processing of the same message.
         /// </summary>
         public BrokerOptionsBuilder AddLoggedInboundConnector(Func<IServiceProvider, IInboundLog> inboundLogFactory)
         {
@@ -62,8 +65,10 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
-        /// This implementation stores the offset of the latest consumed messages and prevents duplicated processing of the same message.
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
+        ///     bus. This implementation stores the offset of the latest consumed messages and prevents duplicated processing of
+        ///     the
+        ///     same message.
         /// </summary>
         public BrokerOptionsBuilder AddOffsetStoredInboundConnector(
             Func<IServiceProvider, IOffsetStore> offsetStoreFactory)
@@ -74,8 +79,9 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
-        /// This implementation logs the incoming messages in the database and prevents duplicated processing of the same message.
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
+        ///     bus. This implementation logs the incoming messages in the database and prevents duplicated processing of the same
+        ///     message.
         /// </summary>
         public BrokerOptionsBuilder AddDbLoggedInboundConnector() =>
             AddLoggedInboundConnector(s =>
@@ -83,8 +89,9 @@ namespace Silverback.Messaging.Configuration
                     s.GetRequiredService<MessageKeyProvider>()));
 
         /// <summary>
-        /// Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal bus.
-        /// This implementation stores the offset of the latest consumed messages in the database and prevents duplicated processing of the same message.
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
+        ///     bus. This implementation stores the offset of the latest consumed messages in the database and prevents duplicated
+        ///     processing of the same message.
         /// </summary>
         public BrokerOptionsBuilder AddDbOffsetStoredInboundConnector() =>
             AddOffsetStoredInboundConnector(s =>
@@ -95,9 +102,10 @@ namespace Silverback.Messaging.Configuration
         #region AddOutboundConnector
 
         /// <summary>
-        /// Adds a connector to publish the integration messages to the configured message broker.
+        ///     Adds a connector to publish the integration messages to the configured message broker.
         /// </summary>
-        public BrokerOptionsBuilder AddOutboundConnector<TConnector>() where TConnector : class, IOutboundConnector
+        public BrokerOptionsBuilder AddOutboundConnector<TConnector>()
+            where TConnector : class, IOutboundConnector
         {
             if (SilverbackBuilder.Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
             {
@@ -112,13 +120,13 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Adds a connector to publish the integration messages to the configured message broker.
+        ///     Adds a connector to publish the integration messages to the configured message broker.
         /// </summary>
         public BrokerOptionsBuilder AddOutboundConnector() => AddOutboundConnector<OutboundConnector>();
 
         /// <summary>
-        /// Adds a connector to publish the integration messages to the configured message broker.
-        /// This implementation stores the outbound messages into an intermediate queue.
+        ///     Adds a connector to publish the integration messages to the configured message broker.
+        ///     This implementation stores the outbound messages into an intermediate queue.
         /// </summary>
         public BrokerOptionsBuilder AddDeferredOutboundConnector(
             Func<IServiceProvider, IOutboundQueueProducer> outboundQueueProducerFactory)
@@ -131,23 +139,32 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Adds a connector to publish the integration messages to the configured message broker.
-        /// This implementation stores the outbound messages into an intermediate queue in the database and
-        /// it is therefore fully transactional.
+        ///     Adds a connector to publish the integration messages to the configured message broker.
+        ///     This implementation stores the outbound messages into an intermediate queue in the database and
+        ///     it is therefore fully transactional.
         /// </summary>
         public BrokerOptionsBuilder AddDbOutboundConnector() =>
             AddDeferredOutboundConnector(s =>
                 new DbOutboundQueueProducer(s.GetRequiredService<IDbContext>()));
 
         /// <summary>
-        /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <param name="interval">The interval between each run (default is 500ms).</param>
-        /// <param name="enforceMessageOrder">if set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
+        /// <param name="enforceMessageOrder">
+        ///     if set to <c>true</c> the message order will be preserved (no message will be
+        ///     skipped).
+        /// </param>
         /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
-        /// <param name="removeProduced">if set to <c>true</c> the messages will be removed from the database immediately after being produced.</param>
-        public BrokerOptionsBuilder AddDbOutboundWorker(TimeSpan? interval = null,
-            bool enforceMessageOrder = true, int readPackageSize = 100, bool removeProduced = true)
+        /// <param name="removeProduced">
+        ///     if set to <c>true</c> the messages will be removed from the database immediately after
+        ///     being produced.
+        /// </param>
+        public BrokerOptionsBuilder AddDbOutboundWorker(
+            TimeSpan? interval = null,
+            bool enforceMessageOrder = true,
+            int readPackageSize = 100,
+            bool removeProduced = true)
         {
             return AddDbOutboundWorker(new DistributedLockSettings(), interval,
                 enforceMessageOrder, readPackageSize, removeProduced);
@@ -158,32 +175,42 @@ namespace Silverback.Messaging.Configuration
         #region AddOutboundWorker
 
         /// <summary>
-        /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <param name="outboundQueueConsumerFactory"></param>
         /// <param name="interval">The interval between each run (default is 500ms).</param>
-        /// <param name="enforceMessageOrder">If set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
-        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
-        // TODO: Test
-        public BrokerOptionsBuilder AddOutboundWorker(
-            Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory, TimeSpan? interval = null,
-            bool enforceMessageOrder = true, int readPackageSize = 100) =>
-            AddOutboundWorker(outboundQueueConsumerFactory, new DistributedLockSettings(), interval,
-                enforceMessageOrder, readPackageSize);
-
-        /// <summary>
-        /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
-        /// </summary>
-        /// <param name="outboundQueueConsumerFactory"></param>
-        /// <param name="distributedLockSettings">The settings for the locking mechanism.</param>
-        /// <param name="interval">The interval between each run (default is 500ms).</param>
-        /// <param name="enforceMessageOrder">If set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
+        /// <param name="enforceMessageOrder">
+        ///     If set to <c>true</c> the message order will be preserved (no message will be
+        ///     skipped).
+        /// </param>
         /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
         // TODO: Test
         public BrokerOptionsBuilder AddOutboundWorker(
             Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
-            DistributedLockSettings distributedLockSettings, TimeSpan? interval = null,
-            bool enforceMessageOrder = true, int readPackageSize = 100)
+            TimeSpan? interval = null,
+            bool enforceMessageOrder = true,
+            int readPackageSize = 100) =>
+            AddOutboundWorker(outboundQueueConsumerFactory, new DistributedLockSettings(), interval,
+                enforceMessageOrder, readPackageSize);
+
+        /// <summary>
+        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        /// </summary>
+        /// <param name="outboundQueueConsumerFactory"></param>
+        /// <param name="distributedLockSettings">The settings for the locking mechanism.</param>
+        /// <param name="interval">The interval between each run (default is 500ms).</param>
+        /// <param name="enforceMessageOrder">
+        ///     If set to <c>true</c> the message order will be preserved (no message will be
+        ///     skipped).
+        /// </param>
+        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
+        // TODO: Test
+        public BrokerOptionsBuilder AddOutboundWorker(
+            Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
+            DistributedLockSettings distributedLockSettings,
+            TimeSpan? interval = null,
+            bool enforceMessageOrder = true,
+            int readPackageSize = 100)
         {
             if (outboundQueueConsumerFactory == null)
                 throw new ArgumentNullException(nameof(outboundQueueConsumerFactory));
@@ -204,8 +231,11 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        internal BrokerOptionsBuilder AddOutboundWorker(TimeSpan interval,
-            DistributedLockSettings distributedLockSettings, bool enforceMessageOrder, int readPackageSize)
+        internal BrokerOptionsBuilder AddOutboundWorker(
+            TimeSpan interval,
+            DistributedLockSettings distributedLockSettings,
+            bool enforceMessageOrder,
+            int readPackageSize)
         {
             SilverbackBuilder.Services
                 .AddSingleton<IOutboundQueueWorker>(s => new OutboundQueueWorker(
@@ -225,15 +255,24 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <param name="distributedLockSettings">The settings for the locking mechanism.</param>
         /// <param name="interval">The interval between each run (default is 500ms).</param>
-        /// <param name="enforceMessageOrder">if set to <c>true</c> the message order will be preserved (no message will be skipped).</param>
+        /// <param name="enforceMessageOrder">
+        ///     if set to <c>true</c> the message order will be preserved (no message will be
+        ///     skipped).
+        /// </param>
         /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
-        /// <param name="removeProduced">if set to <c>true</c> the messages will be removed from the database immediately after being produced.</param>
-        public BrokerOptionsBuilder AddDbOutboundWorker(DistributedLockSettings distributedLockSettings,
-            TimeSpan? interval = null, bool enforceMessageOrder = true, int readPackageSize = 100,
+        /// <param name="removeProduced">
+        ///     if set to <c>true</c> the messages will be removed from the database immediately after
+        ///     being produced.
+        /// </param>
+        public BrokerOptionsBuilder AddDbOutboundWorker(
+            DistributedLockSettings distributedLockSettings,
+            TimeSpan? interval = null,
+            bool enforceMessageOrder = true,
+            int readPackageSize = 100,
             bool removeProduced = true)
         {
             if (distributedLockSettings == null) throw new ArgumentNullException(nameof(distributedLockSettings));
@@ -254,9 +293,10 @@ namespace Silverback.Messaging.Configuration
         #region AddChunkStore
 
         /// <summary>
-        /// Adds a chunk store to temporary save the message chunks until the full message has been received.
+        ///     Adds a chunk store to temporary save the message chunks until the full message has been received.
         /// </summary>
-        public BrokerOptionsBuilder AddChunkStore<TStore>() where TStore : class, IChunkStore
+        public BrokerOptionsBuilder AddChunkStore<TStore>()
+            where TStore : class, IChunkStore
         {
             if (SilverbackBuilder.Services.All(s => s.ServiceType != typeof(ChunkConsumer)))
             {
@@ -269,8 +309,8 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Adds a chunk store to temporary save the message chunks until the full message has been received.
-        /// This implementation stores the message chunks in the database.
+        ///     Adds a chunk store to temporary save the message chunks until the full message has been received.
+        ///     This implementation stores the message chunks in the database.
         /// </summary>
         public BrokerOptionsBuilder AddDbChunkStore() =>
             AddChunkStore<DbChunkStore>();
@@ -280,12 +320,13 @@ namespace Silverback.Messaging.Configuration
         #region AddMessageKeyProvider
 
         /// <summary>
-        /// Adds a message key provider of type <typeparamref name="TProvider"/> to be used
-        /// to auto-generate the unique id of the integration messages.
+        ///     Adds a message key provider of type <typeparamref name="TProvider" /> to be used
+        ///     to auto-generate the unique id of the integration messages.
         /// </summary>
-        /// <typeparam name="TProvider">The type of the <see cref="IMessageKeyProvider"/> to add.</typeparam>
+        /// <typeparam name="TProvider">The type of the <see cref="IMessageKeyProvider" /> to add.</typeparam>
         /// <returns></returns>
-        public BrokerOptionsBuilder AddMessageKeyProvider<TProvider>() where TProvider : class, IMessageKeyProvider
+        public BrokerOptionsBuilder AddMessageKeyProvider<TProvider>()
+            where TProvider : class, IMessageKeyProvider
         {
             SilverbackBuilder.Services.AddSingleton<IMessageKeyProvider, TProvider>();
 
@@ -297,11 +338,12 @@ namespace Silverback.Messaging.Configuration
         #region RegisterConfigurator
 
         /// <summary>
-        /// Registers an <see cref="IEndpointsConfigurator"/> to be used to setup the broker endpoints.
+        ///     Registers an <see cref="IEndpointsConfigurator" /> to be used to setup the broker endpoints.
         /// </summary>
-        /// <typeparam name="TConfigurator">The type of the <see cref="IEndpointsConfigurator"/> to add.</typeparam>
+        /// <typeparam name="TConfigurator">The type of the <see cref="IEndpointsConfigurator" /> to add.</typeparam>
         /// <returns></returns>
-        public BrokerOptionsBuilder RegisterConfigurator<TConfigurator>() where TConfigurator : class, IEndpointsConfigurator
+        public BrokerOptionsBuilder RegisterConfigurator<TConfigurator>()
+            where TConfigurator : class, IEndpointsConfigurator
         {
             SilverbackBuilder.Services.AddTransient<IEndpointsConfigurator, TConfigurator>();
 
@@ -309,9 +351,9 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Registers an <see cref="IEndpointsConfigurator"/> to be used to setup the broker endpoints.
+        ///     Registers an <see cref="IEndpointsConfigurator" /> to be used to setup the broker endpoints.
         /// </summary>
-        /// <param name="configuratorType">The type of the <see cref="IEndpointsConfigurator"/> to add.</param>
+        /// <param name="configuratorType">The type of the <see cref="IEndpointsConfigurator" /> to add.</param>
         /// <returns></returns>
         public BrokerOptionsBuilder RegisterConfigurator(Type configuratorType)
         {
@@ -319,19 +361,20 @@ namespace Silverback.Messaging.Configuration
 
             return this;
         }
-        
+
         /// <summary>
-        /// Registers an <see cref="IEndpointsConfigurator"/> to be used to setup the broker endpoints.
+        ///     Registers an <see cref="IEndpointsConfigurator" /> to be used to setup the broker endpoints.
         /// </summary>
-        /// <param name="implementationFactory">The factory that creates the <see cref="IEndpointsConfigurator"/> to add.</param>
+        /// <param name="implementationFactory">The factory that creates the <see cref="IEndpointsConfigurator" /> to add.</param>
         /// <returns></returns>
-        public BrokerOptionsBuilder RegisterConfigurator(Func<IServiceProvider, IEndpointsConfigurator> implementationFactory)
+        public BrokerOptionsBuilder RegisterConfigurator(
+            Func<IServiceProvider, IEndpointsConfigurator> implementationFactory)
         {
             SilverbackBuilder.Services.AddTransient(implementationFactory);
 
             return this;
         }
-        
+
         #endregion
 
         #region Defaults
@@ -339,8 +382,8 @@ namespace Silverback.Messaging.Configuration
         internal void CompleteWithDefaults() => SetDefaults();
 
         /// <summary>
-        /// Sets the default values (especially for the options that have not been explicitly set
-        /// by the user).
+        ///     Sets the default values (especially for the options that have not been explicitly set
+        ///     by the user).
         /// </summary>
         protected virtual void SetDefaults()
         {

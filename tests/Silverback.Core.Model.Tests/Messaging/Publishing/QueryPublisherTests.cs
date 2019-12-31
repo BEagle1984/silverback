@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
@@ -44,7 +44,8 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         [Fact]
         public async Task ExecuteAsync_ListQueries_EnumerablesReturned()
         {
-            var result = await _publisher.ExecuteAsync(new[] { new ListQuery { Count = 3 }, new ListQuery { Count = 3 } });
+            var result =
+                await _publisher.ExecuteAsync(new[] { new ListQuery { Count = 3 }, new ListQuery { Count = 3 } });
 
             result.Should().BeEquivalentTo(new[] { 1, 2, 3 }, new[] { 1, 2, 3 });
         }

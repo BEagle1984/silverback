@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -19,11 +19,11 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void SerializeDeserialize_Message_CorrectlyDeserialized()
         {
-            var message = new TestEventOne {Content = "the message"};
+            var message = new TestEventOne { Content = "the message" };
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer();
-            
+
             var serialized = serializer.Serialize(message, headers);
 
             var message2 = serializer.Deserialize(serialized, headers) as TestEventOne;
@@ -44,7 +44,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             Encoding.UTF8.GetString(serialized).Should().NotContain("TestEventOne");
 
             var message2 = serializer.Deserialize(serialized, new MessageHeaderCollection()) as TestEventOne;
-            
+
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
         }

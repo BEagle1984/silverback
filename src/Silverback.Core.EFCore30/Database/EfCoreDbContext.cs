@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -17,7 +17,8 @@ namespace Silverback.Database
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public IDbSet<TEntity> GetDbSet<TEntity>() where TEntity : class =>
+        public IDbSet<TEntity> GetDbSet<TEntity>()
+            where TEntity : class =>
             new EfCoreDbSet<TEntity>(
                 _dbContext.Set<TEntity>() ??
                 throw new SilverbackException($"The DbContext doesn't contain a DbSet<{typeof(TEntity).FullName}>."));

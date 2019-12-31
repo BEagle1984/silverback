@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Connectors
         }
 
         [Subscribe]
-        public Task OnMessagesReceived(IEnumerable<IInboundMessage> messages) => 
+        public Task OnMessagesReceived(IEnumerable<IInboundMessage> messages) =>
             _publisher.PublishAsync(
                 messages
                     .Where(m => m.MustUnwrap)

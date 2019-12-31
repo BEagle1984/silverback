@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    /// An <see cref="IBroker"/> implementation for RabbitMQ.
+    ///     An <see cref="IBroker" /> implementation for RabbitMQ.
     /// </summary>
     public class RabbitBroker : Broker
     {
@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Broker
             MessageKeyProvider messageKeyProvider,
             IEnumerable<IBrokerBehavior> behaviors,
             ILoggerFactory loggerFactory,
-            MessageLogger messageLogger) 
+            MessageLogger messageLogger)
             : base(behaviors, loggerFactory)
         {
             _messageKeyProvider = messageKeyProvider;
@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Broker
             _messageLogger = messageLogger;
         }
 
-        /// <inheritdoc cref="Broker"/>
+        /// <inheritdoc cref="Broker" />
         protected override IProducer InstantiateProducer(
             IProducerEndpoint endpoint,
             IEnumerable<IProducerBehavior> behaviors) =>
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Broker
                 _loggerFactory.CreateLogger<RabbitProducer>(),
                 _messageLogger);
 
-        /// <inheritdoc cref="Broker"/>
+        /// <inheritdoc cref="Broker" />
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
             IEnumerable<IConsumerBehavior> behaviors) =>
@@ -56,7 +56,7 @@ namespace Silverback.Messaging.Broker
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            
+
             if (!disposing)
                 return;
 

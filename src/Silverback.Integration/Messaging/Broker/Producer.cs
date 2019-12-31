@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -40,16 +40,16 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        /// Gets the <see cref="IBroker"/> instance that owns this instance.
+        ///     Gets the <see cref="IBroker" /> instance that owns this instance.
         /// </summary>
         public IBroker Broker { get; }
 
         /// <summary>
-        /// Gets the <see cref="IProducerEndpoint"/> this instance is connected to.
+        ///     Gets the <see cref="IProducerEndpoint" /> this instance is connected to.
         /// </summary>
         public IProducerEndpoint Endpoint { get; }
-        
-        /// <inheritdoc cref="IProducer"/>
+
+        /// <inheritdoc cref="IProducer" />
         public void Produce(object message, IEnumerable<MessageHeader> headers = null) =>
             GetRawMessages(message, headers)
                 .ForEach(rawMessage =>
@@ -59,11 +59,11 @@ namespace Silverback.Messaging.Broker
                         return Task.CompletedTask;
                     }).Wait());
 
-        /// <inheritdoc cref="IProducer"/>
+        /// <inheritdoc cref="IProducer" />
         public Task ProduceAsync(object message, IEnumerable<MessageHeader> headers = null) =>
             GetRawMessages(message, headers)
                 .ForEachAsync(async rawMessage =>
-                    await ExecutePipeline(_behaviors, rawMessage, async x => 
+                    await ExecutePipeline(_behaviors, rawMessage, async x =>
                         x.Offset = await ProduceAsync(x)));
 
         private IEnumerable<RawOutboundMessage> GetRawMessages(object content, IEnumerable<MessageHeader> headers)
@@ -76,7 +76,10 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        private async Task ExecutePipeline(IEnumerable<IProducerBehavior> behaviors, RawBrokerMessage message, RawBrokerMessageHandler finalAction)
+        private async Task ExecutePipeline(
+            IEnumerable<IProducerBehavior> behaviors,
+            RawBrokerMessage message,
+            RawBrokerMessageHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
@@ -88,18 +91,18 @@ namespace Silverback.Messaging.Broker
                 _messageLogger.LogInformation(_logger, "Message produced.", message);
             }
         }
-        
+
         /// <summary>
-        /// Publishes the specified message and returns its offset. 
+        ///     Publishes the specified message and returns its offset.
         /// </summary>
-        /// <param name="message">The <see cref="RawBrokerMessage"/> instance containing body, headers, endpoint, etc.</param>
+        /// <param name="message">The <see cref="RawBrokerMessage" /> instance containing body, headers, endpoint, etc.</param>
         /// <returns>The message offset.</returns>
         protected abstract IOffset Produce(RawBrokerMessage message);
 
         /// <summary>
-        /// Publishes the specified message and returns its offset. 
+        ///     Publishes the specified message and returns its offset.
         /// </summary>
-        /// <param name="message">The <see cref="RawBrokerMessage"/> instance containing body, headers, endpoint, etc.</param>
+        /// <param name="message">The <see cref="RawBrokerMessage" /> instance containing body, headers, endpoint, etc.</param>
         /// <returns>The message offset.</returns>
         protected abstract Task<IOffset> ProduceAsync(RawBrokerMessage message);
     }
@@ -109,24 +112,24 @@ namespace Silverback.Messaging.Broker
         where TEndpoint : IProducerEndpoint
     {
         protected Producer(
-            TBroker broker, 
-            TEndpoint endpoint, 
+            TBroker broker,
+            TEndpoint endpoint,
             MessageKeyProvider messageKeyProvider,
             IEnumerable<IProducerBehavior> behaviors,
-            ILogger<Producer> logger, 
+            ILogger<Producer> logger,
             MessageLogger messageLogger)
             : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
         {
         }
 
         /// <summary>
-        /// Gets the <typeparamref name="TBroker"/> instance that owns this instance.
+        ///     Gets the <typeparamref name="TBroker" /> instance that owns this instance.
         /// </summary>
-        protected new TBroker Broker => (TBroker)base.Broker;
+        protected new TBroker Broker => (TBroker) base.Broker;
 
         /// <summary>
-        /// Gets the <typeparamref name="TEndpoint"/> this instance is connected to.
+        ///     Gets the <typeparamref name="TEndpoint" /> this instance is connected to.
         /// </summary>
-        protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
+        protected new TEndpoint Endpoint => (TEndpoint) base.Endpoint;
     }
 }

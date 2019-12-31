@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -9,14 +9,17 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.ErrorHandling
 {
     /// <summary>
-    /// This policy simply skips the message that failed to be processed.
+    ///     This policy simply skips the message that failed to be processed.
     /// </summary>
     public class SkipMessageErrorPolicy : ErrorPolicyBase
     {
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
-        
-        public SkipMessageErrorPolicy(IServiceProvider serviceProvider, ILogger<SkipMessageErrorPolicy> logger, MessageLogger messageLogger)
+
+        public SkipMessageErrorPolicy(
+            IServiceProvider serviceProvider,
+            ILogger<SkipMessageErrorPolicy> logger,
+            MessageLogger messageLogger)
             : base(serviceProvider, logger, messageLogger)
         {
             _logger = logger;

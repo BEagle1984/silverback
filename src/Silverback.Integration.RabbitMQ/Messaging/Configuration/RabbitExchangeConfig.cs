@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -9,18 +9,18 @@ namespace Silverback.Messaging.Configuration
     public sealed class RabbitExchangeConfig : RabbitEndpointConfig, IEquatable<RabbitExchangeConfig>
     {
         /// <summary>
-        /// Gets or sets the exchange type. It should match with one of the constants declared in the
-        /// <see cref="ExchangeType"/> static class.
+        ///     Gets or sets the exchange type. It should match with one of the constants declared in the
+        ///     <see cref="ExchangeType" /> static class.
         /// </summary>
         public string ExchangeType { get; set; }
 
         public override void Validate()
         {
             base.Validate();
-            
+
             if (string.IsNullOrEmpty(ExchangeType))
                 throw new EndpointConfigurationException("ExchangeType cannot be null.");
-            
+
             if (!RabbitMQ.Client.ExchangeType.All().Contains(ExchangeType))
                 throw new EndpointConfigurationException(
                     $"ExchangeType value is invalid. Allowed types are: ${string.Join(", ", RabbitMQ.Client.ExchangeType.All())}.");

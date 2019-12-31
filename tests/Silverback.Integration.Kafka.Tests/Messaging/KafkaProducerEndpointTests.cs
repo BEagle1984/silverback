@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                     Acks = Confluent.Kafka.Acks.Leader
+                    Acks = Confluent.Kafka.Acks.Leader
                 }
             };
 
@@ -119,10 +119,10 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Serializer = new JsonMessageSerializer
                 {
-                     Settings =
-                     {
-                         MaxDepth = 100
-                     }
+                    Settings =
+                    {
+                        MaxDepth = 100
+                    }
                 }
             };
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -8,7 +8,7 @@ namespace Silverback.Messaging.HealthChecks
 {
     public class PingMessage : IMessage
     {
-        public static PingMessage New() => new PingMessage {TimeStamp = DateTime.UtcNow};
+        public static PingMessage New() => new PingMessage { TimeStamp = DateTime.UtcNow };
 
         public DateTime TimeStamp { get; set; }
     }

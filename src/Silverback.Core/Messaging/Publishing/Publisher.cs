@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -28,27 +28,27 @@ namespace Silverback.Messaging.Publishing
             _logger = logger;
         }
 
-        public void Publish(object message) => 
+        public void Publish(object message) =>
             Publish(new[] { message });
 
         public Task PublishAsync(object message) =>
             PublishAsync(new[] { message });
-    
-        public IEnumerable<TResult> Publish<TResult>(object message) => 
+
+        public IEnumerable<TResult> Publish<TResult>(object message) =>
             Publish<TResult>(new[] { message });
 
-        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(object message) => 
+        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(object message) =>
             await PublishAsync<TResult>(new[] { message });
 
-        public void Publish(IEnumerable<object> messages) => 
+        public void Publish(IEnumerable<object> messages) =>
             Publish(messages, false).Wait();
 
         public Task PublishAsync(IEnumerable<object> messages) => Publish(messages, true);
 
         public IEnumerable<TResult> Publish<TResult>(IEnumerable<object> messages) =>
             CastResults<TResult>(Publish(messages, false).Result);
-        
-        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) => 
+
+        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) =>
             CastResults<TResult>(await Publish(messages, true));
 
         private IEnumerable<TResult> CastResults<TResult>(IEnumerable<object> results)
@@ -60,7 +60,7 @@ namespace Silverback.Messaging.Publishing
                     yield return castResult;
                 }
                 else
-                { 
+                {
                     _logger.LogDebug(
                         $"Discarding result of type {result.GetType().FullName} because it doesn't match " +
                         $"the expected return type {typeof(TResult).FullName}.");
@@ -82,7 +82,10 @@ namespace Silverback.Messaging.Publishing
                 .ToList());
         }
 
-        private Task<IEnumerable<object>> ExecutePipeline(IEnumerable<IBehavior> behaviors, IEnumerable<object> messages, Func<IEnumerable<object>, Task<IEnumerable<object>>> finalAction)
+        private Task<IEnumerable<object>> ExecutePipeline(
+            IEnumerable<IBehavior> behaviors,
+            IEnumerable<object> messages,
+            Func<IEnumerable<object>, Task<IEnumerable<object>>> finalAction)
         {
             if (behaviors != null && behaviors.Any())
                 return behaviors.First().Handle(messages, m => ExecutePipeline(behaviors.Skip(1), m, finalAction));

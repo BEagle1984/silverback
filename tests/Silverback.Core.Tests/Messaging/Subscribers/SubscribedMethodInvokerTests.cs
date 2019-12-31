@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -29,8 +29,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod = new DelegateSubscription((Action<TestEventOne>) Method1, new SubscriptionOptions());
 
-            var messages = new object[] {new TestEventOne(), new TestEventTwo(), new TestEventOne()};
-            
+            var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
+
             await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
                 .Invoke(
                     subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
@@ -48,8 +48,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var calls = 0;
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<IEvent>)Method1, new SubscriptionOptions());
-            
+            var subscribedMethod = new DelegateSubscription((Action<IEvent>) Method1, new SubscriptionOptions());
+
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
             await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
@@ -67,9 +67,10 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
         public async Task Invoke_MethodWithSingleMessageParameterOfNotMatchingType_MethodNotInvoked()
         {
             var calls = 0;
-            
+
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<TestCommandOne>)Method1, new SubscriptionOptions());
+            var subscribedMethod =
+                new DelegateSubscription((Action<TestCommandOne>) Method1, new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -90,7 +91,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var receivedMessages = 0;
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<IEnumerable<TestEventOne>>)Method1, new SubscriptionOptions());
+            var subscribedMethod =
+                new DelegateSubscription((Action<IEnumerable<TestEventOne>>) Method1, new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -111,7 +113,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var receivedMessages = 0;
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<IEnumerable<IEvent>>)Method1, new SubscriptionOptions());
+            var subscribedMethod =
+                new DelegateSubscription((Action<IEnumerable<IEvent>>) Method1, new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -132,7 +135,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var calls = 0;
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<IEnumerable<TestCommandOne>>)Method1, new SubscriptionOptions());
+            var subscribedMethod = new DelegateSubscription((Action<IEnumerable<TestCommandOne>>) Method1,
+                new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 

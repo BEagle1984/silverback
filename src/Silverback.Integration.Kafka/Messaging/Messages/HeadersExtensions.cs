@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -19,11 +19,11 @@ namespace Silverback.Messaging.Messages
             return kafkaHeaders;
         }
 
-        public static IEnumerable<MessageHeader> ToSilverbackHeaders(this Confluent.Kafka.Headers kafkaHeaders) => 
-            kafkaHeaders.Select(kafkaHeader => 
-                new MessageHeader(
-                    kafkaHeader.Key, 
-                    Encoding.GetString(kafkaHeader.GetValueBytes())))
+        public static IEnumerable<MessageHeader> ToSilverbackHeaders(this Confluent.Kafka.Headers kafkaHeaders) =>
+            kafkaHeaders.Select(kafkaHeader =>
+                    new MessageHeader(
+                        kafkaHeader.Key,
+                        Encoding.GetString(kafkaHeader.GetValueBytes())))
                 .ToList();
     }
 }

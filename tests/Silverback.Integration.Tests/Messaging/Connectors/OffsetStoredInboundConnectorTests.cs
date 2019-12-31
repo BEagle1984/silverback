@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -43,9 +43,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             services.AddScoped<IOffsetStore, InMemoryOffsetStore>();
 
-            IServiceProvider serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-            _broker = (TestBroker)serviceProvider.GetService<IBroker>();
-            _connector = new OffsetStoredInboundConnector(_broker, serviceProvider, new NullLogger<OffsetStoredInboundConnector>(),
+            IServiceProvider serviceProvider =
+                services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+            _broker = (TestBroker) serviceProvider.GetService<IBroker>();
+            _connector = new OffsetStoredInboundConnector(_broker, serviceProvider,
+                new NullLogger<OffsetStoredInboundConnector>(),
                 new MessageLogger());
 
             _scopedServiceProvider = serviceProvider.CreateScope().ServiceProvider;
@@ -206,12 +208,40 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var consumer = _broker.Consumers.First();
 
-            try { await consumer.TestPush(e, offset: o1); } catch { }
-            try { await consumer.TestPush(e, offset: o2); } catch { }
-            try { await consumer.TestPush(e, offset: o3); } catch { }
-            try { await consumer.TestPush(fail, offset: o4); } catch { }
+            try
+            {
+                await consumer.TestPush(e, offset: o1);
+            }
+            catch
+            {
+            }
 
-            (await _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a")).Value.Should().Be("2");
+            try
+            {
+                await consumer.TestPush(e, offset: o2);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                await consumer.TestPush(e, offset: o3);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                await consumer.TestPush(fail, offset: o4);
+            }
+            catch
+            {
+            }
+
+            (await _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a")).Value.Should()
+                .Be("2");
         }
 
         [Fact]
@@ -249,14 +279,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                         await consumer1.TestPush(e, offset: o2);
                     }
                     catch (Exception)
-                    { }
+                    {
+                    }
                 }),
                 Task.Run(async () =>
                 {
                     try
                     {
                         await consumer2.TestPush(e, offset: o3);
-                        await consumer2.TestPush(fail,offset: o4);
+                        await consumer2.TestPush(fail, offset: o4);
                     }
                     catch (Exception)
                     {
@@ -266,7 +297,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             await Task.WhenAll(tasks);
 
-            (await _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a")).Value.Should().Be("2");
+            (await _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a")).Value.Should()
+                .Be("2");
         }
     }
 }

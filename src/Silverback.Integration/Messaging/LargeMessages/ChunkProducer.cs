@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,7 +12,7 @@ namespace Silverback.Messaging.LargeMessages
         public static IEnumerable<RawOutboundMessage> ChunkIfNeeded(RawOutboundMessage message)
         {
             var messageId = message.Headers.GetValue(MessageHeader.MessageIdKey);
-            var settings = (message.Endpoint as IProducerEndpoint)?.Chunk;
+            var settings = message.Endpoint?.Chunk;
 
             var chunkSize = settings?.Size ?? int.MaxValue;
 
@@ -31,7 +31,7 @@ namespace Silverback.Messaging.LargeMessages
             }
 
             var span = message.RawContent.AsMemory();
-            var chunksCount = (int)Math.Ceiling(message.RawContent.Length / (double)chunkSize);
+            var chunksCount = (int) Math.Ceiling(message.RawContent.Length / (double) chunkSize);
             var offset = 0;
 
             for (var i = 0; i < chunksCount; i++)

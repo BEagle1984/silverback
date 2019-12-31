@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -10,7 +10,8 @@ namespace Silverback.Messaging
 {
     public sealed class KafkaConsumerEndpoint : ConsumerEndpoint, IEquatable<KafkaConsumerEndpoint>
     {
-        public KafkaConsumerEndpoint(params string[] names) : base("")
+        public KafkaConsumerEndpoint(params string[] names)
+            : base("")
         {
             Names = names;
 
@@ -23,13 +24,13 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
-        /// Gets the names of the topics.
+        ///     Gets the names of the topics.
         /// </summary>
         public string[] Names { get; }
 
         /// <summary>
-        /// Gets or sets the Kafka client configuration. This is actually an extension of the configuration
-        /// dictionary provided by the Confluent.Kafka library.
+        ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
+        ///     dictionary provided by the Confluent.Kafka library.
         /// </summary>
         public KafkaConsumerConfig Configuration { get; set; } = new KafkaConsumerConfig();
 

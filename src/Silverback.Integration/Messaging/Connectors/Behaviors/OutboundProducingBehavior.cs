@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -20,6 +20,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
         {
             _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>();
         }
+
         public int SortIndex { get; } = 1000;
 
         public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)

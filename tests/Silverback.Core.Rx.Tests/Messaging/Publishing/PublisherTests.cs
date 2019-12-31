@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -94,8 +94,10 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
                     observable.Subscribe(_ => messagesCount++);
                 }));
 
-            await publisher.PublishAsync(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
-            await publisher.PublishAsync(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+            await publisher.PublishAsync(new ICommand[]
+                { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+            await publisher.PublishAsync(new ICommand[]
+                { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
 
             batchesCount.Should().Be(2);
             messagesCount.Should().Be(6);
@@ -106,9 +108,10 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             int count = 0;
             var publisher = GetPublisher(config =>
-                    config
-                        .Subscribe((TestCommandOne msg) => new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
-                        .Subscribe((TestCommandTwo _) => count++));
+                config
+                    .Subscribe((TestCommandOne msg) =>
+                        new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
+                    .Subscribe((TestCommandTwo _) => count++));
 
             publisher.Publish(new TestCommandOne());
 

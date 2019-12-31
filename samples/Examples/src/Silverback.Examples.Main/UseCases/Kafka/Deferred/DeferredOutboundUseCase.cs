@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -22,7 +22,6 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Deferred
             Title = "Deferred publish (DbOutbound)";
             Description = "The messages are stored into an outbox table and asynchronously published. " +
                           "An outbound worker have to be started to process the outbox table.";
-
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
@@ -48,12 +47,13 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Deferred
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent {Content = DateTime.Now.ToString("HH:mm:ss.fff")});
+            await publisher.PublishAsync(new SimpleIntegrationEvent
+                { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
 
             var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
             await dbContext.SaveChangesAsync();
         }
-        
+
         public class CustomHeadersBehavior : IBehavior
         {
             public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -18,7 +18,10 @@ namespace Silverback.Messaging.Connectors
         public IOutboundRoutingConfiguration Add<TMessage>(IProducerEndpoint endpoint, Type outboundConnectorType) =>
             Add(typeof(TMessage), endpoint, outboundConnectorType);
 
-        public IOutboundRoutingConfiguration Add(Type messageType, IProducerEndpoint endpoint, Type outboundConnectorType)
+        public IOutboundRoutingConfiguration Add(
+            Type messageType,
+            IProducerEndpoint endpoint,
+            Type outboundConnectorType)
         {
             _routes.Add(new OutboundRoute(messageType, endpoint, outboundConnectorType));
             return this;

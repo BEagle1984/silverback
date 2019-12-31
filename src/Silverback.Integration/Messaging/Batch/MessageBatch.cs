@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Batch
             Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> messagesHandler,
             Func<IEnumerable<IOffset>, IServiceProvider, Task> commitHandler,
             Func<IServiceProvider, Task> rollbackHandler,
-            IErrorPolicy errorPolicy, 
+            IErrorPolicy errorPolicy,
             IServiceProvider serviceProvider)
         {
             _messagesHandler = messagesHandler ?? throw new ArgumentNullException(nameof(messagesHandler));
@@ -77,7 +77,9 @@ namespace Silverback.Messaging.Batch
         {
             // TODO: Check this!
             if (_processingException != null)
-                throw new SilverbackException("Cannot add to the batch because the processing of the previous batch failed. See inner exception for details.", _processingException);
+                throw new SilverbackException(
+                    "Cannot add to the batch because the processing of the previous batch failed. See inner exception for details.",
+                    _processingException);
 
             await _semaphore.WaitAsync();
 

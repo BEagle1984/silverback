@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -18,18 +18,19 @@ namespace Silverback.Messaging.Broker
     {
         private readonly ILogger<Producer> _logger;
         private readonly IModel _channel;
-        
+
         private readonly BlockingCollection<QueuedMessage> _queue = new BlockingCollection<QueuedMessage>();
-        
+
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        
-        public RabbitProducer(RabbitBroker broker,
+
+        public RabbitProducer(
+            RabbitBroker broker,
             RabbitProducerEndpoint endpoint,
             MessageKeyProvider messageKeyProvider,
             IEnumerable<IProducerBehavior> behaviors,
             RabbitConnectionFactory connectionFactory,
             ILogger<Producer> logger,
-            MessageLogger messageLogger) 
+            MessageLogger messageLogger)
             : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
         {
             _logger = logger;
@@ -39,17 +40,17 @@ namespace Silverback.Messaging.Broker
             Task.Run(() => ProcessQueue(_cancellationTokenSource.Token));
         }
 
-        /// <inheritdoc cref="Producer"/>
-        protected override IOffset Produce(RawBrokerMessage message)=>
+        /// <inheritdoc cref="Producer" />
+        protected override IOffset Produce(RawBrokerMessage message) =>
             AsyncHelper.RunSynchronously(() => ProduceAsync(message));
 
-        /// <inheritdoc cref="Producer"/>
+        /// <inheritdoc cref="Producer" />
         protected override Task<IOffset> ProduceAsync(RawBrokerMessage message)
         {
             var queuedMessage = new QueuedMessage(message);
 
             _queue.Add(queuedMessage);
-            
+
             return queuedMessage.TaskCompletionSource.Task;
         }
 
@@ -64,7 +65,7 @@ namespace Silverback.Messaging.Broker
                     try
                     {
                         PublishToChannel(queuedMessage.Message);
-                        
+
                         queuedMessage.TaskCompletionSource.SetResult(null);
                     }
                     catch (Exception ex)
@@ -78,7 +79,7 @@ namespace Silverback.Messaging.Broker
                 _logger.LogTrace(ex, "Producer queue processing was cancelled.");
             }
         }
-        
+
         private void PublishToChannel(RawBrokerMessage message)
         {
             var endpoint = (RabbitProducerEndpoint) message.Endpoint;
@@ -100,13 +101,14 @@ namespace Silverback.Messaging.Broker
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (endpoint.ConfirmationTimeout.HasValue) _channel.WaitForConfirmsOrDie(endpoint.ConfirmationTimeout.Value);
+            if (endpoint.ConfirmationTimeout.HasValue)
+                _channel.WaitForConfirmsOrDie(endpoint.ConfirmationTimeout.Value);
         }
 
         private void Flush()
         {
             _queue.CompleteAdding();
-            
+
             while (!_queue.IsCompleted)
                 Task.Delay(100).Wait();
         }
@@ -116,7 +118,7 @@ namespace Silverback.Messaging.Broker
             Flush();
 
             _cancellationTokenSource.Cancel();
-            
+
             _channel?.Dispose();
         }
 

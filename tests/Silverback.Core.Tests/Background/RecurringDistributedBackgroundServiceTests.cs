@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -124,7 +124,9 @@ namespace Silverback.Tests.Core.Background
         {
             private readonly Func<CancellationToken, Task> _task;
 
-            public TestRecurringDistributedBackgroundService(Func<CancellationToken, Task> task, IDistributedLockManager lockManager) 
+            public TestRecurringDistributedBackgroundService(
+                Func<CancellationToken, Task> task,
+                IDistributedLockManager lockManager)
                 : base(
                     TimeSpan.FromMilliseconds(10),
                     new DistributedLockSettings(
@@ -133,14 +135,15 @@ namespace Silverback.Tests.Core.Background
                         TimeSpan.FromMilliseconds(500),
                         TimeSpan.FromMilliseconds(100),
                         TimeSpan.FromSeconds(1),
-                        TimeSpan.FromMilliseconds(100)), 
-                    lockManager, 
+                        TimeSpan.FromMilliseconds(100)),
+                    lockManager,
                     Substitute.For<ILogger<RecurringDistributedBackgroundService>>())
             {
                 _task = task;
             }
 
-            protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) => _task.Invoke(stoppingToken);
+            protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) =>
+                _task.Invoke(stoppingToken);
         }
     }
 }

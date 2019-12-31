@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -17,7 +17,8 @@ namespace Silverback.Messaging.Connectors.Repositories
         private readonly MessageKeyProvider _messageKeyProvider;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
-        public DbInboundLog(IDbContext dbContext, MessageKeyProvider messageKeyProvider) : base(dbContext)
+        public DbInboundLog(IDbContext dbContext, MessageKeyProvider messageKeyProvider)
+            : base(dbContext)
         {
             _messageKeyProvider = messageKeyProvider;
         }
@@ -25,7 +26,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         public async Task Add(object message, IConsumerEndpoint endpoint)
         {
             await _semaphore.WaitAsync();
-            
+
             try
             {
                 DbSet.Add(new InboundMessage

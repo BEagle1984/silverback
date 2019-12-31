@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -37,12 +37,13 @@ namespace Silverback.Messaging.Configuration.Reflection
                 .Select(p => GetParameterValue(p, configSection, type))
                 .ToArray();
 
-            return (T)Activator.CreateInstance(type, constructorArgs);
+            return (T) Activator.CreateInstance(type, constructorArgs);
         }
 
         private object GetParameterValue(ParameterInfo parameter, IConfigurationSection configSection, Type type)
         {
-            var value = GetParameterValueFromConfig(parameter, configSection) ?? _serviceProvider.GetService(parameter.ParameterType);
+            var value = GetParameterValueFromConfig(parameter, configSection) ??
+                        _serviceProvider.GetService(parameter.ParameterType);
 
             if (value == null)
             {

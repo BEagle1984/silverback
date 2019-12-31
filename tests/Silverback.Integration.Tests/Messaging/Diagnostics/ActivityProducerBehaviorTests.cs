@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
@@ -32,23 +32,23 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             var rawMessage = new RawOutboundMessage("123", null, TestProducerEndpoint.GetDefault());
 
             new ActivityProducerBehavior().Handle(rawMessage, _ => Task.CompletedTask);
-            
+
             rawMessage.Headers.Should().Contain(
                 h => h.Key == DiagnosticsConstants.TraceIdHeaderKey &&
                      h.Value.StartsWith("00-0af7651916cd43dd8448eb211c80319c"));
         }
-        
+
         [Fact]
         public void Handle_NoStartedActivity_ActivityStartedAndTraceIdHeaderIsSet()
         {
             var rawMessage = new RawOutboundMessage("123", null, TestProducerEndpoint.GetDefault());
 
             new ActivityProducerBehavior().Handle(rawMessage, _ => Task.CompletedTask);
-            
+
             rawMessage.Headers.Should().Contain(
                 h => h.Key == DiagnosticsConstants.TraceIdHeaderKey && !string.IsNullOrEmpty(h.Value));
         }
-        
+
         [Fact]
         public void Handle_FromProduceWithStartedActivity_TraceIdHeaderIsSet()
         {
@@ -70,7 +70,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 h => h.Key == DiagnosticsConstants.TraceIdHeaderKey &&
                      h.Value.StartsWith("00-0af7651916cd43dd8448eb211c80319c"));
         }
-        
+
         [Fact]
         public async Task Handle_FromProduceAsyncWithStartedActivity_TraceIdHeaderIsSet()
         {

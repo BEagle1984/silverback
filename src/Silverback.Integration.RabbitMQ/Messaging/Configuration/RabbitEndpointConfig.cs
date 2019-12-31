@@ -1,7 +1,6 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -10,19 +9,19 @@ namespace Silverback.Messaging.Configuration
     public abstract class RabbitEndpointConfig
     {
         /// <summary>
-        /// Gets or sets a boolean value indicating whether the queue or the exchange will survive a broker restart.
+        ///     Gets or sets a boolean value indicating whether the queue or the exchange will survive a broker restart.
         /// </summary>
         public bool IsDurable { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets a boolean value indicating whether the queue or the exchange will be automatically deleted
-        /// when the last consumer unsubscribes.
+        ///     Gets or sets a boolean value indicating whether the queue or the exchange will be automatically deleted
+        ///     when the last consumer unsubscribes.
         /// </summary>
         public bool IsAutoDeleteEnabled { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets the optional arguments dictionary.
-        /// The arguments are used by plugins and broker-specific features such as message TTL, queue length limit, etc.
+        ///     Gets or sets the optional arguments dictionary.
+        ///     The arguments are used by plugins and broker-specific features such as message TTL, queue length limit, etc.
         /// </summary>
         public Dictionary<string, object> Arguments { get; set; }
 
@@ -33,7 +32,7 @@ namespace Silverback.Messaging.Configuration
         #region Equality
 
         protected bool Equals(RabbitEndpointConfig other) =>
-            IsDurable == other.IsDurable && 
+            IsDurable == other.IsDurable &&
             IsAutoDeleteEnabled == other.IsAutoDeleteEnabled &&
             Equals(Arguments, other.Arguments);
 
@@ -41,7 +40,7 @@ namespace Silverback.Messaging.Configuration
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((RabbitEndpointConfig) obj);
         }
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -13,12 +13,19 @@ namespace Silverback.Background
         private readonly TimeSpan _interval;
         private readonly ILogger<RecurringDistributedBackgroundService> _logger;
 
-        protected RecurringDistributedBackgroundService(TimeSpan interval, IDistributedLockManager distributedLockManager, ILogger<RecurringDistributedBackgroundService> logger)
+        protected RecurringDistributedBackgroundService(
+            TimeSpan interval,
+            IDistributedLockManager distributedLockManager,
+            ILogger<RecurringDistributedBackgroundService> logger)
             : this(interval, null, distributedLockManager, logger)
         {
         }
 
-        protected RecurringDistributedBackgroundService(TimeSpan interval, DistributedLockSettings distributedLockSettings, IDistributedLockManager distributedLockManager, ILogger<RecurringDistributedBackgroundService> logger)
+        protected RecurringDistributedBackgroundService(
+            TimeSpan interval,
+            DistributedLockSettings distributedLockSettings,
+            IDistributedLockManager distributedLockManager,
+            ILogger<RecurringDistributedBackgroundService> logger)
             : base(distributedLockSettings, distributedLockManager, logger)
         {
             _interval = interval;

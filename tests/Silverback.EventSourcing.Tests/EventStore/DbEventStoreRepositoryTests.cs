@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -309,7 +309,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             entity.Name.Should().Be("Silverback");
             entity.Age.Should().Be(35);
         }
-        
+
         [Fact]
         public void Get_ExistingId_EventsAppliedInRightOrder()
         {
@@ -589,7 +589,6 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             _dbContext.Persons.Count().Should().Be(0);
             _dbContext.Persons.SelectMany(s => s.Events).Count().Should().Be(0);
-
         }
 
         [Fact]
@@ -614,7 +613,6 @@ namespace Silverback.Tests.EventSourcing.EventStore
             var result = await repo.RemoveAsync(entity);
 
             result.Should().BeNull();
-
         }
 
         #endregion

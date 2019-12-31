@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -44,7 +44,8 @@ namespace Silverback.Messaging.Configuration.Common
             var setMethod = endpointType.GetProperty("Serializer").GetSetMethod(true);
 
             if (setMethod == null)
-                throw new InvalidOperationException($"The Serializer property on type {endpointType.FullName} doesn't have a setter.");
+                throw new InvalidOperationException(
+                    $"The Serializer property on type {endpointType.FullName} doesn't have a setter.");
 
             setMethod.Invoke(
                 endpoint, new object[]

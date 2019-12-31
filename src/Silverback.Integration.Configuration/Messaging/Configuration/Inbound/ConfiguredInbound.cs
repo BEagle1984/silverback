@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,7 +11,11 @@ namespace Silverback.Messaging.Configuration.Inbound
 {
     public class ConfiguredInbound
     {
-        public ConfiguredInbound(Type connectorType, IConsumerEndpoint endpoint, IEnumerable<ErrorPolicyBase> errorPolicies, InboundConnectorSettings settings)
+        public ConfiguredInbound(
+            Type connectorType,
+            IConsumerEndpoint endpoint,
+            IEnumerable<ErrorPolicyBase> errorPolicies,
+            InboundConnectorSettings settings)
         {
             ConnectorType = connectorType;
             Endpoint = endpoint;

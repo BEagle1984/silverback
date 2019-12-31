@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -31,7 +31,10 @@ namespace Silverback.Domain.Util
             methods.ForEach(m => InvokeApplyMethod(m, @event, entity, isReplaying));
         }
 
-        private static void InvokeApplyMethod(MethodInfo methodInfo, IEntityEvent @event, object entity,
+        private static void InvokeApplyMethod(
+            MethodInfo methodInfo,
+            IEntityEvent @event,
+            object entity,
             bool isReplaying)
         {
             try
@@ -41,10 +44,10 @@ namespace Silverback.Domain.Util
                 switch (parametersCount)
                 {
                     case 1:
-                        methodInfo.Invoke(entity, new object[] {@event});
+                        methodInfo.Invoke(entity, new object[] { @event });
                         break;
                     case 2:
-                        methodInfo.Invoke(entity, new object[] {@event, isReplaying});
+                        methodInfo.Invoke(entity, new object[] { @event, isReplaying });
                         break;
                     default:
                         throw new ArgumentException("Invalid parameters count.");

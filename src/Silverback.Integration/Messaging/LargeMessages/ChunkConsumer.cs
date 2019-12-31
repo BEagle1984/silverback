@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,7 +12,7 @@ namespace Silverback.Messaging.LargeMessages
     public class ChunkConsumer
     {
         private readonly IChunkStore _store;
- 
+
         public ChunkConsumer(IChunkStore store)
         {
             _store = store;

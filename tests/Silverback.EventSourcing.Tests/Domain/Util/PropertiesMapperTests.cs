@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -14,7 +14,7 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
         [Fact]
         public void Map_MatchingNames_PropertiesValuesCopied()
         {
-            var source = new {Id = 123, Title = "Silverback for Dummies", Published = DateTime.Today, Pages = 13};
+            var source = new { Id = 123, Title = "Silverback for Dummies", Published = DateTime.Today, Pages = 13 };
             var dest = new Book();
 
             PropertiesMapper.Map(source, dest);

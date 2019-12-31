@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,7 +12,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.ErrorHandling
 {
     /// <summary>
-    /// This policy moves the failed messages to the configured endpoint.
+    ///     This policy moves the failed messages to the configured endpoint.
     /// </summary>
     public class MoveMessageErrorPolicy : ErrorPolicyBase
     {
@@ -24,7 +24,12 @@ namespace Silverback.Messaging.ErrorHandling
         private Func<object, Exception, object> _transformationFunction;
         private Func<MessageHeaderCollection, Exception, MessageHeaderCollection> _headersTransformationFunction;
 
-        public MoveMessageErrorPolicy(IBroker broker, IProducerEndpoint endpoint, IServiceProvider serviceProvider, ILogger<MoveMessageErrorPolicy> logger, MessageLogger messageLogger) 
+        public MoveMessageErrorPolicy(
+            IBroker broker,
+            IProducerEndpoint endpoint,
+            IServiceProvider serviceProvider,
+            ILogger<MoveMessageErrorPolicy> logger,
+            MessageLogger messageLogger)
             : base(serviceProvider, logger, messageLogger)
         {
             if (broker == null) throw new ArgumentNullException(nameof(broker));
@@ -37,7 +42,8 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        public MoveMessageErrorPolicy Transform(Func<object, Exception, object> transformationFunction,
+        public MoveMessageErrorPolicy Transform(
+            Func<object, Exception, object> transformationFunction,
             Func<MessageHeaderCollection, Exception, MessageHeaderCollection> headersTransformationFunction = null)
         {
             _transformationFunction = transformationFunction;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -19,7 +19,8 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             _argumentResolvers = argumentResolvers.Reverse();
         }
 
-        public (IMessageArgumentResolver resolver, Type messageType) GetMessageArgumentResolver(SubscribedMethod methodInfo)
+        public (IMessageArgumentResolver resolver, Type messageType) GetMessageArgumentResolver(
+            SubscribedMethod methodInfo)
         {
             var resolver = GetMessageArgumentResolver(methodInfo.Parameters[0], methodInfo.MethodInfo);
 
@@ -34,10 +35,13 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
                         .GetValue(parameterInfo.ParameterType))
                 .ToArray();
 
-        private IMessageArgumentResolver GetMessageArgumentResolver(ParameterInfo parameterInfo, MethodInfo methodInfo) =>
+        private IMessageArgumentResolver
+            GetMessageArgumentResolver(ParameterInfo parameterInfo, MethodInfo methodInfo) =>
             GetArgumentResolver<IMessageArgumentResolver>(parameterInfo, methodInfo);
 
-        private IAdditionalArgumentResolver GetAdditionalArgumentResolver(ParameterInfo parameterInfo, MethodInfo methodInfo) =>
+        private IAdditionalArgumentResolver GetAdditionalArgumentResolver(
+            ParameterInfo parameterInfo,
+            MethodInfo methodInfo) =>
             GetArgumentResolver<IAdditionalArgumentResolver>(parameterInfo, methodInfo);
 
         private TResolver GetArgumentResolver<TResolver>(ParameterInfo parameterInfo, MethodInfo methodInfo)

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -104,7 +104,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             headers.Should().NotContain(h => h.Key == DiagnosticsConstants.TraceBaggageHeaderKey);
         }
-        
+
         [Fact]
         public void SetMessageHeaders_NoCurrentActivity_ExceptionIsThrown()
         {
@@ -130,7 +130,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.ParentId.Should().Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
             activity.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
         }
-        
+
         [Fact]
         public void InitFromMessageHeaders_WithoutActivityHeaders_ActivityIsNotModified()
         {
@@ -143,7 +143,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.TraceStateString.Should().BeNull();
             activity.Baggage.Should().BeEmpty();
         }
-        
+
         [Fact]
         public void InitFromMessageHeaders_WithoutStateAndBaggageHeaders_ActivityStateAndBaggageAreNotSet()
         {

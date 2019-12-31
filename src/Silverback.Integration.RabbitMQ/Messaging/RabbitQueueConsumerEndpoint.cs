@@ -1,8 +1,7 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Configuration;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
@@ -13,11 +12,6 @@ namespace Silverback.Messaging
         public RabbitQueueConsumerEndpoint(string name)
             : base(name)
         {
-        }
-        
-        public override void Validate()
-        {
-            base.Validate();
         }
 
         #region Equality

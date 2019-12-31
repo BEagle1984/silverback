@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -21,12 +21,12 @@ namespace Silverback.Messaging.Broker
         {
         }
 
-        /// <inheritdoc cref="Producer"/>
-        protected override IOffset Produce(RawBrokerMessage message) => 
+        /// <inheritdoc cref="Producer" />
+        protected override IOffset Produce(RawBrokerMessage message) =>
             Broker.GetTopic(Endpoint.Name).Publish(message.RawContent, message.Headers);
 
-        /// <inheritdoc cref="Producer"/>
-        protected override Task<IOffset> ProduceAsync(RawBrokerMessage message) => 
+        /// <inheritdoc cref="Producer" />
+        protected override Task<IOffset> ProduceAsync(RawBrokerMessage message) =>
             Broker.GetTopic(Endpoint.Name).PublishAsync(message.RawContent, message.Headers);
     }
 }

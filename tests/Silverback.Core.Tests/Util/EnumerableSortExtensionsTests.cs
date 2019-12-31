@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
@@ -41,11 +41,13 @@ namespace Silverback.Tests.Core.Util
             public Item(string id) => Id = id;
             public string Id { get; }
         }
-        
+
         private class SortedItem : Item, ISorted
         {
-            public SortedItem(int sortIndex) : base(sortIndex.ToString()) => SortIndex = sortIndex;
-            public int SortIndex { get;}
+            public SortedItem(int sortIndex)
+                : base(sortIndex.ToString()) => SortIndex = sortIndex;
+
+            public int SortIndex { get; }
         }
     }
 }

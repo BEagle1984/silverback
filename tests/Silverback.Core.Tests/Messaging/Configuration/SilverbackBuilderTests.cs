@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -609,7 +609,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             messages.ForEach(m => m.Message.Should().Be("behavior"));
         }
-        
+
         [Fact]
         public void AddTransientBehaviorWithGenericArguments_Type_BehaviorProperlyRegistered()
         {
@@ -630,7 +630,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             messages.ForEach(m => m.Message.Should().Be("behavior"));
         }
-        
+
         [Fact]
         public void AddTransientBehavior_Factory_BehaviorProperlyRegistered()
         {

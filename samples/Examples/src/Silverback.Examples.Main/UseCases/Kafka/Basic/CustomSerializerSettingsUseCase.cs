@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -18,8 +18,9 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Basic
         public CustomSerializerSettingsUseCase()
         {
             Title = "Custom serializer settings";
-            Description = "Playing with the default JsonSerializer settings to change the way messages are encoded and " +
-                          "formatted.";
+            Description =
+                "Playing with the default JsonSerializer settings to change the way messages are encoded and " +
+                "formatted.";
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
@@ -35,7 +36,8 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Basic
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new CustomSerializedIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new CustomSerializedIntegrationEvent
+                { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }
 
         private KafkaProducerEndpoint CreateEndpoint(string name) =>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -40,7 +40,9 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(3, true)]
         [InlineData(4, false)]
         [InlineData(7, false)]
-        public void CanHandle_InboundMessageWithDifferentFailedAttemptsCount_ReturnReflectsMaxFailedAttempts(int failedAttempts, bool expectedResult)
+        public void CanHandle_InboundMessageWithDifferentFailedAttemptsCount_ReturnReflectsMaxFailedAttempts(
+            int failedAttempts,
+            bool expectedResult)
         {
             var policy = _errorPolicyBuilder.Retry().MaxFailedAttempts(3);
 

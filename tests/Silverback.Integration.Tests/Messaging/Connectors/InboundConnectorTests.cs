@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -51,7 +51,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             {
                 ValidateScopes = true
             });
-            _broker = (TestBroker)serviceProvider.GetService<IBroker>();
+            _broker = (TestBroker) serviceProvider.GetService<IBroker>();
             _connector = new InboundConnector(_broker, serviceProvider);
             _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
         }
@@ -71,7 +71,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-           _testSubscriber.ReceivedMessages.Count.Should().Be(5);
+            _testSubscriber.ReceivedMessages.Count.Should().Be(5);
         }
 
         [Fact]
@@ -113,8 +113,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = "key", Value = "value1" } });
-            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = "key", Value = "value2" } });
+            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() },
+                new[] { new MessageHeader { Key = "key", Value = "value1" } });
+            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() },
+                new[] { new MessageHeader { Key = "key", Value = "value2" } });
 
             var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
             var firstMessage = inboundMessages.First();
@@ -135,7 +137,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var consumer = _broker.Consumers.First();
             await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() }, new[] { new MessageHeader { Key = MessageHeader.FailedAttemptsKey, Value = "3" } });
+            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() },
+                new[] { new MessageHeader { Key = MessageHeader.FailedAttemptsKey, Value = "3" } });
 
             var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
             inboundMessages.First().Headers.GetValue<int>(MessageHeader.FailedAttemptsKey).Should().Be(null);
@@ -242,6 +245,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                     await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
                 }
             }
+
             _testSubscriber.ReceivedMessages.Count.Should().Be(0);
 
             foreach (var consumer in _broker.Consumers.Take(3))
@@ -346,7 +350,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
             _testSubscriber.ReceivedMessages.First().As<TestEventOne>().Content.Should().Be("A full message!");
         }
-        
+
         [Fact]
         public async Task Bind_PushMessageChunksWithDuplicates_FullMessagesReceived()
         {
@@ -639,7 +643,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var consumer = _broker.Consumers.First();
             await consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
 
-            var producer = (TestProducer)_broker.GetProducer(new TestProducerEndpoint("bad"));
+            var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("bad"));
 
             _testSubscriber.FailCount.Should().Be(2);
             _testSubscriber.ReceivedMessages.Count.Should().Be(2);
@@ -658,9 +662,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var consumer = _broker.Consumers.First();
             await consumer.TestPush(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
 
-            var producer = (TestProducer)_broker.GetProducer(new TestProducerEndpoint("bad"));
+            var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("bad"));
 
-            producer.ProducedMessages.Last().Headers.Count(h => h.Key == MessageHeader.FailedAttemptsKey).Should().Be(1);
+            producer.ProducedMessages.Last().Headers.Count(h => h.Key == MessageHeader.FailedAttemptsKey).Should()
+                .Be(1);
         }
 
         [Fact]
@@ -717,6 +722,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _testSubscriber.ReceivedMessages.OfType<BatchProcessedEvent>().Count().Should().Be(1);
             _testSubscriber.ReceivedMessages.OfType<TestEventOne>().Count().Should().Be(2);
         }
+
         #endregion
     }
 }

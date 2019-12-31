@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -10,19 +10,22 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Connectors.Repositories
 {
     /// <summary>
-    /// An outbound queue persisted in memory. Note that writing in the queue is thread-safe but
-    /// reading is not.
+    ///     An outbound queue persisted in memory. Note that writing in the queue is thread-safe but
+    ///     reading is not.
     /// </summary>
     /// <seealso cref="IOutboundQueueProducer" />
     /// <seealso cref="IOutboundQueueConsumer" />
-    public class InMemoryOutboundQueue : TransactionalList<QueuedMessage>, IOutboundQueueProducer, IOutboundQueueConsumer
+    public class InMemoryOutboundQueue
+        : TransactionalList<QueuedMessage>, IOutboundQueueProducer,
+            IOutboundQueueConsumer
     {
         #region Writer
 
         public Task Enqueue(IOutboundMessage message)
         {
             if (message.RawContent == null)
-                ((OutboundMessage)message).RawContent = message.Endpoint.Serializer.Serialize(message.Content, message.Headers);
+                ((OutboundMessage) message).RawContent =
+                    message.Endpoint.Serializer.Serialize(message.Content, message.Headers);
 
             Add(new QueuedMessage(message.RawContent, message.Headers, message.Endpoint));
             return Task.CompletedTask;
@@ -45,8 +48,9 @@ namespace Silverback.Messaging.Connectors.Repositories
         #region Reader
 
         public Task<TimeSpan> GetMaxAge() => Task.FromResult(TimeSpan.Zero);
-        
-        public Task<IEnumerable<QueuedMessage>> Dequeue(int count) => Task.FromResult(Entries.Take(count).ToArray().AsEnumerable());
+
+        public Task<IEnumerable<QueuedMessage>> Dequeue(int count) =>
+            Task.FromResult(Entries.Take(count).ToArray().AsEnumerable());
 
         public Task Retry(QueuedMessage queuedMessage)
         {

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -44,7 +44,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             services.AddScoped<IInboundLog, InMemoryInboundLog>();
 
             _serviceProvider = services.BuildServiceProvider();
-            _broker = (TestBroker)_serviceProvider.GetService<IBroker>();
+            _broker = (TestBroker) _serviceProvider.GetService<IBroker>();
             _connector = new LoggedInboundConnector(_broker, _serviceProvider, new NullLogger<LoggedInboundConnector>(),
                 new MessageLogger());
 
@@ -173,10 +173,37 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var consumer = _broker.Consumers.First();
 
-            try { await consumer.TestPush(e1); } catch { }
-            try { await consumer.TestPush(e2); } catch { }
-            try { await consumer.TestPush(e3); } catch { }
-            try { await consumer.TestPush(e4); } catch { }
+            try
+            {
+                await consumer.TestPush(e1);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                await consumer.TestPush(e2);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                await consumer.TestPush(e3);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                await consumer.TestPush(e4);
+            }
+            catch
+            {
+            }
 
             (await _serviceProvider.GetRequiredService<IInboundLog>().GetLength()).Should().Be(2);
         }
@@ -214,7 +241,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                         await consumer1.TestPush(e2);
                     }
                     catch (Exception)
-                    { }
+                    {
+                    }
                 }),
                 Task.Run(async () =>
                 {

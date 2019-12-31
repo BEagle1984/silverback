@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -16,8 +16,8 @@ namespace Silverback.Messaging.Messages
         public void Add(string key, object value) =>
             Add(key, value.ToString());
 
-        public void Add(string key, string value) => 
-            Add(new MessageHeader {Key = key, Value = value});
+        public void Add(string key, string value) =>
+            Add(new MessageHeader { Key = key, Value = value });
 
         public void Remove(string key) =>
             RemoveAll(x => x.Key == key);

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -82,7 +82,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             person.Name.Should().Be("Mandy");
         }
-        
+
         [Fact]
         public void AsQueryable_EfCoreDbSetQueryableIsReturned()
         {

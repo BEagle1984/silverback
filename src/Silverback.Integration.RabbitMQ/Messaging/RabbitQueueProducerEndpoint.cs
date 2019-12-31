@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -10,19 +10,20 @@ namespace Silverback.Messaging
 {
     public sealed class RabbitQueueProducerEndpoint : RabbitProducerEndpoint, IEquatable<RabbitQueueProducerEndpoint>
     {
-        public RabbitQueueProducerEndpoint(string name) : base(name)
+        public RabbitQueueProducerEndpoint(string name)
+            : base(name)
         {
         }
 
         /// <summary>
-        /// Gets or sets the queue configuration.
+        ///     Gets or sets the queue configuration.
         /// </summary>
         public RabbitQueueConfig Queue { get; set; } = new RabbitQueueConfig();
 
         public override void Validate()
         {
             base.Validate();
-            
+
             if (Queue == null)
                 throw new EndpointConfigurationException("Queue cannot be null");
 

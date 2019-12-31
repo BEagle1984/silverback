@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -33,7 +33,8 @@ namespace Silverback.Messaging.Configuration
             var endpointSectionReader = new EndpointSectionReader(customActivator);
             var errorPoliciesSectionReader = new ErrorPoliciesSectionReader(customActivator);
             var inboundSettingsSectionReader = new InboundSettingsSectionReader();
-            var inboundSectionReader = new InboundSectionReader(typeFinder, endpointSectionReader, errorPoliciesSectionReader, inboundSettingsSectionReader);
+            var inboundSectionReader = new InboundSectionReader(
+                typeFinder, endpointSectionReader, errorPoliciesSectionReader, inboundSettingsSectionReader);
             var outboundSectionReader = new OutboundSectionReader(typeFinder, endpointSectionReader);
 
             Inbound = inboundSectionReader
@@ -46,12 +47,13 @@ namespace Silverback.Messaging.Configuration
 
             return this;
         }
-        
+
         public void Apply(IEndpointsConfigurationBuilder builder)
         {
             foreach (var inbound in Inbound)
             {
-                builder.AddInbound(inbound.Endpoint, inbound.ConnectorType, b => inbound.ErrorPolicies.Any() ? b.Chain(inbound.ErrorPolicies) : null);
+                builder.AddInbound(inbound.Endpoint, inbound.ConnectorType,
+                    b => inbound.ErrorPolicies.Any() ? b.Chain(inbound.ErrorPolicies) : null);
             }
 
             foreach (var outbound in Outbound)

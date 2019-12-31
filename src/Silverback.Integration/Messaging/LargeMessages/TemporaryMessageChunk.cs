@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -8,11 +8,9 @@ namespace Silverback.Messaging.LargeMessages
 {
     public class TemporaryMessageChunk
     {
-        [Key, MaxLength(300)]
-        public string OriginalMessageId { get; set; }
+        [Key, MaxLength(300)] public string OriginalMessageId { get; set; }
 
-        [Key]
-        public int ChunkId { get; set; }
+        [Key] public int ChunkId { get; set; }
 
         public int ChunksCount { get; set; }
 

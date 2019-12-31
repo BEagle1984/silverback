@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
         public InMemoryInboundLogTests()
         {
-            _log = new InMemoryInboundLog(new MessageKeyProvider(new []{new DefaultPropertiesMessageKeyProvider()}));
+            _log = new InMemoryInboundLog(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() }));
             InMemoryInboundLog.Clear();
         }
 
@@ -66,7 +66,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             await _log.Add(new TestEventOne { Id = Guid.NewGuid() }, TestConsumerEndpoint.GetDefault());
             await _log.Commit();
 
-            var result = await _log.Exists(new TestEventOne{Id = messageId}, TestConsumerEndpoint.GetDefault());
+            var result = await _log.Exists(new TestEventOne { Id = messageId }, TestConsumerEndpoint.GetDefault());
 
             result.Should().BeTrue();
         }
