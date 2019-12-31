@@ -1,80 +1,90 @@
 ---
 title: Behaviors
 permalink: /docs/quickstart/behaviors
-toc: false
+toc: true
 ---
 
 The behaviors can be used to build a custom pipeline (similar to the asp.net pipeline), easily adding your cross-cutting functionalities such as logging, validation, etc.
 
 ## IBehavior
 
-A behavior must implement the `IBehavior` interface and be registered for dependency injection.
+The behaviors implementing the `IBehavior` interface will be invoked by the `IPublisher` internals every time a message is published to the internal bus (this includes the wrapped `IInboundMessage` and `IOutboundMessages` that are generated to produce or consume a message from the message broker).
+
+At every call to `IPublisher.Publish` the `Handle` method of each registered behavior is called, passing in the collection of messages and the delegate to the next step in the pipeline. This gives you the flexibility to execute any sort of code before and after the messages have been actually published (before or after calling the `next()` step). You can for example modify the messages before publishing them, validate them (like in the above example), add some logging / tracing, etc.
+
+### IBehavior example
+
+The following example demonstrates how to use a behavior to trace the messages.
 
 ```c#
 using Silverback.Messaging.Publishing;
 
-public class ValidationBehavior : IBehavior
+public class TracingBehavior : IBehavior
 {
+    private readonly ITracer _tracer;
+
+    public TracingBehavior(ITracer tracer)
+    {
+        _tracer = tracer;
+    }
+
     public async Task<IEnumerable<object>> Handle(
         IEnumerable<object> messages, 
         MessagesHandler next)
     {
-        foreach (var validatedMessage in messages.OfType(IValidatedMessage))
-        {
-            if (!validatedMessage.IsValid())
-            {
-                throw new InvalidMessageException();
-            }
-        }
+        tracer.TraceProcessing(messages);
+        var result = await next(messages);
+        tracer.TraceProcessed(messages);
 
-        return await next(messages);
+        return result;
     }
 }
 ```
+
+**Note:** The `Handle` receives a collection of `object` because a bunch of messages can be published at once via `IPublisher` or the consumer can be configured to process the messages in batch.
+{: .notice--info}
+
+**Note:** `IInboundMessage` and `IOutboundMessage` are internally used by Silverback to wrap the messages being sent to or received from the message broker and will be received by the `IBroker`. Those interfaces contains the message plus the additional data like endpoint, headers, offset, etc.
+{: .notice--info}
+
+The `IBehavior` implementation have simply to be registered for DI.
+
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
     services
         .AddSilverback()
-        .AddScopedBehavior<ValidationBehavior>();
+        .AddScopedBehavior<TracingBehavior>();
 ```
 
 **Note:** All `Add*Behavior` methods are available also as extensions to the `IServiceCollection` and it isn't therefore mandatory to call them immediately after `AddSilverback`.
 {: .notice--info}
 
 
-At every call to `IPublisher.Publish` the `Handle` method of each registered behavior is called, passing in the array of messages and the delegate to the next step in the pipeline. This gives you the flexibility to execute any sort of code before and after the messages have been actually published (before or after calling the `next()` step). You can for example modify the messages before publishing them, validate them (like in the above example), add some logging / tracing, etc.
+## IProducerBehavior and IConsumerBehavior
 
-### Example1: Modifying outbound message headers
+The `IProducerBehavior` and `IConsumerBehavior` are similar to the `IBehavior` but work at a lower level, much closer to the message broker.
 
-The behaviors can be quite useful to get and set the message headers for inbound/outbound messages.
+### IProducerBehavior example
+
+The following example demonstrate how to set a custom message header on each outbound message.
 
 ```c#
-public class CustomHeadersBehavior : IBehavior
+public class CustomHeadersBehavior : IProducerBehavior
 {
-    public async Task<IEnumerable<object>> Handle(
-        IEnumerable<object> messages, 
-        MessagesHandler next)
+    public async Task Handle(RawBrokerMessage message, RawBrokerMessageHandler next)
     {
-        foreach (var message in messages.OfType<IOutboundMessage>())
-        {
-            message.Headers.Add(
-                "generated-by", 
-                "silverback");
-            message.Headers.Add(
-                "timestamp", 
-                DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-        }
-
-        return await next(messages);
+        message.Headers.Add("generated-by", "silverback");
     }
 }
 ```
 
-### Example2: Logging inbound message headers
+### IConsumerBehavior example
+
+The following example demonstrate how to log the headers received with each inbound message.
 
 ```c#
-public class LogHeadersBehavior : IBehavior
+public class LogHeadersBehavior :IConsumerBehavior
 {
     private readonly ILogger<LogHeadersBehavior> _logger;
 
@@ -83,19 +93,14 @@ public class LogHeadersBehavior : IBehavior
         _logger = logger;
     }
 
-    public async Task<IEnumerable<object>> Handle(
-        IEnumerable<object> messages, 
-        MessagesHandler next)
+    public async Task Handle(RawBrokerMessage message, RawBrokerMessageHandler next)
     {
-        foreach (var message in messages.OfType<IInboundMessage>())
+        foreach (var header in message.Headers)
         {
-            if (message.Headers != null && message.Headers.Any())
-            {
-                _logger.LogInformation(
-                    "Headers: {headers}",
-                    string.Join(", ", 
-                        message.Headers.Select(h => $"{h.Key}={h.Value}")));
-            }
+            _logger.LogTrace(
+                "{key}={value}",
+                header.Key,
+                header.Value);
         }
 
         return await next(messages);
@@ -103,12 +108,36 @@ public class LogHeadersBehavior : IBehavior
 }
 ```
 
-**Note:** `IInboundMessage` and `IOutboundMessage` are internally used by Silverback to wrap the messages being sent to or received from the message broker.
-{: .notice--info}
+### Limitations
 
-## IProducerBehavior and IConsumerBehavior
+Because of the way the Silverback's broker integration works `IProducerBehavior` and `IConsumerBehavior` implementations can only be registered as singleton. If a scoped instance is needed you have to either reference the `IServiceProvider` or use an `IBehavior` (that can still be used to accomplish most of the tasks, as shown in the next example).
 
-The `IProducerBehavior` and `IConsumerBehavior` are similar to the `IBehavior` but work at a lower level, much closer to the message broker. You should be able to accomplish most tasks with the normal `IBehavior`.
+```c#
+public class TracingBehavior : IBehavior
+{
+    private readonly IDbLogger _dbLogger;
 
-**Note:** Because of the way the Silverback's broker integration works `IProducerBehavior` and `IConsumerBehavior` implementations can only be registered as singleton.
-{: .notice--info}
+    public TracingBehavior(IDbLogger _dbLogger)
+    {
+        _dbLogger = dbLogger;
+    }
+
+    public async Task<IEnumerable<object>> Handle(
+        IEnumerable<object> messages, 
+        MessagesHandler next)
+    {
+        foreach (var message in messages.OfType<IInboundMessage>())
+        {
+            _dbLogger.LogInboundMessage(
+                message.Content.GetType(), 
+                message.Headers,
+                message.Endpoint,
+                message.Offset);
+        }
+
+        await _dbLogger.SaveChangesAsync();
+
+        return await next(messages);
+    }
+}
+```
