@@ -4,7 +4,7 @@ permalink: /docs/releases
 toc: true
 ---
 
-## [1.1.0-rc3](https://github.com/BEagle1984/silverback/releases/tag/1.1.0-rc3)
+## [1.1.0](https://github.com/BEagle1984/silverback/releases/tag/1.1.0)
 
 ### What's new
 * Added `IEndpointsConfigurator` interface to allow splitting the endpoints configuration across multiple types (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker#using-iendpointsconfigurator))
