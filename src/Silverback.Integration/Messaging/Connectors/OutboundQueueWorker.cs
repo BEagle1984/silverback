@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -24,8 +24,13 @@ namespace Silverback.Messaging.Connectors
         private readonly int _readPackageSize;
         private readonly bool _enforceMessageOrder;
 
-        public OutboundQueueWorker(IServiceProvider serviceProvider, IBroker broker, ILogger<OutboundQueueWorker> logger,
-            MessageLogger messageLogger, bool enforceMessageOrder, int readPackageSize)
+        public OutboundQueueWorker(
+            IServiceProvider serviceProvider,
+            IBroker broker,
+            ILogger<OutboundQueueWorker> logger,
+            MessageLogger messageLogger,
+            bool enforceMessageOrder,
+            int readPackageSize)
         {
             _serviceProvider = serviceProvider;
             _broker = broker;
@@ -66,7 +71,7 @@ namespace Silverback.Messaging.Connectors
                     break;
             }
         }
-        
+
         private async Task ProcessMessage(QueuedMessage message, IOutboundQueueConsumer queue)
         {
             try
@@ -77,7 +82,8 @@ namespace Silverback.Messaging.Connectors
             }
             catch (Exception ex)
             {
-                _messageLogger.LogError(_logger, ex, "Failed to publish queued message.", new OutboundMessage(message.Content, message.Headers, message.Endpoint));
+                _messageLogger.LogError(_logger, ex, "Failed to publish queued message.",
+                    new OutboundMessage(message.Content, message.Headers, message.Endpoint));
 
                 await queue.Retry(message);
 
@@ -86,8 +92,11 @@ namespace Silverback.Messaging.Connectors
                     throw;
             }
         }
-        
-        protected virtual Task ProduceMessage(byte[] content, IEnumerable<MessageHeader> headers, IProducerEndpoint endpoint)
+
+        protected virtual Task ProduceMessage(
+            byte[] content,
+            IEnumerable<MessageHeader> headers,
+            IProducerEndpoint endpoint)
             => _broker.GetProducer(endpoint).ProduceAsync(content, headers);
     }
 }

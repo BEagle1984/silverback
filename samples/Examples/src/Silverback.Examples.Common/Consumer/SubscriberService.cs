@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -80,7 +80,8 @@ namespace Silverback.Examples.Common.Consumer
         {
             foreach (var id in @event.Identifiers)
             {
-                _logger.LogInformation($"MessageMovedEvent :: Message '{id}' moved from '{@event.Source}' to '{@event.Destination}'");
+                _logger.LogInformation(
+                    $"MessageMovedEvent :: Message '{id}' moved from '{@event.Source}' to '{@event.Destination}'");
             }
         }
     }

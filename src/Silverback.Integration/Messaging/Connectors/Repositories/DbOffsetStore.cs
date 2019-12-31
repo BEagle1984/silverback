@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading;
@@ -28,7 +28,8 @@ namespace Silverback.Messaging.Connectors.Repositories
             };
         }
 
-        public DbOffsetStore(IDbContext dbContext) : base(dbContext)
+        public DbOffsetStore(IDbContext dbContext)
+            : base(dbContext)
         {
         }
 
@@ -77,7 +78,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
             var storedOffset = await DbSet.FindAsync(key);
 
-            return storedOffset?.Offset != null 
+            return storedOffset?.Offset != null
                 ? JsonConvert.DeserializeObject<IComparableOffset>(storedOffset.Offset, SerializerSettings)
                 : null;
         }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -233,7 +233,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
         [Fact]
         public void GetAggregateEntity_ExistingId_EntityRecreated()
         {
-            var eventStore = new PersonEventStore{Id = 12};
+            var eventStore = new PersonEventStore { Id = 12 };
             eventStore.Events.Add(new PersonEvent
             {
                 SerializedEvent = "{" +
@@ -415,7 +415,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var entity = new Person(123);
 
-            var result= repo.Remove(entity);
+            var result = repo.Remove(entity);
 
             result.Should().BeNull();
         }

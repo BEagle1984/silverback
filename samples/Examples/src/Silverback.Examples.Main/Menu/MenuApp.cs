@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -19,7 +19,7 @@ namespace Silverback.Examples.Main.Menu
         {
             _renderer.Chosen += OnOptionChosen;
             _renderer.Back += OnBack;
-            
+
             _breadcrumbs.Push(new RootCategory());
         }
 
@@ -30,7 +30,7 @@ namespace Silverback.Examples.Main.Menu
                 _renderer.ShowMenu(_breadcrumbs, GetOptions());
             }
         }
-        
+
         #region Navigation
 
         private IMenuItemInfo[] GetOptions()
@@ -41,7 +41,7 @@ namespace Silverback.Examples.Main.Menu
                     .Children
                     .Select(type => (IMenuItemInfo) Activator.CreateInstance(type))
                     .ToList();
-            
+
             options = _breadcrumbs.Peek() is RootCategory
                 ? options.Append(new ExitMenu())
                 : options.Append(new BackMenu());
@@ -54,10 +54,10 @@ namespace Silverback.Examples.Main.Menu
             switch (option)
             {
                 case ICategory category:
-                    _breadcrumbs.Push(category);                    
+                    _breadcrumbs.Push(category);
                     break;
                 case IUseCase useCase:
-                    RunUseCase(useCase);                    
+                    RunUseCase(useCase);
                     break;
                 case BackMenu _:
                 case ExitMenu _:
@@ -84,16 +84,16 @@ namespace Silverback.Examples.Main.Menu
         {
             Console.Clear();
             WriteUseCaseHeader(useCase);
-            
+
             useCase.Run();
-            
+
             Console.ForegroundColor = Constants.PrimaryColor;
             Console.Write("\r\nPress any key to continue...");
             Console.ResetColor();
             Console.ReadKey(true);
         }
-        
-        private void WriteUseCaseHeader(IMenuItemInfo useCase) => 
+
+        private void WriteUseCaseHeader(IMenuItemInfo useCase) =>
             _breadcrumbs.Prepend(useCase).WriteBreadcrumbs();
 
         #endregion

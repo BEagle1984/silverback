@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -10,13 +10,14 @@ namespace Silverback.Messaging
 {
     public sealed class KafkaProducerEndpoint : ProducerEndpoint, IEquatable<KafkaProducerEndpoint>
     {
-        public KafkaProducerEndpoint(string name) : base(name)
+        public KafkaProducerEndpoint(string name)
+            : base(name)
         {
         }
-        
+
         /// <summary>
-        /// Gets or sets the Kafka client configuration. This is actually an extension of the configuration
-        /// dictionary provided by the Confluent.Kafka library.
+        ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
+        ///     dictionary provided by the Confluent.Kafka library.
         /// </summary>
         public KafkaProducerConfig Configuration { get; set; } = new KafkaProducerConfig();
 

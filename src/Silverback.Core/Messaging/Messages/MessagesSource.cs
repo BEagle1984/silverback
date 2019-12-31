@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -33,8 +33,8 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <summary>
-        /// Adds an event of the specified type to this entity. The event will be fired when the entity
-        /// is saved to the underlying database.
+        ///     Adds an event of the specified type to this entity. The event will be fired when the entity
+        ///     is saved to the underlying database.
         /// </summary>
         /// <typeparam name="TEvent">The type of the event.</typeparam>
         /// <param name="allowMultiple">if set to <c>false</c> only one instance of the specified type <c>TEvent</c> will be added.</param>

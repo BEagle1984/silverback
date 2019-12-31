@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,9 +12,10 @@ namespace Silverback.Examples.Main.UseCases.Kafka
     public class _CategoryInfo : ICategory
     {
         public string Title => "Apache Kafka";
+
         public string Description => "A set of examples to demonstrate different ways to " +
                                      "use Silverback with Apache Kafka.";
-        
+
         public IEnumerable<Type> Children => new List<Type>
         {
             typeof(Basic._CategoryInfo),

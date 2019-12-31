@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -10,8 +10,9 @@ using Microsoft.Extensions.Logging;
 namespace Silverback.Background
 {
     /// <summary>
-    /// Extends the <seealso cref="Microsoft.Extensions.Hosting.BackgroundService" /> adding a distributed lock mechanism to prevent
-    /// concurrent executions.
+    ///     Extends the <seealso cref="Microsoft.Extensions.Hosting.BackgroundService" /> adding a distributed lock mechanism
+    ///     to prevent
+    ///     concurrent executions.
     /// </summary>
     /// <seealso cref="Microsoft.Extensions.Hosting.BackgroundService" />
     public abstract class DistributedBackgroundService : BackgroundService
@@ -22,15 +23,21 @@ namespace Silverback.Background
 
         protected DistributedLock Lock;
 
-        protected DistributedBackgroundService(IDistributedLockManager distributedLockManager, ILogger<DistributedBackgroundService> logger)
+        protected DistributedBackgroundService(
+            IDistributedLockManager distributedLockManager,
+            ILogger<DistributedBackgroundService> logger)
             : this(null, distributedLockManager, logger)
         {
         }
 
-        protected DistributedBackgroundService(DistributedLockSettings distributedLockSettings, IDistributedLockManager distributedLockManager, ILogger<DistributedBackgroundService> logger)
+        protected DistributedBackgroundService(
+            DistributedLockSettings distributedLockSettings,
+            IDistributedLockManager distributedLockManager,
+            ILogger<DistributedBackgroundService> logger)
         {
             _distributedLockSettings = distributedLockSettings ?? new DistributedLockSettings();
-            _distributedLockManager = distributedLockManager ?? throw new ArgumentNullException(nameof(distributedLockManager));
+            _distributedLockManager =
+                distributedLockManager ?? throw new ArgumentNullException(nameof(distributedLockManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             if (string.IsNullOrEmpty(_distributedLockSettings.ResourceName))

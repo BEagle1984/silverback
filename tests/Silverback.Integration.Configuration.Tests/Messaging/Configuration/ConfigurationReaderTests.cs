@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -101,7 +101,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
-            var serializer = (JsonMessageSerializer)reader.Inbound.Skip(1).First().Endpoint.Serializer;
+            var serializer = (JsonMessageSerializer) reader.Inbound.Skip(1).First().Endpoint.Serializer;
             serializer.Encoding.Should().Be(MessageEncoding.Unicode);
             serializer.Settings.Formatting.Should().Be(Formatting.Indented);
         }
@@ -158,7 +158,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
-            var endpoint = (KafkaConsumerEndpoint)reader.Inbound.First().Endpoint;
+            var endpoint = (KafkaConsumerEndpoint) reader.Inbound.First().Endpoint;
 
             endpoint.Configuration.AutoOffsetReset.Should().Be(AutoOffsetReset.Earliest);
         }
@@ -170,7 +170,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
-            var endpoint = (KafkaConsumerEndpoint)reader.Inbound.First().Endpoint;
+            var endpoint = (KafkaConsumerEndpoint) reader.Inbound.First().Endpoint;
 
             endpoint.Names.Should().BeEquivalentTo("inbound-endpoint1");
         }
@@ -182,7 +182,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
-            var endpoint = (KafkaConsumerEndpoint)reader.Inbound.Skip(1).First().Endpoint;
+            var endpoint = (KafkaConsumerEndpoint) reader.Inbound.Skip(1).First().Endpoint;
 
             endpoint.Names.Should().BeEquivalentTo("inbound-endpoint1", "inbound-endpoint2");
         }
@@ -227,8 +227,12 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new InboundMessage(new byte[1], new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") }, null, new KafkaConsumerEndpoint("test"), true), new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage(new byte[1], new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "6") }, null, new KafkaConsumerEndpoint("test"), true), new ArgumentException()).Should().BeFalse();
+            policy.CanHandle(
+                new InboundMessage(new byte[1], new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") }, null,
+                    new KafkaConsumerEndpoint("test"), true), new ArgumentException()).Should().BeTrue();
+            policy.CanHandle(
+                new InboundMessage(new byte[1], new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "6") }, null,
+                    new KafkaConsumerEndpoint("test"), true), new ArgumentException()).Should().BeFalse();
         }
 
         [Fact]
@@ -252,9 +256,12 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true), new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true), new InvalidOperationException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true), new FormatException()).Should().BeFalse();
+            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true),
+                new ArgumentException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true),
+                new InvalidOperationException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true),
+                new FormatException()).Should().BeFalse();
         }
 
         [Fact]
@@ -265,8 +272,10 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true), new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true), new ArgumentNullException()).Should().BeFalse();
+            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true),
+                new ArgumentException()).Should().BeTrue();
+            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true),
+                new ArgumentNullException()).Should().BeFalse();
         }
 
         [Fact]
@@ -336,6 +345,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
 
             reader.Outbound.First().MessageType.Should().Be(typeof(object));
         }
+
         [Fact]
         public void Read_CompleteOutbound_DefaultSerializerPropertiesSet()
         {
@@ -343,7 +353,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
 
-            var serializer = (JsonMessageSerializer)reader.Outbound.Skip(1).First().Endpoint.Serializer;
+            var serializer = (JsonMessageSerializer) reader.Outbound.Skip(1).First().Endpoint.Serializer;
             serializer.Encoding.Should().Be(MessageEncoding.Unicode);
             serializer.Settings.Formatting.Should().Be(Formatting.Indented);
         }
@@ -355,7 +365,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
 
-            var endpoint = (KafkaProducerEndpoint)reader.Outbound.First().Endpoint;
+            var endpoint = (KafkaProducerEndpoint) reader.Outbound.First().Endpoint;
             endpoint.Configuration.EnableBackgroundPoll.Should().BeFalse();
         }
 
@@ -377,10 +387,10 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
 
-            var serializer = (FakeSerializer)reader.Outbound.First().Endpoint.Serializer;
+            var serializer = (FakeSerializer) reader.Outbound.First().Endpoint.Serializer;
             serializer.Settings.Mode.Should().Be(4);
         }
-        
+
         [Fact]
         public void Read_CompleteOutbound_ConnectorTypeSet()
         {
@@ -400,7 +410,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
 
             reader.Outbound.First().MessageType.Should().Be(typeof(IIntegrationEvent));
         }
-        
+
         [Fact]
         public void Read_SimplestOutbound_DefaultChunkSize()
         {
@@ -408,10 +418,10 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("outbound.simplest"));
 
-            var endpoint = (KafkaProducerEndpoint)reader.Outbound.First().Endpoint;
+            var endpoint = (KafkaProducerEndpoint) reader.Outbound.First().Endpoint;
             endpoint.Chunk.Size.Should().Be(int.MaxValue);
         }
-        
+
         [Fact]
         public void Read_SimplestOutbound_ChunkSizeSet()
         {
@@ -419,7 +429,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 new ConfigurationReader(_serviceProvider)
                     .Read(ConfigFileHelper.GetConfigSection("outbound.complete"));
 
-            var endpoint = (KafkaProducerEndpoint)reader.Outbound.First().Endpoint;
+            var endpoint = (KafkaProducerEndpoint) reader.Outbound.First().Endpoint;
             endpoint.Chunk.Size.Should().Be(100000);
         }
 
@@ -482,6 +492,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 Arg.Any<KafkaProducerEndpoint>(),
                 typeof(DeferredOutboundConnector));
         }
+
         #endregion
     }
 }

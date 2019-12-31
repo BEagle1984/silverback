@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -11,11 +11,24 @@ namespace Silverback.Tests.EventSourcing.TestTypes
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
     public class Person : EventSourcingDomainEntity<int, Person.PersonDomainEvent>
     {
-        public class NameChangedEvent : EntityEvent { public string NewName { get; set; } }
-        public class AgeChangedEvent : EntityEvent { public int NewAge { get; set; } }
-        public class PhoneNumberChangedEvent : EntityEvent { public string NewPhoneNumber { get; set; } }
+        public class NameChangedEvent : EntityEvent
+        {
+            public string NewName { get; set; }
+        }
 
-        public abstract class PersonDomainEvent { }
+        public class AgeChangedEvent : EntityEvent
+        {
+            public int NewAge { get; set; }
+        }
+
+        public class PhoneNumberChangedEvent : EntityEvent
+        {
+            public string NewPhoneNumber { get; set; }
+        }
+
+        public abstract class PersonDomainEvent
+        {
+        }
 
         public Person()
         {
@@ -26,7 +39,8 @@ namespace Silverback.Tests.EventSourcing.TestTypes
             Id = id;
         }
 
-        public Person(IEnumerable<IEntityEvent> events) : base(events)
+        public Person(IEnumerable<IEntityEvent> events)
+            : base(events)
         {
         }
 
@@ -35,7 +49,7 @@ namespace Silverback.Tests.EventSourcing.TestTypes
         public string Name { get; private set; }
         public int Age { get; private set; }
         public string PhoneNumber { get; private set; }
-        
+
         public void ChangeName(string newName) =>
             AddAndApplyEvent(new NameChangedEvent
             {

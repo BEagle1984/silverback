@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -22,26 +22,29 @@ namespace Silverback.Messaging.Broker
         private readonly ILogger _logger;
         private Confluent.Kafka.IProducer<byte[], byte[]> _innerProducer;
 
-        private static readonly ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>> ProducersCache =
-            new ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>>(new KafkaClientConfigComparer());
+        private static readonly
+            ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>>
+            ProducersCache =
+                new ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>>(
+                    new KafkaClientConfigComparer());
 
         public KafkaProducer(
-            KafkaBroker broker, 
+            KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
             MessageKeyProvider messageKeyProvider,
             IEnumerable<IProducerBehavior> behaviors,
-            ILogger<KafkaProducer> logger, 
+            ILogger<KafkaProducer> logger,
             MessageLogger messageLogger)
             : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
         {
             _logger = logger;
         }
 
-        /// <inheritdoc cref="Producer"/>
+        /// <inheritdoc cref="Producer" />
         protected override IOffset Produce(RawBrokerMessage message) =>
             AsyncHelper.RunSynchronously(() => ProduceAsync(message));
 
-        /// <inheritdoc cref="Producer"/>
+        /// <inheritdoc cref="Producer" />
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         protected override async Task<IOffset> ProduceAsync(RawBrokerMessage message)
         {
@@ -73,7 +76,8 @@ namespace Silverback.Messaging.Broker
                 if (Endpoint.Configuration.DisposeOnException)
                     DisposeInnerProducer();
 
-                throw new ProduceException("Error occurred producing the message. See inner exception for details.", ex);
+                throw new ProduceException("Error occurred producing the message. See inner exception for details.",
+                    ex);
             }
         }
 
@@ -83,13 +87,14 @@ namespace Silverback.Messaging.Broker
                 ?.FirstOrDefault(h => h.Key == PartitioningKeyHeaderKey)
                 ?.Value;
 
-            return headerValue == null 
-                ? null 
+            return headerValue == null
+                ? null
                 : Encoding.UTF8.GetBytes(headerValue);
         }
 
         private Confluent.Kafka.IProducer<byte[], byte[]> GetInnerProducer() =>
-            _innerProducer ??= ProducersCache.GetOrAdd(Endpoint.Configuration.ConfluentConfig, _ => CreateInnerProducer());
+            _innerProducer ??=
+                ProducersCache.GetOrAdd(Endpoint.Configuration.ConfluentConfig, _ => CreateInnerProducer());
 
         private Confluent.Kafka.IProducer<byte[], byte[]> CreateInnerProducer()
         {

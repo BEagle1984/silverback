@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -14,7 +14,7 @@ using Silverback.Messaging.Connectors;
 using Silverback.Messaging.HealthChecks;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Examples.Main.UseCases.HealthCheck
+namespace Silverback.Examples.Main.UseCases.Kafka.HealthCheck
 {
     public class OutboundEndpointsHealthUseCase : UseCase
     {
@@ -46,7 +46,7 @@ namespace Silverback.Examples.Main.UseCases.HealthCheck
                         BootstrapServers = "PLAINTEXT://localhost:9092",
                         MessageTimeoutMs = 1000
                     }
-                })              
+                })
                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events-two")
                 {
                     Configuration = new KafkaProducerConfig
@@ -74,7 +74,7 @@ namespace Silverback.Examples.Main.UseCases.HealthCheck
             var result = await new OutboundEndpointsHealthCheckService(
                 serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
                 serviceProvider.GetRequiredService<IBroker>()).PingAllEndpoints();
-            
+
             Console.ForegroundColor = Constants.PrimaryColor;
             Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
             Console.ResetColor();

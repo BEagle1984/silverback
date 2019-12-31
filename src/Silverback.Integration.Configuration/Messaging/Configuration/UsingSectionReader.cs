@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -23,9 +23,10 @@ namespace Silverback.Messaging.Configuration
                 // Scan Silverback.Integration per default
                 AddAssemblyContaining(typeof(IBroker), assemblies);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                throw new SilverbackConfigurationException("Error in Using configuration section. See inner exception for details.", ex);
+                throw new SilverbackConfigurationException(
+                    "Error in Using configuration section. See inner exception for details.", ex);
             }
 
             return assemblies.Select(a => a.Value).ToList();
@@ -38,7 +39,9 @@ namespace Silverback.Messaging.Configuration
                 assemblies.Add(assembly.FullName, assembly);
         }
 
-        private void AddAssembliesFromUsingSection(IConfigurationSection configSection, IDictionary<string, Assembly> assemblies)
+        private void AddAssembliesFromUsingSection(
+            IConfigurationSection configSection,
+            IDictionary<string, Assembly> assemblies)
         {
             foreach (var assemblyName in configSection.GetChildren().Select(c => c.Value))
             {

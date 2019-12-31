@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Creates a chain of multiple policies to be applied one after the other to handle the processing error.
+        ///     Creates a chain of multiple policies to be applied one after the other to handle the processing error.
         /// </summary>
         /// <param name="policies">The policies to be sequentially applied.</param>
         /// <returns></returns>
@@ -30,11 +30,11 @@ namespace Silverback.Messaging.Configuration
             new ErrorPolicyChain(
                 _serviceProvider,
                 _loggerFactory.CreateLogger<ErrorPolicyChain>(),
-                _serviceProvider.GetRequiredService<MessageLogger>(), 
+                _serviceProvider.GetRequiredService<MessageLogger>(),
                 policies);
 
         /// <summary>
-        /// Creates a retry policy to simply try again the message processing in case of processing errors.
+        ///     Creates a retry policy to simply try again the message processing in case of processing errors.
         /// </summary>
         /// <param name="initialDelay">The optional delay between each retry.</param>
         /// <param name="delayIncrement">The optional increment to be added to the initial delay at each retry.</param>
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Configuration
                 initialDelay, delayIncrement);
 
         /// <summary>
-        /// Creates a skip policy to discard the message whose processing failed.
+        ///     Creates a skip policy to discard the message whose processing failed.
         /// </summary>
         /// <returns></returns>
         public SkipMessageErrorPolicy Skip() =>
@@ -57,7 +57,7 @@ namespace Silverback.Messaging.Configuration
                 _serviceProvider.GetRequiredService<MessageLogger>());
 
         /// <summary>
-        /// Creates a move policy to forward the message to another endpoint in case of processing errors.
+        ///     Creates a move policy to forward the message to another endpoint in case of processing errors.
         /// </summary>
         /// <param name="endpoint"></param>
         /// <returns></returns>

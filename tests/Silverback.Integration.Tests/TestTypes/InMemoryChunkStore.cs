@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -49,6 +49,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 Entries.RemoveAll(e => e.MessageId == _pendingCleanup);
                 UncommittedEntries.RemoveAll(e => e.MessageId == _pendingCleanup);
             }
+
             await base.Commit();
         }
 

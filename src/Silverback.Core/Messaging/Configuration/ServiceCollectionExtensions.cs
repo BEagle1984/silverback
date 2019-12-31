@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -15,14 +15,20 @@ namespace Microsoft.Extensions.DependencyInjection
         #region AddTransientSubscriber
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public static IServiceCollection AddTransientSubscriber(this IServiceCollection services, Type baseType, Type subscriberType)
+        public static IServiceCollection AddTransientSubscriber(
+            this IServiceCollection services,
+            Type baseType,
+            Type subscriberType)
         {
             if (baseType == null) throw new ArgumentNullException(nameof(baseType));
             if (subscriberType == null) throw new ArgumentNullException(nameof(subscriberType));
@@ -35,49 +41,63 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public static IServiceCollection AddTransientSubscriber(this IServiceCollection services, Type subscriberType) =>
+        public static IServiceCollection
+            AddTransientSubscriber(this IServiceCollection services, Type subscriberType) =>
             AddTransientSubscriber(services, typeof(ISubscriber), subscriberType);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddTransientSubscriber<TBase, TSubscriber>(this IServiceCollection services)
             where TSubscriber : class, ISubscriber =>
             AddTransientSubscriber(services, typeof(TBase), typeof(TSubscriber));
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddTransientSubscriber<TSubscriber>(this IServiceCollection services)
             where TSubscriber : class, ISubscriber =>
             AddTransientSubscriber<ISubscriber, TSubscriber>(services);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public static IServiceCollection AddTransientSubscriber(this IServiceCollection services, 
+        public static IServiceCollection AddTransientSubscriber(
+            this IServiceCollection services,
             Type baseType,
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
@@ -94,28 +114,34 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddTransientSubscriber(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             Type subscriberType,
             Func<IServiceProvider, ISubscriber> implementationFactory) =>
             AddTransientSubscriber(services, typeof(ISubscriber), subscriberType, implementationFactory);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddTransientSubscriber<TBase, TSubscriber>(
@@ -125,12 +151,15 @@ namespace Microsoft.Extensions.DependencyInjection
             AddTransientSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationFactory);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddTransientSubscriber<TSubscriber>(
@@ -144,14 +173,20 @@ namespace Microsoft.Extensions.DependencyInjection
         #region AddScopedSubscriber
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public static IServiceCollection AddScopedSubscriber(this IServiceCollection services, Type baseType, Type subscriberType)
+        public static IServiceCollection AddScopedSubscriber(
+            this IServiceCollection services,
+            Type baseType,
+            Type subscriberType)
         {
             if (baseType == null) throw new ArgumentNullException(nameof(baseType));
             if (subscriberType == null) throw new ArgumentNullException(nameof(subscriberType));
@@ -164,49 +199,62 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddScopedSubscriber(this IServiceCollection services, Type subscriberType) =>
             AddScopedSubscriber(services, typeof(ISubscriber), subscriberType);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddScopedSubscriber<TBase, TSubscriber>(this IServiceCollection services)
             where TSubscriber : class, ISubscriber =>
             AddScopedSubscriber(services, typeof(TBase), typeof(TSubscriber));
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddScopedSubscriber<TSubscriber>(this IServiceCollection services)
             where TSubscriber : class, ISubscriber =>
             AddScopedSubscriber<ISubscriber, TSubscriber>(services);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public static IServiceCollection AddScopedSubscriber(this IServiceCollection services, 
+        public static IServiceCollection AddScopedSubscriber(
+            this IServiceCollection services,
             Type baseType,
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
@@ -223,28 +271,34 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddScopedSubscriber(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             Type subscriberType,
             Func<IServiceProvider, ISubscriber> implementationFactory) =>
             AddScopedSubscriber(services, typeof(ISubscriber), subscriberType, implementationFactory);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddScopedSubscriber<TBase, TSubscriber>(
@@ -254,12 +308,15 @@ namespace Microsoft.Extensions.DependencyInjection
             AddScopedSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationFactory);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddScopedSubscriber<TSubscriber>(
@@ -273,14 +330,20 @@ namespace Microsoft.Extensions.DependencyInjection
         #region AddSingletonSubscriber
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public static IServiceCollection AddSingletonSubscriber(this IServiceCollection services, Type baseType, Type subscriberType)
+        public static IServiceCollection AddSingletonSubscriber(
+            this IServiceCollection services,
+            Type baseType,
+            Type subscriberType)
         {
             if (baseType == null) throw new ArgumentNullException(nameof(baseType));
             if (subscriberType == null) throw new ArgumentNullException(nameof(subscriberType));
@@ -293,18 +356,22 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public static IServiceCollection AddSingletonSubscriber(this IServiceCollection services, Type subscriberType) =>
+        public static IServiceCollection
+            AddSingletonSubscriber(this IServiceCollection services, Type subscriberType) =>
             AddSingletonSubscriber(services, typeof(ISubscriber), subscriberType);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
@@ -314,8 +381,8 @@ namespace Microsoft.Extensions.DependencyInjection
             AddSingletonSubscriber(services, typeof(TBase), typeof(TSubscriber));
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
@@ -324,17 +391,20 @@ namespace Microsoft.Extensions.DependencyInjection
             AddSingletonSubscriber<ISubscriber, TSubscriber>(services);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonSubscriber(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             Type baseType,
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
@@ -351,28 +421,34 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonSubscriber(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             Type subscriberType,
             Func<IServiceProvider, ISubscriber> implementationFactory) =>
             AddSingletonSubscriber(services, typeof(ISubscriber), subscriberType, implementationFactory);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonSubscriber<TBase, TSubscriber>(
@@ -382,12 +458,15 @@ namespace Microsoft.Extensions.DependencyInjection
             AddSingletonSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationFactory);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonSubscriber<TSubscriber>(
@@ -397,17 +476,20 @@ namespace Microsoft.Extensions.DependencyInjection
             AddSingletonSubscriber<ISubscriber, TSubscriber>(services, implementationFactory);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
-        /// instance specified in <paramref name="implementationInstance" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonSubscriber(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             Type baseType,
             Type subscriberType,
             ISubscriber implementationInstance)
@@ -422,42 +504,56 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
-        /// instance specified in <paramref name="implementationInstance" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public static IServiceCollection AddSingletonSubscriber(this IServiceCollection services, Type subscriberType, ISubscriber implementationInstance) =>
+        public static IServiceCollection AddSingletonSubscriber(
+            this IServiceCollection services,
+            Type subscriberType,
+            ISubscriber implementationInstance) =>
             AddSingletonSubscriber(services, typeof(ISubscriber), subscriberType, implementationInstance);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
-        /// instance specified in <paramref name="implementationInstance" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to register.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonSubscriber<TBase, TSubscriber>(
-            this IServiceCollection services, TSubscriber implementationInstance)
+            this IServiceCollection services,
+            TSubscriber implementationInstance)
             where TSubscriber : class, ISubscriber =>
             AddSingletonSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationInstance);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
-        /// instance specified in <paramref name="implementationInstance" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonSubscriber<TSubscriber>(
-            this IServiceCollection services, TSubscriber implementationInstance)
+            this IServiceCollection services,
+            TSubscriber implementationInstance)
             where TSubscriber : class, ISubscriber =>
             AddSingletonSubscriber(services, typeof(ISubscriber), typeof(TSubscriber), implementationInstance);
 
@@ -470,10 +566,13 @@ namespace Microsoft.Extensions.DependencyInjection
         #region AddTransientBehavior
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddTransientBehavior(this IServiceCollection services, Type behaviorType)
@@ -486,26 +585,32 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddTransientBehavior<TBehavior>(this IServiceCollection services)
             where TBehavior : class, IBehavior =>
             AddTransientBehavior(services, typeof(TBehavior));
 
         /// <summary>
-        /// Adds a scoped behavior with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped behavior with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddTransientBehavior(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
             if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
@@ -520,10 +625,13 @@ namespace Microsoft.Extensions.DependencyInjection
         #region AddScopedBehavior
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddScopedBehavior(this IServiceCollection services, Type behaviorType)
@@ -536,10 +644,13 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddScopedBehavior<TBehavior>(this IServiceCollection services)
@@ -547,15 +658,18 @@ namespace Microsoft.Extensions.DependencyInjection
             AddScopedBehavior(services, typeof(TBehavior));
 
         /// <summary>
-        /// Adds a scoped behavior with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped behavior with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddScopedBehavior(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
             if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
@@ -570,10 +684,13 @@ namespace Microsoft.Extensions.DependencyInjection
         #region AddSingletonBehavior
 
         /// <summary>
-        /// Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonBehavior(this IServiceCollection services, Type behaviorType)
@@ -586,26 +703,32 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a singleton behavior of the type specified in <typeparamref name="TBehavior" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton behavior of the type specified in <typeparamref name="TBehavior" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonBehavior<TBehavior>(this IServiceCollection services)
             where TBehavior : class, IBehavior =>
             AddSingletonBehavior(services, typeof(TBehavior));
 
         /// <summary>
-        /// Adds a singleton behavior with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton behavior with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonBehavior(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
             if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
@@ -616,15 +739,20 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a singleton behavior with an
-        /// instance specified in <paramref name="implementationInstance" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton behavior with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service to.</param>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
-        public static IServiceCollection AddSingletonBehavior(this IServiceCollection services, IBehavior implementationInstance)
+        public static IServiceCollection AddSingletonBehavior(
+            this IServiceCollection services,
+            IBehavior implementationInstance)
         {
             if (implementationInstance == null) throw new ArgumentNullException(nameof(implementationInstance));
 

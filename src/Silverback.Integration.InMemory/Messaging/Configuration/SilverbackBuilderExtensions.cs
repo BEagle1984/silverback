@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class SilverbackBuilderExtensions
     {
         /// <summary>
-        /// Registers the fake in-memory message broker.
+        ///     Registers the fake in-memory message broker.
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="optionsAction">Additional options (such as connectors).</param>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -15,8 +15,8 @@ using Xunit;
 namespace Silverback.Tests.Integration.Messaging.Publishing
 {
     /// <summary>
-    /// The purpose of this class is to ensure that the publisher is still working when
-    /// the broker subscribers are added.
+    ///     The purpose of this class is to ensure that the publisher is still working when
+    ///     the broker subscribers are added.
     /// </summary>
     public class PublisherTests
     {
@@ -37,7 +37,7 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
             _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
             _scopedServiceProvider = _serviceProvider.CreateScope().ServiceProvider;
         }
-        
+
         [Fact]
         public void Publish_HandlersReturnValue_ResultsReturned()
         {
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
 
             results.Should().Equal("response", "response2");
         }
-        
+
         [Fact]
         public async Task PublishAsync_HandlersReturnValue_ResultsReturned()
         {

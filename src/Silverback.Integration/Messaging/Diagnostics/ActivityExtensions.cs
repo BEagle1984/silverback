@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,7 +11,9 @@ namespace Silverback.Messaging.Diagnostics
 {
     internal static class ActivityExtensions
     {
-        public static void AddBaggageRange(this Activity activity, IEnumerable<KeyValuePair<string, string>> baggageItems)
+        public static void AddBaggageRange(
+            this Activity activity,
+            IEnumerable<KeyValuePair<string, string>> baggageItems)
         {
             foreach (var baggageItem in baggageItems)
             {

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Broker
 
         private AsyncEventingBasicConsumer _consumer;
         private string _consumerTag;
-        
+
         public RabbitConsumer(
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
@@ -35,14 +35,14 @@ namespace Silverback.Messaging.Broker
             (_channel, _queueName) = connectionFactory.GetChannel(endpoint);
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}"/>
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
         protected override Task Commit(IEnumerable<RabbitOffset> offsets)
         {
             BasicAck(offsets.Max(offset => offset.DeliveryTag));
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}"/>
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
         protected override Task Rollback(IEnumerable<RabbitOffset> offsets)
         {
             BasicNack(offsets.Max(offset => offset.DeliveryTag));
@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Broker
                 throw;
             }
         }
-        
+
         private void BasicNack(ulong deliveryTag)
         {
             try
@@ -89,29 +89,29 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="Consumer"/>
+        /// <inheritdoc cref="Consumer" />
         public override void Connect()
         {
             if (_consumer != null)
                 return;
-            
+
             _consumer = new AsyncEventingBasicConsumer(_channel);
             _consumer.Received += TryHandleMessage;
-            
+
             _consumerTag = _channel.BasicConsume(queue: _queueName,
                 autoAck: false,
                 consumer: _consumer);
         }
-        
+
         private async Task TryHandleMessage(object sender, BasicDeliverEventArgs deliverEventArgs)
         {
             RabbitOffset offset = null;
-            
+
             try
             {
                 offset = new RabbitOffset(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
-            
-                _logger.LogDebug("Consuming message {offset} from endpoint {endpointName}.", 
+
+                _logger.LogDebug("Consuming message {offset} from endpoint {endpointName}.",
                     offset.Value, Endpoint.Name);
 
                 await HandleMessage(
@@ -130,17 +130,17 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="Consumer"/>
+        /// <inheritdoc cref="Consumer" />
         public override void Disconnect()
         {
             if (_consumer == null)
                 return;
-            
+
             // TODO: See if needed, as it currently causes an exception.
             // "RabbitMQ.Client.Exceptions.AlreadyClosedException: Already closed: The AMQP operation was interrupted:
             // AMQP close-reason, initiated by Peer, code=406, text='PRECONDITION_FAILED - unknown delivery tag 1',
             // classId=60, methodId=80"
-            
+
             _channel.BasicCancel(_consumerTag);
 
             _consumerTag = null;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Messages;
@@ -6,7 +6,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Serialization
 {
     /// <summary>
-    /// Serializes and deserializes the messages sent through the broker.
+    ///     Serializes and deserializes the messages sent through the broker.
     /// </summary>
     public interface IMessageSerializer
     {

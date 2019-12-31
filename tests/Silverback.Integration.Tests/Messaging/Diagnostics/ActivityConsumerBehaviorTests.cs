@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
@@ -21,7 +21,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
         }
-        
+
         [Fact]
         public async Task Handle_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
         {
@@ -41,13 +41,13 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
 
                 entered = true;
-                
+
                 return Task.CompletedTask;
             });
 
             entered.Should().BeTrue();
         }
-        
+
         [Fact]
         public void Handle_WithoutActivityHeaders_NewActivityIsStarted()
         {
@@ -66,13 +66,13 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 Activity.Current.Id.Should().NotBeNullOrEmpty();
 
                 entered = true;
-                
+
                 return Task.CompletedTask;
             });
 
             entered.Should().BeTrue();
         }
-        
+
         [Fact]
         public async Task Handle_FromConsume_NewActivityStartedAndParentIdIsSet()
         {
@@ -83,7 +83,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 .AddSilverback().WithConnectionTo<TestBroker>();
             var serviceProvider = services.BuildServiceProvider();
             var broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
-            
+
             var rawMessage = new RawInboundMessage(
                 "123",
                 new MessageHeaderCollection
@@ -101,10 +101,10 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
 
                 entered = true;
-                
+
                 return Task.CompletedTask;
-            }; 
-            
+            };
+
             broker.Connect();
             await consumer.TestPush(rawMessage.RawContent, rawMessage.Headers);
 

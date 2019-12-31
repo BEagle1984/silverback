@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -56,7 +56,7 @@ namespace Silverback.Messaging.Configuration
                 (f, v) => f.CheckCertificateRevocation = v);
             destination.ApplyConfigIfNotNull(source, c => c.Enabled, (f, v) => f.Enabled = v);
             destination.ApplyConfigIfNotNull(source, c => c.ServerName, (f, v) => f.ServerName = v);
-         
+
             destination.ApplyConfigIfNotNull(source, c => c.Version, (f, v) => f.Version = v);
         }
 

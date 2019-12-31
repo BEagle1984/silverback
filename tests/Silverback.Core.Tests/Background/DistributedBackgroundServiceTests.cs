@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -64,7 +64,7 @@ namespace Silverback.Tests.Core.Background
 
             executed.Should().BeTrue();
         }
-        
+
         [Fact, Trait("CI", "false")]
         public async Task StartAsync_WithDbLockManager_OnlyOneTaskIsExecutedSimultaneously()
         {
@@ -72,14 +72,14 @@ namespace Silverback.Tests.Core.Background
             bool executed2 = false;
 
             var service1 = new TestDistributedBackgroundService(async stoppingToken =>
-                {
-                    executed1 = true;
+            {
+                executed1 = true;
 
-                    while (!stoppingToken.IsCancellationRequested)
-                    {
-                        await Task.Delay(10, stoppingToken);
-                    }
-                }, new DbDistributedLockManager(_servicesProvider));
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    await Task.Delay(10, stoppingToken);
+                }
+            }, new DbDistributedLockManager(_servicesProvider));
             await service1.StartAsync(CancellationToken.None);
 
             await AsyncTestingUtil.WaitAsync(() => executed1);
@@ -106,7 +106,9 @@ namespace Silverback.Tests.Core.Background
         {
             private readonly Func<CancellationToken, Task> _task;
 
-            public TestDistributedBackgroundService(Func<CancellationToken, Task> task, IDistributedLockManager lockManager)
+            public TestDistributedBackgroundService(
+                Func<CancellationToken, Task> task,
+                IDistributedLockManager lockManager)
                 : base(
                     new DistributedLockSettings(
                         "test",

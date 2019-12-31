@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
@@ -10,7 +10,7 @@ using Xunit;
 namespace Silverback.Tests.EventSourcing.Domain.Util
 {
     public class EntityActivatorTests
-    { 
+    {
         [Fact]
         public void CreateInstance_WithSomeEvents_EntityCreated()
         {
@@ -38,7 +38,7 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             entity.Name.Should().Be("Silverback");
             entity.Age.Should().Be(13);
         }
-        
+
         [Fact]
         public void CreateInstance_WithoutEvents_EntityCreated()
         {

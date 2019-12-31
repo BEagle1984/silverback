@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,7 +11,12 @@ namespace Silverback.Messaging.Subscribers
     {
         private readonly Func<IServiceProvider, object> _targetTypeFactory;
 
-        public SubscribedMethod(Func<IServiceProvider, object> targetTypeFactory, MethodInfo methodInfo, bool? exclusive, bool? parallel, int? maxDegreeOfParallelism)
+        public SubscribedMethod(
+            Func<IServiceProvider, object> targetTypeFactory,
+            MethodInfo methodInfo,
+            bool? exclusive,
+            bool? parallel,
+            int? maxDegreeOfParallelism)
         {
             _targetTypeFactory = targetTypeFactory ?? throw new ArgumentNullException(nameof(targetTypeFactory));
             MethodInfo = methodInfo ?? throw new ArgumentNullException(nameof(methodInfo));
@@ -29,13 +34,13 @@ namespace Silverback.Messaging.Subscribers
 
         public ParameterInfo[] Parameters { get; }
 
-        /// <summary>See <see cref="SubscribeAttribute"/>.</summary>
+        /// <summary>See <see cref="SubscribeAttribute" />.</summary>
         public bool IsExclusive { get; }
 
-        /// <summary>See <see cref="SubscribeAttribute"/>.</summary>
+        /// <summary>See <see cref="SubscribeAttribute" />.</summary>
         public bool IsParallel { get; }
 
-        /// <summary>See <see cref="SubscribeAttribute"/>.</summary>
+        /// <summary>See <see cref="SubscribeAttribute" />.</summary>
         public int? MaxDegreeOfParallelism { get; }
 
         public object ResolveTargetType(IServiceProvider serviceProvider) =>

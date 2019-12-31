@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
@@ -42,7 +42,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                     new MessageHeader("header2", "value2")
                 },
                 TestProducerEndpoint.GetDefault());
-            outboundMessage.RawContent = new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers);
+            outboundMessage.RawContent =
+                new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers);
 
             await _connector.RelayMessage(outboundMessage);
             await _queue.Commit();
@@ -51,14 +52,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var queued = (await _queue.Dequeue(1)).First();
             queued.Endpoint.Should().Be(outboundMessage.Endpoint);
             queued.Headers.Count().Should().Be(3);
-            queued.Content.Should().BeEquivalentTo(new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers));
+            queued.Content.Should()
+                .BeEquivalentTo(
+                    new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers));
         }
 
         [Fact]
         public async Task CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne(), null, TestProducerEndpoint.GetDefault());
- 
+            var outboundMessage =
+                new OutboundMessage<TestEventOne>(new TestEventOne(), null, TestProducerEndpoint.GetDefault());
+
             await _connector.RelayMessage(outboundMessage);
             await _transactionManager.OnTransactionCompleted(new TransactionCompletedEvent());
             await _connector.RelayMessage(outboundMessage);

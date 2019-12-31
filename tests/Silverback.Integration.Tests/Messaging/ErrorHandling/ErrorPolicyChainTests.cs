@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -29,7 +29,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-            _errorPolicyBuilder = new ErrorPolicyBuilder(services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true }), NullLoggerFactory.Instance);
+            _errorPolicyBuilder =
+                new ErrorPolicyBuilder(
+                    services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true }),
+                    NullLoggerFactory.Instance);
         }
 
         [Theory]
@@ -83,7 +86,9 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(3, 1)]
         [InlineData(4, 1)]
         [InlineData(5, 2)]
-        public void HandleError_MultiplePoliciesWithSetMaxFailedAttempts_CorrectPolicyApplied(int failedAttempts, int expectedAppliedPolicy)
+        public void HandleError_MultiplePoliciesWithSetMaxFailedAttempts_CorrectPolicyApplied(
+            int failedAttempts,
+            int expectedAppliedPolicy)
         {
             var policies = new[]
             {

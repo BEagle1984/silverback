@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Newtonsoft.Json;
@@ -8,8 +8,8 @@ namespace Silverback.Util
     public class ComparisonHelper
     {
         /// <summary>
-        /// Determines whether the specified object instances are considered equal comparing their
-        /// JSON representations.
+        ///     Determines whether the specified object instances are considered equal comparing their
+        ///     JSON representations.
         /// </summary>
         /// <param name="objA">The first of the two objects to be compared.</param>
         /// <param name="objB">The second of the two objects to be compared.</param>
@@ -19,7 +19,7 @@ namespace Silverback.Util
             (objA != null &&
              objB != null &&
              Equals(GetJsonString(objA), GetJsonString(objB)));
-        
+
         private static string GetJsonString(object obj) =>
             JsonConvert.SerializeObject(
                 obj,

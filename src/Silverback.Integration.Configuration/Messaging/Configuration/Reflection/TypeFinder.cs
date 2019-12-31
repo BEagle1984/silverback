@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -22,7 +22,8 @@ namespace Silverback.Messaging.Configuration.Reflection
             var type = FindType(t => t.IsClass && t.IsPublic, classNames);
 
             if (type == null)
-                throw new SilverbackConfigurationException($"Couldn't find a public class named {string.Join(" or ", classNames)}. Maybe an assembly is missing in the Using configuration section.");
+                throw new SilverbackConfigurationException(
+                    $"Couldn't find a public class named {string.Join(" or ", classNames)}. Maybe an assembly is missing in the Using configuration section.");
 
             return type;
         }
@@ -32,17 +33,19 @@ namespace Silverback.Messaging.Configuration.Reflection
             var type = FindType(t => t.IsInterface && t.IsPublic, interfaceNames);
 
             if (type == null)
-                throw new SilverbackConfigurationException($"Couldn't find a public interface named {string.Join(" or ", interfaceNames)}. Maybe an assembly is missing in the Using configuration section.");
+                throw new SilverbackConfigurationException(
+                    $"Couldn't find a public interface named {string.Join(" or ", interfaceNames)}. Maybe an assembly is missing in the Using configuration section.");
 
             return type;
         }
-        
+
         public Type FindClassOrInterface(params string[] typeNames)
         {
             var type = FindType(t => t.IsPublic, typeNames);
 
             if (type == null)
-                throw new SilverbackConfigurationException($"Couldn't find a public class or interface named {string.Join(" or ", typeNames)}. Maybe an assembly is missing in the Using configuration section.");
+                throw new SilverbackConfigurationException(
+                    $"Couldn't find a public class or interface named {string.Join(" or ", typeNames)}. Maybe an assembly is missing in the Using configuration section.");
 
             return type;
         }

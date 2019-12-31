@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Silverback.Tests.EventSourcing.TestTypes
 {
-    public class PersonInMemoryEventStoreRepository : InMemoryEventStoreRepository<Person, PersonEventStore, PersonEvent>
+    public class
+        PersonInMemoryEventStoreRepository : InMemoryEventStoreRepository<Person, PersonEventStore, PersonEvent>
     {
         public PersonInMemoryEventStoreRepository()
         {
@@ -28,7 +29,8 @@ namespace Silverback.Tests.EventSourcing.TestTypes
 
         public Person GetBySsn(string ssn) => GetAggregateEntity(EventStores.FirstOrDefault(x => x.Ssn == ssn));
 
-        public Person GetSnapshotById(int id, DateTime snapshot) => GetAggregateEntity(EventStores.FirstOrDefault(x => x.Id == id), snapshot);
+        public Person GetSnapshotById(int id, DateTime snapshot) =>
+            GetAggregateEntity(EventStores.FirstOrDefault(x => x.Id == id), snapshot);
 
         protected override PersonEventStore GetEventStoreEntity(Person aggregateEntity, bool addIfNotFound)
         {
@@ -36,14 +38,15 @@ namespace Silverback.Tests.EventSourcing.TestTypes
 
             if (store == null && addIfNotFound)
             {
-                store = new PersonEventStore {Id = aggregateEntity.Id, Ssn = aggregateEntity.Ssn};
+                store = new PersonEventStore { Id = aggregateEntity.Id, Ssn = aggregateEntity.Ssn };
                 EventStores.Add(store);
             }
 
             return store;
         }
 
-        protected override Task<PersonEventStore> GetEventStoreEntityAsync(Person aggregateEntity, bool addIfNotFound) =>
+        protected override Task<PersonEventStore>
+            GetEventStoreEntityAsync(Person aggregateEntity, bool addIfNotFound) =>
             Task.FromResult(GetEventStoreEntity(aggregateEntity, addIfNotFound));
     }
 }

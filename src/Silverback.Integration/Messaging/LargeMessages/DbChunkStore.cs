@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -15,7 +15,8 @@ namespace Silverback.Messaging.LargeMessages
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
-        public DbChunkStore(IDbContext dbContext) : base(dbContext)
+        public DbChunkStore(IDbContext dbContext)
+            : base(dbContext)
         {
         }
 
@@ -65,7 +66,8 @@ namespace Silverback.Messaging.LargeMessages
             return Task.CompletedTask;
         }
 
-        public Task<int> CountChunks(string messageId) => DbSet.AsQueryable().CountAsync(c => c.OriginalMessageId == messageId);
+        public Task<int> CountChunks(string messageId) =>
+            DbSet.AsQueryable().CountAsync(c => c.OriginalMessageId == messageId);
 
         public Task<Dictionary<int, byte[]>> GetChunks(string messageId) =>
             DbSet.AsQueryable()
@@ -90,7 +92,7 @@ namespace Silverback.Messaging.LargeMessages
                             .Select(c => c.ChunkId)
                             .ToListAsync())
                         .Select(chunkId => new TemporaryMessageChunk
-                            {OriginalMessageId = messageId, ChunkId = chunkId})
+                            { OriginalMessageId = messageId, ChunkId = chunkId })
                         .ToList();
                 }
 

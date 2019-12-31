@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -16,12 +16,12 @@ namespace Silverback.Messaging.Connectors.Repositories
         Task<IEnumerable<QueuedMessage>> Dequeue(int count);
 
         /// <summary>
-        /// Re-enqueue the message to retry.
+        ///     Re-enqueue the message to retry.
         /// </summary>
         Task Retry(QueuedMessage queuedMessage);
 
         /// <summary>
-        /// Acknowledges the specified message has been sent.
+        ///     Acknowledges the specified message has been sent.
         /// </summary>
         Task Acknowledge(QueuedMessage queuedMessage);
     }

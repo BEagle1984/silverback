@@ -1,11 +1,10 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -23,14 +22,20 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public int AcknowledgeCount { get; set; }
 
-        public Task TestPush(object message, IEnumerable<MessageHeader> headers = null, IOffset offset = null,
+        public Task TestPush(
+            object message,
+            IEnumerable<MessageHeader> headers = null,
+            IOffset offset = null,
             IMessageSerializer serializer = null) =>
             TestPush(message, new MessageHeaderCollection(headers), offset, serializer);
 
         public Task TestPush(byte[] rawMessage, IEnumerable<MessageHeader> headers = null, IOffset offset = null) =>
             TestPush(rawMessage, new MessageHeaderCollection(headers), offset);
 
-        public async Task TestPush(object message, MessageHeaderCollection headers, IOffset offset = null,
+        public async Task TestPush(
+            object message,
+            MessageHeaderCollection headers,
+            IOffset offset = null,
             IMessageSerializer serializer = null)
         {
             if (serializer == null)
@@ -57,7 +62,7 @@ namespace Silverback.Tests.Integration.TestTypes
             AcknowledgeCount += offsets.Count();
             return Task.CompletedTask;
         }
-        
+
         protected override Task Rollback(IEnumerable<TestOffset> offsets)
         {
             // Nothing to do

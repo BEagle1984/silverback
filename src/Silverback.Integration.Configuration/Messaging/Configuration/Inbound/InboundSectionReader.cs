@@ -1,11 +1,10 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Common;
 using Silverback.Messaging.Configuration.Reflection;
 using Silverback.Messaging.Connectors;
@@ -18,7 +17,11 @@ namespace Silverback.Messaging.Configuration.Inbound
         private readonly ErrorPoliciesSectionReader _errorPoliciesSectionReader;
         private readonly InboundSettingsSectionReader _inboundSettingsSectionReader;
 
-        public InboundSectionReader(TypeFinder typeFinder, EndpointSectionReader endpointSectionReader, ErrorPoliciesSectionReader errorPoliciesSectionReader, InboundSettingsSectionReader inboundSettingsSectionReader)
+        public InboundSectionReader(
+            TypeFinder typeFinder,
+            EndpointSectionReader endpointSectionReader,
+            ErrorPoliciesSectionReader errorPoliciesSectionReader,
+            InboundSettingsSectionReader inboundSettingsSectionReader)
             : base(typeFinder, endpointSectionReader)
         {
             _errorPoliciesSectionReader = errorPoliciesSectionReader;
@@ -40,7 +43,8 @@ namespace Silverback.Messaging.Configuration.Inbound
             }
             catch (Exception ex)
             {
-                throw new SilverbackConfigurationException("Error in Inbound configuration section. See inner exception for details.", ex);
+                throw new SilverbackConfigurationException(
+                    "Error in Inbound configuration section. See inner exception for details.", ex);
             }
         }
 

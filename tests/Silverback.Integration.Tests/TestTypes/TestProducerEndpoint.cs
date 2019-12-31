@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using Silverback.Messaging;
-using Silverback.Messaging.LargeMessages;
 
 #pragma warning disable 659
 
@@ -11,7 +10,8 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public sealed class TestProducerEndpoint : ProducerEndpoint, IEquatable<TestProducerEndpoint>
     {
-        public TestProducerEndpoint(string name) : base(name)
+        public TestProducerEndpoint(string name)
+            : base(name)
         {
         }
 
@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.TestTypes
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((TestProducerEndpoint)obj);
+            return Equals((TestProducerEndpoint) obj);
         }
 
         #endregion

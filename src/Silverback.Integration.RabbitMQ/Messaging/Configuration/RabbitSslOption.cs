@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration
     public sealed class RabbitSslOption : IEquatable<RabbitSslOption>
     {
         /// <summary>
-        /// Retrieve or set the set of ssl policy errors that are deemed acceptable.
+        ///     Retrieve or set the set of ssl policy errors that are deemed acceptable.
         /// </summary>
         public SslPolicyErrors? AcceptablePolicyErrors { get; set; }
 
@@ -35,8 +35,8 @@ namespace Silverback.Messaging.Configuration
         // public RemoteCertificateValidationCallback CertificateValidationCallback { get; set; }
 
         /// <summary>
-        /// Attempts to check certificate revocation status. Default is false. True if peer certificate should be
-        /// checked for revocation, false otherwise.
+        ///     Attempts to check certificate revocation status. Default is false. True if peer certificate should be
+        ///     checked for revocation, false otherwise.
         /// </summary>
         /// <remarks>Uses the built-in .NET mechanics for checking a certificate against CRLs.</remarks>
         public bool? CheckCertificateRevocation { get; set; }
@@ -45,8 +45,8 @@ namespace Silverback.Messaging.Configuration
         public bool Enabled { get; set; }
 
         /// <summary>
-        /// Retrieve or set server's Canonical Name.
-        /// This MUST match the CN on the Certificate else the SSL connection will fail.
+        ///     Retrieve or set server's Canonical Name.
+        ///     This MUST match the CN on the Certificate else the SSL connection will fail.
         /// </summary>
         public string ServerName { get; set; }
 

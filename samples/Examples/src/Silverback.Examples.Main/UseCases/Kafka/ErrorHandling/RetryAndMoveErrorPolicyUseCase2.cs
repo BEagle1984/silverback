@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -11,7 +11,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 
-namespace Silverback.Examples.Main.UseCases.ErrorHandling
+namespace Silverback.Examples.Main.UseCases.Kafka.ErrorHandling
 {
     public class RetryAndMoveErrorPolicyUseCase2 : UseCase
     {
@@ -48,7 +48,8 @@ namespace Silverback.Examples.Main.UseCases.ErrorHandling
 
         private class BuggySerializer : IMessageSerializer
         {
-            public byte[] Serialize(object message, MessageHeaderCollection messageHeaders) => new byte[] { 0, 1, 2, 3, 4 };
+            public byte[] Serialize(object message, MessageHeaderCollection messageHeaders) =>
+                new byte[] { 0, 1, 2, 3, 4 };
 
             public object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
             {

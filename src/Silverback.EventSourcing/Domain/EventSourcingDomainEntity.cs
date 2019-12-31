@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -18,12 +18,15 @@ namespace Silverback.Domain
         {
         }
 
-        protected EventSourcingDomainEntity(IEnumerable<IEntityEvent> events) : base(events)
+        protected EventSourcingDomainEntity(IEnumerable<IEntityEvent> events)
+            : base(events)
         {
         }
     }
 
-    public abstract class EventSourcingDomainEntity<TKey, TDomainEvent> : MessagesSource<TDomainEvent>, IEventSourcingAggregate<TKey>
+    public abstract class EventSourcingDomainEntity<TKey, TDomainEvent>
+        : MessagesSource<TDomainEvent>,
+            IEventSourcingAggregate<TKey>
     {
         private readonly List<IEntityEvent> _storedEvents;
         private List<IEntityEvent> _newEvents;
@@ -49,7 +52,8 @@ namespace Silverback.Domain
 
         [NotMapped]
         public IEnumerable<IEntityEvent> Events =>
-            (_storedEvents ?? Enumerable.Empty<IEntityEvent>()).Union(_newEvents ?? Enumerable.Empty<IEntityEvent>()).ToList().AsReadOnly();
+            (_storedEvents ?? Enumerable.Empty<IEntityEvent>()).Union(_newEvents ?? Enumerable.Empty<IEntityEvent>())
+            .ToList().AsReadOnly();
 
         public TKey Id { get; protected set; }
 

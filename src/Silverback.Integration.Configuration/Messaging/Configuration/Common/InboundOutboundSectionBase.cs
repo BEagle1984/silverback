@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Configuration.Common
             if (!endpointConfig.Exists())
                 throw new InvalidOperationException($"Missing Endpoint in section {configSection.Path}.");
 
-            return (TEndpoint)_endpointSectionReader.GetEndpoint(endpointConfig);
+            return (TEndpoint) _endpointSectionReader.GetEndpoint(endpointConfig);
         }
     }
 }

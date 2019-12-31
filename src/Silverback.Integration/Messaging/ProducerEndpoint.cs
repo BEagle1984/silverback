@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.LargeMessages;
@@ -9,13 +9,14 @@ namespace Silverback.Messaging
 {
     public abstract class ProducerEndpoint : Endpoint, IProducerEndpoint
     {
-        protected ProducerEndpoint(string name) : base(name)
+        protected ProducerEndpoint(string name)
+            : base(name)
         {
         }
 
         /// <summary>
-        /// Gets or sets the message chunking settings. This option can be used to split large messages
-        /// into smaller chunks.
+        ///     Gets or sets the message chunking settings. This option can be used to split large messages
+        ///     into smaller chunks.
         /// </summary>
         public ChunkSettings Chunk { get; set; } = new ChunkSettings();
 
@@ -25,7 +26,7 @@ namespace Silverback.Messaging
 
             Chunk?.Validate();
         }
-        
+
         #region Equality
 
         protected bool Equals(ProducerEndpoint other) => base.Equals(other) && Equals(Chunk, other.Chunk);

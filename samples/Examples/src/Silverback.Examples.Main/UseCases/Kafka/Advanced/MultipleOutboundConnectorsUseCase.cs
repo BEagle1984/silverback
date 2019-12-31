@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Sergio Aquilini
+// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -51,8 +51,10 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
             var publisherB = serviceProvider.GetService<IEventPublisher>();
             var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
 
-            await publisherA.PublishAsync(new IntegrationEventA { Content = "A->" + DateTime.Now.ToString("HH:mm:ss.fff") });
-            await publisherB.PublishAsync(new IntegrationEventB { Content = "B->" + DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisherA.PublishAsync(new IntegrationEventA
+                { Content = "A->" + DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisherB.PublishAsync(new IntegrationEventB
+                { Content = "B->" + DateTime.Now.ToString("HH:mm:ss.fff") });
 
             await dbContext.SaveChangesAsync();
         }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -127,7 +127,7 @@ namespace Silverback.Tests.Core.Rx.Messaging
                     _publisher.Publish(new TestEventOne());
                     threads.Add(Thread.CurrentThread.ManagedThreadId);
                 });
-            
+
             await Task.Delay(100);
 
             count.Should().Be(4);

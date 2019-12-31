@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Newtonsoft.Json;
@@ -17,8 +17,10 @@ namespace Silverback.EventStore
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        public static string Serialize(IEntityEvent @event) => JsonConvert.SerializeObject(@event, typeof(IEntityEvent), SerializerSettings);
+        public static string Serialize(IEntityEvent @event) =>
+            JsonConvert.SerializeObject(@event, typeof(IEntityEvent), SerializerSettings);
 
-        public static IEntityEvent Deserialize(string json) => JsonConvert.DeserializeObject<IEntityEvent>(json, SerializerSettings);
+        public static IEntityEvent Deserialize(string json) =>
+            JsonConvert.DeserializeObject<IEntityEvent>(json, SerializerSettings);
     }
 }

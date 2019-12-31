@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,8 @@ namespace Silverback.Tests.Core.TestTypes.Database
         {
         }
 
-        public TestDbContext(DbContextOptions options) : base(options)
+        public TestDbContext(DbContextOptions options)
+            : base(options)
         {
         }
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
@@ -42,13 +42,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _behavior = (OutboundProducingBehavior)serviceProvider.GetServices<IBehavior>()
+            _behavior = (OutboundProducingBehavior) serviceProvider.GetServices<IBehavior>()
                 .First(s => s is OutboundProducingBehavior);
-            _broker = (TestBroker)serviceProvider.GetRequiredService<IBroker>();
+            _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
 
             InMemoryOutboundQueue.Clear();
         }
-        
+
         [Fact]
         public async Task Handle_OutboundMessage_CorrectlyRelayed()
         {
@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 new TestEventOne(),
                 new MessageHeader[0],
                 new OutboundRoutingConfiguration.OutboundRoute(
-                    typeof(TestEventOne), 
+                    typeof(TestEventOne),
                     TestProducerEndpoint.GetDefault(),
                     typeof(OutboundConnector)));
 

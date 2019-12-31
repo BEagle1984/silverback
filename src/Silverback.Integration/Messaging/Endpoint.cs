@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
@@ -15,19 +15,19 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
-        /// Gets the name of the endpoint (being it a queue, topic, exchange, ...).
+        ///     Gets the name of the endpoint (being it a queue, topic, exchange, ...).
         /// </summary>
         public string Name { get; protected set; }
 
         /// <summary>
-        /// Gets or sets an instance of <see cref="IMessageSerializer"/> to be used to serialize or deserialize
-        /// the messages being produced or consumed.
+        ///     Gets or sets an instance of <see cref="IMessageSerializer" /> to be used to serialize or deserialize
+        ///     the messages being produced or consumed.
         /// </summary>
         public IMessageSerializer Serializer { get; set; } = DefaultSerializer;
 
         public static IMessageSerializer DefaultSerializer { get; } = new JsonMessageSerializer();
 
-        /// <inheritdoc cref="IEndpoint"/>
+        /// <inheritdoc cref="IEndpoint" />
         public virtual void Validate()
         {
             if (string.IsNullOrEmpty(Name))
@@ -35,13 +35,12 @@ namespace Silverback.Messaging
 
             if (Serializer == null)
                 throw new EndpointConfigurationException("Serializer cannot be null");
-            
         }
 
         #region Equality
 
-        protected bool Equals(Endpoint other) => 
-            Name == other.Name && 
+        protected bool Equals(Endpoint other) =>
+            Name == other.Name &&
             ComparisonHelper.JsonEquals(Serializer, other.Serializer);
 
         public override bool Equals(object obj)

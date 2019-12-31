@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
@@ -14,11 +14,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         {
             var collection = new MessageHeaderCollection
             {
-                {"one", "1"},
-                {"two", "2"},
-                {"three", "3"}
+                { "one", "1" },
+                { "two", "2" },
+                { "three", "3" }
             };
-            
+
             collection.Should().BeEquivalentTo(
                 new MessageHeader("one", "1"),
                 new MessageHeader("two", "2"),
@@ -30,8 +30,8 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         {
             var collection = new MessageHeaderCollection
             {
-                {"one", "1"}, 
-                {"two", "2"}
+                { "one", "1" },
+                { "two", "2" }
             };
 
             collection.AddOrReplace("one", "1(2)");
@@ -47,8 +47,8 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         {
             var collection = new MessageHeaderCollection
             {
-                {"one", "1"}, 
-                {"two", "2"}
+                { "one", "1" },
+                { "two", "2" }
             };
 
             collection.AddOrReplace("three", "3");

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -15,9 +15,12 @@ namespace Silverback.Messaging.HealthChecks
         private readonly IOutboundRoutingConfiguration _outboundRoutingConfiguration;
         private readonly IBroker _broker;
 
-        public OutboundEndpointsHealthCheckService(IOutboundRoutingConfiguration outboundRoutingConfiguration, IBroker broker)
+        public OutboundEndpointsHealthCheckService(
+            IOutboundRoutingConfiguration outboundRoutingConfiguration,
+            IBroker broker)
         {
-            _outboundRoutingConfiguration = outboundRoutingConfiguration ?? throw new ArgumentNullException(nameof(outboundRoutingConfiguration));
+            _outboundRoutingConfiguration = outboundRoutingConfiguration ??
+                                            throw new ArgumentNullException(nameof(outboundRoutingConfiguration));
             _broker = broker ?? throw new ArgumentNullException(nameof(broker));
         }
 

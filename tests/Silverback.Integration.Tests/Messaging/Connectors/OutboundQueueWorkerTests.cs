@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading;
@@ -37,7 +37,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 .AddSingleton<ILoggerFactory, NullLoggerFactory>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
                 .AddSingleton<IOutboundQueueConsumer, InMemoryOutboundQueue>()
-                .AddSilverback().WithConnectionTo<TestBroker>(options => options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
+                .AddSilverback().WithConnectionTo<TestBroker>(options =>
+                    options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
@@ -47,7 +48,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
 
-            _worker = new OutboundQueueWorker(serviceProvider, _broker, new NullLogger<OutboundQueueWorker>(), new MessageLogger(), true, 100); // TODO: Test order not enforced
+            _worker = new OutboundQueueWorker(serviceProvider, _broker, new NullLogger<OutboundQueueWorker>(),
+                new MessageLogger(), true, 100); // TODO: Test order not enforced
 
             InMemoryOutboundQueue.Clear();
 
@@ -74,7 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic1");
             _broker.ProducedMessages[1].Endpoint.Name.Should().Be("topic2");
         }
-        
+
         [Fact]
         public async Task ProcessQueue_RunTwice_ProducedOnce()
         {

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaPartitioningKeyBehavior().Handle(new[] {message}, Task.FromResult);
+            new KafkaPartitioningKeyBehavior().Handle(new[] { message }, Task.FromResult);
 
             message.Headers.Should().NotContain(
                 h => h.Key == "x-kafka-partitioning-key");
@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaPartitioningKeyBehavior().Handle(new[] {message1, message2}, Task.FromResult);
+            new KafkaPartitioningKeyBehavior().Handle(new[] { message1, message2 }, Task.FromResult);
 
             message1.Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-kafka-partitioning-key", "1"));

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
     public class InboundMessageUnwrapperTests
     {
         private readonly IPublisher _publisher = Substitute.For<IPublisher>();
-        
+
         [Fact]
         // This is important to be able to effectively avoid the mortal loop
         public async Task Unwrap_SomeInboundMessage_IsReferenceEqualToWrappedContent()
@@ -26,16 +26,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             object unwrappedMessage = null;
             _publisher
                 .When(x => x.PublishAsync(Arg.Any<IEnumerable<object>>()))
-                .Do(x =>
-                {
-                    unwrappedMessage =  x.Arg<IEnumerable<object>>().FirstOrDefault();
-                });
-            
+                .Do(x => { unwrappedMessage = x.Arg<IEnumerable<object>>().FirstOrDefault(); });
+
             var message = new TestEventOne();
-            var wrappedMessage = new InboundMessage<TestEventOne>(new byte[1], null, null, TestConsumerEndpoint.GetDefault(), true)
-            {
-                Content = message
-            };
+            var wrappedMessage =
+                new InboundMessage<TestEventOne>(new byte[1], null, null, TestConsumerEndpoint.GetDefault(), true)
+                {
+                    Content = message
+                };
 
             await new InboundMessageUnwrapper(_publisher).OnMessagesReceived(new[] { wrappedMessage });
 

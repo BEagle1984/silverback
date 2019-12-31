@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -20,11 +20,13 @@ namespace Silverback.Messaging.HealthChecks
         public static TimeSpan MaxMessageAge { get; set; } = TimeSpan.FromSeconds(30);
         public static int? MaxQueueLength { get; set; }
 
-        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+        public async Task<HealthCheckResult> CheckHealthAsync(
+            HealthCheckContext context,
+            CancellationToken cancellationToken = default)
         {
             return await _service.CheckIsHealthy(MaxMessageAge)
                 ? new HealthCheckResult(HealthStatus.Healthy)
-                : new HealthCheckResult(context.Registration.FailureStatus, 
+                : new HealthCheckResult(context.Registration.FailureStatus,
                     $"The outbound queue exceeded the configured limits " +
                     $"(max message age: {MaxMessageAge.ToString()}, " +
                     $"max queue length: {MaxQueueLength?.ToString() ?? "-"}).");

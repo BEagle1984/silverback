@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -53,7 +53,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
             await Task.Delay(1);
             ReceivedMessagesCount++;
 
-            return new[] {"one", "two"};
+            return new[] { "one", "two" };
         }
 
         [Subscribe]

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -17,7 +17,8 @@ namespace Silverback.Messaging.Connectors.Repositories
     {
         private readonly bool _removeProduced;
 
-        public DbOutboundQueueConsumer(IDbContext dbContext, bool removeProduced) : base(dbContext)
+        public DbOutboundQueueConsumer(IDbContext dbContext, bool removeProduced)
+            : base(dbContext)
         {
             _removeProduced = removeProduced;
         }
@@ -38,10 +39,10 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public async Task<IEnumerable<QueuedMessage>> Dequeue(int count) =>
             (await DbSet.AsQueryable()
-                    .Where(m => m.Produced == null)
-                    .OrderBy(m => m.Id)
-                    .Take(count)
-                    .ToListAsync())
+                .Where(m => m.Produced == null)
+                .OrderBy(m => m.Id)
+                .Take(count)
+                .ToListAsync())
             .Select(message => new DbQueuedMessage(
                 message.Id,
                 message.Content,

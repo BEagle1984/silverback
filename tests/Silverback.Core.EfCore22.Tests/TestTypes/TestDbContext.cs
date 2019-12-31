@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading;
@@ -38,7 +38,9 @@ namespace Silverback.Tests.Core.EFCore22.TestTypes
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => SaveChangesAsync(true, cancellationToken);
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public override Task<int> SaveChangesAsync(
+            bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
             => _eventsPublisher.ExecuteSaveTransactionAsync(() =>
                 base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
     }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,13 +12,16 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Connectors
 {
     /// <summary>
-    /// Uses <see cref="IInboundLog"/> to keep track of each processed message and guarantee
-    /// that each one is processed only once.
+    ///     Uses <see cref="IInboundLog" /> to keep track of each processed message and guarantee
+    ///     that each one is processed only once.
     /// </summary>
     public class LoggedInboundConnector : ExactlyOnceInboundConnector
     {
-        public LoggedInboundConnector(IBroker broker, IServiceProvider serviceProvider,
-            ILogger<LoggedInboundConnector> logger, MessageLogger messageLogger)
+        public LoggedInboundConnector(
+            IBroker broker,
+            IServiceProvider serviceProvider,
+            ILogger<LoggedInboundConnector> logger,
+            MessageLogger messageLogger)
             : base(broker, serviceProvider, logger, messageLogger)
         {
         }

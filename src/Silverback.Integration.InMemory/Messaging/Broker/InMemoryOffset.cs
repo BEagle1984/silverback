@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -15,13 +15,13 @@ namespace Silverback.Messaging.Broker
             Value = offset.ToString();
         }
 
-        /// <inheritdoc cref="IOffset"/>
+        /// <inheritdoc cref="IOffset" />
         public string Key { get; }
 
-        /// <inheritdoc cref="IOffset"/>
+        /// <inheritdoc cref="IOffset" />
         public string Value { get; }
-        
-        /// <inheritdoc cref="IOffset"/>
+
+        /// <inheritdoc cref="IOffset" />
         public int Offset { get; }
 
         public int CompareTo(InMemoryOffset other)
@@ -35,15 +35,21 @@ namespace Silverback.Messaging.Broker
         {
             if (ReferenceEquals(this, obj)) return 0;
             if (obj is null) return 1;
-            return obj is InMemoryOffset other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(InMemoryOffset)}");
+            return obj is InMemoryOffset other
+                ? CompareTo(other)
+                : throw new ArgumentException($"Object must be of type {nameof(InMemoryOffset)}");
         }
 
-        public static bool operator <(InMemoryOffset left, InMemoryOffset right) => Comparer<InMemoryOffset>.Default.Compare(left, right) < 0;
+        public static bool operator <(InMemoryOffset left, InMemoryOffset right) =>
+            Comparer<InMemoryOffset>.Default.Compare(left, right) < 0;
 
-        public static bool operator >(InMemoryOffset left, InMemoryOffset right) => Comparer<InMemoryOffset>.Default.Compare(left, right) > 0;
+        public static bool operator >(InMemoryOffset left, InMemoryOffset right) =>
+            Comparer<InMemoryOffset>.Default.Compare(left, right) > 0;
 
-        public static bool operator <=(InMemoryOffset left, InMemoryOffset right) => Comparer<InMemoryOffset>.Default.Compare(left, right) <= 0;
+        public static bool operator <=(InMemoryOffset left, InMemoryOffset right) =>
+            Comparer<InMemoryOffset>.Default.Compare(left, right) <= 0;
 
-        public static bool operator >=(InMemoryOffset left, InMemoryOffset right) => Comparer<InMemoryOffset>.Default.Compare(left, right) >= 0;
+        public static bool operator >=(InMemoryOffset left, InMemoryOffset right) =>
+            Comparer<InMemoryOffset>.Default.Compare(left, right) >= 0;
     }
 }

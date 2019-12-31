@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -14,19 +14,19 @@ namespace Silverback.Examples.Main.UseCases
 {
     public abstract class UseCase : IUseCase
     {
-        /// <inheritdoc cref="IMenuItemInfo"/>
+        /// <inheritdoc cref="IMenuItemInfo" />
         public string Title { get; protected set; }
 
-        /// <inheritdoc cref="IMenuItemInfo"/>
+        /// <inheritdoc cref="IMenuItemInfo" />
         public string Description { get; protected set; }
 
         /// <summary>
-        /// Gets or sets the number of times the <see cref="Execute"/> method has to be called in a loop.
+        ///     Gets or sets the number of times the <see cref="Execute" /> method has to be called in a loop.
         /// </summary>
         protected int ExecutionsCount { get; set; } = 3;
 
         /// <summary>
-        /// Runs the use case.
+        ///     Runs the use case.
         /// </summary>
         public void Run()
         {
@@ -85,32 +85,36 @@ namespace Silverback.Examples.Main.UseCases
         }
 
         /// <summary>
-        /// <param>Registers the required services for DI.</param>
-        /// <param>(Same to what is normally done in the Startup.cs.)</param>
+        ///     <param>Registers the required services for DI.</param>
+        ///     <param>(Same to what is normally done in the Startup.cs.)</param>
         /// </summary>
         protected abstract void ConfigureServices(IServiceCollection services);
 
         /// <summary>
-        /// <param>Configures the Bus.</param>
-        /// <param>(Same to what is normally done in the Startup.cs.)</param>
+        ///     <param>Configures the Bus.</param>
+        ///     <param>(Same to what is normally done in the Startup.cs.)</param>
         /// </summary>
         protected abstract void Configure(BusConfigurator configurator, IServiceProvider serviceProvider);
 
         /// <summary>
-        /// Executes the necessary logic to demonstrate the use case.
+        ///     Executes the necessary logic to demonstrate the use case.
         /// </summary>
         protected abstract Task Execute(IServiceProvider serviceProvider);
 
         /// <summary>
-        /// Invoked after the configuration and just before <see cref="Execute"/>.
-        /// Can be used for example to setup the use case data.
+        ///     Invoked after the configuration and just before <see cref="Execute" />.
+        ///     Can be used for example to setup the use case data.
         /// </summary>
-        protected virtual void PreExecute(IServiceProvider serviceProvider) { }
+        protected virtual void PreExecute(IServiceProvider serviceProvider)
+        {
+        }
 
         /// <summary>
-        /// Invoked after all runs of the <see cref="Execute"/> method.
-        /// Can be used to execute some cleanup work, if needed.
+        ///     Invoked after all runs of the <see cref="Execute" /> method.
+        ///     Can be used to execute some cleanup work, if needed.
         /// </summary>
-        protected virtual void PostExecute(IServiceProvider serviceProvider) { }
+        protected virtual void PostExecute(IServiceProvider serviceProvider)
+        {
+        }
     }
 }

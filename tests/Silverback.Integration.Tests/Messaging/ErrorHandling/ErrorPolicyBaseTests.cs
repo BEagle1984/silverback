@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Theory, MemberData(nameof(Exclude_TestData))]
         public void Exclude_Exception_CanHandleReturnsExpectedResult(Exception exception, bool mustApply)
         {
-            var policy = (TestErrorPolicy)new TestErrorPolicy()
+            var policy = (TestErrorPolicy) new TestErrorPolicy()
                 .Exclude<ArgumentException>()
                 .Exclude<InvalidCastException>();
 
@@ -99,10 +99,14 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             };
 
         [Theory, MemberData(nameof(ApplyWhen_TestData))]
-        public void ApplyWhen_Exception_CanHandleReturnsExpectedResult(IInboundMessage message, Exception exception, bool mustApply)
+        public void ApplyWhen_Exception_CanHandleReturnsExpectedResult(
+            IInboundMessage message,
+            Exception exception,
+            bool mustApply)
         {
-            var policy = (TestErrorPolicy)new TestErrorPolicy()
-                .ApplyWhen((msg, ex) => msg.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey) <= 5 && ex.Message != "no");
+            var policy = (TestErrorPolicy) new TestErrorPolicy()
+                .ApplyWhen((msg, ex) =>
+                    msg.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey) <= 5 && ex.Message != "no");
 
             var canHandle = policy.CanHandle(message, exception);
 

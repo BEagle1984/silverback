@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -94,7 +94,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public void Produce_LargeMessage_Chunked()
         {
-            var producer = (TestProducer)_broker.GetProducer(new TestProducerEndpoint("point")
+            var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("point")
             {
                 Chunk = new ChunkSettings
                 {
@@ -102,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
                 }
             });
 
-            var message = new TestEventOne {Content = "abcdefghijklmnopqrstuvwxyz", Id = Guid.NewGuid()};
+            var message = new TestEventOne { Content = "abcdefghijklmnopqrstuvwxyz", Id = Guid.NewGuid() };
 
             producer.Produce(message);
 
@@ -112,7 +112,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public void ProduceAsync_LargeMessage_Chunked()
         {
-            var producer = (TestProducer)_broker.GetProducer(new TestProducerEndpoint("point")
+            var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("point")
             {
                 Chunk = new ChunkSettings
                 {

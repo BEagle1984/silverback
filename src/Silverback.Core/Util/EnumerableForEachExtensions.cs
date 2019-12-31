@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -26,13 +26,19 @@ namespace Silverback.Util
             }
         }
 
-        public static void ParallelForEach<T>(this IEnumerable<T> source, Action<T> action, int? maxDegreeOfParallelism = null) =>
+        public static void ParallelForEach<T>(
+            this IEnumerable<T> source,
+            Action<T> action,
+            int? maxDegreeOfParallelism = null) =>
             Parallel.ForEach(source,
                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism ?? -1 },
                 action);
 
         // http://blog.briandrupieski.com/throttling-asynchronous-methods-in-csharp
-        public static Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> action, int? maxDegreeOfParallelism = null) =>
+        public static Task ParallelForEachAsync<T>(
+            this IEnumerable<T> source,
+            Func<T, Task> action,
+            int? maxDegreeOfParallelism = null) =>
             source.ParallelSelectAsync(async s =>
             {
                 await action(s);

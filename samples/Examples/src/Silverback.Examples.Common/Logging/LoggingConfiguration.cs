@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
@@ -20,7 +20,7 @@ namespace Silverback.Examples.Common.Logging
         public static void Setup()
         {
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
-            
+
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console(
                     theme: AnsiConsoleTheme.Code,

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -8,21 +8,24 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging
 {
-    public sealed class RabbitExchangeProducerEndpoint : RabbitProducerEndpoint, IEquatable<RabbitExchangeProducerEndpoint>
+    public sealed class RabbitExchangeProducerEndpoint
+        : RabbitProducerEndpoint,
+            IEquatable<RabbitExchangeProducerEndpoint>
     {
-        public RabbitExchangeProducerEndpoint(string name) : base(name)
+        public RabbitExchangeProducerEndpoint(string name)
+            : base(name)
         {
         }
-        
+
         /// <summary>
-        /// Gets or sets the exchange configuration.
+        ///     Gets or sets the exchange configuration.
         /// </summary>
         public RabbitExchangeConfig Exchange { get; set; } = new RabbitExchangeConfig();
 
         public override void Validate()
         {
             base.Validate();
-            
+
             if (Exchange == null)
                 throw new EndpointConfigurationException("Exchange cannot be null");
 

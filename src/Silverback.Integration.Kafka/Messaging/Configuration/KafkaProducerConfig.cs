@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,15 +12,15 @@ namespace Silverback.Messaging.Configuration
         private const bool KafkaDefaultEnableDeliveryReports = true;
 
         /// <summary>
-        /// Gets a boolean value indicating whether delivery reports are enabled according
-        /// to the explicit configuration and Kafka defaults.
+        ///     Gets a boolean value indicating whether delivery reports are enabled according
+        ///     to the explicit configuration and Kafka defaults.
         /// </summary>
         public bool AreDeliveryReportsEnabled => EnableDeliveryReports ?? KafkaDefaultEnableDeliveryReports;
 
         /// <summary>
-        /// Gets a boolean value indicating whether the persistence status will be returned
-        /// as part of the delivery reports according to the explicit configuration
-        /// and Kafka defaults.
+        ///     Gets a boolean value indicating whether the persistence status will be returned
+        ///     as part of the delivery reports according to the explicit configuration
+        ///     and Kafka defaults.
         /// </summary>
         internal bool ArePersistenceStatusReportsEnabled =>
             AreDeliveryReportsEnabled &&
@@ -29,14 +29,14 @@ namespace Silverback.Messaging.Configuration
              DeliveryReportFields.Contains("status"));
 
         /// <summary>
-        /// Gets or sets a boolean value indicating whether an exception must be thrown
-        /// by the producer if the persistence is not acknowledge by the broker.
+        ///     Gets or sets a boolean value indicating whether an exception must be thrown
+        ///     by the producer if the persistence is not acknowledge by the broker.
         /// </summary>
         public bool ThrowIfNotAcknowledged { get; set; } = true;
-        
+
         /// <summary>
-        /// Specifies whether the producer has to be disposed and recreated if a
-        /// <see cref="KafkaException"/> is thrown (default is <c>false</c>).<br/>
+        ///     Specifies whether the producer has to be disposed and recreated if a
+        ///     <see cref="KafkaException" /> is thrown (default is <c>false</c>).<br />
         /// </summary>
         public bool DisposeOnException { get; set; } = true;
 
@@ -66,7 +66,7 @@ namespace Silverback.Messaging.Configuration
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((KafkaProducerConfig)obj);
+            return Equals((KafkaProducerConfig) obj);
         }
 
         #endregion

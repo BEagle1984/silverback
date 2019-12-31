@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -44,7 +44,8 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new SimpleIntegrationEvent
+                { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }
 
         public class CustomHeadersBehavior : IBehavior

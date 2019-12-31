@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -56,7 +56,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         }
 
         [Theory, MemberData(nameof(Handle_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
-        public async Task Handle_MultipleMessages_CorrectlyRoutedToEndpoint(IIntegrationMessage message,
+        public async Task Handle_MultipleMessages_CorrectlyRoutedToEndpoint(
+            IIntegrationMessage message,
             string[] expectedEndpointNames)
         {
             _routingConfiguration.Add<IIntegrationMessage>(new TestProducerEndpoint("allMessages"), null);
@@ -64,7 +65,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), null);
             _routingConfiguration.Add<TestEventTwo>(new TestProducerEndpoint("eventTwo"), null);
 
-            await _behavior.Handle(new[] {message}, Task.FromResult);
+            await _behavior.Handle(new[] { message }, Task.FromResult);
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(100);
@@ -122,19 +123,21 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
 
-            var messages = await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
+            var messages =
+                await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
 
             messages.Count().Should().Be(1);
             messages.First().Should().NotBeOfType<TestEventOne>();
         }
-        
+
         [Fact]
         public async Task Handle_MessagesWithPublishToInternBusOption_RoutedMessageIsNotFiltered()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
 
-            var messages = await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
+            var messages =
+                await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
 
             messages.Count().Should().Be(2);
         }
@@ -144,14 +147,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         public async Task Handle_UnhandledMessageType_CorrectlyRelayed()
         {
             var message = new SomeUnhandledMessage { Content = "abc" };
-            _routingConfiguration.Add<SomeUnhandledMessage>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
+            _routingConfiguration.Add<SomeUnhandledMessage>(new TestProducerEndpoint("eventOne"),
+                typeof(OutboundConnector));
 
             await _behavior.Handle(new[] { message }, Task.FromResult);
 
             _broker.ProducedMessages.Count.Should().Be(1);
         }
-        
-        
+
+
         [Fact]
         public async Task Handle_InboundMessages_AreIgnored()
         {
@@ -163,7 +167,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 {
                     Content = message
                 }).ToList();
-            
+
             await _behavior.Handle(wrappedMessages, Task.FromResult);
             await _behavior.Handle(messages, Task.FromResult);
             await _outboundQueue.Commit();

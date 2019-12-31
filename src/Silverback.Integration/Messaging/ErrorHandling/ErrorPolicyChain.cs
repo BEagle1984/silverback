@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -10,7 +10,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.ErrorHandling
 {
     /// <summary>
-    /// A chain of error policies to be applied one after another.
+    ///     A chain of error policies to be applied one after another.
     /// </summary>
     public class ErrorPolicyChain : ErrorPolicyBase
     {
@@ -18,12 +18,20 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly MessageLogger _messageLogger;
         private readonly IEnumerable<ErrorPolicyBase> _policies;
 
-        public ErrorPolicyChain(IServiceProvider serviceProvider, ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger, params ErrorPolicyBase[] policies)
-            : this (policies.AsEnumerable(), serviceProvider, logger, messageLogger)
+        public ErrorPolicyChain(
+            IServiceProvider serviceProvider,
+            ILogger<ErrorPolicyChain> logger,
+            MessageLogger messageLogger,
+            params ErrorPolicyBase[] policies)
+            : this(policies.AsEnumerable(), serviceProvider, logger, messageLogger)
         {
         }
 
-        public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies, IServiceProvider serviceProvider, ILogger<ErrorPolicyChain> logger, MessageLogger messageLogger)
+        public ErrorPolicyChain(
+            IEnumerable<ErrorPolicyBase> policies,
+            IServiceProvider serviceProvider,
+            ILogger<ErrorPolicyChain> logger,
+            MessageLogger messageLogger)
             : base(serviceProvider, logger, messageLogger)
         {
             _logger = logger;
@@ -33,7 +41,9 @@ namespace Silverback.Messaging.ErrorHandling
 
             StackMaxFailedAttempts(policies);
 
-            if (_policies.Any(p => p == null)) throw new ArgumentNullException(nameof(policies), "One or more policies in the chain have a null value.");
+            if (_policies.Any(p => p == null))
+                throw new ArgumentNullException(nameof(policies),
+                    "One or more policies in the chain have a null value.");
         }
 
         protected override ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception)
@@ -44,7 +54,9 @@ namespace Silverback.Messaging.ErrorHandling
                     return policy.HandleError(messages, exception);
             }
 
-            _messageLogger.LogDebug(_logger, "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.", messages);
+            _messageLogger.LogDebug(_logger,
+                "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.",
+                messages);
             return ErrorAction.StopConsuming;
         }
 

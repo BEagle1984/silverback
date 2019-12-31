@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -25,7 +25,7 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         public async Task TryProcessAsync(
-            IEnumerable<IInboundMessage> messages, 
+            IEnumerable<IInboundMessage> messages,
             IErrorPolicy errorPolicy,
             Func<IEnumerable<IInboundMessage>, Task> messagesHandler)
         {
@@ -54,8 +54,9 @@ namespace Silverback.Messaging.ErrorHandling
 
         private async Task<MessageHandlerResult> HandleMessages(
             IEnumerable<IInboundMessage> messages,
-            Func<IEnumerable<IInboundMessage>, Task> messagesHandler, 
-            IErrorPolicy errorPolicy, int attempt)
+            Func<IEnumerable<IInboundMessage>, Task> messagesHandler,
+            IErrorPolicy errorPolicy,
+            int attempt)
         {
             try
             {
@@ -86,7 +87,7 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private void UpdateFailedAttemptsHeader(IEnumerable<IBrokerMessage> messages, int attempt) => 
+        private void UpdateFailedAttemptsHeader(IEnumerable<IBrokerMessage> messages, int attempt) =>
             messages?.ForEach(msg =>
             {
                 if (attempt == 0)

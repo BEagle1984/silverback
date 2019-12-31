@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -28,8 +28,8 @@ namespace Silverback.Messaging.Configuration
         #region HandleMessagesOfType
 
         /// <summary>
-        /// Configures the type <typeparamref name="TMessage" /> to be recognized
-        /// as a message to enable features like automatic republishing.
+        ///     Configures the type <typeparamref name="TMessage" /> to be recognized
+        ///     as a message to enable features like automatic republishing.
         /// </summary>
         /// <typeparam name="TMessage">The (base) message type.</typeparam>
         /// <returns></returns>
@@ -49,10 +49,10 @@ namespace Silverback.Messaging.Configuration
         #region Subscribe (delegate)
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
         public BusConfigurator Subscribe(Delegate handler, SubscriptionOptions options = null)
         {
@@ -61,11 +61,11 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
         public BusConfigurator Subscribe<TMessage>(Action<TMessage> handler, SubscriptionOptions options = null)
         {
@@ -74,11 +74,11 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
         public BusConfigurator Subscribe<TMessage>(Func<TMessage, Task> handler, SubscriptionOptions options = null)
         {
@@ -87,11 +87,11 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
         public BusConfigurator Subscribe<TMessage>(Func<TMessage, object> handler, SubscriptionOptions options = null)
         {
@@ -100,65 +100,75 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
-        public BusConfigurator Subscribe<TMessage>(Func<TMessage, Task<object>> handler, SubscriptionOptions options = null)
+        public BusConfigurator Subscribe<TMessage>(
+            Func<TMessage, Task<object>> handler,
+            SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
-        public BusConfigurator Subscribe<TMessage>(Action<IEnumerable<TMessage>> handler, SubscriptionOptions options = null)
+        public BusConfigurator Subscribe<TMessage>(
+            Action<IEnumerable<TMessage>> handler,
+            SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
-        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, Task> handler, SubscriptionOptions options = null)
+        public BusConfigurator Subscribe<TMessage>(
+            Func<IEnumerable<TMessage>, Task> handler,
+            SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
-        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, object> handler, SubscriptionOptions options = null)
+        public BusConfigurator Subscribe<TMessage>(
+            Func<IEnumerable<TMessage>, object> handler,
+            SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
-        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, Task<object>> handler, SubscriptionOptions options = null)
+        public BusConfigurator Subscribe<TMessage>(
+            Func<IEnumerable<TMessage>, Task<object>> handler,
+            SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
@@ -169,52 +179,60 @@ namespace Silverback.Messaging.Configuration
         #region Subscribe (delegate w/ service provider)
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
-        public BusConfigurator Subscribe<TMessage>(Action<TMessage, IServiceProvider> handler, SubscriptionOptions options = null)
+        public BusConfigurator Subscribe<TMessage>(
+            Action<TMessage, IServiceProvider> handler,
+            SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
-        public BusConfigurator Subscribe<TMessage>(Func<TMessage, IServiceProvider, object> handler, SubscriptionOptions options = null)
+        public BusConfigurator Subscribe<TMessage>(
+            Func<TMessage, IServiceProvider, object> handler,
+            SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
-        public BusConfigurator Subscribe<TMessage>(Action<IEnumerable<TMessage>, IServiceProvider> handler, SubscriptionOptions options = null)
+        public BusConfigurator Subscribe<TMessage>(
+            Action<IEnumerable<TMessage>, IServiceProvider> handler,
+            SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
         }
 
         /// <summary>
-        /// Subscribes the specified handler method to the messages being published into the bus.
+        ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the messages to be handled.</typeparam>
         /// <param name="handler">The message handler delegate.</param>
-        /// <param name="options">A <see cref="SubscriptionOptions"/> instance specifying parallelism options.</param>
+        /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
-        public BusConfigurator Subscribe<TMessage>(Func<IEnumerable<TMessage>, IServiceProvider, object> handler, SubscriptionOptions options = null)
+        public BusConfigurator Subscribe<TMessage>(
+            Func<IEnumerable<TMessage>, IServiceProvider, object> handler,
+            SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return this;
@@ -225,23 +243,27 @@ namespace Silverback.Messaging.Configuration
         #region Subscribe (automatic / annotation based)
 
         /// <summary>
-        /// Configures the type <typeparamref name="TSubscriber" /> to be used
-        /// to resolve the subscribers.
+        ///     Configures the type <typeparamref name="TSubscriber" /> to be used
+        ///     to resolve the subscribers.
         /// </summary>
         /// <typeparam name="TSubscriber">The type to be used to resolve the subscribers instances.</typeparam>
-        /// <param name="autoSubscribeAllPublicMethods">A boolean value indicating whether all public methods in
-        /// the resolved types have to be automatically subscribed, without relying on the <see cref="SubscribeAttribute"/>.</param>
+        /// <param name="autoSubscribeAllPublicMethods">
+        ///     A boolean value indicating whether all public methods in
+        ///     the resolved types have to be automatically subscribed, without relying on the <see cref="SubscribeAttribute" />.
+        /// </param>
         /// <returns></returns>
         public BusConfigurator Subscribe<TSubscriber>(bool autoSubscribeAllPublicMethods = true) =>
             Subscribe(typeof(TSubscriber), autoSubscribeAllPublicMethods);
 
         /// <summary>
-        /// Configures the type <paramref name="subscriberType"/> to be used
-        /// to resolve the subscribers.
+        ///     Configures the type <paramref name="subscriberType" /> to be used
+        ///     to resolve the subscribers.
         /// </summary>
         /// <param name="subscriberType">The type to be used to resolve the subscribers instances.</param>
-        /// <param name="autoSubscribeAllPublicMethods">A boolean value indicating whether all public methods in
-        /// the resolved types have to be automatically subscribed, without relying on the <see cref="SubscribeAttribute"/>.</param>
+        /// <param name="autoSubscribeAllPublicMethods">
+        ///     A boolean value indicating whether all public methods in
+        ///     the resolved types have to be automatically subscribed, without relying on the <see cref="SubscribeAttribute" />.
+        /// </param>
         /// <returns></returns>
         public BusConfigurator Subscribe(Type subscriberType, bool autoSubscribeAllPublicMethods = true)
         {
@@ -260,8 +282,8 @@ namespace Silverback.Messaging.Configuration
         #region MyRegion
 
         /// <summary>
-        /// Resolves all the subscribers and build the types cache to speed-up the first
-        /// publish.
+        ///     Resolves all the subscribers and build the types cache to speed-up the first
+        ///     publish.
         /// </summary>
         /// <returns></returns>
         public BusConfigurator ScanSubscribers()

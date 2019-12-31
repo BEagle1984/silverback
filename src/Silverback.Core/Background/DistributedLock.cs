@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -25,7 +25,7 @@ namespace Silverback.Background
         public DistributedLockStatus Status { get; private set; }
 
         /// <summary>
-        /// Ensures that the lock is still valid, otherwise tries to re-acquire it.
+        ///     Ensures that the lock is still valid, otherwise tries to re-acquire it.
         /// </summary>
         /// <returns></returns>
         public async Task Renew(CancellationToken cancellationToken = default)
@@ -73,7 +73,7 @@ namespace Silverback.Background
                         !await _lockManager.SendHeartbeat(_settings)
                             ? failedHeartbeats + 1
                             : 0;
-                      
+
                     if (failedHeartbeats >= _settings.FailedHeartbeatsThreshold)
                         await CheckIsStillLocked();
                 }

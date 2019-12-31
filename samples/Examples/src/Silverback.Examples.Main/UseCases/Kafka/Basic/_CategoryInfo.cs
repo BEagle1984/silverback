@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,6 +12,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Basic
     public class _CategoryInfo : ICategory
     {
         public string Title => "Basics";
+
         public string Description => "The simplest configurations to get started using " +
                                      "Silverback with Apache Kafka.";
 

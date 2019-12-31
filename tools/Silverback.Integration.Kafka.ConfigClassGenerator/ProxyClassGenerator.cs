@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -26,7 +26,12 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
         private StringBuilder _builder;
         private XmlDocument _xmlDoc;
 
-        public ProxyClassGenerator(Type proxiedType, string generatedClassName, string baseClassName, string xmlDocumentationPath, bool generateNamespace)
+        public ProxyClassGenerator(
+            Type proxiedType,
+            string generatedClassName,
+            string baseClassName,
+            string xmlDocumentationPath,
+            bool generateNamespace)
         {
             _proxiedType = proxiedType;
             _generatedClassName = generatedClassName;
@@ -63,12 +68,15 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
 
             if (_baseClassName == null)
             {
-                _builder.AppendLine($"        internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }}");
+                _builder.AppendLine(
+                    $"        internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }}");
             }
             else
             {
-                _builder.AppendLine($"        internal override Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }} = new {proxiedTypeName}();");
-                _builder.AppendLine($"        internal {proxiedTypeName} ConfluentConfig => ({proxiedTypeName}) ConfluentBaseConfig;");
+                _builder.AppendLine(
+                    $"        internal override Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }} = new {proxiedTypeName}();");
+                _builder.AppendLine(
+                    $"        internal {proxiedTypeName} ConfluentConfig => ({proxiedTypeName}) ConfluentBaseConfig;");
             }
         }
 
@@ -144,7 +152,8 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
             var typeReferenceExpression = new CodeTypeReferenceExpression(new CodeTypeReference(type));
             using (var writer = new StringWriter())
             {
-                _codeDomProvider.GenerateCodeFromExpression(typeReferenceExpression, writer, new CodeGeneratorOptions());
+                _codeDomProvider.GenerateCodeFromExpression(typeReferenceExpression, writer,
+                    new CodeGeneratorOptions());
                 return writer.GetStringBuilder().ToString();
             }
         }

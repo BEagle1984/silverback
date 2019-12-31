@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Background;
@@ -10,8 +10,8 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class SilverbackBuilderExtensions
     {
         /// <summary>
-        /// Adds the <see cref="IDistributedLockManager"/> implementation and uses the specified DbContext to
-        /// handle the distributed locks.
+        ///     Adds the <see cref="IDistributedLockManager" /> implementation and uses the specified DbContext to
+        ///     handle the distributed locks.
         /// </summary>
         public static ISilverbackBuilder AddDbDistributedLockManager(this ISilverbackBuilder builder)
         {

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -21,7 +21,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             var service = new OutboundQueueHealthCheckService(queue);
 
             var result = await service.CheckIsHealthy();
-            
+
             result.Should().BeTrue();
         }
 
@@ -53,7 +53,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
 
             result.Should().Be(expected);
         }
-        
+
         [Theory]
         [InlineData(120, true)]
         [InlineData(121, false)]

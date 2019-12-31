@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Configuration;
@@ -13,9 +13,10 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class DependencyInjectionExtensions
     {
         /// <summary>
-        /// Adds the minimum essential Silverback services to the specified <see cref="IServiceCollection" />. Additional services
-        /// including broker support, inbound/outbound connectors and database bindings must be added separately using the 
-        /// <see cref="ISilverbackBuilder"/> returned from this method.
+        ///     Adds the minimum essential Silverback services to the specified <see cref="IServiceCollection" />. Additional
+        ///     services
+        ///     including broker support, inbound/outbound connectors and database bindings must be added separately using the
+        ///     <see cref="ISilverbackBuilder" /> returned from this method.
         /// </summary>
         /// <returns></returns>
         public static ISilverbackBuilder AddSilverback(this IServiceCollection services)

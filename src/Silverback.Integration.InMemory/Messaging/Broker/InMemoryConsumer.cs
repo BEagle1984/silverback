@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -9,31 +9,34 @@ namespace Silverback.Messaging.Broker
 {
     public class InMemoryConsumer : Consumer
     {
-        public InMemoryConsumer(InMemoryBroker broker, IConsumerEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors) 
+        public InMemoryConsumer(
+            InMemoryBroker broker,
+            IConsumerEndpoint endpoint,
+            IEnumerable<IConsumerBehavior> behaviors)
             : base(broker, endpoint, behaviors)
         {
         }
 
-        /// <inheritdoc cref="Consumer"/>
+        /// <inheritdoc cref="Consumer" />
         public override Task Commit(IEnumerable<IOffset> offsets)
         {
             // Do nothing
             return Task.CompletedTask;
         }
-        
-        /// <inheritdoc cref="Consumer"/>
+
+        /// <inheritdoc cref="Consumer" />
         public override Task Rollback(IEnumerable<IOffset> offsets)
         {
             // Do nothing
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer"/>
+        /// <inheritdoc cref="Consumer" />
         public override void Connect()
         {
         }
 
-        /// <inheritdoc cref="Consumer"/>
+        /// <inheritdoc cref="Consumer" />
         public override void Disconnect()
         {
         }

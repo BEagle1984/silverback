@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Connectors
 {
     /// <summary>
-    /// Stores the message into a queue to be forwarded to the message broker later on.
+    ///     Stores the message into a queue to be forwarded to the message broker later on.
     /// </summary>
     public class DeferredOutboundConnector : IOutboundConnector
     {
@@ -17,7 +17,10 @@ namespace Silverback.Messaging.Connectors
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
 
-        public DeferredOutboundConnector(IOutboundQueueProducer queueProducer, ILogger<DeferredOutboundConnector> logger, MessageLogger messageLogger)
+        public DeferredOutboundConnector(
+            IOutboundQueueProducer queueProducer,
+            ILogger<DeferredOutboundConnector> logger,
+            MessageLogger messageLogger)
         {
             _queueProducer = queueProducer;
             _logger = logger;

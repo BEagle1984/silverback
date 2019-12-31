@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Messages
         public string Value
         {
             get => _value;
-            set =>  _value = value ?? throw new ArgumentNullException(nameof(Value));
+            set => _value = value ?? throw new ArgumentNullException(nameof(Value));
         }
     }
 }

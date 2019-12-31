@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Concurrent;
 using FluentAssertions;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Xunit;
@@ -16,7 +15,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
 
         public KafkaClientConfigComparerTests()
         {
-            _dictionary = new ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper>(new KafkaClientConfigComparer());
+            _dictionary =
+                new ConcurrentDictionary<Confluent.Kafka.ConsumerConfig, InnerConsumerWrapper>(
+                    new KafkaClientConfigComparer());
         }
 
         [Fact]
@@ -32,7 +33,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
 
             _dictionary.TryAdd(config1, null);
 
-           _dictionary.Should().ContainKey(config2);
+            _dictionary.Should().ContainKey(config2);
         }
 
         [Fact]

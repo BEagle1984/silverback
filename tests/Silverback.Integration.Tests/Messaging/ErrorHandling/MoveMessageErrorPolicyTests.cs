@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -50,12 +50,12 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             {
                 Content = "hey oh!"
             };
-            
+
             policy.HandleError(new[]
             {
                 message
             }, new Exception("test"));
-            var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
+            var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());
 
             producer.ProducedMessages.Count.Should().Be(1);
         }
@@ -73,16 +73,17 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 Content = content,
                 Headers =
                 {
-                    { "key1", "value1" }, 
+                    { "key1", "value1" },
                     { "key2", "value2" }
                 }
             };
-            policy.HandleError(new[]{message}, new Exception("test"));
+            policy.HandleError(new[] { message }, new Exception("test"));
 
-            var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
+            var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());
 
             var producedMessage = producer.ProducedMessages.Last();
-            var deserializedMessage = producedMessage.Endpoint.Serializer.Deserialize(producedMessage.Message, producedMessage.Headers);
+            var deserializedMessage =
+                producedMessage.Endpoint.Serializer.Deserialize(producedMessage.Message, producedMessage.Headers);
             deserializedMessage.Should().BeEquivalentTo(message.Content);
         }
 
@@ -99,14 +100,14 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 Content = null,
                 Headers =
                 {
-                    {"key1", "value1"},
-                    {"key2", "value2"}
+                    { "key1", "value1" },
+                    { "key2", "value2" }
                 }
             };
 
             policy.HandleError(new[] { message }, new Exception("test"));
 
-            var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
+            var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());
             var producedMessage = producer.ProducedMessages.Last();
 
             producedMessage.Message.Should().Equal(producedMessage.Message);
@@ -125,13 +126,13 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 Content = "hey oh!",
                 Headers =
                 {
-                    {"key1", "value1"},
-                    {"key2", "value2"}
+                    { "key1", "value1" },
+                    { "key2", "value2" }
                 }
             };
             policy.HandleError(new[] { message }, new Exception("test"));
 
-            var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
+            var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());
 
             producer.ProducedMessages.Last().Headers.Should().Contain(message.Headers);
         }
@@ -150,8 +151,9 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     null, TestConsumerEndpoint.GetDefault(), true)
             }, new Exception("test"));
 
-            var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
-            var producedMessage = producer.Endpoint.Serializer.Deserialize(producer.ProducedMessages[0].Message, producer.ProducedMessages[0].Headers);
+            var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());
+            var producedMessage = producer.Endpoint.Serializer.Deserialize(producer.ProducedMessages[0].Message,
+                producer.ProducedMessages[0].Headers);
             producedMessage.Should().BeOfType<TestEventTwo>();
         }
 
@@ -172,7 +174,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             message.Headers.Add("key", "value");
             policy.HandleError(new[] { message }, new Exception("test"));
 
-            var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
+            var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());
             var newHeaders = producer.ProducedMessages[0].Headers;
             newHeaders.Count.Should().Be(6); // message-id, message-type, key, traceid, error, source-endpoint
         }
@@ -190,18 +192,18 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 Content = "hey oh!",
                 Headers =
                 {
-                    {"key1", "value1"},
-                    {"key2", "value2"}
+                    { "key1", "value1" },
+                    { "key2", "value2" }
                 }
             };
             policy.HandleError(new[] { message }, new Exception("test"));
 
-            var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
+            var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());
 
             producer.ProducedMessages.Last()
                 .Headers
                 .Should().ContainEquivalentOf(new MessageHeader(
-                    MessageHeader.SourceEndpointKey, 
+                    MessageHeader.SourceEndpointKey,
                     "source-endpoint"));
         }
     }

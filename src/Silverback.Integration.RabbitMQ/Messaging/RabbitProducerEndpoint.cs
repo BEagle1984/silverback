@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.LargeMessages;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
@@ -11,20 +10,21 @@ namespace Silverback.Messaging
 {
     public abstract class RabbitProducerEndpoint : ProducerEndpoint
     {
-        protected RabbitProducerEndpoint(string name) : base(name)
+        protected RabbitProducerEndpoint(string name)
+            : base(name)
         {
         }
 
         /// <summary>
-        /// Gets or sets the RabbitMQ connection settings.
+        ///     Gets or sets the RabbitMQ connection settings.
         /// </summary>
         public RabbitConnectionConfig Connection { get; set; } = new RabbitConnectionConfig();
-      
+
         /// <summary>
-        /// Gets or sets the maximum amount of time to wait for the message produce to be acknowledge before
-        /// considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative
-        /// acknowledgment.
-        /// The default is a quite conservative 5 seconds.
+        ///     Gets or sets the maximum amount of time to wait for the message produce to be acknowledge before
+        ///     considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative
+        ///     acknowledgment.
+        ///     The default is a quite conservative 5 seconds.
         /// </summary>
         public TimeSpan? ConfirmationTimeout { get; set; } = TimeSpan.FromSeconds(5);
 
@@ -40,7 +40,7 @@ namespace Silverback.Messaging
 
         #region Equality
 
-        protected bool Equals(RabbitConsumerEndpoint other) => 
+        protected bool Equals(RabbitConsumerEndpoint other) =>
             base.Equals(other) && Equals(Connection, other.Connection);
 
         public override bool Equals(object obj)

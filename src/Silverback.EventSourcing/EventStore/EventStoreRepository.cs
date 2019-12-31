@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -29,15 +29,17 @@ namespace Silverback.EventStore
 
         protected abstract TEventStoreEntity GetEventStoreEntity(TAggregateEntity aggregateEntity, bool addIfNotFound);
 
-        protected abstract Task<TEventStoreEntity> GetEventStoreEntityAsync(TAggregateEntity aggregateEntity, bool addIfNotFound);
+        protected abstract Task<TEventStoreEntity> GetEventStoreEntityAsync(
+            TAggregateEntity aggregateEntity,
+            bool addIfNotFound);
 
         protected virtual TAggregateEntity GetAggregateEntity(TEventStoreEntity eventStore, DateTime? snapshot = null)
         {
             if (eventStore == null)
                 return default;
 
-            var events = snapshot != null 
-                ? eventStore.Events.Where(e => e.Timestamp <= snapshot) 
+            var events = snapshot != null
+                ? eventStore.Events.Where(e => e.Timestamp <= snapshot)
                 : eventStore.Events;
 
             return EntityActivator.CreateInstance<TAggregateEntity>(

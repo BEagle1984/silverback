@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -26,24 +26,24 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        /// Gets the name of the topic.
+        ///     Gets the name of the topic.
         /// </summary>
         public string Topic { get; }
-        
+
         /// <summary>
-        /// Gets the partition number.
+        ///     Gets the partition number.
         /// </summary>
         public int Partition { get; }
-        
+
         /// <summary>
-        /// Gets the offset in the partition.
+        ///     Gets the offset in the partition.
         /// </summary>
         public long Offset { get; }
-        
-        /// <inheritdoc cref="IOffset"/>
+
+        /// <inheritdoc cref="IOffset" />
         public string Key { get; }
 
-        /// <inheritdoc cref="IOffset"/>
+        /// <inheritdoc cref="IOffset" />
         public string Value { get; }
 
         public int CompareTo(KafkaOffset other)
@@ -57,16 +57,22 @@ namespace Silverback.Messaging.Broker
         {
             if (ReferenceEquals(this, obj)) return 0;
             if (obj is null) return 1;
-            return obj is KafkaOffset other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(KafkaOffset)}");
+            return obj is KafkaOffset other
+                ? CompareTo(other)
+                : throw new ArgumentException($"Object must be of type {nameof(KafkaOffset)}");
         }
 
-        public static bool operator <(KafkaOffset left, KafkaOffset right) => Comparer<KafkaOffset>.Default.Compare(left, right) < 0;
+        public static bool operator <(KafkaOffset left, KafkaOffset right) =>
+            Comparer<KafkaOffset>.Default.Compare(left, right) < 0;
 
-        public static bool operator >(KafkaOffset left, KafkaOffset right) => Comparer<KafkaOffset>.Default.Compare(left, right) > 0;
+        public static bool operator >(KafkaOffset left, KafkaOffset right) =>
+            Comparer<KafkaOffset>.Default.Compare(left, right) > 0;
 
-        public static bool operator <=(KafkaOffset left, KafkaOffset right) => Comparer<KafkaOffset>.Default.Compare(left, right) <= 0;
+        public static bool operator <=(KafkaOffset left, KafkaOffset right) =>
+            Comparer<KafkaOffset>.Default.Compare(left, right) <= 0;
 
-        public static bool operator >=(KafkaOffset left, KafkaOffset right) => Comparer<KafkaOffset>.Default.Compare(left, right) >= 0;
+        public static bool operator >=(KafkaOffset left, KafkaOffset right) =>
+            Comparer<KafkaOffset>.Default.Compare(left, right) >= 0;
 
         internal Confluent.Kafka.TopicPartitionOffset AsTopicPartitionOffset() =>
             new Confluent.Kafka.TopicPartitionOffset(Topic, new Confluent.Kafka.Partition(Partition),

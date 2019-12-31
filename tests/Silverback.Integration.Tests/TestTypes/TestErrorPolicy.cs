@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -14,7 +14,9 @@ namespace Silverback.Tests.Integration.TestTypes
     {
         public bool Applied { get; private set; }
 
-        public TestErrorPolicy(IServiceProvider serviceProvider = null) : base(serviceProvider, NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>(), new MessageLogger())
+        public TestErrorPolicy(IServiceProvider serviceProvider = null)
+            : base(serviceProvider,
+                NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>(), new MessageLogger())
         {
         }
 

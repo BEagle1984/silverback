@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,15 +12,20 @@ namespace Silverback.Messaging.Configuration
         {
         }
 
-        public SilverbackConfigurationException(string message) : base(message)
+        public SilverbackConfigurationException(string message)
+            : base(message)
         {
         }
 
-        public SilverbackConfigurationException(string message, Exception innerException) : base(message, innerException)
+        public SilverbackConfigurationException(string message, Exception innerException)
+            : base(message,
+                innerException)
         {
         }
 
-        protected SilverbackConfigurationException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected SilverbackConfigurationException(SerializationInfo info, StreamingContext context)
+            : base(info,
+                context)
         {
         }
     }

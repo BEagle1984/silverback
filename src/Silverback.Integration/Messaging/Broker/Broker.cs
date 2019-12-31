@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Sergio Aquilini
+// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -16,13 +16,17 @@ namespace Silverback.Messaging.Broker
         private readonly IEnumerable<IProducerBehavior> _producerBehaviors;
         private readonly IEnumerable<IConsumerBehavior> _consumerBehaviors;
 
-        private ConcurrentDictionary<IEndpoint, IProducer> _producers = new ConcurrentDictionary<IEndpoint, IProducer>();
+        private ConcurrentDictionary<IEndpoint, IProducer> _producers;
+
         private List<IConsumer> _consumers = new List<IConsumer>();
 
         protected readonly ILoggerFactory LoggerFactory;
 
         protected Broker(IEnumerable<IBrokerBehavior> behaviors, ILoggerFactory loggerFactory)
         {
+            _producers = new ConcurrentDictionary<IEndpoint, IProducer>();
+
+            behaviors = behaviors?.ToList();
             _producerBehaviors = behaviors?.OfType<IProducerBehavior>() ?? Enumerable.Empty<IProducerBehavior>();
             _consumerBehaviors = behaviors?.OfType<IConsumerBehavior>() ?? Enumerable.Empty<IConsumerBehavior>();
 
@@ -32,7 +36,7 @@ namespace Silverback.Messaging.Broker
 
         #region Producer / Consumer
 
-        /// <inheritdoc cref="IBroker"/>
+        /// <inheritdoc cref="IBroker" />
         public virtual IProducer GetProducer(IProducerEndpoint endpoint) =>
             _producers.GetOrAdd(endpoint, _ =>
             {
@@ -42,19 +46,22 @@ namespace Silverback.Messaging.Broker
             });
 
         /// <summary>
-        /// Returns a new instance of <see cref="IProducer"/> to publish to the specified endpoint. The returned
-        /// instance will be cached and reused for the same endpoint.
+        ///     Returns a new instance of <see cref="IProducer" /> to publish to the specified endpoint. The returned
+        ///     instance will be cached and reused for the same endpoint.
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="behaviors">The behaviors to be plugged-in.</param>
         /// <returns></returns>
-        protected abstract IProducer InstantiateProducer(IProducerEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors);
+        protected abstract IProducer InstantiateProducer(
+            IProducerEndpoint endpoint,
+            IEnumerable<IProducerBehavior> behaviors);
 
-        /// <inheritdoc cref="IBroker"/>
+        /// <inheritdoc cref="IBroker" />
         public virtual IConsumer GetConsumer(IConsumerEndpoint endpoint)
         {
             if (IsConnected)
-                throw new InvalidOperationException("The broker is already connected. Disconnect it to get a new consumer.");
+                throw new InvalidOperationException(
+                    "The broker is already connected. Disconnect it to get a new consumer.");
 
             _logger.LogInformation("Creating new consumer for endpoint {endpointName}.", endpoint.Name);
 
@@ -69,21 +76,23 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        /// Returns a new instance of <see cref="IConsumer"/> to subscribe to the specified endpoint.
+        ///     Returns a new instance of <see cref="IConsumer" /> to subscribe to the specified endpoint.
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="behaviors">The behaviors to be plugged-in.</param>
         /// <returns></returns>
-        protected abstract IConsumer InstantiateConsumer(IConsumerEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors);
+        protected abstract IConsumer InstantiateConsumer(
+            IConsumerEndpoint endpoint,
+            IEnumerable<IConsumerBehavior> behaviors);
 
         #endregion
 
         #region Connect / Disconnect
 
-        /// <inheritdoc cref="IBroker"/>
+        /// <inheritdoc cref="IBroker" />
         public bool IsConnected { get; private set; }
 
-        /// <inheritdoc cref="IBroker"/>
+        /// <inheritdoc cref="IBroker" />
         public void Connect()
         {
             if (IsConnected)
@@ -98,13 +107,13 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        /// Connects all the consumers and starts consuming.
+        ///     Connects all the consumers and starts consuming.
         /// </summary>
         /// <param name="consumers"></param>
         protected virtual void Connect(IEnumerable<IConsumer> consumers) =>
             consumers.ForEach(c => c.Connect());
 
-        /// <inheritdoc cref="IBroker"/>
+        /// <inheritdoc cref="IBroker" />
         public void Disconnect()
         {
             if (!IsConnected)
@@ -119,7 +128,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        /// Disconnects all the consumers and stops consuming.
+        ///     Disconnects all the consumers and stops consuming.
         /// </summary>
         /// <param name="consumers"></param>
         protected virtual void Disconnect(IEnumerable<IConsumer> consumers) =>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -67,10 +67,10 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             result = await new ChunkConsumer(_store).JoinIfComplete(chunks[2]);
             result.Should().NotBeNull();
 
-            var deserializedResult = (BinaryMessage)_serializer.Deserialize(result, headers);
+            var deserializedResult = (BinaryMessage) _serializer.Deserialize(result, headers);
             deserializedResult.Content.Should().BeEquivalentTo(originalMessage.Content);
         }
 
-        private byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte)255).ToArray();
+        private byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte) 255).ToArray();
     }
 }

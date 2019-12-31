@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -30,15 +30,14 @@ namespace Silverback.Messaging.Serialization
 
             var type = typeof(TMessage);
             var json = GetEncoding().GetString(message);
-            
+
             return JsonConvert.DeserializeObject(json, type, Settings);
         }
     }
 
     public class JsonMessageSerializer : IMessageSerializer
     {
-        [DefaultValue("UTF8")]
-        public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
+        [DefaultValue("UTF8")] public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
 
         public JsonSerializerSettings Settings { get; } = new JsonSerializerSettings
         {
@@ -79,13 +78,13 @@ namespace Silverback.Messaging.Serialization
 
         protected System.Text.Encoding GetEncoding() =>
             Encoding switch
-                {
+            {
                 MessageEncoding.Default => System.Text.Encoding.Default,
                 MessageEncoding.ASCII => System.Text.Encoding.ASCII,
                 MessageEncoding.UTF8 => System.Text.Encoding.UTF8,
                 MessageEncoding.UTF32 => System.Text.Encoding.UTF32,
                 MessageEncoding.Unicode => System.Text.Encoding.Unicode,
                 _ => throw new InvalidOperationException("Unhandled encoding.")
-                };
+            };
     }
 }

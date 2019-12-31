@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
@@ -18,7 +17,7 @@ namespace Silverback.Tests.Integration.TestTypes
             : base(
                 broker,
                 endpoint,
-                new MessageKeyProvider(new[] {new DefaultPropertiesMessageKeyProvider()}),
+                new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() }),
                 behaviors,
                 new NullLogger<TestProducer>(),
                 new MessageLogger())

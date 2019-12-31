@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -22,7 +22,7 @@ namespace Silverback.Examples.RabbitConsumer
                 .AsObservable()
                 .UseDbContext<ExamplesDbContext>()
                 .WithConnectionToRabbit(options => options
-                    .AddDbLoggedInboundConnector()
+                        .AddDbLoggedInboundConnector()
                     //.AddDbOffsetStoredInboundConnector()
                     //.AddInboundConnector()
                     //.AddDbChunkStore()
@@ -60,7 +60,7 @@ namespace Silverback.Examples.RabbitConsumer
 
             return endpoint;
         }
-        
+
         private IConsumerEndpoint CreateExchangeEndpoint(
             string name,
             string exchangeType,

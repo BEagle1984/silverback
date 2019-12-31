@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -12,15 +12,18 @@ namespace Silverback
         {
         }
 
-        public SilverbackConcurrencyException(string message) : base(message)
+        public SilverbackConcurrencyException(string message)
+            : base(message)
         {
         }
 
-        public SilverbackConcurrencyException(string message, Exception innerException) : base(message, innerException)
+        public SilverbackConcurrencyException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        protected SilverbackConcurrencyException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected SilverbackConcurrencyException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

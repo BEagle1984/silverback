@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -52,7 +52,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
 
             _broker = services.BuildServiceProvider().GetRequiredService<IBroker>();
         }
-        
+
         private static void Connect()
         {
             _consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("Topic1")
@@ -69,7 +69,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
             _consumer.Received += OnMessageReceived;
 
             _broker.Connect();
-            
+
             Console.CancelKeyPress += (_, e) =>
             {
                 _broker.Disconnect();
@@ -82,7 +82,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
             var testMessage = (TestMessage) args.Message.Endpoint.Serializer.Deserialize(
                 args.Message.RawContent,
                 new MessageHeaderCollection(args.Message.Headers));
-            
+
             Console.WriteLine($"[{testMessage.Id}] [{Activity.Current.Id}] {testMessage.Text}");
 
             var text = testMessage.Text.ToLower().Trim();

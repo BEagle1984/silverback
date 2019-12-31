@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -9,7 +9,7 @@ using Silverback.Messaging.Subscribers;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    /// An interface for configuring Silverback services.
+    ///     An interface for configuring Silverback services.
     /// </summary>
     public interface ISilverbackBuilder
     {
@@ -20,8 +20,8 @@ namespace Silverback.Messaging.Configuration
         #region AddTransientSubscriber
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
@@ -29,16 +29,16 @@ namespace Silverback.Messaging.Configuration
         ISilverbackBuilder AddTransientSubscriber(Type baseType, Type subscriberType);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         ISilverbackBuilder AddTransientSubscriber(Type subscriberType);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
@@ -47,8 +47,8 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
@@ -56,9 +56,9 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
@@ -70,9 +70,9 @@ namespace Silverback.Messaging.Configuration
             Func<IServiceProvider, object> implementationFactory);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
@@ -82,9 +82,9 @@ namespace Silverback.Messaging.Configuration
             Func<IServiceProvider, ISubscriber> implementationFactory);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
@@ -95,9 +95,9 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
         /// <param name="implementationFactory">The factory that creates the service.</param>
@@ -111,8 +111,8 @@ namespace Silverback.Messaging.Configuration
         #region AddScopedSubscriber
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
@@ -120,16 +120,16 @@ namespace Silverback.Messaging.Configuration
         ISilverbackBuilder AddScopedSubscriber(Type baseType, Type subscriberType);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         ISilverbackBuilder AddScopedSubscriber(Type subscriberType);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
@@ -138,8 +138,8 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
@@ -147,9 +147,9 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
@@ -161,9 +161,9 @@ namespace Silverback.Messaging.Configuration
             Func<IServiceProvider, object> implementationFactory);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
@@ -173,9 +173,9 @@ namespace Silverback.Messaging.Configuration
             Func<IServiceProvider, ISubscriber> implementationFactory);
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
@@ -186,9 +186,9 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
         /// <param name="implementationFactory">The factory that creates the service.</param>
@@ -202,8 +202,8 @@ namespace Silverback.Messaging.Configuration
         #region AddSingletonSubscriber
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
@@ -211,16 +211,16 @@ namespace Silverback.Messaging.Configuration
         ISilverbackBuilder AddSingletonSubscriber(Type baseType, Type subscriberType);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="subscriberType">The type of the subscriber to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         ISilverbackBuilder AddSingletonSubscriber(Type subscriberType);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
@@ -229,8 +229,8 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
@@ -238,9 +238,9 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
@@ -252,9 +252,9 @@ namespace Silverback.Messaging.Configuration
             Func<IServiceProvider, object> implementationFactory);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
@@ -264,9 +264,9 @@ namespace Silverback.Messaging.Configuration
             Func<IServiceProvider, ISubscriber> implementationFactory);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
@@ -277,9 +277,9 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TSubscriber">The type of the subscriber to add.</typeparam>
         /// <param name="implementationFactory">The factory that creates the service.</param>
@@ -289,9 +289,9 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
-        /// instance specified in <paramref name="implementationInstance" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="baseType">The subscribers base class or interface.</param>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
@@ -303,9 +303,9 @@ namespace Silverback.Messaging.Configuration
             ISubscriber implementationInstance);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
-        /// instance specified in <paramref name="implementationInstance" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="subscriberType">The type of the subscriber to register.</param>
         /// <param name="implementationInstance">The instance of the service.</param>
@@ -313,9 +313,9 @@ namespace Silverback.Messaging.Configuration
         ISilverbackBuilder AddSingletonSubscriber(Type subscriberType, ISubscriber implementationInstance);
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
-        /// instance specified in <paramref name="implementationInstance" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBase">The subscribers base class or interface.</typeparam>
         /// <typeparam name="TSubscriber">The type of the subscriber to register.</typeparam>
@@ -325,9 +325,9 @@ namespace Silverback.Messaging.Configuration
             where TSubscriber : class, ISubscriber;
 
         /// <summary>
-        /// Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
-        /// instance specified in <paramref name="implementationInstance" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
@@ -343,16 +343,16 @@ namespace Silverback.Messaging.Configuration
         #region AddTransientBehavior
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         ISilverbackBuilder AddTransientBehavior(Type behaviorType);
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
@@ -360,9 +360,9 @@ namespace Silverback.Messaging.Configuration
             where TBehavior : class, IBehavior;
 
         /// <summary>
-        /// Adds a scoped behavior with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped behavior with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
@@ -373,16 +373,16 @@ namespace Silverback.Messaging.Configuration
         #region AddScopedBehavior
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         ISilverbackBuilder AddScopedBehavior(Type behaviorType);
 
         /// <summary>
-        /// Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
@@ -390,9 +390,9 @@ namespace Silverback.Messaging.Configuration
             where TBehavior : class, IBehavior;
 
         /// <summary>
-        /// Adds a scoped behavior with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a scoped behavior with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
@@ -403,16 +403,16 @@ namespace Silverback.Messaging.Configuration
         #region AddSingletonBehavior
 
         /// <summary>
-        /// Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         ISilverbackBuilder AddSingletonBehavior(Type behaviorType);
 
         /// <summary>
-        /// Adds a singleton behavior of the type specified in <typeparamref name="TBehavior" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton behavior of the type specified in <typeparamref name="TBehavior" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
         /// <returns>A reference to this instance after the operation has completed.</returns>
@@ -420,18 +420,18 @@ namespace Silverback.Messaging.Configuration
             where TBehavior : class, IBehavior;
 
         /// <summary>
-        /// Adds a singleton behavior with a
-        /// factory specified in <paramref name="implementationFactory" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton behavior with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         ISilverbackBuilder AddSingletonBehavior(Func<IServiceProvider, IBehavior> implementationFactory);
 
         /// <summary>
-        /// Adds a singleton behavior with an
-        /// instance specified in <paramref name="implementationInstance" /> to the
-        /// specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
+        ///     Adds a singleton behavior with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.ISilverbackBuilder" />.
         /// </summary>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>

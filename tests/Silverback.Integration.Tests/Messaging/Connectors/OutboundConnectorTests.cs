@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
@@ -26,7 +26,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task OnMessageReceived_SingleMessage_Relayed()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne { Content = "Test" }, null, TestProducerEndpoint.GetDefault());
+            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne { Content = "Test" }, null,
+                TestProducerEndpoint.GetDefault());
 
             await _connector.RelayMessage(outboundMessage);
 
@@ -34,7 +35,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.ProducedMessages.First().Endpoint.Should().Be(outboundMessage.Endpoint);
 
             var producedMessage = outboundMessage.Endpoint.Serializer.Deserialize(
-                _broker.ProducedMessages.First().Message, 
+                _broker.ProducedMessages.First().Message,
                 new MessageHeaderCollection(_broker.ProducedMessages.First().Headers)) as TestEventOne;
             producedMessage.Id.Should().Be(outboundMessage.Content.Id);
         }

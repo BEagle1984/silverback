@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Messages
     {
         public bool CanHandle(object message)
         {
-            var idProperty =  GetIdProperty(message);
+            var idProperty = GetIdProperty(message);
 
             return idProperty != null &&
                    (idProperty.PropertyType == typeof(Guid) || idProperty.PropertyType == typeof(string));
@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Messages
             {
                 var current = prop.GetValue(message);
 
-                if (current != null && (Guid)current != Guid.Empty)
+                if (current != null && (Guid) current != Guid.Empty)
                     return current.ToString().ToLower();
 
                 var newValue = Guid.NewGuid();
