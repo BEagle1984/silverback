@@ -8,7 +8,7 @@ namespace Silverback.Examples.Common
     public static class Constants
     {
         public const ConsoleColor PrimaryColor = ConsoleColor.Green;
-        public const ConsoleColor AccentColor = ConsoleColor.Blue;
+        public const ConsoleColor AccentColor = ConsoleColor.Green;
 
         public const ConsoleColor SecondaryColor = ConsoleColor.DarkGray;
     }

@@ -2,9 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Examples.Common;
 
-namespace Silverback.Examples.Main.Menu
+namespace Silverback.Examples.Common
 {
     public static class ConsoleHelper
     {
@@ -14,7 +13,7 @@ namespace Silverback.Examples.Main.Menu
         {
             Console.ForegroundColor = color ?? Constants.SecondaryColor;
             Console.WriteLine("".PadRight(ConsoleWidth, '-'));
-            Console.ResetColor();
+            ResetColor();
         }
 
         public static void WriteLineTruncated(string text, int? maxWidth = null)
@@ -56,7 +55,7 @@ namespace Silverback.Examples.Main.Menu
                 if (textColor.HasValue)
                     Console.ForegroundColor = textColor.Value;
                 else
-                    Console.ResetColor();
+                    ResetColor();
 
                 Console.Write(line.TrimStart().PadRight(width.Value));
 
@@ -66,7 +65,12 @@ namespace Silverback.Examples.Main.Menu
                 text = text.Substring(line.Length);
             }
 
-            Console.ResetColor();
+            ResetColor();
+        }
+
+        public static void ResetColor()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }

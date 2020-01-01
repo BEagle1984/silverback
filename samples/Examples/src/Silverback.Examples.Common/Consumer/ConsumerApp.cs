@@ -15,7 +15,6 @@ namespace Silverback.Examples.Common.Consumer
     public abstract class ConsumerApp
     {
         private IServiceProvider _serviceProvider;
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private IBroker _broker;
 
         public string ConsumerGroupName { get; set; }
@@ -42,16 +41,7 @@ namespace Silverback.Examples.Common.Consumer
 
             Console.CancelKeyPress += OnCancelKeyPress;
 
-            while (!_cancellationTokenSource.IsCancellationRequested)
-            {
-                try
-                {
-                    Task.Delay(5000, _cancellationTokenSource.Token);
-                }
-                catch (TaskCanceledException)
-                {
-                }
-            }
+            WorkerHelper.LoopUntilCancelled();
         }
 
         protected abstract void ConfigureServices(IServiceCollection services);
@@ -62,7 +52,6 @@ namespace Silverback.Examples.Common.Consumer
         {
             args.Cancel = true;
             _broker?.Disconnect();
-            _cancellationTokenSource.Cancel();
 
             Console.CancelKeyPress -= OnCancelKeyPress;
         }
@@ -72,11 +61,11 @@ namespace Silverback.Examples.Common.Consumer
             Console.Write("Please choose the desired ");
             Console.ForegroundColor = Constants.AccentColor;
             Console.Write("consumer group name");
-            Console.ResetColor();
+            ConsoleHelper.ResetColor();
             Console.Write(" or press ENTER to use ");
             Console.ForegroundColor = Constants.AccentColor;
             Console.Write($"{ConsumerGroupName}");
-            Console.ResetColor();
+            ConsoleHelper.ResetColor();
             Console.WriteLine(":");
             Console.CursorVisible = true;
 
@@ -93,7 +82,7 @@ namespace Silverback.Examples.Common.Consumer
             Console.ForegroundColor = Constants.SecondaryColor;
             Console.WriteLine($"(press CTRL-C to exit)");
             Console.WriteLine();
-            Console.ResetColor();
+            ConsoleHelper.ResetColor();
         }
     }
 }

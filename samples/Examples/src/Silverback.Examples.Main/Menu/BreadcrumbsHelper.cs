@@ -30,7 +30,7 @@ namespace Silverback.Examples.Main.Menu
 
                 if (!isEmpty)
                 {
-                    Console.ForegroundColor = Constants.AccentColor;
+                    Console.ForegroundColor = Constants.SecondaryColor;
                     Console.Write(" > ");
                 }
 
@@ -46,7 +46,7 @@ namespace Silverback.Examples.Main.Menu
             Console.WriteLine();
             Console.WriteLine();
 
-            Console.ResetColor();
+            ConsoleHelper.ResetColor();
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RabbitMQ.Client;
 using Silverback.Background;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Data;
@@ -13,7 +14,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Examples.Main.UseCases.Kafka.Deferred
+namespace Silverback.Examples.Main.UseCases.Rabbit.Deferred
 {
     public class OutboundWorkerUseCase : UseCase
     {
@@ -22,7 +23,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Deferred
         public OutboundWorkerUseCase()
         {
             Title = "Start outbound worker";
-            Description = "The outbound worker monitors the outbox table and publishes the messages to Kafka.";
+            Description = "The outbound worker monitors the outbox table and publishes the messages to RabbitMQ.";
             ExecutionsCount = 1;
         }
 
@@ -33,7 +34,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Deferred
                 .UseModel()
                 .UseDbContext<ExamplesDbContext>()
                 .AddDbDistributedLockManager()
-                .WithConnectionToKafka(options => options
+                .WithConnectionToRabbit(options => options
                     .AddDbOutboundConnector()
                     .AddDbOutboundWorker(
                         new DistributedLockSettings(
@@ -45,11 +46,19 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Deferred
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
         {
             configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
+                .AddOutbound<IIntegrationEvent>(new RabbitExchangeProducerEndpoint("silverback-examples-events-fanout")
                 {
-                    Configuration = new KafkaProducerConfig
+                    Exchange = new RabbitExchangeConfig
                     {
-                        BootstrapServers = "PLAINTEXT://localhost:9092"
+                        IsDurable = true,
+                        IsAutoDeleteEnabled = false,
+                        ExchangeType = ExchangeType.Fanout
+                    },
+                    Connection = new RabbitConnectionConfig
+                    {
+                        HostName = "localhost",
+                        UserName = "guest",
+                        Password = "guest"
                     }
                 }));
 
