@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Publishing
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
 
-        private IEnumerable<IBehavior> _behaviors;
+        private IReadOnlyCollection<IBehavior> _behaviors;
         private SubscribedMethodInvoker _methodInvoker;
         private SubscribedMethodsLoader _methodsLoader;
 
@@ -34,24 +34,25 @@ namespace Silverback.Messaging.Publishing
         public Task PublishAsync(object message) =>
             PublishAsync(new[] { message });
 
-        public IEnumerable<TResult> Publish<TResult>(object message) =>
+        public IReadOnlyCollection<TResult> Publish<TResult>(object message) =>
             Publish<TResult>(new[] { message });
 
-        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(object message) =>
+        public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
             await PublishAsync<TResult>(new[] { message });
 
         public void Publish(IEnumerable<object> messages) =>
-            Publish(messages, false).Wait();
+            Publish(messages.ToList(), false).Wait();
 
-        public Task PublishAsync(IEnumerable<object> messages) => Publish(messages, true);
+        public Task PublishAsync(IEnumerable<object> messages) =>
+            Publish(messages.ToList(), true);
 
-        public IEnumerable<TResult> Publish<TResult>(IEnumerable<object> messages) =>
-            CastResults<TResult>(Publish(messages, false).Result);
+        public IReadOnlyCollection<TResult> Publish<TResult>(IEnumerable<object> messages) =>
+            CastResults<TResult>(Publish(messages.ToList(), false).Result).ToList();
 
-        public async Task<IEnumerable<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) =>
-            CastResults<TResult>(await Publish(messages, true));
+        public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) =>
+            CastResults<TResult>(await Publish(messages.ToList(), true)).ToList();
 
-        private IEnumerable<TResult> CastResults<TResult>(IEnumerable<object> results)
+        private IEnumerable<TResult> CastResults<TResult>(IReadOnlyCollection<object> results)
         {
             foreach (var result in results)
             {
@@ -69,12 +70,12 @@ namespace Silverback.Messaging.Publishing
         }
 
         // TODO: Test recursion
-        private async Task<IEnumerable<object>> Publish(IEnumerable<object> messages, bool executeAsync)
+        private async Task<IReadOnlyCollection<object>> Publish(IReadOnlyCollection<object> messages, bool executeAsync)
         {
             var messagesList = messages?.ToList();
 
             if (messagesList == null || !messagesList.Any())
-                return Enumerable.Empty<object>();
+                return Array.Empty<object>();
 
             return await ExecutePipeline(GetBehaviors(), messagesList, async m =>
                 (await InvokeExclusiveMethods(m, executeAsync))
@@ -82,31 +83,39 @@ namespace Silverback.Messaging.Publishing
                 .ToList());
         }
 
-        private Task<IEnumerable<object>> ExecutePipeline(
-            IEnumerable<IBehavior> behaviors,
-            IEnumerable<object> messages,
-            Func<IEnumerable<object>, Task<IEnumerable<object>>> finalAction)
+        private Task<IReadOnlyCollection<object>> ExecutePipeline(
+            IReadOnlyCollection<IBehavior> behaviors,
+            IReadOnlyCollection<object> messages,
+            Func<IReadOnlyCollection<object>, Task<IReadOnlyCollection<object>>> finalAction)
         {
             if (behaviors != null && behaviors.Any())
-                return behaviors.First().Handle(messages, m => ExecutePipeline(behaviors.Skip(1), m, finalAction));
+                return behaviors.First().Handle(
+                    messages,
+                    nextMessages => ExecutePipeline(behaviors.Skip(1).ToList(), nextMessages, finalAction));
 
             return finalAction(messages);
         }
 
-        private Task<IEnumerable<object>> InvokeExclusiveMethods(IEnumerable<object> messages, bool executeAsync) =>
-            GetMethodsLoader().GetSubscribedMethods()
+        private async Task<IReadOnlyCollection<object>> InvokeExclusiveMethods(
+            IReadOnlyCollection<object> messages,
+            bool executeAsync) =>
+            (await GetMethodsLoader().GetSubscribedMethods()
                 .Where(method => method.IsExclusive)
                 .SelectManyAsync(method =>
-                    GetMethodInvoker().Invoke(method, messages, executeAsync));
+                    GetMethodInvoker().Invoke(method, messages, executeAsync)))
+            .ToList();
 
-        private Task<IEnumerable<object>> InvokeNonExclusiveMethods(IEnumerable<object> messages, bool executeAsync) =>
-            GetMethodsLoader().GetSubscribedMethods()
+        private async Task<IReadOnlyCollection<object>> InvokeNonExclusiveMethods(
+            IReadOnlyCollection<object> messages,
+            bool executeAsync) =>
+            (await GetMethodsLoader().GetSubscribedMethods()
                 .Where(method => !method.IsExclusive)
                 .ParallelSelectManyAsync(method =>
-                    GetMethodInvoker().Invoke(method, messages, executeAsync));
+                    GetMethodInvoker().Invoke(method, messages, executeAsync)))
+            .ToList();
 
-        private IEnumerable<IBehavior> GetBehaviors() =>
-            _behaviors ??= _serviceProvider.GetServices<IBehavior>().SortBySortIndex();
+        private IReadOnlyCollection<IBehavior> GetBehaviors() =>
+            _behaviors ??= _serviceProvider.GetServices<IBehavior>().SortBySortIndex().ToList();
 
         private SubscribedMethodInvoker GetMethodInvoker() =>
             _methodInvoker ??= _serviceProvider.GetRequiredService<SubscribedMethodInvoker>();

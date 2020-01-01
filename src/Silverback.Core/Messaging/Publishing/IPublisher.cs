@@ -12,16 +12,16 @@ namespace Silverback.Messaging.Publishing
 
         Task PublishAsync(object message);
 
-        IEnumerable<TResult> Publish<TResult>(object message);
+        IReadOnlyCollection<TResult> Publish<TResult>(object message);
 
-        Task<IEnumerable<TResult>> PublishAsync<TResult>(object message);
+        Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message);
 
         void Publish(IEnumerable<object> messages);
 
         Task PublishAsync(IEnumerable<object> messages);
 
-        IEnumerable<TResult> Publish<TResult>(IEnumerable<object> messages);
+        IReadOnlyCollection<TResult> Publish<TResult>(IEnumerable<object> messages);
 
-        Task<IEnumerable<TResult>> PublishAsync<TResult>(IEnumerable<object> messages);
+        Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(IEnumerable<object> messages);
     }
 }

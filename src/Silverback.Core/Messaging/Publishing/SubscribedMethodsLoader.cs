@@ -9,7 +9,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Publishing
 {
-    public class SubscribedMethodsLoader
+    internal class SubscribedMethodsLoader
     {
         private readonly BusOptions _options;
         private readonly IServiceProvider _serviceProvider;
@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Publishing
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public IEnumerable<SubscribedMethod> GetSubscribedMethods() =>
+        public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods() =>
             _options.Subscriptions
                 .SelectMany(s => s.GetSubscribedMethods(_serviceProvider))
                 .ToList();

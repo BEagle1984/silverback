@@ -52,7 +52,7 @@ namespace Silverback.Tests.Core.EFCore22
 
             _dbContext.SaveChanges();
 
-            _publisher.Received(1).Publish(Arg.Any<IEnumerable<object>>());
+            _publisher.Received(1).Publish(Arg.Any<IReadOnlyCollection<object>>());
         }
 
         [Fact]

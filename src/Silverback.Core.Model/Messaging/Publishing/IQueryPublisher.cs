@@ -13,8 +13,8 @@ namespace Silverback.Messaging.Publishing
 
         Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage);
 
-        IEnumerable<TResult> Execute<TResult>(IEnumerable<IQuery<TResult>> queryMessages);
+        IReadOnlyCollection<TResult> Execute<TResult>(IEnumerable<IQuery<TResult>> queryMessages);
 
-        Task<IEnumerable<TResult>> ExecuteAsync<TResult>(IEnumerable<IQuery<TResult>> queryMessages);
+        Task<IReadOnlyCollection<TResult>> ExecuteAsync<TResult>(IEnumerable<IQuery<TResult>> queryMessages);
     }
 }

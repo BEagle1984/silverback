@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Publishing
 {
-    public delegate Task<IEnumerable<object>> MessagesHandler(IEnumerable<object> messages);
+    public delegate Task<IReadOnlyCollection<object>> MessagesHandler(IReadOnlyCollection<object> messages);
 }

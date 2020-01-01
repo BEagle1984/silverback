@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
@@ -25,10 +24,10 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
             returnValue != null &&
             _publisherOptions.MessageTypes.Any(t => t.IsInstanceOfType(returnValue));
 
-        public IEnumerable<object> Handle(object returnValue) =>
+        public void Handle(object returnValue) =>
             _publisher.Publish<object>(returnValue);
 
-        public Task<IEnumerable<object>> HandleAsync(object returnValue) =>
+        public Task HandleAsync(object returnValue) =>
             _publisher.PublishAsync<object>(returnValue);
     }
 }

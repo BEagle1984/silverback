@@ -151,11 +151,80 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             void Method1(IEnumerable<TestCommandOne> events) => calls++;
         }
 
+        [Fact]
+        public async Task Invoke_MethodWithReadOnlyCollectionParameter_MethodInvokedForMatchingMessages()
+        {
+            var receivedMessages = 0;
+
+            var (resolver, handler) = GetDefaultResolverAndHandler();
+            var subscribedMethod =
+                new DelegateSubscription((Action<IReadOnlyCollection<TestEventOne>>) Method1,
+                    new SubscriptionOptions());
+
+            var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
+
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
+                .Invoke(
+                    subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
+                    messages,
+                    true);
+
+            receivedMessages.Should().Be(2);
+
+            void Method1(IReadOnlyCollection<TestEventOne> events) => receivedMessages += events.Count();
+        }
+
+        [Fact]
+        public async Task Invoke_MethodWithReadOnlyCollectionParameterOfAncestorType_MethodInvoked()
+        {
+            var receivedMessages = 0;
+
+            var (resolver, handler) = GetDefaultResolverAndHandler();
+            var subscribedMethod =
+                new DelegateSubscription((Action<IReadOnlyCollection<IEvent>>) Method1, new SubscriptionOptions());
+
+            var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
+
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
+                .Invoke(
+                    subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
+                    messages,
+                    true);
+
+            receivedMessages.Should().Be(3);
+
+            void Method1(IReadOnlyCollection<IEvent> events) => receivedMessages += events.Count();
+        }
+
+        [Fact]
+        public async Task Invoke_NoMessagesMatchingReadOnlyCollectionType_MethodNotInvoked()
+        {
+            var calls = 0;
+
+            var (resolver, handler) = GetDefaultResolverAndHandler();
+            var subscribedMethod = new DelegateSubscription((Action<IReadOnlyCollection<TestCommandOne>>) Method1,
+                new SubscriptionOptions());
+
+            var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
+
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
+                .Invoke(
+                    subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
+                    messages,
+                    true);
+
+            calls.Should().Be(0);
+
+            void Method1(IReadOnlyCollection<TestCommandOne> events) => calls++;
+        }
+
         private (ArgumentsResolver, ReturnValueHandler) GetDefaultResolverAndHandler() =>
         (
             new ArgumentsResolver(new IArgumentResolver[]
             {
-                new SingleMessageArgumentResolver(), new EnumerableMessageArgumentResolver()
+                new SingleMessageArgumentResolver(),
+                new ReadOnlyCollectionMessageArgumentResolver(),
+                new EnumerableMessageArgumentResolver()
             }),
             new ReturnValueHandler(new IReturnValueHandler[0])
         );

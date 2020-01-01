@@ -7,11 +7,11 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
-    public class EnumerableMessageArgumentResolver : IEnumerableMessageArgumentResolver
+    public class ReadOnlyCollectionMessageArgumentResolver : IEnumerableMessageArgumentResolver
     {
         public bool CanResolve(Type parameterType) =>
             parameterType.IsGenericType &&
-            parameterType.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+            parameterType.GetGenericTypeDefinition() == typeof(IReadOnlyCollection<>);
 
         public Type GetMessageType(Type parameterType) =>
             parameterType.GetGenericArguments()[0];

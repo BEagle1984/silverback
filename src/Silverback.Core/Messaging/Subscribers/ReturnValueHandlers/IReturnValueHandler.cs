@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
@@ -10,8 +9,8 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
     {
         bool CanHandle(object returnValue);
 
-        IEnumerable<object> Handle(object returnValue);
+        void Handle(object returnValue);
 
-        Task<IEnumerable<object>> HandleAsync(object returnValue);
+        Task HandleAsync(object returnValue);
     }
 }

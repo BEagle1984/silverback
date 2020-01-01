@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +22,7 @@ namespace Silverback.Messaging.Connectors
         private readonly IErrorPolicy _errorPolicy;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> _messagesHandler;
+        private readonly Func<IReadOnlyCollection<IInboundMessage>, IServiceProvider, Task> _messagesHandler;
         private readonly Func<IServiceProvider, Task> _commitHandler;
         private readonly Func<IServiceProvider, Task> _rollbackHandler;
 
@@ -36,7 +35,7 @@ namespace Silverback.Messaging.Connectors
             IBroker broker,
             IConsumerEndpoint endpoint,
             InboundConnectorSettings settings,
-            Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> messagesHandler,
+            Func<IReadOnlyCollection<IInboundMessage>, IServiceProvider, Task> messagesHandler,
             Func<IServiceProvider, Task> commitHandler,
             Func<IServiceProvider, Task> rollbackHandler,
             IErrorPolicy errorPolicy,
@@ -98,12 +97,11 @@ namespace Silverback.Messaging.Connectors
                     await RelayAndCommitSingleMessage(messages, scope.ServiceProvider);
                 });
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private async Task RelayAndCommitSingleMessage(
-            IEnumerable<IInboundMessage> messages,
+            IReadOnlyCollection<IInboundMessage> messages,
             IServiceProvider serviceProvider)
         {
-            IEnumerable<IOffset> offsets = null;
+            IReadOnlyCollection<IOffset> offsets = null;
             try
             {
                 offsets = messages.Select(m => m.Offset).ToList();

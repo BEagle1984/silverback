@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Silverback.Examples.Common;
 
 namespace Silverback.Examples.Main.Menu
@@ -152,27 +153,23 @@ namespace Silverback.Examples.Main.Menu
             if (breadcrumbs.IsRoot())
             {
                 Console.ForegroundColor = Constants.PrimaryColor;
-                ConsoleHelper.WriteLineTruncated(
-                    @" _____ _ _                _                _      _____                          _");
-                ConsoleHelper.WriteLineTruncated(
-                    @"/  ___(_) |              | |              | |    |  ___|                        | |");
-                ConsoleHelper.WriteLineTruncated(
-                    @"\ `--. _| |_   _____ _ __| |__   __ _  ___| | __ | |____  ____ _ _ __ ___  _ __ | | ___  ___");
-                ConsoleHelper.WriteLineTruncated(
-                    @" `--. \ | \ \ / / _ \ '__| '_ \ / _` |/ __| |/ / |  __\ \/ / _` | '_ ` _ \| '_ \| |/ _ \/ __|");
-                ConsoleHelper.WriteLineTruncated(
-                    @"/\__/ / | |\ V /  __/ |  | |_) | (_| | (__|   < _| |___>  < (_| | | | | | | |_) | |  __/\__ \");
-                ConsoleHelper.WriteLineTruncated(
-                    @"\____/|_|_| \_/ \___|_|  |_.__/ \__,_|\___|_|\_(_)____/_/\_\__,_|_| |_| |_| .__/|_|\___||___/");
-                ConsoleHelper.WriteLineTruncated(
-                    @"                                                                          | |                ");
-                ConsoleHelper.WriteLineTruncated(
-                    @"                                                                          |_|                ");
-                Console.ResetColor();
+
+                ConsoleHelper.WriteLineTruncated(@" ____ ___ _ __     _______ ____  ____    _    ____ _  __");
+                ConsoleHelper.WriteLineTruncated(@"/ ___|_ _| |\ \   / / ____|  _ \| __ )  / \  / ___| |/ /");
+                ConsoleHelper.WriteLineTruncated(@"\___ \| || | \ \ / /|  _| | |_) |  _ \ / _ \| |   | ' / ");
+                ConsoleHelper.WriteLineTruncated(@" ___) | || |__\ V / | |___|  _ <| |_) / ___ \ |___| . \ ");
+                ConsoleHelper.WriteLineTruncated(@"|____/___|_____\_/  |_____|_| \_\____/_/   \_\____|_|\_\");
+                ConsoleHelper.WriteLineTruncated( GetSilverbackVersion().PadLeft(56));
+                
                 Console.WriteLine();
             }
 
             breadcrumbs.WriteBreadcrumbs();
+            
+            Console.ResetColor();
         }
-    }
+
+        private static string GetSilverbackVersion() =>
+            Assembly.Load("Silverback.Core").GetName().Version.ToString(3);
+     }
 }

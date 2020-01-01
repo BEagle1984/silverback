@@ -10,12 +10,12 @@ using Silverback.Messaging.Publishing;
 namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
 {
     // TODO: Test
-    public class EnumerableMessagesReturnValueHandler : IReturnValueHandler
+    public class ReadOnlyCollectionMessagesReturnValueHandler : IReturnValueHandler
     {
         private readonly IPublisher _publisher;
         private readonly BusOptions _publisherOptions;
 
-        public EnumerableMessagesReturnValueHandler(IPublisher publisher, BusOptions publisherOptions)
+        public ReadOnlyCollectionMessagesReturnValueHandler(IPublisher publisher, BusOptions publisherOptions)
         {
             _publisher = publisher;
             _publisherOptions = publisherOptions;
@@ -25,14 +25,14 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
             returnValue != null &&
             returnValue.GetType().GetInterfaces().Any(
                 i => i.IsGenericType &&
-                     i.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
+                     i.GetGenericTypeDefinition() == typeof(IReadOnlyCollection<>) &&
                      _publisherOptions.MessageTypes.Any(messageType =>
                          messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 
         public void Handle(object returnValue) =>
-            _publisher.Publish<object>((IEnumerable<object>) returnValue);
+            _publisher.Publish<object>((IReadOnlyCollection<object>) returnValue);
 
         public Task HandleAsync(object returnValue) =>
-            _publisher.PublishAsync<object>((IEnumerable<object>) returnValue);
+            _publisher.PublishAsync<object>((IReadOnlyCollection<object>) returnValue);
     }
 }

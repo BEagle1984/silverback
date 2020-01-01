@@ -95,7 +95,7 @@ namespace Silverback.Messaging.Connectors
 
         protected virtual Task ProduceMessage(
             byte[] content,
-            IEnumerable<MessageHeader> headers,
+            IReadOnlyCollection<MessageHeader> headers,
             IProducerEndpoint endpoint)
             => _broker.GetProducer(endpoint).ProduceAsync(content, headers);
     }
