@@ -137,7 +137,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
         public BusConfigurator Subscribe<TMessage>(
-            Func<IEnumerable<TMessage>, Task> handler,
+            Func<IReadOnlyCollection<TMessage>, Task> handler,
             SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
@@ -152,7 +152,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
         public BusConfigurator Subscribe<TMessage>(
-            Func<IEnumerable<TMessage>, object> handler,
+            Func<IReadOnlyCollection<TMessage>, object> handler,
             SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
@@ -167,7 +167,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
         public BusConfigurator Subscribe<TMessage>(
-            Func<IEnumerable<TMessage>, Task<object>> handler,
+            Func<IReadOnlyCollection<TMessage>, Task<object>> handler,
             SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
@@ -231,7 +231,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="options">A <see cref="SubscriptionOptions" /> instance specifying parallelism options.</param>
         /// <returns></returns>
         public BusConfigurator Subscribe<TMessage>(
-            Func<IEnumerable<TMessage>, IServiceProvider, object> handler,
+            Func<IReadOnlyCollection<TMessage>, IServiceProvider, object> handler,
             SubscriptionOptions options = null)
         {
             _busOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
@@ -279,7 +279,7 @@ namespace Silverback.Messaging.Configuration
 
         #endregion
 
-        #region MyRegion
+        #region ScanSubscribers
 
         /// <summary>
         ///     Resolves all the subscribers and build the types cache to speed-up the first

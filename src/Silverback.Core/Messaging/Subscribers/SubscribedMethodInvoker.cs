@@ -11,7 +11,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers
 {
-    public class SubscribedMethodInvoker
+    internal class SubscribedMethodInvoker
     {
         private readonly ArgumentsResolver _argumentsResolver;
         private readonly ReturnValueHandler _returnValueHandler;
@@ -29,23 +29,23 @@ namespace Silverback.Messaging.Subscribers
 
         public async Task<IEnumerable<object>> Invoke(
             SubscribedMethod method,
-            IEnumerable<object> messages,
+            IReadOnlyCollection<object> messages,
             bool executeAsync)
         {
             var (messageArgumentResolver, messageType) = _argumentsResolver.GetMessageArgumentResolver(method);
 
             if (messageArgumentResolver == null)
-                return Enumerable.Empty<object>();
+                return Array.Empty<object>();
 
-            messages = messages.OfType(messageType);
+            messages = messages.OfType(messageType).ToList();
 
             if (!messages.Any())
-                return Enumerable.Empty<object>();
+                return Array.Empty<object>();
 
             var target = method.ResolveTargetType(_serviceProvider);
             var parameterValues = GetShiftedParameterValuesArray(method);
 
-            IEnumerable<object> returnValues;
+            IReadOnlyCollection<object> returnValues;
 
             switch (messageArgumentResolver)
             {

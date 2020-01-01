@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -12,11 +11,12 @@ namespace Silverback.Messaging.Broker
 {
     public abstract class Consumer : IConsumer
     {
-        private readonly IEnumerable<IConsumerBehavior> _behaviors;
+        private readonly IReadOnlyCollection<IConsumerBehavior> _behaviors;
 
         protected Consumer(IBroker broker, IConsumerEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors)
         {
-            _behaviors = behaviors;
+            _behaviors = (IReadOnlyCollection<IConsumerBehavior>) behaviors?.ToList() ??
+                         Array.Empty<IConsumerBehavior>();
 
             Broker = broker ?? throw new ArgumentNullException(nameof(broker));
             Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
@@ -75,15 +75,15 @@ namespace Silverback.Messaging.Broker
                 m => Received.Invoke(this, new MessageReceivedEventArgs(m)));
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private async Task ExecutePipeline(
-            IEnumerable<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
             RawBrokerMessage message,
             RawBrokerMessageHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
-                await behaviors.First().Handle(message, m => ExecutePipeline(behaviors.Skip(1), m, finalAction));
+                await behaviors.First()
+                    .Handle(message, m => ExecutePipeline(behaviors.Skip(1).ToList(), m, finalAction));
             }
             else
             {

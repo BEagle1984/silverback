@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Silverback.Messaging.Configuration
@@ -24,16 +23,15 @@ namespace Silverback.Messaging.Configuration
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         public static bool Compare(Confluent.Kafka.ClientConfig x, Confluent.Kafka.ClientConfig y)
         {
             if (x == null || y == null) return false;
             if (x.Count() != y.Count()) return false;
 
-            var groupedX = x.GroupBy(kvp => kvp.Key);
-            var groupedY = y.GroupBy(kvp => kvp.Key);
+            var groupedX = x.GroupBy(kvp => kvp.Key).ToList();
+            var groupedY = y.GroupBy(kvp => kvp.Key).ToList();
 
-            if (groupedX.Count() != groupedY.Count()) return false;
+            if (groupedX.Count != groupedY.Count) return false;
 
             foreach (var groupX in groupedX)
             {

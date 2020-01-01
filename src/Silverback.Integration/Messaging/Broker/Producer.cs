@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -16,7 +15,7 @@ namespace Silverback.Messaging.Broker
     public abstract class Producer : IProducer
     {
         private readonly MessageKeyProvider _messageKeyProvider;
-        private readonly IEnumerable<IProducerBehavior> _behaviors;
+        private readonly IReadOnlyCollection<IProducerBehavior> _behaviors;
         private readonly MessageLogger _messageLogger;
         private readonly ILogger<Producer> _logger;
 
@@ -29,7 +28,8 @@ namespace Silverback.Messaging.Broker
             MessageLogger messageLogger)
         {
             _messageKeyProvider = messageKeyProvider ?? throw new ArgumentNullException(nameof(messageKeyProvider));
-            _behaviors = behaviors ?? Enumerable.Empty<IProducerBehavior>();
+            _behaviors = (IReadOnlyCollection<IProducerBehavior>) behaviors?.ToList() ??
+                         Array.Empty<IProducerBehavior>();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _messageLogger = messageLogger ?? throw new ArgumentNullException(nameof(messageLogger));
 
@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Broker
         public IProducerEndpoint Endpoint { get; }
 
         /// <inheritdoc cref="IProducer" />
-        public void Produce(object message, IEnumerable<MessageHeader> headers = null) =>
+        public void Produce(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
             GetRawMessages(message, headers)
                 .ForEach(rawMessage =>
                     ExecutePipeline(_behaviors, rawMessage, x =>
@@ -60,7 +60,7 @@ namespace Silverback.Messaging.Broker
                     }).Wait());
 
         /// <inheritdoc cref="IProducer" />
-        public Task ProduceAsync(object message, IEnumerable<MessageHeader> headers = null) =>
+        public Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
             GetRawMessages(message, headers)
                 .ForEachAsync(async rawMessage =>
                     await ExecutePipeline(_behaviors, rawMessage, async x =>
@@ -75,15 +75,15 @@ namespace Silverback.Messaging.Broker
             return ChunkProducer.ChunkIfNeeded(rawMessage);
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private async Task ExecutePipeline(
-            IEnumerable<IProducerBehavior> behaviors,
+            IReadOnlyCollection<IProducerBehavior> behaviors,
             RawBrokerMessage message,
             RawBrokerMessageHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
-                await behaviors.First().Handle(message, m => ExecutePipeline(behaviors.Skip(1), m, finalAction));
+                await behaviors.First()
+                    .Handle(message, m => ExecutePipeline(behaviors.Skip(1).ToList(), m, finalAction));
             }
             else
             {

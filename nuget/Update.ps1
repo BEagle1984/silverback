@@ -2,6 +2,7 @@
 [bool]$global:clearCache = $FALSE
 [bool]$global:build = $TRUE
 [bool]$global:buildSolution = $FALSE
+[bool]$global:restorePackagesAfterwards = $TRUE
 $global:buildConfiguration = "Release"
 
 function Check-Location()
@@ -12,11 +13,6 @@ function Check-Location()
     {
         Write-Host "This script is supposed to run in the /nuget folder of the main Silverback repository!" -ForegroundColor Red
         Exit
-        # $choice = Read-Host "Wanna swith to $repositoryLocation ? [Y/n]"
-        # if ($choice -ne "n")
-        # {
-        #     cd $repositoryLocation
-        # }
     }
 }
 
@@ -40,6 +36,10 @@ function Check-Args([string[]]$argsArray)
         elseif ($arg -eq "--build-solution" -Or $arg -eq "-s")
         {
            $global:buildSolution = $TRUE
+        }
+        elseif ($arg -eq "--no-restore")
+        {
+            $global:restorePackagesAfterwards = $FALSE
         }
     }
 }
@@ -265,6 +265,20 @@ function Delete-Cache([string]$name)
     Write-Separator
 }
 
+function Restore()
+{
+    if ($global:restorePackagesAfterwards -eq $false)
+    {
+        return
+    }
+
+    Write-Host "Restoring nuget packages in Silverback.sln..." -ForegroundColor Yellow
+
+    dotnet restore ../Silverback.sln
+
+    Write-Separator
+}
+
 function Write-Separator()
 {
     Write-Host "`n---------------------------------------------------------------`n" -ForegroundColor Yellow
@@ -278,4 +292,5 @@ Delete-All
 Delete-Cache
 Build
 Copy-All
+Restore
 Show-Summary

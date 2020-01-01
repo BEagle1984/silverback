@@ -16,7 +16,7 @@
 
   <PropertyGroup Label="Build">
     <NetStandardTargetVersion>netstandard2.0</NetStandardTargetVersion>
-    <NetCoreTargetVersion>netcoreapp3.0</NetCoreTargetVersion>
+    <NetCoreTargetVersion>netcoreapp3.1</NetCoreTargetVersion>
     <LangVersion>8</LangVersion>
     <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>

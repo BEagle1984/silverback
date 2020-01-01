@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,8 +24,8 @@ namespace Silverback.Messaging.Batch
         private readonly IErrorPolicy _errorPolicy;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> _messagesHandler;
-        private readonly Func<IEnumerable<IOffset>, IServiceProvider, Task> _commitHandler;
+        private readonly Func<IReadOnlyCollection<IInboundMessage>, IServiceProvider, Task> _messagesHandler;
+        private readonly Func<IReadOnlyCollection<IOffset>, IServiceProvider, Task> _commitHandler;
         private readonly Func<IServiceProvider, Task> _rollbackHandler;
 
         private readonly IServiceProvider _serviceProvider;
@@ -41,8 +40,8 @@ namespace Silverback.Messaging.Batch
 
         public MessageBatch(
             BatchSettings settings,
-            Func<IEnumerable<IInboundMessage>, IServiceProvider, Task> messagesHandler,
-            Func<IEnumerable<IOffset>, IServiceProvider, Task> commitHandler,
+            Func<IReadOnlyCollection<IInboundMessage>, IServiceProvider, Task> messagesHandler,
+            Func<IReadOnlyCollection<IOffset>, IServiceProvider, Task> commitHandler,
             Func<IServiceProvider, Task> rollbackHandler,
             IErrorPolicy errorPolicy,
             IServiceProvider serviceProvider)
@@ -146,7 +145,7 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private void AddHeaders(List<IInboundMessage> messages)
+        private void AddHeaders(IReadOnlyCollection<IInboundMessage> messages)
         {
             foreach (var message in messages)
             {
@@ -155,8 +154,7 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        private async Task ProcessEachMessageAndPublishEvents(IEnumerable<IInboundMessage> messages)
+        private async Task ProcessEachMessageAndPublishEvents(IReadOnlyCollection<IInboundMessage> messages)
         {
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();

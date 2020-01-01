@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
@@ -16,8 +15,7 @@ namespace Silverback.Messaging.Behaviors
     {
         public int SortIndex { get; } = 200;
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        public Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
+        public Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
         {
             messages.OfType<IOutboundMessage>().ForEach(SetPartitioningKey);
             return next(messages);

@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -31,10 +30,10 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
                      _publisherOptions.MessageTypes.Any(messageType =>
                          messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 
-        public IEnumerable<object> Handle(object returnValue) =>
+        public void Handle(object returnValue) =>
             _publisher.Publish<object>(((IObservable<object>) returnValue).ToEnumerable());
 
-        public Task<IEnumerable<object>> HandleAsync(object returnValue) =>
+        public Task HandleAsync(object returnValue) =>
             _publisher.PublishAsync<object>(((IObservable<object>) returnValue).ToEnumerable());
     }
 }

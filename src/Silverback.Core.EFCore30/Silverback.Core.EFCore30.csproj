@@ -12,7 +12,7 @@ This package It contains the storage implementation to integrate Silverback with
     <RepositoryType>$(RepositoryType)</RepositoryType>
     <PackageLicenseExpression>$(License)</PackageLicenseExpression>
     <Copyright>$(Copyright)</Copyright>
-    <Version>3.0.0$(VersionSuffix)</Version>
+    <Version>3.0.1$(VersionSuffix)</Version>
     <RootNamespace>$(RootNamespace)</RootNamespace>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>

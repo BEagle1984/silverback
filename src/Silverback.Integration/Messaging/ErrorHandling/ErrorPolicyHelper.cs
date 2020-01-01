@@ -25,9 +25,9 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         public async Task TryProcessAsync(
-            IEnumerable<IInboundMessage> messages,
+            IReadOnlyCollection<IInboundMessage> messages,
             IErrorPolicy errorPolicy,
-            Func<IEnumerable<IInboundMessage>, Task> messagesHandler)
+            Func<IReadOnlyCollection<IInboundMessage>, Task> messagesHandler)
         {
             var attempt = GetAttemptNumber(messages);
 
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private int GetAttemptNumber(IEnumerable<IInboundMessage> messages)
+        private int GetAttemptNumber(IReadOnlyCollection<IInboundMessage> messages)
         {
             var minAttempts = messages.Min(m => m.Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey));
 
@@ -53,8 +53,8 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         private async Task<MessageHandlerResult> HandleMessages(
-            IEnumerable<IInboundMessage> messages,
-            Func<IEnumerable<IInboundMessage>, Task> messagesHandler,
+            IReadOnlyCollection<IInboundMessage> messages,
+            Func<IReadOnlyCollection<IInboundMessage>, Task> messagesHandler,
             IErrorPolicy errorPolicy,
             int attempt)
         {
@@ -87,7 +87,7 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private void UpdateFailedAttemptsHeader(IEnumerable<IBrokerMessage> messages, int attempt) =>
+        private void UpdateFailedAttemptsHeader(IReadOnlyCollection<IBrokerMessage> messages, int attempt) =>
             messages?.ForEach(msg =>
             {
                 if (attempt == 0)

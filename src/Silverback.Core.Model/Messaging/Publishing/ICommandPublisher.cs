@@ -21,8 +21,8 @@ namespace Silverback.Messaging.Publishing
 
         Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage);
 
-        IEnumerable<TResult> Execute<TResult>(IEnumerable<ICommand<TResult>> commandMessages);
+        IReadOnlyCollection<TResult> Execute<TResult>(IEnumerable<ICommand<TResult>> commandMessages);
 
-        Task<IEnumerable<TResult>> ExecuteAsync<TResult>(IEnumerable<ICommand<TResult>> commandMessages);
+        Task<IReadOnlyCollection<TResult>> ExecuteAsync<TResult>(IEnumerable<ICommand<TResult>> commandMessages);
     }
 }

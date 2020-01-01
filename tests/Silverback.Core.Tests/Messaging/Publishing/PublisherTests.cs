@@ -33,6 +33,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         private readonly TestAsyncSubscriber _asyncSubscriber;
         private readonly TestEnumerableSubscriber _syncEnumerableSubscriber;
         private readonly TestAsyncEnumerableSubscriber _asyncEnumerableSubscriber;
+        private readonly TestReadOnlyCollectionSubscriber _syncReadOnlyCollectionSubscriber;
+        private readonly TestAsyncReadOnlyCollectionSubscriber _asyncReadOnlyCollectionSubscriber;
 
         public PublisherTests()
         {
@@ -40,6 +42,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             _asyncSubscriber = new TestAsyncSubscriber();
             _syncEnumerableSubscriber = new TestEnumerableSubscriber();
             _asyncEnumerableSubscriber = new TestAsyncEnumerableSubscriber();
+            _syncReadOnlyCollectionSubscriber = new TestReadOnlyCollectionSubscriber();
+            _asyncReadOnlyCollectionSubscriber = new TestAsyncReadOnlyCollectionSubscriber();
         }
 
         #region GetPublisher
@@ -495,6 +499,34 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
+        public void Publish_SomeMessages_ReceivedAsReadOnlyCollection()
+        {
+            var publisher = GetPublisher(_syncReadOnlyCollectionSubscriber, _asyncReadOnlyCollectionSubscriber);
+
+            publisher.Publish(new TestCommandOne());
+            publisher.Publish(new TestCommandTwo());
+
+            _syncReadOnlyCollectionSubscriber.ReceivedBatchesCount.Should().Be(2);
+            _syncReadOnlyCollectionSubscriber.ReceivedMessagesCount.Should().Be(2);
+            _asyncReadOnlyCollectionSubscriber.ReceivedBatchesCount.Should().Be(2);
+            _asyncReadOnlyCollectionSubscriber.ReceivedMessagesCount.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task PublishAsync_SomeMessages_ReceivedAsReadOnlyCollection()
+        {
+            var publisher = GetPublisher(_syncReadOnlyCollectionSubscriber, _asyncReadOnlyCollectionSubscriber);
+
+            await publisher.PublishAsync(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
+
+            _syncReadOnlyCollectionSubscriber.ReceivedBatchesCount.Should().Be(2);
+            _syncReadOnlyCollectionSubscriber.ReceivedMessagesCount.Should().Be(2);
+            _asyncReadOnlyCollectionSubscriber.ReceivedBatchesCount.Should().Be(2);
+            _asyncReadOnlyCollectionSubscriber.ReceivedMessagesCount.Should().Be(2);
+        }
+
+        [Fact]
         public void Publish_MessagesBatch_EachMessageReceived()
         {
             var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
@@ -518,7 +550,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public void Publish_MessagesBatch_BatchReceived()
+        public void Publish_MessagesBatch_BatchReceivedAsEnumerable()
         {
             var publisher = GetPublisher(_syncEnumerableSubscriber, _asyncEnumerableSubscriber);
 
@@ -531,7 +563,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public async Task PublishAsync_MessagesBatch_BatchReceived()
+        public async Task PublishAsync_MessagesBatch_BatchReceivedAsEnumerable()
         {
             var publisher = GetPublisher(_syncEnumerableSubscriber, _asyncEnumerableSubscriber);
 
@@ -542,6 +574,33 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             _syncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(3);
             _asyncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(1);
             _asyncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        public void Publish_MessagesBatch_BatchReceivedAsReadOnlyCollection()
+        {
+            var publisher = GetPublisher(_syncReadOnlyCollectionSubscriber, _asyncReadOnlyCollectionSubscriber);
+
+            publisher.Publish(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+
+            _syncReadOnlyCollectionSubscriber.ReceivedBatchesCount.Should().Be(1);
+            _syncReadOnlyCollectionSubscriber.ReceivedMessagesCount.Should().Be(3);
+            _asyncReadOnlyCollectionSubscriber.ReceivedBatchesCount.Should().Be(1);
+            _asyncReadOnlyCollectionSubscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task PublishAsync_MessagesBatch_BatchReceivedAsReadOnlyCollection()
+        {
+            var publisher = GetPublisher(_syncReadOnlyCollectionSubscriber, _asyncReadOnlyCollectionSubscriber);
+
+            await publisher.PublishAsync(new ICommand[]
+                { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+
+            _syncReadOnlyCollectionSubscriber.ReceivedBatchesCount.Should().Be(1);
+            _syncReadOnlyCollectionSubscriber.ReceivedMessagesCount.Should().Be(3);
+            _asyncReadOnlyCollectionSubscriber.ReceivedBatchesCount.Should().Be(1);
+            _asyncReadOnlyCollectionSubscriber.ReceivedMessagesCount.Should().Be(3);
         }
 
         [Fact]

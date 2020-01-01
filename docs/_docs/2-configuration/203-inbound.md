@@ -317,6 +317,9 @@ public class InventoryService : ISubscriber
 }
 ```
 
+**Note:** The method `OnMessageReceived` could declare an argument of type `IReadOnlyCollection<InventoryUpdateEvent>` instead of `IEnumerable<InventoryUpdateEvent>`. (Silverback will in any case always forward a materialized `IList` of messages, but explicitly declaring the paramter as `IReadOnlyCollection<T>` avoids any false positive *"possible multiple enumeration of IEnumerable"* issue that may be detected by a static code analysis tool.)
+{: .notice--info}
+
 ## Multi-threaded consuming
 
 Multiple consumers can be created for the same endpoint to consume in parallel in multiple threads (you need multiple partitions in Kafka).

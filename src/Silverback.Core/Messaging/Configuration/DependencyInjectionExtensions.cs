@@ -33,8 +33,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<IArgumentResolver, ServiceProviderAdditionalArgumentResolver>()
                 .AddSingleton<IArgumentResolver, SingleMessageArgumentResolver>()
                 .AddSingleton<IArgumentResolver, EnumerableMessageArgumentResolver>()
+                .AddSingleton<IArgumentResolver, ReadOnlyCollectionMessageArgumentResolver>()
                 .AddScoped<IReturnValueHandler, SingleMessageReturnValueHandler>()
-                .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>();
+                .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
+                .AddScoped<IReturnValueHandler, ReadOnlyCollectionMessagesReturnValueHandler>();
 
             return new SilverbackBuilder(services);
         }

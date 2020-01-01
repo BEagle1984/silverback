@@ -97,7 +97,7 @@ namespace Silverback.EntityFrameworkCore
             }
         }
 
-        private List<object> GetDomainEvents() =>
+        private IReadOnlyCollection<object> GetDomainEvents() =>
             _dbContext
                 .ChangeTracker.Entries()
                 .SelectMany(e =>

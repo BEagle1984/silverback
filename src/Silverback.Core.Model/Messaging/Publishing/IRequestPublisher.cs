@@ -13,8 +13,8 @@ namespace Silverback.Messaging.Publishing
 
         Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> requestMessage);
 
-        IEnumerable<TResponse> Send<TResponse>(IEnumerable<IRequest<TResponse>> requestMessages);
+        IReadOnlyCollection<TResponse> Send<TResponse>(IEnumerable<IRequest<TResponse>> requestMessages);
 
-        Task<IEnumerable<TResponse>> SendAsync<TResponse>(IEnumerable<IRequest<TResponse>> requestMessages);
+        Task<IReadOnlyCollection<TResponse>> SendAsync<TResponse>(IEnumerable<IRequest<TResponse>> requestMessages);
     }
 }

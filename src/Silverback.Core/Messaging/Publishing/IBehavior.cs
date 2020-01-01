@@ -18,6 +18,6 @@ namespace Silverback.Messaging.Publishing
         /// <param name="messages">The messages being published.</param>
         /// <param name="next">The next behavior in the pipeline.</param>
         /// <returns>The actual messages to be published.</returns>
-        Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next);
+        Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next);
     }
 }

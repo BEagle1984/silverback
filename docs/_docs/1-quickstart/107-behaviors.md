@@ -28,8 +28,8 @@ public class TracingBehavior : IBehavior
         _tracer = tracer;
     }
 
-    public async Task<IEnumerable<object>> Handle(
-        IEnumerable<object> messages, 
+    public async Task<IReadOnlyCollection<object>> Handle(
+        IReadOnlyCollection<object> messages, 
         MessagesHandler next)
     {
         tracer.TraceProcessing(messages);
@@ -122,8 +122,8 @@ public class TracingBehavior : IBehavior
         _dbLogger = dbLogger;
     }
 
-    public async Task<IEnumerable<object>> Handle(
-        IEnumerable<object> messages, 
+    public async Task<IReadOnlyCollection<object>> Handle(
+        IReadOnlyCollection<object> messages, 
         MessagesHandler next)
     {
         foreach (var message in messages.OfType<IInboundMessage>())

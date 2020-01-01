@@ -19,7 +19,7 @@ namespace Silverback.Examples.Common.Consumer
             _logger = logger;
         }
 
-        public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
+        public async Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
         {
             foreach (var message in messages.OfType<IInboundMessage>())
             {

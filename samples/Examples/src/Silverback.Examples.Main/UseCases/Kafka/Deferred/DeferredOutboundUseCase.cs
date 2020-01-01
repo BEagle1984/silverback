@@ -56,7 +56,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Deferred
 
         public class CustomHeadersBehavior : IBehavior
         {
-            public async Task<IEnumerable<object>> Handle(IEnumerable<object> messages, MessagesHandler next)
+            public async Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
             {
                 foreach (var message in messages.OfType<IOutboundMessage>())
                 {

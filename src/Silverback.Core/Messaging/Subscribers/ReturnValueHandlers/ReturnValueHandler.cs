@@ -9,16 +9,18 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
 {
     public class ReturnValueHandler
     {
-        private readonly IEnumerable<IReturnValueHandler> _returnValueHandlers;
+        private readonly IReadOnlyCollection<IReturnValueHandler> _returnValueHandlers;
 
         public ReturnValueHandler(IEnumerable<IReturnValueHandler> returnValueHandlers)
         {
             // Revert the handlers order, to give priority to the ones added after the 
             // default ones.
-            _returnValueHandlers = returnValueHandlers.Reverse();
+            _returnValueHandlers = returnValueHandlers.Reverse().ToList();
         }
 
-        public async Task<IEnumerable<object>> HandleReturnValues(IEnumerable<object> returnValues, bool executeAsync)
+        public async Task<IReadOnlyCollection<object>> HandleReturnValues(
+            IReadOnlyCollection<object> returnValues,
+            bool executeAsync)
         {
             var unhandledReturnValues = new List<object>();
             foreach (var returnValue in returnValues.Where(v => v != null && v.GetType().Name != "VoidTaskResult"))
