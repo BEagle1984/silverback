@@ -6,21 +6,20 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Examples.Main.Menu;
 
-namespace Silverback.Examples.Main.UseCases.Rabbit
+namespace Silverback.Examples.Main.UseCases.Rabbit.Deferred
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class _CategoryInfo : ICategory
     {
-        public string Title => "RabbitMQ";
+        public string Title => "Deferred publish (outbox table)";
 
-        public string Description => "A set of examples to demonstrate different ways to " +
-                                     "use Silverback with RabbitMQ.";
+        public string Description => "Use an outbox table to handle transactionality and make your microservice " +
+                                     "even more resilient.";
 
         public IEnumerable<Type> Children => new List<Type>
         {
-            typeof(Basic._CategoryInfo),
-            typeof(Deferred._CategoryInfo),
-            typeof(StartConsumerUserCase)
+            typeof(DeferredOutboundUseCase),
+            typeof(OutboundWorkerUseCase)
         };
     }
 }

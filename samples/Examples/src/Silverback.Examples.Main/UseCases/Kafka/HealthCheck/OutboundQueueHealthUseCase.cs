@@ -68,7 +68,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.HealthCheck
         {
             Console.ForegroundColor = Constants.PrimaryColor;
             Console.WriteLine("Checking outbound queue (maxAge: 100ms, maxQueueLength: 1)...");
-            Console.ResetColor();
+            ConsoleHelper.ResetColor();
 
             var result = await new OutboundQueueHealthCheckService(
                     serviceProvider.GetRequiredService<IOutboundQueueConsumer>())
@@ -76,7 +76,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.HealthCheck
 
             Console.ForegroundColor = Constants.PrimaryColor;
             Console.WriteLine($"Healthy: {result}");
-            Console.ResetColor();
+            ConsoleHelper.ResetColor();
         }
     }
 }

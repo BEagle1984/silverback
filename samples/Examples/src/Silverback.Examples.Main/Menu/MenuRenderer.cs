@@ -21,6 +21,7 @@ namespace Silverback.Examples.Main.Menu
             do
             {
                 Console.Clear();
+                ConsoleHelper.ResetColor();
 
                 WriteHeader(breadcrumbs);
                 WriteOptions(options, selected);
@@ -65,11 +66,11 @@ namespace Silverback.Examples.Main.Menu
                 if (i == selected)
                     Console.ForegroundColor = Constants.PrimaryColor;
                 else
-                    Console.ResetColor();
+                    ConsoleHelper.ResetColor();
 
                 Console.WriteLine($"{options[i].Title} ");
 
-                Console.ResetColor();
+                ConsoleHelper.ResetColor();
             }
         }
 
@@ -166,7 +167,7 @@ namespace Silverback.Examples.Main.Menu
 
             breadcrumbs.WriteBreadcrumbs();
             
-            Console.ResetColor();
+            ConsoleHelper.ResetColor();
         }
 
         private static string GetSilverbackVersion() =>

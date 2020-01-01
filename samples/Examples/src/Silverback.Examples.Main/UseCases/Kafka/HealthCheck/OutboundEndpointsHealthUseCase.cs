@@ -69,7 +69,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.HealthCheck
         {
             Console.ForegroundColor = Constants.PrimaryColor;
             Console.WriteLine("Pinging all endpoints...");
-            Console.ResetColor();
+            ConsoleHelper.ResetColor();
 
             var result = await new OutboundEndpointsHealthCheckService(
                 serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
@@ -77,7 +77,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.HealthCheck
 
             Console.ForegroundColor = Constants.PrimaryColor;
             Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
-            Console.ResetColor();
+            ConsoleHelper.ResetColor();
         }
     }
 }

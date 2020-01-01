@@ -89,7 +89,7 @@ namespace Silverback.Examples.Main.Menu
 
             Console.ForegroundColor = Constants.PrimaryColor;
             Console.Write("\r\nPress any key to continue...");
-            Console.ResetColor();
+            ConsoleHelper.ResetColor();
             Console.ReadKey(true);
         }
 
