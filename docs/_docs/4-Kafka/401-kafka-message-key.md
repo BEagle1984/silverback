@@ -1,6 +1,6 @@
 ---
 title: Kafka Message Key (Partitioning)
-permalink: /docs/advanced/kafka-message-key
+permalink: /docs/kafka/kafka-message-key
 toc: false
 ---
 

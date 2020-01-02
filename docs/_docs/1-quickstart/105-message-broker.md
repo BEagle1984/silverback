@@ -7,7 +7,7 @@ To connect Silverback to a message broker we need a reference to `Silverback.Int
 
 ## Sample configuration
 
-The following example is very simple and there are of course many more configurations and possibilities. Some more details are given in the dedicated [Broker Configuration Explained]({{ site.baseurl }}/docs/configuration/endpoint) section.
+The following example is very simple and there are of course many more configurations and possibilities. Some more details are given in the dedicated [Broker Configuration Explained]({{ site.baseurl }}/docs/configuration/endpoint) section, covering RabbitMQ as well.
 
 ```c#
 public void ConfigureServices(IServiceCollection services)
