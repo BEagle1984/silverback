@@ -11,7 +11,7 @@ toc_icon: star
 
 Silverback is a simple framework to build reactive, event-driven, microservices.
 
-It includes an in-memory message bus that can be easily connected to a message broker to integrate with other microservices. At the moment only Apache Kafka is supported but other message brokers could be added without much effort.
+It includes an message bus (mediator) that can be easily connected to a message broker to integrate with other microservices. At the moment it supports Apache Kafka and RabbitMQ out of the box but other message brokers could be added without much effort.
 
 Some of its features are highlighted in the following chapters.
 
@@ -27,19 +27,22 @@ Silverback also ships with native support for Rx.net (System.Reactive).
 
 The message broker integration happens configuratively at startup and it is then completely abstracted. The integration messages are published to internal bus as any other message  and Silverback takes care of deliveryng them to the correct endpoint, so that your code remains very clean and no detail about the message broker can leak into it. 
 
-## Apache Kafka integration
+## Apache Kafka and RabbitMQ integration
 
-Silverback provides a package to connect with the very popular [Apache Kafka](https://kafka.apache.org/) message broker.
+Silverback provides a package to connect with the very popular [Apache Kafka](https://kafka.apache.org/) message broker or the equally popular [RabbitMQ](https://www.rabbitmq.com/).
 
 Integrating other message brokers wouldn't be a big deal and some may be added in the future...or feel free to create your own `IBroker` implementation.
 
 ## DDD and transactional messaging
 
-One of the main challenges when adopting a microservices architecture and asnchronous messaging is atomically updating the database and sending the messages to notify the other microservices. Silverback solves this problem for you with the built-in ability to store the messages published by your domain entities in a temporary outbox database table, updated as part of your regular transaction.
+One of the main challenges when adopting a microservices architecture and asynchronous messaging is atomically updating the database and sending the messages to notify the other microservices. Silverback solves this problem for you with the built-in ability to store the messages published by your domain entities in a temporary outbox table, updated as part of your regular transaction.
+
+Silverback integrates of seemlessly with EntityFramework Core (but could be extended to other ORMs).
 
 ## Error handling policies
 
-You can configuratively specify the error handling policies for each inbound connector. The built-in policies are:
+Sooner or later you will run into an issue with a message that cannot be processed and you therefore have to handle the exception and decide what to do with the message.
+With Silverback you can configuratively specify the error handling policies for each inbound connector. The built-in policies are:
 * Skip: simply ingnore the message
 * Retry: retry the same message (delays can be specified)
 * Move: move the message to another topic/queue (or re-enqueue it at the end of the same one)
