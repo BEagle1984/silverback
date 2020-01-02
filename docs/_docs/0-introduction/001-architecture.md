@@ -4,8 +4,8 @@ permalink: /docs/architecture
 ---
 
 Silverback is basically two things:
-* a message bus that can be used to decouple layers or components inside an application
-* an abstraction over a message broker like Apache Kafka.
+* a message bus (actually a mediator) that can be used to decouple layers or components inside an application
+* an abstraction over a message broker like Apache Kafka or RabbitMQ.
 
 Combining those two fundamental pieces allows to build reactive and resilient microservices, using a very simple and familiar programming model.
 
@@ -21,8 +21,8 @@ The following diagram shows the Silverback's main components and how they intera
 2 | When the entities are saved 1 or more events are published
 3 | Some other services subscribe to such events and perform some extra work (that may lead to other events being published and so on)
 4 | The outbound connector catches the messages to relay them to the message broker
-5 | A producer is used to publish the messages to a Kafka topic
-6 | The messages are published to Kafka
+5 | A producer is used to publish the messages to a topic/queue/exchange
+6 | The messages are published to the message broker
 7 | Another microservices is consuming the topic and receives the messages
 8 | The consumer forwards the messages to the inbound connector
 9 | The messages are relayed to the internal message bus
@@ -30,8 +30,8 @@ The following diagram shows the Silverback's main components and how they intera
 1b | As a result some entities are modifierd
 2b | When the entities are saved 1 or more events are published
 3b | The outbound connector catches the messages to relay them to the message broker
-4b | A producer is used to publish the messages to a Kafka topic
-5b | The messages are published to Kafka
+4b | A producer is used to publish the messages to a topic/queue/exchange
+5b | The messages are published to the message broker
 
 ## Packages
 
@@ -66,7 +66,7 @@ Contains the message broker and connectors abstraction. Inbound and outbound con
 An implementation of `Silverback.Integration` for the popular Apache Kafka message broker. It internally uses the `Confluent.Kafka` client library.
 
 [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.RabbitMQ.svg)](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ/)
-**Silverback.Integration.Kafka**<br/>
+**Silverback.Integration.RabbitMQ**<br/>
 An implementation of `Silverback.Integration` for the popular RabbitMQ message broker. It internally uses the `RabbitMQ.Client` library.
 
 [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.InMemory.svg)](https://www.nuget.org/packages/Silverback.Integration.InMemory/)

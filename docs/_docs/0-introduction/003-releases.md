@@ -11,6 +11,8 @@ toc: true
 
 ### Breaking Changes
 * The `IBroker`, `IProduer` and `IConsumer` interfaces have been slightly modified (it shouldn't affect you unless you built your own `IBroker` implementation)
+* Many interfaces (such as `IBehavior`) have been sligthly modified to pass around an `IReadOnlyCollection<T>` instead of an `IEnumerable<T>`, to avoid the possible issues related to multiple enumeration of an `IEnumerable`
+* The `IMessageKeyProvider` interface has been renamed to `IMessageIdProvider` to prevent to be mistaken with the Kafka Key or Rabbit's Routing Key
 
 ## [1.2.0](https://github.com/BEagle1984/silverback/releases/tag/1.2.0)
 
