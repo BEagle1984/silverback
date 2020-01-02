@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
     public class KafkaBrokerTests
     {
         private readonly KafkaBroker _broker = new KafkaBroker(
-            new MessageKeyProvider(new [] { new DefaultPropertiesMessageKeyProvider()}), 
+            new MessageIdProvider(new [] { new DefaultPropertiesMessageIdProvider()}), 
             Enumerable.Empty<IBrokerBehavior>(), 
             Substitute.For<IServiceProvider>(),
             NullLoggerFactory.Instance, 

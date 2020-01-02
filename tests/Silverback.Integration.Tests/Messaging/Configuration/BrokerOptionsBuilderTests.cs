@@ -181,7 +181,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services.AddSilverback().WithConnectionTo<TestBroker>(options =>
                 options.AddLoggedInboundConnector(s =>
-                    new InMemoryInboundLog(s.GetRequiredService<MessageKeyProvider>())));
+                    new InMemoryInboundLog(s.GetRequiredService<MessageIdProvider>())));
             GetBusConfigurator().Connect(endpoints =>
                 endpoints
                     .AddInbound(TestConsumerEndpoint.GetDefault()));

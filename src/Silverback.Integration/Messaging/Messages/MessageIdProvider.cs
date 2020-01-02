@@ -8,13 +8,13 @@ using System.Linq;
 namespace Silverback.Messaging.Messages
 {
     // TODO: Test + Cache?
-    public class MessageKeyProvider
+    public class MessageIdProvider
     {
-        private readonly IEnumerable<IMessageKeyProvider> _providers;
+        private readonly IReadOnlyCollection<IMessageIdProvider> _providers;
 
-        public MessageKeyProvider(IEnumerable<IMessageKeyProvider> providers)
+        public MessageIdProvider(IEnumerable<IMessageIdProvider> providers)
         {
-            _providers = providers;
+            _providers = providers.ToList();
         }
 
         public string GetKey(object message, bool throwIfCannotGet = true)
@@ -27,15 +27,18 @@ namespace Silverback.Messaging.Messages
             if (provider == null)
                 return throwIfCannotGet
                     ? throw new SilverbackException(
-                        $"No IMessageKeyProvider suitable for the message of type {message.GetType().FullName} has been provided.")
+                        $"No IMessageIdProvider suitable for the message of type {message.GetType().FullName} " +
+                        $"has been found. Consider registering an appropriate IMessageIdProvider implementation or add " +
+                        $"an Id or MessageId property of type Guid or String to your messages.")
                     : (string) null;
 
-            return provider.GetKey(message);
+            return provider.GetId(message);
         }
 
         public void EnsureKeyIsInitialized(object message, MessageHeaderCollection headers)
         {
-            var key = _providers.FirstOrDefault(p => p.CanHandle(message))?.EnsureKeyIsInitialized(message);
+            var key = _providers.FirstOrDefault(p => 
+                p.CanHandle(message))?.EnsureIdentifierIsInitialized(message);
 
             headers.AddOrReplace(MessageHeader.MessageIdKey, key ?? Guid.NewGuid().ToString().ToLower());
         }

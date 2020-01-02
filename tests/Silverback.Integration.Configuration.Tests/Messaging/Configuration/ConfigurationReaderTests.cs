@@ -38,7 +38,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
             services.AddSingleton(Substitute.For<IBroker>());
             services.AddScoped(s => Substitute.For<IPublisher>());
             services.AddSingleton<MessageLogger>();
-            services.AddSingleton<MessageKeyProvider>();
+            services.AddSingleton<MessageIdProvider>();
 
             _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
             {

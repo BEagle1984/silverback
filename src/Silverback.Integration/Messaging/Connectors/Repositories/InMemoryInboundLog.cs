@@ -9,18 +9,18 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public class InMemoryInboundLog : TransactionalList<InMemoryInboundLogEntry>, IInboundLog
     {
-        private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly MessageIdProvider _messageIdProvider;
 
-        public InMemoryInboundLog(MessageKeyProvider messageKeyProvider)
+        public InMemoryInboundLog(MessageIdProvider messageIdProvider)
         {
-            _messageKeyProvider = messageKeyProvider;
+            _messageIdProvider = messageIdProvider;
         }
 
         public Task Add(object message, IConsumerEndpoint endpoint) =>
-            Add(new InMemoryInboundLogEntry(_messageKeyProvider.GetKey(message), endpoint.Name));
+            Add(new InMemoryInboundLogEntry(_messageIdProvider.GetKey(message), endpoint.Name));
 
         public Task<bool> Exists(object message, IConsumerEndpoint endpoint) =>
             Task.FromResult(Entries.Union(UncommittedEntries).Any(e =>
-                e.MessageId == _messageKeyProvider.GetKey(message) && e.EndpointName == endpoint.Name));
+                e.MessageId == _messageIdProvider.GetKey(message) && e.EndpointName == endpoint.Name));
     }
 }

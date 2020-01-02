@@ -13,18 +13,18 @@ namespace Silverback.Messaging.Broker
     public class RabbitBroker : Broker
     {
         private readonly RabbitConnectionFactory _connectionFactory = new RabbitConnectionFactory();
-        private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly MessageIdProvider _messageIdProvider;
         private readonly ILoggerFactory _loggerFactory;
         private readonly MessageLogger _messageLogger;
 
         public RabbitBroker(
-            MessageKeyProvider messageKeyProvider,
+            MessageIdProvider messageIdProvider,
             IEnumerable<IBrokerBehavior> behaviors,
             ILoggerFactory loggerFactory,
             MessageLogger messageLogger)
             : base(behaviors, loggerFactory)
         {
-            _messageKeyProvider = messageKeyProvider;
+            _messageIdProvider = messageIdProvider;
             _loggerFactory = loggerFactory;
             _messageLogger = messageLogger;
         }
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker
             new RabbitProducer(
                 this,
                 (RabbitProducerEndpoint) endpoint,
-                _messageKeyProvider,
+                _messageIdProvider,
                 behaviors,
                 _connectionFactory,
                 _loggerFactory.CreateLogger<RabbitProducer>(),

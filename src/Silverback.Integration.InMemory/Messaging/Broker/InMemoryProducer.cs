@@ -13,11 +13,11 @@ namespace Silverback.Messaging.Broker
         public InMemoryProducer(
             InMemoryBroker broker,
             IProducerEndpoint endpoint,
-            MessageKeyProvider messageKeyProvider,
+            MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
             ILogger<Producer> logger,
             MessageLogger messageLogger)
-            : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
+            : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
         {
         }
 

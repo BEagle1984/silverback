@@ -30,11 +30,11 @@ namespace Silverback.Messaging.Broker
         public KafkaProducer(
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
-            MessageKeyProvider messageKeyProvider,
+            MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
             ILogger<KafkaProducer> logger,
             MessageLogger messageLogger)
-            : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
+            : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
         {
             _logger = logger;
         }

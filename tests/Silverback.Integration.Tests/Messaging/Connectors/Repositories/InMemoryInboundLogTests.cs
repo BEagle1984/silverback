@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
         public InMemoryInboundLogTests()
         {
-            _log = new InMemoryInboundLog(new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() }));
+            _log = new InMemoryInboundLog(new MessageIdProvider(new[] { new DefaultPropertiesMessageIdProvider() }));
             InMemoryInboundLog.Clear();
         }
 

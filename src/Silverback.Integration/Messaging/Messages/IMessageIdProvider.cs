@@ -3,22 +3,22 @@
 
 namespace Silverback.Messaging.Messages
 {
-    public interface IMessageKeyProvider
+    public interface IMessageIdProvider
     {
         /// <summary>
-        ///     Returns a boolean value indicating whether this <see cref="IMessageKeyProvider" />
+        ///     Returns a boolean value indicating whether this <see cref="IMessageIdProvider" />
         ///     implementation is able to handle the specified message.
         /// </summary>
         bool CanHandle(object message);
 
         /// <summary>
-        ///     Returns the key currently set on the specified message.
+        ///     Returns the (unique) identifier of the specified message.
         /// </summary>
-        string GetKey(object message);
+        string GetId(object message);
 
         /// <summary>
-        ///     Ensures that the key has been initialized (to a unique value) and returns it.
+        ///     Ensures that the id field has been initialized (to a unique value) and returns it.
         /// </summary>
-        string EnsureKeyIsInitialized(object message);
+        string EnsureIdentifierIsInitialized(object message);
     }
 }

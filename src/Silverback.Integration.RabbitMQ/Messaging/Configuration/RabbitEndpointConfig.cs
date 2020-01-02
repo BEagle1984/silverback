@@ -21,7 +21,8 @@ namespace Silverback.Messaging.Configuration
 
         /// <summary>
         ///     Gets or sets the optional arguments dictionary.
-        ///     The arguments are used by plugins and broker-specific features such as message TTL, queue length limit, etc.
+        ///     The arguments are used by plugins and broker-specific features to configure values such as
+        ///     message TTL, queue length limit, etc.
         /// </summary>
         public Dictionary<string, object> Arguments { get; set; }
 

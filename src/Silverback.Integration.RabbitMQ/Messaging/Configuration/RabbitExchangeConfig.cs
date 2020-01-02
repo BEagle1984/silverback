@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Configuration
     {
         /// <summary>
         ///     Gets or sets the exchange type. It should match with one of the constants declared in the
-        ///     <see cref="ExchangeType" /> static class.
+        ///     <see cref="RabbitMQ.Client.ExchangeType" /> static class.
         /// </summary>
         public string ExchangeType { get; set; }
 

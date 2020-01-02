@@ -17,14 +17,14 @@ namespace Silverback.Messaging.Connectors.Behaviors
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IOutboundRoutingConfiguration _routing;
-        private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly MessageIdProvider _messageIdProvider;
         private readonly ConcurrentBag<object> _inboundMessagesCache = new ConcurrentBag<object>();
 
         public OutboundRoutingBehavior(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _routing = serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
-            _messageKeyProvider = serviceProvider.GetRequiredService<MessageKeyProvider>();
+            _messageIdProvider = serviceProvider.GetRequiredService<MessageIdProvider>();
         }
 
         public int SortIndex { get; } = 100;
@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
                 typeof(OutboundMessage<>).MakeGenericType(message.GetType()),
                 message, null, route);
 
-            _messageKeyProvider.EnsureKeyIsInitialized(wrapper.Content, wrapper.Headers);
+            _messageIdProvider.EnsureKeyIsInitialized(wrapper.Content, wrapper.Headers);
 
             return wrapper;
         }
