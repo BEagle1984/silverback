@@ -14,13 +14,13 @@ namespace Silverback.Messaging.Connectors.Repositories
     // TODO: Test
     public class DbInboundLog : RepositoryBase<InboundMessage>, IInboundLog
     {
-        private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly MessageIdProvider _messageIdProvider;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
-        public DbInboundLog(IDbContext dbContext, MessageKeyProvider messageKeyProvider)
+        public DbInboundLog(IDbContext dbContext, MessageIdProvider messageIdProvider)
             : base(dbContext)
         {
-            _messageKeyProvider = messageKeyProvider;
+            _messageIdProvider = messageIdProvider;
         }
 
         public async Task Add(object message, IConsumerEndpoint endpoint)
@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             {
                 DbSet.Add(new InboundMessage
                 {
-                    MessageId = _messageKeyProvider.GetKey(message),
+                    MessageId = _messageIdProvider.GetKey(message),
                     Message = DefaultSerializer.Serialize(message),
                     EndpointName = endpoint.Name,
                     Consumed = DateTime.UtcNow
@@ -66,7 +66,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public Task<bool> Exists(object message, IConsumerEndpoint endpoint)
         {
-            var key = _messageKeyProvider.GetKey(message);
+            var key = _messageIdProvider.GetKey(message);
             return DbSet.AsQueryable().AnyAsync(m => m.MessageId == key && m.EndpointName == endpoint.Name);
         }
 

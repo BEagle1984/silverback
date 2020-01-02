@@ -10,20 +10,20 @@ namespace Silverback.Messaging.Broker
 {
     public class InMemoryBroker : Broker
     {
-        private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly MessageIdProvider _messageIdProvider;
         private readonly MessageLogger _messageLogger;
 
         private readonly ConcurrentDictionary<string, InMemoryTopic> _topics =
             new ConcurrentDictionary<string, InMemoryTopic>();
 
         public InMemoryBroker(
-            MessageKeyProvider messageKeyProvider,
+            MessageIdProvider messageIdProvider,
             IEnumerable<IBrokerBehavior> behaviors,
             ILoggerFactory loggerFactory,
             MessageLogger messageLogger)
             : base(behaviors, loggerFactory)
         {
-            _messageKeyProvider = messageKeyProvider;
+            _messageIdProvider = messageIdProvider;
             _messageLogger = messageLogger;
         }
 
@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Broker
             new InMemoryProducer(
                 this,
                 endpoint,
-                _messageKeyProvider,
+                _messageIdProvider,
                 behaviors,
                 LoggerFactory.CreateLogger<InMemoryProducer>(),
                 _messageLogger);

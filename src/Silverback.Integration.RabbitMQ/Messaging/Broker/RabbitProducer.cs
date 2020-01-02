@@ -26,12 +26,12 @@ namespace Silverback.Messaging.Broker
         public RabbitProducer(
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,
-            MessageKeyProvider messageKeyProvider,
+            MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
             RabbitConnectionFactory connectionFactory,
             ILogger<Producer> logger,
             MessageLogger messageLogger)
-            : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
+            : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
         {
             _logger = logger;
 

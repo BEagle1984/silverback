@@ -13,20 +13,20 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public class KafkaBroker : Broker
     {
-        private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly MessageIdProvider _messageIdProvider;
         private readonly IServiceProvider _serviceProvider;
         private readonly ILoggerFactory _loggerFactory;
         private readonly MessageLogger _messageLogger;
 
         public KafkaBroker(
-            MessageKeyProvider messageKeyProvider,
+            MessageIdProvider messageIdProvider,
             IEnumerable<IBrokerBehavior> behaviors,
             IServiceProvider serviceProvider, 
             ILoggerFactory loggerFactory, 
             MessageLogger messageLogger)
             : base(behaviors, loggerFactory)
         {
-            _messageKeyProvider = messageKeyProvider;
+            _messageIdProvider = messageIdProvider;
             _serviceProvider = serviceProvider;
             _loggerFactory = loggerFactory;
             _messageLogger = messageLogger;
@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Broker
             new KafkaProducer(
                 this,
                 (KafkaProducerEndpoint) endpoint,
-                _messageKeyProvider,
+                _messageIdProvider,
                 behaviors,
                 _loggerFactory.CreateLogger<KafkaProducer>(),
                 _messageLogger);

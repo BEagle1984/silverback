@@ -11,9 +11,6 @@ namespace Silverback.Messaging.Configuration
     // TODO: Cleanup + test serialization + test equality
     public sealed class RabbitConnectionConfig : IEquatable<RabbitConnectionConfig>
     {
-        /// <summary>TLS versions enabled by default: TLSv1.2, v1.1, v1.0.</summary>
-        public static SslProtocols? DefaultAmqpUriSslProtocols { get; set; }
-
         /// <summary>The AMQP URI SSL protocols.</summary>
         public SslProtocols? AmqpUriSslProtocols { get; set; }
 

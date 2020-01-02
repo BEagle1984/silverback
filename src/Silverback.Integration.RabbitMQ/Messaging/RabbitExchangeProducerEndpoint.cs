@@ -9,8 +9,7 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging
 {
     public sealed class RabbitExchangeProducerEndpoint
-        : RabbitProducerEndpoint,
-            IEquatable<RabbitExchangeProducerEndpoint>
+        : RabbitProducerEndpoint, IEquatable<RabbitExchangeProducerEndpoint>
     {
         public RabbitExchangeProducerEndpoint(string name)
             : base(name)

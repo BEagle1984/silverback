@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.TestTypes
             : base(
                 broker,
                 endpoint,
-                new MessageKeyProvider(new[] { new DefaultPropertiesMessageKeyProvider() }),
+                new MessageIdProvider(new[] { new DefaultPropertiesMessageIdProvider() }),
                 behaviors,
                 new NullLogger<TestProducer>(),
                 new MessageLogger())

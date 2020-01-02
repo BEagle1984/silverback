@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Broker
 {
     public abstract class Producer : IProducer
     {
-        private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly MessageIdProvider _messageIdProvider;
         private readonly IReadOnlyCollection<IProducerBehavior> _behaviors;
         private readonly MessageLogger _messageLogger;
         private readonly ILogger<Producer> _logger;
@@ -22,12 +22,12 @@ namespace Silverback.Messaging.Broker
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
-            MessageKeyProvider messageKeyProvider,
+            MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
             ILogger<Producer> logger,
             MessageLogger messageLogger)
         {
-            _messageKeyProvider = messageKeyProvider ?? throw new ArgumentNullException(nameof(messageKeyProvider));
+            _messageIdProvider = messageIdProvider ?? throw new ArgumentNullException(nameof(messageIdProvider));
             _behaviors = (IReadOnlyCollection<IProducerBehavior>) behaviors?.ToList() ??
                          Array.Empty<IProducerBehavior>();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -69,7 +69,7 @@ namespace Silverback.Messaging.Broker
         private IEnumerable<RawOutboundMessage> GetRawMessages(object content, IEnumerable<MessageHeader> headers)
         {
             var headersCollection = new MessageHeaderCollection(headers);
-            _messageKeyProvider.EnsureKeyIsInitialized(content, headersCollection);
+            _messageIdProvider.EnsureKeyIsInitialized(content, headersCollection);
             var rawMessage = new RawOutboundMessage(content, headersCollection, Endpoint);
 
             return ChunkProducer.ChunkIfNeeded(rawMessage);
@@ -114,11 +114,11 @@ namespace Silverback.Messaging.Broker
         protected Producer(
             TBroker broker,
             TEndpoint endpoint,
-            MessageKeyProvider messageKeyProvider,
+            MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
             ILogger<Producer> logger,
             MessageLogger messageLogger)
-            : base(broker, endpoint, messageKeyProvider, behaviors, logger, messageLogger)
+            : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
         {
         }
 

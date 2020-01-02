@@ -26,8 +26,7 @@ namespace Silverback.Messaging.LargeMessages
             {
                 throw new InvalidOperationException(
                     "Dividing into chunks is pointless if no unique MessageId can be retrieved. " +
-                    "Please add an Id or MessageId property to the message model or " +
-                    "use a custom IMessageKeyProvider.");
+                    "Please add an Id or MessageId property to the message model or use a custom IMessageIdProvider.");
             }
 
             var span = message.RawContent.AsMemory();

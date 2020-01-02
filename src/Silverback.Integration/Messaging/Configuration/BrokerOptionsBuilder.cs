@@ -86,7 +86,7 @@ namespace Silverback.Messaging.Configuration
         public BrokerOptionsBuilder AddDbLoggedInboundConnector() =>
             AddLoggedInboundConnector(s =>
                 new DbInboundLog(s.GetRequiredService<IDbContext>(),
-                    s.GetRequiredService<MessageKeyProvider>()));
+                    s.GetRequiredService<MessageIdProvider>()));
 
         /// <summary>
         ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
@@ -317,18 +317,18 @@ namespace Silverback.Messaging.Configuration
 
         #endregion
 
-        #region AddMessageKeyProvider
+        #region AddMessageIdProvider
 
         /// <summary>
-        ///     Adds a message key provider of type <typeparamref name="TProvider" /> to be used
+        ///     Adds a message id provider of type <typeparamref name="TProvider" /> to be used
         ///     to auto-generate the unique id of the integration messages.
         /// </summary>
-        /// <typeparam name="TProvider">The type of the <see cref="IMessageKeyProvider" /> to add.</typeparam>
+        /// <typeparam name="TProvider">The type of the <see cref="IMessageIdProvider" /> to add.</typeparam>
         /// <returns></returns>
-        public BrokerOptionsBuilder AddMessageKeyProvider<TProvider>()
-            where TProvider : class, IMessageKeyProvider
+        public BrokerOptionsBuilder AddMessageIdProvider<TProvider>()
+            where TProvider : class, IMessageIdProvider
         {
-            SilverbackBuilder.Services.AddSingleton<IMessageKeyProvider, TProvider>();
+            SilverbackBuilder.Services.AddSingleton<IMessageIdProvider, TProvider>();
 
             return this;
         }
@@ -387,7 +387,7 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         protected virtual void SetDefaults()
         {
-            AddMessageKeyProvider<DefaultPropertiesMessageKeyProvider>();
+            AddMessageIdProvider<DefaultPropertiesMessageIdProvider>();
 
             if (SilverbackBuilder.Services.All(s => s.ServiceType != typeof(IInboundConnector)))
                 AddInboundConnector();

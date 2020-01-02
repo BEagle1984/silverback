@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Silverback.Messaging.Messages
 {
-    public class DefaultPropertiesMessageKeyProvider : IMessageKeyProvider
+    public class DefaultPropertiesMessageIdProvider : IMessageIdProvider
     {
         public bool CanHandle(object message)
         {
@@ -16,9 +16,9 @@ namespace Silverback.Messaging.Messages
                    (idProperty.PropertyType == typeof(Guid) || idProperty.PropertyType == typeof(string));
         }
 
-        public string GetKey(object message) => GetIdProperty(message)?.GetValue(message).ToString();
+        public string GetId(object message) => GetIdProperty(message)?.GetValue(message).ToString();
 
-        public string EnsureKeyIsInitialized(object message)
+        public string EnsureIdentifierIsInitialized(object message)
         {
             var prop = GetIdProperty(message);
 
@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Messages
                 return newValue;
             }
 
-            throw new InvalidOperationException("Unhandled key type.");
+            throw new InvalidOperationException("Unhandled id property type.");
         }
 
         private PropertyInfo GetIdProperty(object message) =>
