@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2019 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
@@ -14,17 +15,20 @@ namespace Silverback.Messaging.Broker
     public class KafkaBroker : Broker<KafkaEndpoint>
     {
         private readonly MessageKeyProvider _messageKeyProvider;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILoggerFactory _loggerFactory;
         private readonly MessageLogger _messageLogger;
 
         public KafkaBroker(
             MessageKeyProvider messageKeyProvider,
             IEnumerable<IBrokerBehavior> behaviors,
-            ILoggerFactory loggerFactory,
-            MessageLogger messageLogger) 
+            IServiceProvider serviceProvider, 
+            ILoggerFactory loggerFactory, 
+            MessageLogger messageLogger)
             : base(behaviors, loggerFactory)
         {
             _messageKeyProvider = messageKeyProvider;
+            _serviceProvider = serviceProvider;
             _loggerFactory = loggerFactory;
             _messageLogger = messageLogger;
         }
@@ -43,6 +47,7 @@ namespace Silverback.Messaging.Broker
                 this,
                 (KafkaConsumerEndpoint) endpoint,
                 behaviors,
+                _serviceProvider,
                 _loggerFactory.CreateLogger<KafkaConsumer>());
 
         protected override void Connect(IEnumerable<IConsumer> consumers) =>

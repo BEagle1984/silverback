@@ -7,6 +7,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Events;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -16,6 +20,7 @@ namespace Silverback.Messaging.Broker
         private readonly List<KafkaConsumerEndpoint> _endpoints = new List<KafkaConsumerEndpoint>();
         private readonly Confluent.Kafka.ConsumerConfig _config;
         private readonly bool _enableAutoRecovery;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -26,10 +31,15 @@ namespace Silverback.Messaging.Broker
         private bool _consuming;
         private bool _consumedAtLeastOnce;
 
-        public InnerConsumerWrapper(Confluent.Kafka.ConsumerConfig config, bool enableAutoRecovery, ILogger logger)
+        public InnerConsumerWrapper(
+            Confluent.Kafka.ConsumerConfig config, 
+            bool enableAutoRecovery,
+            IServiceProvider serviceProvider, 
+            ILogger logger)
         {
             _config = config;
             _enableAutoRecovery = enableAutoRecovery;
+            _serviceProvider = serviceProvider;
             _logger = logger;
         }
 
@@ -93,16 +103,25 @@ namespace Silverback.Messaging.Broker
         {
             return new Confluent.Kafka.ConsumerBuilder<byte[], byte[]>(_config)
                 .SetPartitionsAssignedHandler((_, partitions) =>
-                {
-                    partitions.ForEach(partition =>
-                        _logger.LogInformation("Assigned topic {topic} partition {partition}, member id: {memberId}",
-                            partition.Topic, partition.Partition, _innerConsumer.MemberId));
-                })
+                    {
+                        partitions.ForEach(partition =>
+                        {
+                            _logger.LogInformation("Assigned topic {topic} partition {partition}, member id: {memberId}",
+                                partition.Topic, partition.Partition, _innerConsumer.MemberId);
+
+                            Publish(new PartitionAssignedEvent(partition.Topic, partition.Partition, _innerConsumer.MemberId));
+                        });
+                    }
+                )
                 .SetPartitionsRevokedHandler((_, partitions) =>
                 {
                     partitions.ForEach(partition =>
+                    {
                         _logger.LogInformation("Revoked topic {topic} partition {partition}, member id: {memberId}",
-                            partition.Topic, partition.Partition, _innerConsumer.MemberId));
+                            partition.Topic, partition.Partition, _innerConsumer.MemberId);
+
+                        Publish(new PartitionRevokedEvent(partition.Topic, partition.Partition, _innerConsumer.MemberId));
+                    });
                 })
                 .SetOffsetsCommittedHandler((_, offsets) =>
                 {
@@ -122,6 +141,8 @@ namespace Silverback.Messaging.Broker
                             _logger.LogTrace("Successfully committed offset {topic} {partition} @{offset}.",
                                 offset.Topic, offset.Partition, offset.Offset);
                         }
+
+                        Publish(new OffsetCommittedEvent(offset.Topic, offset.Partition, offset.Offset, offset.Error));
                     }
                 })
                 .SetErrorHandler((_, e) =>
@@ -133,10 +154,14 @@ namespace Silverback.Messaging.Broker
 
                     _logger.Log(e.IsFatal ? LogLevel.Critical : LogLevel.Error,
                             "Error in Kafka consumer: {reason}.", e.Reason);
+
+                    Publish(new ErrorEvent(e));
                 })
                 .SetStatisticsHandler((_, json) =>
                 {
                     _logger.LogInformation($"Statistics: {json}");
+
+                    Publish(new StatisticsEvent(json));
                 })
                 .Build();
         }
@@ -235,6 +260,18 @@ namespace Silverback.Messaging.Broker
             _innerConsumer?.Close();
             _innerConsumer?.Dispose();
             _innerConsumer = null;
+        }
+
+        private void Publish(IMessage message)
+        {
+            // Serviceprovider is used if kafka bus events shall be published on internal bus.
+            if (_serviceProvider != null)
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+
+                publisher.Publish(message);
+            }
         }
 
         public void Dispose()
