@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <summary>
-        ///     Gets the collection of <see cref="TopicPartition" /> that have been assigned.
+        ///     Gets the collection of <see cref="Confluent.Kafka.TopicPartition" /> that have been assigned.
         /// </summary>
         public IReadOnlyCollection<Confluent.Kafka.TopicPartition> Partitions { get; }
 

@@ -136,11 +136,6 @@ namespace Silverback.Messaging.Broker
             if (_consumer == null)
                 return;
 
-            // TODO: See if needed, as it currently causes an exception.
-            // "RabbitMQ.Client.Exceptions.AlreadyClosedException: Already closed: The AMQP operation was interrupted:
-            // AMQP close-reason, initiated by Peer, code=406, text='PRECONDITION_FAILED - unknown delivery tag 1',
-            // classId=60, methodId=80"
-
             _channel.BasicCancel(_consumerTag);
 
             _consumerTag = null;

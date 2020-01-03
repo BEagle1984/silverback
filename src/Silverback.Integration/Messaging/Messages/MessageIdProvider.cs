@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Messages
 
         public void EnsureKeyIsInitialized(object message, MessageHeaderCollection headers)
         {
-            var key = _providers.FirstOrDefault(p => 
+            var key = _providers.FirstOrDefault(p =>
                 p.CanHandle(message))?.EnsureIdentifierIsInitialized(message);
 
             headers.AddOrReplace(MessageHeader.MessageIdKey, key ?? Guid.NewGuid().ToString().ToLower());

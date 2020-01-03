@@ -21,8 +21,8 @@ namespace Silverback.Messaging.Broker
         public KafkaBroker(
             MessageIdProvider messageIdProvider,
             IEnumerable<IBrokerBehavior> behaviors,
-            IServiceProvider serviceProvider, 
-            ILoggerFactory loggerFactory, 
+            IServiceProvider serviceProvider,
+            ILoggerFactory loggerFactory,
             MessageLogger messageLogger)
             : base(behaviors, loggerFactory)
         {

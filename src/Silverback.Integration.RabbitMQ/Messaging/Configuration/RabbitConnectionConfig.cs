@@ -23,12 +23,6 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public bool? AutomaticRecoveryEnabled { get; set; }
 
-        // /// <summary>
-        // /// Set to true will enable a asynchronous consumer dispatcher which is compatible with <see cref="T:RabbitMQ.Client.IAsyncBasicConsumer" />.
-        // /// Defaults to false.
-        // /// </summary>
-        // public bool? DispatchConsumersAsync { get; set; }
-
         /// <summary>The host to connect to.</summary>
         public string HostName { get; set; }
 

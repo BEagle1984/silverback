@@ -4,9 +4,10 @@
 using System;
 using Confluent.Kafka;
 
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+
 namespace Silverback.Messaging.Configuration
 {
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public sealed class KafkaConsumerConfig : ConfluentConsumerConfigProxy, IEquatable<KafkaConsumerConfig>
     {
         private const bool KafkaDefaultAutoCommitEnabled = true;
@@ -74,5 +75,4 @@ namespace Silverback.Messaging.Configuration
 
         #endregion
     }
-#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -26,7 +26,8 @@ namespace Silverback.Messaging.Messages
     ///         </item>
     ///         <item>
     ///             <description>
-    ///                 Some partitions failed: global <c>Error</c> is success (<see cref="ErrorCode.NoError" />).
+    ///                 Some partitions failed: global <c>Error</c> is success (
+    ///                 <see cref="Confluent.Kafka.ErrorCode.NoError" />).
     ///             </description>
     ///         </item>
     ///     </list>
