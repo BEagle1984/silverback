@@ -13,6 +13,7 @@ namespace Silverback.Messaging.Broker
     public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint>, IDisposable
     {
         private readonly ILogger<KafkaConsumer> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
         private InnerConsumerWrapper _innerConsumer;
         private int _messagesSinceCommit;
@@ -21,9 +22,11 @@ namespace Silverback.Messaging.Broker
             IBroker broker,
             KafkaConsumerEndpoint endpoint,
             IEnumerable<IConsumerBehavior> behaviors,
+            IServiceProvider serviceProvider,
             ILogger<KafkaConsumer> logger)
             : base(broker, endpoint, behaviors)
         {
+            _serviceProvider = serviceProvider;
             _logger = logger;
 
             Endpoint.Validate();
@@ -37,6 +40,7 @@ namespace Silverback.Messaging.Broker
             _innerConsumer = new InnerConsumerWrapper(
                 Endpoint.Configuration.ConfluentConfig,
                 Endpoint.Configuration.EnableAutoRecovery,
+                _serviceProvider,
                 _logger);
 
             _innerConsumer.Subscribe(Endpoint);
