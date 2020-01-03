@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <summary>
-        ///     Gets the collection of <see cref="TopicPartitionOffset" /> representing the set of partitions the
+        ///     Gets the collection of <see cref="Confluent.Kafka.TopicPartitionOffset" /> representing the set of partitions the
         ///     consumer is currently assigned to, and the current position of the consumer on each of these
         ///     partitions.
         /// </summary>
