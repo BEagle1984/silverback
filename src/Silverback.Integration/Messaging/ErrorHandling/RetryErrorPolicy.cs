@@ -36,7 +36,7 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        protected override ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception)
+        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundMessage> messages, Exception exception)
         {
             ApplyDelay(messages);
 
@@ -45,7 +45,7 @@ namespace Silverback.Messaging.ErrorHandling
             return ErrorAction.Retry;
         }
 
-        private void ApplyDelay(IEnumerable<IInboundMessage> messages)
+        private void ApplyDelay(IReadOnlyCollection<IInboundMessage> messages)
         {
             var delay = _initialDelay.Milliseconds +
                         messages.First().Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey) *

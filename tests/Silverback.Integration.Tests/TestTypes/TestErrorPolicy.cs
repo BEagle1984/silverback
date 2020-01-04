@@ -20,7 +20,7 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        protected override ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception)
+        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundMessage> messages, Exception exception)
         {
             Applied = true;
             return ErrorAction.Skip;

@@ -51,7 +51,7 @@ namespace Silverback.Messaging.ErrorHandling
             return this;
         }
 
-        protected override ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception)
+        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundMessage> messages, Exception exception)
         {
             _messageLogger.LogInformation(_logger,
                 $"{messages.Count()} message(s) will be  be moved to endpoint '{_endpoint.Name}'.", messages);
