@@ -31,7 +31,7 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        internal Func<IEnumerable<IInboundMessage>, object> MessageToPublishFactory { get; private set; }
+        internal Func<IReadOnlyCollection<IInboundMessage>, object> MessageToPublishFactory { get; private set; }
 
         internal int MaxFailedAttemptsSetting { get; private set; } = -1;
 
@@ -118,13 +118,13 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="factory">The factory returning the message to be published.</param>
         /// <returns></returns>
-        public ErrorPolicyBase Publish(Func<IEnumerable<IInboundMessage>, object> factory)
+        public ErrorPolicyBase Publish(Func<IReadOnlyCollection<IInboundMessage>, object> factory)
         {
             MessageToPublishFactory = factory;
             return this;
         }
 
-        public virtual bool CanHandle(IEnumerable<IInboundMessage> messages, Exception exception) =>
+        public virtual bool CanHandle(IReadOnlyCollection<IInboundMessage> messages, Exception exception) =>
             messages.All(msg => CanHandle(msg, exception)); // TODO: Check this
 
         public virtual bool CanHandle(IInboundMessage message, Exception exception)
@@ -175,7 +175,7 @@ namespace Silverback.Messaging.ErrorHandling
             return true;
         }
 
-        public ErrorAction HandleError(IEnumerable<IInboundMessage> messages, Exception exception)
+        public ErrorAction HandleError(IReadOnlyCollection<IInboundMessage> messages, Exception exception)
         {
             var result = ApplyPolicy(messages, exception);
 
@@ -189,6 +189,6 @@ namespace Silverback.Messaging.ErrorHandling
             return result;
         }
 
-        protected abstract ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception);
+        protected abstract ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundMessage> messages, Exception exception);
     }
 }

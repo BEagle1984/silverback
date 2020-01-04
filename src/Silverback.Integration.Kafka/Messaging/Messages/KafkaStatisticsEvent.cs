@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 namespace Silverback.Messaging.Messages
@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     ///     You can enable statistics and set the statistics interval using the <c>StatisticsIntervalMs</c>
     ///     configuration parameter (disabled by default).
     /// </remarks>
-    public class KafkaStatisticsEvent : IMessage
+    public class KafkaStatisticsEvent : IKafkaEvent
     {
         public KafkaStatisticsEvent(string json)
         {

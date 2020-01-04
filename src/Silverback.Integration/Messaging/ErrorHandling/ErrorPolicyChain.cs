@@ -46,7 +46,7 @@ namespace Silverback.Messaging.ErrorHandling
                     "One or more policies in the chain have a null value.");
         }
 
-        protected override ErrorAction ApplyPolicy(IEnumerable<IInboundMessage> messages, Exception exception)
+        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundMessage> messages, Exception exception)
         {
             foreach (var policy in _policies)
             {
