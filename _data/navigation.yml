@@ -75,6 +75,8 @@ docs:
         url: /docs/advanced/message-keys
       - title: IInboundMessage
         url: /docs/advanced/iinboundmessage
+      - title: Kafka Events
+        url: /docs/advanced/kafka-events
       - title: Default Message Headers
         url: /docs/advanced/headers
   - title: Extras
