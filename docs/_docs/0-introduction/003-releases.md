@@ -4,6 +4,11 @@ permalink: /docs/releases
 toc: true
 ---
 
+## [1.2.0](https://github.com/BEagle1984/silverback/releases/tag/1.2.0)
+
+### What's new
+* Some new events are published to the internal bus as a consequence to the Kafka events such as partitions assigned or revoked (see [Kafka Events]({{ site.baseurl }}/docs/advanced/kafka-events)) [[#34](https://github.com/BEagle1984/silverback/issues/34)]
+
 ## [1.1.0](https://github.com/BEagle1984/silverback/releases/tag/1.1.0)
 
 ### What's new

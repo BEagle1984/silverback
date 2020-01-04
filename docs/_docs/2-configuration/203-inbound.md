@@ -228,14 +228,16 @@ public void Configure(BusConfigurator busConfigurator)
 **Note:** The batch is consider a unit of work: it will be processed in the same DI scope, it will be atomically committed, the error policies will be applied to the batch as a whole and all messages will be acknowledged at once when the batch is successfully processed.
 {: .notice--info}
 
-Two additional events are published to the internal bus when batch processing:
+Some additional events are published to the internal bus when batch processing:
 
 Event | Description
 :-- | :--
-`BatchReadyEvent` | Fired when the batch has been filled and is ready to be processed. This event can be subscribed to perform some operations before the messages are processed or to implement all sorts of custom logics, having access to the entire batch.
+`BatchStartedEvent` | Fired when the batch has been filled and just before the first message is published. This event can be subscribed to perform some operations before the messages are processed.
+`BatchCompleteEvent` | Fired when all the messages in a batch have been published. 
 `BatchProcessedEvent` | Fired after all messages have been successfully processed. It can tipically be used to commit the transaction.
+`BatchAbortedEvent` | Fired when an exception occured during the processing of the batch. It can tipically be used to rollback the transaction.
 
-The usage should be similar to the following example.
+The usage should be similar to the following examples.
 
 ```c#
 public class InventoryService : ISubscriber
@@ -247,33 +249,70 @@ public class InventoryService : ISubscriber
         _db = db;
     }
 
-    public void OnBatchReady(BatchReadyEvent message)
+    public void OnBatchStarted(BatchStartedEvent message)
     {
         _logger.LogInformation(
-            $"Batch '{message.BatchId} ready " +
+            $"Processing batch '{message.BatchId} " +
             $"({message.BatchSize} messages)");
     }
 
-    public async Task OnMessageReceived(
-        IEnumerable<InventoryUpdateEvent> events)
+    public void OnMessageReceived(InventoryUpdateEvent @event)
     {
+        // Process the event (but don't call SaveChanges)
+    }
+
+    public async Task OnBatchProcessed(BatchProcessedEvent message)
+    {
+        // Commit all changes in a single transaction
+        await _db.SaveChangesAsync();
+
+        _logger.LogInformation(
+            $"Successfully processed batch '{message.BatchId} " +
+            $"({message.BatchSize} messages)");
+    }
+    
+    public void OnBatchAborted(BatchAbortedEvent message)
+    {
+        _logger.LogError(
+            $"An error occurred while processing batch '{message.BatchId} " +
+            $"({message.BatchSize} messages)");
+    }
+}
+```
+
+...or...
+
+```c#
+public class InventoryService : ISubscriber
+{
+    private DbContext _db;
+
+    public InventoryService(MyDbContext db)
+    {
+        _db = db;
+    }
+
+    public void OnBatchStarted(BatchStartedEvent message)
+    {
+    }
+
+    public async Task OnMessageReceived(
+        IReadOnlyCollection<InventoryUpdateEvent> events)
+    {
+        _logger.LogInformation(
+            $"Processing {events.Count} messages");
+
         // Process all items
         foreach (var event in events)
         {
             ...
         }
-        
+
         // Commit all changes in a single transaction
         await _db.SaveChangesAsync();
-    }
-
-    void OnBatchProcessed(BatchProcessedEvent message)
-    {
-        _db.SaveChanges();
 
         _logger.LogInformation(
-            $"Successfully processed batch '{message.BatchId} " +
-            $"({message.BatchSize} messages)");
+            $"Successfully processed {events.Count} messages");
     }
 }
 ```

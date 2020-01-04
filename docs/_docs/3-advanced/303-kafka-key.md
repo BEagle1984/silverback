@@ -1,7 +1,7 @@
 ---
 title: Kafka Message Key (Partitioning)
 permalink: /docs/advanced/kafka-message-key
-toc: true
+toc: false
 ---
 
 Apache Kafka require a message key for different purposes, such as:

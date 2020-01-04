@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     /// <remarks>
     ///     Corresponding to each of this events there will be a <see cref="KafkaPartitionsRevokedEvent" />.
     /// </remarks>
-    public class KafkaPartitionsAssignedEvent : ISilverbackEvent
+    public class KafkaPartitionsAssignedEvent : IKafkaEvent
     {
         public KafkaPartitionsAssignedEvent(
             IReadOnlyCollection<Confluent.Kafka.TopicPartition> partitions,

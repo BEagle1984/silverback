@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Messages
     ///     Note that the system (either the Kafka client itself or Silverback) will try to automatically recover from
     ///     all errors automatically, so these errors have to be considered purely informational.
     /// </summary>
-    public class KafkaErrorEvent : ISilverbackEvent
+    public class KafkaErrorEvent : IKafkaEvent
     {
         public KafkaErrorEvent(Confluent.Kafka.Error error)
         {
