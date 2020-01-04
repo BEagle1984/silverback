@@ -856,7 +856,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
 
-        [Fact, Trait("CI", "true")]
+        [Fact, Trait("CI", "false")]
         public async Task PublishAsync_LimitedParallelDelegateSubscription_ProcessingInParallel()
         {
             var parallel = new ParallelTestingUtil();

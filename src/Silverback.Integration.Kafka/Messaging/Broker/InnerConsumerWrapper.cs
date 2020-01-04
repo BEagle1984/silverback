@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Events;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Broker
     internal class InnerConsumerWrapper : IDisposable
     {
         private readonly List<KafkaConsumerEndpoint> _endpoints = new List<KafkaConsumerEndpoint>();
-        private readonly Confluent.Kafka.ConsumerConfig _config;
+        private readonly ConsumerConfig _config;
         private readonly bool _enableAutoRecovery;
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
@@ -26,15 +26,15 @@ namespace Silverback.Messaging.Broker
 
         private readonly TimeSpan _recoveryDelay = TimeSpan.FromSeconds(5);
 
-        private Confluent.Kafka.IConsumer<byte[], byte[]> _innerConsumer;
+        private IConsumer<byte[], byte[]> _innerConsumer;
 
         private bool _consuming;
         private bool _consumedAtLeastOnce;
 
         public InnerConsumerWrapper(
-            Confluent.Kafka.ConsumerConfig config, 
+            ConsumerConfig config,
             bool enableAutoRecovery,
-            IServiceProvider serviceProvider, 
+            IServiceProvider serviceProvider,
             ILogger logger)
         {
             _config = config;
@@ -50,20 +50,38 @@ namespace Silverback.Messaging.Broker
             _endpoints.Add(endpoint);
         }
 
-        public void Commit(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets) => 
+        public void Commit(IEnumerable<TopicPartitionOffset> offsets) =>
             _innerConsumer.Commit(offsets);
 
-        public void StoreOffset(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets) =>
+        public void StoreOffset(IEnumerable<TopicPartitionOffset> offsets) =>
             offsets.ForEach(_innerConsumer.StoreOffset);
-        
+
         public void CommitAll()
         {
             if (!_consumedAtLeastOnce) return;
 
-            _innerConsumer.Commit();
+            try
+            {
+                var offsets = _innerConsumer.Commit();
+                CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(
+                    offsets.Select(offset =>
+                            new TopicPartitionOffsetError(
+                                offset,
+                                new Error(ErrorCode.NoError)))
+                        .ToList()));
+            }
+            catch (TopicPartitionOffsetException ex)
+            {
+                CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(ex.Results, ex.Error));
+                throw;
+            }
+            catch (KafkaException ex)
+            {
+                CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(null, ex.Error));
+            }
         }
 
-        public void Seek(Confluent.Kafka.TopicPartitionOffset tpo) => _innerConsumer.Seek(tpo);
+        public void Seek(TopicPartitionOffset tpo) => _innerConsumer.Seek(tpo);
 
         public void StartConsuming()
         {
@@ -83,7 +101,7 @@ namespace Silverback.Messaging.Broker
                 return;
 
             _cancellationTokenSource.Cancel();
-            
+
             // Wait until stopped for real before returning to avoid
             // exceptions when the process exits prematurely
             while (_consuming) Thread.Sleep(100);
@@ -99,38 +117,38 @@ namespace Silverback.Messaging.Broker
 
         private void Subscribe() => _innerConsumer.Subscribe(_endpoints.SelectMany(e => e.Names));
 
-        private Confluent.Kafka.IConsumer<byte[], byte[]> BuildConfluentConsumer()
-        {
-            return new Confluent.Kafka.ConsumerBuilder<byte[], byte[]>(_config)
+        private IConsumer<byte[], byte[]> BuildConfluentConsumer() =>
+            new ConsumerBuilder<byte[], byte[]>(_config)
                 .SetPartitionsAssignedHandler((_, partitions) =>
+                {
+                    partitions.ForEach(partition =>
                     {
-                        partitions.ForEach(partition =>
-                        {
-                            _logger.LogInformation("Assigned topic {topic} partition {partition}, member id: {memberId}",
-                                partition.Topic, partition.Partition, _innerConsumer.MemberId);
+                        _logger.LogInformation("Assigned topic {topic} partition {partition}, member id: {memberId}",
+                            partition.Topic, partition.Partition, _innerConsumer.MemberId);
+                    });
 
-                            Publish(new PartitionAssignedEvent(partition.Topic, partition.Partition, _innerConsumer.MemberId));
-                        });
-                    }
-                )
+                    CreateScopeAndPublishEvent(
+                        new KafkaPartitionsAssignedEvent(partitions, _innerConsumer.MemberId));
+                })
                 .SetPartitionsRevokedHandler((_, partitions) =>
                 {
                     partitions.ForEach(partition =>
                     {
                         _logger.LogInformation("Revoked topic {topic} partition {partition}, member id: {memberId}",
                             partition.Topic, partition.Partition, _innerConsumer.MemberId);
-
-                        Publish(new PartitionRevokedEvent(partition.Topic, partition.Partition, _innerConsumer.MemberId));
                     });
+
+                    CreateScopeAndPublishEvent(
+                        new KafkaPartitionsRevokedEvent(partitions, _innerConsumer.MemberId));
                 })
                 .SetOffsetsCommittedHandler((_, offsets) =>
                 {
                     foreach (var offset in offsets.Offsets)
                     {
-                        if (offset.Offset == Confluent.Kafka.Offset.Unset)
+                        if (offset.Offset == Offset.Unset)
                             continue;
 
-                        if (offset.Error != null && offset.Error.Code != Confluent.Kafka.ErrorCode.NoError)
+                        if (offset.Error != null && offset.Error.Code != ErrorCode.NoError)
                         {
                             _logger.LogError(
                                 "Error occurred committing the offset {topic} {partition} @{offset}: {errorCode} - {errorReason} ",
@@ -142,29 +160,28 @@ namespace Silverback.Messaging.Broker
                                 offset.Topic, offset.Partition, offset.Offset);
                         }
 
-                        Publish(new OffsetCommittedEvent(offset.Topic, offset.Partition, offset.Offset, offset.Error));
+                        CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(offsets));
                     }
                 })
-                .SetErrorHandler((_, e) =>
+                .SetErrorHandler((_, error) =>
                 {
                     // Ignore errors if not consuming anymore
                     // (lidrdkafka randomly throws some "brokers are down"
                     // while disconnecting)
                     if (!_consuming) return;
 
-                    _logger.Log(e.IsFatal ? LogLevel.Critical : LogLevel.Error,
-                            "Error in Kafka consumer: {reason}.", e.Reason);
+                    _logger.Log(error.IsFatal ? LogLevel.Critical : LogLevel.Error,
+                        "Error in Kafka consumer: {reason}.", error.Reason);
 
-                    Publish(new ErrorEvent(e));
+                    CreateScopeAndPublishEvent(new KafkaErrorEvent(error));
                 })
                 .SetStatisticsHandler((_, json) =>
                 {
                     _logger.LogInformation($"Statistics: {json}");
 
-                    Publish(new StatisticsEvent(json));
+                    CreateScopeAndPublishEvent(new KafkaStatisticsEvent(json));
                 })
                 .Build();
-        }
 
         private async Task Consume()
         {
@@ -180,7 +197,7 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogTrace("Consuming canceled.");
                 }
-                catch (Confluent.Kafka.KafkaException ex)
+                catch (KafkaException ex)
                 {
                     if (!AutoRecoveryIfEnabled(ex))
                         break;
@@ -204,19 +221,21 @@ namespace Silverback.Messaging.Broker
 
             if (result.IsPartitionEOF)
             {
-                _logger.LogInformation("Partition EOF reached: {topic} {partition} @{offset}", result.Topic, result.Partition,
+                _logger.LogInformation("Partition EOF reached: {topic} {partition} @{offset}", result.Topic,
+                    result.Partition,
                     result.Offset);
                 return;
             }
 
             _consumedAtLeastOnce = true;
-            _logger.LogTrace("Consuming message: {topic} {partition} @{offset}", result.Topic, result.Partition, result.Offset);
+            _logger.LogTrace("Consuming message: {topic} {partition} @{offset}", result.Topic, result.Partition,
+                result.Offset);
 
             if (Received != null)
                 await Received.Invoke(result.Message, result.TopicPartitionOffset);
         }
 
-        private bool AutoRecoveryIfEnabled(Confluent.Kafka.KafkaException ex)
+        private bool AutoRecoveryIfEnabled(KafkaException ex)
         {
             if (_enableAutoRecovery)
             {
@@ -262,16 +281,12 @@ namespace Silverback.Messaging.Broker
             _innerConsumer = null;
         }
 
-        private void Publish(IMessage message)
+        private void CreateScopeAndPublishEvent(IMessage message)
         {
-            // Serviceprovider is used if kafka bus events shall be published on internal bus.
-            if (_serviceProvider != null)
-            {
-                using var scope = _serviceProvider.CreateScope();
-                var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+            using var scope = _serviceProvider?.CreateScope();
+            var publisher = scope?.ServiceProvider.GetRequiredService<IPublisher>();
 
-                publisher.Publish(message);
-            }
+            publisher?.Publish(message);
         }
 
         public void Dispose()
