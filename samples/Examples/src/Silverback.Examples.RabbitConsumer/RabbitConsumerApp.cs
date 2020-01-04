@@ -22,12 +22,12 @@ namespace Silverback.Examples.RabbitConsumer
                 .AsObservable()
                 .UseDbContext<ExamplesDbContext>()
                 .WithConnectionToRabbit(options => options
-                        .AddDbLoggedInboundConnector()
+                    .AddDbLoggedInboundConnector()
                     //.AddDbOffsetStoredInboundConnector()
                     //.AddInboundConnector()
                     //.AddDbChunkStore()
                 )
-                .AddScopedSubscriber<SubscriberService>()
+                .AddCommonSubscribers()
                 .AddScopedBehavior<LogHeadersBehavior>();
 
         protected override IBroker Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
