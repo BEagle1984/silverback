@@ -30,7 +30,8 @@ namespace Silverback.Examples.KafkaConsumer
                     .AddDbOffsetStoredInboundConnector()
                     .AddInboundConnector()
                     .AddDbChunkStore())
-                .AddScopedSubscriber<SubscriberService>()
+                .AddCommonSubscribers()
+                .AddScopedSubscriber<KafkaEventsSubscriber>()
                 .AddScopedBehavior<LogHeadersBehavior>();
 
         protected override IBroker Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
