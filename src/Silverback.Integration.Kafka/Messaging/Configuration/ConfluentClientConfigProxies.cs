@@ -4,10 +4,14 @@
 // Note: These proxies are generated using Silverback.Integration.Kafka.ConfigClassGenerator
 //       located under /tools/
 
+using Silverback.Util;
+
 namespace Silverback.Messaging.Configuration
 {
     public abstract class ConfluentClientConfigProxy
     {
+        internal static readonly ConfigurationDictionaryComparer<string, string> ConfluentConfigComparer = new ConfigurationDictionaryComparer<string, string>();
+        
         internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig { get; }
 
         public abstract void Validate();

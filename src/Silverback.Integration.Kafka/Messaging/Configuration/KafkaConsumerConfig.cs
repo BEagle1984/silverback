@@ -3,6 +3,7 @@
 
 using System;
 using Confluent.Kafka;
+using Silverback.Util;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
@@ -61,8 +62,7 @@ namespace Silverback.Messaging.Configuration
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            return CommitOffsetEach == other.CommitOffsetEach &&
-                   KafkaClientConfigComparer.Compare(ConfluentConfig, other.ConfluentConfig);
+            return CommitOffsetEach == other.CommitOffsetEach && ConfluentConfigComparer.Equals(ConfluentConfig, other.ConfluentConfig);
         }
 
         public override bool Equals(object obj)

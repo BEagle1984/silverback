@@ -15,7 +15,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
     public class KafkaPartitioningKeyBehaviorTests
     {
         [Fact]
-        public void Handle_NoKeyMembersMessage_KeyHeaderIsNotSet()
+        public void Handle_NoKeyMemberAttribute_KeyHeaderIsNotSet()
         {
             var message = new OutboundMessage<NoKeyMembersMessage>(
                 new NoKeyMembersMessage
@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
         }
 
         [Fact]
-        public void Handle_SingleKeyMemberMessages_KeyHeaderIsSet()
+        public void Handle_SingleKeyMemberAttribute_KeyHeaderIsSet()
         {
             var message1 = new OutboundMessage<SingleKeyMemberMessage>(
                 new SingleKeyMemberMessage
@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
         }
 
         [Fact]
-        public void Handle_MultipleKeyMembersMessages_KeyHeaderIsSet()
+        public void Handle_MultipleKeyMemberAttributes_KeyHeaderIsSet()
         {
             var message1 = new OutboundMessage<MultipleKeyMembersMessage>(
                 new MultipleKeyMembersMessage

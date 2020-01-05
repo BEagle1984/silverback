@@ -3,11 +3,15 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
     public abstract class RabbitEndpointConfig
     {
+        private static readonly ConfigurationDictionaryComparer<string, object> ArgumentsComparer =
+            new ConfigurationDictionaryComparer<string, object>();
+        
         /// <summary>
         ///     Gets or sets a boolean value indicating whether the queue or the exchange will survive a broker restart.
         /// </summary>
@@ -35,7 +39,7 @@ namespace Silverback.Messaging.Configuration
         protected bool Equals(RabbitEndpointConfig other) =>
             IsDurable == other.IsDurable &&
             IsAutoDeleteEnabled == other.IsAutoDeleteEnabled &&
-            Equals(Arguments, other.Arguments);
+            ArgumentsComparer.Equals(Arguments, other.Arguments);
 
         public override bool Equals(object obj)
         {

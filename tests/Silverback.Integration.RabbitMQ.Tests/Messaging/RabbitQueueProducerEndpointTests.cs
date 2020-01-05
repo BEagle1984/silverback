@@ -9,18 +9,18 @@ using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Serialization;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging
+namespace Silverback.Tests.Integration.RabbitMQ.Messaging
 {
-    public class KafkaProducerEndpointTests
+    public class RabbitQueueProducerEndpointTests
     {
         [Fact]
         public void Equals_SameEndpointInstance_TrueIsReturned()
         {
-            var endpoint = new KafkaProducerEndpoint("endpoint")
+            var endpoint = new RabbitQueueProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    IsDurable = false
                 }
             };
 
@@ -30,19 +30,23 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_SameConfiguration_TrueIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("endpoint")
+            var endpoint1 = new RabbitQueueProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    IsDurable = false,
+                    IsAutoDeleteEnabled = true,
+                    IsExclusive = true
                 }
             };
 
-            var endpoint2 = new KafkaProducerEndpoint("endpoint")
+            var endpoint2 = new RabbitQueueProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    IsDurable = false,
+                    IsAutoDeleteEnabled = true,
+                    IsExclusive = true
                 }
             };
 
@@ -52,18 +56,20 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DeserializedEndpoint_TrueIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("endpoint")
+            var endpoint1 = new RabbitQueueProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    IsDurable = false,
+                    IsAutoDeleteEnabled = true,
+                    IsExclusive = true
                 }
             };
 
             var json = JsonConvert.SerializeObject(endpoint1,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
-            var endpoint2 = JsonConvert.DeserializeObject<KafkaProducerEndpoint>(json,
+            var endpoint2 = JsonConvert.DeserializeObject<RabbitQueueProducerEndpoint>(json,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             endpoint1.Equals(endpoint2).Should().BeTrue();
@@ -72,21 +78,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DifferentName_FalseIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("endpoint")
-            {
-                Configuration = new KafkaProducerConfig
-                {
-                    Acks = Confluent.Kafka.Acks.Leader
-                }
-            };
-
-            var endpoint2 = new KafkaProducerEndpoint("endpoint2")
-            {
-                Configuration = new KafkaProducerConfig
-                {
-                    Acks = Confluent.Kafka.Acks.Leader
-                }
-            };
+            var endpoint1 = new RabbitQueueProducerEndpoint("endpoint");
+            var endpoint2 = new RabbitQueueProducerEndpoint("endpoint2");
 
             endpoint1.Equals(endpoint2).Should().BeFalse();
         }
@@ -94,19 +87,22 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DifferentConfiguration_FalseIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("endpoint")
+            var endpoint1 = new RabbitQueueConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    IsDurable = false,
+                    IsAutoDeleteEnabled = true,
+                    IsExclusive = true
                 }
             };
-
-            var endpoint2 = new KafkaProducerEndpoint("endpoint")
+            var endpoint2 = new RabbitQueueConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    Acks = Confluent.Kafka.Acks.All
+                    IsDurable = true,
+                    IsAutoDeleteEnabled = false,
+                    IsExclusive = false
                 }
             };
 
@@ -116,7 +112,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_SameSerializerSettings_TrueIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("endpoint")
+            var endpoint1 = new RabbitQueueProducerEndpoint("endpoint")
             {
                 Serializer = new JsonMessageSerializer
                 {
@@ -127,7 +123,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
                 }
             };
 
-            var endpoint2 = new KafkaProducerEndpoint("endpoint")
+            var endpoint2 = new RabbitQueueProducerEndpoint("endpoint")
             {
                 Serializer = new JsonMessageSerializer
                 {
@@ -144,7 +140,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DifferentSerializerSettings_FalseIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("endpoint")
+            var endpoint1 = new RabbitQueueProducerEndpoint("endpoint")
             {
                 Serializer = new JsonMessageSerializer
                 {
@@ -155,7 +151,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
                 }
             };
 
-            var endpoint2 = new KafkaProducerEndpoint("endpoint")
+            var endpoint2 = new RabbitQueueProducerEndpoint("endpoint")
             {
                 Serializer = new JsonMessageSerializer
                 {
@@ -172,12 +168,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void SerializationAndDeserialization_NoInformationIsLost()
         {
-            var endpoint1 = new KafkaProducerEndpoint("endpoint")
+            var endpoint1 = new RabbitQueueProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
-                },       
+                    IsDurable = false,
+                    IsAutoDeleteEnabled = true,
+                    IsExclusive = true
+                },
                 Serializer = new JsonMessageSerializer
                 {
                     Settings =
@@ -194,7 +192,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             var json = JsonConvert.SerializeObject(endpoint1,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
-            var endpoint2 = JsonConvert.DeserializeObject<KafkaProducerEndpoint>(json,
+            var endpoint2 = JsonConvert.DeserializeObject<RabbitQueueProducerEndpoint>(json,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             endpoint2.Should().BeEquivalentTo(endpoint1);

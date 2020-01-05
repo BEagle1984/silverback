@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Silverback.Messaging.HealthChecks;
 
-#pragma warning disable 618
+#pragma warning disable 618 // Obsolete PartitioningKeyMemberAttribute
 
 namespace Silverback.Messaging.Messages
 {
@@ -26,12 +26,12 @@ namespace Silverback.Messaging.Messages
                         p.Name,
                         Value = p.GetValue(message, null).ToString()
                     })
-                    .ToArray();
+                    .ToList();
 
             if (!keysDictionary.Any())
                 return null;
 
-            return keysDictionary.Length == 1
+            return keysDictionary.Count == 1
                 ? keysDictionary.First().Value
                 : string.Join(",", keysDictionary.Select(p => $"{p.Name}={p.Value}"));
         }

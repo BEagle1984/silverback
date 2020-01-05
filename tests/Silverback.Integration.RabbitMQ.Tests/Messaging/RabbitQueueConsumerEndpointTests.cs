@@ -8,18 +8,18 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging
+namespace Silverback.Tests.Integration.RabbitMQ.Messaging
 {
-    public class KafkaConsumerEndpointTests
+    public class RabbitQueueConsumerEndpointTests
     {
         [Fact]
         public void Equals_SameEndpointInstance_TrueIsReturned()
         {
-            var endpoint = new KafkaConsumerEndpoint("endpoint")
+            var endpoint = new RabbitQueueConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    AutoCommitIntervalMs = 1000
+                    IsDurable = false
                 }
             };
 
@@ -29,19 +29,22 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_SameConfiguration_TrueIsReturned()
         {
-            var endpoint1 = new KafkaConsumerEndpoint("endpoint")
+            var endpoint1 = new RabbitQueueConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    AutoCommitIntervalMs = 1000
+                    IsDurable = false,
+                    IsAutoDeleteEnabled = true,
+                    IsExclusive = true
                 }
             };
-
-            var endpoint2 = new KafkaConsumerEndpoint("endpoint")
+            var endpoint2 = new RabbitQueueConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    AutoCommitIntervalMs = 1000
+                    IsDurable = false,
+                    IsAutoDeleteEnabled = true,
+                    IsExclusive = true
                 }
             };
 
@@ -51,41 +54,30 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DeserializedEndpoint_TrueIsReturned()
         {
-            var endpoint1 = new KafkaConsumerEndpoint("endpoint")
+            var endpoint1 = new RabbitQueueConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    AutoCommitIntervalMs = 1000
+                    IsDurable = false,
+                    IsAutoDeleteEnabled = true,
+                    IsExclusive = true
                 }
             };
-
+            
             var json = JsonConvert.SerializeObject(endpoint1,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
-            var endpoint2 = JsonConvert.DeserializeObject<KafkaConsumerEndpoint>(json,
+            var endpoint2 = JsonConvert.DeserializeObject<RabbitQueueConsumerEndpoint>(json,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             endpoint1.Equals(endpoint2).Should().BeTrue();
         }
-
+        
         [Fact]
         public void Equals_DifferentName_FalseIsReturned()
         {
-            var endpoint1 = new KafkaConsumerEndpoint("endpoint")
-            {
-                Configuration = new KafkaConsumerConfig
-                {
-                    AutoCommitIntervalMs = 1000
-                }
-            };
-
-            var endpoint2 = new KafkaConsumerEndpoint("endpoint2")
-            {
-                Configuration = new KafkaConsumerConfig
-                {
-                    AutoCommitIntervalMs = 1000
-                }
-            };
+            var endpoint1 = new RabbitQueueConsumerEndpoint("endpoint");
+            var endpoint2 = new RabbitQueueConsumerEndpoint("endpoint2");
 
             endpoint1.Equals(endpoint2).Should().BeFalse();
         }
@@ -93,19 +85,22 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DifferentConfiguration_FalseIsReturned()
         {
-            var endpoint1 = new KafkaConsumerEndpoint("endpoint")
+            var endpoint1 = new RabbitQueueConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    AutoCommitIntervalMs = 1000
+                    IsDurable = false,
+                    IsAutoDeleteEnabled = true,
+                    IsExclusive = true
                 }
             };
-
-            var endpoint2 = new KafkaConsumerEndpoint("endpoint")
+            var endpoint2 = new RabbitQueueConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    BrokerAddressTtl = 2000
+                    IsDurable = true,
+                    IsAutoDeleteEnabled = false,
+                    IsExclusive = false
                 }
             };
 
@@ -115,12 +110,13 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void SerializationAndDeserialization_NoInformationIsLost()
         {
-            var endpoint1 = new KafkaConsumerEndpoint("endpoint")
+            var endpoint1 = new RabbitQueueConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Queue = new RabbitQueueConfig
                 {
-                    CommitOffsetEach = 5,
-                    AutoCommitIntervalMs = 1000
+                    IsDurable = false,
+                    IsAutoDeleteEnabled = true,
+                    IsExclusive = true
                 },
                 Serializer = new JsonMessageSerializer
                 {
@@ -128,13 +124,13 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
                     {
                         MaxDepth = 100
                     }
-                }              
+                }
             };
 
             var json = JsonConvert.SerializeObject(endpoint1,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
-            var endpoint2 = JsonConvert.DeserializeObject<KafkaConsumerEndpoint>(json,
+            var endpoint2 = JsonConvert.DeserializeObject<RabbitQueueConsumerEndpoint>(json,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             endpoint2.Should().BeEquivalentTo(endpoint1);

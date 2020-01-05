@@ -106,7 +106,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         public void GetConsumer_SameEndpoint_DifferentInstanceIsReturned()
         {
             var consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("test-endpoint"));
-            var consumer2 = _broker.GetConsumer(new KafkaConsumerEndpoint("other-endpoint"));
+            var consumer2 = _broker.GetConsumer(new KafkaConsumerEndpoint("test-endpoint"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }

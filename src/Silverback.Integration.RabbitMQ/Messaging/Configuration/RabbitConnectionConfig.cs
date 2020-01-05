@@ -5,12 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Authentication;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
     // TODO: Cleanup + test serialization + test equality
     public sealed class RabbitConnectionConfig : IEquatable<RabbitConnectionConfig>
     {
+        private static readonly ConfigurationDictionaryComparer<string, object> ClientPropertiesComparer =
+                new ConfigurationDictionaryComparer<string, object>();
+
         /// <summary>The AMQP URI SSL protocols.</summary>
         public SslProtocols? AmqpUriSslProtocols { get; set; }
 
@@ -131,24 +135,36 @@ namespace Silverback.Messaging.Configuration
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return AmqpUriSslProtocols == other.AmqpUriSslProtocols &&
-                   AutomaticRecoveryEnabled == other.AutomaticRecoveryEnabled &&
+            return Equals(AmqpUriSslProtocols, other.AmqpUriSslProtocols) &&
+                   Equals(AutomaticRecoveryEnabled, other.AutomaticRecoveryEnabled) &&
                    string.Equals(HostName, other.HostName, StringComparison.InvariantCulture) &&
                    Nullable.Equals(NetworkRecoveryInterval, other.NetworkRecoveryInterval) &&
                    Nullable.Equals(HandshakeContinuationTimeout, other.HandshakeContinuationTimeout) &&
-                   Nullable.Equals(ContinuationTimeout, other.ContinuationTimeout) && Port == other.Port &&
-                   RequestedConnectionTimeout == other.RequestedConnectionTimeout &&
-                   SocketReadTimeout == other.SocketReadTimeout && SocketWriteTimeout == other.SocketWriteTimeout &&
-                   Equals(Ssl, other.Ssl) && TopologyRecoveryEnabled == other.TopologyRecoveryEnabled &&
-                   Equals(ClientProperties, other.ClientProperties) &&
+                   Nullable.Equals(ContinuationTimeout, other.ContinuationTimeout) && 
+                   Equals(Port, other.Port) &&
+                   Equals(RequestedConnectionTimeout, other.RequestedConnectionTimeout) &&
+                   Equals(SocketReadTimeout, other.SocketReadTimeout) && 
+                   Equals(SocketWriteTimeout, other.SocketWriteTimeout) &&
+                   Equals(Ssl, other.Ssl) &&
+                   Equals(TopologyRecoveryEnabled, other.TopologyRecoveryEnabled) &&
+                   ClientPropertiesComparer.Equals(ClientProperties, other.ClientProperties) &&
                    string.Equals(Password, other.Password, StringComparison.InvariantCulture) &&
-                   RequestedChannelMax == other.RequestedChannelMax && RequestedFrameMax == other.RequestedFrameMax &&
-                   RequestedHeartbeat == other.RequestedHeartbeat &&
-                   UseBackgroundThreadsForIO == other.UseBackgroundThreadsForIO &&
+                   Equals(RequestedChannelMax, other.RequestedChannelMax) &&
+                   Equals(RequestedFrameMax, other.RequestedFrameMax) &&
+                   Equals(RequestedHeartbeat, other.RequestedHeartbeat) &&
+                   Equals(UseBackgroundThreadsForIO, other.UseBackgroundThreadsForIO) &&
                    string.Equals(UserName, other.UserName, StringComparison.InvariantCulture) &&
                    string.Equals(VirtualHost, other.VirtualHost, StringComparison.InvariantCulture) &&
                    string.Equals(ClientProvidedName, other.ClientProvidedName, StringComparison.InvariantCulture);
         }
+
+        // Workaround for the (ushort?)null==null returning false 
+        // private bool Equals(ushort? x, ushort? y)
+        // {
+        //     if (!x.HasValue && !y.HasValue) return true;
+        //     if (!x.HasValue || !y.HasValue) return false;
+        //     return x.Value == y.Value;
+        // }
 
         public override bool Equals(object obj)
         {

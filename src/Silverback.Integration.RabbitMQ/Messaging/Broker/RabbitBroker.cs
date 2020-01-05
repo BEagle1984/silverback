@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public class RabbitBroker : Broker
     {
-        private readonly RabbitConnectionFactory _connectionFactory = new RabbitConnectionFactory();
+        private readonly IRabbitConnectionFactory _connectionFactory;
         private readonly MessageIdProvider _messageIdProvider;
         private readonly ILoggerFactory _loggerFactory;
         private readonly MessageLogger _messageLogger;
@@ -20,6 +20,7 @@ namespace Silverback.Messaging.Broker
         public RabbitBroker(
             MessageIdProvider messageIdProvider,
             IEnumerable<IBrokerBehavior> behaviors,
+            IRabbitConnectionFactory connectionFactory,
             ILoggerFactory loggerFactory,
             MessageLogger messageLogger)
             : base(behaviors, loggerFactory)
@@ -27,6 +28,7 @@ namespace Silverback.Messaging.Broker
             _messageIdProvider = messageIdProvider;
             _loggerFactory = loggerFactory;
             _messageLogger = messageLogger;
+            _connectionFactory = connectionFactory;
         }
 
         /// <inheritdoc cref="Broker" />
