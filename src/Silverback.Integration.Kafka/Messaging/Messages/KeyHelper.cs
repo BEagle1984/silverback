@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
+using Silverback.Messaging.HealthChecks;
 
 #pragma warning disable 618
 
@@ -11,6 +13,9 @@ namespace Silverback.Messaging.Messages
     {
         public static string GetMessageKey(object message)
         {
+            if (message is PingMessage)
+                return Guid.NewGuid().ToString("N");
+        
             var keysDictionary =
                 message.GetType()
                     .GetProperties()
