@@ -69,7 +69,13 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
             if (_baseClassName == null)
             {
                 _builder.AppendLine(
+                    $"        internal static readonly ConfigurationDictionaryComparer<string, string> ConfluentConfigComparer = new ConfigurationDictionaryComparer<string, string>();");
+                _builder.AppendLine();
+                _builder.AppendLine(
                     $"        internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }}");
+                _builder.AppendLine();
+                _builder.AppendLine(
+                    $"        public abstract void Validate();");
             }
             else
             {

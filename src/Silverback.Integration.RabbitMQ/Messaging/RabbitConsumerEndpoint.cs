@@ -42,7 +42,7 @@ namespace Silverback.Messaging
         #region Equality
 
         protected bool Equals(RabbitConsumerEndpoint other) =>
-            base.Equals(other) && Equals(Connection, other.Connection);
+            base.Equals(other) && Equals(Connection, other.Connection) && Equals(Queue, other.Queue);
 
         public override bool Equals(object obj)
         {

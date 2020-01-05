@@ -6,11 +6,11 @@ using System;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     The values of the properties decorated with this attribute are used to build the message key that will
-    ///     be used by Kafka (for partitioning, compacting, etc.).
+    ///     The value of the property decorated with this attribute will be used as routing key. The routing key
+    ///     can be used by RabbitMQ to route the messages to the proper queue.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class KafkaKeyMemberAttribute : Attribute
+    public class RabbitRoutingKeyAttribute : Attribute
     {
     }
 }

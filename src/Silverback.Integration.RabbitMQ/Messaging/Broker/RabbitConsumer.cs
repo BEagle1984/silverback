@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Broker
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
             IEnumerable<IConsumerBehavior> behaviors,
-            RabbitConnectionFactory connectionFactory,
+            IRabbitConnectionFactory connectionFactory,
             ILogger<RabbitConsumer> logger)
             : base(broker, endpoint, behaviors)
 

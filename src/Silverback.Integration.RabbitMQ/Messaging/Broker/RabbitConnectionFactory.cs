@@ -9,7 +9,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    public class RabbitConnectionFactory : IDisposable
+    public class RabbitConnectionFactory : IRabbitConnectionFactory 
     {
         private ConcurrentDictionary<RabbitConnectionConfig, IConnection> _connections =
             new ConcurrentDictionary<RabbitConnectionConfig, IConnection>();

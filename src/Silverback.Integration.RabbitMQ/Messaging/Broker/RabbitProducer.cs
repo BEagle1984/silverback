@@ -16,6 +16,8 @@ namespace Silverback.Messaging.Broker
 {
     public class RabbitProducer : Producer<RabbitBroker, RabbitProducerEndpoint>, IDisposable
     {
+        internal const string RoutingKeyHeaderKey = "x-rabbit-routing-key";
+
         private readonly ILogger<Producer> _logger;
         private readonly IModel _channel;
 
@@ -28,7 +30,7 @@ namespace Silverback.Messaging.Broker
             RabbitProducerEndpoint endpoint,
             MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
-            RabbitConnectionFactory connectionFactory,
+            IRabbitConnectionFactory connectionFactory,
             ILogger<Producer> logger,
             MessageLogger messageLogger)
             : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
@@ -91,11 +93,18 @@ namespace Silverback.Messaging.Broker
             switch (Endpoint)
             {
                 case RabbitQueueProducerEndpoint queueEndpoint:
-                    _channel.BasicPublish("", queueEndpoint.Name, properties, message.RawContent);
+                    _channel.BasicPublish(
+                        "", 
+                        queueEndpoint.Name, 
+                        properties, 
+                        message.RawContent);
                     break;
                 case RabbitExchangeProducerEndpoint exchangeEndpoint:
-                    _channel.BasicPublish(exchangeEndpoint.Name, "", // TODO: Routing key from attribute
-                        properties, message.RawContent);
+                    _channel.BasicPublish(
+                        exchangeEndpoint.Name, 
+                        GetRoutingKey(message.Headers),
+                        properties, 
+                        message.RawContent);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -104,6 +113,9 @@ namespace Silverback.Messaging.Broker
             if (endpoint.ConfirmationTimeout.HasValue)
                 _channel.WaitForConfirmsOrDie(endpoint.ConfirmationTimeout.Value);
         }
+
+        private string GetRoutingKey(IEnumerable<MessageHeader> headers) =>
+            headers?.FirstOrDefault(header => header.Key == RoutingKeyHeaderKey)?.Value;
 
         private void Flush()
         {

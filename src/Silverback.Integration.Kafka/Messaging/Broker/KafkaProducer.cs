@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -25,7 +24,7 @@ namespace Silverback.Messaging.Broker
             ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>>
             ProducersCache =
                 new ConcurrentDictionary<Confluent.Kafka.ProducerConfig, Confluent.Kafka.IProducer<byte[], byte[]>>(
-                    new KafkaClientConfigComparer());
+                    new ConfigurationDictionaryComparer<string, string>());
 
         public KafkaProducer(
             KafkaBroker broker,
