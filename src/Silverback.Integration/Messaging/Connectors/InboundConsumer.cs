@@ -62,7 +62,7 @@ namespace Silverback.Messaging.Connectors
 
         private void Bind()
         {
-            _logger.LogDebug($"Connecting to inbound endpoint '{_endpoint.Name}'...");
+            _logger.LogTrace($"Connecting to inbound endpoint '{_endpoint.Name}'...");
 
             _settings.Validate();
 
