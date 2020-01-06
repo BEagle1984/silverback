@@ -14,10 +14,11 @@ namespace Silverback.Messaging.Broker
 {
     public class RabbitConsumer : Consumer<RabbitBroker, RabbitConsumerEndpoint, RabbitOffset>
     {
-        private readonly IModel _channel;
-        private readonly string _queueName;
+        private readonly IRabbitConnectionFactory _connectionFactory;
         private readonly ILogger<RabbitConsumer> _logger;
 
+        private IModel _channel;
+        private string _queueName;
         private AsyncEventingBasicConsumer _consumer;
         private string _consumerTag;
 
@@ -30,9 +31,8 @@ namespace Silverback.Messaging.Broker
             : base(broker, endpoint, behaviors)
 
         {
+            _connectionFactory = connectionFactory;
             _logger = logger;
-
-            (_channel, _queueName) = connectionFactory.GetChannel(endpoint);
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
@@ -94,6 +94,8 @@ namespace Silverback.Messaging.Broker
         {
             if (_consumer != null)
                 return;
+            
+            (_channel, _queueName) = _connectionFactory.GetChannel(Endpoint);
 
             _consumer = new AsyncEventingBasicConsumer(_channel);
             _consumer.Received += TryHandleMessage;
@@ -137,7 +139,9 @@ namespace Silverback.Messaging.Broker
                 return;
 
             _channel.BasicCancel(_consumerTag);
-
+            _channel?.Dispose();
+            _channel = null;
+            _queueName = null;
             _consumerTag = null;
             _consumer = null;
         }

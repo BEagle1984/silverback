@@ -18,12 +18,12 @@ namespace Silverback.Messaging.Broker
     {
         internal const string RoutingKeyHeaderKey = "x-rabbit-routing-key";
 
+        private readonly IRabbitConnectionFactory _connectionFactory;
         private readonly ILogger<Producer> _logger;
-        private readonly IModel _channel;
-
         private readonly BlockingCollection<QueuedMessage> _queue = new BlockingCollection<QueuedMessage>();
-
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
+        private IModel _channel;
 
         public RabbitProducer(
             RabbitBroker broker,
@@ -35,9 +35,8 @@ namespace Silverback.Messaging.Broker
             MessageLogger messageLogger)
             : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
         {
+            _connectionFactory = connectionFactory;
             _logger = logger;
-
-            _channel = connectionFactory.GetChannel(endpoint);
 
             Task.Run(() => ProcessQueue(_cancellationTokenSource.Token));
         }
@@ -84,10 +83,10 @@ namespace Silverback.Messaging.Broker
 
         private void PublishToChannel(RawBrokerMessage message)
         {
-            var endpoint = (RabbitProducerEndpoint) message.Endpoint;
-
+            _channel ??= _connectionFactory.GetChannel(Endpoint);
+            
             var properties = _channel.CreateBasicProperties();
-            properties.Persistent = true; // TODO: Make it configurable
+            properties.Persistent = true; // TODO: Make it configurable?
             properties.Headers = message.Headers.ToDictionary(header => header.Key, header => (object) header.Value);
 
             switch (Endpoint)
@@ -110,12 +109,12 @@ namespace Silverback.Messaging.Broker
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (endpoint.ConfirmationTimeout.HasValue)
-                _channel.WaitForConfirmsOrDie(endpoint.ConfirmationTimeout.Value);
+            if (Endpoint.ConfirmationTimeout.HasValue)
+                _channel.WaitForConfirmsOrDie(Endpoint.ConfirmationTimeout.Value);
         }
 
         private string GetRoutingKey(IEnumerable<MessageHeader> headers) =>
-            headers?.FirstOrDefault(header => header.Key == RoutingKeyHeaderKey)?.Value;
+            headers?.FirstOrDefault(header => header.Key == RoutingKeyHeaderKey)?.Value ?? "";
 
         private void Flush()
         {
@@ -132,8 +131,9 @@ namespace Silverback.Messaging.Broker
             _cancellationTokenSource.Cancel();
 
             _channel?.Dispose();
+            _channel = null;
         }
-
+        
         private class QueuedMessage
         {
             public QueuedMessage(RawBrokerMessage message)
