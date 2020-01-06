@@ -10,7 +10,7 @@
     <ProjectUrl>https://beagle1984.github.io/silverback/</ProjectUrl>
     <RepositoryUrl>https://github.com/BEagle1984/silverback/</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Tags>Silverback Microservices Bus Kafka Messaging Event Sourcing DDD Domain Driven CQRS Mediator</Tags>
+    <Tags>Microservices Bus Kafka RabbitMQ Messaging Event Sourcing DDD Domain Driven CQRS Mediator</Tags>
     <IconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</IconUrl>
   </PropertyGroup>
 
