@@ -33,8 +33,15 @@ namespace Silverback.Examples.RabbitConsumer
         protected override IBroker Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator
                 .Connect(endpoints => endpoints
-                    .AddInbound(CreateQueueEndpoint("silverback-examples-events-queue"))
-                    .AddInbound(CreateExchangeEndpoint("silverback-examples-events-fanout", ExchangeType.Fanout))
+                    .AddInbound(CreateQueueEndpoint(
+                        "silverback-examples-events-queue"))
+                    .AddInbound(CreateExchangeEndpoint(
+                        "silverback-examples-events-fanout", 
+                        ExchangeType.Fanout))
+                    .AddInbound(CreateExchangeEndpoint(
+                        "silverback-examples-events-topic", 
+                        ExchangeType.Topic,
+                        routingKey: "interesting.*.event"))
                 );
 
         private RabbitQueueConsumerEndpoint CreateQueueEndpoint(
@@ -66,12 +73,14 @@ namespace Silverback.Examples.RabbitConsumer
             string exchangeType,
             bool durable = true,
             bool autoDelete = false,
+            string routingKey = null,
             IMessageSerializer messageSerializer = null)
         {
             var endpoint = new RabbitExchangeConsumerEndpoint(name)
             {
                 Connection = GetConnectionConfig(),
-                QueueName = ConsumerGroupName,
+                QueueName = $"{ConsumerGroupName}.{name}",
+                RoutingKey = routingKey,
                 Queue = new RabbitQueueConfig
                 {
                     IsDurable = durable,

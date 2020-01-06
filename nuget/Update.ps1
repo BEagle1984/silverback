@@ -273,15 +273,16 @@ function Restore()
     }
 
     Write-Host "Restoring nuget packages in Silverback.sln..." -ForegroundColor Yellow
-
     dotnet restore ../Silverback.sln
+    Write-Host "Restoring nuget packages in Silverback.Examples.sln..." -ForegroundColor Yellow
+    dotnet restore ..\samples\Examples\Silverback.Examples.sln
 
     Write-Separator
 }
 
 function Write-Separator()
 {
-    Write-Host "`n---------------------------------------------------------------`n" -ForegroundColor Yellow
+    Write-Host "`n##################################################################`n" -ForegroundColor Yellow
 }
 
 Write-Separator
