@@ -19,7 +19,8 @@ namespace Silverback.Examples.Main.UseCases.Rabbit.Basic
         public IEnumerable<Type> Children => new List<Type>
         {
             typeof(SimpleQueuePublishUseCase),
-            typeof(FanoutPublishUseCase)
+            typeof(FanoutPublishUseCase),
+            typeof(TopicPublishUseCase)
         };
     }
 }
