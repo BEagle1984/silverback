@@ -822,7 +822,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 2, 3, 4);
         }
 
-        [Fact, Trait("CI", "true")]
+        [Fact, Trait("CI", "false")]
         public void Publish_ParallelSubscriber_ProcessingInParallel()
         {
             var subscriber = new ParallelSubscriberTestService();
@@ -860,7 +860,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             parallel.Steps.Should().BeEquivalentTo(1, 2, 3, 4);
         }
 
-        [Fact, Trait("CI", "true")]
+        [Fact, Trait("CI", "false")]
         public void Publish_ParallelDelegateSubscription_ProcessingInParallel()
         {
             var parallel = new ParallelTestingUtil();
@@ -883,7 +883,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
         }
 
-        [Fact, Trait("CI", "true")]
+        [Fact, Trait("CI", "false")]
         public void Publish_LimitedParallelSubscriber_ProcessingInParallel()
         {
             var subscriber = new LimitedParallelSubscriberTestService();
@@ -898,7 +898,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
         }
 
-        [Fact, Trait("CI", "true")]
+        [Fact, Trait("CI", "false")]
         public async Task PublishAsync_LimitedParallelSubscriber_ProcessingInParallel()
         {
             var subscriber = new LimitedParallelSubscriberTestService();
@@ -914,7 +914,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
 
-        [Fact, Trait("CI", "true")]
+        [Fact, Trait("CI", "false")]
         public void Publish_LimitedParallelDelegateSubscription_ProcessingInParallel()
         {
             var parallel = new ParallelTestingUtil();
