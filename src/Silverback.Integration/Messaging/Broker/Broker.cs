@@ -103,7 +103,7 @@ namespace Silverback.Messaging.Broker
             Connect(_consumers);
             IsConnected = true;
 
-            _logger.LogDebug("Connected to message broker!");
+            _logger.LogInformation("Connected to message broker!");
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Silverback.Messaging.Broker
             Disconnect(_consumers);
             IsConnected = false;
 
-            _logger.LogDebug("Disconnected from message broker!");
+            _logger.LogInformation("Disconnected from message broker!");
         }
 
         /// <summary>
