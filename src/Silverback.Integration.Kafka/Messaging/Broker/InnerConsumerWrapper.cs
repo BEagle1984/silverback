@@ -191,11 +191,10 @@ namespace Silverback.Messaging.Broker
 
                     CreateScopeAndPublishEvent(new KafkaErrorEvent(error));
                 })
-                .SetStatisticsHandler((_, json) =>
+                .SetStatisticsHandler((_, statistics) =>
                 {
-                    _logger.LogDebug($"Statistics: {json}");
-
-                    CreateScopeAndPublishEvent(new KafkaStatisticsEvent(json));
+                    _logger.LogDebug($"Statistics: {statistics}");
+                    CreateScopeAndPublishEvent(new KafkaStatisticsEvent(statistics));
                 })
                 .Build();
 

@@ -13,14 +13,11 @@ namespace Silverback.Messaging.Messages
     /// </remarks>
     public class KafkaStatisticsEvent : IKafkaEvent
     {
-        public KafkaStatisticsEvent(string json)
-        {
-            Json = json;
-        }
+        public KafkaStatisticsEvent(string statistics) => Raw = statistics;
 
         /// <summary>
-        ///     Gets the statistics JSON (see https://github.com/edenhill/librdkafka/blob/master/STATISTICS.md)
+        ///     Gets the statistics in raw JSON, as they are provided from the underlining librdkafka (see https://github.com/edenhill/librdkafka/blob/master/STATISTICS.md).
         /// </summary>
-        public string Json { get; }
+        public string Raw { get; }
     }
 }
