@@ -42,7 +42,8 @@ namespace Silverback.Messaging.Broker
                 _messageIdProvider,
                 behaviors,
                 _loggerFactory.CreateLogger<KafkaProducer>(),
-                _messageLogger);
+                _messageLogger,
+                _serviceProvider);
 
         /// <inheritdoc cref="Broker" />
         protected override IConsumer InstantiateConsumer(

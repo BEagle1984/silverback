@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -16,6 +18,7 @@ namespace Silverback.Messaging.Broker
     public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
         private readonly ILogger _logger;
+        private readonly IServiceProvider _serviceProvider;
         private Confluent.Kafka.IProducer<byte[], byte[]> _innerProducer;
 
         private static readonly
@@ -30,10 +33,12 @@ namespace Silverback.Messaging.Broker
             MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
             ILogger<KafkaProducer> logger,
-            MessageLogger messageLogger)
+            MessageLogger messageLogger,
+            IServiceProvider serviceProvider)
             : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
         {
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         /// <inheritdoc cref="Producer" />
@@ -100,7 +105,20 @@ namespace Silverback.Messaging.Broker
         {
             _logger.LogDebug("Creating Confluent.Kafka.Producer...");
 
-            return new Confluent.Kafka.ProducerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig).Build();
+            return new Confluent.Kafka.ProducerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig)
+                .SetStatisticsHandler((_, statistics) =>
+                {
+                    _logger.LogDebug($"Statistics: {statistics}");
+                    CreateScopeAndPublishEvent(new KafkaStatisticsEvent(statistics));
+                })
+                .Build();
+        }
+
+        private void CreateScopeAndPublishEvent(IMessage message)
+        {
+            using var scope = _serviceProvider?.CreateScope();
+            var publisher = scope?.ServiceProvider.GetRequiredService<IPublisher>();
+            publisher?.Publish(message);
         }
 
         private void CheckPersistenceStatus(Confluent.Kafka.DeliveryResult<byte[], byte[]> deliveryReport)
@@ -109,23 +127,20 @@ namespace Silverback.Messaging.Broker
             {
                 case Confluent.Kafka.PersistenceStatus.PossiblyPersisted
                     when Endpoint.Configuration.ThrowIfNotAcknowledged:
-                {
-                    throw new ProduceException(
-                        "The message was transmitted to broker, but no acknowledgement was received.");
-                }
+                    {
+                        throw new ProduceException("The message was transmitted to broker, but no acknowledgement was received.");
+                    }
                 case Confluent.Kafka.PersistenceStatus.PossiblyPersisted:
-                {
-                    _logger.LogWarning(
-                        "The message was transmitted to broker, but no acknowledgement was received.");
-                    break;
-                }
+                    {
+                        _logger.LogWarning("The message was transmitted to broker, but no acknowledgement was received.");
+                        break;
+                    }
                 case Confluent.Kafka.PersistenceStatus.NotPersisted:
-                {
-                    throw new ProduceException(
-                        "The message was never transmitted to the broker, " +
-                        "or failed with an error indicating it was not written " +
-                        "to the log.'");
-                }
+                    {
+                        throw new ProduceException("The message was never transmitted to the broker, " +
+                                                   "or failed with an error indicating it was not written " +
+                                                   "to the log.'");
+                    }
             }
         }
 
