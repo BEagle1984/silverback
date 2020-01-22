@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Broker
         private readonly IEnumerable<IConsumerBehavior> _consumerBehaviors;
 
         private ConcurrentDictionary<IEndpoint, Producer> _producers = new ConcurrentDictionary<IEndpoint, Producer>();
-        private List<Consumer> _consumers = new List<Consumer>();
+        private ConcurrentDictionary<IEndpoint, Consumer> _consumers = new ConcurrentDictionary<IEndpoint, Consumer>();
 
         protected readonly ILoggerFactory LoggerFactory;
 
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker
         {
             return _producers.GetOrAdd(endpoint, _ =>
             {
-                _logger.LogInformation("Creating new producer for endpoint {endpointName}. " +
+                _logger.LogInformation($"Creating new producer for endpoint {endpoint.Name}. " +
                                        $"(Total producers: {_producers.Count + 1})", endpoint.Name);
                 return InstantiateProducer(endpoint, _producerBehaviors);
             });
@@ -46,19 +46,17 @@ namespace Silverback.Messaging.Broker
 
         public virtual IConsumer GetConsumer(IEndpoint endpoint)
         {
-            if (IsConnected)
-                throw new InvalidOperationException("The broker is already connected. Disconnect it to get a new consumer.");
-
-            _logger.LogInformation("Creating new consumer for endpoint {endpointName}.", endpoint.Name);
-
-            var consumer = InstantiateConsumer(endpoint, _consumerBehaviors);
-
-            lock (_consumers)
+            return _consumers.GetOrAdd(endpoint, _ =>
             {
-                _consumers.Add(consumer);
-            }
+                if (IsConnected)
+                {
+                    throw new InvalidOperationException(
+                        "The broker is already connected. Disconnect it to get a new consumer.");
+                }
 
-            return consumer;
+                _logger.LogInformation($"Creating new consumer for endpoint {endpoint.Name}.");
+                return InstantiateConsumer(endpoint, _consumerBehaviors);
+            });
         }
 
         protected abstract Consumer InstantiateConsumer(IEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors);
@@ -76,7 +74,7 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogTrace("Connecting to message broker...");
 
-            Connect(_consumers);
+            Connect(_consumers.Values);
             IsConnected = true;
 
             _logger.LogTrace("Connected to message broker!");
@@ -91,7 +89,7 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogTrace("Disconnecting from message broker...");
 
-            Disconnect(_consumers);
+            Disconnect(_consumers.Values);
             IsConnected = false;
 
             _logger.LogTrace("Disconnected from message broker!");
@@ -109,7 +107,7 @@ namespace Silverback.Messaging.Broker
 
             Disconnect();
 
-            _consumers?.OfType<IDisposable>().ForEach(o => o.Dispose());
+            _consumers?.Values.OfType<IDisposable>().ForEach(o => o.Dispose());
             _consumers = null;
 
             _producers?.Values.OfType<IDisposable>().ForEach(o => o.Dispose());
