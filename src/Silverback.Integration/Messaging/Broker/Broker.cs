@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker
         {
             return _producers.GetOrAdd(endpoint, _ =>
             {
-                _logger.LogInformation($"Creating new producer for endpoint {endpoint.Name}. " +
+                _logger.LogInformation("Creating new producer for endpoint {0}. " +
                                        $"(Total producers: {_producers.Count + 1})", endpoint.Name);
                 return InstantiateProducer(endpoint, _producerBehaviors);
             });
@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Broker
                         "The broker is already connected. Disconnect it to get a new consumer.");
                 }
 
-                _logger.LogInformation($"Creating new consumer for endpoint {endpoint.Name}.");
+                _logger.LogInformation("Creating new consumer for endpoint {0}.", endpoint.Name);
                 return InstantiateConsumer(endpoint, _consumerBehaviors);
             });
         }
