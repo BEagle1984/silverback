@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
 
         public async Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
         {
-            await messages.OfType<IOutboundMessageInternal>()
+            await messages.OfType<IOutboundEnvelopeInternal>()
                 .ForEachAsync(outboundMessage => _outboundConnectors
                     .GetConnectorInstance(outboundMessage.Route.OutboundConnectorType)
                     .RelayMessage(outboundMessage));

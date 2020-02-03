@@ -42,13 +42,13 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Producer" />
-        protected override IOffset Produce(RawBrokerMessage message) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsync(message));
+        protected override IOffset Produce(RawBrokerEnvelope envelope) =>
+            AsyncHelper.RunSynchronously(() => ProduceAsync(envelope));
 
         /// <inheritdoc cref="Producer" />
-        protected override Task<IOffset> ProduceAsync(RawBrokerMessage message)
+        protected override Task<IOffset> ProduceAsync(RawBrokerEnvelope envelope)
         {
-            var queuedMessage = new QueuedMessage(message);
+            var queuedMessage = new QueuedMessage(envelope);
 
             _queue.Add(queuedMessage);
 
@@ -65,7 +65,7 @@ namespace Silverback.Messaging.Broker
 
                     try
                     {
-                        PublishToChannel(queuedMessage.Message);
+                        PublishToChannel(queuedMessage.Envelope);
 
                         queuedMessage.TaskCompletionSource.SetResult(null);
                     }
@@ -81,13 +81,13 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private void PublishToChannel(RawBrokerMessage message)
+        private void PublishToChannel(RawBrokerEnvelope envelope)
         {
             _channel ??= _connectionFactory.GetChannel(Endpoint);
             
             var properties = _channel.CreateBasicProperties();
             properties.Persistent = true; // TODO: Make it configurable?
-            properties.Headers = message.Headers.ToDictionary(header => header.Key, header => (object) header.Value);
+            properties.Headers = envelope.Headers.ToDictionary(header => header.Key, header => (object) header.Value);
 
             switch (Endpoint)
             {
@@ -96,14 +96,14 @@ namespace Silverback.Messaging.Broker
                         "", 
                         queueEndpoint.Name, 
                         properties, 
-                        message.RawContent);
+                        envelope.RawMessage);
                     break;
                 case RabbitExchangeProducerEndpoint exchangeEndpoint:
                     _channel.BasicPublish(
                         exchangeEndpoint.Name, 
-                        GetRoutingKey(message.Headers),
+                        GetRoutingKey(envelope.Headers),
                         properties, 
-                        message.RawContent);
+                        envelope.RawMessage);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -136,13 +136,13 @@ namespace Silverback.Messaging.Broker
         
         private class QueuedMessage
         {
-            public QueuedMessage(RawBrokerMessage message)
+            public QueuedMessage(RawBrokerEnvelope envelope)
             {
-                Message = message;
+                Envelope = envelope;
                 TaskCompletionSource = new TaskCompletionSource<IOffset>();
             }
 
-            public RawBrokerMessage Message { get; }
+            public RawBrokerEnvelope Envelope { get; }
             public TaskCompletionSource<IOffset> TaskCompletionSource { get; }
         }
     }

@@ -38,9 +38,6 @@ namespace Silverback.Messaging.Configuration
         {
             SilverbackBuilder.Services.AddSingleton<IInboundConnector, TConnector>();
 
-            if (SilverbackBuilder.Services.All(s => s.ImplementationType != typeof(InboundMessageUnwrapper)))
-                SilverbackBuilder.AddScopedSubscriber<InboundMessageUnwrapper>();
-
             if (SilverbackBuilder.Services.All(s => s.ImplementationType != typeof(ErrorPolicyHelper)))
                 SilverbackBuilder.Services.AddSingleton<ErrorPolicyHelper>();
 

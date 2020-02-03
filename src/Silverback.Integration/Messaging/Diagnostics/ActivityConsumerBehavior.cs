@@ -11,14 +11,14 @@ namespace Silverback.Messaging.Diagnostics
     // TODO: Test
     public class ActivityConsumerBehavior : IConsumerBehavior
     {
-        public async Task Handle(RawBrokerMessage message, RawBrokerMessageHandler next)
+        public async Task Handle(RawBrokerEnvelope envelope, RawBrokerMessageHandler next)
         {
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
             try
             {
-                activity.InitFromMessageHeaders(message.Headers);
+                activity.InitFromMessageHeaders(envelope.Headers);
                 activity.Start();
-                await next(message);
+                await next(envelope);
             }
             finally
             {

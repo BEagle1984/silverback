@@ -18,7 +18,9 @@ namespace Silverback.Messaging.Connectors.Behaviors
         private readonly IServiceProvider _serviceProvider;
         private readonly IOutboundRoutingConfiguration _routing;
         private readonly MessageIdProvider _messageIdProvider;
-        private readonly ConcurrentBag<object> _inboundMessagesCache = new ConcurrentBag<object>();
+
+        //TODO: Cleanup (not needed anymore since implicitly unwrapping)
+        //private readonly ConcurrentBag<object> _inboundMessagesCache = new ConcurrentBag<object>();
 
         public OutboundRoutingBehavior(IServiceProvider serviceProvider)
         {
@@ -33,7 +35,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
             IReadOnlyCollection<object> messages,
             MessagesHandler next)
         {
-            messages.OfType<IInboundMessage>().ForEach(message => _inboundMessagesCache.Add(message.Content));
+            //messages.OfType<IInboundEnvelope>().ForEach(envelope => _inboundMessagesCache.Add(envelope.Message));
 
             var routedMessages = await WrapAndRepublishRoutedMessages(messages);
 
@@ -46,31 +48,33 @@ namespace Silverback.Messaging.Connectors.Behaviors
         private async Task<IEnumerable<object>> WrapAndRepublishRoutedMessages(IEnumerable<object> messages)
         {
             var wrappedMessages = messages
-                .Where(message => !(message is IOutboundMessageInternal) &&
-                                  !_inboundMessagesCache.Contains(message))
+                //.Where(message => !(message is IOutboundEnvelope) &&
+                //                  !_inboundMessagesCache.Contains(message))
+                .Where(message => !(message is IOutboundEnvelope))
                 .SelectMany(message =>
                     _routing
                         .GetRoutesForMessage(message)
                         .Select(route =>
-                            CreateOutboundMessage(message, route)));
+                            CreateOutboundEnvelope(message, route)))
+                .ToList();
 
             if (wrappedMessages.Any())
                 await _serviceProvider
                     .GetRequiredService<IPublisher>()
                     .PublishAsync(wrappedMessages);
 
-            return wrappedMessages.Select(m => m.Content);
+            return wrappedMessages.Select(m => m.Message);
         }
 
-        private IOutboundMessage CreateOutboundMessage(object message, IOutboundRoute route)
+        private IOutboundEnvelope CreateOutboundEnvelope(object message, IOutboundRoute route)
         {
-            var wrapper = (IOutboundMessage) Activator.CreateInstance(
-                typeof(OutboundMessage<>).MakeGenericType(message.GetType()),
+            var envelope = (IOutboundEnvelope) Activator.CreateInstance(
+                typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
                 message, null, route);
 
-            _messageIdProvider.EnsureKeyIsInitialized(wrapper.Content, wrapper.Headers);
+            _messageIdProvider.EnsureKeyIsInitialized(envelope.Message, envelope.Headers);
 
-            return wrapper;
+            return envelope;
         }
     }
 }

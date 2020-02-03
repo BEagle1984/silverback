@@ -1,13 +1,13 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
+// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 namespace Silverback.Messaging.Messages
 {
-    public interface IRawOutboundMessage
+    public interface IEnvelope
     {
         /// <summary>
-        ///     Gets the destination endpoint.
+        ///     Gets the message body.
         /// </summary>
-        IProducerEndpoint Endpoint { get; }
+        object Message { get; }
     }
 }

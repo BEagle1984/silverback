@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task OnMessageReceived_SingleMessage_Queued()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>(
+            var envelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "Test" },
                 new[]
                 {
@@ -42,30 +42,30 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                     new MessageHeader("header2", "value2")
                 },
                 TestProducerEndpoint.GetDefault());
-            outboundMessage.RawContent =
-                new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers);
+            envelope.RawMessage =
+                new JsonMessageSerializer().Serialize(envelope.Message, envelope.Headers);
 
-            await _connector.RelayMessage(outboundMessage);
+            await _connector.RelayMessage(envelope);
             await _queue.Commit();
 
             (await _queue.GetLength()).Should().Be(1);
             var queued = (await _queue.Dequeue(1)).First();
-            queued.Endpoint.Should().Be(outboundMessage.Endpoint);
+            queued.Endpoint.Should().Be(envelope.Endpoint);
             queued.Headers.Count().Should().Be(3);
             queued.Content.Should()
                 .BeEquivalentTo(
-                    new JsonMessageSerializer().Serialize(outboundMessage.Content, outboundMessage.Headers));
+                    new JsonMessageSerializer().Serialize(envelope.Message, envelope.Headers));
         }
 
         [Fact]
         public async Task CommitRollback_ReceiveCommitReceiveRollback_FirstIsCommittedSecondIsDiscarded()
         {
-            var outboundMessage =
-                new OutboundMessage<TestEventOne>(new TestEventOne(), null, TestProducerEndpoint.GetDefault());
+            var envelope =
+                new OutboundEnvelope<TestEventOne>(new TestEventOne(), null, TestProducerEndpoint.GetDefault());
 
-            await _connector.RelayMessage(outboundMessage);
+            await _connector.RelayMessage(envelope);
             await _transactionManager.OnTransactionCompleted(new TransactionCompletedEvent());
-            await _connector.RelayMessage(outboundMessage);
+            await _connector.RelayMessage(envelope);
             await _transactionManager.OnTransactionAborted(new TransactionAbortedEvent());
 
             (await _queue.GetLength()).Should().Be(1);

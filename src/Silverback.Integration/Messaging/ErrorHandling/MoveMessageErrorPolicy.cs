@@ -51,23 +51,23 @@ namespace Silverback.Messaging.ErrorHandling
             return this;
         }
 
-        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundMessage> messages, Exception exception)
+        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception)
         {
             _messageLogger.LogInformation(_logger,
-                $"{messages.Count()} message(s) will be  be moved to endpoint '{_endpoint.Name}'.", messages);
+                $"{envelopes.Count} message(s) will be  be moved to endpoint '{_endpoint.Name}'.", envelopes);
 
-            messages.ForEach(msg => PublishToNewEndpoint(msg, exception));
+            envelopes.ForEach(envelope => PublishToNewEndpoint(envelope, exception));
 
             return ErrorAction.Skip;
         }
 
-        private void PublishToNewEndpoint(IInboundMessage message, Exception exception)
+        private void PublishToNewEndpoint(IInboundEnvelope envelope, Exception exception)
         {
-            message.Headers.AddOrReplace(MessageHeader.SourceEndpointKey, message.Endpoint?.Name);
+            envelope.Headers.AddOrReplace(MessageHeader.SourceEndpointKey, envelope.Endpoint?.Name);
 
             _producer.Produce(
-                _transformationFunction?.Invoke(message.Content, exception) ?? message.Content ?? message.RawContent,
-                _headersTransformationFunction?.Invoke(message.Headers, exception) ?? message.Headers);
+                _transformationFunction?.Invoke(envelope.Message, exception) ?? envelope.Message ?? envelope.RawMessage,
+                _headersTransformationFunction?.Invoke(envelope.Headers, exception) ?? envelope.Headers);
         }
     }
 }

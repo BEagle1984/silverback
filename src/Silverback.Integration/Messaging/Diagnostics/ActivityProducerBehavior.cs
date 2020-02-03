@@ -11,14 +11,14 @@ namespace Silverback.Messaging.Diagnostics
     // TODO: Test
     public class ActivityProducerBehavior : IProducerBehavior
     {
-        public async Task Handle(RawBrokerMessage message, RawBrokerMessageHandler next)
+        public async Task Handle(RawBrokerEnvelope envelope, RawBrokerMessageHandler next)
         {
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageProducing);
             try
             {
                 activity.Start();
-                activity.SetMessageHeaders(message.Headers);
-                await next(message);
+                activity.SetMessageHeaders(envelope.Headers);
+                await next(envelope);
             }
             finally
             {

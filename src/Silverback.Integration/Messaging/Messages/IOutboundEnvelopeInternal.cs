@@ -5,7 +5,7 @@ using Silverback.Messaging.Connectors;
 
 namespace Silverback.Messaging.Messages
 {
-    internal interface IOutboundMessageInternal : IOutboundMessage
+    internal interface IOutboundEnvelopeInternal : IOutboundEnvelope
     {
         IOutboundRoute Route { get; }
     }

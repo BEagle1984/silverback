@@ -11,6 +11,6 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public interface IOutboundConnector
     {
-        Task RelayMessage(IOutboundMessage message);
+        Task RelayMessage(IOutboundEnvelope envelope);
     }
 }

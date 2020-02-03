@@ -5,7 +5,7 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
-    public interface IRawBrokerMessage
+    public interface IRawBrokerEnvelope
     {
         /// <summary>
         ///     Gets the optional message headers.
@@ -25,6 +25,6 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets the serialized message body.
         /// </summary>
-        byte[] RawContent { get; }
+        byte[] RawMessage { get; }
     }
 }

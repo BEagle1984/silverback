@@ -22,9 +22,9 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        protected override async Task<bool> MustProcess(IInboundMessage message, IServiceProvider serviceProvider)
+        protected override async Task<bool> MustProcess(IInboundEnvelope envelope, IServiceProvider serviceProvider)
         {
-            if (message.Offset == null || !(message.Offset is IComparableOffset comparableOffset))
+            if (envelope.Offset == null || !(envelope.Offset is IComparableOffset comparableOffset))
                 throw new InvalidOperationException(
                     "The message broker implementation doesn't seem to support comparable offsets. " +
                     "The OffsetStoredInboundConnector cannot be used, please resort to LoggedInboundConnector " +
@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Connectors
 
             var offsetStore = serviceProvider.GetRequiredService<IOffsetStore>();
 
-            var latest = await offsetStore.GetLatestValue(message.Offset.Key);
+            var latest = await offsetStore.GetLatestValue(envelope.Offset.Key);
             if (latest != null && latest.CompareTo(comparableOffset) >= 0)
                 return false;
 

@@ -39,23 +39,23 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Producer" />
-        protected override IOffset Produce(RawBrokerMessage message) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsync(message));
+        protected override IOffset Produce(RawBrokerEnvelope envelope) =>
+            AsyncHelper.RunSynchronously(() => ProduceAsync(envelope));
 
         /// <inheritdoc cref="Producer" />
-        protected override async Task<IOffset> ProduceAsync(RawBrokerMessage message)
+        protected override async Task<IOffset> ProduceAsync(RawBrokerEnvelope envelope)
         {
             try
             {
                 var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
                 {
-                    Key = GetPartitioningKey(message.Headers),
-                    Value = message.RawContent
+                    Key = GetPartitioningKey(envelope.Headers),
+                    Value = envelope.RawMessage
                 };
 
-                if (message.Headers != null && message.Headers.Any())
+                if (envelope.Headers != null && envelope.Headers.Any())
                 {
-                    kafkaMessage.Headers = message.Headers.ToConfluentHeaders();
+                    kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
                 }
 
                 var deliveryReport = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage);

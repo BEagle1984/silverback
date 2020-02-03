@@ -79,9 +79,9 @@ namespace Silverback.Integration.Kafka.TestConsumer
 
         private static async Task OnMessageReceived(object sender, MessageReceivedEventArgs args)
         {
-            var testMessage = (TestMessage) args.Message.Endpoint.Serializer.Deserialize(
-                args.Message.RawContent,
-                new MessageHeaderCollection(args.Message.Headers));
+            var testMessage = (TestMessage) args.Envelope.Endpoint.Serializer.Deserialize(
+                args.Envelope.RawMessage,
+                new MessageHeaderCollection(args.Envelope.Headers));
 
             Console.WriteLine($"[{testMessage.Id}] [{Activity.Current.Id}] {testMessage.Text}");
 
@@ -101,7 +101,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
                 }
             }
 
-            await _consumer.Commit(args.Message.Offset);
+            await _consumer.Commit(args.Envelope.Offset);
         }
 
         private static void PrintHeader()

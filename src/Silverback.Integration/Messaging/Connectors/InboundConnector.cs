@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
@@ -58,10 +59,10 @@ namespace Silverback.Messaging.Connectors
             return this;
         }
 
-        protected async Task HandleMessages(IEnumerable<IInboundMessage> messages, IServiceProvider serviceProvider)
+        protected async Task HandleMessages(IEnumerable<IInboundEnvelope> envelopes, IServiceProvider serviceProvider)
         {
-            var deserializedMessages = await messages
-                .SelectAsync(async message => await HandleChunkedMessage(message, serviceProvider));
+            var deserializedMessages = await envelopes
+                .SelectAsync(async envelope => await HandleChunkedMessage(envelope, serviceProvider));
 
             deserializedMessages = deserializedMessages
                 .Where(args => args != null)
@@ -74,41 +75,40 @@ namespace Silverback.Messaging.Connectors
             await RelayMessages(deserializedMessages, serviceProvider);
         }
 
-        private async Task<IInboundMessage> HandleChunkedMessage(
-            IInboundMessage message,
+        private async Task<IInboundEnvelope> HandleChunkedMessage(
+            IInboundEnvelope envelope,
             IServiceProvider serviceProvider)
         {
-            if (!message.Headers.Contains(MessageHeader.ChunkIdKey))
-                return message;
+            if (!envelope.Headers.Contains(MessageHeader.ChunkIdKey))
+                return envelope;
 
-            var completeMessage = await serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(message);
+            var completeMessage = await serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(envelope);
 
             return completeMessage == null
                 ? null
-                : new InboundMessage(completeMessage, message.Headers, message.Offset, message.Endpoint,
-                    message.MustUnwrap);
+                : new InboundEnvelope(completeMessage, envelope.Headers, envelope.Offset, envelope.Endpoint);
         }
 
-        private IInboundMessage DeserializeRawMessage(IInboundMessage message)
+        private IInboundEnvelope DeserializeRawMessage(IInboundEnvelope envelope)
         {
             var deserialized =
-                message.Content ?? (((InboundMessage) message).Content =
-                    message.Endpoint.Serializer.Deserialize(message.RawContent, message.Headers));
+                envelope.Message ?? (((InboundEnvelope) envelope).Message =
+                    envelope.Endpoint.Serializer.Deserialize(envelope.RawMessage, envelope.Headers));
 
             // Create typed message for easier specific subscription
-            var typedInboundMessage = (InboundMessage) Activator.CreateInstance(
-                typeof(InboundMessage<>).MakeGenericType(deserialized.GetType()),
-                message);
+            var typedInboundMessage = (InboundEnvelope) Activator.CreateInstance(
+                typeof(InboundEnvelope<>).MakeGenericType(deserialized.GetType()),
+                envelope);
 
-            typedInboundMessage.Content = deserialized;
+            typedInboundMessage.Message = deserialized;
 
             return typedInboundMessage;
         }
 
         protected virtual async Task RelayMessages(
-            IEnumerable<IInboundMessage> messages,
+            IEnumerable<IInboundEnvelope> envelopes,
             IServiceProvider serviceProvider) =>
-            await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(messages);
+            await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(envelopes);
 
         protected virtual async Task Commit(IServiceProvider serviceProvider)
         {

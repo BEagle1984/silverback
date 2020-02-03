@@ -9,16 +9,16 @@ namespace Silverback.Messaging.Messages
 {
     public abstract class BatchEvent : ISilverbackEvent
     {
-        protected BatchEvent(Guid batchId, IEnumerable<IInboundMessage> messages)
+        protected BatchEvent(Guid batchId, IReadOnlyCollection<IInboundEnvelope> envelopes)
         {
-            Messages = messages;
+            Envelopes = envelopes;
             BatchId = batchId;
-            BatchSize = messages?.Count() ?? 0;
+            BatchSize = envelopes?.Count() ?? 0;
         }
 
         public Guid BatchId { get; }
 
-        public IEnumerable<IInboundMessage> Messages { get; }
+        public IReadOnlyCollection<IInboundEnvelope> Envelopes { get; }
 
         public int BatchSize { get; }
     }

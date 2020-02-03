@@ -102,8 +102,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
             await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
 
-            _inboundSubscriber.ReceivedMessages.OfType<InboundMessage<TestEventOne>>().Count().Should().Be(2);
-            _inboundSubscriber.ReceivedMessages.OfType<InboundMessage<TestEventTwo>>().Count().Should().Be(3);
+            _inboundSubscriber.ReceivedEnvelopes.OfType<InboundEnvelope<TestEventOne>>().Count().Should().Be(2);
+            _inboundSubscriber.ReceivedEnvelopes.OfType<InboundEnvelope<TestEventTwo>>().Count().Should().Be(3);
         }
 
         [Fact]
@@ -118,12 +118,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() },
                 new[] { new MessageHeader { Key = "key", Value = "value2" } });
 
-            var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
-            var firstMessage = inboundMessages.First();
+            var envelopes = _inboundSubscriber.ReceivedEnvelopes.OfType<IInboundEnvelope>().ToList();
+            var firstMessage = envelopes.First();
             firstMessage.Headers.Count.Should().Be(2);
             firstMessage.Headers.Select(h => h.Key).Should().BeEquivalentTo("key", "x-message-type");
             firstMessage.Headers.GetValue("key").Should().Be("value1");
-            var secondMessage = inboundMessages.Skip(1).First();
+            var secondMessage = envelopes.Skip(1).First();
             secondMessage.Headers.Count.Should().Be(2);
             secondMessage.Headers.Select(h => h.Key).Should().BeEquivalentTo("key", "x-message-type");
             secondMessage.Headers.GetValue("key").Should().Be("value2");
@@ -140,7 +140,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() },
                 new[] { new MessageHeader { Key = MessageHeader.FailedAttemptsKey, Value = "3" } });
 
-            var inboundMessages = _inboundSubscriber.ReceivedMessages.OfType<IInboundMessage>();
+            var inboundMessages = _inboundSubscriber.ReceivedEnvelopes.OfType<IInboundEnvelope>().ToList();
             inboundMessages.First().Headers.GetValue<int>(MessageHeader.FailedAttemptsKey).Should().Be(null);
             inboundMessages.Skip(1).First().Headers.GetValue<int>(MessageHeader.FailedAttemptsKey).Should().Be(3);
         }

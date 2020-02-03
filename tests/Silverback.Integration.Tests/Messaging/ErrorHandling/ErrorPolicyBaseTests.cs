@@ -26,10 +26,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 .ApplyTo<InvalidCastException>();
 
             var canHandle = policy.CanHandle(
-                new InboundMessage(
+                new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "99") },
-                    null, TestConsumerEndpoint.GetDefault(), true),
+                    null, TestConsumerEndpoint.GetDefault()),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -52,10 +52,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 .Exclude<InvalidCastException>();
 
             var canHandle = policy.CanHandle(
-                new InboundMessage(
+                new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "99") },
-                    null, TestConsumerEndpoint.GetDefault(), true),
+                    null, TestConsumerEndpoint.GetDefault()),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -79,10 +79,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 .ApplyTo<FormatException>();
 
             var canHandle = policy.CanHandle(
-                new InboundMessage(
+                new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "99") },
-                    null, TestConsumerEndpoint.GetDefault(), true),
+                    null, TestConsumerEndpoint.GetDefault()), 
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -100,7 +100,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
         [Theory, MemberData(nameof(ApplyWhen_TestData))]
         public void ApplyWhen_Exception_CanHandleReturnsExpectedResult(
-            IInboundMessage message,
+            IInboundEnvelope envelope,
             Exception exception,
             bool mustApply)
         {
@@ -108,7 +108,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 .ApplyWhen((msg, ex) =>
                     msg.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey) <= 5 && ex.Message != "no");
 
-            var canHandle = policy.CanHandle(message, exception);
+            var canHandle = policy.CanHandle(envelope, exception);
 
             canHandle.Should().Be(mustApply);
         }
@@ -118,28 +118,28 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             {
                 new object[]
                 {
-                    new InboundMessage(
+                    new InboundEnvelope(
                         new byte[1],
                         new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
-                        null, TestConsumerEndpoint.GetDefault(), true),
+                        null, TestConsumerEndpoint.GetDefault()), 
                     new ArgumentException(),
                     true
                 },
                 new object[]
                 {
-                    new InboundMessage(
+                    new InboundEnvelope(
                         new byte[1],
                         new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "6") },
-                        null, TestConsumerEndpoint.GetDefault(), true),
+                        null, TestConsumerEndpoint.GetDefault()),
                     new ArgumentException(),
                     false
                 },
                 new object[]
                 {
-                    new InboundMessage(
+                    new InboundEnvelope(
                         new byte[1],
                         new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
-                        null, TestConsumerEndpoint.GetDefault(), true),
+                        null, TestConsumerEndpoint.GetDefault()),
                     new ArgumentException("no"),
                     false
                 }
@@ -154,10 +154,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var policy =
                 (TestErrorPolicy) new TestErrorPolicy(serviceProvider).Publish(msg => new TestEventTwo
                     { Content = "aaa" });
-            var message = new InboundMessage(
+            var message = new InboundEnvelope(
                 new byte[1],
                 new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
-                null, TestConsumerEndpoint.GetDefault(), true);
+                null, TestConsumerEndpoint.GetDefault());
 
 
             policy.HandleError(new[] { message }, new ArgumentNullException());

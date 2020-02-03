@@ -9,16 +9,16 @@ namespace Silverback.Messaging.LargeMessages
 {
     internal static class ChunkProducer
     {
-        public static IEnumerable<RawOutboundMessage> ChunkIfNeeded(RawOutboundMessage message)
+        public static IEnumerable<RawOutboundEnvelope> ChunkIfNeeded(RawOutboundEnvelope envelope)
         {
-            var messageId = message.Headers.GetValue(MessageHeader.MessageIdKey);
-            var settings = message.Endpoint?.Chunk;
+            var messageId = envelope.Headers.GetValue(MessageHeader.MessageIdKey);
+            var settings = envelope.Endpoint?.Chunk;
 
             var chunkSize = settings?.Size ?? int.MaxValue;
 
-            if (chunkSize >= message.RawContent.Length)
+            if (chunkSize >= envelope.RawMessage.Length)
             {
-                yield return message;
+                yield return envelope;
                 yield break;
             }
 
@@ -29,14 +29,14 @@ namespace Silverback.Messaging.LargeMessages
                     "Please add an Id or MessageId property to the message model or use a custom IMessageIdProvider.");
             }
 
-            var span = message.RawContent.AsMemory();
-            var chunksCount = (int) Math.Ceiling(message.RawContent.Length / (double) chunkSize);
+            var span = envelope.RawMessage.AsMemory();
+            var chunksCount = (int) Math.Ceiling(envelope.RawMessage.Length / (double) chunkSize);
             var offset = 0;
 
             for (var i = 0; i < chunksCount; i++)
             {
-                var slice = span.Slice(offset, Math.Min(chunkSize, message.RawContent.Length - offset)).ToArray();
-                var messageChunk = new RawOutboundMessage(slice, message.Headers, message.Endpoint);
+                var slice = span.Slice(offset, Math.Min(chunkSize, envelope.RawMessage.Length - offset)).ToArray();
+                var messageChunk = new RawOutboundEnvelope(slice, envelope.Headers, envelope.Endpoint);
 
                 messageChunk.Headers.AddOrReplace(MessageHeader.ChunkIdKey, i);
                 messageChunk.Headers.AddOrReplace(MessageHeader.ChunksCountKey, chunksCount);

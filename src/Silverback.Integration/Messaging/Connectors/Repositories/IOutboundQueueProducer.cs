@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     public interface IOutboundQueueProducer
     {
-        Task Enqueue(IOutboundMessage message);
+        Task Enqueue(IOutboundEnvelope envelope);
 
         Task Commit();
 

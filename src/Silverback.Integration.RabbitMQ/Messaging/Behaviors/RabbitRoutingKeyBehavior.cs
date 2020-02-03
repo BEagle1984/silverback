@@ -17,18 +17,18 @@ namespace Silverback.Messaging.Behaviors
 
         public Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
         {
-            messages.OfType<IOutboundMessage>().ForEach(SetPartitioningKey);
+            messages.OfType<IOutboundEnvelope>().ForEach(SetRoutingKey);
             return next(messages);
         }
 
-        private void SetPartitioningKey(IOutboundMessage outboundMessage)
+        private void SetRoutingKey(IOutboundEnvelope envelope)
         {
-            var key = RoutingKeyHelper.GetRoutingKey(outboundMessage.Content);
+            var key = RoutingKeyHelper.GetRoutingKey(envelope.Message);
 
             if (key == null)
                 return;
 
-            outboundMessage.Headers.AddOrReplace(RabbitProducer.RoutingKeyHeaderKey, key);
+            envelope.Headers.AddOrReplace(RabbitProducer.RoutingKeyHeaderKey, key);
         }
     }
 }

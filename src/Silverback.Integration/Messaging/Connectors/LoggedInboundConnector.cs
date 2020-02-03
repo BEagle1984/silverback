@@ -26,14 +26,14 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        protected override async Task<bool> MustProcess(IInboundMessage message, IServiceProvider serviceProvider)
+        protected override async Task<bool> MustProcess(IInboundEnvelope envelope, IServiceProvider serviceProvider)
         {
             var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
 
-            if (await inboundLog.Exists(message.Content, message.Endpoint))
+            if (await inboundLog.Exists(envelope.Message, envelope.Endpoint))
                 return false;
 
-            await inboundLog.Add(message.Content, message.Endpoint);
+            await inboundLog.Add(envelope.Message, envelope.Endpoint);
             return true;
         }
 

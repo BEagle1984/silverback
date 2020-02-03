@@ -228,11 +228,11 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
             policy.CanHandle(
-                new InboundMessage(new byte[1], new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") }, null,
-                    new KafkaConsumerEndpoint("test"), true), new ArgumentException()).Should().BeTrue();
+                new InboundEnvelope(new byte[1], new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") }, null,
+                    new KafkaConsumerEndpoint("test")), new ArgumentException()).Should().BeTrue();
             policy.CanHandle(
-                new InboundMessage(new byte[1], new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "6") }, null,
-                    new KafkaConsumerEndpoint("test"), true), new ArgumentException()).Should().BeFalse();
+                new InboundEnvelope(new byte[1], new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "6") }, null,
+                    new KafkaConsumerEndpoint("test")), new ArgumentException()).Should().BeFalse();
         }
 
         [Fact]
@@ -256,11 +256,11 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true),
+            policy.CanHandle(new InboundEnvelope(new byte[1], null, null, new KafkaConsumerEndpoint("test")), 
                 new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true),
+            policy.CanHandle(new InboundEnvelope(new byte[1], null, null, new KafkaConsumerEndpoint("test")),
                 new InvalidOperationException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true),
+            policy.CanHandle(new InboundEnvelope(new byte[1], null, null, new KafkaConsumerEndpoint("test")),
                 new FormatException()).Should().BeFalse();
         }
 
@@ -272,9 +272,9 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
-            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true),
+            policy.CanHandle(new InboundEnvelope(new byte[1], null, null, new KafkaConsumerEndpoint("test")),
                 new ArgumentException()).Should().BeTrue();
-            policy.CanHandle(new InboundMessage(new byte[1], null, null, new KafkaConsumerEndpoint("test"), true),
+            policy.CanHandle(new InboundEnvelope(new byte[1], null, null, new KafkaConsumerEndpoint("test")),
                 new ArgumentNullException()).Should().BeFalse();
         }
 

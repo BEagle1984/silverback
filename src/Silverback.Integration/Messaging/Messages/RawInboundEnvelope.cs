@@ -7,28 +7,26 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
-    public class RawInboundMessage : RawBrokerMessage, IRawInboundMessage
+    public class RawInboundEnvelope : RawBrokerEnvelope, IRawInboundEnvelope
     {
-        public RawInboundMessage(
-            object content,
+        public RawInboundEnvelope(
+            object message,
             IEnumerable<MessageHeader> headers,
             IConsumerEndpoint endpoint,
             IOffset offset = null)
-            : base(content, headers, endpoint, offset)
+            : base(message, headers, endpoint, offset)
         {
-            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
         }
 
-        public RawInboundMessage(
-            byte[] rawContent,
+        public RawInboundEnvelope(
+            byte[] rawMessage,
             IEnumerable<MessageHeader> headers,
             IConsumerEndpoint endpoint,
             IOffset offset = null)
-            : base(rawContent, headers, endpoint, offset)
+            : base(rawMessage, headers, endpoint, offset)
         {
-            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
         }
 
-        public new IConsumerEndpoint Endpoint { get; }
+        public new IConsumerEndpoint Endpoint => (IConsumerEndpoint) base.Endpoint;
     }
 }

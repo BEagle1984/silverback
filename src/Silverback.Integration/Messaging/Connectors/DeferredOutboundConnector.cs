@@ -27,10 +27,10 @@ namespace Silverback.Messaging.Connectors
             _messageLogger = messageLogger;
         }
 
-        public async Task RelayMessage(IOutboundMessage message)
+        public async Task RelayMessage(IOutboundEnvelope envelope)
         {
-            _messageLogger.LogDebug(_logger, "Queuing message for deferred publish.", message);
-            await _queueProducer.Enqueue(message);
+            _messageLogger.LogDebug(_logger, "Queuing message for deferred publish.", envelope);
+            await _queueProducer.Enqueue(envelope);
         }
     }
 }

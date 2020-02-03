@@ -21,13 +21,13 @@ namespace Silverback.Messaging.Connectors.Repositories
     {
         #region Writer
 
-        public Task Enqueue(IOutboundMessage message)
+        public Task Enqueue(IOutboundEnvelope envelope)
         {
-            if (message.RawContent == null)
-                ((OutboundMessage) message).RawContent =
-                    message.Endpoint.Serializer.Serialize(message.Content, message.Headers);
+            if (envelope.RawMessage == null)
+                ((OutboundEnvelope) envelope).RawMessage =
+                    envelope.Endpoint.Serializer.Serialize(envelope.Message, envelope.Headers);
 
-            Add(new QueuedMessage(message.RawContent, message.Headers, message.Endpoint));
+            Add(new QueuedMessage(envelope.RawMessage, envelope.Headers, envelope.Endpoint));
             return Task.CompletedTask;
         }
 

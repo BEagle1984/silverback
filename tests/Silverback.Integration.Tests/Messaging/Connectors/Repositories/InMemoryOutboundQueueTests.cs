@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
     {
         private readonly InMemoryOutboundQueue _queue;
 
-        private readonly IOutboundMessage _sampleOutboundMessage = new OutboundMessage<TestEventOne>(
+        private readonly IOutboundEnvelope _sampleOutboundEnvelope = new OutboundEnvelope(
             new TestEventOne { Content = "Test" }, null, TestProducerEndpoint.GetDefault());
 
         public InMemoryOutboundQueueTests()
@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task EnqueueTest()
         {
-            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundMessage); });
+            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundEnvelope); });
 
             (await _queue.GetLength()).Should().Be(0);
         }
@@ -37,7 +37,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task EnqueueCommitTest()
         {
-            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundMessage); });
+            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundEnvelope); });
 
             await _queue.Commit();
 
@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task EnqueueRollbackTest()
         {
-            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundMessage); });
+            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundEnvelope); });
 
             await _queue.Rollback();
 
@@ -57,11 +57,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task EnqueueCommitRollbackCommitTest()
         {
-            await _queue.Enqueue(_sampleOutboundMessage);
+            await _queue.Enqueue(_sampleOutboundEnvelope);
             await _queue.Commit();
-            await _queue.Enqueue(_sampleOutboundMessage);
+            await _queue.Enqueue(_sampleOutboundEnvelope);
             await _queue.Rollback();
-            await _queue.Enqueue(_sampleOutboundMessage);
+            await _queue.Enqueue(_sampleOutboundEnvelope);
             await _queue.Commit();
 
             (await _queue.GetLength()).Should().Be(2);
@@ -75,7 +75,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             for (var i = 0; i < 5; i++)
             {
-                await _queue.Enqueue(_sampleOutboundMessage);
+                await _queue.Enqueue(_sampleOutboundEnvelope);
             }
 
             await _queue.Commit();
@@ -90,7 +90,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             for (var i = 0; i < 5; i++)
             {
-                await _queue.Enqueue(_sampleOutboundMessage);
+                await _queue.Enqueue(_sampleOutboundEnvelope);
             }
 
             await _queue.Commit();

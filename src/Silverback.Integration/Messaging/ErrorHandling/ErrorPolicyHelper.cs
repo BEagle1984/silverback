@@ -25,15 +25,15 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         public async Task TryProcessAsync(
-            IReadOnlyCollection<IInboundMessage> messages,
+            IReadOnlyCollection<IInboundEnvelope> envelopes,
             IErrorPolicy errorPolicy,
-            Func<IReadOnlyCollection<IInboundMessage>, Task> messagesHandler)
+            Func<IReadOnlyCollection<IInboundEnvelope>, Task> messagesHandler)
         {
-            var attempt = GetAttemptNumber(messages);
+            var attempt = GetAttemptNumber(envelopes);
 
             while (true)
             {
-                var result = await HandleMessages(messages, messagesHandler, errorPolicy, attempt);
+                var result = await HandleMessages(envelopes, messagesHandler, errorPolicy, attempt);
 
                 if (result.IsSuccessful || result.Action == ErrorAction.Skip)
                     return;
@@ -42,43 +42,43 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private int GetAttemptNumber(IReadOnlyCollection<IInboundMessage> messages)
+        private int GetAttemptNumber(IReadOnlyCollection<IInboundEnvelope> envelopes)
         {
-            var minAttempts = messages.Min(m => m.Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey));
+            var minAttempts = envelopes.Min(m => m.Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey));
 
             // Uniform failed attempts, just in case (mostly for consistent logging)
-            UpdateFailedAttemptsHeader(messages, minAttempts);
+            UpdateFailedAttemptsHeader(envelopes, minAttempts);
 
             return minAttempts + 1;
         }
 
         private async Task<MessageHandlerResult> HandleMessages(
-            IReadOnlyCollection<IInboundMessage> messages,
-            Func<IReadOnlyCollection<IInboundMessage>, Task> messagesHandler,
+            IReadOnlyCollection<IInboundEnvelope> envelopes,
+            Func<IReadOnlyCollection<IInboundEnvelope>, Task> messagesHandler,
             IErrorPolicy errorPolicy,
             int attempt)
         {
             try
             {
-                _messageLogger.LogProcessing(_logger, messages);
+                _messageLogger.LogProcessing(_logger, envelopes);
 
-                await messagesHandler(messages);
+                await messagesHandler(envelopes);
 
                 return MessageHandlerResult.Success;
             }
             catch (Exception ex)
             {
-                _messageLogger.LogProcessingError(_logger, messages, ex);
+                _messageLogger.LogProcessingError(_logger, envelopes, ex);
 
                 if (errorPolicy == null)
                     throw;
 
-                UpdateFailedAttemptsHeader(messages, attempt);
+                UpdateFailedAttemptsHeader(envelopes, attempt);
 
-                if (!errorPolicy.CanHandle(messages, ex))
+                if (!errorPolicy.CanHandle(envelopes, ex))
                     throw;
 
-                var action = errorPolicy.HandleError(messages, ex);
+                var action = errorPolicy.HandleError(envelopes, ex);
 
                 if (action == ErrorAction.StopConsuming)
                     throw;
@@ -87,8 +87,8 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private void UpdateFailedAttemptsHeader(IReadOnlyCollection<IBrokerMessage> messages, int attempt) =>
-            messages?.ForEach(msg =>
+        private void UpdateFailedAttemptsHeader(IReadOnlyCollection<IBrokerEnvelope> envelopes, int attempt) =>
+            envelopes?.ForEach(msg =>
             {
                 if (attempt == 0)
                     msg.Headers.Remove(MessageHeader.FailedAttemptsKey);

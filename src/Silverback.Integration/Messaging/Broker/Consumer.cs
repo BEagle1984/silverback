@@ -71,23 +71,23 @@ namespace Silverback.Messaging.Broker
 
             await ExecutePipeline(
                 _behaviors,
-                new RawInboundMessage(message, headers, Endpoint, offset),
-                m => Received.Invoke(this, new MessageReceivedEventArgs(m)));
+                new RawInboundEnvelope(message, headers, Endpoint, offset), 
+                envelope => Received.Invoke(this, new MessageReceivedEventArgs(envelope)));
         }
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IConsumerBehavior> behaviors,
-            RawBrokerMessage message,
+            RawBrokerEnvelope envelope,
             RawBrokerMessageHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
                 await behaviors.First()
-                    .Handle(message, m => ExecutePipeline(behaviors.Skip(1).ToList(), m, finalAction));
+                    .Handle(envelope, m => ExecutePipeline(behaviors.Skip(1).ToList(), m, finalAction));
             }
             else
             {
-                await finalAction(message);
+                await finalAction(envelope);
             }
         }
     }
