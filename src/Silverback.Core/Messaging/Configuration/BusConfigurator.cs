@@ -36,6 +36,12 @@ namespace Silverback.Messaging.Configuration
         public BusConfigurator HandleMessagesOfType<TMessage>() =>
             HandleMessagesOfType(typeof(TMessage));
 
+        /// <summary>
+        ///     Configures the specified type to be recognized
+        ///     as a message to enable features like automatic republishing.
+        /// </summary>
+        /// <param name="messageType">The (base) message type.</param>
+        /// <returns></returns>
         public BusConfigurator HandleMessagesOfType(Type messageType)
         {
             if (!_busOptions.MessageTypes.Contains(messageType))

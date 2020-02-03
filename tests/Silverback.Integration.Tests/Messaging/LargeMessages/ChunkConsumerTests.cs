@@ -31,8 +31,8 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
 
             var originalSerializedMessage = _serializer.Serialize(originalMessage, headers);
 
-            var chunks = new InboundMessage[3];
-            chunks[0] = new InboundMessage(
+            var chunks = new InboundEnvelope[3];
+            chunks[0] = new InboundEnvelope(
                 originalSerializedMessage.AsMemory().Slice(0, 300).ToArray(),
                 new[]
                 {
@@ -40,8 +40,8 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     new MessageHeader(MessageHeader.ChunkIdKey, "0"),
                     new MessageHeader(MessageHeader.ChunksCountKey, "3"),
                 },
-                null, TestConsumerEndpoint.GetDefault(), true);
-            chunks[1] = new InboundMessage(
+                null, TestConsumerEndpoint.GetDefault());
+            chunks[1] = new InboundEnvelope(
                 originalSerializedMessage.AsMemory().Slice(300, 300).ToArray(),
                 new[]
                 {
@@ -49,8 +49,8 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     new MessageHeader(MessageHeader.ChunkIdKey, "1"),
                     new MessageHeader(MessageHeader.ChunksCountKey, "3"),
                 },
-                null, TestConsumerEndpoint.GetDefault(), true);
-            chunks[2] = new InboundMessage(
+                null, TestConsumerEndpoint.GetDefault());
+            chunks[2] = new InboundEnvelope(
                 originalSerializedMessage.AsMemory().Slice(600).ToArray(),
                 new[]
                 {
@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     new MessageHeader(MessageHeader.ChunkIdKey, "2"),
                     new MessageHeader(MessageHeader.ChunksCountKey, "3"),
                 },
-                null, TestConsumerEndpoint.GetDefault(), true);
+                null, TestConsumerEndpoint.GetDefault());
 
             var result = await new ChunkConsumer(_store).JoinIfComplete(chunks[0]);
             result.Should().BeNull();

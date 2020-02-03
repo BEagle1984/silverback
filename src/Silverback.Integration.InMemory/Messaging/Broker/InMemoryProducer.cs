@@ -22,11 +22,11 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Producer" />
-        protected override IOffset Produce(RawBrokerMessage message) =>
-            Broker.GetTopic(Endpoint.Name).Publish(message.RawContent, message.Headers);
+        protected override IOffset Produce(RawBrokerEnvelope envelope) =>
+            Broker.GetTopic(Endpoint.Name).Publish(envelope.RawMessage, envelope.Headers);
 
         /// <inheritdoc cref="Producer" />
-        protected override Task<IOffset> ProduceAsync(RawBrokerMessage message) =>
-            Broker.GetTopic(Endpoint.Name).PublishAsync(message.RawContent, message.Headers);
+        protected override Task<IOffset> ProduceAsync(RawBrokerEnvelope envelope) =>
+            Broker.GetTopic(Endpoint.Name).PublishAsync(envelope.RawMessage, envelope.Headers);
     }
 }

@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Batch
         private readonly IErrorPolicy _errorPolicy;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly Func<IReadOnlyCollection<IInboundMessage>, IServiceProvider, Task> _messagesHandler;
+        private readonly Func<IReadOnlyCollection<IInboundEnvelope>, IServiceProvider, Task> _messagesHandler;
         private readonly Func<IReadOnlyCollection<IOffset>, IServiceProvider, Task> _commitHandler;
         private readonly Func<IServiceProvider, Task> _rollbackHandler;
 
@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Batch
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
 
-        private readonly List<IInboundMessage> _messages;
+        private readonly List<IInboundEnvelope> _envelopes;
         private readonly Timer _waitTimer;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Batch
 
         public MessageBatch(
             BatchSettings settings,
-            Func<IReadOnlyCollection<IInboundMessage>, IServiceProvider, Task> messagesHandler,
+            Func<IReadOnlyCollection<IInboundEnvelope>, IServiceProvider, Task> messagesHandler,
             Func<IReadOnlyCollection<IOffset>, IServiceProvider, Task> commitHandler,
             Func<IServiceProvider, Task> rollbackHandler,
             IErrorPolicy errorPolicy,
@@ -56,7 +56,7 @@ namespace Silverback.Messaging.Batch
             _errorPolicy = errorPolicy;
             _settings = settings;
 
-            _messages = new List<IInboundMessage>(_settings.Size);
+            _envelopes = new List<IInboundEnvelope>(_settings.Size);
 
             if (_settings.MaxWaitTime < TimeSpan.MaxValue)
             {
@@ -70,9 +70,9 @@ namespace Silverback.Messaging.Batch
 
         public Guid CurrentBatchId { get; private set; }
 
-        public int CurrentSize => _messages.Count;
+        public int CurrentSize => _envelopes.Count;
 
-        public async Task AddMessage(IInboundMessage message)
+        public async Task AddMessage(IInboundEnvelope envelope)
         {
             // TODO: Check this!
             if (_processingException != null)
@@ -84,16 +84,16 @@ namespace Silverback.Messaging.Batch
 
             try
             {
-                _messages.Add(message);
+                _envelopes.Add(envelope);
 
-                _messageLogger.LogInformation(_logger, "Message added to batch.", message);
+                _messageLogger.LogInformation(_logger, "Message added to batch.", envelope);
 
-                if (_messages.Count == 1)
+                if (_envelopes.Count == 1)
                 {
                     CurrentBatchId = Guid.NewGuid();
                     _waitTimer?.Start();
                 }
-                else if (_messages.Count == _settings.Size)
+                else if (_envelopes.Count == _settings.Size)
                 {
                     await ProcessBatch();
                 }
@@ -114,7 +114,7 @@ namespace Silverback.Messaging.Batch
 
                     try
                     {
-                        if (_messages.Any())
+                        if (_envelopes.Any())
                             await ProcessBatch();
                     }
                     finally
@@ -129,14 +129,14 @@ namespace Silverback.Messaging.Batch
         {
             try
             {
-                AddHeaders(_messages);
+                AddHeaders(_envelopes);
 
                 await _errorPolicyHelper.TryProcessAsync(
-                    _messages,
+                    _envelopes,
                     _errorPolicy,
                     ProcessEachMessageAndPublishEvents);
 
-                _messages.Clear();
+                _envelopes.Clear();
             }
             catch (Exception ex)
             {
@@ -145,33 +145,33 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private void AddHeaders(IReadOnlyCollection<IInboundMessage> messages)
+        private void AddHeaders(IReadOnlyCollection<IInboundEnvelope> envelopes)
         {
-            foreach (var message in messages)
+            foreach (var envelope in envelopes)
             {
-                message.Headers.AddOrReplace(MessageHeader.BatchIdKey, CurrentBatchId);
-                message.Headers.AddOrReplace(MessageHeader.BatchSizeKey, CurrentSize);
+                envelope.Headers.AddOrReplace(MessageHeader.BatchIdKey, CurrentBatchId);
+                envelope.Headers.AddOrReplace(MessageHeader.BatchSizeKey, CurrentSize);
             }
         }
 
-        private async Task ProcessEachMessageAndPublishEvents(IReadOnlyCollection<IInboundMessage> messages)
+        private async Task ProcessEachMessageAndPublishEvents(IReadOnlyCollection<IInboundEnvelope> envelopes)
         {
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
 
             try
             {
-                await publisher.PublishAsync(new BatchCompleteEvent(CurrentBatchId, messages));
-                await _messagesHandler(messages, scope.ServiceProvider);
-                await publisher.PublishAsync(new BatchProcessedEvent(CurrentBatchId, messages));
+                await publisher.PublishAsync(new BatchCompleteEvent(CurrentBatchId, envelopes));
+                await _messagesHandler(envelopes, scope.ServiceProvider);
+                await publisher.PublishAsync(new BatchProcessedEvent(CurrentBatchId, envelopes));
 
-                await _commitHandler.Invoke(_messages.Select(m => m.Offset).ToList(), scope.ServiceProvider);
+                await _commitHandler.Invoke(envelopes.Select(m => m.Offset).ToList(), scope.ServiceProvider);
             }
             catch (Exception ex)
             {
                 await _rollbackHandler.Invoke(scope.ServiceProvider);
 
-                await publisher.PublishAsync(new BatchAbortedEvent(CurrentBatchId, messages, ex));
+                await publisher.PublishAsync(new BatchAbortedEvent(CurrentBatchId, envelopes, ex));
 
                 throw;
             }

@@ -18,14 +18,15 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        public Task Enqueue(IOutboundMessage message)
+        public Task Enqueue(IOutboundEnvelope envelope)
         {
             DbSet.Add(new OutboundMessage
             {
-                Content = message.RawContent ?? message.Endpoint.Serializer.Serialize(message.Content, message.Headers),
-                Headers = DefaultSerializer.Serialize((IEnumerable<MessageHeader>) message.Headers),
-                Endpoint = DefaultSerializer.Serialize(message.Endpoint),
-                EndpointName = message.Endpoint.Name,
+                Content = envelope.RawMessage ??
+                          envelope.Endpoint.Serializer.Serialize(envelope.Message, envelope.Headers),
+                Headers = DefaultSerializer.Serialize((IEnumerable<MessageHeader>) envelope.Headers),
+                Endpoint = DefaultSerializer.Serialize(envelope.Endpoint),
+                EndpointName = envelope.Endpoint.Name,
                 Created = DateTime.UtcNow
             });
 

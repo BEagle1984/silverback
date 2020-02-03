@@ -26,24 +26,24 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task OnMessageReceived_SingleMessage_Relayed()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>(new TestEventOne { Content = "Test" }, null,
+            var envelope = new OutboundEnvelope<TestEventOne>(new TestEventOne { Content = "Test" }, null,
                 TestProducerEndpoint.GetDefault());
 
-            await _connector.RelayMessage(outboundMessage);
+            await _connector.RelayMessage(envelope);
 
             _broker.ProducedMessages.Count.Should().Be(1);
-            _broker.ProducedMessages.First().Endpoint.Should().Be(outboundMessage.Endpoint);
+            _broker.ProducedMessages.First().Endpoint.Should().Be(envelope.Endpoint);
 
-            var producedMessage = outboundMessage.Endpoint.Serializer.Deserialize(
+            var producedMessage = envelope.Endpoint.Serializer.Deserialize(
                 _broker.ProducedMessages.First().Message,
                 new MessageHeaderCollection(_broker.ProducedMessages.First().Headers)) as TestEventOne;
-            producedMessage.Id.Should().Be(outboundMessage.Content.Id);
+            producedMessage.Id.Should().Be(envelope.Message.Id);
         }
 
         [Fact]
         public async Task OnMessageReceived_SingleMessage_HeadersSent()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>(
+            var envelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "Test" },
                 new[]
                 {
@@ -52,10 +52,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 },
                 TestProducerEndpoint.GetDefault());
 
-            await _connector.RelayMessage(outboundMessage);
+            await _connector.RelayMessage(envelope);
 
             _broker.ProducedMessages.Count.Should().Be(1);
-            _broker.ProducedMessages.First().Endpoint.Should().Be(outboundMessage.Endpoint);
+            _broker.ProducedMessages.First().Endpoint.Should().Be(envelope.Endpoint);
 
             var producedMessage = _broker.ProducedMessages.First();
             producedMessage.Headers.Should()

@@ -17,18 +17,18 @@ namespace Silverback.Messaging.Behaviors
 
         public Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
         {
-            messages.OfType<IOutboundMessage>().ForEach(SetPartitioningKey);
+            messages.OfType<IOutboundEnvelope>().ForEach(SetPartitioningKey);
             return next(messages);
         }
 
-        private void SetPartitioningKey(IOutboundMessage outboundMessage)
+        private void SetPartitioningKey(IOutboundEnvelope envelope)
         {
-            var key = KafkaKeyHelper.GetMessageKey(outboundMessage.Content);
+            var key = KafkaKeyHelper.GetMessageKey(envelope.Message);
 
             if (key == null)
                 return;
 
-            outboundMessage.Headers.AddOrReplace(KafkaProducer.PartitioningKeyHeaderKey, key);
+            envelope.Headers.AddOrReplace(KafkaProducer.PartitioningKeyHeaderKey, key);
         }
     }
 }

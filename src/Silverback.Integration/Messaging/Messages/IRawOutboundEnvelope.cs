@@ -3,11 +3,11 @@
 
 namespace Silverback.Messaging.Messages
 {
-    public interface IBrokerMessage : IRawBrokerMessage
+    public interface IRawOutboundEnvelope : IRawBrokerEnvelope
     {
         /// <summary>
-        ///     Gets the deserialized message body.
+        ///     Gets the destination endpoint.
         /// </summary>
-        object Content { get; }
+        new IProducerEndpoint Endpoint { get; }
     }
 }

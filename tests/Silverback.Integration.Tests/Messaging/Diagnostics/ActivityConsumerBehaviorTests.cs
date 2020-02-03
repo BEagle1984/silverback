@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public async Task Handle_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
         {
-            var rawMessage = new RawInboundMessage(
+            var rawEnvelope = new RawInboundEnvelope(
                 "123",
                 new MessageHeaderCollection
                 {
@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 TestConsumerEndpoint.GetDefault());
 
             var entered = false;
-            await new ActivityConsumerBehavior().Handle(rawMessage, _ =>
+            await new ActivityConsumerBehavior().Handle(rawEnvelope, _ =>
             {
                 Activity.Current.Should().NotBeNull();
                 Activity.Current.ParentId.Should().Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
@@ -51,7 +51,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public void Handle_WithoutActivityHeaders_NewActivityIsStarted()
         {
-            var rawMessage = new RawInboundMessage(
+            var rawEnvelope = new RawInboundEnvelope(
                 "123",
                 new MessageHeaderCollection
                 {
@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 TestConsumerEndpoint.GetDefault());
 
             var entered = false;
-            new ActivityConsumerBehavior().Handle(rawMessage, _ =>
+            new ActivityConsumerBehavior().Handle(rawEnvelope, _ =>
             {
                 Activity.Current.Should().NotBeNull();
                 Activity.Current.Id.Should().NotBeNullOrEmpty();
@@ -84,7 +84,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             var serviceProvider = services.BuildServiceProvider();
             var broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
 
-            var rawMessage = new RawInboundMessage(
+            var rawEnvelope = new RawInboundEnvelope(
                 "123",
                 new MessageHeaderCollection
                 {
@@ -106,7 +106,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             };
 
             broker.Connect();
-            await consumer.TestPush(rawMessage.RawContent, rawMessage.Headers);
+            await consumer.TestPush(rawEnvelope.RawMessage, rawEnvelope.Headers);
 
             entered.Should().BeTrue();
         }

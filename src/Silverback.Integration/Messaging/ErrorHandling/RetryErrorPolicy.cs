@@ -36,26 +36,26 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundMessage> messages, Exception exception)
+        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception)
         {
-            ApplyDelay(messages);
+            ApplyDelay(envelopes);
 
-            _messageLogger.LogInformation(_logger, "The message(s) will be processed again.", messages);
+            _messageLogger.LogInformation(_logger, "The message(s) will be processed again.", envelopes);
 
             return ErrorAction.Retry;
         }
 
-        private void ApplyDelay(IReadOnlyCollection<IInboundMessage> messages)
+        private void ApplyDelay(IReadOnlyCollection<IInboundEnvelope> envelopes)
         {
             var delay = _initialDelay.Milliseconds +
-                        messages.First().Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey) *
+                        envelopes.First().Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey) *
                         _delayIncrement.Milliseconds;
 
             if (delay <= 0)
                 return;
 
             _messageLogger.LogTrace(_logger, $"Waiting {delay} milliseconds before retrying to process the message(s).",
-                messages);
+                envelopes);
             Thread.Sleep(delay);
         }
     }

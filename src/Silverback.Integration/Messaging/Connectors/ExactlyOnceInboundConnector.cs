@@ -31,26 +31,26 @@ namespace Silverback.Messaging.Connectors
         }
 
         protected override async Task RelayMessages(
-            IEnumerable<IInboundMessage> messages,
+            IEnumerable<IInboundEnvelope> envelopes,
             IServiceProvider serviceProvider)
         {
-            messages = await EnsureExactlyOnce(messages, serviceProvider);
+            envelopes = await EnsureExactlyOnce(envelopes, serviceProvider);
 
-            await base.RelayMessages(messages, serviceProvider);
+            await base.RelayMessages(envelopes, serviceProvider);
         }
 
-        private async Task<IEnumerable<IInboundMessage>> EnsureExactlyOnce(
-            IEnumerable<IInboundMessage> messages,
+        private async Task<IEnumerable<IInboundEnvelope>> EnsureExactlyOnce(
+            IEnumerable<IInboundEnvelope> envelopes,
             IServiceProvider serviceProvider) =>
-            await messages.WhereAsync(async message =>
+            await envelopes.WhereAsync(async envelope =>
             {
-                if (await MustProcess(message, serviceProvider))
+                if (await MustProcess(envelope, serviceProvider))
                     return true;
 
-                _messageLogger.LogDebug(Logger, "Message is being skipped since it was already processed.", message);
+                _messageLogger.LogDebug(Logger, "Message is being skipped since it was already processed.", envelope);
                 return false;
             });
 
-        protected abstract Task<bool> MustProcess(IInboundMessage message, IServiceProvider serviceProvider);
+        protected abstract Task<bool> MustProcess(IInboundEnvelope envelope, IServiceProvider serviceProvider);
     }
 }

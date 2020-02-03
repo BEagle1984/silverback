@@ -10,10 +10,10 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class WrappedInboundMessageSubscriber : ISubscriber
     {
-        public List<IInboundMessage<object>> ReceivedMessages { get; } = new List<IInboundMessage<object>>();
+        public List<IInboundEnvelope<object>> ReceivedEnvelopes { get; } = new List<IInboundEnvelope<object>>();
 
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
-        void OnMessageReceived(IInboundMessage<object> message) => ReceivedMessages.Add(message);
+        void OnMessageReceived(IInboundEnvelope<object> envelope) => ReceivedEnvelopes.Add(envelope);
     }
 }

@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         private readonly TestBroker _broker;
         private readonly OutboundQueueWorker _worker;
 
-        private readonly OutboundMessage _sampleOutboundMessage;
+        private readonly OutboundEnvelope _sampleOutboundEnvelope;
 
         public OutboundQueueWorkerTests()
         {
@@ -53,19 +53,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             InMemoryOutboundQueue.Clear();
 
-            _sampleOutboundMessage = new OutboundMessage<TestEventOne>(
+            _sampleOutboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "Test" }, null, TestProducerEndpoint.GetDefault());
-            _sampleOutboundMessage.RawContent =
-                new JsonMessageSerializer().Serialize(_sampleOutboundMessage.Content, _sampleOutboundMessage.Headers);
+            _sampleOutboundEnvelope.RawMessage =
+                new JsonMessageSerializer().Serialize(_sampleOutboundEnvelope.Message, _sampleOutboundEnvelope.Headers);
         }
 
         [Fact]
         public async Task ProcessQueue_SomeMessages_Produced()
         {
-            await _queue.Enqueue(new OutboundMessage<TestEventOne>(
+            await _queue.Enqueue(new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "Test" }, null,
                 new TestProducerEndpoint("topic1")));
-            await _queue.Enqueue(new OutboundMessage<TestEventOne>(
+            await _queue.Enqueue(new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "Test" }, null,
                 new TestProducerEndpoint("topic2")));
             await _queue.Commit();
@@ -80,8 +80,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_RunTwice_ProducedOnce()
         {
-            await _queue.Enqueue(_sampleOutboundMessage);
-            await _queue.Enqueue(_sampleOutboundMessage);
+            await _queue.Enqueue(_sampleOutboundEnvelope);
+            await _queue.Enqueue(_sampleOutboundEnvelope);
             await _queue.Commit();
 
             await _worker.ProcessQueue(CancellationToken.None);
@@ -93,13 +93,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_RunTwice_ProducedNewMessages()
         {
-            await _queue.Enqueue(_sampleOutboundMessage);
-            await _queue.Enqueue(_sampleOutboundMessage);
+            await _queue.Enqueue(_sampleOutboundEnvelope);
+            await _queue.Enqueue(_sampleOutboundEnvelope);
             await _queue.Commit();
 
             await _worker.ProcessQueue(CancellationToken.None);
 
-            await _queue.Enqueue(_sampleOutboundMessage);
+            await _queue.Enqueue(_sampleOutboundEnvelope);
             await _queue.Commit();
 
             await _worker.ProcessQueue(CancellationToken.None);

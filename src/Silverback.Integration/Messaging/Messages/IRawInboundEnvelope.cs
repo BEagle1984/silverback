@@ -3,11 +3,11 @@
 
 namespace Silverback.Messaging.Messages
 {
-    public interface IRawInboundMessage
+    public interface IRawInboundEnvelope : IRawBrokerEnvelope
     {
         /// <summary>
         ///     Gets the source endpoint.
         /// </summary>
-        IConsumerEndpoint Endpoint { get; }
+        new IConsumerEndpoint Endpoint { get; }
     }
 }

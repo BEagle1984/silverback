@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
         [Fact]
         public void Handle_NoKeyMemberAttribute_KeyHeaderIsNotSet()
         {
-            var message = new OutboundMessage<NoKeyMembersMessage>(
+            var envelope = new OutboundEnvelope<NoKeyMembersMessage>(
                 new NoKeyMembersMessage
                 {
                     Id = Guid.NewGuid(),
@@ -28,16 +28,16 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaPartitioningKeyBehavior().Handle(new[] { message }, Task.FromResult);
+            new KafkaPartitioningKeyBehavior().Handle(new[] { envelope }, Task.FromResult);
 
-            message.Headers.Should().NotContain(
+            envelope.Headers.Should().NotContain(
                 h => h.Key == "x-kafka-partitioning-key");
         }
 
         [Fact]
         public void Handle_SingleKeyMemberAttribute_KeyHeaderIsSet()
         {
-            var message1 = new OutboundMessage<SingleKeyMemberMessage>(
+            var envelope1 = new OutboundEnvelope<SingleKeyMemberMessage>(
                 new SingleKeyMemberMessage
                 {
                     Id = Guid.NewGuid(),
@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 },
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
-            var message2 = new OutboundMessage<SingleKeyMemberMessage>(
+            var envelope2 = new OutboundEnvelope<SingleKeyMemberMessage>(
                 new SingleKeyMemberMessage
                 {
                     Id = Guid.NewGuid(),
@@ -58,18 +58,18 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaPartitioningKeyBehavior().Handle(new[] { message1, message2 }, Task.FromResult);
+            new KafkaPartitioningKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
 
-            message1.Headers.Should().ContainEquivalentOf(
+            envelope1.Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-kafka-partitioning-key", "1"));
-            message2.Headers.Should().ContainEquivalentOf(
+            envelope2.Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-kafka-partitioning-key", "a"));
         }
 
         [Fact]
         public void Handle_MultipleKeyMemberAttributes_KeyHeaderIsSet()
         {
-            var message1 = new OutboundMessage<MultipleKeyMembersMessage>(
+            var envelope1 = new OutboundEnvelope<MultipleKeyMembersMessage>(
                 new MultipleKeyMembersMessage
                 {
                     Id = Guid.NewGuid(),
@@ -79,7 +79,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 },
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
-            var message2 = new OutboundMessage<MultipleKeyMembersMessage>(
+            var envelope2 = new OutboundEnvelope<MultipleKeyMembersMessage>(
                 new MultipleKeyMembersMessage
                 {
                     Id = Guid.NewGuid(),
@@ -90,11 +90,11 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaPartitioningKeyBehavior().Handle(new[] { message1, message2 }, Task.FromResult);
+            new KafkaPartitioningKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
 
-            message1.Headers.Should().ContainEquivalentOf(
+            envelope1.Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-kafka-partitioning-key", "One=1,Two=2"));
-            message2.Headers.Should().ContainEquivalentOf(
+            envelope2.Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-kafka-partitioning-key", "One=a,Two=b"));
         }
     }

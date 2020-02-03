@@ -26,9 +26,9 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundMessage> messages, Exception exception)
+        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception)
         {
-            _messageLogger.LogWarning(_logger, exception, "The message(s) will be skipped.", messages);
+            _messageLogger.LogWarning(_logger, exception, "The message(s) will be skipped.", envelopes);
 
             return ErrorAction.Skip;
         }

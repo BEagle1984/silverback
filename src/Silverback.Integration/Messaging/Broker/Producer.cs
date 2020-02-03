@@ -51,60 +51,60 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IProducer" />
         public void Produce(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
-            GetRawMessages(message, headers)
-                .ForEach(rawMessage =>
-                    ExecutePipeline(_behaviors, rawMessage, x =>
+            GetRawEnvelopes(message, headers)
+                .ForEach(envelope =>
+                    ExecutePipeline(_behaviors, envelope, finalEnvelope =>
                     {
-                        x.Offset = Produce(x);
+                        finalEnvelope.Offset = Produce(finalEnvelope);
                         return Task.CompletedTask;
                     }).Wait());
 
         /// <inheritdoc cref="IProducer" />
         public Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
-            GetRawMessages(message, headers)
-                .ForEachAsync(async rawMessage =>
-                    await ExecutePipeline(_behaviors, rawMessage, async x =>
-                        x.Offset = await ProduceAsync(x)));
+            GetRawEnvelopes(message, headers)
+                .ForEachAsync(async envelope =>
+                    await ExecutePipeline(_behaviors, envelope, async finalEnvelope =>
+                        finalEnvelope.Offset = await ProduceAsync(finalEnvelope)));
 
-        private IEnumerable<RawOutboundMessage> GetRawMessages(object content, IEnumerable<MessageHeader> headers)
+        private IEnumerable<RawOutboundEnvelope> GetRawEnvelopes(object content, IEnumerable<MessageHeader> headers)
         {
             var headersCollection = new MessageHeaderCollection(headers);
             _messageIdProvider.EnsureKeyIsInitialized(content, headersCollection);
-            var rawMessage = new RawOutboundMessage(content, headersCollection, Endpoint);
+            var rawMessage = new RawOutboundEnvelope(content, headersCollection, Endpoint);
 
             return ChunkProducer.ChunkIfNeeded(rawMessage);
         }
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IProducerBehavior> behaviors,
-            RawBrokerMessage message,
+            RawBrokerEnvelope envelope,
             RawBrokerMessageHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
                 await behaviors.First()
-                    .Handle(message, m => ExecutePipeline(behaviors.Skip(1).ToList(), m, finalAction));
+                    .Handle(envelope, m => ExecutePipeline(behaviors.Skip(1).ToList(), m, finalAction));
             }
             else
             {
-                await finalAction(message);
-                _messageLogger.LogInformation(_logger, "Message produced.", message);
+                await finalAction(envelope);
+                _messageLogger.LogInformation(_logger, "Message produced.", envelope);
             }
         }
 
         /// <summary>
         ///     Publishes the specified message and returns its offset.
         /// </summary>
-        /// <param name="message">The <see cref="RawBrokerMessage" /> instance containing body, headers, endpoint, etc.</param>
+        /// <param name="envelope">The <see cref="RawBrokerEnvelope" /> instance containing body, headers, endpoint, etc.</param>
         /// <returns>The message offset.</returns>
-        protected abstract IOffset Produce(RawBrokerMessage message);
+        protected abstract IOffset Produce(RawBrokerEnvelope envelope);
 
         /// <summary>
         ///     Publishes the specified message and returns its offset.
         /// </summary>
-        /// <param name="message">The <see cref="RawBrokerMessage" /> instance containing body, headers, endpoint, etc.</param>
+        /// <param name="envelope">The <see cref="RawBrokerEnvelope" /> instance containing body, headers, endpoint, etc.</param>
         /// <returns>The message offset.</returns>
-        protected abstract Task<IOffset> ProduceAsync(RawBrokerMessage message);
+        protected abstract Task<IOffset> ProduceAsync(RawBrokerEnvelope envelope);
     }
 
     public abstract class Producer<TBroker, TEndpoint> : Producer

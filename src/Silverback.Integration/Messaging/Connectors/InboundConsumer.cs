@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Connectors
         private readonly IErrorPolicy _errorPolicy;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly Func<IReadOnlyCollection<IInboundMessage>, IServiceProvider, Task> _messagesHandler;
+        private readonly Func<IReadOnlyCollection<IInboundEnvelope>, IServiceProvider, Task> _messagesHandler;
         private readonly Func<IServiceProvider, Task> _commitHandler;
         private readonly Func<IServiceProvider, Task> _rollbackHandler;
 
@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Connectors
             IBroker broker,
             IConsumerEndpoint endpoint,
             InboundConnectorSettings settings,
-            Func<IReadOnlyCollection<IInboundMessage>, IServiceProvider, Task> messagesHandler,
+            Func<IReadOnlyCollection<IInboundEnvelope>, IServiceProvider, Task> messagesHandler,
             Func<IServiceProvider, Task> commitHandler,
             Func<IServiceProvider, Task> rollbackHandler,
             IErrorPolicy errorPolicy,
@@ -84,29 +84,29 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        private IInboundMessage CreateInboundMessage(MessageReceivedEventArgs args) =>
-            new InboundMessage(args.Message, _settings.UnwrapMessages);
+        private IInboundEnvelope CreateInboundMessage(MessageReceivedEventArgs args) =>
+            new InboundEnvelope(args.Envelope);
 
-        private async Task ProcessSingleMessage(IInboundMessage message) =>
+        private async Task ProcessSingleMessage(IInboundEnvelope envelope) =>
             await _errorPolicyHelper.TryProcessAsync(
-                new[] { message },
+                new[] { envelope },
                 _errorPolicy,
-                async messages =>
+                async envelopes =>
                 {
                     using var scope = _serviceProvider.CreateScope();
-                    await RelayAndCommitSingleMessage(messages, scope.ServiceProvider);
+                    await RelayAndCommitSingleMessage(envelopes, scope.ServiceProvider);
                 });
 
         private async Task RelayAndCommitSingleMessage(
-            IReadOnlyCollection<IInboundMessage> messages,
+            IReadOnlyCollection<IInboundEnvelope> envelopes,
             IServiceProvider serviceProvider)
         {
             IReadOnlyCollection<IOffset> offsets = null;
             try
             {
-                offsets = messages.Select(m => m.Offset).ToList();
+                offsets = envelopes.Select(m => m.Offset).ToList();
 
-                await _messagesHandler(messages, serviceProvider);
+                await _messagesHandler(envelopes, serviceProvider);
                 await Commit(offsets, serviceProvider);
             }
             catch (Exception)

@@ -29,11 +29,11 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             var activity = new Activity("test");
             activity.SetParentId("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
             activity.Start();
-            var rawMessage = new RawOutboundMessage("123", null, TestProducerEndpoint.GetDefault());
+            var rawEnvelope = new RawOutboundEnvelope("123", null, TestProducerEndpoint.GetDefault());
 
-            new ActivityProducerBehavior().Handle(rawMessage, _ => Task.CompletedTask);
+            new ActivityProducerBehavior().Handle(rawEnvelope, _ => Task.CompletedTask);
 
-            rawMessage.Headers.Should().Contain(
+            rawEnvelope.Headers.Should().Contain(
                 h => h.Key == DiagnosticsConstants.TraceIdHeaderKey &&
                      h.Value.StartsWith("00-0af7651916cd43dd8448eb211c80319c"));
         }
@@ -41,11 +41,11 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public void Handle_NoStartedActivity_ActivityStartedAndTraceIdHeaderIsSet()
         {
-            var rawMessage = new RawOutboundMessage("123", null, TestProducerEndpoint.GetDefault());
+            var rawEnvelope = new RawOutboundEnvelope("123", null, TestProducerEndpoint.GetDefault());
 
-            new ActivityProducerBehavior().Handle(rawMessage, _ => Task.CompletedTask);
+            new ActivityProducerBehavior().Handle(rawEnvelope, _ => Task.CompletedTask);
 
-            rawMessage.Headers.Should().Contain(
+            rawEnvelope.Headers.Should().Contain(
                 h => h.Key == DiagnosticsConstants.TraceIdHeaderKey && !string.IsNullOrEmpty(h.Value));
         }
 

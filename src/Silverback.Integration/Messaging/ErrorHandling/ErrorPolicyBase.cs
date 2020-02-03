@@ -18,7 +18,7 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly MessageLogger _messageLogger;
         private readonly List<Type> _excludedExceptions = new List<Type>();
         private readonly List<Type> _includedExceptions = new List<Type>();
-        private Func<IInboundMessage, Exception, bool> _applyRule;
+        private Func<IInboundEnvelope, Exception, bool> _applyRule;
 
 
         protected ErrorPolicyBase(
@@ -31,7 +31,7 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        internal Func<IReadOnlyCollection<IInboundMessage>, object> MessageToPublishFactory { get; private set; }
+        internal Func<IReadOnlyCollection<IInboundEnvelope>, object> MessageToPublishFactory { get; private set; }
 
         internal int MaxFailedAttemptsSetting { get; private set; } = -1;
 
@@ -91,7 +91,7 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="applyRule">The predicate.</param>
         /// <returns></returns>
-        public ErrorPolicyBase ApplyWhen(Func<IInboundMessage, Exception, bool> applyRule)
+        public ErrorPolicyBase ApplyWhen(Func<IInboundEnvelope, Exception, bool> applyRule)
         {
             _applyRule = applyRule;
             return this;
@@ -118,30 +118,30 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="factory">The factory returning the message to be published.</param>
         /// <returns></returns>
-        public ErrorPolicyBase Publish(Func<IReadOnlyCollection<IInboundMessage>, object> factory)
+        public ErrorPolicyBase Publish(Func<IReadOnlyCollection<IInboundEnvelope>, object> factory)
         {
             MessageToPublishFactory = factory;
             return this;
         }
 
-        public virtual bool CanHandle(IReadOnlyCollection<IInboundMessage> messages, Exception exception) =>
-            messages.All(msg => CanHandle(msg, exception)); // TODO: Check this
+        public virtual bool CanHandle(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception) =>
+            envelopes.All(envelope => CanHandle(envelope, exception)); // TODO: Check this
 
-        public virtual bool CanHandle(IInboundMessage message, Exception exception)
+        public virtual bool CanHandle(IInboundEnvelope envelope, Exception exception)
         {
-            if (message == null)
+            if (envelope == null)
             {
                 _logger.LogTrace($"The policy '{GetType().Name}' cannot be applied because the message is null.");
                 return false;
             }
 
-            var failedAttempts = message.Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey);
+            var failedAttempts = envelope.Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey);
             if (MaxFailedAttemptsSetting >= 0 && failedAttempts > MaxFailedAttemptsSetting)
             {
                 _messageLogger.LogTrace(_logger,
                     $"The policy '{GetType().Name}' will be skipped because the current failed attempts " +
                     $"({failedAttempts}) exceeds the configured maximum attempts " +
-                    $"({MaxFailedAttemptsSetting}).", message);
+                    $"({MaxFailedAttemptsSetting}).", envelope);
 
                 return false;
             }
@@ -150,7 +150,7 @@ namespace Silverback.Messaging.ErrorHandling
             {
                 _messageLogger.LogTrace(_logger,
                     $"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
-                    "is not in the list of handled exceptions.", message);
+                    "is not in the list of handled exceptions.", envelope);
 
                 return false;
             }
@@ -159,36 +159,36 @@ namespace Silverback.Messaging.ErrorHandling
             {
                 _messageLogger.LogTrace(_logger,
                     $"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
-                    "is in the list of excluded exceptions.", message);
+                    "is in the list of excluded exceptions.", envelope);
 
                 return false;
             }
 
-            if (_applyRule != null && !_applyRule.Invoke(message, exception))
+            if (_applyRule != null && !_applyRule.Invoke(envelope, exception))
             {
                 _messageLogger.LogTrace(_logger,
                     $"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
-                    "evaluated and returned false.", message);
+                    "evaluated and returned false.", envelope);
                 return false;
             }
 
             return true;
         }
 
-        public ErrorAction HandleError(IReadOnlyCollection<IInboundMessage> messages, Exception exception)
+        public ErrorAction HandleError(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception)
         {
-            var result = ApplyPolicy(messages, exception);
+            var result = ApplyPolicy(envelopes, exception);
 
             if (MessageToPublishFactory != null)
             {
                 using var scope = _serviceProvider.CreateScope();
                 scope.ServiceProvider.GetRequiredService<IPublisher>()
-                    .Publish(MessageToPublishFactory.Invoke(messages));
+                    .Publish(MessageToPublishFactory.Invoke(envelopes));
             }
 
             return result;
         }
 
-        protected abstract ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundMessage> messages, Exception exception);
+        protected abstract ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception);
     }
 }

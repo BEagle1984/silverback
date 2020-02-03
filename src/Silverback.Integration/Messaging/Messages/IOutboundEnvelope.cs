@@ -3,7 +3,7 @@
 
 namespace Silverback.Messaging.Messages
 {
-    public interface IOutboundMessage : IBrokerMessage
+    public interface IOutboundEnvelope : IBrokerEnvelope
     {
         /// <summary>
         ///     Gets the destination endpoint.
@@ -11,11 +11,11 @@ namespace Silverback.Messaging.Messages
         new IProducerEndpoint Endpoint { get; }
     }
 
-    public interface IOutboundMessage<out TContent> : IOutboundMessage
+    public interface IOutboundEnvelope<out TMessage> : IOutboundEnvelope
     {
         /// <summary>
         ///     Gets the deserialized message body.
         /// </summary>
-        new TContent Content { get; }
+        new TMessage Message { get; }
     }
 }

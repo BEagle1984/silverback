@@ -162,13 +162,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), null);
 
             var messages = new[] { new TestEventOne(), new TestEventOne() };
-            var wrappedMessages = messages.Select(message =>
-                new InboundMessage<TestEventOne>(new byte[1], null, null, TestConsumerEndpoint.GetDefault(), true)
+            var envelopes = messages.Select(message =>
+                new InboundEnvelope<TestEventOne>(new byte[1], null, null, TestConsumerEndpoint.GetDefault())
                 {
-                    Content = message
+                    Message = message
                 }).ToList();
 
-            await _behavior.Handle(wrappedMessages, Task.FromResult);
+            await _behavior.Handle(envelopes, Task.FromResult);
             await _behavior.Handle(messages, Task.FromResult);
             await _outboundQueue.Commit();
 

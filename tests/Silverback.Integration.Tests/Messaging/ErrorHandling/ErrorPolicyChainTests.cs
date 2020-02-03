@@ -49,10 +49,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             chain.HandleError(new[]
             {
-                new InboundMessage(
+                new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault(), true)
+                    null, TestConsumerEndpoint.GetDefault())
             }, new Exception("test"));
 
             testPolicy.Applied.Should().Be(failedAttempts > 3);
@@ -71,10 +71,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var action = chain.HandleError(new[]
             {
-                new InboundMessage(
+                new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault(), true)
+                    null, TestConsumerEndpoint.GetDefault())
             }, new Exception("test"));
 
             action.Should().Be(expectedAction);
@@ -101,10 +101,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             chain.HandleError(new[]
             {
-                new InboundMessage(
+                new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault(), true)
+                    null, TestConsumerEndpoint.GetDefault())
             }, new Exception("test"));
 
             for (var i = 0; i < policies.Length; i++)

@@ -18,9 +18,9 @@ namespace Silverback.Messaging.LargeMessages
             _store = store;
         }
 
-        public async Task<byte[]> JoinIfComplete(IInboundMessage message)
+        public async Task<byte[]> JoinIfComplete(IInboundEnvelope envelope)
         {
-            var (messageId, chunkId, chunksCount) = ExtractHeadersValues(message);
+            var (messageId, chunkId, chunksCount) = ExtractHeadersValues(envelope);
 
             var count = await _store.CountChunks(messageId);
 
@@ -30,7 +30,7 @@ namespace Silverback.Messaging.LargeMessages
                 if (chunks.ContainsKey(chunkId))
                     return null;
 
-                chunks.Add(chunkId, message.RawContent);
+                chunks.Add(chunkId, envelope.RawMessage);
 
                 var completeMessage = Join(chunks);
 
@@ -40,18 +40,18 @@ namespace Silverback.Messaging.LargeMessages
             }
             else
             {
-                await _store.Store(messageId, chunkId, chunksCount, message.RawContent);
+                await _store.Store(messageId, chunkId, chunksCount, envelope.RawMessage);
                 return null;
             }
         }
 
-        private (string messageId, int chinkId, int chunksCount) ExtractHeadersValues(IInboundMessage message)
+        private (string messageId, int chinkId, int chunksCount) ExtractHeadersValues(IInboundEnvelope envelope)
         {
-            var messageId = message.Headers.GetValue(MessageHeader.MessageIdKey);
+            var messageId = envelope.Headers.GetValue(MessageHeader.MessageIdKey);
 
-            var chunkId = message.Headers.GetValue<int>(MessageHeader.ChunkIdKey);
+            var chunkId = envelope.Headers.GetValue<int>(MessageHeader.ChunkIdKey);
 
-            var chunksCount = message.Headers.GetValue<int>(MessageHeader.ChunksCountKey);
+            var chunksCount = envelope.Headers.GetValue<int>(MessageHeader.ChunksCountKey);
 
             if (string.IsNullOrEmpty(messageId))
                 throw new InvalidOperationException("Message id header not found or invalid.");

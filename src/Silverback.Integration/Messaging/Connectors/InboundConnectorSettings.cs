@@ -18,13 +18,6 @@ namespace Silverback.Messaging.Connectors
         /// </summary>
         public int Consumers { get; set; } = 1;
 
-        /// <summary>
-        ///     When set to <c>true</c> the incoming messages will be unwrapped (and published twice to the internal bus),
-        ///     otherwise they will only be published wrapped into an <see cref="IInboundMessage{TContent}" />. Default is
-        ///     <c>true</c>.
-        /// </summary>
-        public bool UnwrapMessages { get; set; } = true;
-
         public void Validate()
         {
             if (Batch == null)

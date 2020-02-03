@@ -27,10 +27,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var action = _policy.HandleError(new[]
             {
-                new InboundMessage(
+                new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault(), true)
+                    null, TestConsumerEndpoint.GetDefault()), 
             }, new Exception("test"));
 
             action.Should().Be(expectedAction);

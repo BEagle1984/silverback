@@ -52,7 +52,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         [Fact]
         public async Task Handle_OutboundMessage_CorrectlyRelayed()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>(
+            var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 new MessageHeader[0],
                 new OutboundRoutingConfiguration.OutboundRoute(
@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                     TestProducerEndpoint.GetDefault(),
                     typeof(OutboundConnector)));
 
-            await _behavior.Handle(new[] { outboundMessage, outboundMessage, outboundMessage }, Task.FromResult);
+            await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult);
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(10);
@@ -71,7 +71,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         [Fact]
         public async Task Handle_OutboundMessage_RelayedViaTheRightConnector()
         {
-            var outboundMessage = new OutboundMessage<TestEventOne>(
+            var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 new MessageHeader[0],
                 new OutboundRoutingConfiguration.OutboundRoute(
@@ -79,7 +79,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                     TestProducerEndpoint.GetDefault(),
                     typeof(DeferredOutboundConnector)));
 
-            await _behavior.Handle(new[] { outboundMessage, outboundMessage, outboundMessage }, Task.FromResult);
+            await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult);
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(10);

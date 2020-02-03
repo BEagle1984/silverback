@@ -46,17 +46,17 @@ namespace Silverback.Messaging.ErrorHandling
                     "One or more policies in the chain have a null value.");
         }
 
-        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundMessage> messages, Exception exception)
+        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception)
         {
             foreach (var policy in _policies)
             {
-                if (policy.CanHandle(messages, exception))
-                    return policy.HandleError(messages, exception);
+                if (policy.CanHandle(envelopes, exception))
+                    return policy.HandleError(envelopes, exception);
             }
 
             _messageLogger.LogDebug(_logger,
                 "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.",
-                messages);
+                envelopes);
             return ErrorAction.StopConsuming;
         }
 

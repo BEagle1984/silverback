@@ -27,8 +27,8 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
             var headers = new MessageHeaderCollection();
             var serializedMessage = _serializer.Serialize(message, headers);
-            var rawBrokerMessage =
-                new RawOutboundMessage(message, headers,
+            var rawEnvelope =
+                new RawOutboundEnvelope(message, headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings
@@ -37,13 +37,13 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                         }
                     })
                 {
-                    RawContent = serializedMessage
+                    RawMessage = serializedMessage
                 };
 
-            var chunks = ChunkProducer.ChunkIfNeeded(rawBrokerMessage);
+            var chunks = ChunkProducer.ChunkIfNeeded(rawEnvelope);
 
             chunks.Should().HaveCount(1);
-            chunks.First().Should().BeEquivalentTo(rawBrokerMessage);
+            chunks.First().Should().BeEquivalentTo(rawEnvelope);
         }
 
         [Fact]
@@ -60,8 +60,8 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
 
             var serializedMessage = _serializer.Serialize(message, headers);
-            var rawBrokerMessage =
-                new RawOutboundMessage(message, headers,
+            var rawEnvelope =
+                new RawOutboundEnvelope(message, headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings
@@ -70,13 +70,13 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                         }
                     })
                 {
-                    RawContent = serializedMessage
+                    RawMessage = serializedMessage
                 };
 
-            var chunks = ChunkProducer.ChunkIfNeeded(rawBrokerMessage);
+            var chunks = ChunkProducer.ChunkIfNeeded(rawEnvelope).ToList();
 
             chunks.Should().HaveCount(4);
-            chunks.Should().Match(c => c.All(m => m.RawContent.Length < 1000));
+            chunks.Should().Match(c => c.All(m => m.RawMessage.Length < 1000));
         }
 
         private byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte) 255).ToArray();
