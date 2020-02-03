@@ -10,9 +10,11 @@ toc: true
 * Created `Silverback.Integration.RabbitMQ` (see XY)
 
 ### Breaking Changes
-* The `IBroker`, `IProduer` and `IConsumer` interfaces have been slightly modified (it shouldn't affect you unless you built your own `IBroker` implementation)
+* The `IBroker`, `IProducer` and `IConsumer` interfaces have been slightly modified (it shouldn't affect you unless you built your own `IBroker` implementation)
 * Many interfaces (such as `IBehavior`) and delegates have been sligthly modified to pass around an `IReadOnlyCollection<T>` instead of an `IEnumerable<T>`, to avoid the possible issues related to multiple enumeration of an `IEnumerable`
 * The `IMessageKeyProvider` interface has been renamed to `IMessageIdProvider` to prevent to be mistaken with the Kafka Key or Rabbit's Routing Key
+* `IInboundMessage`/`IOutboundMessage` (plus all the related types) have been renamed to `IInboundEnvelope`/`IOutboundEnvelope` and the message body property has been renamed from `Content` to `Message`
+* The `MustUnwrap` option has been removed from the inbound connector configuration (messages are unwrapped by default)
 
 ## [1.2.0](https://github.com/BEagle1984/silverback/releases/tag/1.2.0)
 

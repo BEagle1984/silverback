@@ -8,7 +8,7 @@ The behaviors can be used to build a custom pipeline (similar to the asp.net pip
 
 ## IBehavior
 
-The behaviors implementing the `IBehavior` interface will be invoked by the `IPublisher` internals every time a message is published to the internal bus (this includes the wrapped `IInboundMessage` and `IOutboundMessages` that are generated to produce or consume a message from the message broker).
+The behaviors implementing the `IBehavior` interface will be invoked by the `IPublisher` internals every time a message is published to the internal bus (this includes the wrapped `IInboundMessage` and `IOutboundMessage` that are generated to produce or consume a message from the message broker).
 
 At every call to `IPublisher.Publish` the `Handle` method of each registered behavior is called, passing in the collection of messages and the delegate to the next step in the pipeline. This gives you the flexibility to execute any sort of code before and after the messages have been actually published (before or after calling the `next()` step). You can for example modify the messages before publishing them, validate them (like in the above example), add some logging / tracing, etc.
 
