@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 using Silverback.Util;
@@ -37,6 +38,12 @@ namespace Silverback.Messaging.Subscribers
             if (messageArgumentResolver == null)
                 return Array.Empty<object>();
 
+            // Unwrap envelopes only if the argument isn't an IEnvelope itself)
+            if (!typeof(IEnvelope).IsAssignableFrom(messageType))
+                messages = messages.Select(message => message is IEnvelope envelope
+                    ? envelope.Message
+                    : message).ToList();
+            
             messages = messages.OfType(messageType).ToList();
 
             if (!messages.Any())

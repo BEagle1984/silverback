@@ -53,7 +53,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
             [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
             public async Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
             {
-                foreach (var message in messages.OfType<IOutboundMessage>())
+                foreach (var message in messages.OfType<IOutboundEnvelope>())
                 {
                     message.Headers.Add("generated-by", "silverback");
                     message.Headers.Add("timestamp", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));

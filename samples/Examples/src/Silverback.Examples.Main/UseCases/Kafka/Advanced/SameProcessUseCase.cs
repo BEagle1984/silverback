@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -16,6 +17,8 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
 {
     public class SameProcessUseCase : UseCase
     {
+        private IBroker _broker;
+
         public SameProcessUseCase()
         {
             Title = "Producer and Consumer in the same process";
@@ -24,6 +27,7 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
                           "tricky with the earlier versions of Silverback but it now works naturally. " +
                           "Note: An inbound endpoint is added only to demonstrate that the feared 'mortal loop' is " +
                           "not an issue anymore.";
+            ExecutionsCount = 1;
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
@@ -35,9 +39,9 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
         {
             var logger = serviceProvider.GetService<ILogger<SameProcessUseCase>>();
 
-            configurator
+            _broker = configurator
                 .Subscribe((SimpleIntegrationEvent message) =>
-                    logger.LogInformation($"Received SimpleIntegrationEvent '{message.Content}"))
+                    logger.LogInformation($"Received SimpleIntegrationEvent '{message.Content}'"))
                 .Connect(endpoints => endpoints
                     .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events-sp")
                     {
@@ -73,6 +77,8 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
             while (Console.ReadKey(false).Key != ConsoleKey.Escape)
             {
             }
+            
+            _broker?.Disconnect();
         }
     }
 }

@@ -85,7 +85,7 @@ namespace Silverback.Examples.KafkaConsumer
                                 .Publish(messages => new MessageMovedEvent
                                 {
                                     Identifiers = messages
-                                        .Select(x => ((IIntegrationMessage) x?.Content)?.Id ?? Guid.Empty).ToList(),
+                                        .Select(x => ((IIntegrationMessage) x?.Message)?.Id ?? Guid.Empty).ToList(),
                                     Source = messages.First().Endpoint.Name,
                                     Destination = "silverback-examples-events"
                                 })))

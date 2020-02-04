@@ -56,7 +56,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
         private IEnumerable<MethodInfo> GetMethods(Type type) =>
             type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                 .Where(m => m.GetCustomAttribute<SubscribeAttribute>(true) != null ||
-                            _autoSubscribeAllPublicMethods && m.IsPublic &&
+                            _autoSubscribeAllPublicMethods && m.IsPublic && !m.IsSpecialName &&
                             m.DeclaringType == type && m.GetParameters().Any());
     }
 }

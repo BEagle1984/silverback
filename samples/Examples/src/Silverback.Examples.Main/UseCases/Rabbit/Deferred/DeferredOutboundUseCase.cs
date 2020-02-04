@@ -67,7 +67,7 @@ namespace Silverback.Examples.Main.UseCases.Rabbit.Deferred
         {
             public async Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
             {
-                foreach (var message in messages.OfType<IOutboundMessage>())
+                foreach (var message in messages.OfType<IOutboundEnvelope>())
                 {
                     message.Headers.Add("was-created", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                 }

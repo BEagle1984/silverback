@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
             _messageIdProvider = serviceProvider.GetRequiredService<MessageIdProvider>();
         }
 
-        public int SortIndex { get; } = 100;
+        public int SortIndex { get; } = 200;
 
         public async Task<IReadOnlyCollection<object>> Handle(
             IReadOnlyCollection<object> messages,
@@ -40,12 +40,12 @@ namespace Silverback.Messaging.Connectors.Behaviors
             var routedMessages = await WrapAndRepublishRoutedMessages(messages);
 
             if (!_routing.PublishOutboundMessagesToInternalBus)
-                messages = messages.Where(m => !routedMessages.Contains(m)).ToList();
+                messages = messages.Where(m => !(m is IOutboundEnvelope) && !routedMessages.Contains(m)).ToList();
 
             return await next(messages);
         }
 
-        private async Task<IEnumerable<object>> WrapAndRepublishRoutedMessages(IEnumerable<object> messages)
+        private async Task<IReadOnlyCollection<object>> WrapAndRepublishRoutedMessages(IEnumerable<object> messages)
         {
             var wrappedMessages = messages
                 //.Where(message => !(message is IOutboundEnvelope) &&
@@ -63,7 +63,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
                     .GetRequiredService<IPublisher>()
                     .PublishAsync(wrappedMessages);
 
-            return wrappedMessages.Select(m => m.Message);
+            return wrappedMessages.Select(m => m.Message).ToList();
         }
 
         private IOutboundEnvelope CreateOutboundEnvelope(object message, IOutboundRoute route)

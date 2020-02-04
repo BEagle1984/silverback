@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         Task<TimeSpan> GetMaxAge();
 
-        Task<IEnumerable<QueuedMessage>> Dequeue(int count);
+        Task<IReadOnlyCollection<QueuedMessage>> Dequeue(int count);
 
         /// <summary>
         ///     Re-enqueue the message to retry.
