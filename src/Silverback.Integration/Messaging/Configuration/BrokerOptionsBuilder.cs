@@ -107,8 +107,9 @@ namespace Silverback.Messaging.Configuration
             if (SilverbackBuilder.Services.All(s => s.ServiceType != typeof(IOutboundRoutingConfiguration)))
             {
                 SilverbackBuilder.Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
-                SilverbackBuilder.AddScopedBehavior<OutboundProducingBehavior>();
-                SilverbackBuilder.AddScopedBehavior<OutboundRoutingBehavior>();
+                SilverbackBuilder
+                    .AddScopedBehavior<OutboundRoutingBehavior>()
+                    .AddScopedBehavior<OutboundProducingBehavior>();
             }
 
             SilverbackBuilder.Services.AddScoped<IOutboundConnector, TConnector>();

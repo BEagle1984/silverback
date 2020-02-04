@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
             _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>();
         }
 
-        public int SortIndex { get; } = 1000;
+        public int SortIndex { get; } = 100;
 
         public async Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
         {

@@ -101,7 +101,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(1);
-            queued.Count().Should().Be(1);
+            queued.Count.Should().Be(1);
             _broker.ProducedMessages.Count.Should().Be(0);
         }
 
@@ -114,7 +114,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(1);
-            queued.Count().Should().Be(0);
+            queued.Count.Should().Be(0);
             _broker.ProducedMessages.Count.Should().Be(1);
         }
 
@@ -126,10 +126,28 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             var messages =
                 await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
 
-            messages.Count().Should().Be(1);
+            messages.Count.Should().Be(1);
             messages.First().Should().NotBeOfType<TestEventOne>();
         }
 
+        [Fact]
+        public async Task Handle_OutboundEnvelope_OutboundEnvelopeIsFiltered()
+        {
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
+
+            var messages =
+                await _behavior.Handle(
+                    new object[]
+                    {
+                        new OutboundEnvelope<TestEventOne>(
+                            new TestEventOne(), 
+                            null,
+                            new TestProducerEndpoint("eventOne"))
+                    }, Task.FromResult);
+
+            messages.Count.Should().Be(0);
+        }
+        
         [Fact]
         public async Task Handle_MessagesWithPublishToInternBusOption_RoutedMessageIsNotFiltered()
         {
@@ -139,7 +157,26 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             var messages =
                 await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
 
-            messages.Count().Should().Be(2);
+            messages.Count.Should().Be(2);
+        }
+        
+        [Fact]
+        public async Task Handle_OutboundEnvelopeWithPublishToInternBusOption_OutboundEnvelopeIsNotFiltered()
+        {
+            _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
+
+            var messages =
+                await _behavior.Handle(
+                    new object[]
+                    {
+                        new OutboundEnvelope<TestEventOne>(
+                            new TestEventOne(), 
+                            null,
+                            new TestProducerEndpoint("eventOne"))
+                    }, Task.FromResult);
+
+            messages.Count.Should().Be(1);
         }
 
         [Fact]
@@ -155,26 +192,26 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             _broker.ProducedMessages.Count.Should().Be(1);
         }
 
-
-        [Fact]
-        public async Task Handle_InboundMessages_AreIgnored()
-        {
-            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), null);
-
-            var messages = new[] { new TestEventOne(), new TestEventOne() };
-            var envelopes = messages.Select(message =>
-                new InboundEnvelope<TestEventOne>(new byte[1], null, null, TestConsumerEndpoint.GetDefault())
-                {
-                    Message = message
-                }).ToList();
-
-            await _behavior.Handle(envelopes, Task.FromResult);
-            await _behavior.Handle(messages, Task.FromResult);
-            await _outboundQueue.Commit();
-
-            var queued = await _outboundQueue.Dequeue(1);
-            queued.Count().Should().Be(0);
-            _broker.ProducedMessages.Count.Should().Be(0);
-        }
+// TODO: Deprecated, useless, remove
+//        [Fact]
+//        public async Task Handle_InboundMessages_AreIgnored()
+//        {
+//            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), null);
+//
+//            var messages = new[] { new TestEventOne(), new TestEventOne() };
+//            var envelopes = messages.Select(message =>
+//                new InboundEnvelope<TestEventOne>(new byte[1], null, null, TestConsumerEndpoint.GetDefault())
+//                {
+//                    Message = message
+//                }).ToList();
+//
+//            await _behavior.Handle(envelopes, Task.FromResult);
+//            await _behavior.Handle(messages, Task.FromResult);
+//            await _outboundQueue.Commit();
+//
+//            var queued = await _outboundQueue.Dequeue(1);
+//            queued.Count().Should().Be(0);
+//            _broker.ProducedMessages.Count.Should().Be(0);
+//        }
     }
 }

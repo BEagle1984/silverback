@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             return DateTime.UtcNow - oldestCreated;
         }
 
-        public async Task<IEnumerable<QueuedMessage>> Dequeue(int count) =>
+        public async Task<IReadOnlyCollection<QueuedMessage>> Dequeue(int count) =>
             (await DbSet.AsQueryable()
                 .Where(m => m.Produced == null)
                 .OrderBy(m => m.Id)
@@ -47,7 +47,8 @@ namespace Silverback.Messaging.Connectors.Repositories
                 message.Id,
                 message.Content,
                 DefaultSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
-                DefaultSerializer.Deserialize<IProducerEndpoint>(message.Endpoint)));
+                DefaultSerializer.Deserialize<IProducerEndpoint>(message.Endpoint)))
+            .ToList();
 
         public Task Retry(QueuedMessage queuedMessage)
         {

@@ -21,7 +21,7 @@ namespace Silverback.Examples.Common.Consumer
 
         public async Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
         {
-            foreach (var message in messages.OfType<IInboundMessage>())
+            foreach (var message in messages.OfType<IInboundEnvelope>())
             {
                 if (message.Headers != null && message.Headers.Any())
                 {

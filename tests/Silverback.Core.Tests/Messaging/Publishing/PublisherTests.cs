@@ -1388,5 +1388,33 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             act.Should().Throw<InvalidOperationException>();
         }
+
+        [Fact]
+        public void Publish_Envelope_EnvelopeAndUnwrappedReceived()
+        {
+            var messages = new List<object>();
+            var publisher = GetPublisher(builder => builder
+                .Subscribe((object message) => messages.Add(message))
+                .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
+
+            publisher.Publish(new TestEnvelope(new TestCommandOne()));
+
+            messages.OfType<TestEnvelope>().Count().Should().Be(1);
+            messages.OfType<TestCommandOne>().Count().Should().Be(1);
+        }
+
+        [Fact]
+        public async Task PublishAsync_Envelope_EnvelopeAndUnwrappedReceived()
+        {
+            var messages = new List<object>();
+            var publisher = GetPublisher(builder => builder
+                .Subscribe((object message) => messages.Add(message))
+                .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
+            
+            await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
+
+            messages.OfType<TestEnvelope>().Count().Should().Be(1);
+            messages.OfType<TestCommandOne>().Count().Should().Be(1);
+        }
     }
 }
