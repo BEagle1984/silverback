@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Configuration
     public sealed class RabbitConnectionConfig : IEquatable<RabbitConnectionConfig>
     {
         private static readonly ConfigurationDictionaryComparer<string, object> ClientPropertiesComparer =
-                new ConfigurationDictionaryComparer<string, object>();
+            new ConfigurationDictionaryComparer<string, object>();
 
         /// <summary>The AMQP URI SSL protocols.</summary>
         public SslProtocols? AmqpUriSslProtocols { get; set; }
@@ -140,10 +140,10 @@ namespace Silverback.Messaging.Configuration
                    string.Equals(HostName, other.HostName, StringComparison.InvariantCulture) &&
                    Nullable.Equals(NetworkRecoveryInterval, other.NetworkRecoveryInterval) &&
                    Nullable.Equals(HandshakeContinuationTimeout, other.HandshakeContinuationTimeout) &&
-                   Nullable.Equals(ContinuationTimeout, other.ContinuationTimeout) && 
+                   Nullable.Equals(ContinuationTimeout, other.ContinuationTimeout) &&
                    Equals(Port, other.Port) &&
                    Equals(RequestedConnectionTimeout, other.RequestedConnectionTimeout) &&
-                   Equals(SocketReadTimeout, other.SocketReadTimeout) && 
+                   Equals(SocketReadTimeout, other.SocketReadTimeout) &&
                    Equals(SocketWriteTimeout, other.SocketWriteTimeout) &&
                    Equals(Ssl, other.Ssl) &&
                    Equals(TopologyRecoveryEnabled, other.TopologyRecoveryEnabled) &&

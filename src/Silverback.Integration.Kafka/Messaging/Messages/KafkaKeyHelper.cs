@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Messages
         {
             if (message is PingMessage)
                 return Guid.NewGuid().ToString("N");
-        
+
             var keysDictionary =
                 message.GetType()
                     .GetProperties()

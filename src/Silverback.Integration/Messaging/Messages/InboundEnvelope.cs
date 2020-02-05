@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Messages
     internal class InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
     {
         public InboundEnvelope(IRawBrokerEnvelope envelope)
-            : this(envelope.RawMessage, envelope.Headers, envelope.Offset, (IConsumerEndpoint)envelope.Endpoint)
+            : this(envelope.RawMessage, envelope.Headers, envelope.Offset, (IConsumerEndpoint) envelope.Endpoint)
         {
         }
 

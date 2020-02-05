@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         public Task<TimeSpan> GetMaxAge() => Task.FromResult(TimeSpan.Zero);
 
         public Task<IReadOnlyCollection<QueuedMessage>> Dequeue(int count) =>
-            Task.FromResult((IReadOnlyCollection<QueuedMessage>)Entries.Take(count).ToList());
+            Task.FromResult((IReadOnlyCollection<QueuedMessage>) Entries.Take(count).ToList());
 
         public Task Retry(QueuedMessage queuedMessage)
         {

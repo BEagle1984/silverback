@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
 
             endpoint1.Equals(endpoint2).Should().BeTrue();
         }
-        
+
         [Fact]
         public void Equals_DeserializedEndpoint_TrueIsReturned()
         {
@@ -95,7 +95,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
 
             endpoint1.Equals(endpoint2).Should().BeTrue();
         }
-        
+
         [Fact]
         public void Equals_DifferentName_FalseIsReturned()
         {
@@ -104,7 +104,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
 
             endpoint1.Equals(endpoint2).Should().BeFalse();
         }
-        
+
         [Fact]
         public void Equals_DifferentExchangeConfiguration_FalseIsReturned()
         {
@@ -141,7 +141,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
 
             endpoint1.Equals(endpoint2).Should().BeFalse();
         }
-        
+
         [Fact]
         public void Equals_DifferentQueueConfiguration_FalseIsReturned()
         {
@@ -178,17 +178,17 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
 
             endpoint1.Equals(endpoint2).Should().BeFalse();
         }
-        
+
         [Fact]
         public void Equals_DifferentQueueName_FalseIsReturned()
         {
             var endpoint1 = new RabbitExchangeConsumerEndpoint("endpoint")
             {
-                QueueName = "queue1" 
+                QueueName = "queue1"
             };
             var endpoint2 = new RabbitExchangeConsumerEndpoint("endpoint")
             {
-                QueueName = "queue2" 
+                QueueName = "queue2"
             };
 
             endpoint1.Equals(endpoint2).Should().BeFalse();
@@ -199,16 +199,16 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
         {
             var endpoint1 = new RabbitExchangeConsumerEndpoint("endpoint")
             {
-                RoutingKey = "key" 
+                RoutingKey = "key"
             };
             var endpoint2 = new RabbitExchangeConsumerEndpoint("endpoint")
             {
-                QueueName = "someotherkey" 
+                QueueName = "someotherkey"
             };
 
             endpoint1.Equals(endpoint2).Should().BeFalse();
         }
-        
+
         [Fact]
         public void SerializationAndDeserialization_NoInformationIsLost()
         {

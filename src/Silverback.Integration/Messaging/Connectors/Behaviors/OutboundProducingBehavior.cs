@@ -23,7 +23,9 @@ namespace Silverback.Messaging.Connectors.Behaviors
 
         public int SortIndex { get; } = 100;
 
-        public async Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
+        public async Task<IReadOnlyCollection<object>> Handle(
+            IReadOnlyCollection<object> messages,
+            MessagesHandler next)
         {
             await messages.OfType<IOutboundEnvelopeInternal>()
                 .ForEachAsync(outboundMessage => _outboundConnectors

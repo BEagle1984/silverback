@@ -84,7 +84,7 @@ namespace Silverback.Messaging.Broker
         private void PublishToChannel(RawBrokerEnvelope envelope)
         {
             _channel ??= _connectionFactory.GetChannel(Endpoint);
-            
+
             var properties = _channel.CreateBasicProperties();
             properties.Persistent = true; // TODO: Make it configurable?
             properties.Headers = envelope.Headers.ToDictionary(header => header.Key, header => (object) header.Value);
@@ -93,16 +93,16 @@ namespace Silverback.Messaging.Broker
             {
                 case RabbitQueueProducerEndpoint queueEndpoint:
                     _channel.BasicPublish(
-                        "", 
-                        queueEndpoint.Name, 
-                        properties, 
+                        "",
+                        queueEndpoint.Name,
+                        properties,
                         envelope.RawMessage);
                     break;
                 case RabbitExchangeProducerEndpoint exchangeEndpoint:
                     _channel.BasicPublish(
-                        exchangeEndpoint.Name, 
+                        exchangeEndpoint.Name,
                         GetRoutingKey(envelope.Headers),
-                        properties, 
+                        properties,
                         envelope.RawMessage);
                     break;
                 default:
@@ -133,7 +133,7 @@ namespace Silverback.Messaging.Broker
             _channel?.Dispose();
             _channel = null;
         }
-        
+
         private class QueuedMessage
         {
             public QueuedMessage(RawBrokerEnvelope envelope)

@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Subscribers
                 messages = messages.Select(message => message is IEnvelope envelope
                     ? envelope.Message
                     : message).ToList();
-            
+
             messages = messages.OfType(messageType).ToList();
 
             if (!messages.Any())

@@ -128,7 +128,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
                     {
                         MaxDepth = 100
                     }
-                }              
+                }
             };
 
             var json = JsonConvert.SerializeObject(endpoint1,

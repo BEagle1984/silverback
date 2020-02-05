@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -14,7 +14,8 @@ namespace Silverback.Messaging.Diagnostics
 
         internal static string Serialize(IEnumerable<KeyValuePair<string, string>> baggage)
         {
-            return string.Join(BaggageItemSeparator.ToString(), baggage.Select(b => b.Key + ItemKeyValueSeparator + b.Value));
+            return string.Join(BaggageItemSeparator.ToString(),
+                baggage.Select(b => b.Key + ItemKeyValueSeparator + b.Value));
         }
 
         internal static bool TryDeserialize(string baggage, out IEnumerable<KeyValuePair<string, string>> baggageItems)

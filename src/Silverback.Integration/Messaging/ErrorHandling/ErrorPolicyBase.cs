@@ -189,6 +189,8 @@ namespace Silverback.Messaging.ErrorHandling
             return result;
         }
 
-        protected abstract ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception);
+        protected abstract ErrorAction ApplyPolicy(
+            IReadOnlyCollection<IInboundEnvelope> envelopes,
+            Exception exception);
     }
 }

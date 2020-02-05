@@ -158,7 +158,6 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         }
 
         [Fact]
-        
         public async Task AddInboundConnector_CalledMultipleTimes_EachMessageReceivedOnce()
         {
             _services.AddSilverback()

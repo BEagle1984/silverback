@@ -65,7 +65,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             producer2.Should().BeSameAs(producer);
         }
-        
+
         [Fact]
         public void GetProducer_SameExchangeEndpointConfiguration_SameInstanceIsReturned()
         {
@@ -90,7 +90,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             producer2.Should().BeSameAs(producer);
         }
-        
+
         [Fact]
         public void GetProducer_SameQueueEndpointConfiguration_SameInstanceIsReturned()
         {
@@ -113,7 +113,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             producer2.Should().BeSameAs(producer);
         }
-        
+
         [Fact]
         public void GetProducer_DifferentExchangeEndpoint_DifferentInstanceIsReturned()
         {
@@ -128,7 +128,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             producer2.Should().NotBeSameAs(producer);
         }
-        
+
         [Fact]
         public void GetProducer_DifferentQueueEndpoint_DifferentInstanceIsReturned()
         {
@@ -137,7 +137,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             producer2.Should().NotBeSameAs(producer);
         }
-        
+
         [Fact]
         public void GetProducer_DifferentEndpointType_DifferentInstanceIsReturned()
         {
@@ -149,7 +149,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             producer2.Should().NotBeSameAs(producer);
         }
-        
+
         [Fact]
         public void GetProducer_DifferentExchangeEndpointConfiguration_DifferentInstanceIsReturned()
         {
@@ -174,7 +174,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             producer2.Should().NotBeSameAs(producer);
         }
-        
+
         [Fact]
         public void GetProducer_DifferentQueueEndpointConfiguration_DifferentInstanceIsReturned()
         {
@@ -198,7 +198,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             producer2.Should().NotBeSameAs(producer);
         }
-        
+
         [Fact]
         public void GetConsumer_ExchangeEndpoint_ConsumerIsReturned()
         {
@@ -209,7 +209,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             consumer.Should().NotBeNull();
         }
-        
+
         [Fact]
         public void GetConsumer_QueueEndpoint_ConsumerIsReturned()
         {
@@ -217,7 +217,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             consumer.Should().NotBeNull();
         }
-        
+
         [Fact]
         public void GetConsumer_SameExchangeEndpoint_DifferentInstanceIsReturned()
         {
@@ -232,7 +232,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             consumer2.Should().NotBeSameAs(consumer);
         }
-        
+
         [Fact]
         public void GetConsumer_SameQueueEndpoint_DifferentInstanceIsReturned()
         {
@@ -241,7 +241,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             consumer2.Should().NotBeSameAs(consumer);
         }
-        
+
         [Fact]
         public void GetConsumer_DifferentExchangeEndpoint_DifferentInstanceIsReturned()
         {
@@ -256,7 +256,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             consumer2.Should().NotBeSameAs(consumer);
         }
-        
+
         [Fact]
         public void GetConsumer_DifferentQueueEndpoint_DifferentInstanceIsReturned()
         {
@@ -265,7 +265,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             consumer2.Should().NotBeSameAs(consumer);
         }
-        
+
         [Fact]
         public void GetConsumer_DifferentEndpointType_DifferentInstanceIsReturned()
         {

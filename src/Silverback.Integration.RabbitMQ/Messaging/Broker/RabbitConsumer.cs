@@ -94,7 +94,7 @@ namespace Silverback.Messaging.Broker
         {
             if (_consumer != null)
                 return;
-            
+
             (_channel, _queueName) = _connectionFactory.GetChannel(Endpoint);
 
             _consumer = new AsyncEventingBasicConsumer(_channel);

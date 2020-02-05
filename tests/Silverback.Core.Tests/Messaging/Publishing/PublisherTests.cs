@@ -1410,7 +1410,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var publisher = GetPublisher(builder => builder
                 .Subscribe((object message) => messages.Add(message))
                 .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
-            
+
             await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
 
             messages.OfType<TestEnvelope>().Count().Should().Be(1);

@@ -7,8 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Database;
 using Silverback.Infrastructure;
+using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
-using OutboundMessage = Silverback.Messaging.Connectors.Model.OutboundMessage;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {

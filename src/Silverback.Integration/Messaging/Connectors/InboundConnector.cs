@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;

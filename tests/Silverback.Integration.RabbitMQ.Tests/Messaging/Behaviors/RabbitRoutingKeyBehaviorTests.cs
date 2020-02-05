@@ -90,7 +90,8 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 null,
                 new RabbitExchangeProducerEndpoint("test-endpoint"));
 
-            Func<Task> act = () => new RabbitRoutingKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
+            Func<Task> act = () =>
+                new RabbitRoutingKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
 
             act.Should().Throw<InvalidOperationException>();
         }
