@@ -29,28 +29,22 @@ namespace Silverback.Messaging.Subscribers
         }
 
         public async Task<IEnumerable<object>> Invoke(
-            SubscribedMethod method,
+            SubscribedMethod subscribedMethod,
             IReadOnlyCollection<object> messages,
             bool executeAsync)
         {
-            var (messageArgumentResolver, messageType) = _argumentsResolver.GetMessageArgumentResolver(method);
+            var (messageArgumentResolver, targetMessageType) = _argumentsResolver.GetMessageArgumentResolver(subscribedMethod);
 
             if (messageArgumentResolver == null)
                 return Array.Empty<object>();
 
-            // Unwrap envelopes only if the argument isn't an IEnvelope itself)
-            if (!typeof(IEnvelope).IsAssignableFrom(messageType))
-                messages = messages.Select(message => message is IEnvelope envelope
-                    ? envelope.Message
-                    : message).ToList();
-
-            messages = messages.OfType(messageType).ToList();
+            messages = UnwrapEnvelopesAndFilterMessages(messages, targetMessageType, subscribedMethod);
 
             if (!messages.Any())
                 return Array.Empty<object>();
 
-            var target = method.ResolveTargetType(_serviceProvider);
-            var parameterValues = GetShiftedParameterValuesArray(method);
+            var target = subscribedMethod.ResolveTargetType(_serviceProvider);
+            var parameterValues = GetShiftedParameterValuesArray(subscribedMethod);
 
             IReadOnlyCollection<object> returnValues;
 
@@ -58,21 +52,21 @@ namespace Silverback.Messaging.Subscribers
             {
                 case ISingleMessageArgumentResolver singleResolver:
                     returnValues = (await messages
-                            .OfType(messageType)
+                            .OfType(targetMessageType)
                             .SelectAsync(
                                 message =>
                                 {
                                     parameterValues[0] = singleResolver.GetValue(message);
-                                    return Invoke(target, method, parameterValues, executeAsync);
+                                    return Invoke(target, subscribedMethod, parameterValues, executeAsync);
                                 },
-                                method.IsParallel,
-                                method.MaxDegreeOfParallelism))
+                                subscribedMethod.IsParallel,
+                                subscribedMethod.MaxDegreeOfParallelism))
                         .ToList();
                     break;
                 case IEnumerableMessageArgumentResolver enumerableResolver:
-                    parameterValues[0] = enumerableResolver.GetValue(messages, messageType);
+                    parameterValues[0] = enumerableResolver.GetValue(messages, targetMessageType);
 
-                    returnValues = new[] { await Invoke(target, method, parameterValues, executeAsync) };
+                    returnValues = new[] { await Invoke(target, subscribedMethod, parameterValues, executeAsync) };
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -80,6 +74,29 @@ namespace Silverback.Messaging.Subscribers
 
             return await _returnValueHandler.HandleReturnValues(returnValues, executeAsync);
         }
+
+        private static IReadOnlyCollection<object> UnwrapEnvelopesAndFilterMessages(
+            IEnumerable<object> messages,
+            Type targetMessageType,
+            SubscribedMethod subscribedMethod) =>
+            UnwrapEnvelopesIfNeeded(
+                    ApplyFilters(subscribedMethod.Filters, messages),
+                    targetMessageType)
+                .OfType(targetMessageType).ToList();
+
+        private static IEnumerable<object> UnwrapEnvelopesIfNeeded(
+            IEnumerable<object> messages,
+            Type targetMessageType) =>
+            typeof(IEnvelope).IsAssignableFrom(targetMessageType)
+                ? messages
+                : messages.Select(message => message is IEnvelope envelope
+                    ? envelope.Message
+                    : message);
+
+        private static IEnumerable<object> ApplyFilters(
+            IReadOnlyCollection<IMessageFilter> filters,
+            IEnumerable<object> messages) =>
+            messages.Where(message => filters.All(filter => filter.MustProcess(message)));
 
         private object[] GetShiftedParameterValuesArray(SubscribedMethod methodInfo) =>
             new object[1].Concat(

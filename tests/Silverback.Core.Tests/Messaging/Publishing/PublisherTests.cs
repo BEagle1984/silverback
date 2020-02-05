@@ -35,6 +35,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         private readonly TestAsyncEnumerableSubscriber _asyncEnumerableSubscriber;
         private readonly TestReadOnlyCollectionSubscriber _syncReadOnlyCollectionSubscriber;
         private readonly TestAsyncReadOnlyCollectionSubscriber _asyncReadOnlyCollectionSubscriber;
+        private readonly TestFilteredSubscriber _filteredSubscriber;
 
         public PublisherTests()
         {
@@ -44,6 +45,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             _asyncEnumerableSubscriber = new TestAsyncEnumerableSubscriber();
             _syncReadOnlyCollectionSubscriber = new TestReadOnlyCollectionSubscriber();
             _asyncReadOnlyCollectionSubscriber = new TestAsyncReadOnlyCollectionSubscriber();
+            _filteredSubscriber = new TestFilteredSubscriber();
         }
 
         #region GetPublisher
@@ -1415,6 +1417,33 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             messages.OfType<TestEnvelope>().Count().Should().Be(1);
             messages.OfType<TestCommandOne>().Count().Should().Be(1);
+        }
+        
+        [Fact]
+        public async Task Publish_MessagesWithFilter_FilteredMessagesReceived()
+        {
+            var publisher = GetPublisher(_filteredSubscriber);
+
+            publisher.Publish(new TestEventOne { Message = "yes" });
+            publisher.Publish(new TestEventOne { Message = "no" });
+            await publisher.PublishAsync(new TestEventOne { Message = "yes" });
+            await publisher.PublishAsync(new TestEventOne { Message = "no" });
+
+            _filteredSubscriber.ReceivedMessagesCount.Should().Be(2);
+        }
+        
+        [Fact]
+        public async Task Publish_EnvelopesWithFilter_FilteredEnvelopesAndMessagesReceived()
+        {
+            var publisher = GetPublisher(_filteredSubscriber);
+
+            publisher.Publish(new TestEnvelope(new TestEventOne { Message = "yes" }));
+            publisher.Publish(new TestEnvelope(new TestEventOne { Message = "no" }));
+            await publisher.PublishAsync(new TestEnvelope(new TestEventOne { Message = "yes" }));
+            await publisher.PublishAsync(new TestEnvelope(new TestEventOne { Message = "no" }));
+
+            _filteredSubscriber.ReceivedEnvelopesCount.Should().Be(2);
+            _filteredSubscriber.ReceivedMessagesCount.Should().Be(2);
         }
     }
 }

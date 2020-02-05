@@ -218,6 +218,64 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             void Method1(IReadOnlyCollection<TestCommandOne> events) => calls++;
         }
 
+        [Fact]
+        public async Task Invoke_EnvelopesToUnwrap_MethodInvokedWithPureMessage()
+        {
+            var calls = 0;
+
+            var (resolver, handler) = GetDefaultResolverAndHandler();
+            var subscribedMethod = new DelegateSubscription((Action<IEvent>) Method1, new SubscriptionOptions());
+
+            var envelopes = new object[]
+            {
+                new TestEnvelope(new TestEventOne()),
+                new TestEnvelope(new TestEventTwo()),
+                new TestEnvelope(new TestEventOne())
+            };
+
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
+                .Invoke(
+                    subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
+                    envelopes,
+                    true);
+
+            calls.Should().Be(3);
+
+            void Method1(IEvent @event)
+            {
+                if (@event != null) calls++;
+            }
+        }
+
+        [Fact]
+        public async Task Invoke_Envelopes_MethodInvoked()
+        {
+            var calls = 0;
+
+            var (resolver, handler) = GetDefaultResolverAndHandler();
+            var subscribedMethod = new DelegateSubscription((Action<TestEnvelope>) Method1, new SubscriptionOptions());
+
+            var envelopes = new object[]
+            {
+                new TestEnvelope(new TestEventOne()),
+                new TestEnvelope(new TestEventTwo()),
+                new TestEnvelope(new TestEventOne())
+            };
+
+            await new SubscribedMethodInvoker(resolver, handler, ServiceProvider)
+                .Invoke(
+                    subscribedMethod.GetSubscribedMethods(ServiceProvider).First(),
+                    envelopes,
+                    true);
+
+            calls.Should().Be(3);
+
+            void Method1(TestEnvelope envelope)
+            {
+                if (envelope != null) calls++;
+            }
+        }
+
         private (ArgumentsResolver, ReturnValueHandler) GetDefaultResolverAndHandler() =>
         (
             new ArgumentsResolver(new IArgumentResolver[]

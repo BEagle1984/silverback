@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -21,10 +22,12 @@ namespace Silverback.Messaging.Subscribers
             _targetTypeFactory = targetTypeFactory ?? throw new ArgumentNullException(nameof(targetTypeFactory));
             MethodInfo = methodInfo ?? throw new ArgumentNullException(nameof(methodInfo));
             Parameters = methodInfo.GetParameters();
-
+      
             if (!Parameters.Any())
                 throw new SilverbackException("The subscribed method must have at least 1 argument.");
 
+            Filters = methodInfo.GetCustomAttributes<MessageFilterAttribute>(false).ToList();
+            
             IsExclusive = exclusive ?? true;
             IsParallel = parallel ?? false;
             MaxDegreeOfParallelism = maxDegreeOfParallelism;
@@ -42,6 +45,8 @@ namespace Silverback.Messaging.Subscribers
 
         /// <summary>See <see cref="SubscribeAttribute" />.</summary>
         public int? MaxDegreeOfParallelism { get; }
+        
+        public IReadOnlyCollection<IMessageFilter> Filters { get; } 
 
         public object ResolveTargetType(IServiceProvider serviceProvider) =>
             _targetTypeFactory(serviceProvider);
