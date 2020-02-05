@@ -45,7 +45,7 @@ namespace Silverback.Util
         {
             dictionaryX = (dictionaryX ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
             dictionaryY = (dictionaryY ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
-            
+
             if (dictionaryX.Count() != dictionaryY.Count()) return false;
 
             var allKeys = dictionaryX.Select(pair => pair.Key)
@@ -56,7 +56,7 @@ namespace Silverback.Util
 
             if (allKeys.Count != dictionaryX.Count())
                 return false;
-            
+
             foreach (var key in allKeys)
             {
                 var valueX = dictionaryX.FirstOrDefault(pair => Equals(pair.Key, key));

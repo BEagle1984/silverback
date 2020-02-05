@@ -71,7 +71,7 @@ namespace Silverback.Messaging.Broker
 
             await ExecutePipeline(
                 _behaviors,
-                new RawInboundEnvelope(message, headers, Endpoint, offset), 
+                new RawInboundEnvelope(message, headers, Endpoint, offset),
                 envelope => Received.Invoke(this, new MessageReceivedEventArgs(envelope)));
         }
 

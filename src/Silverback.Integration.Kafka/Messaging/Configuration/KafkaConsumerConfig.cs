@@ -61,7 +61,8 @@ namespace Silverback.Messaging.Configuration
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            return CommitOffsetEach == other.CommitOffsetEach && ConfluentConfigComparer.Equals(ConfluentConfig, other.ConfluentConfig);
+            return CommitOffsetEach == other.CommitOffsetEach &&
+                   ConfluentConfigComparer.Equals(ConfluentConfig, other.ConfluentConfig);
         }
 
         public override bool Equals(object obj)

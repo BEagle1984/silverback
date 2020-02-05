@@ -9,7 +9,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    public class RabbitConnectionFactory : IRabbitConnectionFactory 
+    public class RabbitConnectionFactory : IRabbitConnectionFactory
     {
         private ConcurrentDictionary<RabbitConnectionConfig, IConnection> _connections =
             new ConcurrentDictionary<RabbitConnectionConfig, IConnection>();
@@ -86,7 +86,7 @@ namespace Silverback.Messaging.Broker
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
+
             // TOOD: Make configurable?
             channel.BasicQos(1, 1, false);
 

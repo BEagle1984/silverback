@@ -25,7 +25,7 @@ namespace Silverback.Tests.Core.Util
 
             result.Should().BeTrue();
         }
-        
+
         [Fact]
         public void Equals_SameContent_TrueIsReturned()
         {
@@ -46,7 +46,7 @@ namespace Silverback.Tests.Core.Util
 
             result.Should().BeTrue();
         }
-        
+
         [Fact]
         public void Equals_DifferentValues_FalseIsReturned()
         {
@@ -67,7 +67,7 @@ namespace Silverback.Tests.Core.Util
 
             result.Should().BeFalse();
         }
-                        
+
         [Fact]
         public void Equals_DifferentKeys_FalseIsReturned()
         {
@@ -88,7 +88,7 @@ namespace Silverback.Tests.Core.Util
 
             result.Should().BeFalse();
         }
-                        
+
         [Fact]
         public void Equals_NullVsNonNull_FalseIsReturned()
         {
@@ -109,7 +109,7 @@ namespace Silverback.Tests.Core.Util
 
             result.Should().BeFalse();
         }
-                       
+
         [Fact]
         public void Equals_NullVsMissingKey_FalseIsReturned()
         {
@@ -129,14 +129,14 @@ namespace Silverback.Tests.Core.Util
 
             result.Should().BeFalse();
         }
-        
+
         [Fact]
         [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local")]
         [SuppressMessage("ReSharper", "ExpressionIsAlwaysNull")]
         public void Equals_NullDictionaryVsEmptyDictionary_TrueIsReturned()
         {
             var dictionaryX = new Dictionary<string, string>();
-            var dictionaryY = (Dictionary<string, string>)null;
+            var dictionaryY = (Dictionary<string, string>) null;
 
             var result = new ConfigurationDictionaryComparer<string, string>().Equals(dictionaryX, dictionaryY);
 

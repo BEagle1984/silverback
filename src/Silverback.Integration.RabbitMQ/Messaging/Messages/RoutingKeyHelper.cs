@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Messages
                 return "ping";
 
             var messageType = message.GetType();
-            
+
             var keys =
                 messageType
                     .GetProperties()
@@ -25,10 +25,11 @@ namespace Silverback.Messaging.Messages
 
             if (!keys.Any())
                 return null;
-            
+
             if (keys.Count > 1)
-                throw new InvalidOperationException("Multiple properties are decorated with RabbitRoutingKeyAttribute " +
-                                                    $"in type {messageType.Name}.");
+                throw new InvalidOperationException(
+                    "Multiple properties are decorated with RabbitRoutingKeyAttribute " +
+                    $"in type {messageType.Name}.");
 
             return keys.First();
         }

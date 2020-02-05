@@ -63,7 +63,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
                     IsExclusive = true
                 }
             };
-            
+
             var json = JsonConvert.SerializeObject(endpoint1,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
@@ -72,7 +72,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
 
             endpoint1.Equals(endpoint2).Should().BeTrue();
         }
-        
+
         [Fact]
         public void Equals_DifferentName_FalseIsReturned()
         {

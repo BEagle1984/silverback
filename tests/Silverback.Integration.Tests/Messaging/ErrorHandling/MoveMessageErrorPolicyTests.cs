@@ -148,7 +148,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundEnvelope(
                     Encoding.UTF8.GetBytes("hey oh!"),
                     new[] { new MessageHeader(MessageHeader.MessageTypeKey, typeof(string).AssemblyQualifiedName) },
-                    null, TestConsumerEndpoint.GetDefault()), 
+                    null, TestConsumerEndpoint.GetDefault()),
             }, new Exception("test"));
 
             var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());

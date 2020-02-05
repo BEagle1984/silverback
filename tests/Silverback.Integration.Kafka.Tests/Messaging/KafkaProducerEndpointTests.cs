@@ -177,7 +177,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
                 Configuration = new KafkaProducerConfig
                 {
                     Acks = Confluent.Kafka.Acks.Leader
-                },       
+                },
                 Serializer = new JsonMessageSerializer
                 {
                     Settings =

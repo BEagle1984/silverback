@@ -140,14 +140,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                     new object[]
                     {
                         new OutboundEnvelope<TestEventOne>(
-                            new TestEventOne(), 
+                            new TestEventOne(),
                             null,
                             new TestProducerEndpoint("eventOne"))
                     }, Task.FromResult);
 
             messages.Count.Should().Be(0);
         }
-        
+
         [Fact]
         public async Task Handle_MessagesWithPublishToInternBusOption_RoutedMessageIsNotFiltered()
         {
@@ -159,7 +159,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             messages.Count.Should().Be(2);
         }
-        
+
         [Fact]
         public async Task Handle_OutboundEnvelopeWithPublishToInternBusOption_OutboundEnvelopeIsNotFiltered()
         {
@@ -171,7 +171,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                     new object[]
                     {
                         new OutboundEnvelope<TestEventOne>(
-                            new TestEventOne(), 
+                            new TestEventOne(),
                             null,
                             new TestProducerEndpoint("eventOne"))
                     }, Task.FromResult);

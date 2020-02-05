@@ -28,7 +28,10 @@ namespace Silverback.Messaging.Messages
         public void LogInformation(ILogger logger, string logMessage, IRawBrokerEnvelope envelope) =>
             Log(logger, LogLevel.Information, null, logMessage, new[] { envelope });
 
-        public void LogInformation(ILogger logger, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
+        public void LogInformation(
+            ILogger logger,
+            string logMessage,
+            IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, LogLevel.Information, null, logMessage, envelopes);
 
         public void LogWarning(ILogger logger, string logMessage, IRawBrokerEnvelope envelope) =>
@@ -128,7 +131,10 @@ namespace Silverback.Messaging.Messages
                     : "Processing inbound message.",
                 envelopes);
 
-        public void LogProcessingError(ILogger logger, IReadOnlyCollection<IRawBrokerEnvelope> envelopes, Exception exception) =>
+        public void LogProcessingError(
+            ILogger logger,
+            IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
+            Exception exception) =>
             LogWarning(logger,
                 exception,
                 envelopes.Count > 1

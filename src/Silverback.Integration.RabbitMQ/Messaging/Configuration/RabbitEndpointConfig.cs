@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration
     {
         private static readonly ConfigurationDictionaryComparer<string, object> ArgumentsComparer =
             new ConfigurationDictionaryComparer<string, object>();
-        
+
         /// <summary>
         ///     Gets or sets a boolean value indicating whether the queue or the exchange will survive a broker restart.
         /// </summary>

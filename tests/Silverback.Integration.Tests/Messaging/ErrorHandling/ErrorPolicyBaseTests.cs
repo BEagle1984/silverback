@@ -82,7 +82,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "99") },
-                    null, TestConsumerEndpoint.GetDefault()), 
+                    null, TestConsumerEndpoint.GetDefault()),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -121,7 +121,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new InboundEnvelope(
                         new byte[1],
                         new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
-                        null, TestConsumerEndpoint.GetDefault()), 
+                        null, TestConsumerEndpoint.GetDefault()),
                     new ArgumentException(),
                     true
                 },
