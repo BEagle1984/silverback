@@ -158,9 +158,9 @@ namespace Silverback.Messaging.Broker
                             _logger.LogDebug("Successfully committed offset {topic} {partition} @{offset}.",
                                 offset.Topic, offset.Partition, offset.Offset);
                         }
-
-                        CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(offsets));
                     }
+
+                    CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(offsets));
                 })
                 .SetErrorHandler((_, error) =>
                 {

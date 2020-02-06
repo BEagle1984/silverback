@@ -7,6 +7,7 @@ namespace Silverback.Examples.Common.Messages
 {
     public class PartitionedSimpleIntegrationEvent : IntegrationEvent
     {
-        [KafkaKeyMember] public string Key { get; set; }
+        [KafkaKeyMember]
+        public string Key { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Behaviors
 {
     public class RabbitRoutingKeyBehavior : IBehavior, ISorted
     {
-        public int SortIndex { get; } = 200;
+        public int SortIndex { get; } = 100;
 
         public Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
         {

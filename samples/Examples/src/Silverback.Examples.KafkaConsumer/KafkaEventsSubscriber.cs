@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
@@ -31,10 +32,14 @@ namespace Silverback.Examples.KafkaConsumer
                 message.Partitions.Count,
                 string.Join(", ", message.Partitions.Select(partition => partition.ToString())));
 
-        public void OnOffsetCommitted(KafkaOffsetsCommittedEvent message) =>
+        public void OnOffsetCommitted(KafkaOffsetsCommittedEvent message)
+        {
+            var committedOffsets = message.Offsets.Where(offset => offset.Offset != Offset.Unset).ToList();
+            
             _logger.LogInformation(
                 "KafkaOffsetsCommittedEvent received: {count} offsets have been committed ({offsets})",
-                message.Offsets.Count,
-                string.Join(", ", message.Offsets.Select(offset => offset.ToString())));
+                committedOffsets.Count,
+                string.Join(", ", committedOffsets.Select(offset => offset.ToString())));
+        }
     }
 }
