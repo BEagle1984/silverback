@@ -60,6 +60,18 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             serialized.Should().BeSameAs(messageBytes);
         }
+        
+        [Fact]
+        public void Serialize_ByteArrayWithHardcodedType_ReturnedUnmodified()
+        {
+            var messageBytes = Encoding.UTF8.GetBytes("test");
+
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var serialized = serializer.Serialize(messageBytes, new MessageHeaderCollection());
+
+            serialized.Should().BeSameAs(messageBytes);
+        }
 
         [Fact]
         // This is necessary for backward compatibility with messages generated with version <= 0.10
@@ -76,6 +88,66 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             deserialized.Should().NotBeNull();
             deserialized.Should().BeEquivalentTo(original);
+        }
+        
+        [Fact]
+        public void Serialize_NullMessage_EmptyByteArrayReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+
+            var serialized = serializer.Serialize(null, new MessageHeaderCollection());
+
+            serialized.Should().BeEquivalentTo(new byte[0]);
+        }
+        
+        [Fact]
+        public void Serialize_NullMessageWithHardcodedType_EmptyByteArrayReturned()
+        {
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var serialized = serializer.Serialize(null, new MessageHeaderCollection());
+
+            serialized.Should().BeEquivalentTo(new byte[0]);
+        }
+        
+        [Fact]
+        public void Deserialize_NullMessage_NullIsReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+
+            var deserialized = serializer.Deserialize(null, new MessageHeaderCollection());
+
+            deserialized.Should().BeNull();
+        }
+         
+        [Fact]
+        public void Deserialize_NullMessageWithHardcodedType_NullIsReturned()
+        {
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var deserialized = serializer.Deserialize(null, new MessageHeaderCollection());
+
+            deserialized.Should().BeNull();
+        }
+         
+        [Fact]
+        public void Deserialize_EmptyArrayMessage_NullIsReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+
+            var deserialized = serializer.Deserialize(new byte[0], new MessageHeaderCollection());
+
+            deserialized.Should().BeNull();
+        }
+        
+        [Fact]
+        public void Deserialize_EmptyArrayMessageWithHardcodedType_NullIsReturned()
+        {
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var deserialized = serializer.Deserialize(new byte[0], new MessageHeaderCollection());
+
+            deserialized.Should().BeNull();
         }
     }
 }
