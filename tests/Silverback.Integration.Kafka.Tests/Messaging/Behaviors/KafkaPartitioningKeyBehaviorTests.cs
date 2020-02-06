@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
             new KafkaMessageKeyBehavior().Handle(new[] { envelope }, Task.FromResult);
 
             envelope.Headers.Should().NotContain(
-                h => h.Key == "x-kafka-partitioning-key");
+                h => h.Key == "x-kafka-message-key");
         }
 
         [Fact]
@@ -61,9 +61,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
             new KafkaMessageKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
 
             envelope1.Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-kafka-partitioning-key", "1"));
+                new MessageHeader("x-kafka-message-key", "1"));
             envelope2.Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-kafka-partitioning-key", "a"));
+                new MessageHeader("x-kafka-message-key", "a"));
         }
 
         [Fact]
@@ -93,9 +93,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
             new KafkaMessageKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
 
             envelope1.Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-kafka-partitioning-key", "One=1,Two=2"));
+                new MessageHeader("x-kafka-message-key", "One=1,Two=2"));
             envelope2.Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-kafka-partitioning-key", "One=a,Two=b"));
+                new MessageHeader("x-kafka-message-key", "One=a,Two=b"));
         }
     }
 }
