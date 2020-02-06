@@ -8,7 +8,7 @@ The behaviors can be used to build a custom pipeline (similar to the asp.net pip
 
 ## IBehavior
 
-The behaviors implementing the `IBehavior` interface will be invoked by the `IPublisher` internals every time a message is published to the internal bus (this includes the wrapped `IInboundMessage` and `IOutboundMessage` that are generated to produce or consume a message from the message broker).
+The behaviors implementing the `IBehavior` interface will be invoked by the `IPublisher` internals every time a message is published to the internal bus (this includes the inbound/outbound messages, but they will be wrapped into an `IInboundEvelope` or `IOutboundEnvelope`).
 
 At every call to `IPublisher.Publish` the `Handle` method of each registered behavior is called, passing in the collection of messages and the delegate to the next step in the pipeline. This gives you the flexibility to execute any sort of code before and after the messages have been actually published (before or after calling the `next()` step). You can for example modify the messages before publishing them, validate them (like in the above example), add some logging / tracing, etc.
 
@@ -44,7 +44,7 @@ public class TracingBehavior : IBehavior
 **Note:** The `Handle` receives a collection of `object` because a bunch of messages can be published at once via `IPublisher` or the consumer can be configured to process the messages in batch.
 {: .notice--info}
 
-**Note:** `IInboundMessage` and `IOutboundMessage` are internally used by Silverback to wrap the messages being sent to or received from the message broker and will be received by the `IBroker`. Those interfaces contains the message plus the additional data like endpoint, headers, offset, etc.
+**Note:** `IInboundEnvelope` and `IOutboundEnvelope` are internally used by Silverback to wrap the messages being sent to or received from the message broker and will be received by the `IBroker`. Those interfaces contains the message plus the additional data like endpoint, headers, offset, etc.
 {: .notice--info}
 
 The `IBehavior` implementation have simply to be registered for DI.
@@ -126,13 +126,13 @@ public class TracingBehavior : IBehavior
         IReadOnlyCollection<object> messages, 
         MessagesHandler next)
     {
-        foreach (var message in messages.OfType<IInboundMessage>())
+        foreach (var envelope in messages.OfType<IInboundEnvelope>())
         {
             _dbLogger.LogInboundMessage(
-                message.Content.GetType(), 
-                message.Headers,
-                message.Endpoint,
-                message.Offset);
+                envelope.Message.GetType(), 
+                envelope.Headers,
+                envelope.Endpoint,
+                envelope.Offset);
         }
 
         await _dbLogger.SaveChangesAsync();

@@ -3,11 +3,19 @@ title: Connecting to a Message Broker
 permalink: /docs/quickstart/message-broker
 ---
 
-To connect Silverback to a message broker we need a reference to `Silverback.Integration`, plus the concrete implementation (`Silverback.Integration.Kafka` in this example). We can then add the broker to the DI and configure the connected endpoints. 
+To connect Silverback to a message broker we need a reference to `Silverback.Integration`, plus the concrete implementation (`Silverback.Integration.Kafka`  or `Silverback.Integration.RabbitMQ`). We can then add the broker to the DI and configure the connected endpoints. 
 
 ## Sample configuration
 
-The following example is very simple and there are of course many more configurations and possibilities. Some more details are given in the dedicated [Broker Configuration Explained]({{ site.baseurl }}/docs/configuration/endpoint) section, covering RabbitMQ as well.
+The following example is very simple and there are of course many more configurations and possibilities. Some more details are given in the dedicated [Broker Configuration Explained]({{ site.baseurl }}/docs/configuration/endpoint) section.
+
+The basic concepts:
+* `WithConnectionTo` registers the services necessary to connect to the message broker of choice
+* `AddInbound` is used to automatically relay the incoming messages to the internal bus and they can therefore be subscribed as seen in the previous chapters
+* `AddOutbound` works the other way around and subscribes to the internal bus to forward the integration messages to the message broker
+* `Connect` automatically creates and starts all the consumers.
+
+### Basic Kafka configuration
 
 ```c#
 public void ConfigureServices(IServiceCollection services)
@@ -51,11 +59,85 @@ public void Configure(BusConfigurator busConfigurator)
                 }));
 ```
 
-`AddInbound` is used to automatically relay the incoming messages to the internal bus and they can therefore be subscribed as seen in the previous chapters.
+### Basic RabbitMQ configuration
 
-`AddOutbound` works the other way around and subscribes to the internal bus to forward the integration messages to the message broker.
+```c#
+public void ConfigureServices(IServiceCollection services)
+{
+    services
+        .AddSilverback()
+        .WithConnectionToRabbit(options => options
+            .AddInboundConnector()
+            .AddOutboundConnector());
+}
 
-`Connect()` automatically creates and starts all the consumers.
+public void Configure(BusConfigurator busConfigurator)
+{
+    busConfigurator
+        .Connect(endpoints => endpoints
+            .AddInbound(
+                new RabbitExchangeConsumerEndpoint("basket-events")
+                {
+                    Connection = new RabbitConnectionConfig
+                    {
+                        HostName = "localhost",
+                        UserName = "guest",
+                        Password = "guest",
+                    },
+                    Exchange = new RabbitExchangeConfig
+                    {
+                        IsDurable = true,
+                        IsAutoDeleteEnabled = false,
+                        ExchangeType = ExchangeType.Fanout
+                    },
+                    QueueName = "basket-events-order-service-queue",
+                    Queue = new RabbitQueueConfig
+                    {
+                        IsDurable = true,
+                        IsExclusive = true,
+                        IsAutoDeleteEnabled = false
+                    }
+                })
+            .AddInbound(
+                new RabbitExchangeConsumerEndpoint("payment-events")
+                {
+                    Connection = new RabbitConnectionConfig
+                    {
+                        HostName = "localhost",
+                        UserName = "guest",
+                        Password = "guest",
+                    },
+                    Exchange = new RabbitExchangeConfig
+                    {
+                        IsDurable = true,
+                        IsAutoDeleteEnabled = false,
+                        ExchangeType = ExchangeType.Fanout
+                    },
+                    QueueName = "payment-events-order-service-queue",
+                    Queue = new RabbitQueueConfig
+                    {
+                        IsDurable = true,
+                        IsExclusive = true,
+                        IsAutoDeleteEnabled = false
+                    }
+                })
+            .AddOutbound<IIntegrationEvent>(
+                new RabbitExchangeProducerEndpoint("order-events")
+                {
+                    Connection = new RabbitConnectionConfig
+                    {
+                        HostName = "localhost",
+                        UserName = "guest",
+                        Password = "guest"
+                    },
+                    Exchange = new RabbitExchangeConfig
+                    {
+                        IsDurable = true,
+                        IsAutoDeleteEnabled = false,
+                        ExchangeType = ExchangeType.Fanout
+                    }
+                }));
+```
 
 ## Using IEndpointsConfigurator
 
@@ -124,7 +206,6 @@ public class EndpointsConfiguratorsModule : Module
     }
 }
 ```
-
 
 ## Graceful shutdown
 

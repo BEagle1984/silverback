@@ -1,6 +1,6 @@
 ---
-title: Kafka Message Key (Partitioning)
-permalink: /docs/kafka/kafka-message-key
+title: Kafka Message Key (partitioning)
+permalink: /docs/kafka/message-key
 toc: false
 ---
 
@@ -26,3 +26,6 @@ public class MultipleKeyMembersMessage : IIntegrationMessage
 ```
 
 If no key members are specified no key will be generated and the messages will land in a random partition.
+
+**Note:** The message key will also be submitted as header (see [Default Message Headers]({{ site.baseurl }}/docs/advanced/headers) for details).
+{: .notice--info}

@@ -121,6 +121,6 @@ public void Configure(BusConfigurator busConfigurator)
 }
 ```
 
-**Note:** What said above is only partially true, as you can subscribe to the wrapped message (`IOutboundMessage<TMessage>`) even without calling `PublishOutboundMessagesToInternalBus`.
+**Note:** What said above is only partially true, as you can subscribe to the wrapped message (`IOutboundEnvelope<TMessage>`) even without calling `PublishOutboundMessagesToInternalBus`.
 {: .notice--info}
 
