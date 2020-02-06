@@ -11,7 +11,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Behaviors
 {
-    public class KafkaPartitioningKeyBehavior : IBehavior, ISorted
+    public class KafkaMessageKeyBehavior : IBehavior, ISorted
     {
         public int SortIndex { get; } = 200;
 
@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Behaviors
             if (key == null)
                 return;
 
-            envelope.Headers.AddOrReplace(KafkaProducer.PartitioningKeyHeaderKey, key);
+            envelope.Headers.AddOrReplace(KafkaProducer.MessageKeyHeaderKey, key);
         }
     }
 }

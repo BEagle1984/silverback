@@ -4,10 +4,10 @@ permalink: /docs/releases
 toc: true
 ---
 
-## [2.0.0-beta1](https://github.com/BEagle1984/silverback/releases/tag/2.0.0-beta1)
+## [2.0.0-rc1](https://github.com/BEagle1984/silverback/releases/tag/2.0.0-rc1)
 
 ### What's new
-* Created `Silverback.Integration.RabbitMQ` (see XY)
+* Created `Silverback.Integration.RabbitMQ` package to connect Silverback with RabbitMQ (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 
 ### Breaking Changes
 * The `IBroker`, `IProducer` and `IConsumer` interfaces have been slightly modified (it shouldn't affect you unless you built your own `IBroker` implementation)
@@ -52,7 +52,7 @@ toc: true
 
 ### Fixes
 * Kafka message key is not hashed anymore to avoid possible collisions and simplify debugging
-* Not really a fix but `PartitioningKeyMemberAttribute` has been deprecated in favor of `KafkaKeyMemberAttribute`, since the message key isn't used just for partitioning (see [Kafka Message Key]({{ site.baseurl }}/docs/advanced/kafka-message-key))
+* Not really a fix but `PartitioningKeyMemberAttribute` has been deprecated in favor of `KafkaKeyMemberAttribute`, since the message key isn't used just for partitioning (see [Kafka Message Key]({{ site.baseurl }}/docs/kafka/message-key))
 
 ## [1.0.2](https://github.com/BEagle1984/silverback/releases/tag/1.0.2)
 
@@ -89,11 +89,11 @@ toc: true
 * Changes to the schema of the outbox table (`Silverback.Messaging.Connectors.Model.OutboundMessage`)
 * The configuration fluent API changed quite a bit, refer to the current documentation (e.g. [Using the Bus]({{ site.baseurl }}/docs/quickstart/bus) and [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 
-**Important!** `WithConnectionTo<KafkaBroker>` has to be replaced with `WithConnectionToKafka` in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see [Kafka Message Key]({{ site.baseurl }}/docs/advanced/kafka-message-key))
+**Important!** `WithConnectionTo<KafkaBroker>` has to be replaced with `WithConnectionToKafka` in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see [Kafka Message Key]({{ site.baseurl }}/docs/kafka/message-key))
 {: .notice--warning}
 
 * `Silverback.Integration.EntityFrameworkCore` and `Silverback.EventSourcing.EntityFrameworkCore` have been deprecated (`Silverback.Core.EntityFrameworkCore` contains all the necessary logic to use EF as store)
-* `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Message Key]({{ site.baseurl }}/docs/advanced/kafka-message-key))
+* `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Message Key]({{ site.baseurl }}/docs/kafka/message-key))
 
 ## [0.10.0](https://github.com/BEagle1984/silverback/releases/tag/0.10.0)
 

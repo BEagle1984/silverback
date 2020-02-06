@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Broker
 {
     public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
-        internal const string PartitioningKeyHeaderKey = "x-kafka-partitioning-key";
+        internal const string MessageKeyHeaderKey = "x-kafka-message-key";
 
         private readonly ILogger _logger;
         private Confluent.Kafka.IProducer<byte[], byte[]> _innerProducer;
@@ -81,7 +81,7 @@ namespace Silverback.Messaging.Broker
         private byte[] GetPartitioningKey(IEnumerable<MessageHeader> headers)
         {
             var headerValue = headers
-                ?.FirstOrDefault(h => h.Key == PartitioningKeyHeaderKey)
+                ?.FirstOrDefault(h => h.Key == MessageKeyHeaderKey)
                 ?.Value;
 
             return headerValue == null
