@@ -8,18 +8,20 @@ toc: true
 
 ### What's new
 * Created `Silverback.Integration.RabbitMQ` package to connect Silverback with RabbitMQ (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
+* Messages with an empy body can now be subscribed (you must subscribe to `IInboundEnvelope`) [[#61](https://github.com/BEagle1984/silverback/issues/61)]
+* The Kafka partition offset can now be manually set when a partition is assigned to the cosumer (see [Kafka Events]({{ site.baseurl }}/docs/kafka/events)) [[#57](https://github.com/BEagle1984/silverback/issues/57)]
 
 ### Breaking Changes
 * The `IBroker`, `IProducer` and `IConsumer` interfaces have been slightly modified (it shouldn't affect you unless you built your own `IBroker` implementation)
 * Many interfaces (such as `IBehavior`) and delegates have been sligthly modified to pass around an `IReadOnlyCollection<T>` instead of an `IEnumerable<T>`, to avoid the possible issues related to multiple enumeration of an `IEnumerable`
 * The `IMessageKeyProvider` interface has been renamed to `IMessageIdProvider` to prevent to be mistaken with the Kafka Key or Rabbit's Routing Key
-* `IInboundMessage`/`IOutboundMessage` (plus all the related types) have been renamed to `IInboundEnvelope`/`IOutboundEnvelope` and the message body property has been renamed from `Content` to `Message`
+* `IInboundMessage`/`IOutboundMessage` (plus all the related types) have been renamed to `IInboundEnvelope`/`IOutboundEnvelope` and the property containing the actual message has been renamed from `Content` to `Message`
 * The `MustUnwrap` option has been removed from the inbound connector configuration (messages are unwrapped by default)
 
 ## [1.2.0](https://github.com/BEagle1984/silverback/releases/tag/1.2.0)
 
 ### What's new
-* Some new events are published to the internal bus as a consequence to the Kafka events such as partitions assigned or revoked (see [Kafka Events]({{ site.baseurl }}/docs/advanced/kafka-events)) [[#34](https://github.com/BEagle1984/silverback/issues/34)]
+* Some new events are published to the internal bus as a consequence to the Kafka events such as partitions assigned or revoked (see [Kafka Events]({{ site.baseurl }}/docs/kafka/events)) [[#34](https://github.com/BEagle1984/silverback/issues/34)]
 
 ## [1.1.0](https://github.com/BEagle1984/silverback/releases/tag/1.1.0)
 
