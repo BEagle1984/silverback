@@ -191,27 +191,5 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             _broker.ProducedMessages.Count.Should().Be(1);
         }
-
-// TODO: Deprecated, useless, remove
-//        [Fact]
-//        public async Task Handle_InboundMessages_AreIgnored()
-//        {
-//            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), null);
-//
-//            var messages = new[] { new TestEventOne(), new TestEventOne() };
-//            var envelopes = messages.Select(message =>
-//                new InboundEnvelope<TestEventOne>(new byte[1], null, null, TestConsumerEndpoint.GetDefault())
-//                {
-//                    Message = message
-//                }).ToList();
-//
-//            await _behavior.Handle(envelopes, Task.FromResult);
-//            await _behavior.Handle(messages, Task.FromResult);
-//            await _outboundQueue.Commit();
-//
-//            var queued = await _outboundQueue.Dequeue(1);
-//            queued.Count().Should().Be(0);
-//            _broker.ProducedMessages.Count.Should().Be(0);
-//        }
     }
 }

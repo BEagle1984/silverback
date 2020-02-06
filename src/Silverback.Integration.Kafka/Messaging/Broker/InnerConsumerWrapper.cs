@@ -80,8 +80,6 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        public void Seek(Confluent.Kafka.TopicPartitionOffset tpo) => _innerConsumer.Seek(tpo);
-
         public void StartConsuming()
         {
             if (_consuming)
@@ -122,18 +120,32 @@ namespace Silverback.Messaging.Broker
                 {
                     partitions.ForEach(partition =>
                     {
-                        _logger.LogInformation("Assigned topic {topic} partition {partition}, member id: {memberId}",
+                        _logger.LogInformation("Assigned partition {topic} {partition}, member id: {memberId}",
                             partition.Topic, partition.Partition, _innerConsumer.MemberId);
                     });
 
-                    CreateScopeAndPublishEvent(
-                        new KafkaPartitionsAssignedEvent(partitions, _innerConsumer.MemberId));
+                    var partitionsAssignedEvent = new KafkaPartitionsAssignedEvent(partitions, _innerConsumer.MemberId);
+
+                    CreateScopeAndPublishEvent(partitionsAssignedEvent);
+
+                    foreach (var topicPartitionOffset in partitionsAssignedEvent.Partitions)
+                    {
+                        if (topicPartitionOffset.Offset != Confluent.Kafka.Offset.Unset)
+                        {
+                            _logger.LogDebug("{topic} {partition} offset will be reset to {offset}.",
+                                topicPartitionOffset.Topic,
+                                topicPartitionOffset.Partition,
+                                topicPartitionOffset.Offset);
+                        }
+                    }
+
+                    return partitionsAssignedEvent.Partitions;
                 })
                 .SetPartitionsRevokedHandler((_, partitions) =>
                 {
                     partitions.ForEach(partition =>
                     {
-                        _logger.LogInformation("Revoked topic {topic} partition {partition}, member id: {memberId}",
+                        _logger.LogInformation("Revoked partition {topic} {partition}, member id: {memberId}",
                             partition.Topic, partition.Partition, _innerConsumer.MemberId);
                     });
 
@@ -150,12 +162,12 @@ namespace Silverback.Messaging.Broker
                         if (offset.Error != null && offset.Error.Code != Confluent.Kafka.ErrorCode.NoError)
                         {
                             _logger.LogError(
-                                "Error occurred committing the offset {topic} {partition} @{offset}: {errorCode} - {errorReason} ",
+                                "Error occurred committing the offset {topic} {partition} @{offset}: {errorCode} - {errorReason}",
                                 offset.Topic, offset.Partition, offset.Offset, offset.Error.Code, offset.Error.Reason);
                         }
                         else
                         {
-                            _logger.LogDebug("Successfully committed offset {topic} {partition} @{offset}.",
+                            _logger.LogDebug("Successfully committed offset {topic} {partition} @{offset}",
                                 offset.Topic, offset.Partition, offset.Offset);
                         }
                     }
@@ -176,7 +188,7 @@ namespace Silverback.Messaging.Broker
                 })
                 .SetStatisticsHandler((_, json) =>
                 {
-                    _logger.LogInformation($"Statistics: {json}");
+                    _logger.LogDebug($"Statistics: {json}");
 
                     CreateScopeAndPublishEvent(new KafkaStatisticsEvent(json));
                 })

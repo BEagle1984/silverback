@@ -72,15 +72,15 @@ namespace Silverback.Messaging.Broker
 
         private async Task OnMessageReceived(
             Confluent.Kafka.Message<byte[], byte[]> message,
-            Confluent.Kafka.TopicPartitionOffset tpo)
+            Confluent.Kafka.TopicPartitionOffset topicPartitionOffset)
         {
             // Checking if the message was sent to the subscribed topic is necessary
             // when reusing the same consumer for multiple topics.
             if (!Endpoint.Names.Any(endpointName =>
-                tpo.Topic.Equals(endpointName, StringComparison.InvariantCultureIgnoreCase)))
+                topicPartitionOffset.Topic.Equals(endpointName, StringComparison.InvariantCultureIgnoreCase)))
                 return;
 
-            await TryHandleMessage(message, tpo);
+            await TryHandleMessage(message, topicPartitionOffset);
         }
 
         private async Task TryHandleMessage(
