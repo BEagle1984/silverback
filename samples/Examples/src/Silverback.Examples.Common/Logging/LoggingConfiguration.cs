@@ -9,7 +9,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Silverback.Examples.Common.Logging
 {
-    public class LoggingConfiguration
+    public static class LoggingConfiguration
     {
         private const string VerboseOutputTemplate =
             "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}) {Message:lj} {Exception} {Properties}{NewLine}";

@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Linq;
+using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
@@ -17,14 +19,24 @@ namespace Silverback.Messaging.Messages
             IReadOnlyCollection<Confluent.Kafka.TopicPartition> partitions,
             string memberId)
         {
-            Partitions = partitions;
+            Partitions = partitions.Select(partition =>
+                new Confluent.Kafka.TopicPartitionOffset(
+                    partition, 
+                    Confluent.Kafka.Offset.Unset))
+                .ToList();
             MemberId = memberId;
         }
 
         /// <summary>
-        ///     Gets the collection of <see cref="Confluent.Kafka.TopicPartition" /> that have been assigned.
+        ///     <para>
+        ///         Gets or sets the collection of <see cref="Confluent.Kafka.TopicPartitionOffset" /> representing the
+        ///         assigned partitions.
+        ///     </para>
+        ///     <para>
+        ///         The collection can be modified to set the actual partitions to consume from and the start offsets.
+        ///     </para>
         /// </summary>
-        public IReadOnlyCollection<Confluent.Kafka.TopicPartition> Partitions { get; }
+        public ICollection<Confluent.Kafka.TopicPartitionOffset> Partitions { get; set; }
 
         /// <summary>
         ///     Gets the (dynamic) group member id of this consumer (as set by the broker).

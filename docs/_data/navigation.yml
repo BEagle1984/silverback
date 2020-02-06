@@ -73,8 +73,6 @@ docs:
         url: /docs/advanced/message-id
       - title: IInboundMessage
         url: /docs/advanced/iinboundmessage
-      - title: Kafka Events
-        url: /docs/advanced/kafka-events
       - title: Default Message Headers
         url: /docs/advanced/headers
   - title: Kafka Specific
@@ -83,6 +81,8 @@ docs:
         url: /docs/kafka/message-key
       - title: Multiple Consumer Groups (in same process)
         url: /docs/kafka/multiple-consumer-groups
+      - title: Kafka Events
+        url: /docs/kafka/events
   - title: RabbitMQ Specific
     children:
       - title: Routing Key

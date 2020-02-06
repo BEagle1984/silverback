@@ -26,6 +26,16 @@ namespace Silverback.Examples.KafkaConsumer
                 message.Partitions.Count,
                 string.Join(", ", message.Partitions.Select(partition => partition.ToString())));
 
+        // public void OnPartitionsAssignedResetOffset(KafkaPartitionsAssignedEvent message)
+        // {
+        //     message.Partitions = message.Partitions
+        //         .Select(topicPartitionOffset =>
+        //             new TopicPartitionOffset(
+        //                 topicPartitionOffset.TopicPartition,
+        //                 Offset.Beginning))
+        //         .ToList();
+        // }
+        
         public void OnPartitionsRevoked(KafkaPartitionsRevokedEvent message) =>
             _logger.LogInformation(
                 "KafkaPartitionsRevokedEvent received: {count} partitions have been revoked ({partitions})",

@@ -7,5 +7,5 @@ namespace Silverback.Messaging.Broker
 {
     internal delegate Task KafkaMessageReceivedHandler(
         Confluent.Kafka.Message<byte[], byte[]> message,
-        Confluent.Kafka.TopicPartitionOffset tpo);
+        Confluent.Kafka.TopicPartitionOffset topicPartitionOffset);
 }

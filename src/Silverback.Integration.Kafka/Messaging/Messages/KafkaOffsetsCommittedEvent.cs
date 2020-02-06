@@ -34,7 +34,8 @@ namespace Silverback.Messaging.Messages
     /// </remarks>
     public class KafkaOffsetsCommittedEvent : IKafkaEvent
     {
-        public KafkaOffsetsCommittedEvent(Confluent.Kafka.CommittedOffsets committedOffsets)
+        public KafkaOffsetsCommittedEvent(
+            Confluent.Kafka.CommittedOffsets committedOffsets)
             : this(committedOffsets?.Offsets.ToList(), committedOffsets?.Error)
         {
         }
