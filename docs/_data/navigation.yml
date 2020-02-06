@@ -79,8 +79,14 @@ docs:
         url: /docs/advanced/headers
   - title: Kafka Specific
     children:
-      - title: Kafka Message Key (Partitioning)
-        url: /docs/advanced/kafka-message-key
+      - title: Message Key (partitioning)
+        url: /docs/kafka/message-key
+      - title: Multiple Consumer Groups (in same process)
+        url: /docs/kafka/multiple-consumer-groups
+  - title: RabbitMQ Specific
+    children:
+      - title: Routing Key
+        url: /docs/rabbit/routing-key
   - title: Extras
     children:
       - title: Distributed Background Services

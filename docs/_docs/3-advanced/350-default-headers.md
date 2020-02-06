@@ -10,7 +10,7 @@ Here is the list of the default headers that may be sent.
 
 Header | Optional | Description
 :-- | :-: | :--
-`x-message-id` | yes<sup>1</sup> | A unique identifier that may be useful for tracing. It may not be present if the produced message isn't implementing `IIntegrationMessage` and no `Id` or `MessageId` property of a supported type is defined.
+`x-message-id` | yes | A unique identifier that may be useful for tracing. It may not be present if the produced message isn't implementing `IIntegrationMessage` and no `Id` or `MessageId` property of a supported type is defined.
 `x-message-type` | no | The assembly qualified name of the message type.
 `x-failed-attempts` | yes | If an exception if thrown the failed attempts will be incremented and stored as header. This is necessary for the [error policies]({{ site.baseurl }}/docs/configuration/inbound#error-handling) to work.
 `x-chunk-id` | yes | The unique id of the message chunk, used when [chunking]({{ site.baseurl }}/docs/advanced/chunking) is enabled.
@@ -20,5 +20,4 @@ Header | Optional | Description
 `traceparent` | no | The current `Activity.Id`, used by the `IConsumer` implementation to set the `Activity.ParentId`, thus enabling distributed tracing across the message broker. Note that an `Activity` is automatically started by the default `IProducer` implementation. See [System.Diagnostics documentation](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=netcore-3.1) for details about `Activity` and distributed tracing in asp.net core and [W3C Trace Context proposal](https://www.w3.org/TR/trace-context-1) for details about the headers.
 `tracestate` | yes | The `Activity.TraceStateString`. See also the [W3C Trace Context proposal](https://www.w3.org/TR/trace-context-1) for details.
 `tracebaggage` | yes | The string representation of the `Activity.Baggage` dictionary. See [System.Diagnostics documentation](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=netcore-3.1) for details.
-
-_<sup>1</sup> The `x-message-id` header is always set for_
+`x-kafka-message-key` | yes | When using Kafka, the [kafka message key]({{ site.baseurl }}/docs/kafka/message-key) will also be submitted as header (see [Kafka Message Key (Partitioning)]({{ site.baseurl }}/docs/kafka/message-key) to know how to define a message key)

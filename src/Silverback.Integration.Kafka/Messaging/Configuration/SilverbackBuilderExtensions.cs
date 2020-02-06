@@ -23,7 +23,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.WithConnectionTo<KafkaBroker>(optionsAction);
 
-            builder.AddSingletonBehavior<KafkaPartitioningKeyBehavior>();
+            builder.AddSingletonBehavior<KafkaMessageKeyBehavior>();
 
             return builder;
         }

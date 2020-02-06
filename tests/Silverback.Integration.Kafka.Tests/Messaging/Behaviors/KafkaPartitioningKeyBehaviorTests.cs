@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaPartitioningKeyBehavior().Handle(new[] { envelope }, Task.FromResult);
+            new KafkaMessageKeyBehavior().Handle(new[] { envelope }, Task.FromResult);
 
             envelope.Headers.Should().NotContain(
                 h => h.Key == "x-kafka-partitioning-key");
@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaPartitioningKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
+            new KafkaMessageKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
 
             envelope1.Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-kafka-partitioning-key", "1"));
@@ -90,7 +90,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaPartitioningKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
+            new KafkaMessageKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
 
             envelope1.Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-kafka-partitioning-key", "One=1,Two=2"));
