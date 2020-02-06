@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
             _messageIdProvider = serviceProvider.GetRequiredService<MessageIdProvider>();
         }
 
-        public int SortIndex { get; } = 200;
+        public int SortIndex { get; } = 300;
 
         public async Task<IReadOnlyCollection<object>> Handle(
             IReadOnlyCollection<object> messages,

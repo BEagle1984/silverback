@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common.Messages;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.Common.Subscribers
@@ -48,6 +49,12 @@ namespace Silverback.Examples.Common.Subscribers
             _logger.LogInformation($"Message '{message.Content}' is BAD...throwing exception!");
 
             await DoFail();
+        }
+
+        public void OnEmptyMessageReceived(IInboundEnvelope envelope)
+        {
+            if (envelope.Message == null)
+                _logger.LogInformation("Empty message received!");
         }
 
         private Task DoFail()
