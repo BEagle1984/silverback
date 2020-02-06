@@ -24,7 +24,9 @@ namespace Silverback.Examples.Main.UseCases.Kafka.Advanced
             typeof(InteroperableMessageUseCase),
             typeof(HeadersUseCase),
             typeof(MultipleOutboundConnectorsUseCase),
-            typeof(SameProcessUseCase)
+            typeof(SameProcessUseCase),
+            typeof(ProduceByteArrayUseCase),
+            typeof(ProduceEmptyMessageUseCase)
         };
     }
 }
