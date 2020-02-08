@@ -24,7 +24,7 @@ namespace Silverback.Examples.KafkaConsumer
             _logger.LogInformation(
                 "KafkaPartitionsAssignedEvent received: {count} partitions have been assigned ({partitions})",
                 message.Partitions.Count,
-                string.Join(", ", message.Partitions.Select(partition => partition.ToString())));
+                string.Join(", ", message.Partitions.Select(partition => partition.TopicPartition.ToString())));
 
         // public void OnPartitionsAssignedResetOffset(KafkaPartitionsAssignedEvent message)
         // {
@@ -40,7 +40,7 @@ namespace Silverback.Examples.KafkaConsumer
             _logger.LogInformation(
                 "KafkaPartitionsRevokedEvent received: {count} partitions have been revoked ({partitions})",
                 message.Partitions.Count,
-                string.Join(", ", message.Partitions.Select(partition => partition.ToString())));
+                string.Join(", ", message.Partitions.Select(partition => partition.TopicPartition.ToString())));
 
         public void OnOffsetCommitted(KafkaOffsetsCommittedEvent message)
         {
