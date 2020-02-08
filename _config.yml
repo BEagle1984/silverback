@@ -1,7 +1,9 @@
 repository: beagle1984/silverback
 
 title: Silverback
+masthead_title: hide
 description: "A framework to build reactive, event-driven, microservices with .net core"
+logo: assets/images/logo.png
 
 name: &name "Sergio Aquilini"
 author: BEagle1984
