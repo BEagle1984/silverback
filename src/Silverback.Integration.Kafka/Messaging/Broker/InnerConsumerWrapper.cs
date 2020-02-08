@@ -42,6 +42,8 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
+        private string EndpointsNames => string.Join(", ", _endpoints.Select(endpoint => endpoint.Name)); 
+        
         public event KafkaMessageReceivedHandler Received;
 
         public void Subscribe(KafkaConsumerEndpoint endpoint)
@@ -181,8 +183,11 @@ namespace Silverback.Messaging.Broker
                     // while disconnecting)
                     if (!_consuming) return;
 
-                    _logger.Log(error.IsFatal ? LogLevel.Critical : LogLevel.Error,
-                        "Error in Kafka consumer: {reason}.", error.Reason);
+                    _logger.Log(
+                        error.IsFatal ? LogLevel.Critical : LogLevel.Error,
+                        "Error in Kafka consumer: {error} (topic(s): {topics})",
+                        error,
+                        EndpointsNames);
 
                     CreateScopeAndPublishEvent(new KafkaErrorEvent(error));
                 })
@@ -249,14 +254,21 @@ namespace Silverback.Messaging.Broker
         {
             if (_enableAutoRecovery)
             {
-                _logger.LogWarning(ex, "KafkaException occurred. The consumer will try to recover.");
+                _logger.LogWarning(
+                    ex,
+                    "KafkaException occurred. The consumer will try to recover. (topic(s): {topics})",
+                    EndpointsNames);
+                
                 ResetInnerConsumer();
             }
             else
             {
-                _logger.LogCritical(ex, "Fatal error occurred consuming a message. The consumer will be stopped. " +
-                                        "Enable auto recovery to allow Silverback to automatically try to reconnect " +
-                                        "(EnableAutoRecovery=true in the endpoint configuration).");
+                _logger.LogCritical(
+                    ex,
+                    "Fatal error occurred consuming a message. The consumer will be stopped. " +
+                    "Enable auto recovery to allow Silverback to automatically try to reconnect " +
+                    "(EnableAutoRecovery=true in the endpoint configuration). (topic(s): {topics})",
+                    EndpointsNames);
             }
 
             return _enableAutoRecovery;
