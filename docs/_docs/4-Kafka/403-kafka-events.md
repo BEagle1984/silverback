@@ -24,13 +24,16 @@ Event | Description
 In the following example the `KafkaPartitionsAssignedEvent` is subscribed in order to reset the start offsets and replay the past messages.
 
 ```c#
-public void OnPartitionsAssigned(KafkaPartitionsAssignedEvent message)
+public class KafkaEventsSubscriber : ISubscriber
 {
-    message.Partitions = message.Partitions
-        .Select(topicPartitionOffset =>
-            new TopicPartitionOffset(
-                topicPartitionOffset.TopicPartition,
-                Offset.Beginning))
-        .ToList();
+    public void OnPartitionsAssigned(KafkaPartitionsAssignedEvent message)
+    {
+        message.Partitions = message.Partitions
+            .Select(topicPartitionOffset =>
+                new TopicPartitionOffset(
+                    topicPartitionOffset.TopicPartition,
+                    Offset.Beginning))
+            .ToList();
+    }
 }
 ```
