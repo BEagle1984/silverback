@@ -82,7 +82,9 @@ namespace Silverback.Messaging.Subscribers
             UnwrapEnvelopesIfNeeded(
                     ApplyFilters(subscribedMethod.Filters, messages),
                     targetMessageType)
-                .OfType(targetMessageType).ToList();
+                .Where(message => message != null)
+                .OfType(targetMessageType)
+                .ToList();
 
         private static IEnumerable<object> UnwrapEnvelopesIfNeeded(
             IEnumerable<object> messages,
@@ -90,7 +92,7 @@ namespace Silverback.Messaging.Subscribers
             typeof(IEnvelope).IsAssignableFrom(targetMessageType)
                 ? messages
                 : messages.Select(message => message is IEnvelope envelope
-                    ? envelope.Message
+                    ? envelope.AutoUnwrap ? envelope.Message : null
                     : message);
 
         private static IEnumerable<object> ApplyFilters(

@@ -29,17 +29,21 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         private readonly OutboundRoutingConfiguration _routingConfiguration;
         private readonly InMemoryOutboundQueue _outboundQueue;
         private readonly TestBroker _broker;
+        private readonly TestSubscriber _testSubscriber;
 
         public OutboundRoutingBehaviorTests()
         {
             var services = new ServiceCollection();
 
             _outboundQueue = new InMemoryOutboundQueue();
+            _testSubscriber = new TestSubscriber();
 
             services.AddSilverback()
                 .WithConnectionTo<TestBroker>(options => options
                     .AddDeferredOutboundConnector(_ => _outboundQueue)
                     .AddOutboundConnector());
+
+            services.AddSingletonSubscriber(_testSubscriber);
 
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
@@ -131,25 +135,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         }
 
         [Fact]
-        public async Task Handle_OutboundEnvelope_OutboundEnvelopeIsFiltered()
+        public async Task Handle_Messages_RoutedMessageIsRepublishedWithoutAutoUnwrap()
         {
             _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
 
-            var messages =
-                await _behavior.Handle(
-                    new object[]
-                    {
-                        new OutboundEnvelope<TestEventOne>(
-                            new TestEventOne(),
-                            null,
-                            new TestProducerEndpoint("eventOne"))
-                    }, Task.FromResult);
+            await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
 
-            messages.Count.Should().Be(0);
+            _testSubscriber.ReceivedMessages.Count.Should().Be(0); // Because TestSubscriber discards the envelopes
         }
 
         [Fact]
-        public async Task Handle_MessagesWithPublishToInternBusOption_RoutedMessageIsNotFiltered()
+        public async Task Handle_MessagesWithPublishToInternBusOption_RoutedMessageIsFiltered()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
@@ -157,7 +153,21 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             var messages =
                 await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
 
-            messages.Count.Should().Be(2);
+            messages.Count.Should().Be(1);
+            messages.First().Should().NotBeOfType<TestEventOne>();
+        }
+
+        [Fact]
+        public async Task Handle_MessagesWithPublishToInternBusOption_RoutedMessageIsRepublishedWithAutoUnwrap()
+        {
+            _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
+
+            var messages =
+                await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
+
+            _testSubscriber.ReceivedMessages.Count.Should().Be(1);
+            _testSubscriber.ReceivedMessages.First().Should().BeOfType<TestEventOne>();
         }
 
         [Fact]

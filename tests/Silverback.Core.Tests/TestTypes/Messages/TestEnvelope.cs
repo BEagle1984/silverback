@@ -7,11 +7,14 @@ namespace Silverback.Tests.Core.TestTypes.Messages
 {
     public class TestEnvelope : IEnvelope
     {
-        public TestEnvelope(object message)
+        public TestEnvelope(object message, bool autoUnwrap = true)
         {
             Message = message;
+            AutoUnwrap = autoUnwrap;
         }
 
         public object Message { get; }
+        
+        public bool AutoUnwrap { get; }
     }
 }

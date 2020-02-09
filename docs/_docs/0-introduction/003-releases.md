@@ -9,7 +9,8 @@ toc: true
 ### What's new
 * Created `Silverback.Integration.RabbitMQ` package to connect Silverback with RabbitMQ (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 * Messages with an empy body can now be subscribed (you must subscribe to `IInboundEnvelope`) [[#61](https://github.com/BEagle1984/silverback/issues/61)]
-* The Kafka partition offset can now be manually set when a partition is assigned to the cosumer (see [Kafka Events]({{ site.baseurl }}/docs/kafka/events)) [[#57](https://github.com/BEagle1984/silverback/issues/57)]
+* The Kafka partition start offset can now be manually set when a partition is assigned to the consumer (see [Kafka Events]({{ site.baseurl }}/docs/kafka/events)) [[#57](https://github.com/BEagle1984/silverback/issues/57)]
+* Several reliablity and performance related improvements
 
 ### Breaking Changes
 * The `IBroker`, `IProducer` and `IConsumer` interfaces have been slightly modified (it shouldn't affect you unless you built your own `IBroker` implementation)

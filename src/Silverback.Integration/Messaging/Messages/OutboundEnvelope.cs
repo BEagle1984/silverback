@@ -10,8 +10,12 @@ namespace Silverback.Messaging.Messages
 {
     internal class OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelopeInternal
     {
-        internal OutboundEnvelope(object message, IEnumerable<MessageHeader> headers, IOutboundRoute route)
-            : this(message, headers, route?.DestinationEndpoint)
+        internal OutboundEnvelope(
+            object message,
+            IEnumerable<MessageHeader> headers,
+            IOutboundRoute route,
+            bool autoUnwrap = false)
+            : this(message, headers, route?.DestinationEndpoint, autoUnwrap)
         {
             Route = route ?? throw new ArgumentNullException(nameof(route));
         }
@@ -20,26 +24,38 @@ namespace Silverback.Messaging.Messages
             object message,
             IEnumerable<MessageHeader> headers,
             IProducerEndpoint endpoint,
+            bool autoUnwrap = false,
             IOffset offset = null)
             : base(message, headers, endpoint, offset)
         {
             Message = message;
+            AutoUnwrap = autoUnwrap;
         }
 
         public object Message { get; }
+
+        public bool AutoUnwrap { get; }
 
         public IOutboundRoute Route { get; }
     }
 
     internal class OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboundEnvelope<TMessage>
     {
-        public OutboundEnvelope(TMessage message, IEnumerable<MessageHeader> headers, IOutboundRoute route)
-            : base(message, headers, route)
+        public OutboundEnvelope(
+            TMessage message,
+            IEnumerable<MessageHeader> headers,
+            IOutboundRoute route,
+            bool autoUnwrap = false)
+            : base(message, headers, route, autoUnwrap)
         {
         }
 
-        public OutboundEnvelope(TMessage message, IEnumerable<MessageHeader> headers, IProducerEndpoint endpoint)
-            : base(message, headers, endpoint)
+        public OutboundEnvelope(
+            TMessage message,
+            IEnumerable<MessageHeader> headers,
+            IProducerEndpoint endpoint,
+            bool autoUnwrap = false)
+            : base(message, headers, endpoint, autoUnwrap)
         {
         }
 

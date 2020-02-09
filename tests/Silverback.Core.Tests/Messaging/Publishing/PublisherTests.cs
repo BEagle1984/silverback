@@ -1420,6 +1420,34 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
         
         [Fact]
+        public void Publish_EnvelopeWithoutAutoUnwrap_EnvelopeOnlyIsReceived()
+        {
+            var messages = new List<object>();
+            var publisher = GetPublisher(builder => builder
+                .Subscribe((object message) => messages.Add(message))
+                .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
+
+            publisher.Publish(new TestEnvelope(new TestCommandOne(), false));
+
+            messages.OfType<TestEnvelope>().Count().Should().Be(1);
+            messages.OfType<TestCommandOne>().Count().Should().Be(0);
+        }
+
+        [Fact]
+        public async Task PublishAsync_EnvelopeWithoutAutoUnwrap_EnvelopeOnlyIsReceived()
+        {
+            var messages = new List<object>();
+            var publisher = GetPublisher(builder => builder
+                .Subscribe((object message) => messages.Add(message))
+                .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
+
+            await publisher.PublishAsync(new TestEnvelope(new TestCommandOne(), false));
+
+            messages.OfType<TestEnvelope>().Count().Should().Be(1);
+            messages.OfType<TestCommandOne>().Count().Should().Be(0);
+        }
+        
+        [Fact]
         public async Task Publish_MessagesWithFilter_FilteredMessagesReceived()
         {
             var publisher = GetPublisher(_filteredSubscriber);

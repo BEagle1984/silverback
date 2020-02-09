@@ -32,8 +32,10 @@ namespace Silverback.Messaging.Connectors.Behaviors
         {
             var routedMessages = await WrapAndRepublishRoutedMessages(messages);
 
-            if (!_routing.PublishOutboundMessagesToInternalBus)
-                messages = messages.Where(m => !(m is IOutboundEnvelope) && !routedMessages.Contains(m)).ToList();
+            // The routed messages are discarded because they have been republished
+            // as OutboundEnvelope and they will be normally subscribable
+            // (if PublishOutboundMessagesToInternalBus is true).
+            messages = messages.Where(m => !routedMessages.Contains(m)).ToList();
 
             return await next(messages);
         }
@@ -61,7 +63,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
         {
             var envelope = (IOutboundEnvelope) Activator.CreateInstance(
                 typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
-                message, null, route);
+                message, null, route, _routing.PublishOutboundMessagesToInternalBus);
 
             _messageIdProvider.EnsureKeyIsInitialized(envelope.Message, envelope.Headers);
 

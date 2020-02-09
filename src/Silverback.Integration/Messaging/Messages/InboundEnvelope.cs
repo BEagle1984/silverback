@@ -23,6 +23,8 @@ namespace Silverback.Messaging.Messages
         }
 
         public object Message { get; set; }
+
+        public bool AutoUnwrap { get; } = true;
     }
 
     internal class InboundEnvelope<TMessage> : InboundEnvelope, IInboundEnvelope<TMessage>
