@@ -13,6 +13,8 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public class KafkaBroker : Broker
     {
+        internal const string MessageKeyHeaderKey = "x-kafka-message-key";
+        
         private readonly MessageIdProvider _messageIdProvider;
         private readonly IServiceProvider _serviceProvider;
         private readonly ILoggerFactory _loggerFactory;

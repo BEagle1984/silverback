@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -94,9 +95,14 @@ namespace Silverback.Messaging.Broker
                 _messagesSinceCommit++;
                 offset = new KafkaOffset(tpo);
 
+                var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());
+                
+                if (message.Key != null)
+                    headers.AddOrReplace(KafkaBroker.MessageKeyHeaderKey, Encoding.UTF8.GetString(message.Key));
+                
                 await HandleMessage(
                     message.Value,
-                    message.Headers.ToSilverbackHeaders(),
+                    headers,
                     offset);
             }
             catch (Exception ex)

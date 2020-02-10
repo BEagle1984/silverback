@@ -4,7 +4,7 @@ permalink: /docs/releases
 toc: true
 ---
 
-## [2.0.0-rc1](https://github.com/BEagle1984/silverback/releases/tag/2.0.0-rc1)
+## [2.0.0-rc2](https://github.com/BEagle1984/silverback/releases/tag/2.0.0-rc2)
 
 ### What's new
 * Created `Silverback.Integration.RabbitMQ` package to connect Silverback with RabbitMQ (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))

@@ -15,8 +15,6 @@ namespace Silverback.Messaging.Broker
 {
     public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
-        internal const string MessageKeyHeaderKey = "x-kafka-message-key";
-
         private readonly ILogger _logger;
         private Confluent.Kafka.IProducer<byte[], byte[]> _innerProducer;
 
@@ -49,7 +47,7 @@ namespace Silverback.Messaging.Broker
             {
                 var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
                 {
-                    Key = GetPartitioningKey(envelope.Headers),
+                    Key = GetKafkaMessageKey(envelope.Headers),
                     Value = envelope.RawMessage
                 };
 
@@ -78,15 +76,20 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private byte[] GetPartitioningKey(IEnumerable<MessageHeader> headers)
+        private byte[] GetKafkaMessageKey(MessageHeaderCollection headers)
         {
-            var headerValue = headers
-                ?.FirstOrDefault(h => h.Key == MessageKeyHeaderKey)
-                ?.Value;
+            var kafkaKeyHeader = headers
+                ?.FirstOrDefault(header => header.Key == KafkaBroker.MessageKeyHeaderKey);
 
-            return headerValue == null
-                ? null
-                : Encoding.UTF8.GetBytes(headerValue);
+            if (kafkaKeyHeader != null)
+            {
+                headers.Remove(kafkaKeyHeader);
+
+                if (kafkaKeyHeader.Value != null)
+                    return Encoding.UTF8.GetBytes(kafkaKeyHeader.Value);
+            } 
+            
+            return null;
         }
 
         private Confluent.Kafka.IProducer<byte[], byte[]> GetInnerProducer() =>

@@ -63,7 +63,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">The headers of the consumed message.</param>
         /// <param name="offset">The offset of the consumed message.</param>
         /// <returns></returns>
-        protected virtual async Task HandleMessage(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset)
+        protected virtual async Task HandleMessage(byte[] message, IReadOnlyCollection<MessageHeader> headers, IOffset offset)
         {
             if (Received == null)
                 throw new InvalidOperationException(
