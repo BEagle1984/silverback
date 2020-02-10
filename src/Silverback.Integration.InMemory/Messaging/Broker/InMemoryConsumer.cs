@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using System.Linq;
 
 namespace Silverback.Messaging.Broker
 {
@@ -42,6 +43,6 @@ namespace Silverback.Messaging.Broker
         }
 
         internal Task Receive(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset) =>
-            HandleMessage(message, headers, offset);
+            HandleMessage(message, headers.ToList(), offset);
     }
 }
