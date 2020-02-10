@@ -83,7 +83,7 @@ namespace Silverback.Messaging.Connectors
             catch (Exception ex)
             {
                 _messageLogger.LogError(_logger, ex, "Failed to publish queued message.",
-                    new OutboundEnvelope(message.Content, message.Headers, message.Endpoint, false));
+                    new OutboundEnvelope(message.Content, message.Headers, message.Endpoint));
 
                 await queue.Retry(message);
 

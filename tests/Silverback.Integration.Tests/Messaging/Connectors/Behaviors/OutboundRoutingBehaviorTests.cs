@@ -163,8 +163,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector));
 
-            var messages =
-                await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
+            await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult);
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
             _testSubscriber.ReceivedMessages.First().Should().BeOfType<TestEventOne>();

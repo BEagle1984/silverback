@@ -39,5 +39,19 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             registeredBehaviors.Should()
                 .Contain(x => x.GetType() == typeof(ActivityConsumerBehavior));
         }
+
+        [Fact]
+        public void WithConnectionTo_BrokerOptionsConfiguratorInvoked()
+        {
+            var serviceProvider = new ServiceCollection()
+                .AddSilverback()
+                .WithConnectionTo<TestBroker>(options => { })
+                .Services.BuildServiceProvider();
+
+            var registeredBehaviors = serviceProvider.GetServices<IBrokerBehavior>().ToList();
+
+            registeredBehaviors.Should()
+                .Contain(x => x.GetType() == typeof(EmptyBehavior));
+        }
     }
 }
