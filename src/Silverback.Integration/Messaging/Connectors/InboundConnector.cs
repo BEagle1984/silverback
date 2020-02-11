@@ -76,7 +76,7 @@ namespace Silverback.Messaging.Connectors
             IInboundEnvelope envelope,
             IServiceProvider serviceProvider)
         {
-            if (!envelope.Headers.Contains(MessageHeader.ChunkIdKey))
+            if (!envelope.Headers.Contains(DefaultMessageHeaders.ChunkId))
                 return envelope;
 
             var completeMessage = await serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(envelope);

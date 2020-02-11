@@ -228,11 +228,11 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
 
             var policy = reader.Inbound.First().ErrorPolicies.First();
             policy.CanHandle(
-                new InboundEnvelope(new byte[1], new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "3") },
+                new InboundEnvelope(new byte[1], new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
                     null,
                     new KafkaConsumerEndpoint("test")), new ArgumentException()).Should().BeTrue();
             policy.CanHandle(
-                new InboundEnvelope(new byte[1], new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, "6") },
+                new InboundEnvelope(new byte[1], new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "6") },
                     null,
                     new KafkaConsumerEndpoint("test")), new ArgumentException()).Should().BeFalse();
         }

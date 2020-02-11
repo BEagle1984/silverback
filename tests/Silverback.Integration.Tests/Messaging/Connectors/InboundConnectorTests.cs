@@ -138,11 +138,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var consumer = _broker.Consumers.First();
             await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
             await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() },
-                new[] { new MessageHeader { Key = MessageHeader.FailedAttemptsKey, Value = "3" } });
+                new[] { new MessageHeader { Key = DefaultMessageHeaders.FailedAttempts, Value = "3" } });
 
             var inboundMessages = _inboundSubscriber.ReceivedEnvelopes.OfType<IInboundEnvelope>().ToList();
-            inboundMessages.First().Headers.GetValue<int>(MessageHeader.FailedAttemptsKey).Should().Be(null);
-            inboundMessages.Skip(1).First().Headers.GetValue<int>(MessageHeader.FailedAttemptsKey).Should().Be(3);
+            inboundMessages.First().Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts).Should().Be(null);
+            inboundMessages.Skip(1).First().Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts).Should().Be(3);
         }
 
         [Fact]
@@ -277,31 +277,31 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var consumer = _broker.Consumers.First();
             await consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "1"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "2"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "3"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "4"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
@@ -320,31 +320,31 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var consumer = _broker.Consumers.First();
             await consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "1"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "4"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "3"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "2"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
@@ -363,45 +363,45 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var consumer = _broker.Consumers.First();
             await consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "1"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "4"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "3"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "4"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "3"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "2"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
 
             _testSubscriber.ReceivedMessages.Count.Should().Be(1);
@@ -599,31 +599,31 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var consumer = _broker.Consumers.First();
             await consumer.TestPush(buffer.Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "1"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(40).Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "2"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(80).Take(40).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "3"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestPush(buffer.Skip(120).ToArray(), new[]
             {
-                new MessageHeader(MessageHeader.MessageIdKey, "123"),
-                new MessageHeader(MessageHeader.ChunkIdKey, "4"),
-                new MessageHeader(MessageHeader.ChunksCountKey, "4"),
-                new MessageHeader(MessageHeader.MessageTypeKey, typeof(TestEventOne).AssemblyQualifiedName)
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
 
             testSerializer.FailCount.Should().Be(3);
@@ -664,7 +664,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("bad"));
 
-            producer.ProducedMessages.Last().Headers.Count(h => h.Key == MessageHeader.FailedAttemptsKey).Should()
+            producer.ProducedMessages.Last().Headers.Count(h => h.Key == DefaultMessageHeaders.FailedAttempts).Should()
                 .Be(1);
         }
 

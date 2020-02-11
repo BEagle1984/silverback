@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Messages
             var key = _providers.FirstOrDefault(p =>
                 p.CanHandle(message))?.EnsureIdentifierIsInitialized(message);
 
-            headers.AddOrReplace(MessageHeader.MessageIdKey, key ?? Guid.NewGuid().ToString().ToLower());
+            headers.AddOrReplace(DefaultMessageHeaders.MessageId, key ?? Guid.NewGuid().ToString().ToLower());
         }
     }
 }

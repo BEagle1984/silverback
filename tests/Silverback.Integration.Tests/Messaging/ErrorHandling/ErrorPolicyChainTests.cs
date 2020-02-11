@@ -51,7 +51,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             {
                 new InboundEnvelope(
                     new byte[1],
-                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
+                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
                     null, TestConsumerEndpoint.GetDefault())
             }, new Exception("test"));
 
@@ -73,7 +73,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             {
                 new InboundEnvelope(
                     new byte[1],
-                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
+                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
                     null, TestConsumerEndpoint.GetDefault())
             }, new Exception("test"));
 
@@ -103,7 +103,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             {
                 new InboundEnvelope(
                     new byte[1],
-                    new[] { new MessageHeader(MessageHeader.FailedAttemptsKey, failedAttempts.ToString()) },
+                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
                     null, TestConsumerEndpoint.GetDefault())
             }, new Exception("test"));
 

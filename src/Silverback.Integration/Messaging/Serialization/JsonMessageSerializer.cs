@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Serialization
             var type = message.GetType();
             var json = JsonConvert.SerializeObject(message, type, Settings);
 
-            messageHeaders.AddOrReplace(MessageHeader.MessageTypeKey, type.AssemblyQualifiedName);
+            messageHeaders.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
             return GetEncoding().GetBytes(json);
         }
@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Serialization
                 return null;
             
             var json = GetEncoding().GetString(message);
-            var typeName = messageHeaders.GetValue(MessageHeader.MessageTypeKey);
+            var typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
             var type = typeName != null ? Type.GetType(typeName) : typeof(object);
 
             return JsonConvert.DeserializeObject(json, type, Settings);

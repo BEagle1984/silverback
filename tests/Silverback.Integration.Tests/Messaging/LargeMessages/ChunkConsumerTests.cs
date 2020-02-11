@@ -36,27 +36,27 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 originalSerializedMessage.AsMemory().Slice(0, 300).ToArray(),
                 new[]
                 {
-                    new MessageHeader(MessageHeader.MessageIdKey, originalMessage.MessageId.ToString()),
-                    new MessageHeader(MessageHeader.ChunkIdKey, "0"),
-                    new MessageHeader(MessageHeader.ChunksCountKey, "3"),
+                    new MessageHeader(DefaultMessageHeaders.MessageId, originalMessage.MessageId.ToString()),
+                    new MessageHeader(DefaultMessageHeaders.ChunkId, "0"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 },
                 null, TestConsumerEndpoint.GetDefault());
             chunks[1] = new InboundEnvelope(
                 originalSerializedMessage.AsMemory().Slice(300, 300).ToArray(),
                 new[]
                 {
-                    new MessageHeader(MessageHeader.MessageIdKey, originalMessage.MessageId.ToString()),
-                    new MessageHeader(MessageHeader.ChunkIdKey, "1"),
-                    new MessageHeader(MessageHeader.ChunksCountKey, "3"),
+                    new MessageHeader(DefaultMessageHeaders.MessageId, originalMessage.MessageId.ToString()),
+                    new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 },
                 null, TestConsumerEndpoint.GetDefault());
             chunks[2] = new InboundEnvelope(
                 originalSerializedMessage.AsMemory().Slice(600).ToArray(),
                 new[]
                 {
-                    new MessageHeader(MessageHeader.MessageIdKey, originalMessage.MessageId.ToString()),
-                    new MessageHeader(MessageHeader.ChunkIdKey, "2"),
-                    new MessageHeader(MessageHeader.ChunksCountKey, "3"),
+                    new MessageHeader(DefaultMessageHeaders.MessageId, originalMessage.MessageId.ToString()),
+                    new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 },
                 null, TestConsumerEndpoint.GetDefault());
 

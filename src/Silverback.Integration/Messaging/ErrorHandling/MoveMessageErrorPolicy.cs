@@ -62,7 +62,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         private void PublishToNewEndpoint(IInboundEnvelope envelope, Exception exception)
         {
-            envelope.Headers.AddOrReplace(MessageHeader.SourceEndpointKey, envelope.Endpoint?.Name);
+            envelope.Headers.AddOrReplace(DefaultMessageHeaders.SourceEndpoint, envelope.Endpoint?.Name);
 
             _producer.Produce(
                 _transformationFunction?.Invoke(envelope.Message, exception) ?? envelope.Message ?? envelope.RawMessage,
