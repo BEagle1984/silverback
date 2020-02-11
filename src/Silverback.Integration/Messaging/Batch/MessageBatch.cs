@@ -149,8 +149,8 @@ namespace Silverback.Messaging.Batch
         {
             foreach (var envelope in envelopes)
             {
-                envelope.Headers.AddOrReplace(MessageHeader.BatchIdKey, CurrentBatchId);
-                envelope.Headers.AddOrReplace(MessageHeader.BatchSizeKey, CurrentSize);
+                envelope.Headers.AddOrReplace(DefaultMessageHeaders.BatchId, CurrentBatchId);
+                envelope.Headers.AddOrReplace(DefaultMessageHeaders.BatchSize, CurrentSize);
             }
         }
 

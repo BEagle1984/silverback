@@ -147,7 +147,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             {
                 new InboundEnvelope(
                     Encoding.UTF8.GetBytes("hey oh!"),
-                    new[] { new MessageHeader(MessageHeader.MessageTypeKey, typeof(string).AssemblyQualifiedName) },
+                    new[] { new MessageHeader(DefaultMessageHeaders.MessageType, typeof(string).AssemblyQualifiedName) },
                     null, TestConsumerEndpoint.GetDefault()),
             }, new Exception("test"));
 
@@ -203,7 +203,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             producer.ProducedMessages.Last()
                 .Headers
                 .Should().ContainEquivalentOf(new MessageHeader(
-                    MessageHeader.SourceEndpointKey,
+                    DefaultMessageHeaders.SourceEndpoint,
                     "source-endpoint"));
         }
     }

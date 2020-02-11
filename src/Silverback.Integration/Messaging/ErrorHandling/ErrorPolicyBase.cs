@@ -135,7 +135,7 @@ namespace Silverback.Messaging.ErrorHandling
                 return false;
             }
 
-            var failedAttempts = envelope.Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey);
+            var failedAttempts = envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts);
             if (MaxFailedAttemptsSetting >= 0 && failedAttempts > MaxFailedAttemptsSetting)
             {
                 _messageLogger.LogTrace(_logger,

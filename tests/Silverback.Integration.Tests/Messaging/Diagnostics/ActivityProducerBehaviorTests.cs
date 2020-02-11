@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             new ActivityProducerBehavior().Handle(rawEnvelope, _ => Task.CompletedTask);
 
             rawEnvelope.Headers.Should().Contain(
-                h => h.Key == DiagnosticsConstants.TraceIdHeaderKey &&
+                h => h.Key == DefaultMessageHeaders.TraceId &&
                      h.Value.StartsWith("00-0af7651916cd43dd8448eb211c80319c"));
         }
 
@@ -46,7 +46,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             new ActivityProducerBehavior().Handle(rawEnvelope, _ => Task.CompletedTask);
 
             rawEnvelope.Headers.Should().Contain(
-                h => h.Key == DiagnosticsConstants.TraceIdHeaderKey && !string.IsNullOrEmpty(h.Value));
+                h => h.Key == DefaultMessageHeaders.TraceId && !string.IsNullOrEmpty(h.Value));
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             broker.GetProducer(TestProducerEndpoint.GetDefault()).Produce("123");
 
             broker.ProducedMessages.Single().Headers.Should().Contain(
-                h => h.Key == DiagnosticsConstants.TraceIdHeaderKey &&
+                h => h.Key == DefaultMessageHeaders.TraceId &&
                      h.Value.StartsWith("00-0af7651916cd43dd8448eb211c80319c"));
         }
 
@@ -89,7 +89,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             await broker.GetProducer(TestProducerEndpoint.GetDefault()).ProduceAsync("123");
 
             broker.ProducedMessages.Single().Headers.Should().Contain(
-                h => h.Key == DiagnosticsConstants.TraceIdHeaderKey &&
+                h => h.Key == DefaultMessageHeaders.TraceId &&
                      h.Value.StartsWith("00-0af7651916cd43dd8448eb211c80319c"));
         }
     }

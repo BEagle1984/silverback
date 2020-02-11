@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Broker
             {
                 var kafkaMessage = new Confluent.Kafka.Message<byte[], byte[]>
                 {
-                    Key = GetKafkaMessageKey(envelope.Headers),
+                    Key = GetKafkaKeyAndRemoveHeader(envelope.Headers),
                     Value = envelope.RawMessage
                 };
 
@@ -76,10 +76,10 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private byte[] GetKafkaMessageKey(MessageHeaderCollection headers)
+        private byte[] GetKafkaKeyAndRemoveHeader(MessageHeaderCollection headers)
         {
             var kafkaKeyHeader = headers
-                ?.FirstOrDefault(header => header.Key == KafkaBroker.MessageKeyHeaderKey);
+                ?.FirstOrDefault(header => header.Key == KafkaMessageHeaders.KafkaMessageKey);
 
             if (kafkaKeyHeader != null)
             {

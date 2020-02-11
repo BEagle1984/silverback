@@ -95,21 +95,21 @@ namespace Silverback.Messaging.Messages
 
             properties.Add(("Endpoint", "endpointName", firstMessage.Endpoint?.Name));
 
-            var failedAttempts = firstMessage.Headers.GetValue<int>(MessageHeader.FailedAttemptsKey);
+            var failedAttempts = firstMessage.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts);
             if (failedAttempts > 0)
                 properties.Add(("FailedAttempts", "failedAttempts", failedAttempts.ToString()));
 
             if (envelopes.Count == 1)
             {
-                properties.Add(("Type", "messageType", firstMessage.Headers.GetValue(MessageHeader.MessageTypeKey)));
-                properties.Add(("Id", "messageId", firstMessage.Headers.GetValue(MessageHeader.MessageIdKey)));
+                properties.Add(("Type", "messageType", firstMessage.Headers.GetValue(DefaultMessageHeaders.MessageType)));
+                properties.Add(("Id", "messageId", firstMessage.Headers.GetValue(DefaultMessageHeaders.MessageId)));
 
                 if (firstMessage.Offset != null)
                     properties.Add(("Offset", "offset", $"{firstMessage.Offset.Value}"));
             }
 
-            properties.Add(("BatchId", "batchId", firstMessage.Headers.GetValue(MessageHeader.BatchIdKey)));
-            properties.Add(("BatchSize", "batchSize", firstMessage.Headers.GetValue(MessageHeader.BatchSizeKey)));
+            properties.Add(("BatchId", "batchId", firstMessage.Headers.GetValue(DefaultMessageHeaders.BatchId)));
+            properties.Add(("BatchSize", "batchSize", firstMessage.Headers.GetValue(DefaultMessageHeaders.BatchSize)));
 
             // Don't log empty values
             properties.RemoveAll(x => string.IsNullOrWhiteSpace(x.Item3));

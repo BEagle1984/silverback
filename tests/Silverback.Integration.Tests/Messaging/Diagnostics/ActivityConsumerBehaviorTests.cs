@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 "123",
                 new MessageHeaderCollection
                 {
-                    { DiagnosticsConstants.TraceIdHeaderKey, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
+                    { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
                 TestConsumerEndpoint.GetDefault());
 
@@ -55,7 +55,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 "123",
                 new MessageHeaderCollection
                 {
-                    { DiagnosticsConstants.TraceIdHeaderKey, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
+                    { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
                 TestConsumerEndpoint.GetDefault());
 
@@ -88,7 +88,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 "123",
                 new MessageHeaderCollection
                 {
-                    { DiagnosticsConstants.TraceIdHeaderKey, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
+                    { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
                 TestConsumerEndpoint.GetDefault());
 

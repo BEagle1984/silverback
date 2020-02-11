@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
             var headers = new MessageHeaderCollection
             {
-                { MessageHeader.MessageIdKey, "1234" }
+                { DefaultMessageHeaders.MessageId, "1234" }
             };
 
             var serializedMessage = _serializer.Serialize(message, headers);

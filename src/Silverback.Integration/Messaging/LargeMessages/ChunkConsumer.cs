@@ -47,11 +47,11 @@ namespace Silverback.Messaging.LargeMessages
 
         private (string messageId, int chinkId, int chunksCount) ExtractHeadersValues(IInboundEnvelope envelope)
         {
-            var messageId = envelope.Headers.GetValue(MessageHeader.MessageIdKey);
+            var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
 
-            var chunkId = envelope.Headers.GetValue<int>(MessageHeader.ChunkIdKey);
+            var chunkId = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkId);
 
-            var chunksCount = envelope.Headers.GetValue<int>(MessageHeader.ChunksCountKey);
+            var chunksCount = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
 
             if (string.IsNullOrEmpty(messageId))
                 throw new InvalidOperationException("Message id header not found or invalid.");

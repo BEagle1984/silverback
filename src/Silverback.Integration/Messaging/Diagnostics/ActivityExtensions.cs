@@ -27,17 +27,17 @@ namespace Silverback.Messaging.Diagnostics
                 throw new InvalidOperationException(
                     "Activity.Id is null. Consider to start a new activity, before calling this method.");
 
-            headers.Add(new MessageHeader(DiagnosticsConstants.TraceIdHeaderKey, activity.Id));
+            headers.Add(new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
 
             var traceState = activity.TraceStateString;
             if (traceState != null)
             {
-                headers.Add(DiagnosticsConstants.TraceStateHeaderKey, traceState);
+                headers.Add(DefaultMessageHeaders.TraceState, traceState);
             }
 
             if (activity.Baggage.Any())
             {
-                headers.Add(new MessageHeader(DiagnosticsConstants.TraceBaggageHeaderKey,
+                headers.Add(new MessageHeader(DefaultMessageHeaders.TraceBaggage,
                     BaggageConverter.Serialize(activity.Baggage)));
             }
         }
@@ -45,14 +45,14 @@ namespace Silverback.Messaging.Diagnostics
         // See https://github.com/aspnet/AspNetCore/blob/master/src/Hosting/Hosting/src/Internal/HostingApplicationDiagnostics.cs
         public static void InitFromMessageHeaders(this Activity activity, MessageHeaderCollection headers)
         {
-            var traceId = headers.GetValue(DiagnosticsConstants.TraceIdHeaderKey);
+            var traceId = headers.GetValue(DefaultMessageHeaders.TraceId);
             if (!string.IsNullOrEmpty(traceId))
             {
                 // This will reflect, that the current activity is a child of the activity
                 // which is represented in the message.
                 activity.SetParentId(traceId);
 
-                var traceState = headers.GetValue(DiagnosticsConstants.TraceStateHeaderKey);
+                var traceState = headers.GetValue(DefaultMessageHeaders.TraceState);
                 if (!string.IsNullOrEmpty(traceState))
                 {
                     activity.TraceStateString = traceState;
@@ -60,7 +60,7 @@ namespace Silverback.Messaging.Diagnostics
 
                 // We expect baggage to be empty by default.
                 // Only very advanced users will be using it in near future, we encourage them to keep baggage small (few items).
-                var baggage = headers.GetValue(DiagnosticsConstants.TraceBaggageHeaderKey);
+                var baggage = headers.GetValue(DefaultMessageHeaders.TraceBaggage);
                 if (BaggageConverter.TryDeserialize(baggage, out var baggageItems))
                 {
                     activity.AddBaggageRange(baggageItems);

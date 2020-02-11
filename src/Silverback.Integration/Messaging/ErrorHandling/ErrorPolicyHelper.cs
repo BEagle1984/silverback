@@ -44,7 +44,8 @@ namespace Silverback.Messaging.ErrorHandling
 
         private int GetAttemptNumber(IReadOnlyCollection<IInboundEnvelope> envelopes)
         {
-            var minAttempts = envelopes.Min(m => m.Headers.GetValueOrDefault<int>(MessageHeader.FailedAttemptsKey));
+            var minAttempts = envelopes.Min(m => 
+                m.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts));
 
             // Uniform failed attempts, just in case (mostly for consistent logging)
             UpdateFailedAttemptsHeader(envelopes, minAttempts);
@@ -91,9 +92,9 @@ namespace Silverback.Messaging.ErrorHandling
             envelopes?.ForEach(msg =>
             {
                 if (attempt == 0)
-                    msg.Headers.Remove(MessageHeader.FailedAttemptsKey);
+                    msg.Headers.Remove(DefaultMessageHeaders.FailedAttempts);
                 else
-                    msg.Headers.AddOrReplace(MessageHeader.FailedAttemptsKey, attempt);
+                    msg.Headers.AddOrReplace(DefaultMessageHeaders.FailedAttempts, attempt);
             });
     }
 }

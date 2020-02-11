@@ -98,7 +98,7 @@ namespace Silverback.Messaging.Broker
                 var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());
                 
                 if (message.Key != null)
-                    headers.AddOrReplace(KafkaBroker.MessageKeyHeaderKey, Encoding.UTF8.GetString(message.Key));
+                    headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, Encoding.UTF8.GetString(message.Key));
                 
                 await HandleMessage(
                     message.Value,

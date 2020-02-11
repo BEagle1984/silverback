@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Behaviors
             if (key == null)
                 return;
 
-            envelope.Headers.AddOrReplace(KafkaBroker.MessageKeyHeaderKey, key);
+            envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, key);
         }
     }
 }

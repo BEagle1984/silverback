@@ -50,7 +50,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.SetMessageHeaders(headers);
 
             headers.Should().ContainEquivalentOf(
-                new MessageHeader(DiagnosticsConstants.TraceIdHeaderKey, activity.Id));
+                new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.SetMessageHeaders(headers);
 
             headers.Should().ContainEquivalentOf(
-                new MessageHeader(DiagnosticsConstants.TraceStateHeaderKey, "Test"));
+                new MessageHeader(DefaultMessageHeaders.TraceState, "Test"));
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.Start();
             activity.SetMessageHeaders(headers);
 
-            headers.Should().NotContain(h => h.Key == DiagnosticsConstants.TraceStateHeaderKey);
+            headers.Should().NotContain(h => h.Key == DefaultMessageHeaders.TraceState);
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.SetMessageHeaders(headers);
 
             headers.Should().ContainEquivalentOf(
-                new MessageHeader(DiagnosticsConstants.TraceBaggageHeaderKey, "key1=value1"));
+                new MessageHeader(DefaultMessageHeaders.TraceBaggage, "key1=value1"));
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.Start();
             activity.SetMessageHeaders(headers);
 
-            headers.Should().NotContain(h => h.Key == DiagnosticsConstants.TraceBaggageHeaderKey);
+            headers.Should().NotContain(h => h.Key == DefaultMessageHeaders.TraceBaggage);
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var headers = new MessageHeaderCollection
             {
-                { DiagnosticsConstants.TraceIdHeaderKey, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
+                { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
             };
 
             var activity = new Activity("test");
@@ -149,7 +149,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var headers = new MessageHeaderCollection
             {
-                { DiagnosticsConstants.TraceIdHeaderKey, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
+                { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
             };
 
             var activity = new Activity("test");
@@ -165,8 +165,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var headers = new MessageHeaderCollection
             {
-                { DiagnosticsConstants.TraceIdHeaderKey, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" },
-                { DiagnosticsConstants.TraceBaggageHeaderKey, "key1=value1" }
+                { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" },
+                { DefaultMessageHeaders.TraceBaggage, "key1=value1" }
             };
 
             var activity = new Activity("test");
@@ -181,8 +181,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var headers = new MessageHeaderCollection
             {
-                { DiagnosticsConstants.TraceIdHeaderKey, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" },
-                { DiagnosticsConstants.TraceStateHeaderKey, "key1=value1" }
+                { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" },
+                { DefaultMessageHeaders.TraceState, "key1=value1" }
             };
 
             var activity = new Activity("test");
