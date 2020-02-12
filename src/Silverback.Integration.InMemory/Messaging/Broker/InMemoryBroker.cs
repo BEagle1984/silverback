@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Broker" />
         protected override void Disconnect(IEnumerable<IConsumer> consumers)
         {
-            base.Disconnect();
+            base.Disconnect(consumers);
 
             _topics.Clear();
         }

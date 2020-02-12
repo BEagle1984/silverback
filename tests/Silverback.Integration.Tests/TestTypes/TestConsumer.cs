@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        public bool IsReady { get; set; }
+        public bool IsConnected { get; set; }
 
         public int AcknowledgeCount { get; set; }
 
@@ -51,7 +51,7 @@ namespace Silverback.Tests.Integration.TestTypes
             if (!Broker.IsConnected)
                 throw new InvalidOperationException("The broker is not connected.");
 
-            if (!IsReady)
+            if (!IsConnected)
                 throw new InvalidOperationException("The consumer is not ready.");
 
             await HandleMessage(rawMessage, headers, offset);
@@ -69,12 +69,8 @@ namespace Silverback.Tests.Integration.TestTypes
             return Task.CompletedTask;
         }
 
-        public override void Connect()
-        {
-        }
+        public override void Connect() => IsConnected = true;
 
-        public override void Disconnect()
-        {
-        }
+        public override void Disconnect() => IsConnected = true;
     }
 }

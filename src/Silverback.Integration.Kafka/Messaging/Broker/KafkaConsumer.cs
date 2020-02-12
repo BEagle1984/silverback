@@ -69,7 +69,19 @@ namespace Silverback.Messaging.Broker
                 Endpoint.Name, Endpoint.Configuration.BootstrapServers);
         }
 
-        public void Dispose() => Disconnect();
+        public void Dispose()
+        {
+            try
+            {
+                Disconnect();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex,
+                    "Error occurred while disconnecting consumer from topic {topic}. (BootstrapServers=\"{bootstrapServers}\")",
+                    Endpoint.Name, Endpoint.Configuration.BootstrapServers);
+            }
+        }
 
         private async Task OnMessageReceived(
             Confluent.Kafka.Message<byte[], byte[]> message,

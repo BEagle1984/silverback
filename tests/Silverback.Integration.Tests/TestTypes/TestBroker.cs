@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -33,15 +32,6 @@ namespace Silverback.Tests.Integration.TestTypes
             var consumer = new TestConsumer(this, (TestConsumerEndpoint) endpoint, behaviors);
             Consumers.Add(consumer);
             return consumer;
-        }
-
-        protected override void Connect(IEnumerable<IConsumer> consumers)
-        {
-            consumers.Cast<TestConsumer>().ToList().ForEach(c => c.IsReady = true);
-        }
-
-        protected override void Disconnect(IEnumerable<IConsumer> consumers)
-        {
         }
 
         public class ProducedMessage

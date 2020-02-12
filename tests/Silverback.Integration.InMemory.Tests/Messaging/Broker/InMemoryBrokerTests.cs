@@ -143,5 +143,13 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             receivedEnvelopes.Count.Should().Be(2);
             receivedEnvelopes.OfType<IInboundEnvelope>().Select(x => x.Message).Should().AllBeOfType<TestMessage>();
         }
+        
+        [Fact]
+        public void InMemoryBroker_ConnectAndDispose_NoExceptionIsThrown()
+        {
+            var broker = (IDisposable)_serviceProvider.GetRequiredService<BusConfigurator>().Connect();
+            
+            broker.Dispose();
+        }
     }
 }
