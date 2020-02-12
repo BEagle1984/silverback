@@ -40,9 +40,22 @@ public void Configure(BusConfigurator busConfigurator)
                 }));
 ```
 
-By default Silverback would call every matching subscriber method for each message, regardless of the consumer group and you basically have two choices to work around this: manually inspecting the `IInboundEnvelope` or using the `KafkaGroupIdFilterAttribute`.
+By default Silverback would call every matching subscriber method for each message, regardless of the consumer group and you basically have two choices to work around this: using the `KafkaGroupIdFilterAttribute` or manually inspecting the `IInboundEnvelope`.
 
-## Subscribing and checking the envelope
+## Using the attribute
+
+```c#
+public class MySubscriber : ISubscriber
+{
+    [KafkaGroupIdFilter("group1")]
+    private void PerformTask1(MyEvent @event) => ...
+
+    [KafkaGroupIdFilter("group2")]
+    private void PerformTask2(MyEvent @event) => ...
+}
+```
+
+## Subscribing to the IInboundEnvelope
 
 ```c#
 public class MySubscriber : ISubscriber
@@ -62,19 +75,6 @@ public class MySubscriber : ISubscriber
 
     private void PerformTask1(MyEvent @event) => ...
 
-    private void PerformTask2(MyEvent @event) => ...
-}
-```
-
-## Using the attribute
-
-```c#
-public class MySubscriber : ISubscriber
-{
-    [KafkaGroupIdFilter("group1")]
-    private void PerformTask1(MyEvent @event) => ...
-
-    [KafkaGroupIdFilter("group2")]
     private void PerformTask2(MyEvent @event) => ...
 }
 ```
