@@ -9,9 +9,10 @@ namespace Silverback
 {
     public static class SilverbackBuilderExtensions
     {
-        public static ISilverbackBuilder AddCommonSubscribers(this ISilverbackBuilder builder) =>
-            builder.AddScopedSubscriber<SampleEventsSubscriber>()
-                .AddScopedSubscriber<LegacyMessagesSubscriber>()
-                .AddScopedSubscriber<SilverbackEventsSubscriber>();
+        public static ISilverbackBuilder AddCommonSubscribers(this ISilverbackBuilder builder) => builder
+            .AddScopedSubscriber<SampleEventsSubscriber>()
+            .AddScopedSubscriber<MultipleGroupsSubscriber>()
+            .AddScopedSubscriber<LegacyMessagesSubscriber>()
+            .AddScopedSubscriber<SilverbackEventsSubscriber>();
     }
 }

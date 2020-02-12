@@ -39,6 +39,8 @@ namespace Silverback.Examples.KafkaConsumer
                 .Connect(endpoints => endpoints
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-events",
                         "silverback-examples-events-chunked", "silverback-examples-events-sp"))
+                    .AddInbound(CreateConsumerEndpoint("silverback-examples-multiple-groups", $"__group-1"))
+                    .AddInbound(CreateConsumerEndpoint("silverback-examples-multiple-groups", $"__group-2"))
                     .AddInbound(CreateConsumerEndpoint("silverback-examples-batch"),
                         settings: new InboundConnectorSettings
                         {
@@ -98,20 +100,28 @@ namespace Silverback.Examples.KafkaConsumer
                             Encoding = MessageEncoding.ASCII
                         })));
 
-        private KafkaConsumerEndpoint CreateConsumerEndpoint(string name, IMessageSerializer messageSerializer = null)
-            => CreateConsumerEndpoint(new[] { name }, messageSerializer);
+        private KafkaConsumerEndpoint CreateConsumerEndpoint(
+            string name,
+            IMessageSerializer messageSerializer = null) =>
+            CreateConsumerEndpoint(new[] { name }, messageSerializer);
 
-        private KafkaConsumerEndpoint CreateConsumerEndpoint(params string[] names)
-            => CreateConsumerEndpoint(names, null);
+        private KafkaConsumerEndpoint CreateConsumerEndpoint(params string[] names) =>
+            CreateConsumerEndpoint(names, null);
 
-        private KafkaConsumerEndpoint CreateConsumerEndpoint(string[] names, IMessageSerializer messageSerializer)
+        private KafkaConsumerEndpoint CreateConsumerEndpoint(string name, string groupId) =>
+            CreateConsumerEndpoint(new[] { name }, null, groupId);
+        
+        private KafkaConsumerEndpoint CreateConsumerEndpoint(
+            string[] names,
+            IMessageSerializer messageSerializer,
+            string groupId = null)
         {
             var endpoint = new KafkaConsumerEndpoint(names)
             {
                 Configuration = new KafkaConsumerConfig
                 {
                     BootstrapServers = "PLAINTEXT://localhost:9092",
-                    GroupId = ConsumerGroupName,
+                    GroupId = groupId ?? ConsumerGroupName,
                     AutoOffsetReset = AutoOffsetReset.Earliest
                 }
             };

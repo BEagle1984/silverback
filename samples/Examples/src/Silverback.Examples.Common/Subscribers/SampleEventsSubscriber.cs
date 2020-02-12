@@ -13,7 +13,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.Common.Subscribers
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class SampleEventsSubscriber : ISubscriber
     {
         private readonly ILogger<SampleEventsSubscriber> _logger;
@@ -34,7 +34,7 @@ namespace Silverback.Examples.Common.Subscribers
         {
             if (messages.Count() <= 1) return;
 
-            _logger.LogInformation($"Received batch containing {messages.Count()} IntegrationEvent messages.");
+            _logger.LogInformation($"Received batch containing {messages.Count()} IntegrationEvent messages");
         }
 
         [Subscribe(Parallel = true)]
