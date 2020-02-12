@@ -15,7 +15,7 @@ namespace Silverback.Messaging
         }
 
         public override string GetUniqueConsumerGroupName() => Name;
-        
+
         #region Equality
 
         public bool Equals(RabbitQueueConsumerEndpoint other)

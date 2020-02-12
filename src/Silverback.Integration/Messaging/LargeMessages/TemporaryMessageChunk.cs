@@ -8,9 +8,11 @@ namespace Silverback.Messaging.LargeMessages
 {
     public class TemporaryMessageChunk
     {
-        [Key, MaxLength(300)] public string OriginalMessageId { get; set; }
+        [Key, MaxLength(300)]
+        public string OriginalMessageId { get; set; }
 
-        [Key] public int ChunkId { get; set; }
+        [Key]
+        public int ChunkId { get; set; }
 
         public int ChunksCount { get; set; }
 

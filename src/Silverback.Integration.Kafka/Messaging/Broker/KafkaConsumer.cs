@@ -108,10 +108,10 @@ namespace Silverback.Messaging.Broker
                 offset = new KafkaOffset(tpo);
 
                 var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());
-                
+
                 if (message.Key != null)
                     headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, Encoding.UTF8.GetString(message.Key));
-                
+
                 await HandleMessage(
                     message.Value,
                     headers,

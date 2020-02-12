@@ -82,16 +82,16 @@ namespace Silverback.Messaging.Configuration
             {
                 var hashCode = AcceptablePolicyErrors.GetHashCode();
                 hashCode = (hashCode * 397) ^ (CertPassphrase != null
-                               ? StringComparer.InvariantCulture.GetHashCode(CertPassphrase)
-                               : 0);
+                    ? StringComparer.InvariantCulture.GetHashCode(CertPassphrase)
+                    : 0);
                 hashCode = (hashCode * 397) ^ (CertPath != null
-                               ? StringComparer.InvariantCulture.GetHashCode(CertPath)
-                               : 0);
+                    ? StringComparer.InvariantCulture.GetHashCode(CertPath)
+                    : 0);
                 hashCode = (hashCode * 397) ^ CheckCertificateRevocation.GetHashCode();
                 hashCode = (hashCode * 397) ^ Enabled.GetHashCode();
                 hashCode = (hashCode * 397) ^ (ServerName != null
-                               ? StringComparer.InvariantCulture.GetHashCode(ServerName)
-                               : 0);
+                    ? StringComparer.InvariantCulture.GetHashCode(ServerName)
+                    : 0);
                 hashCode = (hashCode * 397) ^ (int) Version;
                 return hashCode;
             }

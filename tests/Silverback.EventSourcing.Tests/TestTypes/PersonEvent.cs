@@ -10,6 +10,7 @@ namespace Silverback.Tests.EventSourcing.TestTypes
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
     public class PersonEvent : EventEntity
     {
-        [Key] public int Id { get; private set; }
+        [Key]
+        public int Id { get; private set; }
     }
 }

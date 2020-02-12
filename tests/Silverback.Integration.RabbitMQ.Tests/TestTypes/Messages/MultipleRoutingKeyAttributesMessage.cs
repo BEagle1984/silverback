@@ -9,8 +9,13 @@ namespace Silverback.Tests.Integration.RabbitMQ.TestTypes.Messages
     public class MultipleRoutingKeyAttributesMessage : IMessage
     {
         public Guid Id { get; set; }
-        [RabbitRoutingKey] public string One { get; set; }
-        [RabbitRoutingKey] public string Two { get; set; }
+
+        [RabbitRoutingKey]
+        public string One { get; set; }
+
+        [RabbitRoutingKey]
+        public string Two { get; set; }
+
         public string Three { get; set; }
     }
 }

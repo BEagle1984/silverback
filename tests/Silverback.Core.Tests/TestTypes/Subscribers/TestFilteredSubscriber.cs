@@ -13,12 +13,12 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
     public class TestFilteredSubscriber : ISubscriber
     {
         public int ReceivedMessagesCount { get; private set; }
-        
+
         public int ReceivedEnvelopesCount { get; private set; }
 
         [TestMessageFilter]
         public void OnMessageReceived(ITestMessage _) => ReceivedMessagesCount++;
-        
+
         [TestMessageFilter]
         public async Task OnEnvelopeReceived(IEnvelope _) => ReceivedEnvelopesCount++;
     }

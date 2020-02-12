@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 
             try
             {
-                var entity =await DbSet.FindAsync(GetKey(offset.Key, endpoint)) ??
+                var entity = await DbSet.FindAsync(GetKey(offset.Key, endpoint)) ??
                              DbSet.Add(new StoredOffset
                              {
                                  Key = GetKey(offset.Key, endpoint)
@@ -84,7 +84,8 @@ namespace Silverback.Messaging.Connectors.Repositories
                 ? JsonConvert.DeserializeObject<IComparableOffset>(storedOffset.Offset, SerializerSettings)
                 : null;
         }
-        
-        private string GetKey(string offsetKey, IConsumerEndpoint endpoint) => $"{endpoint.GetUniqueConsumerGroupName()}|{offsetKey}";
+
+        private string GetKey(string offsetKey, IConsumerEndpoint endpoint) =>
+            $"{endpoint.GetUniqueConsumerGroupName()}|{offsetKey}";
     }
 }

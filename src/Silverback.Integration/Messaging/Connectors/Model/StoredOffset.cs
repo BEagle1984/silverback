@@ -10,8 +10,10 @@ namespace Silverback.Messaging.Connectors.Model
     /// </summary>
     public class StoredOffset
     {
-        [Key, MaxLength(300)] public string Key { get; set; }
+        [Key, MaxLength(300)]
+        public string Key { get; set; }
 
-        [MaxLength(500)] public string Offset { get; set; }
+        [MaxLength(500)]
+        public string Offset { get; set; }
     }
 }

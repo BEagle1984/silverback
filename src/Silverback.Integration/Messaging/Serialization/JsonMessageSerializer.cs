@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Serialization
 
             if (message == null || message.Length == 0)
                 return null;
-            
+
             var json = GetEncoding().GetString(message);
             var typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
             var type = typeName != null ? Type.GetType(typeName) : typeof(object);
@@ -67,7 +67,7 @@ namespace Silverback.Messaging.Serialization
                 _ => throw new InvalidOperationException("Unhandled encoding.")
             };
     }
-    
+
     public class JsonMessageSerializer<TMessage> : JsonMessageSerializer
     {
         public override byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
@@ -90,7 +90,7 @@ namespace Silverback.Messaging.Serialization
         {
             if (message == null || message.Length == 0)
                 return null;
-            
+
             var type = typeof(TMessage);
             var json = GetEncoding().GetString(message);
 

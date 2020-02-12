@@ -16,7 +16,8 @@ namespace Silverback.Messaging.Messages
                 header => header.Key,
                 header => (object) Encoding.GetBytes(header.Value));
 
-        public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(this IDictionary<string, object> rabbitHeaders) =>
+        public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(
+            this IDictionary<string, object> rabbitHeaders) =>
             rabbitHeaders.Select(rabbitHeader =>
                     new MessageHeader(
                         rabbitHeader.Key,

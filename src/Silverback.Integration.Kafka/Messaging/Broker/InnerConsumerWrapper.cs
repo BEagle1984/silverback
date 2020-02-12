@@ -42,8 +42,8 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
-        private string EndpointsNames => string.Join(", ", _endpoints.Select(endpoint => endpoint.Name)); 
-        
+        private string EndpointsNames => string.Join(", ", _endpoints.Select(endpoint => endpoint.Name));
+
         public event KafkaMessageReceivedHandler Received;
 
         public void Subscribe(KafkaConsumerEndpoint endpoint)
@@ -258,7 +258,7 @@ namespace Silverback.Messaging.Broker
                     ex,
                     "KafkaException occurred. The consumer will try to recover. (topic(s): {topics})",
                     EndpointsNames);
-                
+
                 ResetInnerConsumer();
             }
             else

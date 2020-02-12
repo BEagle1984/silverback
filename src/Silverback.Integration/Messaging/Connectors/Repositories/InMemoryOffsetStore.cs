@@ -77,6 +77,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             }
         }
 
-        private string GetKey(string offsetKey, IConsumerEndpoint endpoint) => $"{endpoint.GetUniqueConsumerGroupName()}|{offsetKey}";
+        private string GetKey(string offsetKey, IConsumerEndpoint endpoint) =>
+            $"{endpoint.GetUniqueConsumerGroupName()}|{offsetKey}";
     }
 }

@@ -101,7 +101,8 @@ namespace Silverback.Messaging.Messages
 
             if (envelopes.Count == 1)
             {
-                properties.Add(("Type", "messageType", firstMessage.Headers.GetValue(DefaultMessageHeaders.MessageType)));
+                properties.Add(
+                    ("Type", "messageType", firstMessage.Headers.GetValue(DefaultMessageHeaders.MessageType)));
                 properties.Add(("Id", "messageId", firstMessage.Headers.GetValue(DefaultMessageHeaders.MessageId)));
 
                 if (firstMessage.Offset != null)

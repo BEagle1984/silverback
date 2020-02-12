@@ -240,7 +240,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             {
             }
 
-            (await _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a", consumer.Endpoint)).Value.Should()
+            (await _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a", consumer.Endpoint))
+                .Value.Should()
                 .Be("2");
         }
 
@@ -297,7 +298,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             await Task.WhenAll(tasks);
 
-            (await _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a", consumer2.Endpoint)).Value.Should()
+            (await _scopedServiceProvider.GetRequiredService<IOffsetStore>().GetLatestValue("a", consumer2.Endpoint))
+                .Value.Should()
                 .Be("2");
         }
     }

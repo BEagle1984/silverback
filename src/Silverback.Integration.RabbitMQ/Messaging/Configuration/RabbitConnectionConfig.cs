@@ -204,8 +204,8 @@ namespace Silverback.Messaging.Configuration
                 hashCode = (hashCode * 397) ^
                            (VirtualHost != null ? StringComparer.InvariantCulture.GetHashCode(VirtualHost) : 0);
                 hashCode = (hashCode * 397) ^ (ClientProvidedName != null
-                               ? StringComparer.InvariantCulture.GetHashCode(ClientProvidedName)
-                               : 0);
+                    ? StringComparer.InvariantCulture.GetHashCode(ClientProvidedName)
+                    : 0);
                 return hashCode;
             }
         }

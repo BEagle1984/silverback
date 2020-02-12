@@ -61,7 +61,7 @@ namespace Silverback.Messaging.Connectors
         protected async Task HandleMessages(IEnumerable<IInboundEnvelope> envelopes, IServiceProvider serviceProvider)
         {
             envelopes = (await envelopes
-                .SelectAsync(async envelope => await HandleChunkedMessage(envelope, serviceProvider)))
+                    .SelectAsync(async envelope => await HandleChunkedMessage(envelope, serviceProvider)))
                 .Where(args => args != null)
                 .Select(DeserializeRawMessage)
                 .ToList();
@@ -94,7 +94,7 @@ namespace Silverback.Messaging.Connectors
 
             if (deserialized == null)
                 return envelope;
-            
+
             // Create typed message for easier specific subscription
             var typedInboundMessage = (InboundEnvelope) Activator.CreateInstance(
                 typeof(InboundEnvelope<>).MakeGenericType(deserialized.GetType()),

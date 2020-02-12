@@ -87,8 +87,8 @@ namespace Silverback.Messaging.Broker
 
                 if (kafkaKeyHeader.Value != null)
                     return Encoding.UTF8.GetBytes(kafkaKeyHeader.Value);
-            } 
-            
+            }
+
             return null;
         }
 

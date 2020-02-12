@@ -23,10 +23,10 @@ namespace Silverback.Util
         private static IEnumerable<object> Invoke(IEnumerable<object> source, Type type, string methodName)
         {
             return typeof(Enumerable)
-                           .GetMethod(methodName, BindingFlags.Static | BindingFlags.Public)
-                           ?.MakeGenericMethod(type)
-                           .Invoke(null, new object[] { source })
-                       as IEnumerable<object> ?? Enumerable.Empty<object>();
+                    .GetMethod(methodName, BindingFlags.Static | BindingFlags.Public)
+                    ?.MakeGenericMethod(type)
+                    .Invoke(null, new object[] { source })
+                as IEnumerable<object> ?? Enumerable.Empty<object>();
         }
     }
 }

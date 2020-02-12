@@ -19,9 +19,9 @@ namespace Silverback.Messaging.Messages
             string memberId)
         {
             Partitions = partitions.Select(partition =>
-                new Confluent.Kafka.TopicPartitionOffset(
-                    partition, 
-                    Confluent.Kafka.Offset.Unset))
+                    new Confluent.Kafka.TopicPartitionOffset(
+                        partition,
+                        Confluent.Kafka.Offset.Unset))
                 .ToList();
             MemberId = memberId;
         }

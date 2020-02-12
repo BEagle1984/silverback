@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Configuration
         {
             var servicesGeneric = new ServiceCollection();
             var servicesSpecific = new ServiceCollection();
-            
+
             new SilverbackBuilder(servicesGeneric).WithConnectionTo<RabbitBroker>();
             new SilverbackBuilder(servicesSpecific).WithConnectionToRabbit();
 

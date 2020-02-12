@@ -7,7 +7,8 @@ namespace Silverback.Tests.Core.EFCore30.TestTypes.Model
 {
     public class Person
     {
-        [Key] public int Id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         public string Name { get; set; }
 

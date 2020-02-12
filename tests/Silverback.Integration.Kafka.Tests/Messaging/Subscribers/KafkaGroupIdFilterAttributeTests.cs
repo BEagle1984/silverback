@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
 using Xunit;
 
@@ -39,7 +39,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
 
             result.Should().Be(expectedResult);
         }
-        
+
         [Fact]
         public void MustProcess_NonInboundEnvelope_FalseIsReturned()
         {
@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
 
             result.Should().BeFalse();
         }
-        
+
         [Fact]
         public void MustProcess_InboundEnvelopeWithNonKafkaEndpoint_FalseIsReturned()
         {
@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
                 new List<MessageHeader>(),
                 null,
                 new SomeConsumerEndpoint());
-            
+
             var result = new KafkaGroupIdFilterAttribute().MustProcess(inboundEnvelope);
 
             result.Should().BeFalse();

@@ -21,6 +21,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         public Task<bool> Exists(object message, IConsumerEndpoint endpoint) =>
             Task.FromResult(Entries.Union(UncommittedEntries).Any(e =>
-                e.MessageId == _messageIdProvider.GetKey(message) && e.EndpointName == endpoint.GetUniqueConsumerGroupName()));
+                e.MessageId == _messageIdProvider.GetKey(message) &&
+                e.EndpointName == endpoint.GetUniqueConsumerGroupName()));
     }
 }

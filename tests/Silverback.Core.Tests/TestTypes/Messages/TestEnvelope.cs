@@ -14,7 +14,7 @@ namespace Silverback.Tests.Core.TestTypes.Messages
         }
 
         public object Message { get; }
-        
+
         public bool AutoUnwrap { get; }
     }
 }

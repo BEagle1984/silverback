@@ -52,12 +52,12 @@ namespace Microsoft.Extensions.DependencyInjection
             if (type == null)
                 return null;
 
-            return (IBrokerOptionsConfigurator<TBroker> )Activator.CreateInstance(type);
+            return (IBrokerOptionsConfigurator<TBroker>) Activator.CreateInstance(type);
         }
 
         #endregion
-        
-                #region RegisterConfigurator
+
+        #region RegisterConfigurator
 
         /// <summary>
         ///     Adds an <see cref="IEndpointsConfigurator" /> to be used to setup the broker endpoints.

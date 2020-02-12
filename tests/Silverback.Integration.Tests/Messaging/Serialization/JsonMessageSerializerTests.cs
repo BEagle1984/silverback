@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             serialized.Should().BeSameAs(messageBytes);
         }
-        
+
         [Fact]
         public void Serialize_ByteArrayWithHardcodedType_ReturnedUnmodified()
         {
@@ -89,7 +89,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             deserialized.Should().NotBeNull();
             deserialized.Should().BeEquivalentTo(original);
         }
-        
+
         [Fact]
         public void Serialize_NullMessage_EmptyByteArrayReturned()
         {
@@ -99,7 +99,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             serialized.Should().BeEquivalentTo(new byte[0]);
         }
-        
+
         [Fact]
         public void Serialize_NullMessageWithHardcodedType_EmptyByteArrayReturned()
         {
@@ -109,7 +109,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             serialized.Should().BeEquivalentTo(new byte[0]);
         }
-        
+
         [Fact]
         public void Deserialize_NullMessage_NullIsReturned()
         {
@@ -119,7 +119,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             deserialized.Should().BeNull();
         }
-         
+
         [Fact]
         public void Deserialize_NullMessageWithHardcodedType_NullIsReturned()
         {
@@ -129,7 +129,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             deserialized.Should().BeNull();
         }
-         
+
         [Fact]
         public void Deserialize_EmptyArrayMessage_NullIsReturned()
         {
@@ -139,7 +139,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             deserialized.Should().BeNull();
         }
-        
+
         [Fact]
         public void Deserialize_EmptyArrayMessageWithHardcodedType_NullIsReturned()
         {

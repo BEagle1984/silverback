@@ -12,7 +12,8 @@ namespace Silverback.Tests.Integration.Kafka.TestTypes.Messages
     {
         public Guid Id { get; set; }
 
-        [PartitioningKeyMember] public string One { get; set; }
+        [PartitioningKeyMember]
+        public string One { get; set; }
 
         public string Two { get; set; }
 

@@ -33,7 +33,8 @@ namespace Silverback.Messaging.Subscribers
             IReadOnlyCollection<object> messages,
             bool executeAsync)
         {
-            var (messageArgumentResolver, targetMessageType) = _argumentsResolver.GetMessageArgumentResolver(subscribedMethod);
+            var (messageArgumentResolver, targetMessageType) =
+                _argumentsResolver.GetMessageArgumentResolver(subscribedMethod);
 
             if (messageArgumentResolver == null)
                 return Array.Empty<object>();

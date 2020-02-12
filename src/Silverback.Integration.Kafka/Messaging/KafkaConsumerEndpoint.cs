@@ -47,7 +47,7 @@ namespace Silverback.Messaging
         public override string GetUniqueConsumerGroupName() => (!string.IsNullOrEmpty(Configuration.GroupId))
             ? Configuration.GroupId
             : Name;
-        
+
         #region Equality
 
         public bool Equals(KafkaConsumerEndpoint other)

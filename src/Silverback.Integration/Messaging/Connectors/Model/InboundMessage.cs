@@ -15,8 +15,8 @@ namespace Silverback.Messaging.Connectors.Model
         public string MessageId { get; set; }
 
         /// <summary>
-        /// Note: the name was maintained for backward compatibility but it now contains the
-        /// <see cref="IConsumerEndpoint"/>'s unique consumer group name.
+        ///     Note: the name was maintained for backward compatibility but it now contains the
+        ///     <see cref="IConsumerEndpoint" />'s unique consumer group name.
         /// </summary>
         [Key, MaxLength(300)]
         public string EndpointName { get; set; }

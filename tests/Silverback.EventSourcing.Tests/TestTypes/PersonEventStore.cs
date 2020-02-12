@@ -8,7 +8,8 @@ namespace Silverback.Tests.EventSourcing.TestTypes
 {
     public class PersonEventStore : EventStoreEntity<PersonEvent>
     {
-        [Key] public int Id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         public string Ssn { get; set; }
     }

@@ -19,7 +19,8 @@ namespace Silverback.Messaging.Messages
             return kafkaHeaders;
         }
 
-        public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(this Confluent.Kafka.Headers kafkaHeaders) =>
+        public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(
+            this Confluent.Kafka.Headers kafkaHeaders) =>
             kafkaHeaders.Select(kafkaHeader =>
                     new MessageHeader(
                         kafkaHeader.Key,

@@ -147,7 +147,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             {
                 new InboundEnvelope(
                     Encoding.UTF8.GetBytes("hey oh!"),
-                    new[] { new MessageHeader(DefaultMessageHeaders.MessageType, typeof(string).AssemblyQualifiedName) },
+                    new[]
+                    {
+                        new MessageHeader(DefaultMessageHeaders.MessageType, typeof(string).AssemblyQualifiedName)
+                    },
                     null, TestConsumerEndpoint.GetDefault()),
             }, new Exception("test"));
 

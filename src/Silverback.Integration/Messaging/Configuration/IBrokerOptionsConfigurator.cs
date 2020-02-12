@@ -7,7 +7,8 @@ using Silverback.Messaging.Broker;
 namespace Silverback.Messaging.Configuration
 {
     [SuppressMessage("ReSharper", "UnusedTypeParameter")]
-    public interface IBrokerOptionsConfigurator<TBroker> where TBroker : IBroker
+    public interface IBrokerOptionsConfigurator<TBroker>
+        where TBroker : IBroker
     {
         /// <summary>
         ///     Called when registered the broker to configure the broker-specific services and options

@@ -8,8 +8,10 @@ namespace Silverback.Domain
 {
     public abstract class EntityEvent : IEntityEvent
     {
-        [JsonIgnore] public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        [JsonIgnore]
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
-        [JsonIgnore] public int Sequence { get; set; } = 0;
+        [JsonIgnore]
+        public int Sequence { get; set; } = 0;
     }
 }

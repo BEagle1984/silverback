@@ -1418,7 +1418,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             messages.OfType<TestEnvelope>().Count().Should().Be(1);
             messages.OfType<TestCommandOne>().Count().Should().Be(1);
         }
-        
+
         [Fact]
         public void Publish_EnvelopeWithoutAutoUnwrap_EnvelopeOnlyIsReceived()
         {
@@ -1446,7 +1446,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             messages.OfType<TestEnvelope>().Count().Should().Be(1);
             messages.OfType<TestCommandOne>().Count().Should().Be(0);
         }
-        
+
         [Fact]
         public async Task Publish_MessagesWithFilter_FilteredMessagesReceived()
         {
@@ -1459,7 +1459,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             _filteredSubscriber.ReceivedMessagesCount.Should().Be(2);
         }
-        
+
         [Fact]
         public async Task Publish_EnvelopesWithFilter_FilteredEnvelopesAndMessagesReceived()
         {

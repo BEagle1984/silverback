@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
         {
             var servicesGeneric = new ServiceCollection();
             var servicesSpecific = new ServiceCollection();
-            
+
             new SilverbackBuilder(servicesGeneric).WithConnectionTo<KafkaBroker>();
             new SilverbackBuilder(servicesSpecific).WithConnectionToKafka();
 

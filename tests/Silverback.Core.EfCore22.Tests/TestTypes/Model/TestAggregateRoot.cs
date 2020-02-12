@@ -8,7 +8,8 @@ namespace Silverback.Tests.Core.EFCore22.TestTypes.Model
 {
     public class TestAggregateRoot : DomainEntity
     {
-        [Key] public int Id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         public new void AddEvent(IDomainEvent domainEvent)
             => base.AddEvent(domainEvent);
