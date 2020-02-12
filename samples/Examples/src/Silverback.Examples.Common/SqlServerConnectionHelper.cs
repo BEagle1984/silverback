@@ -11,7 +11,7 @@ namespace Silverback.Examples.Common
         public static string GetProducerConnectionString() =>
             string.Format(ConnectionString, "Main");
 
-        public static string GetConsumerConnectionString(string consumerGroupName) =>
-            string.Format(ConnectionString, consumerGroupName);
+        public static string GetConsumerConnectionString(string dbNameSuffix) =>
+            string.Format(ConnectionString, dbNameSuffix);
     }
 }

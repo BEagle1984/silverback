@@ -42,6 +42,10 @@ namespace Silverback.Messaging
             Exchange.Validate();
         }
 
+        public override string GetUniqueConsumerGroupName() => (!string.IsNullOrEmpty(QueueName))
+            ? QueueName
+            : Name;
+        
         #region Equality
 
         public bool Equals(RabbitExchangeConsumerEndpoint other)

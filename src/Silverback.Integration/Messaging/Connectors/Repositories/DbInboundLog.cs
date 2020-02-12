@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                 {
                     MessageId = _messageIdProvider.GetKey(message),
                     Message = DefaultSerializer.Serialize(message),
-                    EndpointName = endpoint.Name,
+                    EndpointName = endpoint.GetUniqueConsumerGroupName(),
                     Consumed = DateTime.UtcNow
                 });
             }
@@ -67,7 +67,8 @@ namespace Silverback.Messaging.Connectors.Repositories
         public Task<bool> Exists(object message, IConsumerEndpoint endpoint)
         {
             var key = _messageIdProvider.GetKey(message);
-            return DbSet.AsQueryable().AnyAsync(m => m.MessageId == key && m.EndpointName == endpoint.Name);
+            var consumerGroupName = endpoint.GetUniqueConsumerGroupName();
+            return DbSet.AsQueryable().AnyAsync(m => m.MessageId == key && m.EndpointName == consumerGroupName);
         }
 
         public Task<int> GetLength() => DbSet.AsQueryable().CountAsync();

@@ -30,7 +30,7 @@ namespace Silverback.Examples.Common.Consumer
             LoggingConfiguration.Setup();
 
             var services = DependencyInjectionHelper.GetServiceCollection(
-                SqlServerConnectionHelper.GetConsumerConnectionString(ConsumerGroupName));
+                SqlServerConnectionHelper.GetConsumerConnectionString(GetType().Name));
             ConfigureServices(services);
 
             _serviceProvider = services.BuildServiceProvider();

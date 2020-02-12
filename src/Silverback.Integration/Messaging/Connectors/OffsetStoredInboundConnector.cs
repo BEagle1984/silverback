@@ -32,11 +32,11 @@ namespace Silverback.Messaging.Connectors
 
             var offsetStore = serviceProvider.GetRequiredService<IOffsetStore>();
 
-            var latest = await offsetStore.GetLatestValue(envelope.Offset.Key);
+            var latest = await offsetStore.GetLatestValue(envelope.Offset.Key, envelope.Endpoint);
             if (latest != null && latest.CompareTo(comparableOffset) >= 0)
                 return false;
 
-            await offsetStore.Store(comparableOffset);
+            await offsetStore.Store(comparableOffset, envelope.Endpoint);
             return true;
         }
 

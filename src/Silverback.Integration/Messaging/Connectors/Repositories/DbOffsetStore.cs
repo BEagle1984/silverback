@@ -11,6 +11,7 @@ using Silverback.Messaging.Connectors.Model;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
+    // TODO: Test maybe?
     public class DbOffsetStore : RepositoryBase<StoredOffset>, IOffsetStore
     {
         private static readonly JsonSerializerSettings SerializerSettings;
@@ -33,16 +34,16 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        public async Task Store(IComparableOffset offset)
+        public async Task Store(IComparableOffset offset, IConsumerEndpoint endpoint)
         {
             await _semaphore.WaitAsync();
 
             try
             {
-                var entity = await DbSet.FindAsync(offset.Key) ??
+                var entity =await DbSet.FindAsync(GetKey(offset.Key, endpoint)) ??
                              DbSet.Add(new StoredOffset
                              {
-                                 Key = offset.Key
+                                 Key = GetKey(offset.Key, endpoint)
                              });
 
                 entity.Offset = JsonConvert.SerializeObject(offset, typeof(IOffset), SerializerSettings);
@@ -74,13 +75,16 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        public async Task<IComparableOffset> GetLatestValue(string key)
+        public async Task<IComparableOffset> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint)
         {
-            var storedOffset = await DbSet.FindAsync(key);
+            var storedOffset = await DbSet.FindAsync(GetKey(offsetKey, endpoint)) ??
+                               await DbSet.FindAsync(offsetKey);
 
             return storedOffset?.Offset != null
                 ? JsonConvert.DeserializeObject<IComparableOffset>(storedOffset.Offset, SerializerSettings)
                 : null;
         }
+        
+        private string GetKey(string offsetKey, IConsumerEndpoint endpoint) => $"{endpoint.GetUniqueConsumerGroupName()}|{offsetKey}";
     }
 }

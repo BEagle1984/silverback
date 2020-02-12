@@ -18,20 +18,20 @@ namespace Silverback.Messaging.Connectors.Repositories
         private readonly Dictionary<string, IComparableOffset> _uncommittedOffsets =
             new Dictionary<string, IComparableOffset>();
 
-        public Task Store(IComparableOffset offset)
+        public Task Store(IComparableOffset offset, IConsumerEndpoint endpoint)
         {
             lock (_uncommittedOffsets)
             {
-                _uncommittedOffsets[offset.Key] = offset;
+                _uncommittedOffsets[GetKey(offset.Key, endpoint)] = offset;
             }
 
             return Task.CompletedTask;
         }
 
-        public Task<IComparableOffset> GetLatestValue(string key) =>
+        public Task<IComparableOffset> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint) =>
             Task.FromResult(
                 LatestOffsets.Union(_uncommittedOffsets)
-                    .Where(o => o.Key == key)
+                    .Where(o => o.Key == GetKey(offsetKey, endpoint))
                     .Select(o => o.Value)
                     .Max());
 
@@ -76,5 +76,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                 LatestOffsets.Clear();
             }
         }
+
+        private string GetKey(string offsetKey, IConsumerEndpoint endpoint) => $"{endpoint.GetUniqueConsumerGroupName()}|{offsetKey}";
     }
 }
