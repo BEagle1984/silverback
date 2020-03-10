@@ -23,7 +23,13 @@ namespace Silverback.Messaging
         ///     Gets or sets the queue configuration.
         /// </summary>
         public RabbitQueueConfig Queue { get; set; } = new RabbitQueueConfig();
-
+        
+        /// <summary>
+        ///     Defines the number of message processed before sending the acknowledgment to the server.
+        ///     The most reliable level is 1 but it reduces throughput.
+        /// </summary>
+        public int AcknowledgeEach { get; set; } = 1;
+        
         public override void Validate()
         {
             base.Validate();
@@ -37,6 +43,9 @@ namespace Silverback.Messaging
                 throw new EndpointConfigurationException("Queue cannot be null");
 
             Queue.Validate();
+
+            if (AcknowledgeEach < 1)
+                throw new EndpointConfigurationException("AcknowledgeEach cannot be less than 1");
         }
 
         #region Equality

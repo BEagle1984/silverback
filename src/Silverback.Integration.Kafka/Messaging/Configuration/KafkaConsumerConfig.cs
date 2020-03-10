@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Configuration
 
         public override void Validate()
         {
-            if (IsAutoCommitEnabled && CommitOffsetEach > 0)
+            if (IsAutoCommitEnabled && CommitOffsetEach >= 0)
             {
                 throw new EndpointConfigurationException(
                     "CommitOffsetEach cannot be used when auto-commit is enabled. " +

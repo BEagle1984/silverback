@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -29,7 +30,12 @@ namespace Silverback.Tests.Integration.TestTypes
             IConsumerEndpoint endpoint,
             IEnumerable<IConsumerBehavior> behaviors)
         {
-            var consumer = new TestConsumer(this, (TestConsumerEndpoint) endpoint, behaviors);
+            var consumer = new TestConsumer(
+                this,
+                (TestConsumerEndpoint) endpoint,
+                behaviors,
+                LoggerFactory.CreateLogger<TestConsumer>());
+
             Consumers.Add(consumer);
             return consumer;
         }

@@ -5,21 +5,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
-    public abstract class Consumer : IConsumer
+    public abstract class Consumer : IConsumer, IDisposable
     {
         private readonly IReadOnlyCollection<IConsumerBehavior> _behaviors;
+        private readonly ILogger<Consumer> _logger;
 
-        protected Consumer(IBroker broker, IConsumerEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors)
+        protected Consumer(
+            IBroker broker,
+            IConsumerEndpoint endpoint,
+            IEnumerable<IConsumerBehavior> behaviors,
+            ILogger<Consumer> logger)
         {
             _behaviors = (IReadOnlyCollection<IConsumerBehavior>) behaviors?.ToList() ??
                          Array.Empty<IConsumerBehavior>();
 
             Broker = broker ?? throw new ArgumentNullException(nameof(broker));
             Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
+            _logger = logger;
 
             Endpoint.Validate();
         }
@@ -54,6 +61,20 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IConsumer" />
         public abstract void Disconnect();
+
+        public void Dispose()
+        {
+            try
+            {
+                Disconnect();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex,
+                    "Error occurred while disposing consumer from endpoint {endpoint}.",
+                    Endpoint.Name);
+            }
+        }
 
         /// <summary>
         ///     Handles the consumed message invoking the <see cref="IConsumerBehavior" /> pipeline and finally
@@ -100,8 +121,12 @@ namespace Silverback.Messaging.Broker
         where TEndpoint : IConsumerEndpoint
         where TOffset : IOffset
     {
-        protected Consumer(TBroker broker, TEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors)
-            : base(broker, endpoint, behaviors)
+        protected Consumer(
+            TBroker broker,
+            TEndpoint endpoint,
+            IEnumerable<IConsumerBehavior> behaviors,
+            ILogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
+            : base(broker, endpoint, behaviors, logger)
         {
         }
 

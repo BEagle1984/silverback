@@ -59,7 +59,8 @@ namespace Silverback.Examples.RabbitConsumer
                     IsDurable = durable,
                     IsExclusive = exclusive,
                     IsAutoDeleteEnabled = autoDelete
-                }
+                },
+                AcknowledgeEach = 2
             };
 
             if (messageSerializer != null)
