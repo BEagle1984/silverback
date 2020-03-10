@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -13,8 +14,12 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestConsumer : Consumer<TestBroker, TestConsumerEndpoint, TestOffset>
     {
-        public TestConsumer(TestBroker broker, TestConsumerEndpoint endpoint, IEnumerable<IConsumerBehavior> behaviors)
-            : base(broker, endpoint, behaviors)
+        public TestConsumer(
+            TestBroker broker,
+            TestConsumerEndpoint endpoint,
+            IEnumerable<IConsumerBehavior> behaviors,
+            ILogger<TestConsumer> logger)
+            : base(broker, endpoint, behaviors, logger)
         {
         }
 

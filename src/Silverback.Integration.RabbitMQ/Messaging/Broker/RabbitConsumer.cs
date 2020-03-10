@@ -22,23 +22,66 @@ namespace Silverback.Messaging.Broker
         private AsyncEventingBasicConsumer _consumer;
         private string _consumerTag;
 
+        private bool _disconnecting;
+
+        private int _pendingOffsetsCount;
+        private RabbitOffset _pendingOffset;
+        private readonly object _pendingOffsetLock = new object();
+        
         public RabbitConsumer(
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
             IEnumerable<IConsumerBehavior> behaviors,
             IRabbitConnectionFactory connectionFactory,
             ILogger<RabbitConsumer> logger)
-            : base(broker, endpoint, behaviors)
+            : base(broker, endpoint, behaviors, logger)
 
         {
             _connectionFactory = connectionFactory;
             _logger = logger;
         }
 
+
+        /// <inheritdoc cref="Consumer" />
+        public override void Connect()
+        {
+            if (_consumer != null)
+                return;
+
+            (_channel, _queueName) = _connectionFactory.GetChannel(Endpoint);
+
+            _consumer = new AsyncEventingBasicConsumer(_channel);
+            _consumer.Received += TryHandleMessage;
+
+            _consumerTag = _channel.BasicConsume(queue: _queueName,
+                autoAck: false,
+                consumer: _consumer);
+        }
+
+        /// <inheritdoc cref="Consumer" />
+        public override void Disconnect()
+        {
+            if (_consumer == null)
+                return;
+
+            _disconnecting = true;
+
+            CommitPendingOffset();
+            
+            _channel.BasicCancel(_consumerTag);
+            _channel?.Dispose();
+            _channel = null;
+            _queueName = null;
+            _consumerTag = null;
+            _consumer = null;
+            
+            _disconnecting = false;
+        }
+        
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
         protected override Task Commit(IEnumerable<RabbitOffset> offsets)
         {
-            BasicAck(offsets.Max(offset => offset.DeliveryTag));
+            CommitOrStoreOffset(offsets.OrderBy(offset => offset.DeliveryTag).Last());
             return Task.CompletedTask;
         }
 
@@ -49,6 +92,67 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
+        private async Task TryHandleMessage(object sender, BasicDeliverEventArgs deliverEventArgs)
+        {
+            RabbitOffset offset = null;
+
+            try
+            {
+                offset = new RabbitOffset(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
+
+                _logger.LogDebug("Consuming message {offset} from endpoint {endpointName}.",
+                    offset.Value, Endpoint.Name);
+
+                if (_disconnecting)
+                    return;
+                
+                await HandleMessage(
+                    deliverEventArgs.Body,
+                    deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
+                    offset);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex,
+                    "Fatal error occurred consuming the message {offset} from endpoint {endpointName}. " +
+                    "The consumer will be stopped.",
+                    offset?.Value, Endpoint.Name);
+
+                Disconnect();
+            }
+        }
+        
+        private void CommitOrStoreOffset(RabbitOffset offset)
+        {
+            lock (_pendingOffsetLock)
+            {
+                if (Endpoint.AcknowledgeEach == 1)
+                {
+                    BasicAck(offset.DeliveryTag);
+                    return;
+                }
+
+                _pendingOffset = offset;
+                _pendingOffsetsCount++;
+            }
+
+            if (Endpoint.AcknowledgeEach <= _pendingOffsetsCount)
+                CommitPendingOffset();
+        }
+
+        private void CommitPendingOffset()
+        {
+            lock (_pendingOffsetLock)
+            {
+                if (_pendingOffset == null)
+                    return;
+
+                BasicAck(_pendingOffset.DeliveryTag);
+                _pendingOffset = null;
+                _pendingOffsetsCount = 0;
+            }
+        }
+        
         private void BasicAck(ulong deliveryTag)
         {
             try
@@ -87,63 +191,6 @@ namespace Silverback.Messaging.Broker
 
                 throw;
             }
-        }
-
-        /// <inheritdoc cref="Consumer" />
-        public override void Connect()
-        {
-            if (_consumer != null)
-                return;
-
-            (_channel, _queueName) = _connectionFactory.GetChannel(Endpoint);
-
-            _consumer = new AsyncEventingBasicConsumer(_channel);
-            _consumer.Received += TryHandleMessage;
-
-            _consumerTag = _channel.BasicConsume(queue: _queueName,
-                autoAck: false,
-                consumer: _consumer);
-        }
-
-        private async Task TryHandleMessage(object sender, BasicDeliverEventArgs deliverEventArgs)
-        {
-            RabbitOffset offset = null;
-
-            try
-            {
-                offset = new RabbitOffset(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
-
-                _logger.LogDebug("Consuming message {offset} from endpoint {endpointName}.",
-                    offset.Value, Endpoint.Name);
-
-                await HandleMessage(
-                    deliverEventArgs.Body,
-                    deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
-                    offset);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex,
-                    "Fatal error occurred consuming the message {offset} from endpoint {endpointName}. " +
-                    "The consumer will be stopped.",
-                    offset?.Value, Endpoint.Name);
-
-                Disconnect();
-            }
-        }
-
-        /// <inheritdoc cref="Consumer" />
-        public override void Disconnect()
-        {
-            if (_consumer == null)
-                return;
-
-            _channel.BasicCancel(_consumerTag);
-            _channel?.Dispose();
-            _channel = null;
-            _queueName = null;
-            _consumerTag = null;
-            _consumer = null;
         }
     }
 }

@@ -46,7 +46,11 @@ namespace Silverback.Messaging.Broker
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
             IEnumerable<IConsumerBehavior> behaviors) =>
-            GetTopic(endpoint.Name).Subscribe(new InMemoryConsumer(this, endpoint, behaviors));
+            GetTopic(endpoint.Name).Subscribe(new InMemoryConsumer(
+                this,
+                endpoint,
+                behaviors,
+                LoggerFactory.CreateLogger<InMemoryConsumer>()));
 
         /// <inheritdoc cref="Broker" />
         protected override void Disconnect(IEnumerable<IConsumer> consumers)

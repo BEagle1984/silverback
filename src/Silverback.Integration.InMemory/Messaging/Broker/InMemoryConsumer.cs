@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
@@ -13,8 +14,9 @@ namespace Silverback.Messaging.Broker
         public InMemoryConsumer(
             InMemoryBroker broker,
             IConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors)
-            : base(broker, endpoint, behaviors)
+            IEnumerable<IConsumerBehavior> behaviors,
+            ILogger<InMemoryConsumer> logger)
+            :  base(broker, endpoint, behaviors, logger)
         {
         }
 

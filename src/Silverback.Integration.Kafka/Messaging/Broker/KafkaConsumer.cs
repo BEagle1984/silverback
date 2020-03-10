@@ -11,7 +11,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
-    public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint, KafkaOffset>, IDisposable
+    public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint, KafkaOffset>
     {
         private readonly ILogger<KafkaConsumer> _logger;
         private readonly IServiceProvider _serviceProvider;
@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Broker
             IEnumerable<IConsumerBehavior> behaviors,
             IServiceProvider serviceProvider,
             ILogger<KafkaConsumer> logger)
-            : base(broker, endpoint, behaviors)
+            : base(broker, endpoint, behaviors, logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -67,20 +67,6 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogDebug("Disconnected consumer from topic {topic}. (BootstrapServers=\"{bootstrapServers}\")",
                 Endpoint.Name, Endpoint.Configuration.BootstrapServers);
-        }
-
-        public void Dispose()
-        {
-            try
-            {
-                Disconnect();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex,
-                    "Error occurred while disconnecting consumer from topic {topic}. (BootstrapServers=\"{bootstrapServers}\")",
-                    Endpoint.Name, Endpoint.Configuration.BootstrapServers);
-            }
         }
 
         private async Task OnMessageReceived(
