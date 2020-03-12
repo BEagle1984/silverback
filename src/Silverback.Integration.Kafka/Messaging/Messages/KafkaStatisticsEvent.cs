@@ -17,10 +17,11 @@ namespace Silverback.Messaging.Messages
     /// </remarks>
     public class KafkaStatisticsEvent : IKafkaEvent
     {
+        private KafkaStatistics _statistics;
+
         public KafkaStatisticsEvent(string statistics)
         {
             Raw = statistics;
-            Statistics = JsonConvert.DeserializeObject<KafkaStatistics>(statistics);
         }
 
         /// <summary>
@@ -31,6 +32,17 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets the statistics as typed <see cref="KafkaStatistics"/> object
         /// </summary>
-        public KafkaStatistics Statistics { get; }
+        public KafkaStatistics Statistics
+        {
+            get
+            {
+                if (_statistics == null)
+                {
+                    _statistics = JsonConvert.DeserializeObject<KafkaStatistics>(Raw);
+                }
+
+                return _statistics;
+            }
+        }
     }
 }

@@ -13,9 +13,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         [Fact]
         public void Deserialize_DeserializesKafkaStatistics()
         {
-            string json = ReadJson("Silverback.Tests.Integration.Kafka.Resources.statistics.json");
+            var json = ReadJson("Silverback.Tests.Integration.Kafka.Resources.statistics.json");
 
-            KafkaStatistics statistics = JsonConvert.DeserializeObject<KafkaStatistics>(json);
+            var statistics = JsonConvert.DeserializeObject<KafkaStatistics>(json);
 
             // Global fields
             statistics.Name.Should().Be("Test#consumer-1");
@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             statistics.Brokers.Should().HaveCount(1);
             statistics.Brokers.Should().ContainKey("kafka1:29092/1");
 
-            BrokerStatistics broker = statistics.Brokers["kafka1:29092/1"];
+            var broker = statistics.Brokers["kafka1:29092/1"];
             broker.Name.Should().Be("kafka1:29092/1");
             broker.NodeId.Should().Be(1);
             broker.NodeName.Should().Be("kafka1:29092");
@@ -152,7 +152,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             broker.TopicPartitions.Should().ContainKey("test-event-0");
 
             // TopPar fields
-            TopicPartitions toppar = broker.TopicPartitions["test-event-0"];
+            var toppar = broker.TopicPartitions["test-event-0"];
             toppar.Topic.Should().Be("test-event");
             toppar.Partition.Should().Be(0);
 
@@ -160,7 +160,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             statistics.Topics.Should().HaveCount(1);
             statistics.Topics.Should().ContainKey("test-event");
 
-            TopicStatistics topic = statistics.Topics["test-event"];
+            var topic = statistics.Topics["test-event"];
             topic.Topic.Should().Be("test-event");
             topic.MetadataAge.Should().Be(29005);
             topic.BatchSize.Should().NotBeNull();
@@ -199,7 +199,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             topic.Partitions.Should().HaveCount(2);
             topic.Partitions.Should().ContainKey("0");
 
-            PartitionStatistics partition0 = topic.Partitions["0"];
+            var partition0 = topic.Partitions["0"];
             partition0.Partition.Should().Be(0);
             partition0.Broker.Should().Be(1);
             partition0.Leader.Should().Be(1);
@@ -234,7 +234,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             partition0.NextErrSeq.Should().Be(123);
             partition0.AckedMsgId.Should().Be(123);
 
-            PartitionStatistics partition2 = topic.Partitions["-1"];
+            var partition2 = topic.Partitions["-1"];
             partition2.Partition.Should().Be(-1);
             partition2.Broker.Should().Be(-1);
             partition2.Leader.Should().Be(-1);
@@ -272,7 +272,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             // Consumer Group fields
             statistics.ConsumerGroup.Should().NotBeNull();
 
-            ConsumerGroupStatistics consumerGroup = statistics.ConsumerGroup ?? new ConsumerGroupStatistics();
+            var consumerGroup = statistics.ConsumerGroup ?? new ConsumerGroupStatistics();
             consumerGroup.State.Should().Be("up");
             consumerGroup.StateAge.Should().Be(34005);
             consumerGroup.JoinState.Should().Be("started");
@@ -284,7 +284,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             // EOS fields
             statistics.ExactlyOnceSemantics.Should().NotBeNull();
 
-            ExactlyOnceSemanticsStatistics eos = statistics.ExactlyOnceSemantics ?? new ExactlyOnceSemanticsStatistics();
+            var eos = statistics.ExactlyOnceSemantics ?? new ExactlyOnceSemanticsStatistics();
             eos.IdempState.Should().Be("Assigned");
             eos.IdempStateAge.Should().Be(12345);
             eos.TxnState.Should().Be("InTransaction");
@@ -297,11 +297,11 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
 
         private static string ReadJson(string resourceName)
         {
-            using Stream? resource = Assembly
+            using var resource = Assembly
                 .GetAssembly(typeof(KafkaStatisticsDeserializationTests))
                 ?.GetManifestResourceStream(resourceName);
 
-            using StreamReader reader = new StreamReader(resource ?? throw new InvalidOperationException());
+            using var reader = new StreamReader(resource ?? throw new InvalidOperationException());
 
             return reader.ReadToEnd();
         }
