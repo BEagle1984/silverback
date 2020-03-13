@@ -29,6 +29,16 @@ namespace Silverback.Messaging
         ///     The most reliable level is 1 but it reduces throughput.
         /// </summary>
         public int AcknowledgeEach { get; set; } = 1;
+
+        /// <summary>
+        ///     Defines the QoS prefetch size parameter for the consumer.
+        /// </summary>
+        public uint PrefetchSize { get; set; }
+        
+        /// <summary>
+        ///     Defines the QoS prefetch count parameter for the consumer.
+        /// </summary>
+        public ushort PrefetchCount { get; set; }
         
         public override void Validate()
         {

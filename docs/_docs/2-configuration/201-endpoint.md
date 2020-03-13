@@ -158,6 +158,9 @@ Property | Description
 `Queue.IsAutoDeleteEnabled` | Specifies whether the queue will be automatically deleted when the last consumer unsubscribes. The default is `false`.
 `Queue.IsExclusive` | Specifies whether the queue is used by only one connection and will be deleted when that connection closes. The default is `false`.
 `Queue.Arguments` | The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.
+`AcknowledgeEach` | Defines the number of message processed before sending the acknowledgment to the server. The most reliable level is 1 but it reduces throughput.
+`PrefetchSize` | Defines the QoS prefetch size parameter for the consumer. See [RabbitMQ Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) documentation for details.
+`PrefetchCount` | Defines the QoS prefetch count parameter for the consumer. See [RabbitMQ Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) documentation for details.
 
 ```c#
 new RabbitQueueConsumerEndpoint("inventory-commands-queue")
@@ -201,6 +204,9 @@ Property | Description
 `RoutingKey` | The routing key (aka binding key) to be used to bind with the exchange.
 `ConfirmationTimeout` | The maximum amount of time to wait for the message produce to be acknowledge before considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment. The default is a quite conservative `5 seconds`.
 `Chunk` | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
+`AcknowledgeEach` | Defines the number of message processed before sending the acknowledgment to the server. The most reliable level is 1 but it reduces throughput.
+`PrefetchSize` | Defines the QoS prefetch size parameter for the consumer. See [RabbitMQ Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) documentation for details.
+`PrefetchCount` | Defines the QoS prefetch count parameter for the consumer. See [RabbitMQ Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) documentation for details.
 
 ```c#
 new RabbitExchangeConsumerEndpoint("order-events")

@@ -21,7 +21,7 @@ namespace Silverback.Messaging
         public RabbitConnectionConfig Connection { get; set; } = new RabbitConnectionConfig();
 
         /// <summary>
-        ///     Gets or sets the maximum amount of time to wait for the message produce to be acknowledge before
+        ///     Defines the maximum amount of time to wait for the message produce to be acknowledge before
         ///     considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative
         ///     acknowledgment.
         ///     The default is a quite conservative 5 seconds.

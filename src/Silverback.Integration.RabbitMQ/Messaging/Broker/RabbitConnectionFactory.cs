@@ -86,9 +86,8 @@ namespace Silverback.Messaging.Broker
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-            // TOOD: Make configurable?
-            channel.BasicQos(1, 1, false);
+            
+            channel.BasicQos(endpoint.PrefetchSize, endpoint.PrefetchCount, false);
 
             return (channel, queueName);
         }
