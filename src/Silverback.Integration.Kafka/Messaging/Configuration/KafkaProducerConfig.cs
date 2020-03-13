@@ -30,8 +30,8 @@ namespace Silverback.Messaging.Configuration
              DeliveryReportFields.Contains("status"));
 
         /// <summary>
-        ///     Gets or sets a boolean value indicating whether an exception must be thrown
-        ///     by the producer if the persistence is not acknowledge by the broker.
+        ///     Specifies whether an exception must be thrown by the producer if the persistence
+        ///     is not acknowledge by the broker.
         /// </summary>
         public bool ThrowIfNotAcknowledged { get; set; } = true;
 
