@@ -27,14 +27,14 @@ public class InMemoryBrokerTests
         services
             // Register Silverback as usual
             .AddSilverback()
-            // Register the InMemoryBroker instead of 
+            // Register the InMemoryBroker instead of
             // the real broker (e.g. KafkaBroker)
             .WithInMemoryBroker()
             // Register the subscriber under test
             .AddScopedSubscriber<MySubscriber>();
 
         // ...register all other types you need...
-        
+
         _serviceProvider = services.BuildServiceProvider();
     }
 
@@ -42,7 +42,7 @@ public class InMemoryBrokerTests
     public void SampleTest()
     {
         // Arrange
-        
+
         // Configure the Bus
         _serviceProvider.GetRequiredService<BusConfigurator>()
             // Configure inbound and outbound endpoints
@@ -68,8 +68,10 @@ public class InMemoryBrokerTests
 
 An alternative technique is to leverage the [ASP.NET Core integration tests](https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests) to perform a full test based on the real configuration applied in the application's startup class.
 
+The following code shows the most simple integration test possible, in which an object is published to the broker and e.g. a subscriber is called.
+
 ```c#
-public class IntegrationTests 
+public class IntegrationTests
     : IClassFixture<WebApplicationFactory<Startup>>
 {
     private readonly WebApplicationFactory<Startup> _factory;
@@ -80,7 +82,7 @@ public class IntegrationTests
         {
             builder.ConfigureTestServices(services =>
             {
-                // Replace the usual broker (e.g. KafkaBroker) 
+                // Replace the usual broker (e.g. KafkaBroker)
                 // with the InMemoryBroker
                 services.OverrideWithInMemoryBroker();
             });
@@ -91,9 +93,6 @@ public class IntegrationTests
     public async Task SampleTest()
     {
         // Arrange
-
-        // This call is required to startup the environment
-        _factory.CreateClient();
 
         // Resolve a producer to push to test-topic
         var producer = _factory.Server.Host.Services
@@ -107,4 +106,73 @@ public class IntegrationTests
         // ...your assertions...
     }
 }
+```
+
+As topics represents APIs there might be more complex scenarios in which one wants to test the serialization as well to ensure compatibility.
+The code below shows a test which assumes that an use case is to consume from a topic, transform the record and produce to another topic.
+
+```c#
+public class IntegrationTests
+    : IClassFixture<WebApplicationFactory<Startup>>
+{
+    private readonly WebApplicationFactory<Startup> _factory;
+
+    public IntegrationTests(WebApplicationFactory<Startup> factory)
+    {
+        _factory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureTestServices(services =>
+            {
+                // Replace the usual broker (e.g. KafkaBroker)
+                // with the InMemoryBroker
+                services.OverrideWithInMemoryBroker();
+            });
+        };
+    }
+
+    [Fact]
+    public async Task SampleTest()
+    {
+
+        // Arrange
+        const string record = @"{
+            ""FIRST_NAME"": ""Xy"",
+            ""LAST_NAME"":""Zz"",
+            ""AGE"":32
+        }";
+
+        byte[] recordBytes = Encoding.UTF8.GetBytes(record);
+        using IServiceScope scope = _webApplicationFactory.Services.CreateScope();
+        var broker = scope.ServiceProvider.GetRequiredService<IBroker>();
+
+        // Internal events are directly emitted to the bus.
+        // Events for which an endpoint is configured are emitted as IOutboundEnvelope<T> to the bus.
+        IList<IOutboundEnvelope<Person>> externalEvents = new List<IOutboundEnvelope<Person>>();
+        scope.ServiceProvider.GetRequiredService<BusConfigurator>()
+            .Subscribe<IOutboundEnvelope<MappedPerson>>(e => externalEvents.Add(e));
+
+        // Calling this producer is like there would be an "incoming" record.
+        IProducer producer = broker.GetProducer(new KafkaProducerEndpoint("MyTopicFromWhichTheApplicationConsumes"));
+
+        // Act
+        await producer.ProduceAsync(recordBytes);
+
+        // Assert
+        externalEvents.Count.Should().Be(1);
+
+        IOutboundEnvelope<MappedPerson> message = externalEvents.Single();
+        message.Endpoint.Name.Should().Be("MyTopicToWhichTheApplicationWrites");
+        string actualMessage = Encoding.UTF8.GetString(message.RawMessage);
+
+        const string expectedMessage = @"{
+            ""FirstName"": ""Xy"",
+            ""LastName"":""Zz"",
+            ""Age"":32
+        }";
+
+        // Might you want to create a own FluentAssertionExtension, to do something like this.
+        actualMessage.Should().BeEquivalentJsonTo(expectedMessage);
+    }
+}
+
 ```
