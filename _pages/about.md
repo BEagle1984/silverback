@@ -8,15 +8,16 @@ Silverback is an open-source project maintained by Sergio Aquilini (aka BEagle19
 
 # In few words
 
-Silverback is a simple framework to build reactive, event-driven, microservices.
+Silverback is a simple but feature-rich framework to build reactive/event-driven applications.
 
-It includes an in-memory message bus that can be easily connected to a message broker to integrate with other microservices. At the moment only [Apache Kafka](https://kafka.apache.org/) and [RabbitMQ](https://www.rabbitmq.com/) are supported but other message brokers could be added without much effort.
+It includes an in-memory message bus that can be easily connected to a message broker to integrate with other applications or microservices. At the moment only [Apache Kafka](https://kafka.apache.org/) and [RabbitMQ](https://www.rabbitmq.com/) are supported but other message brokers could be added without much effort.
 
 Its main features are:
 * Simple yet powerful message bus
 * Abstracted and configurative integration with a message broker
 * Apache Kafka and RabbitMQ integration
 * DDD, Domain Events and Transactional Messaging
+* Outbox table pattern implementation
 * Built-in error handling policies for consumers
 
 # License
