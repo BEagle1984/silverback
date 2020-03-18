@@ -37,7 +37,7 @@ docs:
         url: /docs/quickstart/model
       - title: DDD and Domain Events
         url: /docs/quickstart/domain-events
-      - title: Connecting a Message Broker (Kafka)
+      - title: Connecting a Message Broker
         url: /docs/quickstart/message-broker
       - title: Translating Messages
         url: /docs/quickstart/translating
