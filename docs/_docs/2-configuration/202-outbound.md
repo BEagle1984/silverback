@@ -20,7 +20,8 @@ public void ConfigureServices(IServiceCollection services)
 
     services
         .AddSilverback()
-        .WithConnectionToKafka(options => options
+        .WithConnectionToMessageBroker(options => options
+            .AddKafka()
             .AddOutboundConnector());
     ...
 }
@@ -66,7 +67,8 @@ public void ConfigureServices(IServiceCollection services)
         // work without locking. 
         .AddDbDistributedLockManager()
 
-        .WithConnectionToKafka(options => options
+        .WithConnectionToMessageBroker(options => options
+            .AddKafka()
             // Use a deferred outbound connector
             .AddDbOutboundConnector()
 

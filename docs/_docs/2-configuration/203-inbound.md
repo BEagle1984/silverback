@@ -21,7 +21,8 @@ public void ConfigureServices(IServiceCollection services)
 {
     services
         .AddSilverback()
-        .WithConnectionToKafka(options => options
+        .WithConnectionToMessageBroker(options => options
+            .AddKafka()
             .AddInboundConnector());
 }
 
@@ -54,7 +55,8 @@ public void ConfigureServices(IServiceCollection services)
     services
         .AddSilverback()
         .UseDbContext<MyDbContext>()
-        .WithConnectionToKafka(options => options
+        .WithConnectionToMessageBroker(options => options
+            .AddKafka()
             .AddDbOffsetStoredInboundConnector());
 }
 ``` 
@@ -72,7 +74,8 @@ public void ConfigureServices(IServiceCollection services)
     services
         .AddSilverback()
         .UseDbContext<MyDbContext>()
-        .WithConnectionToKafka(options => options
+        .WithConnectionToMessageBroker(options => options
+            .AddKafka()
             .AddDbLoggedInboundConnector());
 }
 ```

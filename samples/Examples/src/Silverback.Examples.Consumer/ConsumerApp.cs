@@ -27,9 +27,9 @@ namespace Silverback.Examples.Consumer
                 .AddDbOffsetStoredInboundConnector()
                 .AddInboundConnector()
                 .AddDbLoggedInboundConnector()
-                .AddDbChunkStore())
-            .AddEndpointsConfigurator<KafkaEndpointsConfigurator>()
-            .AddEndpointsConfigurator<RabbitEndpointsConfigurator>()
+                .AddDbChunkStore()
+                .RegisterConfigurator<KafkaEndpointsConfigurator>()
+                .RegisterConfigurator<RabbitEndpointsConfigurator>())
             // Subscribers
             .AddScopedSubscriber<SampleEventsSubscriber>()
             .AddScopedSubscriber<MultipleGroupsSubscriber>()

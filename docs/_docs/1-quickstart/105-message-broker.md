@@ -10,19 +10,23 @@ To connect Silverback to a message broker we need a reference to `Silverback.Int
 The following example is very simple and there are of course many more configurations and possibilities. Some more details are given in the dedicated [Broker Configuration Explained]({{ site.baseurl }}/docs/configuration/endpoint) section.
 
 The basic concepts:
-* `WithConnectionTo` registers the services necessary to connect to the message broker of choice
+* `WithConnectionToMessageBroker` registers the services necessary to connect to a message broker
+* `AddKafka`, `AddRabbit`, `AddInMemoryBroker`, etc. register the message broker implementation(s)
 * `AddInbound` is used to automatically relay the incoming messages to the internal bus and they can therefore be subscribed as seen in the previous chapters
 * `AddOutbound` works the other way around and subscribes to the internal bus to forward the integration messages to the message broker
 * `Connect` automatically creates and starts all the consumers.
 
 ### Basic Kafka configuration
 
+The following sample demonstrates how to setup some inbound and outbound endpoints against an Apache Kafka broker.
+
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
     services
         .AddSilverback()
-        .WithConnectionToKafka(options => options
+        .WithConnectionToMessageBroker(options => options
+            .AddKafka()
             .AddInboundConnector()
             .AddOutboundConnector());
 }
@@ -61,12 +65,15 @@ public void Configure(BusConfigurator busConfigurator)
 
 ### Basic RabbitMQ configuration
 
+The following sample demonstrates how to setup some inbound and outbound endpoints against a RabbitMQ broker.
+
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
     services
         .AddSilverback()
-        .WithConnectionToRabbit(options => options
+        .WithConnectionToMessageBroker(options => options
+            .AddRabbit()
             .AddInboundConnector()
             .AddOutboundConnector());
 }
@@ -139,6 +146,37 @@ public void Configure(BusConfigurator busConfigurator)
                 }));
 ```
 
+### Multiple brokers
+
+It is possible to use multiple message brokers together in the same application. The following sample demonstrates how to consume from both Apache Kafka and RabbitMQ.
+
+```c#
+public void ConfigureServices(IServiceCollection services)
+{
+    services
+        .AddSilverback()
+        .WithConnectionToMessageBroker(options => options
+            .AddKafka()
+            .AddRabbit()
+            .AddInboundConnector());
+}
+
+public void Configure(BusConfigurator busConfigurator)
+{
+    busConfigurator
+        .Connect(endpoints => endpoints
+            .AddInbound(
+                new RabbitExchangeConsumerEndpoint("rabbit-events")
+                {
+                    ...
+                })
+            .AddInbound(
+                new KafkaConsumerEndpoint("kafka-events")
+                {
+                    ...
+                }));
+```
+
 ## Using IEndpointsConfigurator
 
 The endpoints configuration can be split into multiple types implementing the `IEndpointsConfigurator` interface.
@@ -174,7 +212,8 @@ public class Startup
     {
         services
             .AddSilverback()
-            .WithConnectionToKafka(options => options
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
                 .RegisterConfigurator<MyFeatureConfigurator>());
     }
 }
@@ -185,7 +224,7 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddEndPointsConfigurator<MyFeatureConfigurator>());
+        services.AddEndpointsConfigurator<MyFeatureConfigurator>());
     }
 }
 ```
@@ -214,9 +253,9 @@ It is important to properly close the consumers using the `Disconnect` method be
 ```c#
 public void Configure(BusConfigurator busConfigurator)
 {
-    var broker = busConfigurator.Connect(...);
+    var brokers = busConfigurator.Connect(...);
 
-    appLifetime.ApplicationStopping.Register(() => broker.Disconnect());
+    appLifetime.ApplicationStopping.Register(() => brokers.Disconnect());
 ```
 
 ## Health Monitoring
