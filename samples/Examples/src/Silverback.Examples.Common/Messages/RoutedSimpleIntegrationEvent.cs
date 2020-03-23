@@ -7,6 +7,7 @@ namespace Silverback.Examples.Common.Messages
 {
     public class RoutedSimpleIntegrationEvent : IntegrationEvent
     {
-        [RabbitRoutingKey] public string Key { get; set; }
+        [RabbitRoutingKey]
+        public string Key { get; set; }
     }
 }

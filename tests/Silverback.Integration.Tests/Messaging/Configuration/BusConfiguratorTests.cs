@@ -183,6 +183,21 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             GetTestBroker().ProducedMessages.Count.Should().Be(5);
         }
 
+        [Fact]
+        public void Connect_WithSMultipleBrokers_AllBrokersAreConnected()
+        {
+            _services
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options
+                    .AddBroker<TestBroker>()
+                    .AddBroker<TestOtherBroker>());
+
+            GetBusConfigurator().Connect();
+
+            GetTestBroker().IsConnected.Should().BeTrue();
+            GetTestOtherBroker().IsConnected.Should().BeTrue();
+        }
+
         private class TestConfiguratorOne : IEndpointsConfigurator
         {
             public void Configure(IEndpointsConfigurationBuilder builder)

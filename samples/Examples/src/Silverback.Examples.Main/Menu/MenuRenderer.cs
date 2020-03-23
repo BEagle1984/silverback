@@ -160,17 +160,17 @@ namespace Silverback.Examples.Main.Menu
                 ConsoleHelper.WriteLineTruncated(@"\___ \| || | \ \ / /|  _| | |_) |  _ \ / _ \| |   | ' / ");
                 ConsoleHelper.WriteLineTruncated(@" ___) | || |__\ V / | |___|  _ <| |_) / ___ \ |___| . \ ");
                 ConsoleHelper.WriteLineTruncated(@"|____/___|_____\_/  |_____|_| \_\____/_/   \_\____|_|\_\");
-                ConsoleHelper.WriteLineTruncated( GetSilverbackVersion().PadLeft(56));
-                
+                ConsoleHelper.WriteLineTruncated(GetSilverbackVersion().PadLeft(56));
+
                 Console.WriteLine();
             }
 
             breadcrumbs.WriteBreadcrumbs();
-            
+
             ConsoleHelper.ResetColor();
         }
 
         private static string GetSilverbackVersion() =>
             Assembly.Load("Silverback.Core").GetName().Version.ToString(3);
-     }
+    }
 }

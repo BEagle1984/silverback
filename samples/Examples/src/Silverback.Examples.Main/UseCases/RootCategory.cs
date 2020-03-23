@@ -14,8 +14,9 @@ namespace Silverback.Examples.Main.UseCases
 
         public IEnumerable<Type> Children => new List<Type>
         {
-            typeof(Kafka._CategoryInfo),
-            typeof(Rabbit._CategoryInfo)
+            typeof(Producing.Kafka._CategoryInfo),
+            typeof(Producing.Rabbit._CategoryInfo),
+            typeof(Consuming._CategoryInfo)
         };
     }
 }
