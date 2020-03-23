@@ -13,20 +13,20 @@ namespace Silverback.Messaging.HealthChecks
     public class OutboundEndpointsHealthCheckService : IOutboundEndpointsHealthCheckService
     {
         private readonly IOutboundRoutingConfiguration _outboundRoutingConfiguration;
-        private readonly IBroker _broker;
+        private readonly IBrokerCollection _brokerCollection;
 
         public OutboundEndpointsHealthCheckService(
             IOutboundRoutingConfiguration outboundRoutingConfiguration,
-            IBroker broker)
+            IBrokerCollection brokerCollection)
         {
             _outboundRoutingConfiguration = outboundRoutingConfiguration ??
                                             throw new ArgumentNullException(nameof(outboundRoutingConfiguration));
-            _broker = broker ?? throw new ArgumentNullException(nameof(broker));
+            _brokerCollection = brokerCollection ?? throw new ArgumentNullException(nameof(brokerCollection));
         }
 
         public async Task<IEnumerable<EndpointCheckResult>> PingAllEndpoints()
         {
-            if (!_broker.IsConnected)
+            if (!_brokerCollection.All(broker => broker.IsConnected))
                 return Enumerable.Empty<EndpointCheckResult>();
 
             var tasks = _outboundRoutingConfiguration.Routes
@@ -34,7 +34,7 @@ namespace Silverback.Messaging.HealthChecks
                 {
                     try
                     {
-                        await _broker.GetProducer(route.DestinationEndpoint).ProduceAsync(PingMessage.New());
+                        await _brokerCollection.GetProducer(route.DestinationEndpoint).ProduceAsync(PingMessage.New());
                         return new EndpointCheckResult(route.DestinationEndpoint.Name, true);
                     }
                     catch (Exception ex)

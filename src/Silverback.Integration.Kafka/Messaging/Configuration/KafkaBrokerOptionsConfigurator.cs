@@ -8,9 +8,7 @@ namespace Silverback.Messaging.Configuration
 {
     public class KafkaBrokerOptionsConfigurator : IBrokerOptionsConfigurator<KafkaBroker>
     {
-        public void Configure(ISilverbackBuilder silverbackBuilder, BrokerOptionsBuilder brokerOptionsBuilder)
-        {
-            silverbackBuilder.AddSingletonBehavior<KafkaMessageKeyBehavior>();
-        }
+        public void Configure(IBrokerOptionsBuilder options) =>
+            options.SilverbackBuilder.AddSingletonBehavior<KafkaMessageKeyBehavior>();
     }
 }

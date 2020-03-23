@@ -10,7 +10,20 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    public abstract class Broker : IBroker, IDisposable
+    /// <summary>
+    ///     The base class for all <see cref="IBroker" /> implementations.
+    /// </summary>
+    /// <typeparam name="TProducerEndpoint">
+    ///     The type of the <see cref="IProducerEndpoint" /> that is being handled by this
+    ///     broker implementation.
+    /// </typeparam>
+    /// <typeparam name="TConsumerEndpoint">
+    ///     The type of the <see cref="IConsumerEndpoint" /> that is being handled by this
+    ///     broker implementation.
+    /// </typeparam>
+    public abstract class Broker<TProducerEndpoint, TConsumerEndpoint> : IBroker, IDisposable
+        where TProducerEndpoint : IProducerEndpoint
+        where TConsumerEndpoint : IConsumerEndpoint
     {
         private readonly ILogger _logger;
         private readonly IEnumerable<IProducerBehavior> _producerBehaviors;
@@ -32,9 +45,18 @@ namespace Silverback.Messaging.Broker
 
             LoggerFactory = loggerFactory;
             _logger = loggerFactory.CreateLogger(GetType());
+
+            ProducerEndpointType = typeof(TProducerEndpoint);
+            ConsumerEndpointType = typeof(TConsumerEndpoint);
         }
 
         #region Producer / Consumer
+
+        /// <inheritdoc cref="IBroker" />
+        public Type ProducerEndpointType { get; }
+
+        /// <inheritdoc cref="IBroker" />
+        public Type ConsumerEndpointType { get; }
 
         /// <inheritdoc cref="IBroker" />
         public virtual IProducer GetProducer(IProducerEndpoint endpoint) =>
@@ -42,7 +64,7 @@ namespace Silverback.Messaging.Broker
             {
                 _logger.LogInformation("Creating new producer for endpoint {endpointName}. " +
                                        $"(Total producers: {_producers.Count + 1})", endpoint.Name);
-                return InstantiateProducer(endpoint, _producerBehaviors);
+                return InstantiateProducer((TProducerEndpoint) endpoint, _producerBehaviors);
             });
 
         /// <summary>
@@ -53,7 +75,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviors">The behaviors to be plugged-in.</param>
         /// <returns></returns>
         protected abstract IProducer InstantiateProducer(
-            IProducerEndpoint endpoint,
+            TProducerEndpoint endpoint,
             IEnumerable<IProducerBehavior> behaviors);
 
         /// <inheritdoc cref="IBroker" />
@@ -65,7 +87,7 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogInformation("Creating new consumer for endpoint {endpointName}.", endpoint.Name);
 
-            var consumer = InstantiateConsumer(endpoint, _consumerBehaviors);
+            var consumer = InstantiateConsumer((TConsumerEndpoint) endpoint, _consumerBehaviors);
 
             lock (_consumers)
             {
@@ -82,7 +104,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviors">The behaviors to be plugged-in.</param>
         /// <returns></returns>
         protected abstract IConsumer InstantiateConsumer(
-            IConsumerEndpoint endpoint,
+            TConsumerEndpoint endpoint,
             IEnumerable<IConsumerBehavior> behaviors);
 
         #endregion
@@ -98,12 +120,12 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 return;
 
-            _logger.LogDebug("Connecting to message broker...");
+            _logger.LogDebug("Connecting to message broker ({broker})...", GetType().Name);
 
             Connect(_consumers);
             IsConnected = true;
 
-            _logger.LogInformation("Connected to message broker!");
+            _logger.LogInformation("Connected to message broker ({broker})!", GetType().Name);
         }
 
         /// <summary>
@@ -119,12 +141,12 @@ namespace Silverback.Messaging.Broker
             if (!IsConnected)
                 return;
 
-            _logger.LogDebug("Disconnecting from message broker...");
+            _logger.LogDebug("Disconnecting from message broker ({broker})...", GetType().Name);
 
             Disconnect(_consumers);
             IsConnected = false;
 
-            _logger.LogInformation("Disconnected from message broker!");
+            _logger.LogInformation("Disconnected from message broker ({broker})!", GetType().Name);
         }
 
         /// <summary>

@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Connectors
         public IOutboundRoutingConfiguration Add(
             Type messageType,
             IProducerEndpoint endpoint,
-            Type outboundConnectorType)
+            Type outboundConnectorType = null)
         {
             _routes.Add(new OutboundRoute(messageType, endpoint, outboundConnectorType));
             return this;

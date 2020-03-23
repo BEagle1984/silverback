@@ -17,8 +17,10 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Configuration
             var servicesGeneric = new ServiceCollection();
             var servicesSpecific = new ServiceCollection();
 
+#pragma warning disable 618
             new SilverbackBuilder(servicesGeneric).WithConnectionTo<RabbitBroker>();
             new SilverbackBuilder(servicesSpecific).WithConnectionToRabbit();
+#pragma warning restore 618
 
             servicesGeneric.Count.Should().Be(servicesSpecific.Count);
         }

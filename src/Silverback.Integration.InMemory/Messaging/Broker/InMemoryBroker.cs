@@ -8,7 +8,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
-    public class InMemoryBroker : Broker
+    public class InMemoryBroker : Broker<IProducerEndpoint, IConsumerEndpoint>
     {
         private readonly MessageIdProvider _messageIdProvider;
         private readonly MessageLogger _messageLogger;

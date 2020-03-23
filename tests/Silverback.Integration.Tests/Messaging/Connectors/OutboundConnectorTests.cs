@@ -1,9 +1,11 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -20,10 +22,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public OutboundConnectorTests()
         {
             _broker = new TestBroker();
-            _connector = new OutboundConnector(_broker);
+            _connector = new OutboundConnector(new BrokerCollection(new[] { _broker }));
         }
 
         [Fact]
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public async Task OnMessageReceived_SingleMessage_Relayed()
         {
             var envelope = new OutboundEnvelope<TestEventOne>(new TestEventOne { Content = "Test" }, null,

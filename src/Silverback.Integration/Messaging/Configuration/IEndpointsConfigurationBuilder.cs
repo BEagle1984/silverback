@@ -33,6 +33,17 @@ namespace Silverback.Messaging.Configuration
             IProducerEndpoint endpoint,
             Type outboundConnectorType = null);
 
+
+        /// <summary>
+        ///     Adds and outbound endpoint for the specified message type.
+        /// </summary>
+        /// <param name="messageType">The type of the messages to be published to this endpoint.</param>
+        /// <param name="endpoint">The endpoint (topic).</param>
+        /// <param name="outboundConnectorType">
+        ///     The type of the <see cref="IOutboundConnector" /> to be used.
+        ///     If not specified, the default one will be used.
+        /// </param>
+        /// <returns></returns>
         IEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
             IProducerEndpoint endpoint,

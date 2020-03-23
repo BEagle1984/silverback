@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Connectors
         private readonly IConsumer _consumer;
 
         public InboundConsumer(
-            IBroker broker,
+            IBrokerCollection brokerCollection,
             IConsumerEndpoint endpoint,
             InboundConnectorSettings settings,
             Func<IReadOnlyCollection<IInboundEnvelope>, IServiceProvider, Task> messagesHandler,
@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Connectors
             IErrorPolicy errorPolicy,
             IServiceProvider serviceProvider)
         {
-            if (broker == null) throw new ArgumentNullException(nameof(broker));
+            if (brokerCollection == null) throw new ArgumentNullException(nameof(brokerCollection));
 
             _endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -55,7 +55,7 @@ namespace Silverback.Messaging.Connectors
             _logger = serviceProvider.GetRequiredService<ILogger<InboundConsumer>>();
             _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
 
-            _consumer = broker.GetConsumer(_endpoint);
+            _consumer = brokerCollection.GetConsumer(_endpoint);
 
             Bind();
         }

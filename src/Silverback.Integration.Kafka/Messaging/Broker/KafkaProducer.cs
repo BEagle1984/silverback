@@ -127,20 +127,21 @@ namespace Silverback.Messaging.Broker
             {
                 case Confluent.Kafka.PersistenceStatus.PossiblyPersisted
                     when Endpoint.Configuration.ThrowIfNotAcknowledged:
-                    {
-                        throw new ProduceException("The message was transmitted to broker, but no acknowledgement was received.");
-                    }
+                {
+                    throw new ProduceException(
+                        "The message was transmitted to broker, but no acknowledgement was received.");
+                }
                 case Confluent.Kafka.PersistenceStatus.PossiblyPersisted:
-                    {
-                        _logger.LogWarning("The message was transmitted to broker, but no acknowledgement was received.");
-                        break;
-                    }
+                {
+                    _logger.LogWarning("The message was transmitted to broker, but no acknowledgement was received.");
+                    break;
+                }
                 case Confluent.Kafka.PersistenceStatus.NotPersisted:
-                    {
-                        throw new ProduceException("The message was never transmitted to the broker, " +
-                                                   "or failed with an error indicating it was not written " +
-                                                   "to the log.'");
-                    }
+                {
+                    throw new ProduceException("The message was never transmitted to the broker, " +
+                                               "or failed with an error indicating it was not written " +
+                                               "to the log.'");
+                }
             }
         }
 

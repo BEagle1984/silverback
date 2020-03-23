@@ -11,7 +11,7 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestProducer : Producer<TestBroker, TestProducerEndpoint>
     {
-        public List<TestBroker.ProducedMessage> ProducedMessages { get; }
+        public List<ProducedMessage> ProducedMessages { get; }
 
         public TestProducer(TestBroker broker, TestProducerEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors)
             : base(
@@ -27,7 +27,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override IOffset Produce(RawBrokerEnvelope envelope)
         {
-            ProducedMessages.Add(new TestBroker.ProducedMessage(envelope.RawMessage, envelope.Headers, Endpoint));
+            ProducedMessages.Add(new ProducedMessage(envelope.RawMessage, envelope.Headers, Endpoint));
             return null;
         }
 

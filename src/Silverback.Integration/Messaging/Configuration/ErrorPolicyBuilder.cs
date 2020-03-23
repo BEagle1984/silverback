@@ -63,7 +63,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns></returns>
         public MoveMessageErrorPolicy Move(IProducerEndpoint endpoint) =>
             new MoveMessageErrorPolicy(
-                _serviceProvider.GetRequiredService<IBroker>(), endpoint,
+                _serviceProvider.GetRequiredService<IBrokerCollection>(), endpoint,
                 _serviceProvider,
                 _loggerFactory.CreateLogger<MoveMessageErrorPolicy>(),
                 _serviceProvider.GetRequiredService<MessageLogger>());

@@ -9,14 +9,14 @@ namespace Silverback.Messaging.Connectors
 {
     public class OutboundConnector : IOutboundConnector
     {
-        private readonly IBroker _broker;
+        private readonly IBrokerCollection _brokerCollection;
 
-        public OutboundConnector(IBroker broker)
+        public OutboundConnector(IBrokerCollection brokerCollection)
         {
-            _broker = broker;
+            _brokerCollection = brokerCollection;
         }
 
         public Task RelayMessage(IOutboundEnvelope envelope) =>
-            _broker.GetProducer(envelope.Endpoint).ProduceAsync(envelope.Message, envelope.Headers);
+            _brokerCollection.GetProducer(envelope.Endpoint).ProduceAsync(envelope.Message, envelope.Headers);
     }
 }

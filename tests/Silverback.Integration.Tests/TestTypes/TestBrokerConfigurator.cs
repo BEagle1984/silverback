@@ -8,9 +8,7 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestBrokerConfigurator : IBrokerOptionsConfigurator<TestBroker>
     {
-        public void Configure(ISilverbackBuilder silverbackBuilder, BrokerOptionsBuilder brokerOptionsBuilder)
-        {
-            silverbackBuilder.AddSingletonBrokerBehavior<EmptyBehavior>();
-        }
+        public void Configure(IBrokerOptionsBuilder options) =>
+            options.SilverbackBuilder.AddSingletonBrokerBehavior<EmptyBehavior>();
     }
 }

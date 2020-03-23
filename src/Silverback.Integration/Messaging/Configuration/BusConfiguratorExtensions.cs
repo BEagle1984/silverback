@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <param name="configurator"></param>
         /// <returns></returns>
-        public static IBroker Connect(this BusConfigurator configurator) =>
+        public static IBrokerCollection Connect(this BusConfigurator configurator) =>
             Connect(configurator, null);
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="configurator"></param>
         /// <param name="endpointsConfigurationAction">The inbound/outbound endpoints configuration action.</param>
         /// <returns></returns>
-        public static IBroker Connect(
+        public static IBrokerCollection Connect(
             this BusConfigurator configurator,
             Action<IEndpointsConfigurationBuilder> endpointsConfigurationAction)
         {
@@ -39,11 +39,11 @@ namespace Silverback.Messaging.Configuration
             configurator.ServiceProvider.GetServices<IEndpointsConfigurator>().ForEach(c =>
                 c.Configure(endpointsConfigurationBuilder));
 
-            var broker = configurator.ServiceProvider.GetRequiredService<IBroker>();
+            var brokers = configurator.ServiceProvider.GetRequiredService<IBrokerCollection>();
 
-            broker.Connect();
+            brokers.Connect();
 
-            return broker;
+            return brokers;
         }
     }
 }

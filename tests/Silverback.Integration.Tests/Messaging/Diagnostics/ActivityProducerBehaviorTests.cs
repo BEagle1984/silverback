@@ -56,7 +56,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             services
                 .AddSingleton<ILoggerFactory, NullLoggerFactory>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
-                .AddSilverback().WithConnectionTo<TestBroker>();
+                .AddSilverback().WithConnectionToMessageBroker(options => options
+                    .AddBroker<TestBroker>());
             var serviceProvider = services.BuildServiceProvider();
             var broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
 
@@ -78,7 +79,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             services
                 .AddSingleton<ILoggerFactory, NullLoggerFactory>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
-                .AddSilverback().WithConnectionTo<TestBroker>();
+                .AddSilverback().WithConnectionToMessageBroker(options => options
+                    .AddBroker<TestBroker>());
             var serviceProvider = services.BuildServiceProvider();
             var broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
 

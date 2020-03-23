@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2020 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Silverback.Messaging.Messages.Statistics
@@ -96,6 +99,7 @@ namespace Silverback.Messaging.Messages.Statistics
         public Dictionary<string, long> Requests { get; set; } = new Dictionary<string, long>();
 
         [JsonProperty("toppars")]
-        public Dictionary<string, TopicPartitions> TopicPartitions { get; set; } = new Dictionary<string, TopicPartitions>();
+        public Dictionary<string, TopicPartitions> TopicPartitions { get; set; } =
+            new Dictionary<string, TopicPartitions>();
     }
 }

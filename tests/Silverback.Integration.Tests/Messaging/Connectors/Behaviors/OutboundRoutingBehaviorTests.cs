@@ -9,7 +9,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
@@ -26,9 +25,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
     public class OutboundRoutingBehaviorTests
     {
         private readonly OutboundRoutingBehavior _behavior;
-        private readonly OutboundRoutingConfiguration _routingConfiguration;
+        private readonly IOutboundRoutingConfiguration _routingConfiguration;
         private readonly InMemoryOutboundQueue _outboundQueue;
         private readonly TestBroker _broker;
+        private readonly TestOtherBroker _otherBroker;
         private readonly TestSubscriber _testSubscriber;
 
         public OutboundRoutingBehaviorTests()
@@ -39,7 +39,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             _testSubscriber = new TestSubscriber();
 
             services.AddSilverback()
-                .WithConnectionTo<TestBroker>(options => options
+                .WithConnectionToMessageBroker(options => options
+                    .AddBroker<TestBroker>()
+                    .AddBroker<TestOtherBroker>()
                     .AddDeferredOutboundConnector(_ => _outboundQueue)
                     .AddOutboundConnector());
 
@@ -54,7 +56,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 .First(s => s is OutboundRoutingBehavior);
             _routingConfiguration =
                 (OutboundRoutingConfiguration) serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
-            _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
+            _broker = serviceProvider.GetRequiredService<TestBroker>();
+            _otherBroker = serviceProvider.GetRequiredService<TestOtherBroker>();
 
             InMemoryOutboundQueue.Clear();
         }
@@ -64,10 +67,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             IIntegrationMessage message,
             string[] expectedEndpointNames)
         {
-            _routingConfiguration.Add<IIntegrationMessage>(new TestProducerEndpoint("allMessages"), null);
-            _routingConfiguration.Add<IIntegrationEvent>(new TestProducerEndpoint("allEvents"), null);
-            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), null);
-            _routingConfiguration.Add<TestEventTwo>(new TestProducerEndpoint("eventTwo"), null);
+            _routingConfiguration.Add<IIntegrationMessage>(new TestProducerEndpoint("allMessages"));
+            _routingConfiguration.Add<IIntegrationEvent>(new TestProducerEndpoint("allEvents"));
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"));
+            _routingConfiguration.Add<TestEventTwo>(new TestProducerEndpoint("eventTwo"));
 
             await _behavior.Handle(new[] { message }, Task.FromResult);
             await _outboundQueue.Commit();
@@ -99,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         [Fact]
         public async Task Handle_Message_CorrectlyRoutedToDefaultConnector()
         {
-            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"), null);
+            _routingConfiguration.Add<TestEventOne>(new TestProducerEndpoint("eventOne"));
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult);
             await _outboundQueue.Commit();
@@ -199,6 +202,42 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             await _behavior.Handle(new[] { message }, Task.FromResult);
 
             _broker.ProducedMessages.Count.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task Handle_MultipleRoutesToMultipleBrokers_CorrectlyQueued()
+        {
+            _routingConfiguration
+                .Add<TestEventOne>(new TestProducerEndpoint("eventOne"))
+                .Add<TestEventTwo>(new TestOtherProducerEndpoint("eventTwo"))
+                .Add<TestEventThree>(new TestProducerEndpoint("eventThree"));
+
+            await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult);
+            await _behavior.Handle(new[] { new TestEventThree(), }, Task.FromResult);
+            await _behavior.Handle(new[] { new TestEventTwo() }, Task.FromResult);
+            await _outboundQueue.Commit();
+
+            var queued = (await _outboundQueue.Dequeue(10)).ToArray();
+            queued.Length.Should().Be(3);
+            queued[0].Endpoint.Should().BeOfType<TestProducerEndpoint>();
+            queued[1].Endpoint.Should().BeOfType<TestProducerEndpoint>();
+            queued[2].Endpoint.Should().BeOfType<TestOtherProducerEndpoint>();
+        }
+        
+        [Fact]
+        public async Task Handle_MultipleRoutesToMultipleBrokers_CorrectlyRelayed()
+        {
+            _routingConfiguration
+                .Add<TestEventOne>(new TestProducerEndpoint("eventOne"), typeof(OutboundConnector))
+                .Add<TestEventTwo>(new TestOtherProducerEndpoint("eventTwo"), typeof(OutboundConnector))
+                .Add<TestEventThree>(new TestProducerEndpoint("eventThree"), typeof(OutboundConnector));
+
+            await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult);
+            await _behavior.Handle(new[] { new TestEventThree(), }, Task.FromResult);
+            await _behavior.Handle(new[] { new TestEventTwo() }, Task.FromResult);
+
+            _broker.ProducedMessages.Count.Should().Be(2);
+            _otherBroker.ProducedMessages.Count.Should().Be(1);
         }
     }
 }

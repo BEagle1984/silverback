@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Broker
         private int _pendingOffsetsCount;
         private RabbitOffset _pendingOffset;
         private readonly object _pendingOffsetLock = new object();
-        
+
         public RabbitConsumer(
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
@@ -67,17 +67,17 @@ namespace Silverback.Messaging.Broker
             _disconnecting = true;
 
             CommitPendingOffset();
-            
+
             _channel.BasicCancel(_consumerTag);
             _channel?.Dispose();
             _channel = null;
             _queueName = null;
             _consumerTag = null;
             _consumer = null;
-            
+
             _disconnecting = false;
         }
-        
+
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
         protected override Task Commit(IEnumerable<RabbitOffset> offsets)
         {
@@ -105,7 +105,7 @@ namespace Silverback.Messaging.Broker
 
                 if (_disconnecting)
                     return;
-                
+
                 await HandleMessage(
                     deliverEventArgs.Body,
                     deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
@@ -121,7 +121,7 @@ namespace Silverback.Messaging.Broker
                 Disconnect();
             }
         }
-        
+
         private void CommitOrStoreOffset(RabbitOffset offset)
         {
             lock (_pendingOffsetLock)
@@ -152,7 +152,7 @@ namespace Silverback.Messaging.Broker
                 _pendingOffsetsCount = 0;
             }
         }
-        
+
         private void BasicAck(ulong deliveryTag)
         {
             try

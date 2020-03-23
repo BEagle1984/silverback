@@ -23,7 +23,7 @@ namespace Silverback.Messaging
         ///     Gets or sets the queue configuration.
         /// </summary>
         public RabbitQueueConfig Queue { get; set; } = new RabbitQueueConfig();
-        
+
         /// <summary>
         ///     Defines the number of message processed before sending the acknowledgment to the server.
         ///     The most reliable level is 1 but it reduces throughput.
@@ -34,12 +34,12 @@ namespace Silverback.Messaging
         ///     Defines the QoS prefetch size parameter for the consumer.
         /// </summary>
         public uint PrefetchSize { get; set; }
-        
+
         /// <summary>
         ///     Defines the QoS prefetch count parameter for the consumer.
         /// </summary>
         public ushort PrefetchCount { get; set; }
-        
+
         public override void Validate()
         {
             base.Validate();

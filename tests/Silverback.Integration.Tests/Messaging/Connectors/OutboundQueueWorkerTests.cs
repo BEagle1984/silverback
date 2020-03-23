@@ -37,8 +37,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 .AddSingleton<ILoggerFactory, NullLoggerFactory>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
                 .AddSingleton<IOutboundQueueConsumer, InMemoryOutboundQueue>()
-                .AddSilverback().WithConnectionTo<TestBroker>(options =>
-                    options.AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options
+                    .AddBroker<TestBroker>()
+                    .AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
@@ -48,7 +50,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
 
-            _worker = new OutboundQueueWorker(serviceProvider, _broker, new NullLogger<OutboundQueueWorker>(),
+            _worker = new OutboundQueueWorker(serviceProvider,
+                new BrokerCollection(new[] { _broker }),
+                new NullLogger<OutboundQueueWorker>(),
                 new MessageLogger(), true, 100); // TODO: Test order not enforced
 
             InMemoryOutboundQueue.Clear();

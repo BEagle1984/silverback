@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
+// ReSharper disable once CheckNamespace
 namespace Silverback.Database
 {
     public class EfCoreQueryableExtensions : IQueryableExtensions

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
@@ -8,6 +10,18 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public interface IBroker
     {
+        /// <summary>
+        ///     Gets the type of the <see cref="IProducerEndpoint" /> that is being handled by this
+        ///     broker implementation.
+        /// </summary>
+        Type ProducerEndpointType { get; }
+
+        /// <summary>
+        ///     Gets the type of the <see cref="IConsumerEndpoint" /> that is being handled by this
+        ///     broker implementation.
+        /// </summary>
+        Type ConsumerEndpointType { get; }
+
         /// <summary>
         ///     Returns an <see cref="IProducer" /> to be used to produce to
         ///     the specified endpoint.

@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Broker
             IConsumerEndpoint endpoint,
             IEnumerable<IConsumerBehavior> behaviors,
             ILogger<InMemoryConsumer> logger)
-            :  base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviors, logger)
         {
         }
 

@@ -24,18 +24,18 @@ namespace Silverback.Messaging.ErrorHandling
         private Func<MessageHeaderCollection, Exception, MessageHeaderCollection> _headersTransformationFunction;
 
         public MoveMessageErrorPolicy(
-            IBroker broker,
+            IBrokerCollection brokerCollection,
             IProducerEndpoint endpoint,
             IServiceProvider serviceProvider,
             ILogger<MoveMessageErrorPolicy> logger,
             MessageLogger messageLogger)
             : base(serviceProvider, logger, messageLogger)
         {
-            if (broker == null) throw new ArgumentNullException(nameof(broker));
+            if (brokerCollection == null) throw new ArgumentNullException(nameof(brokerCollection));
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
             if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
 
-            _producer = broker.GetProducer(endpoint);
+            _producer = brokerCollection.GetProducer(endpoint);
             _endpoint = endpoint;
             _logger = logger;
             _messageLogger = messageLogger;

@@ -11,9 +11,9 @@ namespace Silverback.Messaging.Configuration
         where TBroker : IBroker
     {
         /// <summary>
-        ///     Called when registered the broker to configure the broker-specific services and options
+        ///     Called while registering the broker to configure the broker-specific services and options
         ///     (e.g. behaviors).
         /// </summary>
-        void Configure(ISilverbackBuilder silverbackBuilder, BrokerOptionsBuilder brokerOptionsBuilder);
+        void Configure(IBrokerOptionsBuilder options);
     }
 }

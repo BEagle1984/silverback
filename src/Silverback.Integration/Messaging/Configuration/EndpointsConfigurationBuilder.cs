@@ -24,6 +24,7 @@ namespace Silverback.Messaging.Configuration
             _errorPolicyBuilder = errorPolicyBuilder;
         }
 
+        /// <inheritdoc cref="IEndpointsConfigurationBuilder"/>
         public IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IProducerEndpoint endpoint)
             where TConnector : IOutboundConnector
         {
@@ -31,6 +32,7 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        /// <inheritdoc cref="IEndpointsConfigurationBuilder"/>
         public IEndpointsConfigurationBuilder AddOutbound<TMessage>(
             IProducerEndpoint endpoint,
             Type outboundConnectorType = null)
@@ -39,6 +41,7 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        /// <inheritdoc cref="IEndpointsConfigurationBuilder"/>
         public IEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
             IProducerEndpoint endpoint,
@@ -48,6 +51,7 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        /// <inheritdoc cref="IEndpointsConfigurationBuilder"/>
         public IEndpointsConfigurationBuilder AddInbound(
             IConsumerEndpoint endpoint,
             Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null,
@@ -57,6 +61,7 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        /// <inheritdoc cref="IEndpointsConfigurationBuilder"/>
         public IEndpointsConfigurationBuilder AddInbound<TConnector>(
             IConsumerEndpoint endpoint,
             Func<ErrorPolicyBuilder, IErrorPolicy> errorPolicyFactory = null,
@@ -67,6 +72,7 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        /// <inheritdoc cref="IEndpointsConfigurationBuilder"/>
         public IEndpointsConfigurationBuilder AddInbound(
             IConsumerEndpoint endpoint,
             Type inboundConnectorType,
@@ -78,6 +84,7 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        /// <inheritdoc cref="IEndpointsConfigurationBuilder"/>
         public IEndpointsConfigurationBuilder PublishOutboundMessagesToInternalBus()
         {
             _outboundRoutingConfiguration.PublishOutboundMessagesToInternalBus = true;

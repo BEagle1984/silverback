@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2020 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Silverback.Messaging.Messages.Statistics
 {
     /// <summary>
-    /// A Kafka statistics event.
-    /// See <see href="https://github.com/edenhill/librdkafka/blob/master/STATISTICS.md"/> for
-    /// information about the structure.
+    ///     A Kafka statistics event.
+    ///     See <see href="https://github.com/edenhill/librdkafka/blob/master/STATISTICS.md" /> for
+    ///     information about the structure.
     /// </summary>
     public class KafkaStatistics
     {

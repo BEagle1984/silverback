@@ -20,11 +20,11 @@ namespace Silverback.Messaging.Connectors
         private readonly MessageLogger _messageLogger;
 
         protected ExactlyOnceInboundConnector(
-            IBroker broker,
+            IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
             ILogger<ExactlyOnceInboundConnector> logger,
             MessageLogger messageLogger)
-            : base(broker, serviceProvider)
+            : base(brokerCollection, serviceProvider)
         {
             Logger = logger;
             _messageLogger = messageLogger;
