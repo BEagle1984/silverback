@@ -9,11 +9,9 @@ namespace Silverback.Messaging.Configuration
 {
     public class RabbitBrokerOptionsConfigurator : IBrokerOptionsConfigurator<RabbitBroker>
     {
-        public void Configure(ISilverbackBuilder silverbackBuilder, BrokerOptionsBuilder brokerOptionsBuilder)
-        {
-            silverbackBuilder.Services
+        public void Configure(IBrokerOptionsBuilder options) =>
+            options.SilverbackBuilder.Services
                 .AddSingleton<IRabbitConnectionFactory, RabbitConnectionFactory>()
                 .AddSingletonBehavior<RabbitRoutingKeyBehavior>();
-        }
     }
 }

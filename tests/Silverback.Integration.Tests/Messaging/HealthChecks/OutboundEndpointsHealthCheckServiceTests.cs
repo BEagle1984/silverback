@@ -24,6 +24,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         {
             var broker = Substitute.For<IBroker>();
             broker.IsConnected.Returns(true);
+            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
+            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
             var producer1 = Substitute.For<IProducer>();
             var producer2 = Substitute.For<IProducer>();
             var producer3 = Substitute.For<IProducer>();
@@ -41,7 +43,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                     new TestProducerEndpoint("endpoint3"), typeof(OutboundConnector)),
             });
 
-            var service = new OutboundEndpointsHealthCheckService(configuration, broker);
+            var service = new OutboundEndpointsHealthCheckService(configuration,
+                new BrokerCollection(new[] { broker }));
 
             await service.PingAllEndpoints();
 
@@ -55,6 +58,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         {
             var broker = Substitute.For<IBroker>();
             broker.IsConnected.Returns(true);
+            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
+            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
             var producer1 = Substitute.For<IProducer>();
             var producer2 = Substitute.For<IProducer>();
             var producer3 = Substitute.For<IProducer>();
@@ -72,7 +77,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                     new TestProducerEndpoint("endpoint3"), typeof(OutboundConnector)),
             });
 
-            var service = new OutboundEndpointsHealthCheckService(configuration, broker);
+            var service = new OutboundEndpointsHealthCheckService(configuration,
+                new BrokerCollection(new[] { broker }));
 
             var results = await service.PingAllEndpoints();
 
@@ -84,6 +90,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         {
             var broker = Substitute.For<IBroker>();
             broker.IsConnected.Returns(true);
+            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
+            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
             var producer1 = Substitute.For<IProducer>();
             var producer2 = Substitute.For<IProducer>();
             producer2.ProduceAsync(null).ThrowsForAnyArgs<ProduceException>();
@@ -102,7 +110,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                     new TestProducerEndpoint("endpoint3"), typeof(OutboundConnector)),
             });
 
-            var service = new OutboundEndpointsHealthCheckService(configuration, broker);
+            var service = new OutboundEndpointsHealthCheckService(configuration,
+                new BrokerCollection(new[] { broker }));
 
             var results = (await service.PingAllEndpoints()).ToList();
 

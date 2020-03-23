@@ -17,7 +17,9 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public static TestConsumerEndpoint GetDefault() => new TestConsumerEndpoint("test");
 
-        public string GroupId = "default-group";
+        public string GroupId { get; set; } = "default-group";
+
+        public override string GetUniqueConsumerGroupName() => $"{Name}|{GroupId}";
 
         #region IEquatable
 
@@ -35,8 +37,6 @@ namespace Silverback.Tests.Integration.TestTypes
             if (obj.GetType() != GetType()) return false;
             return Equals((TestConsumerEndpoint) obj);
         }
-
-        public override string GetUniqueConsumerGroupName() => $"{Name}|GroupId";
 
         #endregion
     }

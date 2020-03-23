@@ -17,8 +17,10 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
             var servicesGeneric = new ServiceCollection();
             var servicesSpecific = new ServiceCollection();
 
+#pragma warning disable 618
             new SilverbackBuilder(servicesGeneric).WithConnectionTo<KafkaBroker>();
             new SilverbackBuilder(servicesSpecific).WithConnectionToKafka();
+#pragma warning restore 618
 
             servicesGeneric.Count.Should().Be(servicesSpecific.Count);
         }

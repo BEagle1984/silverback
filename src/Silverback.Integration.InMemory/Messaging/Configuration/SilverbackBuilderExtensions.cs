@@ -16,9 +16,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="builder"></param>
         /// <param name="optionsAction">Additional options (such as connectors).</param>
         /// <returns></returns>
+        [Obsolete("Use WithConnectionToMessageBroker and AddInMemoryBroker instead.")]
         public static ISilverbackBuilder WithInMemoryBroker(
             this ISilverbackBuilder builder,
-            Action<BrokerOptionsBuilder> optionsAction = null)
+            Action<IBrokerOptionsBuilder> optionsAction = null)
         {
             builder.WithConnectionTo<InMemoryBroker>(optionsAction);
 

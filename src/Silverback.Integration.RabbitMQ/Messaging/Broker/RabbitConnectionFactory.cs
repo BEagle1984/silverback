@@ -86,7 +86,7 @@ namespace Silverback.Messaging.Broker
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
+
             channel.BasicQos(endpoint.PrefetchSize, endpoint.PrefetchCount, false);
 
             return (channel, queueName);

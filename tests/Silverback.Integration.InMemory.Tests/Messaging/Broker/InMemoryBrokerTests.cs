@@ -29,7 +29,8 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-            services.AddSilverback().WithInMemoryBroker();
+            services.AddSilverback().WithConnectionToMessageBroker(options => options
+                .AddInMemoryBroker());
 
             _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
         }
@@ -147,7 +148,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
         [Fact]
         public void InMemoryBroker_ConnectAndDispose_NoExceptionIsThrown()
         {
-            var broker = (IDisposable) _serviceProvider.GetRequiredService<BusConfigurator>().Connect();
+            var broker = (IDisposable) _serviceProvider.GetRequiredService<BusConfigurator>().Connect().First();
 
             broker.Dispose();
         }

@@ -21,15 +21,15 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public class InboundConnector : IInboundConnector
     {
-        private readonly IBroker _broker;
+        private readonly IBrokerCollection _brokerCollection;
         private readonly IServiceProvider _serviceProvider;
 
         [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
         private readonly List<InboundConsumer> _inboundConsumers = new List<InboundConsumer>();
 
-        public InboundConnector(IBroker broker, IServiceProvider serviceProvider)
+        public InboundConnector(IBrokerCollection brokerCollection, IServiceProvider serviceProvider)
         {
-            _broker = broker ?? throw new ArgumentNullException(nameof(broker));
+            _brokerCollection = brokerCollection ?? throw new ArgumentNullException(nameof(brokerCollection));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Connectors
             for (var i = 0; i < settings.Consumers; i++)
             {
                 _inboundConsumers.Add(new InboundConsumer(
-                    _broker,
+                    _brokerCollection,
                     endpoint,
                     settings,
                     HandleMessages,

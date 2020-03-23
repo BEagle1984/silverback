@@ -29,7 +29,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-            services.AddSilverback().WithConnectionTo<TestBroker>(options => { });
+            services.AddSilverback().WithConnectionToMessageBroker(options => options
+                .AddBroker<TestBroker>());
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 

@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Connectors
     public class OutboundQueueWorker : IOutboundQueueWorker
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IBroker _broker;
+        private readonly IBrokerCollection _brokerCollection;
         private readonly MessageLogger _messageLogger;
         private readonly ILogger<OutboundQueueWorker> _logger;
 
@@ -26,14 +26,14 @@ namespace Silverback.Messaging.Connectors
 
         public OutboundQueueWorker(
             IServiceProvider serviceProvider,
-            IBroker broker,
+            IBrokerCollection brokerCollection,
             ILogger<OutboundQueueWorker> logger,
             MessageLogger messageLogger,
             bool enforceMessageOrder,
             int readPackageSize)
         {
             _serviceProvider = serviceProvider;
-            _broker = broker;
+            _brokerCollection = brokerCollection;
             _messageLogger = messageLogger;
             _logger = logger;
             _enforceMessageOrder = enforceMessageOrder;
@@ -97,6 +97,6 @@ namespace Silverback.Messaging.Connectors
             byte[] content,
             IReadOnlyCollection<MessageHeader> headers,
             IProducerEndpoint endpoint)
-            => _broker.GetProducer(endpoint).ProduceAsync(content, headers);
+            => _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers);
     }
 }

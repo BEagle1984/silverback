@@ -38,14 +38,18 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             services
                 .AddSilverback()
-                .WithConnectionTo<TestBroker>()
+                .WithConnectionToMessageBroker(options => options
+                    .AddBroker<TestBroker>())
                 .AddSingletonSubscriber(_testSubscriber);
 
             services.AddScoped<IInboundLog, InMemoryInboundLog>();
 
             _serviceProvider = services.BuildServiceProvider();
             _broker = (TestBroker) _serviceProvider.GetService<IBroker>();
-            _connector = new LoggedInboundConnector(_broker, _serviceProvider, new NullLogger<LoggedInboundConnector>(),
+            _connector = new LoggedInboundConnector(
+                _serviceProvider.GetService<IBrokerCollection>(),
+                _serviceProvider,
+                new NullLogger<LoggedInboundConnector>(),
                 new MessageLogger());
 
             InMemoryInboundLog.Clear();

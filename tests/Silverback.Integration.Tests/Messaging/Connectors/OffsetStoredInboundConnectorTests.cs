@@ -38,7 +38,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             services
                 .AddSilverback()
-                .WithConnectionTo<TestBroker>()
+                .WithConnectionToMessageBroker(options => options
+                    .AddBroker<TestBroker>())
                 .AddSingletonSubscriber(_testSubscriber);
 
             services.AddScoped<IOffsetStore, InMemoryOffsetStore>();
@@ -46,7 +47,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             IServiceProvider serviceProvider =
                 services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
             _broker = (TestBroker) serviceProvider.GetService<IBroker>();
-            _connector = new OffsetStoredInboundConnector(_broker, serviceProvider,
+            _connector = new OffsetStoredInboundConnector(
+                serviceProvider.GetService<IBrokerCollection>(),
+                serviceProvider,
                 new NullLogger<OffsetStoredInboundConnector>(),
                 new MessageLogger());
 

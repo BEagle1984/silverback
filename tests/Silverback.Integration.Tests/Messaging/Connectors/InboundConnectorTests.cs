@@ -44,7 +44,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 .AddSingletonSubscriber(_testSubscriber)
                 .AddSingletonSubscriber(_inboundSubscriber)
                 .AddSingletonSubscriber(_someUnhandledMessageSubscriber)
-                .WithConnectionTo<TestBroker>(options => options
+                .WithConnectionToMessageBroker(options => options
+                    .AddBroker<TestBroker>()
                     .AddChunkStore<InMemoryChunkStore>());
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
@@ -52,7 +53,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 ValidateScopes = true
             });
             _broker = (TestBroker) serviceProvider.GetService<IBroker>();
-            _connector = new InboundConnector(_broker, serviceProvider);
+            _connector = new InboundConnector(serviceProvider.GetService<IBrokerCollection>(), serviceProvider);
             _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
         }
 

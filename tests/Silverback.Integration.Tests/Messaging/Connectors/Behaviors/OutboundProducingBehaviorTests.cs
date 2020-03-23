@@ -7,7 +7,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
@@ -33,7 +32,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             _outboundQueue = new InMemoryOutboundQueue();
 
             services.AddSilverback()
-                .WithConnectionTo<TestBroker>(options => options
+                .WithConnectionToMessageBroker(options => options
+                    .AddBroker<TestBroker>()
                     .AddOutboundConnector()
                     .AddDeferredOutboundConnector(_ => _outboundQueue));
 
@@ -44,7 +44,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             _behavior = (OutboundProducingBehavior) serviceProvider.GetServices<IBehavior>()
                 .First(s => s is OutboundProducingBehavior);
-            _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
+            _broker = serviceProvider.GetRequiredService<TestBroker>();
 
             InMemoryOutboundQueue.Clear();
         }
@@ -83,7 +83,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(10);
-            queued.Count().Should().Be(3);
+            queued.Count.Should().Be(3);
             _broker.ProducedMessages.Count.Should().Be(0);
         }
     }

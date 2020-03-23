@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
+// ReSharper disable once CheckNamespace
 namespace Silverback.Database
 {
     public class EfCoreDbContext<TDbContext> : IDbContext

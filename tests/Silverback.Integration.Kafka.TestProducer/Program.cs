@@ -45,7 +45,7 @@ namespace Silverback.Integration.Kafka.TestProducer
         {
             var services = new ServiceCollection();
             services.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace))
-                .AddSilverback().WithConnectionToKafka();
+                .AddSilverback().WithConnectionToMessageBroker(options => options.AddKafka());
 
             _broker = services.BuildServiceProvider().GetRequiredService<IBroker>();
         }

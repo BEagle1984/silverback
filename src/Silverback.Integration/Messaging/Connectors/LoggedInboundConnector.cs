@@ -18,11 +18,11 @@ namespace Silverback.Messaging.Connectors
     public class LoggedInboundConnector : ExactlyOnceInboundConnector
     {
         public LoggedInboundConnector(
-            IBroker broker,
+            IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
             ILogger<LoggedInboundConnector> logger,
             MessageLogger messageLogger)
-            : base(broker, serviceProvider, logger, messageLogger)
+            : base(brokerCollection, serviceProvider, logger, messageLogger)
         {
         }
 

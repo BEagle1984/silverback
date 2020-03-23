@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 
 // ReSharper disable once CheckNamespace
@@ -16,9 +15,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="builder"></param>
         /// <param name="optionsAction">Additional options (such as connectors).</param>
         /// <returns></returns>
+        [Obsolete("Use WithConnectionToMessageBroker and AddKafka instead.")]
         public static ISilverbackBuilder WithConnectionToKafka(
             this ISilverbackBuilder builder,
-            Action<BrokerOptionsBuilder> optionsAction = null) =>
-            builder.WithConnectionTo<KafkaBroker>(optionsAction);
+            Action<IBrokerOptionsBuilder> optionsAction = null) =>
+            builder.WithConnectionToMessageBroker(options =>
+            {
+                options.AddKafka();
+                optionsAction?.Invoke(options);
+            });
     }
 }

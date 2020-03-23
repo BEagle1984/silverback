@@ -14,11 +14,11 @@ namespace Silverback.Messaging.Connectors
     public class OffsetStoredInboundConnector : ExactlyOnceInboundConnector
     {
         public OffsetStoredInboundConnector(
-            IBroker broker,
+            IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
             ILogger<OffsetStoredInboundConnector> logger,
             MessageLogger messageLogger)
-            : base(broker, serviceProvider, logger, messageLogger)
+            : base(brokerCollection, serviceProvider, logger, messageLogger)
         {
         }
 
