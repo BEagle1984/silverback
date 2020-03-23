@@ -7,8 +7,10 @@ namespace Silverback.Examples.Common.Data
 {
     public class Customer
     {
-        [Key] public int Id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
-        [StringLength(100)] public string Name { get; set; }
+        [StringLength(100)]
+        public string Name { get; set; }
     }
 }

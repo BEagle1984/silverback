@@ -28,8 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Examples.Common\Silverback.Examples.Common.csproj" />
-    <ProjectReference Include="..\Silverback.Examples.KafkaConsumer\Silverback.Examples.KafkaConsumer.csproj" />
-    <ProjectReference Include="..\Silverback.Examples.RabbitConsumer\Silverback.Examples.RabbitConsumer.csproj" />
+    <ProjectReference Include="..\Silverback.Examples.Consumer\Silverback.Examples.Consumer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
