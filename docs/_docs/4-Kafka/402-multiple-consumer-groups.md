@@ -11,7 +11,8 @@ public void ConfigureServices(IServiceCollection services)
 {
     services
         .AddSilverback()
-        .WithConnectionToKafka(options => options
+        .WithConnectionToMessageBroker(options => options
+            .AddKafka()
             .AddInboundConnector()
             .AddOutboundConnector());
 }

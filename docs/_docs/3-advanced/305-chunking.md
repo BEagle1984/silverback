@@ -36,7 +36,8 @@ public void ConfigureServices(IServiceCollection services)
     services
         .AddSilverback()
         .UseDbContext<MyDbContext>()
-        .WithConnectionToKafka(options => options
+        .WithConnectionToMessageBroker(options => options
+            .AddKafka()
             .AddDbChunkStore());
 }
 ``` 
