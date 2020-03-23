@@ -14,7 +14,11 @@ The only required service is the broker.
 ```c#
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddSilverback().WithConnectionToKafka();
+    services
+        .AddSilverback()
+        .WithConnectionToMessageBroker(options => options
+            .AddKafka());
+
 }
 ```
 
@@ -27,7 +31,7 @@ public class MyCustomMessageProcessor
 {
     private readonly IConsumer _consumer;
 
-    public MyCustomMessageProcessor(IBroker broker)
+    public MyCustomMessageProcessor(KafkaBroker broker)
     {
         _consumer = _broker.GetConsumer(new KafkaConsumerEndpoint("topic-name")
         {
