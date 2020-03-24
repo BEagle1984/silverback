@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Messages
             IProducerEndpoint endpoint,
             bool autoUnwrap = false,
             IOffset offset = null)
-            : base(message, headers, endpoint, offset)
+            : base(headers, endpoint, offset)
         {
             Message = message;
             AutoUnwrap = autoUnwrap;

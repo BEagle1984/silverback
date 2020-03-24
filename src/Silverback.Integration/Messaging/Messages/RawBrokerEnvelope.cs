@@ -10,7 +10,6 @@ namespace Silverback.Messaging.Messages
     public abstract class RawBrokerEnvelope : IRawBrokerEnvelope
     {
         internal RawBrokerEnvelope(
-            object message,
             IEnumerable<MessageHeader> headers,
             IEndpoint endpoint,
             IOffset offset = null)
@@ -18,8 +17,6 @@ namespace Silverback.Messaging.Messages
             Headers = new MessageHeaderCollection(headers);
             Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
             Offset = offset;
-
-            RawMessage = Endpoint.Serializer.Serialize(message, Headers);
         }
 
         internal RawBrokerEnvelope(

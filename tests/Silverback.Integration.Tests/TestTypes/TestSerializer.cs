@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
@@ -30,5 +31,11 @@ namespace Silverback.Tests.Integration.TestTypes
 
             return deserialized;
         }
+
+        public virtual Task<byte[]> SerializeAsync(object message, MessageHeaderCollection messageHeaders) =>
+            Task.FromResult(Serialize(message, messageHeaders));
+
+        public virtual Task<object> DeserializeAsync(byte[] message, MessageHeaderCollection messageHeaders) =>
+            Task.FromResult(Deserialize(message, messageHeaders));
     }
 }

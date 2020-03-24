@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             var headers = new MessageHeaderCollection();
             var serializedMessage = _serializer.Serialize(message, headers);
             var rawEnvelope =
-                new RawOutboundEnvelope(message, headers,
+                new RawOutboundEnvelope(headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings
@@ -61,7 +61,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
 
             var serializedMessage = _serializer.Serialize(message, headers);
             var rawEnvelope =
-                new RawOutboundEnvelope(message, headers,
+                new RawOutboundEnvelope(headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings

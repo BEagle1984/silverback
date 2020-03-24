@@ -3,17 +3,29 @@
 
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Serialization
 {
+    /// <summary>
+    ///     Serializes the messages in JSON format and relies on some added headers
+    ///     to determine the message type upon deserialization. This default serializer
+    ///     is ideal when the producer and the consumer are both using Silverback.
+    /// </summary>
     public class JsonMessageSerializer : IMessageSerializer
     {
+        /// <summary>
+        ///     Gets or sets the message encoding. The default is UTF8.
+        /// </summary>
         [DefaultValue("UTF8")]
         public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
 
-        public JsonSerializerSettings Settings { get; } = new JsonSerializerSettings
+        /// <summary>
+        ///     Gets or sets the settings to be applied to the Newtosoft.Json serializer.
+        /// </summary>
+        public JsonSerializerSettings Settings { get; set; } = new JsonSerializerSettings
         {
             Formatting = Formatting.None,
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
@@ -22,6 +34,7 @@ namespace Silverback.Messaging.Serialization
             TypeNameHandling = TypeNameHandling.Auto
         };
 
+        /// <inheritdoc cref="IMessageSerializer"/>
         public virtual byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
         {
             if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
@@ -42,6 +55,7 @@ namespace Silverback.Messaging.Serialization
             return GetEncoding().GetBytes(json);
         }
 
+        /// <inheritdoc cref="IMessageSerializer"/>
         public virtual object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
         {
             if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
@@ -56,6 +70,14 @@ namespace Silverback.Messaging.Serialization
             return JsonConvert.DeserializeObject(json, type, Settings);
         }
 
+        /// <inheritdoc cref="IMessageSerializer"/>
+        public virtual Task<byte[]> SerializeAsync(object message, MessageHeaderCollection messageHeaders) =>
+            Task.FromResult(Serialize(message, messageHeaders));
+
+        /// <inheritdoc cref="IMessageSerializer"/>
+        public virtual Task<object> DeserializeAsync(byte[] message, MessageHeaderCollection messageHeaders) =>
+            Task.FromResult(Deserialize(message, messageHeaders));
+
         protected System.Text.Encoding GetEncoding() =>
             Encoding switch
             {
@@ -68,8 +90,13 @@ namespace Silverback.Messaging.Serialization
             };
     }
 
+    /// <summary>
+    ///     Serializes and deserializes the messages of type <typeparamref name="TMessage"/> in JSON format.
+    /// </summary>
+    /// <typeparam name="TMessage">The type of the messages to be serialized and/or deserialized.</typeparam>
     public class JsonMessageSerializer<TMessage> : JsonMessageSerializer
     {
+        /// <inheritdoc cref="IMessageSerializer"/>
         public override byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
         {
             switch (message)
@@ -86,6 +113,7 @@ namespace Silverback.Messaging.Serialization
             return GetEncoding().GetBytes(json);
         }
 
+        /// <inheritdoc cref="IMessageSerializer"/>
         public override object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
         {
             if (message == null || message.Length == 0)
