@@ -26,7 +26,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         public async Task Handle_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
         {
             var rawEnvelope = new RawInboundEnvelope(
-                "123",
+                new byte[5],
                 new MessageHeaderCollection
                 {
                     { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
@@ -52,7 +52,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         public void Handle_WithoutActivityHeaders_NewActivityIsStarted()
         {
             var rawEnvelope = new RawInboundEnvelope(
-                "123",
+                new byte[5],
                 new MessageHeaderCollection
                 {
                     { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
@@ -87,7 +87,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             var broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
 
             var rawEnvelope = new RawInboundEnvelope(
-                "123",
+                new byte[5],
                 new MessageHeaderCollection
                 {
                     { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }

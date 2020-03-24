@@ -9,11 +9,10 @@ namespace Silverback.Messaging.Messages
     public class RawOutboundEnvelope : RawBrokerEnvelope, IRawOutboundEnvelope
     {
         public RawOutboundEnvelope(
-            object message,
             IEnumerable<MessageHeader> headers,
             IProducerEndpoint endpoint,
             IOffset offset = null)
-            : base(message, headers, endpoint, offset)
+            : base(headers, endpoint, offset)
         {
         }
 

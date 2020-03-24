@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IProducer" />
         public void Produce(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
-            GetRawEnvelopes(message, headers)
+            GetRawEnvelopes(message, headers, false).Result
                 .ForEach(envelope =>
                     ExecutePipeline(_behaviors, envelope, finalEnvelope =>
                     {
@@ -60,17 +60,25 @@ namespace Silverback.Messaging.Broker
                     }).Wait());
 
         /// <inheritdoc cref="IProducer" />
-        public Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
-            GetRawEnvelopes(message, headers)
+        public async Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
+            await (await GetRawEnvelopes(message, headers, true))
                 .ForEachAsync(async envelope =>
                     await ExecutePipeline(_behaviors, envelope, async finalEnvelope =>
                         finalEnvelope.Offset = await ProduceAsync(finalEnvelope)));
 
-        private IEnumerable<RawOutboundEnvelope> GetRawEnvelopes(object content, IEnumerable<MessageHeader> headers)
+        private async Task<IEnumerable<RawOutboundEnvelope>> GetRawEnvelopes(
+            object content,
+            IEnumerable<MessageHeader> headers,
+            bool executeAsync)
         {
             var headersCollection = new MessageHeaderCollection(headers);
             _messageIdProvider.EnsureKeyIsInitialized(content, headersCollection);
-            var rawMessage = new RawOutboundEnvelope(content, headersCollection, Endpoint);
+            var rawMessage = new RawOutboundEnvelope(headersCollection, Endpoint);
+
+            if (executeAsync)
+                rawMessage.RawMessage = await Endpoint.Serializer.SerializeAsync(content, rawMessage.Headers);
+            else
+                rawMessage.RawMessage = Endpoint.Serializer.Serialize(content, rawMessage.Headers);
 
             return ChunkProducer.ChunkIfNeeded(rawMessage);
         }

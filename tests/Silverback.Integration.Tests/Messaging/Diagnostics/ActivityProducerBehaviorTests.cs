@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             var activity = new Activity("test");
             activity.SetParentId("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
             activity.Start();
-            var rawEnvelope = new RawOutboundEnvelope("123", null, TestProducerEndpoint.GetDefault());
+            var rawEnvelope = new RawOutboundEnvelope(new byte[5], null, TestProducerEndpoint.GetDefault());
 
             new ActivityProducerBehavior().Handle(rawEnvelope, _ => Task.CompletedTask);
 
@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public void Handle_NoStartedActivity_ActivityStartedAndTraceIdHeaderIsSet()
         {
-            var rawEnvelope = new RawOutboundEnvelope("123", null, TestProducerEndpoint.GetDefault());
+            var rawEnvelope = new RawOutboundEnvelope(new byte[5], null, TestProducerEndpoint.GetDefault());
 
             new ActivityProducerBehavior().Handle(rawEnvelope, _ => Task.CompletedTask);
 
