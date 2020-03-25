@@ -11,24 +11,24 @@ namespace Silverback.Tests.Integration.Configuration.Types
     {
         public FakeSerializerSettings Settings { get; set; } = new FakeSerializerSettings();
 
-        public byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
-        {
-            throw new System.NotImplementedException();
-        }
+        public byte[] Serialize(
+            object message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context) => throw new System.NotImplementedException();
 
-        public object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
-        {
-            throw new System.NotImplementedException();
-        }
+        public object Deserialize(
+            byte[] message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context) => throw new System.NotImplementedException();
 
-        public Task<byte[]> SerializeAsync(object message, MessageHeaderCollection messageHeaders)
-        {
-            throw new System.NotImplementedException();
-        }
+        public Task<byte[]> SerializeAsync(
+            object message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context) => throw new System.NotImplementedException();
 
-        public Task<object> DeserializeAsync(byte[] message, MessageHeaderCollection messageHeaders)
-        {
-            throw new System.NotImplementedException();
-        }
+        public Task<object> DeserializeAsync(
+            byte[] message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context) => throw new System.NotImplementedException();
     }
 }

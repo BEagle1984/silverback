@@ -43,7 +43,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 },
                 TestProducerEndpoint.GetDefault());
             envelope.RawMessage =
-                new JsonMessageSerializer().Serialize(envelope.Message, envelope.Headers);
+                new JsonMessageSerializer().Serialize(envelope.Message, envelope.Headers,
+                    MessageSerializationContext.Empty);
 
             await _connector.RelayMessage(envelope);
             await _queue.Commit();
@@ -54,7 +55,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             queued.Headers.Count().Should().Be(3);
             queued.Content.Should()
                 .BeEquivalentTo(
-                    new JsonMessageSerializer().Serialize(envelope.Message, envelope.Headers));
+                    new JsonMessageSerializer().Serialize(envelope.Message, envelope.Headers,
+                        MessageSerializationContext.Empty));
         }
 
         [Fact]

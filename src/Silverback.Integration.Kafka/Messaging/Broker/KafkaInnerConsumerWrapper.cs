@@ -102,14 +102,14 @@ namespace Silverback.Messaging.Broker
                 new Confluent.Kafka.ConsumerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig);
 
             _kafkaEventsHandler.SetConsumerEventsHandlers(this, consumerBuilder);
-            
+
             _innerConsumer = consumerBuilder.Build();
             Subscribe();
         }
 
         private void Subscribe() => _innerConsumer.Subscribe(Endpoint.Names);
 
-       private async Task Consume()
+        private async Task Consume()
         {
             IsConsuming = true;
 
@@ -167,7 +167,7 @@ namespace Silverback.Messaging.Broker
                 _logger.LogWarning(
                     ex,
                     "KafkaException occurred. The consumer will try to recover. (topic(s): {topics})",
-                    (object)Endpoint.Names);
+                    (object) Endpoint.Names);
 
                 ResetInnerConsumer();
             }
@@ -178,7 +178,7 @@ namespace Silverback.Messaging.Broker
                     "Fatal error occurred consuming a message. The consumer will be stopped. " +
                     "Enable auto recovery to allow Silverback to automatically try to reconnect " +
                     "(EnableAutoRecovery=true in the endpoint configuration). (topic(s): {topics})",
-                    (object)Endpoint.Names);
+                    (object) Endpoint.Names);
             }
 
             return Endpoint.Configuration.EnableAutoRecovery;

@@ -82,11 +82,13 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="message">The body of the consumed message.</param>
         /// <param name="headers">The headers of the consumed message.</param>
+        /// <param name="sourceEndpointName">The name of the actual endpoint (topic) where the message has been delivered.</param>
         /// <param name="offset">The offset of the consumed message.</param>
         /// <returns></returns>
         protected virtual async Task HandleMessage(
             byte[] message,
             IReadOnlyCollection<MessageHeader> headers,
+            string sourceEndpointName,
             IOffset offset)
         {
             if (Received == null)
@@ -95,19 +97,20 @@ namespace Silverback.Messaging.Broker
 
             await ExecutePipeline(
                 _behaviors,
-                new RawInboundEnvelope(message, headers, Endpoint, offset),
+                new RawInboundEnvelope(message, headers, Endpoint, sourceEndpointName, offset),
                 envelope => Received.Invoke(this, new MessageReceivedEventArgs(envelope)));
         }
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IConsumerBehavior> behaviors,
-            RawBrokerEnvelope envelope,
-            RawBrokerMessageHandler finalAction)
+            IRawInboundEnvelope envelope,
+            RawInboundEnvelopeHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
                 await behaviors.First()
-                    .Handle(envelope, m => ExecutePipeline(behaviors.Skip(1).ToList(), m, finalAction));
+                    .Handle(envelope,
+                        nextEnvelope => ExecutePipeline(behaviors.Skip(1).ToList(), nextEnvelope, finalAction));
             }
             else
             {

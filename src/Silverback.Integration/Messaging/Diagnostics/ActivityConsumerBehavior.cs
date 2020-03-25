@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Diagnostics
     // TODO: Test
     public class ActivityConsumerBehavior : IConsumerBehavior
     {
-        public async Task Handle(RawBrokerEnvelope envelope, RawBrokerMessageHandler next)
+        public async Task Handle(IRawInboundEnvelope envelope, RawInboundEnvelopeHandler next)
         {
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
             try

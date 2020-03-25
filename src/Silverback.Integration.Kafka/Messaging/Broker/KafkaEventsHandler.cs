@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Broker
                     _logger.LogDebug($"Statistics: {statistics}");
                     CreateScopeAndPublishEvent(new KafkaStatisticsEvent(statistics));
                 });
-        
+
         public void SetConsumerEventsHandlers(
             KafkaInnerConsumerWrapper ownerConsumer,
             Confluent.Kafka.ConsumerBuilder<byte[], byte[]> consumerBuilder) =>

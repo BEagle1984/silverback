@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -16,7 +17,8 @@ namespace Silverback.Messaging.Connectors.Repositories
     /// <seealso cref="IOutboundQueueProducer" />
     /// <seealso cref="IOutboundQueueConsumer" />
     public class InMemoryOutboundQueue
-        : TransactionalList<QueuedMessage>, IOutboundQueueProducer,
+        : TransactionalList<QueuedMessage>,
+            IOutboundQueueProducer,
             IOutboundQueueConsumer
     {
         #region Writer
@@ -25,7 +27,10 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
             if (envelope.RawMessage == null)
                 ((OutboundEnvelope) envelope).RawMessage =
-                    envelope.Endpoint.Serializer.Serialize(envelope.Message, envelope.Headers);
+                    envelope.Endpoint.Serializer.Serialize(
+                        envelope.Message,
+                        envelope.Headers,
+                        new MessageSerializationContext(envelope.Endpoint));
 
             Add(new QueuedMessage(envelope.RawMessage, envelope.Headers, envelope.Endpoint));
             return Task.CompletedTask;

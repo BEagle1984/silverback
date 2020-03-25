@@ -48,13 +48,29 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
 
         private class BuggySerializer : IMessageSerializer
         {
-            public byte[] Serialize(object message, MessageHeaderCollection messageHeaders) =>
+            public byte[] Serialize(
+                object message,
+                MessageHeaderCollection messageHeaders,
+                MessageSerializationContext context) =>
                 new byte[] { 0, 1, 2, 3, 4 };
 
-            public object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
-            {
+            public object Deserialize(
+                byte[] message,
+                MessageHeaderCollection messageHeaders,
+                MessageSerializationContext context) =>
                 throw new NotImplementedException();
-            }
+
+            public Task<byte[]> SerializeAsync(
+                object message,
+                MessageHeaderCollection messageHeaders,
+                MessageSerializationContext context) =>
+                Task.FromResult(Serialize(message, messageHeaders, context));
+
+            public Task<object> DeserializeAsync(
+                byte[] message,
+                MessageHeaderCollection messageHeaders,
+                MessageSerializationContext context) =>
+                throw new NotImplementedException();
         }
     }
 }

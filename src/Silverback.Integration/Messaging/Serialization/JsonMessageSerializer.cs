@@ -34,8 +34,11 @@ namespace Silverback.Messaging.Serialization
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        /// <inheritdoc cref="IMessageSerializer"/>
-        public virtual byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
+        /// <inheritdoc cref="IMessageSerializer" />
+        public virtual byte[] Serialize(
+            object message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context)
         {
             if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
 
@@ -55,8 +58,11 @@ namespace Silverback.Messaging.Serialization
             return GetEncoding().GetBytes(json);
         }
 
-        /// <inheritdoc cref="IMessageSerializer"/>
-        public virtual object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
+        /// <inheritdoc cref="IMessageSerializer" />
+        public virtual object Deserialize(
+            byte[] message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context)
         {
             if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
 
@@ -70,13 +76,19 @@ namespace Silverback.Messaging.Serialization
             return JsonConvert.DeserializeObject(json, type, Settings);
         }
 
-        /// <inheritdoc cref="IMessageSerializer"/>
-        public virtual Task<byte[]> SerializeAsync(object message, MessageHeaderCollection messageHeaders) =>
-            Task.FromResult(Serialize(message, messageHeaders));
+        /// <inheritdoc cref="IMessageSerializer" />
+        public virtual Task<byte[]> SerializeAsync(
+            object message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context) =>
+            Task.FromResult(Serialize(message, messageHeaders, context));
 
-        /// <inheritdoc cref="IMessageSerializer"/>
-        public virtual Task<object> DeserializeAsync(byte[] message, MessageHeaderCollection messageHeaders) =>
-            Task.FromResult(Deserialize(message, messageHeaders));
+        /// <inheritdoc cref="IMessageSerializer" />
+        public virtual Task<object> DeserializeAsync(
+            byte[] message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context) =>
+            Task.FromResult(Deserialize(message, messageHeaders, context));
 
         protected System.Text.Encoding GetEncoding() =>
             Encoding switch
@@ -91,13 +103,16 @@ namespace Silverback.Messaging.Serialization
     }
 
     /// <summary>
-    ///     Serializes and deserializes the messages of type <typeparamref name="TMessage"/> in JSON format.
+    ///     Serializes and deserializes the messages of type <typeparamref name="TMessage" /> in JSON format.
     /// </summary>
     /// <typeparam name="TMessage">The type of the messages to be serialized and/or deserialized.</typeparam>
     public class JsonMessageSerializer<TMessage> : JsonMessageSerializer
     {
-        /// <inheritdoc cref="IMessageSerializer"/>
-        public override byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
+        /// <inheritdoc cref="IMessageSerializer" />
+        public override byte[] Serialize(
+            object message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context)
         {
             switch (message)
             {
@@ -113,8 +128,11 @@ namespace Silverback.Messaging.Serialization
             return GetEncoding().GetBytes(json);
         }
 
-        /// <inheritdoc cref="IMessageSerializer"/>
-        public override object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
+        /// <inheritdoc cref="IMessageSerializer" />
+        public override object Deserialize(
+            byte[] message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context)
         {
             if (message == null || message.Length == 0)
                 return null;

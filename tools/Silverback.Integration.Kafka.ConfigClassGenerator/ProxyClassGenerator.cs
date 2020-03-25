@@ -169,7 +169,7 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
             if (_xmlDoc == null)
                 LoadXmlDoc();
 
-            var path = "P:" + memberInfo.DeclaringType.FullName + "." + memberInfo.Name;
+            var path = "P:" + memberInfo.DeclaringType?.FullName + "." + memberInfo.Name;
             var node = _xmlDoc?.SelectSingleNode("//member[starts-with(@name, '" + path + "')]");
 
             if (node == null)

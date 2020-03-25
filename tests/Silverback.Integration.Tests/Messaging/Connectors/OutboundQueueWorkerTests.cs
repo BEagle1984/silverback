@@ -60,7 +60,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _sampleOutboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "Test" }, null, TestProducerEndpoint.GetDefault());
             _sampleOutboundEnvelope.RawMessage =
-                new JsonMessageSerializer().Serialize(_sampleOutboundEnvelope.Message, _sampleOutboundEnvelope.Headers);
+                new JsonMessageSerializer().Serialize(_sampleOutboundEnvelope.Message, _sampleOutboundEnvelope.Headers,
+                    MessageSerializationContext.Empty);
         }
 
         [Fact]

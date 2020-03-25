@@ -8,11 +8,11 @@ namespace Silverback.Messaging.Broker
 {
     public class MessageReceivedEventArgs : EventArgs
     {
-        public MessageReceivedEventArgs(RawBrokerEnvelope envelope)
+        public MessageReceivedEventArgs(IRawInboundEnvelope envelope)
         {
             Envelope = envelope;
         }
 
-        public RawBrokerEnvelope Envelope { get; }
+        public IRawInboundEnvelope Envelope { get; }
     }
 }

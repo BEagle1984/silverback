@@ -25,13 +25,13 @@ namespace Silverback.Tests.Integration.TestTypes
             ProducedMessages = broker.ProducedMessages;
         }
 
-        protected override IOffset Produce(RawBrokerEnvelope envelope)
+        protected override IOffset Produce(IRawOutboundEnvelope envelope)
         {
             ProducedMessages.Add(new ProducedMessage(envelope.RawMessage, envelope.Headers, Endpoint));
             return null;
         }
 
-        protected override Task<IOffset> ProduceAsync(RawBrokerEnvelope envelope)
+        protected override Task<IOffset> ProduceAsync(IRawOutboundEnvelope envelope)
         {
             Produce(envelope.RawMessage, envelope.Headers);
             return Task.FromResult<IOffset>(null);

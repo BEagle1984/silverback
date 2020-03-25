@@ -72,6 +72,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Rabb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.RabbitMQ.Tests", "tests\Silverback.Integration.RabbitMQ.Tests\Silverback.Integration.RabbitMQ.Tests.csproj", "{7A461DE8-622A-4946-80ED-06086A3884EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Kafka.SchemaRegistry", "src\Silverback.Integration.Kafka.SchemaRegistry\Silverback.Integration.Kafka.SchemaRegistry.csproj", "{521B782C-7D00-4489-879C-7FA666CC6474}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -182,6 +184,10 @@ Global
 		{7A461DE8-622A-4946-80ED-06086A3884EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A461DE8-622A-4946-80ED-06086A3884EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A461DE8-622A-4946-80ED-06086A3884EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{521B782C-7D00-4489-879C-7FA666CC6474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{521B782C-7D00-4489-879C-7FA666CC6474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{521B782C-7D00-4489-879C-7FA666CC6474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{521B782C-7D00-4489-879C-7FA666CC6474}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -223,7 +223,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             queued[1].Endpoint.Should().BeOfType<TestProducerEndpoint>();
             queued[2].Endpoint.Should().BeOfType<TestOtherProducerEndpoint>();
         }
-        
+
         [Fact]
         public async Task Handle_MultipleRoutesToMultipleBrokers_CorrectlyRelayed()
         {

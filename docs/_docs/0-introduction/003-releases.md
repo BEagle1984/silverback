@@ -10,6 +10,7 @@ toc: true
 * **[Rabbit]** Added `PrefetchSize` and `PrefetchCount` to set the QoS prefetch in the RabbitMQ consumer (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
 * **[Rabbit]** Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
 * **[Kafka]** The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
+* **[Kafka]** Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
 * Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 
 ### Breaking Changes

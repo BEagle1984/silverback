@@ -13,6 +13,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.InMemory.TestTypes.Messages;
 using Xunit;
 
@@ -68,8 +69,10 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
 #pragma warning disable 1998
             consumer.Received += async (_, e) =>
-                receivedMessages.Add(e.Envelope.Endpoint.Serializer.Deserialize(e.Envelope.RawMessage,
-                    new MessageHeaderCollection(e.Envelope.Headers)));
+                receivedMessages.Add(e.Envelope.Endpoint.Serializer.Deserialize(
+                    e.Envelope.RawMessage,
+                    new MessageHeaderCollection(e.Envelope.Headers), 
+                    MessageSerializationContext.Empty));
 #pragma warning restore 1998
 
             producer.Produce(new TestMessage { Content = "hello!" });
@@ -90,8 +93,10 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
 #pragma warning disable 1998
             consumer.Received += async (_, e) =>
-                receivedMessages.Add(e.Envelope.Endpoint.Serializer.Deserialize(e.Envelope.RawMessage,
-                    new MessageHeaderCollection(e.Envelope.Headers)));
+                receivedMessages.Add(e.Envelope.Endpoint.Serializer.Deserialize(
+                    e.Envelope.RawMessage,
+                    new MessageHeaderCollection(e.Envelope.Headers),
+                    MessageSerializationContext.Empty));
 #pragma warning restore 1998
 
             producer.Produce(new TestMessage { Content = "hello!" });

@@ -44,7 +44,8 @@ namespace Silverback.Messaging.Broker
         {
         }
 
+        // TODO: Should pass the actual endpoint name via header (Endpoint.Name may contain a list of topics)
         internal Task Receive(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset) =>
-            HandleMessage(message, headers.ToList(), offset);
+            HandleMessage(message, headers.ToList(), Endpoint.Name, offset); 
     }
 }

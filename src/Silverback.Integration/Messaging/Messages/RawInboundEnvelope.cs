@@ -12,11 +12,15 @@ namespace Silverback.Messaging.Messages
             byte[] rawMessage,
             IEnumerable<MessageHeader> headers,
             IConsumerEndpoint endpoint,
+            string actualEndpointName,
             IOffset offset = null)
             : base(rawMessage, headers, endpoint, offset)
         {
+            ActualEndpointName = actualEndpointName;
         }
 
         public new IConsumerEndpoint Endpoint => (IConsumerEndpoint) base.Endpoint;
+        
+        public string ActualEndpointName { get; }
     }
 }

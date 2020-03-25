@@ -26,7 +26,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 Content = GetByteArray(100)
             };
             var headers = new MessageHeaderCollection();
-            var serializedMessage = _serializer.Serialize(message, headers);
+            var serializedMessage = _serializer.Serialize(message, headers, MessageSerializationContext.Empty);
             var rawEnvelope =
                 new RawOutboundEnvelope(headers,
                     new TestProducerEndpoint("test")
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 { DefaultMessageHeaders.MessageId, "1234" }
             };
 
-            var serializedMessage = _serializer.Serialize(message, headers);
+            var serializedMessage = _serializer.Serialize(message, headers, MessageSerializationContext.Empty);
             var rawEnvelope =
                 new RawOutboundEnvelope(headers,
                     new TestProducerEndpoint("test")
