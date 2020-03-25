@@ -212,7 +212,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             (await _serviceProvider.GetRequiredService<IInboundLog>().GetLength()).Should().Be(2);
         }
 
-        [Fact]
+        [Fact, Trait("CI", "false")]
         public async Task Bind_PushMessagesInBatchToMultipleConsumers_OnlyCommittedBatchWrittenToLog()
         {
             var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
