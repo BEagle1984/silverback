@@ -4,10 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Broker
 {
@@ -16,7 +17,8 @@ namespace Silverback.Messaging.Broker
         private readonly ILogger<KafkaConsumer> _logger;
         private readonly IServiceProvider _serviceProvider;
 
-        private InnerConsumerWrapper _innerConsumer;
+        private KafkaInnerConsumerWrapper _innerConsumer;
+        private IKafkaMessageSerializer _serializer;
         private int _messagesSinceCommit;
 
         public KafkaConsumer(
@@ -37,13 +39,14 @@ namespace Silverback.Messaging.Broker
             if (_innerConsumer != null)
                 return;
 
-            _innerConsumer = new InnerConsumerWrapper(
-                Endpoint.Configuration.ConfluentConfig,
-                Endpoint.Configuration.EnableAutoRecovery,
-                _serviceProvider,
+            _innerConsumer = new KafkaInnerConsumerWrapper(
+                Endpoint,
+                _serviceProvider.GetRequiredService<KafkaEventsHandler>(),
                 _logger);
 
-            _innerConsumer.Subscribe(Endpoint);
+            _serializer = Endpoint.Serializer as IKafkaMessageSerializer ??
+                          new DefaultKafkaMessageSerializer(Endpoint.Serializer);
+
             _innerConsumer.Received += OnMessageReceived;
             _innerConsumer.StartConsuming();
 
@@ -96,7 +99,7 @@ namespace Silverback.Messaging.Broker
                 var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());
 
                 if (message.Key != null)
-                    headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, Encoding.UTF8.GetString(message.Key));
+                    headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, _serializer.DeserializeKey(message.Key, headers));
 
                 await HandleMessage(
                     message.Value,

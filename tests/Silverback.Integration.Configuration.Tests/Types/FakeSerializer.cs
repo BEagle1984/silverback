@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
@@ -16,6 +17,16 @@ namespace Silverback.Tests.Integration.Configuration.Types
         }
 
         public object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<byte[]> SerializeAsync(object message, MessageHeaderCollection messageHeaders)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<object> DeserializeAsync(byte[] message, MessageHeaderCollection messageHeaders)
         {
             throw new System.NotImplementedException();
         }

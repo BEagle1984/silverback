@@ -11,14 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
     public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
+        private readonly KafkaEventsHandler _kafkaEventsHandler;
         private readonly ILogger _logger;
-        private readonly IServiceProvider _serviceProvider;
+
         private Confluent.Kafka.IProducer<byte[], byte[]> _innerProducer;
 
         private static readonly
@@ -32,13 +34,14 @@ namespace Silverback.Messaging.Broker
             KafkaProducerEndpoint endpoint,
             MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
-            ILogger<KafkaProducer> logger,
             MessageLogger messageLogger,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            ILogger<KafkaProducer> logger)
             : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
         {
             _logger = logger;
-            _serviceProvider = serviceProvider;
+            
+            _kafkaEventsHandler = serviceProvider.GetRequiredService<KafkaEventsHandler>();
         }
 
         /// <inheritdoc cref="Producer" />
@@ -105,20 +108,12 @@ namespace Silverback.Messaging.Broker
         {
             _logger.LogDebug("Creating Confluent.Kafka.Producer...");
 
-            return new Confluent.Kafka.ProducerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig)
-                .SetStatisticsHandler((_, statistics) =>
-                {
-                    _logger.LogDebug($"Statistics: {statistics}");
-                    CreateScopeAndPublishEvent(new KafkaStatisticsEvent(statistics));
-                })
-                .Build();
-        }
+            var producerBuilder =
+                new Confluent.Kafka.ProducerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig);
 
-        private void CreateScopeAndPublishEvent(IMessage message)
-        {
-            using var scope = _serviceProvider?.CreateScope();
-            var publisher = scope?.ServiceProvider.GetRequiredService<IPublisher>();
-            publisher?.Publish(message);
+            _kafkaEventsHandler.SetProducerEventsHandlers(producerBuilder);
+
+            return producerBuilder.Build();
         }
 
         private void CheckPersistenceStatus(Confluent.Kafka.DeliveryResult<byte[], byte[]> deliveryReport)
