@@ -3,6 +3,7 @@
 
 using System;
 using System.Text;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
@@ -27,6 +28,22 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             var serialized = serializer.Serialize(message, headers);
 
             var message2 = serializer.Deserialize(serialized, headers) as TestEventOne;
+
+            message2.Should().NotBeNull();
+            message2.Should().BeEquivalentTo(message);
+        }
+
+        [Fact]
+        public async Task SerializeDeserializeAsync_Message_CorrectlyDeserialized()
+        {
+            var message = new TestEventOne { Content = "the message" };
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new JsonMessageSerializer();
+
+            var serialized = await serializer.SerializeAsync(message, headers);
+
+            var message2 = await serializer.DeserializeAsync(serialized, headers) as TestEventOne;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);

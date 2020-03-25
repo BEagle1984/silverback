@@ -16,12 +16,22 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 {
     public class KafkaBrokerTests
     {
-        private readonly KafkaBroker _broker = new KafkaBroker(
-            new MessageIdProvider(new[] { new DefaultPropertiesMessageIdProvider() }),
-            Enumerable.Empty<IBrokerBehavior>(),
-            Substitute.For<IServiceProvider>(),
-            NullLoggerFactory.Instance,
-            new MessageLogger());
+        private readonly KafkaBroker _broker;
+
+        public KafkaBrokerTests()
+        {
+            var serviceProvider = Substitute.For<IServiceProvider>();
+
+            serviceProvider.GetService(typeof(KafkaEventsHandler))
+                .Returns(new KafkaEventsHandler(serviceProvider, new NullLogger<KafkaEventsHandler>()));
+            
+            _broker = new KafkaBroker(
+                new MessageIdProvider(new[] { new DefaultPropertiesMessageIdProvider() }),
+                Enumerable.Empty<IBrokerBehavior>(),
+                serviceProvider,
+                NullLoggerFactory.Instance,
+                new MessageLogger());
+        }
 
         [Fact]
         public void GetProducer_SomeEndpoint_ProducerIsReturned()
