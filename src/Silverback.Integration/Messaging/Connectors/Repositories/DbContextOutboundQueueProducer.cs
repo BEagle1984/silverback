@@ -8,6 +8,7 @@ using Silverback.Database;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -23,7 +24,10 @@ namespace Silverback.Messaging.Connectors.Repositories
             DbSet.Add(new OutboundMessage
             {
                 Content = envelope.RawMessage ??
-                          envelope.Endpoint.Serializer.Serialize(envelope.Message, envelope.Headers),
+                          envelope.Endpoint.Serializer.Serialize(
+                          envelope.Message, 
+                          envelope.Headers,
+                          new MessageSerializationContext(envelope.Endpoint)),
                 Headers = DefaultSerializer.Serialize((IEnumerable<MessageHeader>) envelope.Headers),
                 Endpoint = DefaultSerializer.Serialize(envelope.Endpoint),
                 EndpointName = envelope.Endpoint.Name,

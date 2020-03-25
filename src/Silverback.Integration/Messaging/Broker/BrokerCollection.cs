@@ -10,7 +10,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <inheritdoc cref="IBrokerCollection"/>
+    /// <inheritdoc cref="IBrokerCollection" />
     public class BrokerCollection : IBrokerCollection
     {
         private readonly IReadOnlyCollection<IBroker> _brokers;
@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Broker
                     broker => broker));
         }
 
-        /// <inheritdoc cref="IBrokerCollection"/>
+        /// <inheritdoc cref="IBrokerCollection" />
         public IProducer GetProducer(IProducerEndpoint endpoint)
         {
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
@@ -45,7 +45,7 @@ namespace Silverback.Messaging.Broker
                 .GetProducer(endpoint);
         }
 
-        /// <inheritdoc cref="IBrokerCollection"/>
+        /// <inheritdoc cref="IBrokerCollection" />
         public IConsumer GetConsumer(IConsumerEndpoint endpoint)
         {
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
@@ -59,10 +59,10 @@ namespace Silverback.Messaging.Broker
                 .GetConsumer(endpoint);
         }
 
-        /// <inheritdoc cref="IBrokerCollection"/>
+        /// <inheritdoc cref="IBrokerCollection" />
         public void Connect() => _brokers.ForEach(broker => broker.Connect());
 
-        /// <inheritdoc cref="IBrokerCollection"/>
+        /// <inheritdoc cref="IBrokerCollection" />
         public void Disconnect() => _brokers.ForEach(broker => broker.Disconnect());
 
         private IBroker FindBroker(

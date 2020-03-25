@@ -25,9 +25,10 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serializer = new JsonMessageSerializer();
 
-            var serialized = serializer.Serialize(message, headers);
+            var serialized = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
-            var message2 = serializer.Deserialize(serialized, headers) as TestEventOne;
+            var message2 =
+                serializer.Deserialize(serialized, headers, MessageSerializationContext.Empty) as TestEventOne;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -41,9 +42,11 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serializer = new JsonMessageSerializer();
 
-            var serialized = await serializer.SerializeAsync(message, headers);
+            var serialized = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            var message2 = await serializer.DeserializeAsync(serialized, headers) as TestEventOne;
+            var message2 =
+                await serializer.DeserializeAsync(serialized, headers, MessageSerializationContext.Empty) as
+                    TestEventOne;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -56,11 +59,14 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var serialized = serializer.Serialize(message, new MessageHeaderCollection());
+            var serialized =
+                serializer.Serialize(message, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
             Encoding.UTF8.GetString(serialized).Should().NotContain("TestEventOne");
 
-            var message2 = serializer.Deserialize(serialized, new MessageHeaderCollection()) as TestEventOne;
+            var message2 =
+                serializer.Deserialize(serialized, new MessageHeaderCollection(), MessageSerializationContext.Empty) as
+                    TestEventOne;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -73,7 +79,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serializer = new JsonMessageSerializer();
 
-            var serialized = serializer.Serialize(messageBytes, new MessageHeaderCollection());
+            var serialized = serializer.Serialize(messageBytes, new MessageHeaderCollection(),
+                MessageSerializationContext.Empty);
 
             serialized.Should().BeSameAs(messageBytes);
         }
@@ -85,7 +92,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var serialized = serializer.Serialize(messageBytes, new MessageHeaderCollection());
+            var serialized = serializer.Serialize(messageBytes, new MessageHeaderCollection(),
+                MessageSerializationContext.Empty);
 
             serialized.Should().BeSameAs(messageBytes);
         }
@@ -101,7 +109,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serializer = new JsonMessageSerializer();
 
-            var deserialized = serializer.Deserialize(buffer, new MessageHeaderCollection());
+            var deserialized =
+                serializer.Deserialize(buffer, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
             deserialized.Should().NotBeNull();
             deserialized.Should().BeEquivalentTo(original);
@@ -112,7 +121,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         {
             var serializer = new JsonMessageSerializer();
 
-            var serialized = serializer.Serialize(null, new MessageHeaderCollection());
+            var serialized =
+                serializer.Serialize(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
             serialized.Should().BeNull();
         }
@@ -122,7 +132,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         {
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var serialized = serializer.Serialize(null, new MessageHeaderCollection());
+            var serialized =
+                serializer.Serialize(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
             serialized.Should().BeEquivalentTo(new byte[0]);
         }
@@ -132,7 +143,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         {
             var serializer = new JsonMessageSerializer();
 
-            var deserialized = serializer.Deserialize(null, new MessageHeaderCollection());
+            var deserialized =
+                serializer.Deserialize(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
             deserialized.Should().BeNull();
         }
@@ -142,7 +154,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         {
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var deserialized = serializer.Deserialize(null, new MessageHeaderCollection());
+            var deserialized =
+                serializer.Deserialize(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
             deserialized.Should().BeNull();
         }
@@ -152,7 +165,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         {
             var serializer = new JsonMessageSerializer();
 
-            var deserialized = serializer.Deserialize(new byte[0], new MessageHeaderCollection());
+            var deserialized = serializer.Deserialize(new byte[0], new MessageHeaderCollection(),
+                MessageSerializationContext.Empty);
 
             deserialized.Should().BeNull();
         }
@@ -162,7 +176,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         {
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var deserialized = serializer.Deserialize(new byte[0], new MessageHeaderCollection());
+            var deserialized = serializer.Deserialize(new byte[0], new MessageHeaderCollection(),
+                MessageSerializationContext.Empty);
 
             deserialized.Should().BeNull();
         }

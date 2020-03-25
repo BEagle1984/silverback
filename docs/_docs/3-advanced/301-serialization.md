@@ -5,7 +5,7 @@ permalink: /docs/advanced/serialization
 
 Being flexible when serializing and deserializing the messages sent over the message broker is crucial for interoperability and these mechanisms are therfore completely customizable.
 
-## Default JsonMessageSerializer
+## Default JSON serialization
 
 The default `JsonMessageSerializer` internally uses `Newtonsoft.Json` to serialize the messages as json. The messages are then transformed in a byte array using the UTF8 encoder.
 
@@ -17,7 +17,7 @@ This is the suggested serialization strategy when both producer and consumer are
 
 Have a look at the [Default Message Headers]({{ site.baseurl }}/docs/advanced/headers) section for an overview on the headers that are appended to the messages.
 
-## Typed JsonMessageSerializer
+## Fixed-type JSON for interoperability
 
 If you are consuming a message coming from another system (not based on Silverback), chances are that the type name is not being delivered as header.
 
@@ -40,9 +40,43 @@ public void Configure(BusConfigurator busConfigurator)
 **Note:** The `JsonMessageSerializer` can be also be tweaked modifying its `Settings` and `Encoding`.
 {: .notice--info}
 
-## Custom IMessageSerializer
+## Apache Avro
 
-In some cases you may want to build your very own custom serializer extending `IMessageSerializer` directly.
+The `AvroSerializer` contained in the `Silverback.Integration.Kafka.SchemaRegistry` package can be used to connect with a schema registry and exchange messages in [Apache Avro](https://avro.apache.org/) format.
+
+```c#
+public void Configure(BusConfigurator busConfigurator)
+{
+    busConfigurator
+        .Connect(endpoints => endpoints
+            .AddOutbound<OrderEvent>(
+                new KafkaConsumerEndpoint("order-events")
+                {
+                    ...
+                    Serializer = new AvroMessageSerializer<OrderEvent>
+                    {
+                        SchemaRegistryConfig = new SchemaRegistryConfig
+                        {
+                            Url = "schema-registry:8081"
+                        },
+                        AvroSerializerConfig = new AvroSerializerConfig
+                        {
+                            AutoRegisterSchemas = true
+                        }
+                    },
+                }));
+}
+```
+
+**Note:** The C# message models can be generated from an Avro schema using [AvroGen](https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/).
+{: .notice--info}
+
+**Note:** This serializer is built for Kafka but it could work with other brokers, as long as a schema registry is available.
+{: .notice--info}
+
+## Custom serializer
+
+In some cases you may want to build your very own custom serializer implementing `IMessageSerializer` directly.
 
 ```c#
 public class MyCustomSerializer : IMessageSerializer
@@ -56,5 +90,40 @@ public class MyCustomSerializer : IMessageSerializer
     {
         ...
     }
+
+    public byte[] Serialize(
+        object message,
+        MessageHeaderCollection messageHeaders,
+        MessageSerializationContext context)
+    {
+        ...
+    }
+
+    public object Deserialize(
+        byte[] message,
+        MessageHeaderCollection messageHeaders,
+        MessageSerializationContext context)
+    {
+        ...
+    }
+
+    public Task<byte[]> SerializeAsync(
+        object message,
+        MessageHeaderCollection messageHeaders,
+        MessageSerializationContext context)
+    {
+        ...
+    }
+
+    public Task<object> DeserializeAsync(
+        byte[] message,
+        MessageHeaderCollection messageHeaders,
+        MessageSerializationContext context)
+    {
+        ...
+    }
 }
 ```
+
+**Note:** You may need to implement `IKafkaMessageSerializer` if you want to have full control over the serialization of the Kafka key as well.
+{: .notice--info}

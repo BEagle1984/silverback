@@ -57,6 +57,7 @@ function Get-Sources()
         ("Silverback.Integration.HealthChecks", ("..\src\Silverback.Integration.HealthChecks\")),
         ("Silverback.Integration.InMemory", ("..\src\Silverback.Integration.InMemory\")),
         ("Silverback.Integration.Kafka", ("..\src\Silverback.Integration.Kafka\")),
+        ("Silverback.Integration.Kafka.SchemaRegistry", ("..\src\Silverback.Integration.Kafka.SchemaRegistry\")),
         ("Silverback.Integration.RabbitMQ", ("..\src\Silverback.Integration.RabbitMQ\"))
 
     return $sources

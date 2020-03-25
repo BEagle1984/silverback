@@ -46,7 +46,7 @@ namespace Silverback.Tests.Integration.TestTypes
             if (serializer == null)
                 serializer = new JsonMessageSerializer();
 
-            var buffer = serializer.Serialize(message, headers);
+            var buffer = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
             await TestPush(buffer, headers, offset);
         }
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.TestTypes
             if (!IsConnected)
                 throw new InvalidOperationException("The consumer is not ready.");
 
-            await HandleMessage(rawMessage, headers, offset);
+            await HandleMessage(rawMessage, headers, "test-topic", offset);
         }
 
         protected override Task Commit(IEnumerable<TestOffset> offsets)

@@ -1,0 +1,8 @@
+﻿{"namespace": "Silverback.Examples.Messages",
+ "type": "record",
+ "name": "AvroMessage",
+ "fields": [
+     {"name": "key", "type": "string"},
+     {"name": "content", "type": "string"}
+ ]
+}

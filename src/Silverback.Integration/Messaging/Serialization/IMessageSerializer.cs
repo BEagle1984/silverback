@@ -16,31 +16,47 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         /// <param name="message">The message object to be serialized.</param>
         /// <param name="messageHeaders">The message headers collection.</param>
+        /// <param name="context">The context information.</param>
         /// <returns></returns>
-        byte[] Serialize(object message, MessageHeaderCollection messageHeaders);
+        byte[] Serialize(
+            object message, 
+            MessageHeaderCollection messageHeaders, 
+            MessageSerializationContext context);
 
         /// <summary>
         ///     Deserializes the byte array back into a message object.
         /// </summary>
         /// <param name="message">The byte array to be deserialized.</param>
         /// <param name="messageHeaders">The message headers collection.</param>
+        /// <param name="context">The context information.</param>
         /// <returns></returns>
-        object Deserialize(byte[] message, MessageHeaderCollection messageHeaders);
-        
+        object Deserialize(
+            byte[] message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context);
+
         /// <summary>
         ///     Serializes the specified message object into a byte array.
         /// </summary>
         /// <param name="message">The message object to be serialized.</param>
         /// <param name="messageHeaders">The message headers collection.</param>
+        /// <param name="context">The context information.</param>
         /// <returns></returns>
-        Task<byte[]> SerializeAsync(object message, MessageHeaderCollection messageHeaders);
+        Task<byte[]> SerializeAsync(
+            object message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context);
 
         /// <summary>
         ///     Deserializes the byte array back into a message object.
         /// </summary>
         /// <param name="message">The byte array to be deserialized.</param>
         /// <param name="messageHeaders">The message headers collection.</param>
+        /// <param name="context">The context information.</param>
         /// <returns></returns>
-        Task<object> DeserializeAsync(byte[] message, MessageHeaderCollection messageHeaders);
+        Task<object> DeserializeAsync(
+            byte[] message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context);
     }
 }

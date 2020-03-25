@@ -12,6 +12,7 @@ using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
@@ -83,14 +84,22 @@ namespace Silverback.Messaging.Connectors
 
             return completeMessage == null
                 ? null
-                : new InboundEnvelope(completeMessage, envelope.Headers, envelope.Offset, envelope.Endpoint);
+                : new InboundEnvelope(
+                    completeMessage,
+                    envelope.Headers,
+                    envelope.Offset,
+                    envelope.Endpoint,
+                    envelope.ActualEndpointName);
         }
 
         private IInboundEnvelope DeserializeRawMessage(IInboundEnvelope envelope)
         {
             var deserialized =
                 envelope.Message ?? (((InboundEnvelope) envelope).Message =
-                    envelope.Endpoint.Serializer.Deserialize(envelope.RawMessage, envelope.Headers));
+                    envelope.Endpoint.Serializer.Deserialize(
+                        envelope.RawMessage,
+                        envelope.Headers,
+                        new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName)));
 
             if (deserialized == null)
                 return envelope;

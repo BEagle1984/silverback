@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2BDFE494-1306-4E9B-AC16-16C04615CCB5}"
 ProjectSection(SolutionItems) = preProject
 	Silverback.Examples.sln.DotSettings = Silverback.Examples.sln.DotSettings
+	..\..\docker-compose.yaml = ..\..\docker-compose.yaml
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Examples.Consumer", "src\Silverback.Examples.Consumer\Silverback.Examples.Consumer.csproj", "{767EDB5E-A47E-48DE-8DCA-B0C3A88D9FDA}"

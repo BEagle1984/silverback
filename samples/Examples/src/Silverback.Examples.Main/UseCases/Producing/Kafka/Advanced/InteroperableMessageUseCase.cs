@@ -61,13 +61,31 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
                 TypeNameHandling = TypeNameHandling.None
             };
 
-            public byte[] Serialize(object message, MessageHeaderCollection messageHeaders) =>
+            public byte[] Serialize(
+                object message,
+                MessageHeaderCollection messageHeaders,
+                MessageSerializationContext context) =>
                 Encoding.ASCII.GetBytes(
                     JsonConvert.SerializeObject(message, _settings));
 
-            public object Deserialize(byte[] message, MessageHeaderCollection messageHeaders) =>
+            public object Deserialize(
+                byte[] message,
+                MessageHeaderCollection messageHeaders,
+                MessageSerializationContext context) =>
                 JsonConvert.DeserializeObject<LegacyMessage>(
                     Encoding.ASCII.GetString(message));
+
+            public Task<byte[]> SerializeAsync(
+                object message,
+                MessageHeaderCollection messageHeaders,
+                MessageSerializationContext context) =>
+                Task.FromResult(Serialize(message, messageHeaders, context));
+
+            public Task<object> DeserializeAsync(
+                byte[] message,
+                MessageHeaderCollection messageHeaders,
+                MessageSerializationContext context) =>
+                Task.FromResult(Deserialize(message, messageHeaders, context));
         }
     }
 }

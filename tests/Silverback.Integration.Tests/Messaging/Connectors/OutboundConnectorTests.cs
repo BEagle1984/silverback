@@ -8,6 +8,7 @@ using FluentAssertions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -39,7 +40,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var producedMessage = envelope.Endpoint.Serializer.Deserialize(
                 _broker.ProducedMessages.First().Message,
-                new MessageHeaderCollection(_broker.ProducedMessages.First().Headers)) as TestEventOne;
+                new MessageHeaderCollection(_broker.ProducedMessages.First().Headers),
+                MessageSerializationContext.Empty) as TestEventOne;
             producedMessage.Id.Should().Be(envelope.Message.Id);
         }
 

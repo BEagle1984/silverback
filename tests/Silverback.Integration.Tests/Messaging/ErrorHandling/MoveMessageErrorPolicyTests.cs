@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -47,7 +48,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 new byte[1],
                 null,
-                null, TestConsumerEndpoint.GetDefault())
+                null, TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name)
             {
                 Message = "hey oh!"
             };
@@ -68,8 +70,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var message = new TestEventOne { Content = "hey oh!" };
             var headers = new MessageHeaderCollection();
-            var rawContent = TestConsumerEndpoint.GetDefault().Serializer.Serialize(message, headers);
-            var envelope = new InboundEnvelope(rawContent, headers, null, TestConsumerEndpoint.GetDefault())
+            var rawContent = TestConsumerEndpoint.GetDefault().Serializer
+                .Serialize(message, headers, MessageSerializationContext.Empty);
+            var envelope = new InboundEnvelope(rawContent, headers, null, 
+                TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name)
             {
                 Message = message,
                 Headers =
@@ -84,7 +88,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var producedMessage = producer.ProducedMessages.Last();
             var deserializedMessage =
-                producedMessage.Endpoint.Serializer.Deserialize(producedMessage.Message, producedMessage.Headers);
+                producedMessage.Endpoint.Serializer.Deserialize(producedMessage.Message, producedMessage.Headers,
+                    MessageSerializationContext.Empty);
             deserializedMessage.Should().BeEquivalentTo(envelope.Message);
         }
 
@@ -96,7 +101,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 Encoding.UTF8.GetBytes("hey oh!"),
                 null,
-                null, TestConsumerEndpoint.GetDefault())
+                null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name)
             {
                 Message = null,
                 Headers =
@@ -122,7 +127,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 Encoding.UTF8.GetBytes("hey oh!"),
                 null,
-                null, TestConsumerEndpoint.GetDefault())
+                null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name)
             {
                 Message = "hey oh!",
                 Headers =
@@ -152,12 +157,14 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     {
                         new MessageHeader(DefaultMessageHeaders.MessageType, typeof(string).AssemblyQualifiedName)
                     },
-                    null, TestConsumerEndpoint.GetDefault()),
+                    null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name),
             }, new Exception("test"));
 
             var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());
-            var producedMessage = producer.Endpoint.Serializer.Deserialize(producer.ProducedMessages[0].Message,
-                producer.ProducedMessages[0].Headers);
+            var producedMessage = producer.Endpoint.Serializer.Deserialize(
+                producer.ProducedMessages[0].Message,
+                producer.ProducedMessages[0].Headers,
+                MessageSerializationContext.Empty);
             producedMessage.Should().BeOfType<TestEventTwo>();
         }
 
@@ -174,7 +181,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 Encoding.UTF8.GetBytes("hey oh!"),
                 null,
-                null, TestConsumerEndpoint.GetDefault());
+                null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);
             envelope.Headers.Add("key", "value");
             policy.HandleError(new[] { envelope }, new Exception("test"));
 
@@ -191,7 +198,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var message = new InboundEnvelope(
                 Encoding.UTF8.GetBytes("hey oh!"),
                 null,
-                null, new TestConsumerEndpoint("source-endpoint"))
+                null, new TestConsumerEndpoint("source-endpoint"), "source-endpoint")
             {
                 Message = "hey oh!",
                 Headers =

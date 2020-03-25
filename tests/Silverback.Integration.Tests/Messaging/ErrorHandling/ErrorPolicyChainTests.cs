@@ -53,7 +53,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault())
+                    null, TestConsumerEndpoint.GetDefault(),
+                    TestConsumerEndpoint.GetDefault().Name)
             }, new Exception("test"));
 
             testPolicy.Applied.Should().Be(failedAttempts > 3);
@@ -75,7 +76,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault())
+                    null, TestConsumerEndpoint.GetDefault(),
+                    TestConsumerEndpoint.GetDefault().Name)
             }, new Exception("test"));
 
             action.Should().Be(expectedAction);
@@ -105,7 +107,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault())
+                    null, TestConsumerEndpoint.GetDefault(),
+                    TestConsumerEndpoint.GetDefault().Name)
             }, new Exception("test"));
 
             for (var i = 0; i < policies.Length; i++)

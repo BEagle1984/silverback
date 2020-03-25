@@ -42,11 +42,11 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Producer" />
-        protected override IOffset Produce(RawBrokerEnvelope envelope) =>
+        protected override IOffset Produce(IRawOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceAsync(envelope));
 
         /// <inheritdoc cref="Producer" />
-        protected override Task<IOffset> ProduceAsync(RawBrokerEnvelope envelope)
+        protected override Task<IOffset> ProduceAsync(IRawOutboundEnvelope envelope)
         {
             var queuedMessage = new QueuedMessage(envelope);
 
@@ -81,7 +81,7 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private void PublishToChannel(RawBrokerEnvelope envelope)
+        private void PublishToChannel(IRawOutboundEnvelope envelope)
         {
             _channel ??= _connectionFactory.GetChannel(Endpoint);
 
@@ -136,13 +136,13 @@ namespace Silverback.Messaging.Broker
 
         private class QueuedMessage
         {
-            public QueuedMessage(RawBrokerEnvelope envelope)
+            public QueuedMessage(IRawOutboundEnvelope envelope)
             {
                 Envelope = envelope;
                 TaskCompletionSource = new TaskCompletionSource<IOffset>();
             }
 
-            public RawBrokerEnvelope Envelope { get; }
+            public IRawOutboundEnvelope Envelope { get; }
             public TaskCompletionSource<IOffset> TaskCompletionSource { get; }
         }
     }

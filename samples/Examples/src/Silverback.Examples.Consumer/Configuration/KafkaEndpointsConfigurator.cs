@@ -4,7 +4,9 @@
 using System;
 using System.Linq;
 using Confluent.Kafka;
+using Confluent.SchemaRegistry;
 using Silverback.Examples.Common.Messages;
+using Silverback.Examples.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
@@ -79,6 +81,8 @@ namespace Silverback.Examples.Consumer.Configuration
                         })))
             .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer",
                 GetCustomSerializer()))
+            .AddInbound(CreateConsumerEndpoint("silverback-examples-avro",
+                GetAvroSerializer()))
             // Special inbound (not logged)
             .AddInbound<InboundConnector>(CreateConsumerEndpoint("silverback-examples-legacy-messages",
                 new JsonMessageSerializer<LegacyMessage>()
@@ -118,14 +122,19 @@ namespace Silverback.Examples.Consumer.Configuration
             return endpoint;
         }
 
-        private static JsonMessageSerializer GetCustomSerializer()
-        {
-            var serializer = new JsonMessageSerializer
+        private static IMessageSerializer GetCustomSerializer() =>
+            new JsonMessageSerializer
             {
                 Encoding = MessageEncoding.Unicode
             };
 
-            return serializer;
-        }
+        private static IMessageSerializer GetAvroSerializer() =>
+            new AvroMessageSerializer<AvroMessage>
+            {
+                SchemaRegistryConfig = new SchemaRegistryConfig
+                {
+                    Url = "localhost:8081"
+                }
+            };
     }
 }

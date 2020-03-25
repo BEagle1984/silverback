@@ -81,7 +81,8 @@ namespace Silverback.Integration.Kafka.TestConsumer
         {
             var testMessage = (TestMessage) args.Envelope.Endpoint.Serializer.Deserialize(
                 args.Envelope.RawMessage,
-                new MessageHeaderCollection(args.Envelope.Headers));
+                new MessageHeaderCollection(args.Envelope.Headers), 
+                MessageSerializationContext.Empty);
 
             Console.WriteLine($"[{testMessage.Id}] [{Activity.Current.Id}] {testMessage.Text}");
 

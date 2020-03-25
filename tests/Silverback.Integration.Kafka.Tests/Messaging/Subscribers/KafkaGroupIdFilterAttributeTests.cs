@@ -33,7 +33,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
                     {
                         GroupId = envelopeGroupId
                     }
-                });
+                },
+                "my-topic");
 
             var result = new KafkaGroupIdFilterAttribute("group1", "group2").MustProcess(inboundEnvelope);
 
@@ -55,7 +56,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
                 new byte[0],
                 new List<MessageHeader>(),
                 null,
-                new SomeConsumerEndpoint());
+                new SomeConsumerEndpoint(),
+                "");
 
             var result = new KafkaGroupIdFilterAttribute().MustProcess(inboundEnvelope);
 

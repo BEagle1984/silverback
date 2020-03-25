@@ -3,10 +3,10 @@
 
 namespace Silverback.Messaging.Messages
 {
-    public interface IInboundEnvelope : IBrokerEnvelope
+    public interface IInboundEnvelope : IBrokerEnvelope, IRawInboundEnvelope
     {
         /// <summary>
-        ///     Gets the source endpoint.
+        ///     Gets the source endpoint configuration.
         /// </summary>
         new IConsumerEndpoint Endpoint { get; }
     }

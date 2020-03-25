@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Broker
         ///     the specified endpoint.
         /// </summary>
         IConsumer GetConsumer(IConsumerEndpoint endpoint);
-        
+
         /// <summary>
         ///     Connect to all message brokers to start consuming.
         /// </summary>

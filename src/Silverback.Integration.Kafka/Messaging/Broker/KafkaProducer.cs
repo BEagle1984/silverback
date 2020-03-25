@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -40,16 +39,16 @@ namespace Silverback.Messaging.Broker
             : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
         {
             _logger = logger;
-            
+
             _kafkaEventsHandler = serviceProvider.GetRequiredService<KafkaEventsHandler>();
         }
 
         /// <inheritdoc cref="Producer" />
-        protected override IOffset Produce(RawBrokerEnvelope envelope) =>
+        protected override IOffset Produce(IRawOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceAsync(envelope));
 
         /// <inheritdoc cref="Producer" />
-        protected override async Task<IOffset> ProduceAsync(RawBrokerEnvelope envelope)
+        protected override async Task<IOffset> ProduceAsync(IRawOutboundEnvelope envelope)
         {
             try
             {
@@ -94,7 +93,12 @@ namespace Silverback.Messaging.Broker
                 headers.Remove(kafkaKeyHeader);
 
                 if (kafkaKeyHeader.Value != null)
-                    return Encoding.UTF8.GetBytes(kafkaKeyHeader.Value);
+                    return Endpoint.Serializer is IKafkaMessageSerializer kafkaSerializer
+                        ? kafkaSerializer.SerializeKey(
+                            kafkaKeyHeader.Value, 
+                            headers, 
+                            new MessageSerializationContext(Endpoint, Endpoint.Name))
+                        : Encoding.UTF8.GetBytes(kafkaKeyHeader.Value);
             }
 
             return null;

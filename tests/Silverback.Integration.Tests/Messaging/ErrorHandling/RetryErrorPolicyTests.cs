@@ -52,7 +52,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault()),
+                    null, TestConsumerEndpoint.GetDefault(),
+                    TestConsumerEndpoint.GetDefault().Name),
             }, new Exception("test"));
 
             canHandle.Should().Be(expectedResult);

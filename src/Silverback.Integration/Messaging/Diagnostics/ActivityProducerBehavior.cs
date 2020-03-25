@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Diagnostics
     // TODO: Test
     public class ActivityProducerBehavior : IProducerBehavior
     {
-        public async Task Handle(RawBrokerEnvelope envelope, RawBrokerMessageHandler next)
+        public async Task Handle(IRawOutboundEnvelope envelope, RawOutboundEnvelopeHandler next)
         {
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageProducing);
             try

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common.Messages;
+using Silverback.Examples.Messages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
@@ -55,6 +56,11 @@ namespace Silverback.Examples.Consumer.Subscribers
         {
             if (envelope.Message == null)
                 _logger.LogInformation("Empty message received!");
+        }
+
+        public void OnAvroMessageReceived(AvroMessage message)
+        {
+            _logger.LogInformation($"Received AvroMessage '{message.content}'");
         }
 
         private Task DoFail()

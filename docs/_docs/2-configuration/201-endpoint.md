@@ -7,7 +7,7 @@ The endpoint object contains all information that identify the topic/queue that 
 
 ## Kafka
 
-Silverback.Integration.Kafka uses 2 different classes to specify inbound and outbound endpoints configuration.
+`Silverback.Integration.Kafka` uses 2 different classes to specify inbound and outbound endpoints configuration.
 
 For a more in-depth documentation about the Kafka configuration refer to the [confluent-kafka-dotnet documentation](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html).
 
@@ -67,7 +67,7 @@ new KafkaConsumerEndpoint(
 
 ## RabbitMQ
 
-Silverback.Integration.RabbitMQ is a bit more intricated and uses 4 different classes to specify inbound and outbound endpoints configuration.
+`Silverback.Integration.RabbitMQ` is a bit more intricated and uses 4 different classes to specify inbound and outbound endpoints configuration.
 
 For a more in-depth documentation about the RabbitMQ configuration refer to the [RabbitMQ tutorials and documentation](https://www.rabbitmq.com/getstarted.html).
 

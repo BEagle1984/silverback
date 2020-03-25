@@ -17,6 +17,6 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="envelope">The envelope containing the message being produced.</param>
         /// <param name="next">The next behavior in the pipeline.</param>
-        Task Handle(RawBrokerEnvelope envelope, RawBrokerMessageHandler next);
+        Task Handle(IRawOutboundEnvelope envelope, RawOutboundEnvelopeHandler next);
     }
 }

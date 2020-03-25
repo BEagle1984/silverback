@@ -99,11 +99,16 @@ namespace Silverback.Messaging.Broker
                 var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());
 
                 if (message.Key != null)
-                    headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, _serializer.DeserializeKey(message.Key, headers));
+                    headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey,
+                        _serializer.DeserializeKey(
+                            message.Key,
+                            headers,
+                            new MessageSerializationContext(Endpoint, tpo.Topic)));
 
                 await HandleMessage(
                     message.Value,
                     headers,
+                    tpo.Topic,
                     offset);
             }
             catch (Exception ex)

@@ -14,14 +14,20 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public int FailCount { get; private set; }
 
-        public byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
+        public byte[] Serialize(
+            object message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context)
         {
             throw new NotImplementedException();
         }
 
-        public object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
+        public object Deserialize(
+            byte[] message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context)
         {
-            var deserialized = new JsonMessageSerializer().Deserialize(message, messageHeaders);
+            var deserialized = new JsonMessageSerializer().Deserialize(message, messageHeaders, context);
 
             if (MustFailCount > FailCount)
             {
@@ -32,10 +38,16 @@ namespace Silverback.Tests.Integration.TestTypes
             return deserialized;
         }
 
-        public virtual Task<byte[]> SerializeAsync(object message, MessageHeaderCollection messageHeaders) =>
-            Task.FromResult(Serialize(message, messageHeaders));
+        public virtual Task<byte[]> SerializeAsync(
+            object message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context) =>
+            Task.FromResult(Serialize(message, messageHeaders, context));
 
-        public virtual Task<object> DeserializeAsync(byte[] message, MessageHeaderCollection messageHeaders) =>
-            Task.FromResult(Deserialize(message, messageHeaders));
+        public virtual Task<object> DeserializeAsync(
+            byte[] message,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context) =>
+            Task.FromResult(Deserialize(message, messageHeaders, context));
     }
 }

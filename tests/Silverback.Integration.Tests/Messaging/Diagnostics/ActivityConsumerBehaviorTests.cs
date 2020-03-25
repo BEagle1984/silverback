@@ -31,7 +31,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 {
                     { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
-                TestConsumerEndpoint.GetDefault());
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
 
             var entered = false;
             await new ActivityConsumerBehavior().Handle(rawEnvelope, _ =>
@@ -57,7 +58,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 {
                     { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
-                TestConsumerEndpoint.GetDefault());
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
 
             var entered = false;
             new ActivityConsumerBehavior().Handle(rawEnvelope, _ =>
@@ -92,7 +94,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 {
                     { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
-                TestConsumerEndpoint.GetDefault());
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
 
             var consumer = (TestConsumer) broker.GetConsumer(TestConsumerEndpoint.GetDefault());
             var entered = false;

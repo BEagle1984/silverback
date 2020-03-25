@@ -21,6 +21,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Basic
             typeof(SimplePublishUseCase),
             typeof(TranslateUseCase),
             typeof(CustomSerializerSettingsUseCase),
+            typeof(AvroSerializerUseCase),
             typeof(ExternalConfigUseCase)
         };
     }

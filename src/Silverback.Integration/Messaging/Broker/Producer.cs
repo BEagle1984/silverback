@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -55,7 +56,7 @@ namespace Silverback.Messaging.Broker
                 .ForEach(envelope =>
                     ExecutePipeline(_behaviors, envelope, finalEnvelope =>
                     {
-                        finalEnvelope.Offset = Produce(finalEnvelope);
+                        ((RawOutboundEnvelope)finalEnvelope).Offset = Produce(finalEnvelope);
                         return Task.CompletedTask;
                     }).Wait());
 
@@ -64,7 +65,7 @@ namespace Silverback.Messaging.Broker
             await (await GetRawEnvelopes(message, headers, true))
                 .ForEachAsync(async envelope =>
                     await ExecutePipeline(_behaviors, envelope, async finalEnvelope =>
-                        finalEnvelope.Offset = await ProduceAsync(finalEnvelope)));
+                        ((RawOutboundEnvelope)finalEnvelope).Offset = await ProduceAsync(finalEnvelope)));
 
         private async Task<IEnumerable<RawOutboundEnvelope>> GetRawEnvelopes(
             object content,
@@ -76,17 +77,19 @@ namespace Silverback.Messaging.Broker
             var rawMessage = new RawOutboundEnvelope(headersCollection, Endpoint);
 
             if (executeAsync)
-                rawMessage.RawMessage = await Endpoint.Serializer.SerializeAsync(content, rawMessage.Headers);
+                rawMessage.RawMessage = await Endpoint.Serializer
+                    .SerializeAsync(content, rawMessage.Headers, new MessageSerializationContext(Endpoint));
             else
-                rawMessage.RawMessage = Endpoint.Serializer.Serialize(content, rawMessage.Headers);
+                rawMessage.RawMessage = Endpoint.Serializer
+                    .Serialize(content, rawMessage.Headers, new MessageSerializationContext(Endpoint));
 
             return ChunkProducer.ChunkIfNeeded(rawMessage);
         }
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IProducerBehavior> behaviors,
-            RawBrokerEnvelope envelope,
-            RawBrokerMessageHandler finalAction)
+            IRawOutboundEnvelope envelope,
+            RawOutboundEnvelopeHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
@@ -105,14 +108,14 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="envelope">The <see cref="RawBrokerEnvelope" /> instance containing body, headers, endpoint, etc.</param>
         /// <returns>The message offset.</returns>
-        protected abstract IOffset Produce(RawBrokerEnvelope envelope);
+        protected abstract IOffset Produce(IRawOutboundEnvelope envelope);
 
         /// <summary>
         ///     Publishes the specified message and returns its offset.
         /// </summary>
         /// <param name="envelope">The <see cref="RawBrokerEnvelope" /> instance containing body, headers, endpoint, etc.</param>
         /// <returns>The message offset.</returns>
-        protected abstract Task<IOffset> ProduceAsync(RawBrokerEnvelope envelope);
+        protected abstract Task<IOffset> ProduceAsync(IRawOutboundEnvelope envelope);
     }
 
     public abstract class Producer<TBroker, TEndpoint> : Producer

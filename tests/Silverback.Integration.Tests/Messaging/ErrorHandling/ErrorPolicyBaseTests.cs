@@ -29,7 +29,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
-                    null, TestConsumerEndpoint.GetDefault()),
+                    null, TestConsumerEndpoint.GetDefault(),
+                    TestConsumerEndpoint.GetDefault().Name),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -55,7 +56,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
-                    null, TestConsumerEndpoint.GetDefault()),
+                    null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -82,7 +83,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
-                    null, TestConsumerEndpoint.GetDefault()),
+                    null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -121,7 +122,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new InboundEnvelope(
                         new byte[1],
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
-                        null, TestConsumerEndpoint.GetDefault()),
+                        null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name),
                     new ArgumentException(),
                     true
                 },
@@ -130,7 +131,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new InboundEnvelope(
                         new byte[1],
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "6") },
-                        null, TestConsumerEndpoint.GetDefault()),
+                        null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name),
                     new ArgumentException(),
                     false
                 },
@@ -139,7 +140,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new InboundEnvelope(
                         new byte[1],
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
-                        null, TestConsumerEndpoint.GetDefault()),
+                        null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name),
                     new ArgumentException("no"),
                     false
                 }
@@ -157,7 +158,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var message = new InboundEnvelope(
                 new byte[1],
                 new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
-                null, TestConsumerEndpoint.GetDefault());
+                null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);
 
 
             policy.HandleError(new[] { message }, new ArgumentNullException());
