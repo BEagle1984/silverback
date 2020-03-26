@@ -2,7 +2,7 @@
   <PropertyGroup Label="Package information">
     <Authors>Sergio Aquilini</Authors>
     <Company></Company>
-    <Description>Silverback is a simple framework to build reactive, event-driven, microservices.</Description>
+    <Description>Silverback is a simple but feature-rich framework to build reactive/event-driven applications or microservices.</Description>
     <License>MIT</License>
     <Copyright>Copyright (c) 2019 Sergio Aquilini</Copyright>
     <VersionSuffix>-rc1</VersionSuffix>

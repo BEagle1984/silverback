@@ -13,7 +13,7 @@
         <RepositoryType>$(RepositoryType)</RepositoryType>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Description>$(Description)
-            This package adds the support for Apache Avro and the schema registry on top of Silverback.Integration.Kafka.</Description>
+This package adds the support for Apache Avro and the schema registry on top of Silverback.Integration.Kafka.</Description>
         <PackageIconUrl>$(IconUrl)</PackageIconUrl>
         <PackageTags>$(Tags)</PackageTags>
         <LangVersion>$(LangVersion)</LangVersion>

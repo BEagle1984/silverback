@@ -4,7 +4,7 @@
 [![GitHub issues by-label](https://img.shields.io/github/issues/beagle1984/silverback/bug?label=bugs)](https://github.com/BEagle1984/silverback/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/BEagle1984/silverback/blob/master/LICENSE)
 
-A simple but feature-rich framework to build reactive/event-driven applications.
+A simple but feature-rich framework to build reactive/event-driven applications or microservices.
 
 It includes an in-memory message bus that can be easily connected to a message broker to integrate with other applications or microservices. At the moment only [Apache Kafka](https://kafka.apache.org/) and [RabbitMQ](https://www.rabbitmq.com/) are supported but other message brokers could be added without much effort.
 

@@ -2,16 +2,16 @@
 title: Features
 permalink: /docs/features
 
-excerpt: Silverback is a simple framework to build reactive, event-driven, microservices.
+excerpt: Silverback is a simple but feature rich framework to build reactive/event-driven applications or microservices
 
 toc: true
 toc_label: Features
 toc_icon: star
 ---
 
-Silverback is a simple framework to build reactive, event-driven, microservices.
+Silverback is a simple but feature rich framework to build reactive/event-driven applications or microservices
 
-It includes an message bus (mediator) that can be easily connected to a message broker to integrate with other microservices. At the moment it supports Apache Kafka and RabbitMQ out of the box but other message brokers could be added without much effort.
+It includes an in-memory message bus that can be easily connected to a message broker to integrate with other applications or microservices. At the moment it supports [Apache Kafka](https://kafka.apache.org/) and [RabbitMQ](https://www.rabbitmq.com/) and other message brokers might be added in the future.
 
 Some of its features are highlighted in the following chapters.
 
