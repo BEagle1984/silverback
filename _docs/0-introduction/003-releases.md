@@ -7,15 +7,16 @@ toc: true
 ## [2.1.0-rc1](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc1)
 
 ### What's new
-* **[Rabbit]** Added `PrefetchSize` and `PrefetchCount` to set the QoS prefetch in the RabbitMQ consumer (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
+* **[Rabbit]** Added consumer `PrefetchSize` and `PrefetchCount` settings (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
 * **[Rabbit]** Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
 * **[Kafka]** The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
 * **[Kafka]** Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
-* Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
+* **[Integration]** Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 
 ### Breaking Changes
-* `WithConnectionTo<>`, `WithConnectionToKafka` and `WithConnectionToRabbitMQ` are deprecated (but they will still be supported in this version), please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit` methods (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
-* The `IBroker` inteface and `Broker` abstract base class have been modified to explicitly declare which endpoint type is being handled by the broker implementation (this shouldn't affect you, unless you built your own `IBroker` implementation)
+* **[Integration]** `WithConnectionTo<>`, `WithConnectionToKafka` and `WithConnectionToRabbitMQ` are deprecated (but they will still be supported in this version), please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit` methods (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
+* **[Integration]** The `IBroker` inteface and `Broker` abstract base class have been modified to explicitly declare which endpoint type is being handled by the broker implementation (this shouldn't affect you, unless you built your own `IBroker` implementation)
+* **[Integration]** The `IMessageSerializer` interfaces has been changed (this shouldn't affect you, unless you built a custom serializer)
 
 ## [2.0.0](https://github.com/BEagle1984/silverback/releases/tag/2.0.0)
 
