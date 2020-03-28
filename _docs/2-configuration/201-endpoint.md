@@ -18,11 +18,12 @@ Used for outbound endpoints, exposes the following properties:
 Property | Description
 :-- | :--
 `Name` | The name of the topic. This is set in the constructor.
-`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. (see also [Custom Serializer]({{ site.baseurl }}/docs/advanced/chunking))
+`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. See [Serialization]({{ site.baseurl }}/docs/advanced/serialization) for details.
+`Encryption` | Enable end-to-end message encryption. See [Encryption]({{ site.baseurl }}/docs/advanced/encryption) for details.
+`Chunk` | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
 `Configuration` | An instance of `KafkaProducerConfig`, that's just an extension of `Confluent.Kafka.ProducerConfig`.
 `Configuration.BootstrapServers`, ...| All properties inherited from `Confluent.Kafka.ProducerConfig`. See [confluent-kafka-dotnet documentation](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.ProducerConfig.html) for details.
 `Configuration.ThrowIfNotAcknowledged` | When set to `true` an exception will be thrown in the producer if no acknowledge is received by the broker (`PersistenceStatus.PossiblyPersisted`). The default is `true`.
-`Chunk` | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
 
 ```c#
 new KafkaProducerEndpoint("basket-events")
@@ -43,6 +44,7 @@ Property | Description
 :-- | :--
 `Names` | The name of the topics to be consumed (yes, you can subscribe multiple topics at once). This is set in the constructor.
 `Serializer` | The `IMessageSerializer` to be used to serialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding.
+`Encryption` | Enable end-to-end message encryption. See [Encryption]({{ site.baseurl }}/docs/advanced/encryption) for details.
 `Configuration` | An instance of `KafkaConsumerConfig`, that's just an extension of `Confluent.Kafka.ConsumerConfig`.
 `Configuration.BootstrapServers`, `Configuration.GroupId`, ...| All properties inherited from `Confluent.Kafka.ConsumerConfig`. See [confluent-kafka-dotnet documentation](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.ConsumerConfig.html) for details.
 `Configuration.CommitOffsetEach` | When auto-commit is disable, defines the number of message processed before committing the offset to the server. The most reliable level is 1 but it reduces throughput.
@@ -78,7 +80,9 @@ Used for outbound endpoints that produce directly to a queue, exposes the follow
 Property | Description
 :-- | :--
 `Name` | The name of the queue. This is set in the constructor.
-`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. (see also [Custom Serializer]({{ site.baseurl }}/docs/advanced/chunking))
+`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. See [Serialization]({{ site.baseurl }}/docs/advanced/serialization) for details.
+`Encryption` | Enable end-to-end message encryption. See [Encryption]({{ site.baseurl }}/docs/advanced/encryption) for details.
+`Chunk` | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
 `Connection` | An instance of `RabbitConnectionConfig`. It exposes the properties necessary to setup the connection with RabbitMQ.
 `Connection.HostName`, ...| All properties exposed by the `RabbitMQ.Client.ConnectionFactory`. See [RabbitMQ .NET/C# Client API Guide](https://www.rabbitmq.com/dotnet-api-guide.html) for details.
 `Queue` | An instance of `RabbitQueueConfig` that specifies the queue configuration.
@@ -87,7 +91,6 @@ Property | Description
 `Queue.IsExclusive` | Specifies whether the queue is used by only one connection and will be deleted when that connection closes. The default is `false`.
 `Queue.Arguments` | The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.
 `ConfirmationTimeout` | The maximum amount of time to wait for the message produce to be acknowledge before considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment. The default is a quite conservative `5 seconds`.
-`Chunk` | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
 
 ```c#
 new RabbitQueueProducerEndpoint("inventory-commands-queue")
@@ -114,7 +117,9 @@ Used for outbound endpoints that produce to an exchange, exposes the following p
 Property | Description
 :-- | :--
 `Name` | The name of the exchange. This is set in the constructor.
-`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. (see also [Custom Serializer]({{ site.baseurl }}/docs/advanced/chunking))
+`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. See [Serialization]({{ site.baseurl }}/docs/advanced/serialization) for details.
+`Encryption` | Enable end-to-end message encryption. See [Encryption]({{ site.baseurl }}/docs/advanced/encryption) for details.
+`Chunk` | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
 `Connection` | An instance of `RabbitConnectionConfig`. It exposes the properties necessary to setup the connection with RabbitMQ.
 `Connection.HostName`, ...| All properties exposed by the `RabbitMQ.Client.ConnectionFactory`. See [RabbitMQ .NET/C# Client API Guide](https://www.rabbitmq.com/dotnet-api-guide.html) for details.
 `Exchange` | An instance of `RabbitExchangeConfig` that specifies the exchange configuration.
@@ -123,7 +128,6 @@ Property | Description
 `Exchange.IsAutoDeleteEnabled` | Specifies whether the queue will be automatically deleted when the last consumer unsubscribes. The default is `false`.
 `Exchange.Arguments` | The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.
 `ConfirmationTimeout` | The maximum amount of time to wait for the message produce to be acknowledge before considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment. The default is a quite conservative `5 seconds`.
-`Chunk` | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
 
 ```c#
 new RabbitExchangeProducerEndpoint("order-events")
@@ -150,7 +154,8 @@ Used for inbound endpoints that consume directly from a queue, exposes the follo
 Property | Description
 :-- | :--
 `Name` | The name of the queue. This is set in the constructor.
-`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. (see also [Custom Serializer]({{ site.baseurl }}/docs/advanced/chunking))
+`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. See [Serialization]({{ site.baseurl }}/docs/advanced/serialization) for details.
+`Encryption` | Enable end-to-end message encryption. See [Encryption]({{ site.baseurl }}/docs/advanced/encryption) for details.
 `Connection` | An instance of `RabbitConnectionConfig`. It exposes the properties necessary to setup the connection with RabbitMQ.
 `Connection.HostName`, ...| All properties exposed by the `RabbitMQ.Client.ConnectionFactory`. See [RabbitMQ .NET/C# Client API Guide](https://www.rabbitmq.com/dotnet-api-guide.html) for details.
 `Queue` | An instance of `RabbitQueueConfig` that specifies the queue configuration.
@@ -187,7 +192,8 @@ Used for inbound endpoints that consume from an exchange, exposes the following 
 Property | Description
 :-- | :--
 `Name` | The name of the exchange. This is set in the constructor.
-`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. (see also [Custom Serializer]({{ site.baseurl }}/docs/advanced/chunking))
+`Serializer` | The `IMessageSerializer` to be used to deserialize the messages. The default is a `JsonMessageSerializer` using UTF-8 encoding. See [Serialization]({{ site.baseurl }}/docs/advanced/serialization) for details.
+`Encryption` | Enable end-to-end message encryption. See [Encryption]({{ site.baseurl }}/docs/advanced/encryption) for details.
 `Connection` | An instance of `RabbitConnectionConfig`. It exposes the properties necessary to setup the connection with RabbitMQ.
 `Connection.HostName`, ...| All properties exposed by the `RabbitMQ.Client.ConnectionFactory`. See [RabbitMQ .NET/C# Client API Guide](https://www.rabbitmq.com/dotnet-api-guide.html) for details.
 `Exchange` | An instance of `RabbitExchangeConfig` that specifies the exchange configuration.
@@ -203,7 +209,6 @@ Property | Description
 `Queue.Arguments` | The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.
 `RoutingKey` | The routing key (aka binding key) to be used to bind with the exchange.
 `ConfirmationTimeout` | The maximum amount of time to wait for the message produce to be acknowledge before considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment. The default is a quite conservative `5 seconds`.
-`Chunk` | Enable chunking to efficiently deal with large messages. See [Chunking]({{ site.baseurl }}/docs/advanced/chunking) for details.
 `AcknowledgeEach` | Defines the number of message processed before sending the acknowledgment to the server. The most reliable level is 1 but it reduces throughput.
 `PrefetchSize` | Defines the QoS prefetch size parameter for the consumer. See [RabbitMQ Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) documentation for details.
 `PrefetchCount` | Defines the QoS prefetch count parameter for the consumer. See [RabbitMQ Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) documentation for details.
