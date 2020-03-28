@@ -3,7 +3,6 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Serialization
 {
@@ -14,7 +13,7 @@ namespace Silverback.Messaging.Serialization
     {
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            ((OutboundEnvelope) context.Envelope).RawMessage =
+            context.Envelope.RawMessage =
                 await context.Envelope.Endpoint.Serializer.SerializeAsync(
                     context.Envelope.Message,
                     context.Envelope.Headers,

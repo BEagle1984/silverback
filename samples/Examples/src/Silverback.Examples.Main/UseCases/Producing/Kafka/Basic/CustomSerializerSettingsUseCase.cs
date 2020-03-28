@@ -30,7 +30,15 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Basic
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(CreateEndpoint("silverback-examples-custom-serializer")));
+                .AddOutbound<IIntegrationEvent>(
+                    new KafkaProducerEndpoint("silverback-examples-custom-serializer")
+                    {
+                        Serializer = GetSerializer(),
+                        Configuration = new KafkaProducerConfig
+                        {
+                            BootstrapServers = "PLAINTEXT://localhost:9092"
+                        }
+                    }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
@@ -39,16 +47,6 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Basic
             await publisher.PublishAsync(new CustomSerializedIntegrationEvent
                 { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
         }
-
-        private KafkaProducerEndpoint CreateEndpoint(string name) =>
-            new KafkaProducerEndpoint(name)
-            {
-                Serializer = GetSerializer(),
-                Configuration = new KafkaProducerConfig
-                {
-                    BootstrapServers = "PLAINTEXT://localhost:9092"
-                }
-            };
 
         private static JsonMessageSerializer GetSerializer()
         {

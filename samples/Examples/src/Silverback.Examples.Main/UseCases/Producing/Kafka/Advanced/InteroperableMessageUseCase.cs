@@ -36,21 +36,22 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            await broker.GetProducer(CreateEndpoint("silverback-examples-legacy-messages"))
-                .ProduceAsync(new LegacyMessage { Content = "LEGACY - " + DateTime.Now.ToString("HH:mm:ss.fff") });
-        }
-
-        private KafkaProducerEndpoint CreateEndpoint(string name) =>
-            new KafkaProducerEndpoint(name)
+            var producer = broker.GetProducer(new KafkaProducerEndpoint("silverback-examples-legacy-messages")
             {
                 Serializer = new LegacyMessageSerializer(),
                 Configuration = new KafkaProducerConfig
                 {
                     BootstrapServers = "PLAINTEXT://localhost:9092"
                 }
-            };
+            });
 
-        public class LegacyMessageSerializer : IMessageSerializer
+            await producer.ProduceAsync(new LegacyMessage
+            {
+                Content = "LEGACY - " + DateTime.Now.ToString("HH:mm:ss.fff")
+            });
+        }
+
+        private class LegacyMessageSerializer : IMessageSerializer
         {
             private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
             {

@@ -30,16 +30,14 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
-                .AddOutbound<SampleBatchProcessedEvent>(CreateEndpoint()));
-
-        private KafkaProducerEndpoint CreateEndpoint() =>
-            new KafkaProducerEndpoint("silverback-examples-batch")
-            {
-                Configuration = new KafkaProducerConfig
-                {
-                    BootstrapServers = "PLAINTEXT://localhost:9092"
-                }
-            };
+                .AddOutbound<SampleBatchProcessedEvent>(
+                    new KafkaProducerEndpoint("silverback-examples-batch")
+                    {
+                        Configuration = new KafkaProducerConfig
+                        {
+                            BootstrapServers = "PLAINTEXT://localhost:9092"
+                        }
+                    }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

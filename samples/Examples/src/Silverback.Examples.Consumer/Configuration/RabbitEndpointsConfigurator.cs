@@ -5,7 +5,6 @@ using RabbitMQ.Client;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
-using Silverback.Messaging.Serialization;
 
 namespace Silverback.Examples.Consumer.Configuration
 {
@@ -19,75 +18,55 @@ namespace Silverback.Examples.Consumer.Configuration
         }
 
         public void Configure(IEndpointsConfigurationBuilder builder) => builder
-            .AddInbound(
-                CreateQueueEndpoint("silverback-examples-events-queue"),
-                typeof(LoggedInboundConnector))
-            .AddInbound(
-                CreateExchangeEndpoint("silverback-examples-events-fanout", ExchangeType.Fanout),
-                typeof(LoggedInboundConnector))
-            .AddInbound(
-                CreateExchangeEndpoint("silverback-examples-events-topic",
-                    ExchangeType.Topic,
-                    routingKey: "interesting.*.event"),
-                typeof(LoggedInboundConnector));
-
-        private RabbitQueueConsumerEndpoint CreateQueueEndpoint(
-            string name,
-            bool durable = true,
-            bool exclusive = false,
-            bool autoDelete = false,
-            IMessageSerializer messageSerializer = null)
-        {
-            var endpoint = new RabbitQueueConsumerEndpoint(name)
-            {
-                Connection = GetConnectionConfig(),
-                Queue = new RabbitQueueConfig
+            .AddInbound<LoggedInboundConnector>(
+                new RabbitQueueConsumerEndpoint("silverback-examples-events-queue")
                 {
-                    IsDurable = durable,
-                    IsExclusive = exclusive,
-                    IsAutoDeleteEnabled = autoDelete
-                },
-                AcknowledgeEach = 2
-            };
-
-            if (messageSerializer != null)
-                endpoint.Serializer = messageSerializer;
-
-            return endpoint;
-        }
-
-        private IConsumerEndpoint CreateExchangeEndpoint(
-            string name,
-            string exchangeType,
-            bool durable = true,
-            bool autoDelete = false,
-            string routingKey = null,
-            IMessageSerializer messageSerializer = null)
-        {
-            var endpoint = new RabbitExchangeConsumerEndpoint(name)
-            {
-                Connection = GetConnectionConfig(),
-                QueueName = $"{_app.ConsumerGroupName}.{name}",
-                RoutingKey = routingKey,
-                Queue = new RabbitQueueConfig
+                    Connection = GetConnectionConfig(),
+                    Queue = new RabbitQueueConfig
+                    {
+                        IsDurable = true,
+                        IsExclusive = false,
+                        IsAutoDeleteEnabled = false
+                    },
+                    AcknowledgeEach = 2
+                })
+            .AddInbound<LoggedInboundConnector>(
+                new RabbitExchangeConsumerEndpoint("silverback-examples-events-fanout")
                 {
-                    IsDurable = durable,
-                    IsExclusive = false,
-                    IsAutoDeleteEnabled = autoDelete
-                },
-                Exchange = new RabbitExchangeConfig
+                    Connection = GetConnectionConfig(),
+                    QueueName = $"{_app.ConsumerGroupName}.silverback-examples-events-fanout",
+                    Queue = new RabbitQueueConfig
+                    {
+                        IsDurable = true,
+                        IsExclusive = false,
+                        IsAutoDeleteEnabled = false
+                    },
+                    Exchange = new RabbitExchangeConfig
+                    {
+                        IsDurable = true,
+                        IsAutoDeleteEnabled = false,
+                        ExchangeType = ExchangeType.Fanout
+                    }
+                })
+            .AddInbound<LoggedInboundConnector>(
+                new RabbitExchangeConsumerEndpoint("silverback-examples-events-topic")
                 {
-                    IsDurable = durable,
-                    IsAutoDeleteEnabled = autoDelete,
-                    ExchangeType = exchangeType
-                }
-            };
-
-            if (messageSerializer != null)
-                endpoint.Serializer = messageSerializer;
-
-            return endpoint;
-        }
+                    Connection = GetConnectionConfig(),
+                    QueueName = $"{_app.ConsumerGroupName}.silverback-examples-events-topic",
+                    RoutingKey = "interesting.*.event",
+                    Queue = new RabbitQueueConfig
+                    {
+                        IsDurable = true,
+                        IsExclusive = false,
+                        IsAutoDeleteEnabled = false
+                    },
+                    Exchange = new RabbitExchangeConfig
+                    {
+                        IsDurable = true,
+                        IsAutoDeleteEnabled = false,
+                        ExchangeType = ExchangeType.Topic
+                    }
+                });
 
         private static RabbitConnectionConfig GetConnectionConfig() => new RabbitConnectionConfig
         {

@@ -5,9 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Messaging.LargeMessages;
 
-namespace Silverback.Tests.Integration.TestTypes
+namespace Silverback.Messaging.LargeMessages
 {
     public class InMemoryChunkStore : TransactionalList<InMemoryStoredChunk>, IChunkStore
     {

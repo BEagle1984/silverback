@@ -11,7 +11,8 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int MessageIdInitializer = 200;
             public const int BrokerKeyHeaderInitializer = 300;
             public const int Serializer = 400;
-            public const int ChunkSplitter = 500;
+            public const int Encryptor = 500;
+            public const int ChunkSplitter = 600;
         }
 
         public static class Consumer
@@ -19,7 +20,8 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int Activity = 100;
             public const int InboundProcessor = 200;
             public const int ChunkAggregator = 300;
-            public const int Deserializer = 400;
+            public const int Decryptor = 400;
+            public const int Deserializer = 500;
         }
     }
 }

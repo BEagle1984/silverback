@@ -23,8 +23,8 @@ namespace Silverback.Messaging.Messages
         IEndpoint Endpoint { get; }
 
         /// <summary>
-        ///     Gets the serialized message body.
+        ///     Gets or sets the serialized message body.
         /// </summary>
-        byte[] RawMessage { get; }
+        byte[] RawMessage { get; set; }
     }
 }

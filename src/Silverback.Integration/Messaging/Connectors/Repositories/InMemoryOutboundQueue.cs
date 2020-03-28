@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         public Task Enqueue(IOutboundEnvelope envelope)
         {
             if (envelope.RawMessage == null)
-                ((OutboundEnvelope) envelope).RawMessage =
+                envelope.RawMessage =
                     envelope.Endpoint.Serializer.Serialize(
                         envelope.Message,
                         envelope.Headers,

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Subscribers;
@@ -72,6 +73,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
 
             public string Name { get; } = "";
             public IMessageSerializer Serializer { get; } = new JsonMessageSerializer();
+            public EncryptionSettings Encryption { get; } = null;
 
             public string GetUniqueConsumerGroupName() => Name;
         }

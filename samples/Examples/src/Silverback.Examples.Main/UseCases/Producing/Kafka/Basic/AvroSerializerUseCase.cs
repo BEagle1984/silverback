@@ -30,7 +30,25 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Basic
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
-                .AddOutbound<AvroMessage>(CreateEndpoint("silverback-examples-avro")));
+                .AddOutbound<AvroMessage>(
+                    new KafkaProducerEndpoint("silverback-examples-avro")
+                    {
+                        Serializer = new AvroMessageSerializer<AvroMessage>
+                        {
+                            SchemaRegistryConfig = new SchemaRegistryConfig
+                            {
+                                Url = "localhost:8081"
+                            },
+                            AvroSerializerConfig = new AvroSerializerConfig
+                            {
+                                AutoRegisterSchemas = true
+                            }
+                        },
+                        Configuration = new KafkaProducerConfig
+                        {
+                            BootstrapServers = "PLAINTEXT://localhost:9092"
+                        }
+                    }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
@@ -42,25 +60,5 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Basic
                 content = DateTime.Now.ToString("HH:mm:ss.fff")
             });
         }
-
-        private KafkaProducerEndpoint CreateEndpoint(string name) =>
-            new KafkaProducerEndpoint(name)
-            {
-                Serializer = new AvroMessageSerializer<AvroMessage>
-                {
-                    SchemaRegistryConfig = new SchemaRegistryConfig
-                    {
-                        Url = "localhost:8081"
-                    },
-                    AvroSerializerConfig = new AvroSerializerConfig
-                    {
-                        AutoRegisterSchemas = true
-                    }
-                },
-                Configuration = new KafkaProducerConfig
-                {
-                    BootstrapServers = "PLAINTEXT://localhost:9092"
-                }
-            };
     }
 }

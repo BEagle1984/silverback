@@ -27,7 +27,9 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             typeof(SameProcessUseCase),
             typeof(MultipleConsumerGroupsUseCase),
             typeof(ProduceByteArrayUseCase),
-            typeof(ProduceEmptyMessageUseCase)
+            typeof(ProduceEmptyMessageUseCase),
+            typeof(EncryptionUseCase),
+            typeof(EncryptionAvroUseCase)
         };
     }
 }

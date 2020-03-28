@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Silverback.EventSourcing.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Integration.Tests.E2E")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Configuration")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Configuration.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.InMemory")]

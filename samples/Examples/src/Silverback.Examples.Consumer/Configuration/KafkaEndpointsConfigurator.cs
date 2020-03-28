@@ -5,11 +5,13 @@ using System;
 using System.Linq;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry;
+using Silverback.Examples.Common;
 using Silverback.Examples.Common.Messages;
 using Silverback.Examples.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
@@ -25,11 +27,45 @@ namespace Silverback.Examples.Consumer.Configuration
         }
 
         public void Configure(IEndpointsConfigurationBuilder builder) => builder
-            .AddInbound(CreateConsumerEndpoint("silverback-examples-events",
-                "silverback-examples-events-chunked", "silverback-examples-events-sp"))
-            .AddInbound(CreateConsumerEndpoint("silverback-examples-multiple-groups", $"__group-1"))
-            .AddInbound(CreateConsumerEndpoint("silverback-examples-multiple-groups", $"__group-2"))
-            .AddInbound(CreateConsumerEndpoint("silverback-examples-batch"),
+            .AddInbound(new KafkaConsumerEndpoint(
+                "silverback-examples-events",
+                "silverback-examples-events-chunked",
+                "silverback-examples-events-sp")
+            {
+                Configuration = new KafkaConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
+                    GroupId = _app.ConsumerGroupName,
+                    AutoOffsetReset = AutoOffsetReset.Earliest
+                }
+            })
+            .AddInbound(new KafkaConsumerEndpoint("silverback-examples-multiple-groups")
+            {
+                Configuration = new KafkaConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
+                    GroupId = "__group-1",
+                    AutoOffsetReset = AutoOffsetReset.Earliest
+                }
+            })
+            .AddInbound(new KafkaConsumerEndpoint("silverback-examples-multiple-groups")
+            {
+                Configuration = new KafkaConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
+                    GroupId = "__group-2",
+                    AutoOffsetReset = AutoOffsetReset.Earliest
+                }
+            })
+            .AddInbound(new KafkaConsumerEndpoint("silverback-examples-batch")
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://localhost:9092",
+                        GroupId = _app.ConsumerGroupName,
+                        AutoOffsetReset = AutoOffsetReset.Earliest
+                    }
+                },
                 settings: new InboundConnectorSettings
                 {
                     Batch = new Messaging.Batch.BatchSettings
@@ -39,7 +75,15 @@ namespace Silverback.Examples.Consumer.Configuration
                     },
                     Consumers = 2
                 })
-            .AddInbound(CreateConsumerEndpoint("silverback-examples-error-events"), policy => policy
+            .AddInbound(new KafkaConsumerEndpoint("silverback-examples-error-events")
+            {
+                Configuration = new KafkaConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
+                    GroupId = _app.ConsumerGroupName,
+                    AutoOffsetReset = AutoOffsetReset.Earliest
+                }
+            }, policy => policy
                 .Chain(
                     policy
                         .Retry(TimeSpan.FromMilliseconds(500))
@@ -79,48 +123,77 @@ namespace Silverback.Examples.Consumer.Configuration
                             Source = messages.First().Endpoint.Name,
                             Destination = "silverback-examples-events"
                         })))
-            .AddInbound(CreateConsumerEndpoint("silverback-examples-custom-serializer",
-                GetCustomSerializer()))
-            .AddInbound(CreateConsumerEndpoint("silverback-examples-avro",
-                GetAvroSerializer()))
-            // Special inbound (not logged)
-            .AddInbound<InboundConnector>(CreateConsumerEndpoint("silverback-examples-legacy-messages",
-                new JsonMessageSerializer<LegacyMessage>()
-                {
-                    Encoding = MessageEncoding.ASCII
-                }));
-
-        private KafkaConsumerEndpoint CreateConsumerEndpoint(
-            string name,
-            IMessageSerializer messageSerializer = null) =>
-            CreateConsumerEndpoint(new[] { name }, messageSerializer);
-
-        private KafkaConsumerEndpoint CreateConsumerEndpoint(params string[] names) =>
-            CreateConsumerEndpoint(names, null);
-
-        private KafkaConsumerEndpoint CreateConsumerEndpoint(string name, string groupId) =>
-            CreateConsumerEndpoint(new[] { name }, null, groupId);
-
-        private KafkaConsumerEndpoint CreateConsumerEndpoint(
-            string[] names,
-            IMessageSerializer messageSerializer,
-            string groupId = null)
-        {
-            var endpoint = new KafkaConsumerEndpoint(names)
+            .AddInbound(new KafkaConsumerEndpoint("silverback-examples-custom-serializer")
             {
                 Configuration = new KafkaConsumerConfig
                 {
                     BootstrapServers = "PLAINTEXT://localhost:9092",
-                    GroupId = groupId ?? _app.ConsumerGroupName,
-                    AutoOffsetReset = AutoOffsetReset.Earliest
+                    GroupId = _app.ConsumerGroupName,
+                    AutoOffsetReset = AutoOffsetReset.Earliest,
+                },
+                Serializer = GetCustomSerializer()
+            })
+            .AddInbound(new KafkaConsumerEndpoint("silverback-examples-custom-serializer")
+            {
+                Configuration = new KafkaConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
+                    GroupId = _app.ConsumerGroupName,
+                    AutoOffsetReset = AutoOffsetReset.Earliest,
+                },
+                Serializer = GetCustomSerializer()
+            })
+            .AddInbound(new KafkaConsumerEndpoint("silverback-examples-avro")
+            {
+                Configuration = new KafkaConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
+                    GroupId = _app.ConsumerGroupName,
+                    AutoOffsetReset = AutoOffsetReset.Earliest,
+                },
+                Serializer = GetAvroSerializer()
+            })
+            .AddInbound(new KafkaConsumerEndpoint("silverback-examples-encrypted")
+            {
+                Configuration = new KafkaConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
+                    GroupId = _app.ConsumerGroupName,
+                    AutoOffsetReset = AutoOffsetReset.Earliest,
+                },
+                Encryption = new SymmetricEncryptionSettings
+                {
+                    Key = Constants.AesEncryptionKey
                 }
-            };
-
-            if (messageSerializer != null)
-                endpoint.Serializer = messageSerializer;
-
-            return endpoint;
-        }
+            })
+            .AddInbound(new KafkaConsumerEndpoint("silverback-examples-avro-encrypted")
+            {
+                Configuration = new KafkaConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
+                    GroupId = _app.ConsumerGroupName,
+                    AutoOffsetReset = AutoOffsetReset.Earliest,
+                },
+                Serializer = GetAvroSerializer(),
+                Encryption = new SymmetricEncryptionSettings
+                {
+                    Key = Constants.AesEncryptionKey
+                }
+            })
+            // Special inbound (not logged)
+            .AddInbound<InboundConnector>(new KafkaConsumerEndpoint("silverback-examples-legacy-messages")
+            {
+                Configuration = new KafkaConsumerConfig
+                {
+                    BootstrapServers = "PLAINTEXT://localhost:9092",
+                    GroupId = _app.ConsumerGroupName,
+                    AutoOffsetReset = AutoOffsetReset.Earliest,
+                },
+                Serializer = new JsonMessageSerializer<LegacyMessage>()
+                {
+                    Encoding = MessageEncoding.ASCII
+                }
+            });
 
         private static IMessageSerializer GetCustomSerializer() =>
             new JsonMessageSerializer

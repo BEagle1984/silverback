@@ -25,8 +25,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Basic
             .UseModel()
             .WithConnectionToMessageBroker(options => options.AddKafka());
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
-        {
+        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
                 {
@@ -35,7 +34,6 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Basic
                         BootstrapServers = "PLAINTEXT://localhost:9092"
                     }
                 }));
-        }
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

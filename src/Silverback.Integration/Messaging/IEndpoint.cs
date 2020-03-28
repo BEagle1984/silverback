@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging
@@ -17,6 +18,19 @@ namespace Silverback.Messaging
         ///     the messages being produced or consumed.
         /// </summary>
         IMessageSerializer Serializer { get; }
+
+        /// <summary>
+        ///     <para>
+        ///         Gets the encryption settings. This optional settings enables the end-to-end message encryption.
+        ///     </para>
+        ///     <para>
+        ///         When enabled the messages are transparently encrypted by the producer and decrypted by the consumer.
+        ///     </para>
+        ///     <para>
+        ///         Set it to <c>null</c> (default) to disable this feature.
+        ///     </para>
+        /// </summary>
+        EncryptionSettings Encryption { get; }
 
         /// <summary>
         ///     Validates the endpoint configuration and throws an <see cref="EndpointConfigurationException" />

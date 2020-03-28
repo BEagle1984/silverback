@@ -55,10 +55,10 @@ namespace Silverback.Examples.Main.Menu
                     {
                         case ICategory _:
                         case IUseCase _:
-                            Console.Write($"{i + 1}. ");
+                            Console.Write($"{i + 1}.".PadLeft(3) + " ");
                             break;
                         case IBackMenu _:
-                            Console.Write("<  ");
+                            Console.Write(" <  ");
                             break;
                     }
                 }
@@ -79,16 +79,16 @@ namespace Silverback.Examples.Main.Menu
             switch (option)
             {
                 case BackMenu _:
-                    Console.Write("<- ");
+                    Console.Write("<-  ");
                     break;
                 case ExitMenu _:
-                    Console.Write("<- ");
+                    Console.Write("<-  ");
                     break;
                 case ICategory _:
-                    Console.Write("-> ");
+                    Console.Write("->  ");
                     break;
                 case IUseCase _:
-                    Console.Write(">> ");
+                    Console.Write(">>  ");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

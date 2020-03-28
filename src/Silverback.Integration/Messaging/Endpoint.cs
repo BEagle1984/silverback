@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
+using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -25,6 +26,22 @@ namespace Silverback.Messaging
         /// </summary>
         public IMessageSerializer Serializer { get; set; } = DefaultSerializer;
 
+        /// <summary>
+        ///     <para>
+        ///         Gets or sets the encryption settings. This optional settings enables the end-to-end message encryption.
+        ///     </para>
+        ///     <para>
+        ///         When enabled the messages are transparently encrypted by the producer and decrypted by the consumer.
+        ///     </para>
+        ///     <para>
+        ///         Set it to <c>null</c> (default) to disable this feature.
+        ///     </para>
+        /// </summary>
+        public EncryptionSettings Encryption { get; set; }
+
+        /// <summary>
+        ///     Gets the default serializer instance (a <see cref="JsonMessageSerializer" /> with default settings).
+        /// </summary>
         public static IMessageSerializer DefaultSerializer { get; } = new JsonMessageSerializer();
 
         /// <inheritdoc cref="IEndpoint" />
@@ -35,6 +52,8 @@ namespace Silverback.Messaging
 
             if (Serializer == null)
                 throw new EndpointConfigurationException("Serializer cannot be null");
+
+            Encryption?.Validate();
         }
 
         #region Equality

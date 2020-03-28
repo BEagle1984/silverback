@@ -27,3 +27,6 @@ public class SubscribingService : ISubscriber
     }
 }
 ```
+
+**Note:** Subscribing to the non-generic `IInboundEnvelope` or `IInboundRawEnvelope` it is possible to catch even the messages with an empty body.
+{: .notice--info}
