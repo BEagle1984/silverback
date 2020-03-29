@@ -12,16 +12,18 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Behaviors
 {
-    public class OutboundProducingBehavior : IBehavior, ISorted
+    /// <summary>
+    ///     Produces the <see cref="IOutboundEnvelope{TMessage}" /> through the correct
+    ///     <see cref="IOutboundConnector" /> instance.
+    /// </summary>
+    public class OutboundProducerBehavior : IBehavior, ISorted
     {
         private readonly IEnumerable<IOutboundConnector> _outboundConnectors;
 
-        public OutboundProducingBehavior(IServiceProvider serviceProvider)
+        public OutboundProducerBehavior(IServiceProvider serviceProvider)
         {
             _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>();
         }
-
-        public int SortIndex { get; } = 200;
 
         public async Task<IReadOnlyCollection<object>> Handle(
             IReadOnlyCollection<object> messages,
@@ -34,5 +36,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
 
             return await next(messages);
         }
+
+        public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundProducer;
     }
 }

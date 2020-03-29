@@ -6,7 +6,7 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
-    public class RawInboundEnvelope : RawBrokerEnvelope, IRawInboundEnvelope
+    internal class RawInboundEnvelope : RawBrokerEnvelope, IRawInboundEnvelope
     {
         public RawInboundEnvelope(
             byte[] rawMessage,
@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Messages
         }
 
         public new IConsumerEndpoint Endpoint => (IConsumerEndpoint) base.Endpoint;
-        
+
         public string ActualEndpointName { get; }
     }
 }

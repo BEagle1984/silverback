@@ -3,7 +3,7 @@
 
 namespace Silverback.Messaging.Messages
 {
-    public interface IOutboundEnvelope : IBrokerEnvelope
+    public interface IOutboundEnvelope : IBrokerEnvelope, IRawOutboundEnvelope
     {
         /// <summary>
         ///     Gets the destination endpoint.

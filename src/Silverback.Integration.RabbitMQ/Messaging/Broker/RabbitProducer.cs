@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -28,12 +29,11 @@ namespace Silverback.Messaging.Broker
         public RabbitProducer(
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,
-            MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
             IRabbitConnectionFactory connectionFactory,
             ILogger<Producer> logger,
             MessageLogger messageLogger)
-            : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
+            : base(broker, endpoint, behaviors, logger, messageLogger)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;
@@ -42,11 +42,11 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Producer" />
-        protected override IOffset Produce(IRawOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsync(envelope));
+        protected override IOffset ProduceImpl(IRawOutboundEnvelope envelope) =>
+            AsyncHelper.RunSynchronously(() => ProduceAsyncImpl(envelope));
 
         /// <inheritdoc cref="Producer" />
-        protected override Task<IOffset> ProduceAsync(IRawOutboundEnvelope envelope)
+        protected override Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope)
         {
             var queuedMessage = new QueuedMessage(envelope);
 

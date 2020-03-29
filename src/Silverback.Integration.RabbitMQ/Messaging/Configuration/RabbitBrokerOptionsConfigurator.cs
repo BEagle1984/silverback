@@ -12,6 +12,6 @@ namespace Silverback.Messaging.Configuration
         public void Configure(IBrokerOptionsBuilder options) =>
             options.SilverbackBuilder.Services
                 .AddSingleton<IRabbitConnectionFactory, RabbitConnectionFactory>()
-                .AddSingletonBehavior<RabbitRoutingKeyBehavior>();
+                .AddSingletonBrokerBehavior<RabbitRoutingKeyInitializerProducerBehavior>();
     }
 }

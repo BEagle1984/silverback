@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
 {
-    public class RabbitRoutingKeyBehaviorTests
+    public class RabbitRoutingKeyInitializerProducerBehaviorTests
     {
         [Fact]
         public void Handle_NoRoutingKeyAttribute_KeyHeaderIsNotSet()
@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 null,
                 new RabbitExchangeProducerEndpoint("test-endpoint"));
 
-            new RabbitRoutingKeyBehavior().Handle(new[] { envelope }, Task.FromResult);
+            new RabbitRoutingKeyInitializerProducerBehavior().Handle(envelope , _ => Task.CompletedTask);
 
             envelope.Headers.Should().NotContain(
                 h => h.Key == "x-rabbit-routing-key");
@@ -37,7 +37,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
         [Fact]
         public void Handle_SingleRoutingKeyAttribute_KeyHeaderIsSet()
         {
-            var envelope1 = new OutboundEnvelope<RoutingKeyMessage>(
+            var envelope = new OutboundEnvelope<RoutingKeyMessage>(
                 new RoutingKeyMessage
                 {
                     Id = Guid.NewGuid(),
@@ -47,29 +47,16 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 },
                 null,
                 new RabbitExchangeProducerEndpoint("test-endpoint"));
-            var envelope2 = new OutboundEnvelope<RoutingKeyMessage>(
-                new RoutingKeyMessage
-                {
-                    Id = Guid.NewGuid(),
-                    One = "a",
-                    Two = "b",
-                    Three = "c"
-                },
-                null,
-                new RabbitExchangeProducerEndpoint("test-endpoint"));
 
-            new RabbitRoutingKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
+            new RabbitRoutingKeyInitializerProducerBehavior().Handle(envelope, _ => Task.CompletedTask);
 
-            envelope1.Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-rabbit-routing-key", "1"));
-            envelope2.Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-rabbit-routing-key", "a"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-rabbit-routing-key", "1"));
         }
 
         [Fact]
         public void Handle_MultipleRoutingKeyAttributes_KeyHeaderIsSet()
         {
-            var envelope1 = new OutboundEnvelope<MultipleRoutingKeyAttributesMessage>(
+            var envelope = new OutboundEnvelope<MultipleRoutingKeyAttributesMessage>(
                 new MultipleRoutingKeyAttributesMessage
                 {
                     Id = Guid.NewGuid(),
@@ -79,19 +66,9 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 },
                 null,
                 new RabbitExchangeProducerEndpoint("test-endpoint"));
-            var envelope2 = new OutboundEnvelope<MultipleRoutingKeyAttributesMessage>(
-                new MultipleRoutingKeyAttributesMessage
-                {
-                    Id = Guid.NewGuid(),
-                    One = "a",
-                    Two = "b",
-                    Three = "c"
-                },
-                null,
-                new RabbitExchangeProducerEndpoint("test-endpoint"));
 
             Func<Task> act = () =>
-                new RabbitRoutingKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
+                new RabbitRoutingKeyInitializerProducerBehavior().Handle(envelope , _ => Task.CompletedTask);
 
             act.Should().Throw<InvalidOperationException>();
         }

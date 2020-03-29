@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 

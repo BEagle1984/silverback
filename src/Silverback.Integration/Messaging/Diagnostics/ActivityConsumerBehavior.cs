@@ -3,7 +3,7 @@
 
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Diagnostics

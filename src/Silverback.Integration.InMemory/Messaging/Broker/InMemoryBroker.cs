@@ -4,26 +4,24 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
     public class InMemoryBroker : Broker<IProducerEndpoint, IConsumerEndpoint>
     {
-        private readonly MessageIdProvider _messageIdProvider;
         private readonly MessageLogger _messageLogger;
 
         private readonly ConcurrentDictionary<string, InMemoryTopic> _topics =
             new ConcurrentDictionary<string, InMemoryTopic>();
 
         public InMemoryBroker(
-            MessageIdProvider messageIdProvider,
             IEnumerable<IBrokerBehavior> behaviors,
             ILoggerFactory loggerFactory,
             MessageLogger messageLogger)
             : base(behaviors, loggerFactory)
         {
-            _messageIdProvider = messageIdProvider;
             _messageLogger = messageLogger;
         }
 
@@ -37,7 +35,6 @@ namespace Silverback.Messaging.Broker
             new InMemoryProducer(
                 this,
                 endpoint,
-                _messageIdProvider,
                 behaviors,
                 LoggerFactory.CreateLogger<InMemoryProducer>(),
                 _messageLogger);

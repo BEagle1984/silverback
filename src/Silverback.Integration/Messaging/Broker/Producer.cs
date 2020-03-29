@@ -6,16 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
     public abstract class Producer : IProducer
     {
-        private readonly MessageIdProvider _messageIdProvider;
         private readonly IReadOnlyCollection<IProducerBehavior> _behaviors;
         private readonly MessageLogger _messageLogger;
         private readonly ILogger<Producer> _logger;
@@ -23,13 +21,11 @@ namespace Silverback.Messaging.Broker
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
-            MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
             ILogger<Producer> logger,
             MessageLogger messageLogger)
         {
-            _messageIdProvider = messageIdProvider ?? throw new ArgumentNullException(nameof(messageIdProvider));
-            _behaviors = (IReadOnlyCollection<IProducerBehavior>) behaviors?.ToList() ??
+            _behaviors = (IReadOnlyCollection<IProducerBehavior>) behaviors?.SortBySortIndex().ToList() ??
                          Array.Empty<IProducerBehavior>();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _messageLogger = messageLogger ?? throw new ArgumentNullException(nameof(messageLogger));
@@ -52,44 +48,30 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IProducer" />
         public void Produce(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
-            GetRawEnvelopes(message, headers, false).Result
-                .ForEach(envelope =>
-                    ExecutePipeline(_behaviors, envelope, finalEnvelope =>
-                    {
-                        ((RawOutboundEnvelope)finalEnvelope).Offset = Produce(finalEnvelope);
-                        return Task.CompletedTask;
-                    }).Wait());
+            Produce(new OutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc cref="IProducer" />
-        public async Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
-            await (await GetRawEnvelopes(message, headers, true))
-                .ForEachAsync(async envelope =>
-                    await ExecutePipeline(_behaviors, envelope, async finalEnvelope =>
-                        ((RawOutboundEnvelope)finalEnvelope).Offset = await ProduceAsync(finalEnvelope)));
+        public Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
+            ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
 
-        private async Task<IEnumerable<RawOutboundEnvelope>> GetRawEnvelopes(
-            object content,
-            IEnumerable<MessageHeader> headers,
-            bool executeAsync)
-        {
-            var headersCollection = new MessageHeaderCollection(headers);
-            _messageIdProvider.EnsureKeyIsInitialized(content, headersCollection);
-            var rawMessage = new RawOutboundEnvelope(headersCollection, Endpoint);
+        /// <inheritdoc cref="IProducer" />
+        public void Produce(IOutboundEnvelope envelope) =>
+            AsyncHelper.RunSynchronously(() =>
+                ExecutePipeline(_behaviors, envelope, finalEnvelope =>
+                {
+                    ((RawOutboundEnvelope) finalEnvelope).Offset = ProduceImpl(finalEnvelope);
+                    return Task.CompletedTask;
+                }));
 
-            if (executeAsync)
-                rawMessage.RawMessage = await Endpoint.Serializer
-                    .SerializeAsync(content, rawMessage.Headers, new MessageSerializationContext(Endpoint));
-            else
-                rawMessage.RawMessage = Endpoint.Serializer
-                    .Serialize(content, rawMessage.Headers, new MessageSerializationContext(Endpoint));
-
-            return ChunkProducer.ChunkIfNeeded(rawMessage);
-        }
+        /// <inheritdoc cref="IProducer" />
+        public async Task ProduceAsync(IOutboundEnvelope envelope) =>
+            await ExecutePipeline(_behaviors, envelope, async finalEnvelope =>
+                ((RawOutboundEnvelope) finalEnvelope).Offset = await ProduceAsyncImpl(finalEnvelope));
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IProducerBehavior> behaviors,
-            IRawOutboundEnvelope envelope,
-            RawOutboundEnvelopeHandler finalAction)
+            IOutboundEnvelope envelope,
+            OutboundEnvelopeHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
@@ -108,14 +90,14 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="envelope">The <see cref="RawBrokerEnvelope" /> instance containing body, headers, endpoint, etc.</param>
         /// <returns>The message offset.</returns>
-        protected abstract IOffset Produce(IRawOutboundEnvelope envelope);
+        protected abstract IOffset ProduceImpl(IRawOutboundEnvelope envelope);
 
         /// <summary>
         ///     Publishes the specified message and returns its offset.
         /// </summary>
         /// <param name="envelope">The <see cref="RawBrokerEnvelope" /> instance containing body, headers, endpoint, etc.</param>
         /// <returns>The message offset.</returns>
-        protected abstract Task<IOffset> ProduceAsync(IRawOutboundEnvelope envelope);
+        protected abstract Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope);
     }
 
     public abstract class Producer<TBroker, TEndpoint> : Producer
@@ -125,11 +107,10 @@ namespace Silverback.Messaging.Broker
         protected Producer(
             TBroker broker,
             TEndpoint endpoint,
-            MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
             ILogger<Producer> logger,
             MessageLogger messageLogger)
-            : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
+            : base(broker, endpoint, behaviors, logger, messageLogger)
         {
         }
 

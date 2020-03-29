@@ -17,7 +17,6 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
     public class RabbitBrokerTests
     {
         private readonly RabbitBroker _broker = new RabbitBroker(
-            new MessageIdProvider(new[] { new DefaultPropertiesMessageIdProvider() }),
             Enumerable.Empty<IBrokerBehavior>(),
             Substitute.For<IRabbitConnectionFactory>(),
             NullLoggerFactory.Instance,

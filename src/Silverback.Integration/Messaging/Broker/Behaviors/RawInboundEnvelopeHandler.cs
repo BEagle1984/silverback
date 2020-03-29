@@ -4,7 +4,7 @@
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Broker
+namespace Silverback.Messaging.Broker.Behaviors
 {
     public delegate Task RawInboundEnvelopeHandler(IRawInboundEnvelope envelope);
 }

@@ -21,7 +21,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
     [Collection("StaticInMemory")]
     public class OutboundProducingBehaviorTests
     {
-        private readonly OutboundProducingBehavior _behavior;
+        private readonly OutboundProducerBehavior _behavior;
         private readonly InMemoryOutboundQueue _outboundQueue;
         private readonly TestBroker _broker;
 
@@ -42,8 +42,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _behavior = (OutboundProducingBehavior) serviceProvider.GetServices<IBehavior>()
-                .First(s => s is OutboundProducingBehavior);
+            _behavior = (OutboundProducerBehavior) serviceProvider.GetServices<IBehavior>()
+                .First(s => s is OutboundProducerBehavior);
             _broker = serviceProvider.GetRequiredService<TestBroker>();
 
             InMemoryOutboundQueue.Clear();

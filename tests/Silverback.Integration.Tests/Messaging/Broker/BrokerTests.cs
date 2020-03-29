@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -14,6 +15,18 @@ namespace Silverback.Tests.Integration.Messaging.Broker
     public class BrokerTests
     {
         private readonly TestBroker _broker = new TestBroker();
+
+        public BrokerTests()
+        {
+            var services = new ServiceCollection();
+
+            services.AddSilverback().WithConnectionToMessageBroker(options => options
+                .AddBroker<TestBroker>());
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            _broker = serviceProvider.GetRequiredService<TestBroker>();
+        }
 
         [Fact]
         public void GetProducer_SomeEndpoint_ProducerIsReturned()

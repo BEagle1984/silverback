@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker

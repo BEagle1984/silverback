@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
@@ -22,7 +23,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
         public OutboundConnectorTests()
         {
-            _broker = new TestBroker();
+            var services = new ServiceCollection();
+
+            services.AddSilverback().WithConnectionToMessageBroker(options => options
+                .AddBroker<TestBroker>());
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            _broker = serviceProvider.GetRequiredService<TestBroker>();
             _connector = new OutboundConnector(new BrokerCollection(new[] { _broker }));
         }
 

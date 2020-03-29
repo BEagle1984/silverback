@@ -11,20 +11,20 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Connectors.Behaviors
 {
-    public class OutboundRoutingBehavior : IBehavior, ISorted
+    /// <summary>
+    ///     Routes the messages to the outbound endpoint by wrapping them in an
+    ///     <see cref="IOutboundEnvelope{TMessage}" /> that is republished to the bus.
+    /// </summary>
+    public class OutboundRouterBehavior : IBehavior, ISorted
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IOutboundRoutingConfiguration _routing;
-        private readonly MessageIdProvider _messageIdProvider;
 
-        public OutboundRoutingBehavior(IServiceProvider serviceProvider)
+        public OutboundRouterBehavior(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _routing = serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
-            _messageIdProvider = serviceProvider.GetRequiredService<MessageIdProvider>();
         }
-
-        public int SortIndex { get; } = 300;
 
         public async Task<IReadOnlyCollection<object>> Handle(
             IReadOnlyCollection<object> messages,
@@ -59,15 +59,11 @@ namespace Silverback.Messaging.Connectors.Behaviors
             return wrappedMessages.Select(m => m.Message).ToList();
         }
 
-        private IOutboundEnvelope CreateOutboundEnvelope(object message, IOutboundRoute route)
-        {
-            var envelope = (IOutboundEnvelope) Activator.CreateInstance(
+        private IOutboundEnvelope CreateOutboundEnvelope(object message, IOutboundRoute route) =>
+            (IOutboundEnvelope) Activator.CreateInstance(
                 typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
                 message, null, route, _routing.PublishOutboundMessagesToInternalBus);
 
-            _messageIdProvider.EnsureKeyIsInitialized(envelope.Message, envelope.Headers);
-
-            return envelope;
-        }
+        public int SortIndex { get; } = IntegrationBehaviorsSortIndexes.OutboundRouter;
     }
 }

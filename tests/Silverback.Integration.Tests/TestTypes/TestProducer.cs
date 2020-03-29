@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.TestTypes
@@ -17,7 +18,6 @@ namespace Silverback.Tests.Integration.TestTypes
             : base(
                 broker,
                 endpoint,
-                new MessageIdProvider(new[] { new DefaultPropertiesMessageIdProvider() }),
                 behaviors,
                 new NullLogger<TestProducer>(),
                 new MessageLogger())
@@ -25,13 +25,13 @@ namespace Silverback.Tests.Integration.TestTypes
             ProducedMessages = broker.ProducedMessages;
         }
 
-        protected override IOffset Produce(IRawOutboundEnvelope envelope)
+        protected override IOffset ProduceImpl(IRawOutboundEnvelope envelope)
         {
             ProducedMessages.Add(new ProducedMessage(envelope.RawMessage, envelope.Headers, Endpoint));
             return null;
         }
 
-        protected override Task<IOffset> ProduceAsync(IRawOutboundEnvelope envelope)
+        protected override Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope)
         {
             Produce(envelope.RawMessage, envelope.Headers);
             return Task.FromResult<IOffset>(null);

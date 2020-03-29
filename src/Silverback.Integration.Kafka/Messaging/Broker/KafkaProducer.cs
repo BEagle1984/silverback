@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -31,12 +32,11 @@ namespace Silverback.Messaging.Broker
         public KafkaProducer(
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
-            MessageIdProvider messageIdProvider,
             IEnumerable<IProducerBehavior> behaviors,
             MessageLogger messageLogger,
             IServiceProvider serviceProvider,
             ILogger<KafkaProducer> logger)
-            : base(broker, endpoint, messageIdProvider, behaviors, logger, messageLogger)
+            : base(broker, endpoint, behaviors, logger, messageLogger)
         {
             _logger = logger;
 
@@ -44,11 +44,11 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Producer" />
-        protected override IOffset Produce(IRawOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsync(envelope));
+        protected override IOffset ProduceImpl(IRawOutboundEnvelope envelope) =>
+            AsyncHelper.RunSynchronously(() => ProduceAsyncImpl(envelope));
 
         /// <inheritdoc cref="Producer" />
-        protected override async Task<IOffset> ProduceAsync(IRawOutboundEnvelope envelope)
+        protected override async Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope)
         {
             try
             {

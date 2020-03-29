@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
@@ -13,12 +15,12 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.LargeMessages
 {
-    public class ChunkProducerTests
+    public class ChunkSplitterProducerBehaviorTests
     {
         private readonly IMessageSerializer _serializer = new JsonMessageSerializer();
 
         [Fact]
-        public void ChunkIfNeeded_SmallMessage_ReturnedWithoutChanges()
+        public void Handle_SmallMessage_ReturnedWithoutChanges()
         {
             var message = new BinaryMessage
             {
@@ -27,8 +29,8 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
             var headers = new MessageHeaderCollection();
             var serializedMessage = _serializer.Serialize(message, headers, MessageSerializationContext.Empty);
-            var rawEnvelope =
-                new RawOutboundEnvelope(headers,
+            var envelope =
+                new OutboundEnvelope(message, headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings
@@ -40,14 +42,19 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     RawMessage = serializedMessage
                 };
 
-            var chunks = ChunkProducer.ChunkIfNeeded(rawEnvelope);
+            var chunks = new List<IOutboundEnvelope>();
+            new ChunkSplitterProducerBehavior().Handle(envelope, chunk =>
+            {
+                chunks.Add(chunk);
+                return Task.CompletedTask;
+            });
 
             chunks.Should().HaveCount(1);
-            chunks.First().Should().BeEquivalentTo(rawEnvelope);
+            chunks.First().Should().BeEquivalentTo(envelope);
         }
 
         [Fact]
-        public void ChunkIfNeeded_LargeMessage_Chunked()
+        public void Handle_LargeMessage_SplitIntoChunks()
         {
             var message = new BinaryMessage
             {
@@ -60,8 +67,8 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
 
             var serializedMessage = _serializer.Serialize(message, headers, MessageSerializationContext.Empty);
-            var rawEnvelope =
-                new RawOutboundEnvelope(headers,
+            var envelope =
+                new OutboundEnvelope(message, headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings
@@ -73,7 +80,12 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     RawMessage = serializedMessage
                 };
 
-            var chunks = ChunkProducer.ChunkIfNeeded(rawEnvelope).ToList();
+            var chunks = new List<IOutboundEnvelope>();
+            new ChunkSplitterProducerBehavior().Handle(envelope, chunk =>
+            {
+                chunks.Add(chunk);
+                return Task.CompletedTask;
+            });
 
             chunks.Should().HaveCount(4);
             chunks.Should().Match(c => c.All(m => m.RawMessage.Length < 1000));

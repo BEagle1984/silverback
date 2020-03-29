@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
 {
-    public class KafkaPartitioningKeyBehaviorTests
+    public class KafkaMessageKeyInitializerProducerBehaviorTests
     {
         [Fact]
         public void Handle_NoKeyMemberAttribute_KeyHeaderIsNotSet()
@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaMessageKeyBehavior().Handle(new[] { envelope }, Task.FromResult);
+            new KafkaMessageKeyInitializerProducerBehavior().Handle(envelope, _ => Task.CompletedTask);
 
             envelope.Headers.Should().NotContain(
                 h => h.Key == "x-kafka-message-key");
@@ -37,7 +37,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
         [Fact]
         public void Handle_SingleKeyMemberAttribute_KeyHeaderIsSet()
         {
-            var envelope1 = new OutboundEnvelope<SingleKeyMemberMessage>(
+            var envelope = new OutboundEnvelope<SingleKeyMemberMessage>(
                 new SingleKeyMemberMessage
                 {
                     Id = Guid.NewGuid(),
@@ -47,29 +47,16 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 },
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
-            var envelope2 = new OutboundEnvelope<SingleKeyMemberMessage>(
-                new SingleKeyMemberMessage
-                {
-                    Id = Guid.NewGuid(),
-                    One = "a",
-                    Two = "b",
-                    Three = "c"
-                },
-                null,
-                new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaMessageKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
+            new KafkaMessageKeyInitializerProducerBehavior().Handle(envelope, _ => Task.CompletedTask);
 
-            envelope1.Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-kafka-message-key", "1"));
-            envelope2.Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-kafka-message-key", "a"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "1"));
         }
 
         [Fact]
         public void Handle_MultipleKeyMemberAttributes_KeyHeaderIsSet()
         {
-            var envelope1 = new OutboundEnvelope<MultipleKeyMembersMessage>(
+            var envelope = new OutboundEnvelope<MultipleKeyMembersMessage>(
                 new MultipleKeyMembersMessage
                 {
                     Id = Guid.NewGuid(),
@@ -79,23 +66,10 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 },
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
-            var envelope2 = new OutboundEnvelope<MultipleKeyMembersMessage>(
-                new MultipleKeyMembersMessage
-                {
-                    Id = Guid.NewGuid(),
-                    One = "a",
-                    Two = "b",
-                    Three = "c"
-                },
-                null,
-                new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaMessageKeyBehavior().Handle(new[] { envelope1, envelope2 }, Task.FromResult);
+            new KafkaMessageKeyInitializerProducerBehavior().Handle(envelope, _ => Task.CompletedTask);
 
-            envelope1.Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-kafka-message-key", "One=1,Two=2"));
-            envelope2.Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-kafka-message-key", "One=a,Two=b"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "One=1,Two=2"));
         }
     }
 }

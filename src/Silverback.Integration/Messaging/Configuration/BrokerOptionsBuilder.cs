@@ -10,12 +10,14 @@ using Microsoft.Extensions.Logging;
 using Silverback.Background;
 using Silverback.Database;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -38,8 +40,14 @@ namespace Silverback.Messaging.Configuration
         {
             SilverbackBuilder.Services
                 .AddSingleton<IBroker, TBroker>()
-                .AddSingleton(servicesProvider =>
+                // ReSharper disable once RedundantTypeArgumentsOfMethod
+                .AddSingleton<TBroker>(servicesProvider =>
                     servicesProvider.GetServices<IBroker>().OfType<TBroker>().FirstOrDefault());
+
+            SilverbackBuilder
+                .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>()
+                .AddSingletonBrokerBehavior<SerializerProducerBehavior>()
+                .AddSingletonBrokerBehavior<ChunkSplitterProducerBehavior>();
 
             FindOptionsConfigurator<TBroker>()?.Configure(this);
 
@@ -117,8 +125,8 @@ namespace Silverback.Messaging.Configuration
             {
                 SilverbackBuilder.Services.AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
                 SilverbackBuilder
-                    .AddScopedBehavior<OutboundRoutingBehavior>()
-                    .AddScopedBehavior<OutboundProducingBehavior>();
+                    .AddScopedBehavior<OutboundRouterBehavior>()
+                    .AddScopedBehavior<OutboundProducerBehavior>();
             }
 
             SilverbackBuilder.Services.AddScoped<IOutboundConnector, TConnector>();

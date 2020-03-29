@@ -3,15 +3,17 @@
 
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Diagnostics
 {
-    // TODO: Test
+    /// <summary>
+    ///     Starts an <see cref="Activity" /> and adds the tracing information to the message headers.
+    /// </summary>
     public class ActivityProducerBehavior : IProducerBehavior
     {
-        public async Task Handle(IRawOutboundEnvelope envelope, RawOutboundEnvelopeHandler next)
+        public async Task Handle(IOutboundEnvelope envelope, OutboundEnvelopeHandler next)
         {
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageProducing);
             try

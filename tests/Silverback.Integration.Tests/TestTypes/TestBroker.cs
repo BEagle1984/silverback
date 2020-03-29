@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Tests.Integration.TestTypes
 {

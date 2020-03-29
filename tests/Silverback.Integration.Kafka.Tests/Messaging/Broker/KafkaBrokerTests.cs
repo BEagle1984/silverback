@@ -26,7 +26,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
                 .Returns(new KafkaEventsHandler(serviceProvider, new NullLogger<KafkaEventsHandler>()));
 
             _broker = new KafkaBroker(
-                new MessageIdProvider(new[] { new DefaultPropertiesMessageIdProvider() }),
                 Enumerable.Empty<IBrokerBehavior>(),
                 serviceProvider,
                 NullLoggerFactory.Instance,

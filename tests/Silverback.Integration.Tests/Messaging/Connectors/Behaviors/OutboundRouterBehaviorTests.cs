@@ -22,16 +22,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 {
     [Collection("StaticInMemory")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class OutboundRoutingBehaviorTests
+    public class OutboundRouterBehaviorTests
     {
-        private readonly OutboundRoutingBehavior _behavior;
+        private readonly OutboundRouterBehavior _behavior;
         private readonly IOutboundRoutingConfiguration _routingConfiguration;
         private readonly InMemoryOutboundQueue _outboundQueue;
         private readonly TestBroker _broker;
         private readonly TestOtherBroker _otherBroker;
         private readonly TestSubscriber _testSubscriber;
 
-        public OutboundRoutingBehaviorTests()
+        public OutboundRouterBehaviorTests()
         {
             var services = new ServiceCollection();
 
@@ -52,8 +52,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _behavior = (OutboundRoutingBehavior) serviceProvider.GetServices<IBehavior>()
-                .First(s => s is OutboundRoutingBehavior);
+            _behavior = (OutboundRouterBehavior) serviceProvider.GetServices<IBehavior>()
+                .First(s => s is OutboundRouterBehavior);
             _routingConfiguration =
                 (OutboundRoutingConfiguration) serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
             _broker = serviceProvider.GetRequiredService<TestBroker>();

@@ -7,7 +7,7 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
-    public abstract class RawBrokerEnvelope : IRawBrokerEnvelope
+    internal abstract class RawBrokerEnvelope : IRawBrokerEnvelope
     {
         internal RawBrokerEnvelope(
             IEnumerable<MessageHeader> headers,
