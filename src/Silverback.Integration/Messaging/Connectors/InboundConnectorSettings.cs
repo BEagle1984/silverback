@@ -19,10 +19,8 @@ namespace Silverback.Messaging.Connectors
 
         public void Validate()
         {
-            if (Batch == null)
-                Batch = new BatchSettings();
-
-            Batch.Validate();
+            if (Batch != null)
+                Batch.Validate();
 
             if (Consumers < 1)
                 throw new EndpointConfigurationException("Consumers must be greater or equal to 1.");

@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.TestTypes.Behaviors;
@@ -21,8 +19,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         private IServiceProvider GetServiceProvider(Action<IServiceCollection> configAction)
         {
             var services = new ServiceCollection()
-                .AddSingleton<ILoggerFactory, NullLoggerFactory>()
-                .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+                .AddNullLogger();
 
             configAction(services);
 

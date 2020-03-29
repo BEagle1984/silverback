@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
   </ItemGroup>
 
 </Project>

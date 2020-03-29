@@ -25,9 +25,9 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         public async Task TryProcessAsync(
-            IReadOnlyCollection<IInboundEnvelope> envelopes,
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             IErrorPolicy errorPolicy,
-            Func<IReadOnlyCollection<IInboundEnvelope>, Task> messagesHandler)
+            Func<IReadOnlyCollection<IRawInboundEnvelope>, Task> messagesHandler)
         {
             var attempt = GetAttemptNumber(envelopes);
 
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private int GetAttemptNumber(IReadOnlyCollection<IInboundEnvelope> envelopes)
+        private int GetAttemptNumber(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
             var minAttempts = envelopes.Min(m =>
                 m.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts));
@@ -54,8 +54,8 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         private async Task<MessageHandlerResult> HandleMessages(
-            IReadOnlyCollection<IInboundEnvelope> envelopes,
-            Func<IReadOnlyCollection<IInboundEnvelope>, Task> messagesHandler,
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            Func<IReadOnlyCollection<IRawInboundEnvelope>, Task> messagesHandler,
             IErrorPolicy errorPolicy,
             int attempt)
         {
@@ -88,7 +88,7 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private void UpdateFailedAttemptsHeader(IReadOnlyCollection<IBrokerEnvelope> envelopes, int attempt) =>
+        private void UpdateFailedAttemptsHeader(IReadOnlyCollection<IRawInboundEnvelope> envelopes, int attempt) =>
             envelopes?.ForEach(msg =>
             {
                 if (attempt == 0)

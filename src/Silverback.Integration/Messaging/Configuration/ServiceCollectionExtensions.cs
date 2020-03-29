@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 
 // ReSharper disable once CheckNamespace
@@ -55,7 +55,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         #endregion
 
-        #region BrokerBehaviors (AddSingletonBrokerBehavior)
+        #region AddSingletonBrokerBehavior
 
         /// <summary>
         ///     Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the
@@ -136,5 +136,65 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         #endregion
+
+        // TODO: DELETE
+        //         #region AddTransientBrokerBehavior
+        //
+        // /// <summary>
+        // ///     Adds a transient behavior of the type specified in <paramref name="behaviorType" /> to the
+        // ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        // /// </summary>
+        // /// <param name="services">
+        // ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        // ///     service to.
+        // /// </param>
+        // /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
+        // /// <returns>A reference to this instance after the operation has completed.</returns>
+        // public static IServiceCollection AddTransientBrokerBehavior(this IServiceCollection services, Type behaviorType)
+        // {
+        //     if (behaviorType == null) throw new ArgumentNullException(nameof(behaviorType));
+        //
+        //     services.AddTransient(typeof(IBrokerBehavior), behaviorType);
+        //
+        //     return services;
+        // }
+        //
+        // /// <summary>
+        // ///     Adds a transient behavior of the type specified in <typeparamref name="TBehavior" /> to the
+        // ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        // /// </summary>
+        // /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
+        // /// <param name="services">
+        // ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        // ///     service to.
+        // /// </param>
+        // /// <returns>A reference to this instance after the operation has completed.</returns>
+        // public static IServiceCollection AddTransientBrokerBehavior<TBehavior>(this IServiceCollection services)
+        //     where TBehavior : class, IBrokerBehavior =>
+        //     AddTransientBrokerBehavior(services, typeof(TBehavior));
+        //
+        // /// <summary>
+        // ///     Adds a transient behavior with a
+        // ///     factory specified in <paramref name="implementationFactory" /> to the
+        // ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        // /// </summary>
+        // /// <param name="services">
+        // ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        // ///     service to.
+        // /// </param>
+        // /// <param name="implementationFactory">The factory that creates the service.</param>
+        // /// <returns>A reference to this instance after the operation has completed.</returns>
+        // public static IServiceCollection AddTransientBrokerBehavior(
+        //     this IServiceCollection services,
+        //     Func<IServiceProvider, IBrokerBehavior> implementationFactory)
+        // {
+        //     if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
+        //
+        //     services.AddTransient(typeof(IBrokerBehavior), implementationFactory);
+        //
+        //     return services;
+        // }
+        //
+        // #endregion
     }
 }

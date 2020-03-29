@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public abstract class ExactlyOnceInboundConnector : InboundConnector
     {
-        protected ILogger Logger;
+        private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
 
         protected ExactlyOnceInboundConnector(
@@ -24,14 +24,14 @@ namespace Silverback.Messaging.Connectors
             IServiceProvider serviceProvider,
             ILogger<ExactlyOnceInboundConnector> logger,
             MessageLogger messageLogger)
-            : base(brokerCollection, serviceProvider)
+            : base(brokerCollection, serviceProvider, logger)
         {
-            Logger = logger;
+            _logger = logger;
             _messageLogger = messageLogger;
         }
 
         protected override async Task RelayMessages(
-            IEnumerable<IInboundEnvelope> envelopes,
+            IEnumerable<IRawInboundEnvelope> envelopes,
             IServiceProvider serviceProvider)
         {
             envelopes = await EnsureExactlyOnce(envelopes, serviceProvider);
@@ -39,18 +39,18 @@ namespace Silverback.Messaging.Connectors
             await base.RelayMessages(envelopes, serviceProvider);
         }
 
-        private async Task<IEnumerable<IInboundEnvelope>> EnsureExactlyOnce(
-            IEnumerable<IInboundEnvelope> envelopes,
+        private async Task<IEnumerable<IRawInboundEnvelope>> EnsureExactlyOnce(
+            IEnumerable<IRawInboundEnvelope> envelopes,
             IServiceProvider serviceProvider) =>
             await envelopes.WhereAsync(async envelope =>
             {
                 if (await MustProcess(envelope, serviceProvider))
                     return true;
 
-                _messageLogger.LogDebug(Logger, "Message is being skipped since it was already processed.", envelope);
+                _messageLogger.LogDebug(_logger, "Message is being skipped since it was already processed.", envelope);
                 return false;
             });
 
-        protected abstract Task<bool> MustProcess(IInboundEnvelope envelope, IServiceProvider serviceProvider);
+        protected abstract Task<bool> MustProcess(IRawInboundEnvelope envelope, IServiceProvider serviceProvider);
     }
 }

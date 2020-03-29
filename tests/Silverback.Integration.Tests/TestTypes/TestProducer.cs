@@ -14,7 +14,10 @@ namespace Silverback.Tests.Integration.TestTypes
     {
         public List<ProducedMessage> ProducedMessages { get; }
 
-        public TestProducer(TestBroker broker, TestProducerEndpoint endpoint, IEnumerable<IProducerBehavior> behaviors)
+        public TestProducer(
+            TestBroker broker,
+            TestProducerEndpoint endpoint,
+            IReadOnlyCollection<IProducerBehavior> behaviors)
             : base(
                 broker,
                 endpoint,

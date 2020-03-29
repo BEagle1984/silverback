@@ -18,8 +18,7 @@ namespace Silverback.Messaging.ErrorHandling
         private readonly MessageLogger _messageLogger;
         private readonly List<Type> _excludedExceptions = new List<Type>();
         private readonly List<Type> _includedExceptions = new List<Type>();
-        private Func<IInboundEnvelope, Exception, bool> _applyRule;
-
+        private Func<IRawInboundEnvelope, Exception, bool> _applyRule;
 
         protected ErrorPolicyBase(
             IServiceProvider serviceProvider,
@@ -31,7 +30,7 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        internal Func<IReadOnlyCollection<IInboundEnvelope>, object> MessageToPublishFactory { get; private set; }
+        internal Func<IReadOnlyCollection<IRawInboundEnvelope>, object> MessageToPublishFactory { get; private set; }
 
         internal int MaxFailedAttemptsSetting { get; private set; } = -1;
 
@@ -91,7 +90,7 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="applyRule">The predicate.</param>
         /// <returns></returns>
-        public ErrorPolicyBase ApplyWhen(Func<IInboundEnvelope, Exception, bool> applyRule)
+        public ErrorPolicyBase ApplyWhen(Func<IRawInboundEnvelope, Exception, bool> applyRule)
         {
             _applyRule = applyRule;
             return this;
@@ -118,16 +117,16 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="factory">The factory returning the message to be published.</param>
         /// <returns></returns>
-        public ErrorPolicyBase Publish(Func<IReadOnlyCollection<IInboundEnvelope>, object> factory)
+        public ErrorPolicyBase Publish(Func<IReadOnlyCollection<IRawInboundEnvelope>, object> factory)
         {
             MessageToPublishFactory = factory;
             return this;
         }
 
-        public virtual bool CanHandle(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception) =>
+        public virtual bool CanHandle(IReadOnlyCollection<IRawInboundEnvelope> envelopes, Exception exception) =>
             envelopes.All(envelope => CanHandle(envelope, exception)); // TODO: Check this
 
-        public virtual bool CanHandle(IInboundEnvelope envelope, Exception exception)
+        public virtual bool CanHandle(IRawInboundEnvelope envelope, Exception exception)
         {
             if (envelope == null)
             {
@@ -175,7 +174,7 @@ namespace Silverback.Messaging.ErrorHandling
             return true;
         }
 
-        public ErrorAction HandleError(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception)
+        public ErrorAction HandleError(IReadOnlyCollection<IRawInboundEnvelope> envelopes, Exception exception)
         {
             var result = ApplyPolicy(envelopes, exception);
 
@@ -190,7 +189,7 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         protected abstract ErrorAction ApplyPolicy(
-            IReadOnlyCollection<IInboundEnvelope> envelopes,
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception);
     }
 }

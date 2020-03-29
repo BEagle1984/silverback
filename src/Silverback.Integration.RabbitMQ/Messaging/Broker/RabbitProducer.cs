@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Broker
         public RabbitProducer(
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,
-            IEnumerable<IProducerBehavior> behaviors,
+            IReadOnlyCollection<IProducerBehavior> behaviors,
             IRabbitConnectionFactory connectionFactory,
             ILogger<Producer> logger,
             MessageLogger messageLogger)

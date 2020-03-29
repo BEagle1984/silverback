@@ -36,7 +36,9 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception)
+        protected override ErrorAction ApplyPolicy(
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            Exception exception)
         {
             ApplyDelay(envelopes);
 
@@ -45,7 +47,7 @@ namespace Silverback.Messaging.ErrorHandling
             return ErrorAction.Retry;
         }
 
-        private void ApplyDelay(IReadOnlyCollection<IInboundEnvelope> envelopes)
+        private void ApplyDelay(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
             var delay = _initialDelay.Milliseconds +
                         envelopes.First().Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) *

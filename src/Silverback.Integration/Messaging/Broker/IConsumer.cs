@@ -3,11 +3,17 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Broker
 {
     public interface IConsumer
     {
+        /// <summary>
+        ///     Gets the collection of <see cref="IConsumerBehavior" /> configured for this <see cref="IConsumer" />.
+        /// </summary>
+        IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
+
         /// <summary>
         ///     Fired when a new message is received.
         /// </summary>
@@ -31,7 +37,7 @@ namespace Silverback.Messaging.Broker
         ///     </param>
         /// </summary>
         /// <param name="offsets">The offsets to be committed.</param>
-        Task Commit(IEnumerable<IOffset> offsets);
+        Task Commit(IReadOnlyCollection<IOffset> offsets);
 
         /// <summary>
         ///     <param>Notifies that an error occured while processing the message at the specified offset.</param>
@@ -51,7 +57,7 @@ namespace Silverback.Messaging.Broker
         ///     </param>
         /// </summary>
         /// <param name="offsets">The offsets to be rolled back.</param>
-        Task Rollback(IEnumerable<IOffset> offsets);
+        Task Rollback(IReadOnlyCollection<IOffset> offsets);
 
         /// <summary>
         ///     Connects and starts consuming.

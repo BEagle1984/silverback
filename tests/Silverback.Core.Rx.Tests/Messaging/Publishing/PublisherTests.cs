@@ -6,8 +6,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
@@ -24,8 +22,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             var services = new ServiceCollection();
             services.AddSilverback().AsObservable();
 
-            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            services.AddNullLogger();
 
             foreach (var sub in subscribers)
                 services.AddScoped(_ => sub);

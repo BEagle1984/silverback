@@ -5,8 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
@@ -37,8 +35,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                     .AddOutboundConnector()
                     .AddDeferredOutboundConnector(_ => _outboundQueue));
 
-            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            services.AddNullLogger();
 
             var serviceProvider = services.BuildServiceProvider();
 

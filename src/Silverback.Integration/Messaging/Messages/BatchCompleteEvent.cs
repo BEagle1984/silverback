@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public class BatchCompleteEvent : BatchEvent
     {
-        public BatchCompleteEvent(Guid batchId, IReadOnlyCollection<IInboundEnvelope> envelopes)
+        public BatchCompleteEvent(Guid batchId, IReadOnlyCollection<IRawInboundEnvelope> envelopes)
             : base(batchId, envelopes)
         {
         }

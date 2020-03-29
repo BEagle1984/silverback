@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -32,7 +33,9 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IBrokerCollection" />
-        public IProducer GetProducer(IProducerEndpoint endpoint)
+        public IProducer GetProducer(
+            IProducerEndpoint endpoint,
+            IReadOnlyCollection<IProducerBehavior> behaviors = null)
         {
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
 
@@ -42,11 +45,13 @@ namespace Silverback.Messaging.Broker
                     broker => broker.ProducerEndpointType,
                     endpointType,
                     _producerEndpointTypeMap)
-                .GetProducer(endpoint);
+                .GetProducer(endpoint, behaviors);
         }
 
         /// <inheritdoc cref="IBrokerCollection" />
-        public IConsumer GetConsumer(IConsumerEndpoint endpoint)
+        public IConsumer GetConsumer(
+            IConsumerEndpoint endpoint,
+            IReadOnlyCollection<IConsumerBehavior> behaviors = null)
         {
             if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
 
@@ -56,7 +61,7 @@ namespace Silverback.Messaging.Broker
                     broker => broker.ConsumerEndpointType,
                     endpointType,
                     _consumerEndpointTypeMap)
-                .GetConsumer(endpoint);
+                .GetConsumer(endpoint, behaviors);
         }
 
         /// <inheritdoc cref="IBrokerCollection" />

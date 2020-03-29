@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,12 +10,12 @@ namespace Silverback.Tests.Core.TestTypes
     public class ParallelTestingUtil
     {
         private int _lastStep;
-        public List<int> Steps { get; } = new List<int>();
+        public ConcurrentBag<int> Steps { get; } = new ConcurrentBag<int>();
 
         public void DoWork()
         {
             Thread.Sleep(20);
-            lock (Steps) Steps.Add(_lastStep + 1);
+            Steps.Add(_lastStep + 1);
             Thread.Sleep(20);
             Interlocked.Increment(ref _lastStep);
         }
@@ -23,7 +23,7 @@ namespace Silverback.Tests.Core.TestTypes
         public async Task DoWorkAsync()
         {
             await Task.Delay(20);
-            lock (Steps) Steps.Add(_lastStep + 1);
+            Steps.Add(_lastStep + 1);
             await Task.Delay(20);
             Interlocked.Increment(ref _lastStep);
         }

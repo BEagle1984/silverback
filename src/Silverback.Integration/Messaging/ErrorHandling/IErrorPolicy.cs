@@ -12,8 +12,8 @@ namespace Silverback.Messaging.ErrorHandling
     /// </summary>
     public interface IErrorPolicy
     {
-        bool CanHandle(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception);
+        bool CanHandle(IReadOnlyCollection<IRawInboundEnvelope> envelopes, Exception exception);
 
-        ErrorAction HandleError(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception);
+        ErrorAction HandleError(IReadOnlyCollection<IRawInboundEnvelope> envelopes, Exception exception);
     }
 }

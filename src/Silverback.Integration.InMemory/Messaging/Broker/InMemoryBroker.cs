@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
@@ -19,8 +20,9 @@ namespace Silverback.Messaging.Broker
         public InMemoryBroker(
             IEnumerable<IBrokerBehavior> behaviors,
             ILoggerFactory loggerFactory,
-            MessageLogger messageLogger)
-            : base(behaviors, loggerFactory)
+            MessageLogger messageLogger,
+            IServiceProvider serviceProvider)
+            : base(behaviors, loggerFactory, serviceProvider)
         {
             _messageLogger = messageLogger;
         }
@@ -31,7 +33,8 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Broker" />
         protected override IProducer InstantiateProducer(
             IProducerEndpoint endpoint,
-            IEnumerable<IProducerBehavior> behaviors) =>
+            IReadOnlyCollection<IProducerBehavior> behaviors,
+            IServiceProvider serviceProvider) =>
             new InMemoryProducer(
                 this,
                 endpoint,
@@ -42,11 +45,13 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Broker" />
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors) =>
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IServiceProvider serviceProvider) =>
             GetTopic(endpoint.Name).Subscribe(new InMemoryConsumer(
                 this,
                 endpoint,
                 behaviors,
+                serviceProvider,
                 LoggerFactory.CreateLogger<InMemoryConsumer>()));
 
         /// <inheritdoc cref="Broker" />

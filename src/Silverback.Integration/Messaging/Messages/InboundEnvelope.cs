@@ -9,7 +9,8 @@ namespace Silverback.Messaging.Messages
     internal class InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
     {
         public InboundEnvelope(IRawInboundEnvelope envelope)
-            : this(envelope.RawMessage, envelope.Headers, envelope.Offset, envelope.Endpoint, envelope.ActualEndpointName)
+            : this(envelope.RawMessage, envelope.Headers, envelope.Offset, envelope.Endpoint,
+                envelope.ActualEndpointName)
         {
         }
 
@@ -22,20 +23,19 @@ namespace Silverback.Messaging.Messages
             : base(rawMessage, headers, endpoint, actualEndpointName, offset)
         {
         }
-        
+
         public object Message { get; set; }
 
         public bool AutoUnwrap { get; } = true;
-        
     }
 
     internal class InboundEnvelope<TMessage> : InboundEnvelope, IInboundEnvelope<TMessage>
     {
-        public InboundEnvelope(IInboundEnvelope envelope)
+        public InboundEnvelope(IRawInboundEnvelope envelope)
             : base(envelope)
         {
-            if (envelope.Message != null)
-                Message = (TMessage) envelope.Message;
+            if (envelope is IInboundEnvelope deserializedEnvelope && deserializedEnvelope.Message != null)
+                Message = (TMessage) deserializedEnvelope.Message;
         }
 
         public InboundEnvelope(

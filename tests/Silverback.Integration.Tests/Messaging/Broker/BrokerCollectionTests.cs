@@ -1,7 +1,9 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Tests.Integration.TestTypes;
@@ -24,7 +26,11 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             int endpointIndex,
             string expectedProducerType)
         {
-            var brokerCollection = new BrokerCollection(new IBroker[] { new TestBroker(), new TestOtherBroker() });
+            var brokerCollection = new BrokerCollection(new IBroker[]
+            {
+                new TestBroker(Substitute.For<IServiceProvider>(), null),
+                new TestOtherBroker(Substitute.For<IServiceProvider>(), null)
+            });
             var endpoint = _producerEndpoints[endpointIndex];
 
             var producer = brokerCollection.GetProducer(endpoint);
@@ -40,7 +46,11 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             int endpointIndex,
             string expectedConsumerType)
         {
-            var brokerCollection = new BrokerCollection(new IBroker[] { new TestBroker(), new TestOtherBroker() });
+            var brokerCollection = new BrokerCollection(new IBroker[]
+            {
+                new TestBroker(Substitute.For<IServiceProvider>(), null),
+                new TestOtherBroker(Substitute.For<IServiceProvider>(), null)
+            });
             var endpoint = _consumerEndpoints[endpointIndex];
 
             var consumer = brokerCollection.GetConsumer(endpoint);

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker.Behaviors;
@@ -21,8 +22,9 @@ namespace Silverback.Messaging.Broker
             IEnumerable<IBrokerBehavior> behaviors,
             IRabbitConnectionFactory connectionFactory,
             ILoggerFactory loggerFactory,
-            MessageLogger messageLogger)
-            : base(behaviors, loggerFactory)
+            MessageLogger messageLogger,
+            IServiceProvider serviceProvider)
+            : base(behaviors, loggerFactory, serviceProvider)
         {
             _loggerFactory = loggerFactory;
             _messageLogger = messageLogger;
@@ -32,7 +34,8 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Broker" />
         protected override IProducer InstantiateProducer(
             RabbitProducerEndpoint endpoint,
-            IEnumerable<IProducerBehavior> behaviors) =>
+            IReadOnlyCollection<IProducerBehavior> behaviors,
+            IServiceProvider serviceProvider) =>
             new RabbitProducer(
                 this,
                 endpoint,
@@ -44,12 +47,14 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Broker" />
         protected override IConsumer InstantiateConsumer(
             RabbitConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors) =>
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IServiceProvider serviceProvider) =>
             new RabbitConsumer(
                 this,
                 endpoint,
                 behaviors,
                 _connectionFactory,
+                serviceProvider,
                 _loggerFactory.CreateLogger<RabbitConsumer>());
 
         protected override void Dispose(bool disposing)

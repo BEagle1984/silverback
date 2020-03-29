@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Broker
 {
-    public delegate Task MessageReceivedHandler(object sender, MessageReceivedEventArgs e);
+    public delegate Task MessageReceivedHandler(object sender, MessagesReceivedEventArgs args);
 }

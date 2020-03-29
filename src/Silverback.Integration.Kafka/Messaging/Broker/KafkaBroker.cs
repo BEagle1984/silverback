@@ -14,18 +14,16 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public class KafkaBroker : Broker<KafkaProducerEndpoint, KafkaConsumerEndpoint>
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly ILoggerFactory _loggerFactory;
         private readonly MessageLogger _messageLogger;
 
         public KafkaBroker(
             IEnumerable<IBrokerBehavior> behaviors,
-            IServiceProvider serviceProvider,
             ILoggerFactory loggerFactory,
-            MessageLogger messageLogger)
-            : base(behaviors, loggerFactory)
+            MessageLogger messageLogger,
+            IServiceProvider serviceProvider)
+            : base(behaviors, loggerFactory, serviceProvider)
         {
-            _serviceProvider = serviceProvider;
             _loggerFactory = loggerFactory;
             _messageLogger = messageLogger;
         }
@@ -33,24 +31,26 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Broker" />
         protected override IProducer InstantiateProducer(
             KafkaProducerEndpoint endpoint,
-            IEnumerable<IProducerBehavior> behaviors) =>
+            IReadOnlyCollection<IProducerBehavior> behaviors,
+            IServiceProvider serviceProvider) =>
             new KafkaProducer(
                 this,
                 endpoint,
                 behaviors,
                 _messageLogger,
-                _serviceProvider,
+                serviceProvider,
                 _loggerFactory.CreateLogger<KafkaProducer>());
 
         /// <inheritdoc cref="Broker" />
         protected override IConsumer InstantiateConsumer(
             KafkaConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors) =>
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IServiceProvider serviceProvider) =>
             new KafkaConsumer(
                 this,
                 endpoint,
                 behaviors,
-                _serviceProvider,
+                serviceProvider,
                 _loggerFactory.CreateLogger<KafkaConsumer>());
     }
 }

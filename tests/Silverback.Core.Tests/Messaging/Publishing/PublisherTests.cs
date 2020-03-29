@@ -9,8 +9,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -87,8 +85,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var services = new ServiceCollection();
             var builder = services.AddSilverback();
 
-            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            services.AddNullLogger();
 
             buildAction(builder);
 

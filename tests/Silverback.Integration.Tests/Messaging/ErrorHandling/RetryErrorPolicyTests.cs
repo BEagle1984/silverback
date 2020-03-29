@@ -4,7 +4,6 @@
 using System;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -22,8 +21,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var services = new ServiceCollection();
 
-            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            services.AddNullLogger();
 
             services.AddSilverback().WithConnectionToMessageBroker(options => options
                 .AddBroker<TestBroker>());

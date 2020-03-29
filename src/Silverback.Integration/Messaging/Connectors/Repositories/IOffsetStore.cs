@@ -6,13 +6,9 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public interface IOffsetStore
+    public interface IOffsetStore : ITransactional
     {
         Task Store(IComparableOffset offset, IConsumerEndpoint endpoint);
-
-        Task Commit();
-
-        Task Rollback();
 
         Task<IComparableOffset> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint);
     }

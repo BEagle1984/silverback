@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,21 +16,22 @@ namespace Silverback.Messaging.Broker
         public InMemoryConsumer(
             InMemoryBroker broker,
             IConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IServiceProvider serviceProvider,
             ILogger<InMemoryConsumer> logger)
-            : base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviors, serviceProvider, logger)
         {
         }
 
         /// <inheritdoc cref="Consumer" />
-        public override Task Commit(IEnumerable<IOffset> offsets)
+        public override Task Commit(IReadOnlyCollection<IOffset> offsets)
         {
             // Do nothing
             return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="Consumer" />
-        public override Task Rollback(IEnumerable<IOffset> offsets)
+        public override Task Rollback(IReadOnlyCollection<IOffset> offsets)
         {
             // Do nothing
             return Task.CompletedTask;
@@ -47,6 +49,6 @@ namespace Silverback.Messaging.Broker
 
         // TODO: Should pass the actual endpoint name via header (Endpoint.Name may contain a list of topics)
         internal Task Receive(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset) =>
-            HandleMessage(message, headers.ToList(), Endpoint.Name, offset); 
+            HandleMessage(message, headers.ToList(), Endpoint.Name, offset);
     }
 }

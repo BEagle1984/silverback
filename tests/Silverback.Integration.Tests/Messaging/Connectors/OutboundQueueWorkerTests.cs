@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
@@ -34,8 +33,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var services = new ServiceCollection();
 
             services
-                .AddSingleton<ILoggerFactory, NullLoggerFactory>()
-                .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
+                .AddNullLogger()
                 .AddSingleton<IOutboundQueueConsumer, InMemoryOutboundQueue>()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options

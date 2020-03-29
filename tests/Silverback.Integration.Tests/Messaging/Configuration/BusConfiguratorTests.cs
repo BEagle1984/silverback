@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Publishing;
@@ -53,6 +54,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void AddBroker_BrokerRegisteredForDI()
         {
             var serviceProvider = new ServiceCollection()
+                .AddNullLogger()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>())
@@ -66,6 +68,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void AddBroker_BrokerOptionsConfiguratorInvoked()
         {
             var serviceProvider = new ServiceCollection()
+                .AddNullLogger()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>())

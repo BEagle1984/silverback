@@ -26,27 +26,20 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        protected override async Task<bool> MustProcess(IInboundEnvelope envelope, IServiceProvider serviceProvider)
+        protected override async Task<bool> MustProcess(IRawInboundEnvelope envelope, IServiceProvider serviceProvider)
         {
             var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
 
-            if (await inboundLog.Exists(envelope.Message, envelope.Endpoint))
+            if (!(envelope is IInboundEnvelope deserializedEnvelope) || deserializedEnvelope.Message == null)
+                return true;
+
+            if (await inboundLog.Exists(deserializedEnvelope.Message, envelope.Endpoint))
                 return false;
 
-            await inboundLog.Add(envelope.Message, envelope.Endpoint);
+            serviceProvider.GetRequiredService<ConsumerTransactionManager>().Enlist(inboundLog);
+
+            await inboundLog.Add(deserializedEnvelope.Message, envelope.Endpoint);
             return true;
-        }
-
-        protected override async Task Commit(IServiceProvider serviceProvider)
-        {
-            await base.Commit(serviceProvider);
-            await serviceProvider.GetRequiredService<IInboundLog>().Commit();
-        }
-
-        protected override async Task Rollback(IServiceProvider serviceProvider)
-        {
-            await base.Rollback(serviceProvider);
-            await serviceProvider.GetRequiredService<IInboundLog>().Rollback();
         }
     }
 }

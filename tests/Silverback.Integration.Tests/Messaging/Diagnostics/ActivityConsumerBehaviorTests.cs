@@ -5,8 +5,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
@@ -35,16 +33,20 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 TestConsumerEndpoint.GetDefault().Name);
 
             var entered = false;
-            await new ActivityConsumerBehavior().Handle(rawEnvelope, _ =>
-            {
-                Activity.Current.Should().NotBeNull();
-                Activity.Current.ParentId.Should().Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
-                Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
+            await new ActivityConsumerBehavior().Handle(
+                new[] { rawEnvelope },
+                null,
+                null,
+                (_, __, ___) =>
+                {
+                    Activity.Current.Should().NotBeNull();
+                    Activity.Current.ParentId.Should().Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
+                    Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
 
-                entered = true;
+                    entered = true;
 
-                return Task.CompletedTask;
-            });
+                    return Task.CompletedTask;
+                });
 
             entered.Should().BeTrue();
         }
@@ -62,15 +64,19 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 TestConsumerEndpoint.GetDefault().Name);
 
             var entered = false;
-            new ActivityConsumerBehavior().Handle(rawEnvelope, _ =>
-            {
-                Activity.Current.Should().NotBeNull();
-                Activity.Current.Id.Should().NotBeNullOrEmpty();
+            new ActivityConsumerBehavior().Handle(
+                new[] { rawEnvelope },
+                null,
+                null,
+                (_, __, ___) =>
+                {
+                    Activity.Current.Should().NotBeNull();
+                    Activity.Current.Id.Should().NotBeNullOrEmpty();
 
-                entered = true;
+                    entered = true;
 
-                return Task.CompletedTask;
-            });
+                    return Task.CompletedTask;
+                });
 
             entered.Should().BeTrue();
         }
@@ -80,8 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var services = new ServiceCollection();
             services
-                .AddSingleton<ILoggerFactory, NullLoggerFactory>()
-                .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
+                .AddNullLogger()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>());
@@ -111,7 +116,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             };
 
             broker.Connect();
-            await consumer.TestPush(rawEnvelope.RawMessage, rawEnvelope.Headers);
+            await consumer.TestHandleMessage(rawEnvelope.RawMessage, rawEnvelope.Headers);
 
             entered.Should().BeTrue();
         }

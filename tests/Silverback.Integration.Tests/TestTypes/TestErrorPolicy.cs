@@ -20,7 +20,9 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        protected override ErrorAction ApplyPolicy(IReadOnlyCollection<IInboundEnvelope> envelopes, Exception exception)
+        protected override ErrorAction ApplyPolicy(
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            Exception exception)
         {
             Applied = true;
             return ErrorAction.Skip;

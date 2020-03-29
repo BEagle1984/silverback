@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Xunit;
@@ -18,9 +19,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
     {
         private readonly KafkaBroker _broker = new KafkaBroker(
             Enumerable.Empty<IBrokerBehavior>(),
-            Substitute.For<IServiceProvider>(),
             NullLoggerFactory.Instance,
-            new MessageLogger());
+            new MessageLogger(),
+            Substitute.For<IServiceProvider>());
 
         [Fact]
         public void Produce_SomeMessage_EndpointConfigurationIsNotAltered()

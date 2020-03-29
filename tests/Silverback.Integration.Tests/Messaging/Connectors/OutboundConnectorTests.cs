@@ -25,8 +25,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         {
             var services = new ServiceCollection();
 
-            services.AddSilverback().WithConnectionToMessageBroker(options => options
-                .AddBroker<TestBroker>());
+            services
+                .AddNullLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options
+                    .AddBroker<TestBroker>());
 
             var serviceProvider = services.BuildServiceProvider();
 

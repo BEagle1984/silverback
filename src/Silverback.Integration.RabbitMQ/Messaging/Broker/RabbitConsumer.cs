@@ -32,10 +32,11 @@ namespace Silverback.Messaging.Broker
         public RabbitConsumer(
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
             IRabbitConnectionFactory connectionFactory,
+            IServiceProvider serviceProvider,
             ILogger<RabbitConsumer> logger)
-            : base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviors, serviceProvider, logger)
 
         {
             _connectionFactory = connectionFactory;
@@ -80,14 +81,14 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
-        protected override Task Commit(IEnumerable<RabbitOffset> offsets)
+        protected override Task Commit(IReadOnlyCollection<RabbitOffset> offsets)
         {
             CommitOrStoreOffset(offsets.OrderBy(offset => offset.DeliveryTag).Last());
             return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
-        protected override Task Rollback(IEnumerable<RabbitOffset> offsets)
+        protected override Task Rollback(IReadOnlyCollection<RabbitOffset> offsets)
         {
             BasicNack(offsets.Max(offset => offset.DeliveryTag));
             return Task.CompletedTask;

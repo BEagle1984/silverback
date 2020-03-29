@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Broker
         public KafkaProducer(
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
-            IEnumerable<IProducerBehavior> behaviors,
+            IReadOnlyCollection<IProducerBehavior> behaviors,
             MessageLogger messageLogger,
             IServiceProvider serviceProvider,
             ILogger<KafkaProducer> logger)
@@ -95,8 +95,8 @@ namespace Silverback.Messaging.Broker
                 if (kafkaKeyHeader.Value != null)
                     return Endpoint.Serializer is IKafkaMessageSerializer kafkaSerializer
                         ? kafkaSerializer.SerializeKey(
-                            kafkaKeyHeader.Value, 
-                            headers, 
+                            kafkaKeyHeader.Value,
+                            headers,
                             new MessageSerializationContext(Endpoint, Endpoint.Name))
                         : Encoding.UTF8.GetBytes(kafkaKeyHeader.Value);
             }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -8,6 +9,7 @@ using NSubstitute;
 using RabbitMQ.Client;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Xunit;
@@ -20,7 +22,8 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
             Enumerable.Empty<IBrokerBehavior>(),
             Substitute.For<IRabbitConnectionFactory>(),
             NullLoggerFactory.Instance,
-            new MessageLogger());
+            new MessageLogger(),
+            Substitute.For<IServiceProvider>());
 
         [Fact]
         public void GetProducer_ExchangeEndpoint_ProducerIsReturned()

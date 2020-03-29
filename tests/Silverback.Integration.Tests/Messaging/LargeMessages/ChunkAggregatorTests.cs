@@ -5,6 +5,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
+using Silverback.Messaging.Connectors;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -14,13 +16,14 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.LargeMessages
 {
-    public class ChunkConsumerTests
+    public class ChunkAggregatorTests
     {
         private readonly IChunkStore _store = new InMemoryChunkStore();
+        private readonly ConsumerTransactionManager _transactionManager = new ConsumerTransactionManager();
         private readonly IMessageSerializer _serializer = new JsonMessageSerializer();
 
         [Fact]
-        public async Task JoinIfComplete_AllChunks_Joined()
+        public async Task AggregateIfComplete_AllChunks_Joined()
         {
             var headers = new MessageHeaderCollection();
             var originalMessage = new BinaryMessage
@@ -61,11 +64,11 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 },
                 null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);
 
-            var result = await new ChunkConsumer(_store).JoinIfComplete(chunks[0]);
+            var result = await new ChunkAggregator(_store,_transactionManager).AggregateIfComplete(chunks[0]);
             result.Should().BeNull();
-            result = await new ChunkConsumer(_store).JoinIfComplete(chunks[1]);
+            result = await new ChunkAggregator(_store, _transactionManager).AggregateIfComplete(chunks[1]);
             result.Should().BeNull();
-            result = await new ChunkConsumer(_store).JoinIfComplete(chunks[2]);
+            result = await new ChunkAggregator(_store, _transactionManager).AggregateIfComplete(chunks[2]);
             result.Should().NotBeNull();
 
             var deserializedResult = (BinaryMessage) _serializer.Deserialize(

@@ -6,5 +6,5 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker.Behaviors
 {
-    public delegate Task OutboundEnvelopeHandler(IOutboundEnvelope envelope);
+    public delegate Task OutboundEnvelopeHandler(IOutboundEnvelope envelope, IProducer producer);
 }

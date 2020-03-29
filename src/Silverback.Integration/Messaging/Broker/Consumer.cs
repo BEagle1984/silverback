@@ -8,30 +8,33 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
     public abstract class Consumer : IConsumer, IDisposable
     {
-        private readonly IReadOnlyCollection<IConsumerBehavior> _behaviors;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<Consumer> _logger;
 
         protected Consumer(
             IBroker broker,
             IConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IServiceProvider serviceProvider,
             ILogger<Consumer> logger)
         {
-            _behaviors = (IReadOnlyCollection<IConsumerBehavior>) behaviors?.SortBySortIndex().ToList() ??
-                         Array.Empty<IConsumerBehavior>();
+            Behaviors = behaviors ?? Array.Empty<IConsumerBehavior>();
 
             Broker = broker ?? throw new ArgumentNullException(nameof(broker));
             Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
+            _serviceProvider = serviceProvider;
             _logger = logger;
 
             Endpoint.Validate();
         }
+
+        /// <inheritdoc cref="IConsumer" />
+        public IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
 
         /// <summary>
         ///     Gets the <see cref="IBroker" /> instance that owns this instance.
@@ -50,13 +53,13 @@ namespace Silverback.Messaging.Broker
         public Task Commit(IOffset offset) => Commit(new[] { offset });
 
         /// <inheritdoc cref="IConsumer" />
-        public abstract Task Commit(IEnumerable<IOffset> offsets);
+        public abstract Task Commit(IReadOnlyCollection<IOffset> offsets);
 
         /// <inheritdoc cref="IConsumer" />
         public Task Rollback(IOffset offset) => Rollback(new[] { offset });
 
         /// <inheritdoc cref="IConsumer" />
-        public abstract Task Rollback(IEnumerable<IOffset> offsets);
+        public abstract Task Rollback(IReadOnlyCollection<IOffset> offsets);
 
         /// <inheritdoc cref="IConsumer" />
         public abstract void Connect();
@@ -98,25 +101,35 @@ namespace Silverback.Messaging.Broker
                     "A message was received but no handler is configured, please attach to the Received event.");
 
             await ExecutePipeline(
-                _behaviors,
-                new RawInboundEnvelope(message, headers, Endpoint, sourceEndpointName, offset),
-                envelope => Received.Invoke(this, new MessageReceivedEventArgs(envelope)));
+                Behaviors,
+                new[] { new RawInboundEnvelope(message, headers, Endpoint, sourceEndpointName, offset) },
+                _serviceProvider,
+                (finalEnvelope, finalServiceProvider, _) => Received.Invoke(this,
+                    new MessagesReceivedEventArgs(finalEnvelope, finalServiceProvider)));
         }
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IConsumerBehavior> behaviors,
-            IRawInboundEnvelope envelope,
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            IServiceProvider serviceProvider,
             RawInboundEnvelopeHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
                 await behaviors.First()
-                    .Handle(envelope,
-                        nextEnvelope => ExecutePipeline(behaviors.Skip(1).ToList(), nextEnvelope, finalAction));
+                    .Handle(envelopes,
+                        serviceProvider,
+                        this,
+                        (nextEnvelopes, nextServiceProvider, _) =>
+                            ExecutePipeline(
+                                behaviors.Skip(1).ToList(),
+                                nextEnvelopes,
+                                nextServiceProvider,
+                                finalAction));
             }
             else
             {
-                await finalAction(envelope);
+                await finalAction(envelopes, serviceProvider, this);
             }
         }
     }
@@ -129,9 +142,10 @@ namespace Silverback.Messaging.Broker
         protected Consumer(
             TBroker broker,
             TEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IServiceProvider serviceProvider,
             ILogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
-            : base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviors, serviceProvider, logger)
         {
         }
 
@@ -146,7 +160,7 @@ namespace Silverback.Messaging.Broker
         protected new TEndpoint Endpoint => (TEndpoint) base.Endpoint;
 
         /// <inheritdoc cref="IConsumer" />
-        public override Task Commit(IEnumerable<IOffset> offsets) => Commit(offsets.Cast<TOffset>());
+        public override Task Commit(IReadOnlyCollection<IOffset> offsets) => Commit(offsets.Cast<TOffset>().ToList());
 
         /// <summary>
         ///     <param>Confirms that the messages at the specified offsets have been successfully processed.</param>
@@ -156,10 +170,11 @@ namespace Silverback.Messaging.Broker
         ///     </param>
         /// </summary>
         /// <param name="offsets">The offsets to be committed.</param>
-        protected abstract Task Commit(IEnumerable<TOffset> offsets);
+        protected abstract Task Commit(IReadOnlyCollection<TOffset> offsets);
 
         /// <inheritdoc cref="IConsumer" />
-        public override Task Rollback(IEnumerable<IOffset> offsets) => Rollback(offsets.Cast<TOffset>());
+        public override Task Rollback(IReadOnlyCollection<IOffset> offsets) =>
+            Rollback(offsets.Cast<TOffset>().ToList());
 
         /// <summary>
         ///     <param>Notifies that an error occured while processing the messages at the specified offsets.</param>
@@ -169,6 +184,6 @@ namespace Silverback.Messaging.Broker
         ///     </param>
         /// </summary>
         /// <param name="offsets">The offsets to be rolled back.</param>
-        protected abstract Task Rollback(IEnumerable<TOffset> offsets);
+        protected abstract Task Rollback(IReadOnlyCollection<TOffset> offsets);
     }
 }

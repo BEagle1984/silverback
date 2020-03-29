@@ -3,12 +3,18 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
     public interface IProducer
     {
+        /// <summary>
+        ///     Gets the collection of <see cref="IProducerBehavior" /> configured for this <see cref="IProducer" />.
+        /// </summary>
+        IReadOnlyCollection<IProducerBehavior> Behaviors { get; }
+
         /// <summary>
         ///     Publishes the specified message.
         /// </summary>

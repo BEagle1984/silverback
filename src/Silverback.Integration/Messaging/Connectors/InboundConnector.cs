@@ -3,17 +3,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.ErrorHandling;
-using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Serialization;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -24,14 +23,16 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly IBrokerCollection _brokerCollection;
         private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger<InboundConnector> _logger;
 
-        [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
-        private readonly List<InboundConsumer> _inboundConsumers = new List<InboundConsumer>();
-
-        public InboundConnector(IBrokerCollection brokerCollection, IServiceProvider serviceProvider)
+        public InboundConnector(
+            IBrokerCollection brokerCollection,
+            IServiceProvider serviceProvider,
+            ILogger<InboundConnector> logger)
         {
             _brokerCollection = brokerCollection ?? throw new ArgumentNullException(nameof(brokerCollection));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _logger = logger;
         }
 
         public virtual IInboundConnector Bind(
@@ -39,98 +40,63 @@ namespace Silverback.Messaging.Connectors
             IErrorPolicy errorPolicy = null,
             InboundConnectorSettings settings = null)
         {
+            if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
+
             settings ??= new InboundConnectorSettings();
 
             for (var i = 0; i < settings.Consumers; i++)
             {
-                _inboundConsumers.Add(new InboundConsumer(
-                    _brokerCollection,
-                    endpoint,
-                    settings,
-                    HandleMessages,
-                    Commit,
-                    Rollback,
-                    errorPolicy,
-                    _serviceProvider));
+                CreateAndBindConsumer(endpoint, errorPolicy, settings);
             }
 
-            // TODO: Carefully test with multiple endpoints!
-            // TODO: Test if consumer gets properly disposed etc.
             return this;
         }
 
-        protected async Task HandleMessages(IEnumerable<IInboundEnvelope> envelopes, IServiceProvider serviceProvider)
+        protected virtual void CreateAndBindConsumer(
+            IConsumerEndpoint endpoint,
+            IErrorPolicy errorPolicy,
+            InboundConnectorSettings settings)
         {
-            envelopes = (await envelopes
-                    .SelectAsync(async envelope => await HandleChunkedMessage(envelope, serviceProvider)))
-                .Where(args => args != null)
-                .Select(DeserializeRawMessage)
-                .ToList();
+            _logger.LogTrace("Connecting to inbound endpoint '{endpointName}'...", endpoint.Name);
 
-            if (!envelopes.Any())
-                return;
+            settings.Validate();
 
-            await RelayMessages(envelopes, serviceProvider);
+            var consumer = _brokerCollection.GetConsumer(endpoint);
+            consumer.Received += (sender, args) => RelayMessages(args.Envelopes, args.ServiceProvider);
+
+            InitConsumerAdditionalFeatures(errorPolicy, settings, consumer);
         }
 
-        private async Task<IInboundEnvelope> HandleChunkedMessage(
-            IInboundEnvelope envelope,
-            IServiceProvider serviceProvider)
+        private void InitConsumerAdditionalFeatures(
+            IErrorPolicy errorPolicy,
+            InboundConnectorSettings settings,
+            IConsumer consumer)
         {
-            if (!envelope.Headers.Contains(DefaultMessageHeaders.ChunkId))
-                return envelope;
+            var inboundProcessors = consumer.Behaviors.OfType<InboundProcessorConsumerBehavior>().ToList();
 
-            var completeMessage = await serviceProvider.GetRequiredService<ChunkConsumer>().JoinIfComplete(envelope);
+            if (inboundProcessors.Count != 1)
+                throw new SilverbackException("No InboundProcessorConsumerBehavior is configured.");
 
-            return completeMessage == null
-                ? null
-                : new InboundEnvelope(
-                    completeMessage,
-                    envelope.Headers,
-                    envelope.Offset,
-                    envelope.Endpoint,
-                    envelope.ActualEndpointName);
+            var inboundProcessor = inboundProcessors.First();
+
+            inboundProcessor.Batch = CreateMessageBatchIfNeeded(errorPolicy, settings);
+            inboundProcessor.ErrorPolicy = errorPolicy;
         }
 
-        private IInboundEnvelope DeserializeRawMessage(IInboundEnvelope envelope)
+        private MessageBatch CreateMessageBatchIfNeeded(IErrorPolicy errorPolicy, InboundConnectorSettings settings)
         {
-            var deserialized =
-                envelope.Message ?? (((InboundEnvelope) envelope).Message =
-                    envelope.Endpoint.Serializer.Deserialize(
-                        envelope.RawMessage,
-                        envelope.Headers,
-                        new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName)));
+            if (settings.Batch.Size <= 1)
+                return null;
 
-            if (deserialized == null)
-                return envelope;
-
-            // Create typed message for easier specific subscription
-            var typedInboundMessage = (InboundEnvelope) Activator.CreateInstance(
-                typeof(InboundEnvelope<>).MakeGenericType(deserialized.GetType()),
-                envelope);
-
-            typedInboundMessage.Message = deserialized;
-
-            return typedInboundMessage;
+            return new MessageBatch(
+                settings.Batch,
+                errorPolicy,
+                _serviceProvider);
         }
 
         protected virtual async Task RelayMessages(
-            IEnumerable<IInboundEnvelope> envelopes,
+            IEnumerable<IRawInboundEnvelope> envelopes,
             IServiceProvider serviceProvider) =>
             await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(envelopes);
-
-        protected virtual async Task Commit(IServiceProvider serviceProvider)
-        {
-            var chunkConsumer = serviceProvider.GetService<ChunkConsumer>();
-            if (chunkConsumer != null)
-                await chunkConsumer.Commit();
-        }
-
-        protected virtual async Task Rollback(IServiceProvider serviceProvider)
-        {
-            var chunkConsumer = serviceProvider.GetService<ChunkConsumer>();
-            if (chunkConsumer != null)
-                await chunkConsumer.Rollback();
-        }
     }
 }

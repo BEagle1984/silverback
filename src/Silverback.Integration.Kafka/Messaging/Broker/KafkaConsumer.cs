@@ -25,10 +25,10 @@ namespace Silverback.Messaging.Broker
         public KafkaConsumer(
             KafkaBroker broker,
             KafkaConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
             IServiceProvider serviceProvider,
             ILogger<KafkaConsumer> logger)
-            : base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviors, serviceProvider, logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -124,7 +124,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
-        protected override Task Commit(IEnumerable<KafkaOffset> offsets)
+        protected override Task Commit(IReadOnlyCollection<KafkaOffset> offsets)
         {
             var lastOffsets = offsets
                 .GroupBy(o => o.Key)
@@ -145,7 +145,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
-        protected override Task Rollback(IEnumerable<KafkaOffset> offsets)
+        protected override Task Rollback(IReadOnlyCollection<KafkaOffset> offsets)
         {
             // Nothing to do here. With Kafka the uncommitted messages will be implicitly re-consumed. 
             return Task.CompletedTask;

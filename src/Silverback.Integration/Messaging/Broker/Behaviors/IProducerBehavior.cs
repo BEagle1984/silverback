@@ -15,8 +15,15 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <summary>
         ///     Process, handles or transforms the message being produced.
         /// </summary>
-        /// <param name="envelope">The envelope containing the message being produced.</param>
-        /// <param name="next">The next behavior in the pipeline.</param>
-        Task Handle(IOutboundEnvelope envelope, OutboundEnvelopeHandler next);
+        /// <param name="envelope">
+        ///     The envelope containing the message being produced.
+        /// </param>
+        /// <param name="producer">
+        ///     The <see cref="IProducer" /> instance that is invoking this behavior.
+        /// </param>
+        /// <param name="next">
+        ///     The next behavior in the pipeline.
+        /// </param>
+        Task Handle(IOutboundEnvelope envelope, IProducer producer, OutboundEnvelopeHandler next);
     }
 }

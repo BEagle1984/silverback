@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        protected override async Task<bool> MustProcess(IInboundEnvelope envelope, IServiceProvider serviceProvider)
+        protected override async Task<bool> MustProcess(IRawInboundEnvelope envelope, IServiceProvider serviceProvider)
         {
             if (envelope.Offset == null || !(envelope.Offset is IComparableOffset comparableOffset))
                 throw new InvalidOperationException(
@@ -36,20 +36,10 @@ namespace Silverback.Messaging.Connectors
             if (latest != null && latest.CompareTo(comparableOffset) >= 0)
                 return false;
 
+            serviceProvider.GetRequiredService<ConsumerTransactionManager>().Enlist(offsetStore);
+
             await offsetStore.Store(comparableOffset, envelope.Endpoint);
             return true;
-        }
-
-        protected override async Task Commit(IServiceProvider serviceProvider)
-        {
-            await base.Commit(serviceProvider);
-            await serviceProvider.GetRequiredService<IOffsetStore>().Commit();
-        }
-
-        protected override async Task Rollback(IServiceProvider serviceProvider)
-        {
-            await base.Rollback(serviceProvider);
-            await serviceProvider.GetRequiredService<IOffsetStore>().Rollback();
         }
     }
 }

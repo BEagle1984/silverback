@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -11,8 +12,8 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestBroker : Broker<TestProducerEndpoint, TestConsumerEndpoint>
     {
-        public TestBroker(IEnumerable<IBrokerBehavior> behaviors = null)
-            : base(behaviors, NullLoggerFactory.Instance)
+        public TestBroker(IServiceProvider serviceProvider, IEnumerable<IBrokerBehavior> behaviors)
+            : base(behaviors, NullLoggerFactory.Instance, serviceProvider)
         {
         }
 
@@ -22,17 +23,20 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override IProducer InstantiateProducer(
             TestProducerEndpoint endpoint,
-            IEnumerable<IProducerBehavior> behaviors) =>
+            IReadOnlyCollection<IProducerBehavior> behaviors,
+            IServiceProvider serviceProvider) =>
             new TestProducer(this, endpoint, behaviors);
 
         protected override IConsumer InstantiateConsumer(
             TestConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors)
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IServiceProvider serviceProvider)
         {
             var consumer = new TestConsumer(
                 this,
                 endpoint,
                 behaviors,
+                serviceProvider,
                 LoggerFactory.CreateLogger<TestConsumer>());
 
             Consumers.Add(consumer);

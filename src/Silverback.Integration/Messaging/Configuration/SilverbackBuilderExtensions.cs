@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;

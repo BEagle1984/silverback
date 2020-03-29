@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -43,11 +45,14 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 };
 
             var chunks = new List<IOutboundEnvelope>();
-            new ChunkSplitterProducerBehavior().Handle(envelope, chunk =>
-            {
-                chunks.Add(chunk);
-                return Task.CompletedTask;
-            });
+            new ChunkSplitterProducerBehavior().Handle(
+                envelope,
+                Substitute.For<IProducer>(),
+                (chunk, _) =>
+                {
+                    chunks.Add(chunk);
+                    return Task.CompletedTask;
+                });
 
             chunks.Should().HaveCount(1);
             chunks.First().Should().BeEquivalentTo(envelope);
@@ -81,11 +86,14 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 };
 
             var chunks = new List<IOutboundEnvelope>();
-            new ChunkSplitterProducerBehavior().Handle(envelope, chunk =>
-            {
-                chunks.Add(chunk);
-                return Task.CompletedTask;
-            });
+            new ChunkSplitterProducerBehavior().Handle(
+                envelope,
+                Substitute.For<IProducer>(),
+                (chunk, _) =>
+                {
+                    chunks.Add(chunk);
+                    return Task.CompletedTask;
+                });
 
             chunks.Should().HaveCount(4);
             chunks.Should().Match(c => c.All(m => m.RawMessage.Length < 1000));

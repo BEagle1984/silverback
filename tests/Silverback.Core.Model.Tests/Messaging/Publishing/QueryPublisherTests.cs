@@ -4,8 +4,6 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.Model.TestTypes.Messages;
 using Silverback.Tests.Core.Model.TestTypes.Subscribers;
@@ -25,8 +23,7 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
                 .UseModel()
                 .AddSingletonSubscriber(_ => new QueriesHandler());
 
-            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            services.AddNullLogger();
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 

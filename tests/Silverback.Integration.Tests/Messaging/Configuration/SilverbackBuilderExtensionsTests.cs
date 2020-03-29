@@ -5,6 +5,7 @@ using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Tests.Integration.TestTypes;
 using Xunit;
@@ -46,6 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void WithConnectionTo_BrokerCollectionRegisteredForDI()
         {
             var serviceProvider = new ServiceCollection()
+                .AddNullLogger()
                 .AddSilverback()
                 .WithConnectionTo<TestBroker>(options => { })
                 .Services.BuildServiceProvider();
@@ -58,6 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void WithConnectionTo_BrokerRegisteredForDI()
         {
             var serviceProvider = new ServiceCollection()
+                .AddNullLogger()
                 .AddSilverback()
                 .WithConnectionTo<TestBroker>(options => { })
                 .Services.BuildServiceProvider();
@@ -69,6 +72,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void WithConnectionTo_ActivityBehaviorsRegisteredForDI()
         {
             var serviceProvider = new ServiceCollection()
+                .AddNullLogger()
                 .AddSilverback()
                 .WithConnectionTo<TestBroker>(options => { })
                 .Services.BuildServiceProvider();
@@ -85,6 +89,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void WithConnectionTo_BrokerOptionsConfiguratorInvoked()
         {
             var serviceProvider = new ServiceCollection()
+                .AddNullLogger()
                 .AddSilverback()
                 .WithConnectionTo<TestBroker>(options => { })
                 .Services.BuildServiceProvider();

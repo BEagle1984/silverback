@@ -5,8 +5,6 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
@@ -28,8 +26,7 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
             var services = new ServiceCollection();
 
             services
-                .AddSingleton<ILoggerFactory, NullLoggerFactory>()
-                .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
+                .AddNullLogger()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>());

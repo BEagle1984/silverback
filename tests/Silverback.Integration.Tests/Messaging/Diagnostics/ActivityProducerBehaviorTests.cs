@@ -6,8 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
@@ -31,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.Start();
             var envelope = new OutboundEnvelope(null, null, TestProducerEndpoint.GetDefault());
 
-            new ActivityProducerBehavior().Handle(envelope, _ => Task.CompletedTask);
+            new ActivityProducerBehavior().Handle(envelope, null, (_, __) => Task.CompletedTask);
 
             envelope.Headers.Should().Contain(
                 h => h.Key == DefaultMessageHeaders.TraceId &&
@@ -43,7 +41,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var envelope = new OutboundEnvelope(null, null, TestProducerEndpoint.GetDefault());
 
-            new ActivityProducerBehavior().Handle(envelope, _ => Task.CompletedTask);
+            new ActivityProducerBehavior().Handle(envelope, null, (_, __) => Task.CompletedTask);
 
             envelope.Headers.Should().Contain(
                 h => h.Key == DefaultMessageHeaders.TraceId && !string.IsNullOrEmpty(h.Value));
@@ -54,8 +52,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var services = new ServiceCollection();
             services
-                .AddSingleton<ILoggerFactory, NullLoggerFactory>()
-                .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
+                .AddNullLogger()
                 .AddSilverback().WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>());
             var serviceProvider = services.BuildServiceProvider();
@@ -77,8 +74,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var services = new ServiceCollection();
             services
-                .AddSingleton<ILoggerFactory, NullLoggerFactory>()
-                .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
+                .AddNullLogger()
                 .AddSilverback().WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>());
             var serviceProvider = services.BuildServiceProvider();

@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaMessageKeyInitializerProducerBehavior().Handle(envelope, _ => Task.CompletedTask);
+            new KafkaMessageKeyInitializerProducerBehavior().Handle(envelope, null, (_, __) => Task.CompletedTask);
 
             envelope.Headers.Should().NotContain(
                 h => h.Key == "x-kafka-message-key");
@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaMessageKeyInitializerProducerBehavior().Handle(envelope, _ => Task.CompletedTask);
+            new KafkaMessageKeyInitializerProducerBehavior().Handle(envelope, null, (_, __) => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "1"));
         }
@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaMessageKeyInitializerProducerBehavior().Handle(envelope, _ => Task.CompletedTask);
+            new KafkaMessageKeyInitializerProducerBehavior().Handle(envelope, null, (_, __) => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "One=1,Two=2"));
         }

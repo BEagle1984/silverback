@@ -6,8 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors.Repositories;
@@ -47,8 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             _services = new ServiceCollection();
 
-            _services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-            _services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            _services.AddNullLogger();
 
             _serviceProvider = null; // Creation deferred to after AddBroker() has been called
             _serviceScope = null;
@@ -129,13 +126,15 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                 .AddInbound(TestConsumerEndpoint.GetDefault()));
 
             var consumer = GetBroker().Consumers.First();
-            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
 
-            _testSubscriber.ReceivedMessages.Count.Should().Be(5);
+            _testSubscriber.ReceivedMessages
+                .Count(message => !(message is ISilverbackEvent))
+                .Should().Be(5);
         }
 
         [Fact]
@@ -150,13 +149,15 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                 .AddInbound(TestConsumerEndpoint.GetDefault()));
 
             var consumer = GetBroker().Consumers.First();
-            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
 
-            _testSubscriber.ReceivedMessages.Count.Should().Be(5);
+            _testSubscriber.ReceivedMessages
+                .Count(message => !(message is ISilverbackEvent))
+                .Should().Be(5);
         }
 
         [Fact]
@@ -173,13 +174,15 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             var consumer = GetBroker().Consumers.First();
             var duplicatedId = Guid.NewGuid();
-            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventOne { Id = duplicatedId });
-            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventTwo { Id = duplicatedId });
+            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Id = duplicatedId });
+            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo { Id = duplicatedId });
 
-            _testSubscriber.ReceivedMessages.Count.Should().Be(4);
+            _testSubscriber.ReceivedMessages
+                .Count(message => !(message is ISilverbackEvent))
+                .Should().Be(4);
         }
 
         [Fact]
@@ -194,26 +197,28 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                     .AddInbound(TestConsumerEndpoint.GetDefault()));
 
             var consumer = GetBroker().Consumers.First();
-            await consumer.TestPush(
+            await consumer.TestHandleMessage(
                 new TestEventOne { Id = Guid.NewGuid() },
                 offset: new TestOffset("test-1", "1"));
-            await consumer.TestPush(
+            await consumer.TestHandleMessage(
                 new TestEventTwo { Id = Guid.NewGuid() },
                 offset: new TestOffset("test-2", "1"));
-            await consumer.TestPush(
+            await consumer.TestHandleMessage(
                 new TestEventOne { Id = Guid.NewGuid() },
                 offset: new TestOffset("test-1", "2"));
-            await consumer.TestPush(
+            await consumer.TestHandleMessage(
                 new TestEventTwo { Id = Guid.NewGuid() },
                 offset: new TestOffset("test-2", "1"));
-            await consumer.TestPush(
+            await consumer.TestHandleMessage(
                 new TestEventOne { Id = Guid.NewGuid() },
                 offset: new TestOffset("test-1", "3"));
-            await consumer.TestPush(
+            await consumer.TestHandleMessage(
                 new TestEventTwo { Id = Guid.NewGuid() },
                 offset: new TestOffset("test-2", "2"));
 
-            _testSubscriber.ReceivedMessages.Count.Should().Be(5);
+            _testSubscriber.ReceivedMessages
+                .Count(message => !(message is ISilverbackEvent))
+                .Should().Be(5);
         }
     }
 }

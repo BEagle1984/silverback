@@ -14,19 +14,17 @@ namespace Silverback.Messaging.Broker
 {
     public abstract class Producer : IProducer
     {
-        private readonly IReadOnlyCollection<IProducerBehavior> _behaviors;
         private readonly MessageLogger _messageLogger;
         private readonly ILogger<Producer> _logger;
 
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
-            IEnumerable<IProducerBehavior> behaviors,
+            IReadOnlyCollection<IProducerBehavior> behaviors,
             ILogger<Producer> logger,
             MessageLogger messageLogger)
         {
-            _behaviors = (IReadOnlyCollection<IProducerBehavior>) behaviors?.SortBySortIndex().ToList() ??
-                         Array.Empty<IProducerBehavior>();
+            Behaviors = behaviors ?? Array.Empty<IProducerBehavior>();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _messageLogger = messageLogger ?? throw new ArgumentNullException(nameof(messageLogger));
 
@@ -35,6 +33,9 @@ namespace Silverback.Messaging.Broker
 
             Endpoint.Validate();
         }
+
+        /// <inheritdoc cref="IProducer" />
+        public IReadOnlyCollection<IProducerBehavior> Behaviors { get; }
 
         /// <summary>
         ///     Gets the <see cref="IBroker" /> instance that owns this instance.
@@ -57,7 +58,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer" />
         public void Produce(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() =>
-                ExecutePipeline(_behaviors, envelope, finalEnvelope =>
+                ExecutePipeline(Behaviors, envelope, (finalEnvelope, _) =>
                 {
                     ((RawOutboundEnvelope) finalEnvelope).Offset = ProduceImpl(finalEnvelope);
                     return Task.CompletedTask;
@@ -65,7 +66,7 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IProducer" />
         public async Task ProduceAsync(IOutboundEnvelope envelope) =>
-            await ExecutePipeline(_behaviors, envelope, async finalEnvelope =>
+            await ExecutePipeline(Behaviors, envelope, async (finalEnvelope, _) =>
                 ((RawOutboundEnvelope) finalEnvelope).Offset = await ProduceAsyncImpl(finalEnvelope));
 
         private async Task ExecutePipeline(
@@ -76,11 +77,12 @@ namespace Silverback.Messaging.Broker
             if (behaviors != null && behaviors.Any())
             {
                 await behaviors.First()
-                    .Handle(envelope, m => ExecutePipeline(behaviors.Skip(1).ToList(), m, finalAction));
+                    .Handle(envelope, this, (nextEnvelope, _) =>
+                        ExecutePipeline(behaviors.Skip(1).ToList(), nextEnvelope, finalAction));
             }
             else
             {
-                await finalAction(envelope);
+                await finalAction(envelope, this);
                 _messageLogger.LogInformation(_logger, "Message produced.", envelope);
             }
         }
@@ -107,7 +109,7 @@ namespace Silverback.Messaging.Broker
         protected Producer(
             TBroker broker,
             TEndpoint endpoint,
-            IEnumerable<IProducerBehavior> behaviors,
+            IReadOnlyCollection<IProducerBehavior> behaviors,
             ILogger<Producer> logger,
             MessageLogger messageLogger)
             : base(broker, endpoint, behaviors, logger, messageLogger)

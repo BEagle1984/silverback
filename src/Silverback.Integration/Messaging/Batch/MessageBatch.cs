@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -24,39 +23,31 @@ namespace Silverback.Messaging.Batch
         private readonly IErrorPolicy _errorPolicy;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
-        private readonly Func<IReadOnlyCollection<IInboundEnvelope>, IServiceProvider, Task> _messagesHandler;
-        private readonly Func<IReadOnlyCollection<IOffset>, IServiceProvider, Task> _commitHandler;
-        private readonly Func<IServiceProvider, Task> _rollbackHandler;
-
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
         private readonly MessageLogger _messageLogger;
 
-        private readonly List<IInboundEnvelope> _envelopes;
+        private readonly List<IRawInboundEnvelope> _envelopes;
         private readonly Timer _waitTimer;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
+        private Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> _messagesHandler;
+        private Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> _commitHandler;
+        private Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> _rollbackHandler;
         private Exception _processingException;
 
         public MessageBatch(
             BatchSettings settings,
-            Func<IReadOnlyCollection<IInboundEnvelope>, IServiceProvider, Task> messagesHandler,
-            Func<IReadOnlyCollection<IOffset>, IServiceProvider, Task> commitHandler,
-            Func<IServiceProvider, Task> rollbackHandler,
             IErrorPolicy errorPolicy,
             IServiceProvider serviceProvider)
         {
-            _messagesHandler = messagesHandler ?? throw new ArgumentNullException(nameof(messagesHandler));
-            _commitHandler = commitHandler ?? throw new ArgumentNullException(nameof(commitHandler));
-            _rollbackHandler = rollbackHandler ?? throw new ArgumentNullException(nameof(rollbackHandler));
-
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
 
             _errorPolicy = errorPolicy;
             _settings = settings;
 
-            _envelopes = new List<IInboundEnvelope>(_settings.Size);
+            _envelopes = new List<IRawInboundEnvelope>(_settings.Size);
 
             if (_settings.MaxWaitTime < TimeSpan.MaxValue)
             {
@@ -72,7 +63,21 @@ namespace Silverback.Messaging.Batch
 
         public int CurrentSize => _envelopes.Count;
 
-        public async Task AddMessage(IInboundEnvelope envelope)
+        public void BindOnce(
+            Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> messagesHandler,
+            Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> commitHandler,
+            Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> rollbackHandler
+        )
+        {
+            if (_messagesHandler != null)
+                return;
+
+            _messagesHandler = messagesHandler ?? throw new ArgumentNullException(nameof(messagesHandler));
+            _commitHandler = commitHandler ?? throw new ArgumentNullException(nameof(commitHandler));
+            _rollbackHandler = rollbackHandler ?? throw new ArgumentNullException(nameof(rollbackHandler));
+        }
+
+        public async Task AddMessages(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
             // TODO: Check this!
             if (_processingException != null)
@@ -84,14 +89,19 @@ namespace Silverback.Messaging.Batch
 
             try
             {
-                _envelopes.Add(envelope);
+                _envelopes.AddRange(envelopes);
 
-                _messageLogger.LogInformation(_logger, "Message added to batch.", envelope);
+                _envelopes.ForEach(envelope =>
+                    _messageLogger.LogInformation(_logger, "Message added to batch.", envelope));
 
                 if (_envelopes.Count == 1)
                 {
                     CurrentBatchId = Guid.NewGuid();
                     _waitTimer?.Start();
+
+                    using var scope = _serviceProvider.CreateScope();
+                    await scope.ServiceProvider.GetRequiredService<IPublisher>()
+                        .PublishAsync(new BatchStartedEvent(CurrentBatchId));
                 }
                 else if (_envelopes.Count == _settings.Size)
                 {
@@ -145,7 +155,7 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private void AddHeaders(IReadOnlyCollection<IInboundEnvelope> envelopes)
+        private void AddHeaders(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
             foreach (var envelope in envelopes)
             {
@@ -154,7 +164,7 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private async Task ProcessEachMessageAndPublishEvents(IReadOnlyCollection<IInboundEnvelope> envelopes)
+        private async Task ProcessEachMessageAndPublishEvents(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
@@ -165,11 +175,11 @@ namespace Silverback.Messaging.Batch
                 await _messagesHandler(envelopes, scope.ServiceProvider);
                 await publisher.PublishAsync(new BatchProcessedEvent(CurrentBatchId, envelopes));
 
-                await _commitHandler.Invoke(envelopes.Select(m => m.Offset).ToList(), scope.ServiceProvider);
+                await _commitHandler.Invoke(envelopes, scope.ServiceProvider);
             }
             catch (Exception ex)
             {
-                await _rollbackHandler.Invoke(scope.ServiceProvider);
+                await _rollbackHandler.Invoke(envelopes, scope.ServiceProvider);
 
                 await publisher.PublishAsync(new BatchAbortedEvent(CurrentBatchId, envelopes, ex));
 

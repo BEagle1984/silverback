@@ -18,9 +18,10 @@ namespace Silverback.Tests.Integration.TestTypes
         public TestConsumer(
             TestBroker broker,
             TestConsumerEndpoint endpoint,
-            IEnumerable<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IServiceProvider serviceProvider,
             ILogger<TestConsumer> logger)
-            : base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviors, serviceProvider, logger)
         {
         }
 
@@ -28,17 +29,17 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public int AcknowledgeCount { get; set; }
 
-        public Task TestPush(
+        public Task TestHandleMessage(
             object message,
             IEnumerable<MessageHeader> headers = null,
             IOffset offset = null,
             IMessageSerializer serializer = null) =>
-            TestPush(message, new MessageHeaderCollection(headers), offset, serializer);
+            TestHandleMessage(message, new MessageHeaderCollection(headers), offset, serializer);
 
-        public Task TestPush(byte[] rawMessage, IEnumerable<MessageHeader> headers = null, IOffset offset = null) =>
-            TestPush(rawMessage, new MessageHeaderCollection(headers), offset);
+        public Task TestConsume(byte[] rawMessage, IEnumerable<MessageHeader> headers = null, IOffset offset = null) =>
+            TestHandleMessage(rawMessage, new MessageHeaderCollection(headers), offset);
 
-        public async Task TestPush(
+        public async Task TestHandleMessage(
             object message,
             MessageHeaderCollection headers,
             IOffset offset = null,
@@ -49,10 +50,10 @@ namespace Silverback.Tests.Integration.TestTypes
 
             var buffer = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
-            await TestPush(buffer, headers, offset);
+            await TestHandleMessage(buffer, headers, offset);
         }
 
-        public async Task TestPush(byte[] rawMessage, MessageHeaderCollection headers, IOffset offset = null)
+        public async Task TestHandleMessage(byte[] rawMessage, MessageHeaderCollection headers, IOffset offset = null)
         {
             if (!Broker.IsConnected)
                 throw new InvalidOperationException("The broker is not connected.");
@@ -63,13 +64,13 @@ namespace Silverback.Tests.Integration.TestTypes
             await HandleMessage(rawMessage, headers, "test-topic", offset);
         }
 
-        protected override Task Commit(IEnumerable<TestOffset> offsets)
+        protected override Task Commit(IReadOnlyCollection<TestOffset> offsets)
         {
             AcknowledgeCount += offsets.Count();
             return Task.CompletedTask;
         }
 
-        protected override Task Rollback(IEnumerable<TestOffset> offsets)
+        protected override Task Rollback(IReadOnlyCollection<TestOffset> offsets)
         {
             // Nothing to do
             return Task.CompletedTask;

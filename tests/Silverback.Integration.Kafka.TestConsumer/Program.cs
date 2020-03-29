@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -77,12 +78,11 @@ namespace Silverback.Integration.Kafka.TestConsumer
             };
         }
 
-        private static async Task OnMessageReceived(object sender, MessageReceivedEventArgs args)
+        private static async Task OnMessageReceived(object sender, MessagesReceivedEventArgs args)
         {
-            var testMessage = (TestMessage) args.Envelope.Endpoint.Serializer.Deserialize(
-                args.Envelope.RawMessage,
-                new MessageHeaderCollection(args.Envelope.Headers), 
-                MessageSerializationContext.Empty);
+            var envelope = (IInboundEnvelope<TestMessage>) args.Envelopes.Single();
+
+            var testMessage = envelope.Message;
 
             Console.WriteLine($"[{testMessage.Id}] [{Activity.Current.Id}] {testMessage.Text}");
 
@@ -102,7 +102,7 @@ namespace Silverback.Integration.Kafka.TestConsumer
                 }
             }
 
-            await _consumer.Commit(args.Envelope.Offset);
+            await _consumer.Commit(args.Envelopes.Select(e => e.Offset).ToList());
         }
 
         private static void PrintHeader()

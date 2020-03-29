@@ -5,20 +5,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.LargeMessages
 {
-    public class ChunkConsumer
+    public class ChunkAggregator
     {
         private readonly IChunkStore _store;
 
-        public ChunkConsumer(IChunkStore store)
+        public ChunkAggregator(IChunkStore store, ConsumerTransactionManager transactionManager)
         {
             _store = store;
+            transactionManager.Enlist(_store);
         }
 
-        public async Task<byte[]> JoinIfComplete(IInboundEnvelope envelope)
+        public async Task<byte[]> AggregateIfComplete(IRawInboundEnvelope envelope)
         {
             var (messageId, chunkId, chunksCount) = ExtractHeadersValues(envelope);
 
@@ -45,7 +47,7 @@ namespace Silverback.Messaging.LargeMessages
             }
         }
 
-        private (string messageId, int chinkId, int chunksCount) ExtractHeadersValues(IInboundEnvelope envelope)
+        private (string messageId, int chinkId, int chunksCount) ExtractHeadersValues(IRawInboundEnvelope envelope)
         {
             var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
 

@@ -3,16 +3,13 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Connectors;
 
 namespace Silverback.Messaging.LargeMessages
 {
-    public interface IChunkStore
+    public interface IChunkStore : ITransactional
     {
         Task Store(string messageId, int chunkId, int chunksCount, byte[] content);
-
-        Task Commit();
-
-        Task Rollback();
 
         Task<int> CountChunks(string messageId);
 

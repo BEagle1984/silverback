@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
@@ -34,8 +33,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _testSubscriber = new TestSubscriber();
 
-            services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            services.AddNullLogger();
             services
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options
@@ -47,11 +45,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _serviceProvider = services.BuildServiceProvider();
             _broker = (TestBroker) _serviceProvider.GetService<IBroker>();
             _connector = new LoggedInboundConnector(
-                _serviceProvider.GetService<IBrokerCollection>(),
+                _serviceProvider.GetRequiredService<IBrokerCollection>(),
                 _serviceProvider,
-                new NullLogger<LoggedInboundConnector>(),
-                new MessageLogger());
-
+                _serviceProvider.GetRequiredService<ILogger<LoggedInboundConnector>>(),
+                _serviceProvider.GetRequiredService<MessageLogger>());
             InMemoryInboundLog.Clear();
         }
 
@@ -62,10 +59,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestPush(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestPush(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
 
-            _testSubscriber.ReceivedMessages.Count.Should().Be(2);
+            _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
+                .Should().Be(2);
         }
 
         [Fact]
@@ -78,13 +76,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestPush(e1);
-            await consumer.TestPush(e2);
-            await consumer.TestPush(e1);
-            await consumer.TestPush(e2);
-            await consumer.TestPush(e1);
+            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(e2);
+            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(e2);
+            await consumer.TestHandleMessage(e1);
 
-            _testSubscriber.ReceivedMessages.Count.Should().Be(2);
+            _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
+                .Should().Be(2);
         }
 
         [Fact]
@@ -97,11 +96,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestPush(e1);
-            await consumer.TestPush(e2);
-            await consumer.TestPush(e1);
-            await consumer.TestPush(e2);
-            await consumer.TestPush(e1);
+            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(e2);
+            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(e2);
+            await consumer.TestHandleMessage(e1);
 
             (await _serviceProvider.GetRequiredService<IInboundLog>().GetLength()).Should().Be(2);
         }
@@ -122,13 +121,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestPush(e1);
-            await consumer.TestPush(e2);
-            await consumer.TestPush(e1);
-            await consumer.TestPush(e2);
-            await consumer.TestPush(e1);
+            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(e2);
+            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(e2);
+            await consumer.TestHandleMessage(e1);
 
-            _testSubscriber.ReceivedMessages.Count.Should().Be(6);
+            _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
+                .Should().Be(2);
         }
 
         [Fact]
@@ -147,11 +147,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestPush(e1);
-            await consumer.TestPush(e2);
-            await consumer.TestPush(e1);
-            await consumer.TestPush(e2);
-            await consumer.TestPush(e1);
+            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(e2);
+            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(e2);
+            await consumer.TestHandleMessage(e1);
 
             (await _serviceProvider.GetRequiredService<IInboundLog>().GetLength()).Should().Be(2);
         }
@@ -179,7 +179,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             try
             {
-                await consumer.TestPush(e1);
+                await consumer.TestHandleMessage(e1);
             }
             catch
             {
@@ -187,7 +187,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             try
             {
-                await consumer.TestPush(e2);
+                await consumer.TestHandleMessage(e2);
             }
             catch
             {
@@ -195,7 +195,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             try
             {
-                await consumer.TestPush(e3);
+                await consumer.TestHandleMessage(e3);
             }
             catch
             {
@@ -203,7 +203,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             try
             {
-                await consumer.TestPush(e4);
+                await consumer.TestHandleMessage(e4);
             }
             catch
             {
@@ -241,8 +241,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 {
                     try
                     {
-                        await consumer1.TestPush(e1);
-                        await consumer1.TestPush(e2);
+                        await consumer1.TestHandleMessage(e1);
+                        await consumer1.TestHandleMessage(e2);
                     }
                     catch (Exception)
                     {
@@ -250,8 +250,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 }),
                 Task.Run(async () =>
                 {
-                    await consumer2.TestPush(e3);
-                    await consumer2.TestPush(e4);
+                    await consumer2.TestHandleMessage(e3);
+                    await consumer2.TestHandleMessage(e4);
                 })
             };
 

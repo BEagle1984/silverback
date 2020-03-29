@@ -15,8 +15,9 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         {
             var envelope = new RawInboundEnvelope(
                 (byte[]) null,
-                null, 
+                null,
                 TestConsumerEndpoint.GetDefault(),
+                "test",
                 new TestOffset("a", "b"));
 
             envelope.Should().NotBeNull();

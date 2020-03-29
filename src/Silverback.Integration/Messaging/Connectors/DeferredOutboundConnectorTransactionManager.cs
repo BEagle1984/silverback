@@ -17,19 +17,10 @@ namespace Silverback.Messaging.Connectors
             _queueProducer = queueProducer;
         }
 
-#pragma warning disable IDE0060
         [Subscribe]
-        public async Task OnTransactionCompleted(TransactionCompletedEvent message)
-        {
-            await _queueProducer.Commit();
-        }
+        public async Task OnTransactionCompleted(TransactionCompletedEvent message) => await _queueProducer.Commit();
 
         [Subscribe]
-        public async Task OnTransactionAborted(TransactionAbortedEvent message)
-        {
-            await _queueProducer.Rollback();
-        }
-
-#pragma warning restore
+        public async Task OnTransactionAborted(TransactionAbortedEvent message) => await _queueProducer.Rollback();
     }
 }

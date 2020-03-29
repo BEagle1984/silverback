@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.TestTypes
         public TestOtherProducer(
             TestOtherBroker broker,
             TestOtherProducerEndpoint endpoint,
-            IEnumerable<IProducerBehavior> behaviors)
+            IReadOnlyCollection<IProducerBehavior> behaviors)
             : base(
                 broker,
                 endpoint,

@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Silverback.Core.Rx\Silverback.Core.Rx.csproj" />
+    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
   </ItemGroup>
 
 </Project>

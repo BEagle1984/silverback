@@ -2,16 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    public interface IInboundLog
+    public interface IInboundLog : ITransactional
     {
         Task Add(object message, IConsumerEndpoint endpoint);
-
-        Task Commit();
-
-        Task Rollback();
 
         /// <summary>
         ///     Returns a boolean value indicating whether a message with the same id and endpoint

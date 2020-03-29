@@ -3,22 +3,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Silverback.Messaging.Messages
 {
     public abstract class BatchEvent : ISilverbackEvent
     {
-        protected BatchEvent(Guid batchId, IReadOnlyCollection<IInboundEnvelope> envelopes)
+        protected BatchEvent(Guid batchId, IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
             Envelopes = envelopes;
             BatchId = batchId;
-            BatchSize = envelopes?.Count() ?? 0;
+            BatchSize = envelopes?.Count ?? 0;
         }
 
         public Guid BatchId { get; }
 
-        public IReadOnlyCollection<IInboundEnvelope> Envelopes { get; }
+        public IReadOnlyCollection<IRawInboundEnvelope> Envelopes { get; }
 
         public int BatchSize { get; }
     }
