@@ -72,7 +72,7 @@ The following example demonstrate how to set a custom message header on each out
 ```c#
 public class CustomHeadersBehavior : IProducerBehavior
 {
-    public async Task Handle(RawBrokerMessage message, RawBrokerMessageHandler next)
+    public async Task Handle(RawBrokerMessage message, IProducer producer, RawOutboundEnvelopeHandler next)
     {
         message.Headers.Add("generated-by", "silverback");
     }
@@ -84,7 +84,7 @@ public class CustomHeadersBehavior : IProducerBehavior
 The following example demonstrate how to log the headers received with each inbound message.
 
 ```c#
-public class LogHeadersBehavior :IConsumerBehavior
+public class LogHeadersBehavior : IConsumerBehavior
 {
     private readonly ILogger<LogHeadersBehavior> _logger;
 
@@ -93,7 +93,11 @@ public class LogHeadersBehavior :IConsumerBehavior
         _logger = logger;
     }
 
-    public async Task Handle(RawBrokerMessage message, RawBrokerMessageHandler next)
+    public async Task Handle(
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            IServiceProvider serviceProvider,
+            IConsumer consumer,
+            RawInboundEnvelopeHandler next)
     {
         foreach (var header in message.Headers)
         {
@@ -108,9 +112,14 @@ public class LogHeadersBehavior :IConsumerBehavior
 }
 ```
 
+**Note:** The `Handle` method reaceives an instance of `IServiceProvider` that can be either the root service provider or the scoped service provider for the processing of the consumed message (depending on the position of the behavior in the pipeline).
+{: .notice--info}
+
 ### Limitations
 
-Because of the way the Silverback's broker integration works `IProducerBehavior` and `IConsumerBehavior` implementations can only be registered as singleton. If a scoped instance is needed you have to either reference the `IServiceProvider` or use an `IBehavior` (that can still be used to accomplish most of the tasks, as shown in the next example).
+Because of the way the Silverback's broker integration works `IProducerBehavior` and `IConsumerBehavior` implementations can only be registered as singleton. An `IProducerBehaviorFactory` or `IConsumerBehaviorFactory` can be used to create an instance per each `IConsumer` or `IProducer` that gets intantiated.
+
+If a scoped instance is needed you have to either use the `IServiceProvider` or use an `IBehavior` (that can still be used to accomplish most of the tasks, as shown in the next example).
 
 ```c#
 public class TracingBehavior : IBehavior
