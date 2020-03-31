@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Messages
             IEndpoint endpoint,
             IOffset offset = null)
         {
-            RawMessage = rawMessage ?? throw new ArgumentNullException(nameof(rawMessage));
+            RawMessage = rawMessage;
             Headers = new MessageHeaderCollection(headers);
             Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
             Offset = offset;

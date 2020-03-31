@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Serialization
             switch (message)
             {
                 case null:
-                    return new byte[0];
+                    return null;
                 case byte[] bytes:
                     return bytes;
             }

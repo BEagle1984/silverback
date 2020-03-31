@@ -16,7 +16,7 @@ namespace Silverback.Messaging.LargeMessages
 
             var chunkSize = settings?.Size ?? int.MaxValue;
 
-            if (chunkSize >= envelope.RawMessage.Length)
+            if (envelope.RawMessage == null || chunkSize >= envelope.RawMessage.Length)
             {
                 yield return envelope;
                 yield break;

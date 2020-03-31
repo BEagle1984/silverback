@@ -91,13 +91,13 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         }
 
         [Fact]
-        public void Serialize_NullMessage_EmptyByteArrayReturned()
+        public void Serialize_NullMessage_NullIsReturned()
         {
             var serializer = new JsonMessageSerializer();
 
             var serialized = serializer.Serialize(null, new MessageHeaderCollection());
 
-            serialized.Should().BeEquivalentTo(new byte[0]);
+            serialized.Should().BeNull();
         }
 
         [Fact]
