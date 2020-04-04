@@ -6,13 +6,14 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
+    /// <inheritdoc cref="IRawOutboundEnvelope" />
     internal class RawOutboundEnvelope : RawBrokerEnvelope, IRawOutboundEnvelope
     {
         public RawOutboundEnvelope(
             IEnumerable<MessageHeader> headers,
             IProducerEndpoint endpoint,
             IOffset offset = null)
-            : base(headers, endpoint, offset)
+            : this(null, headers, endpoint, offset)
         {
         }
 
@@ -25,6 +26,7 @@ namespace Silverback.Messaging.Messages
         {
         }
 
+        /// <inheritdoc cref="IRawOutboundEnvelope" />
         public new IProducerEndpoint Endpoint => (IProducerEndpoint) base.Endpoint;
     }
 }

@@ -9,21 +9,11 @@ namespace Silverback.Messaging.Messages
 {
     internal abstract class RawBrokerEnvelope : IRawBrokerEnvelope
     {
-        internal RawBrokerEnvelope(
-            IEnumerable<MessageHeader> headers,
-            IEndpoint endpoint,
-            IOffset offset = null)
-        {
-            Headers = new MessageHeaderCollection(headers);
-            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
-            Offset = offset;
-        }
-
-        internal RawBrokerEnvelope(
+        protected RawBrokerEnvelope(
             byte[] rawMessage,
             IEnumerable<MessageHeader> headers,
             IEndpoint endpoint,
-            IOffset offset = null)
+            IOffset offset)
         {
             RawMessage = rawMessage;
             Headers = new MessageHeaderCollection(headers);

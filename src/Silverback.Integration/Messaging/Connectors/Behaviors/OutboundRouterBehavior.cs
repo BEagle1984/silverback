@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
                 .SelectMany(message =>
                     _routing
                         .GetRoutesForMessage(message)
-                        .Select(route =>
+                        .SelectMany(route =>
                             CreateOutboundEnvelope(message, route)))
                 .ToList();
 
@@ -59,10 +59,22 @@ namespace Silverback.Messaging.Connectors.Behaviors
             return wrappedMessages.Select(m => m.Message).ToList();
         }
 
-        private IOutboundEnvelope CreateOutboundEnvelope(object message, IOutboundRoute route) =>
-            (IOutboundEnvelope) Activator.CreateInstance(
-                typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
-                message, null, route, _routing.PublishOutboundMessagesToInternalBus);
+        private IEnumerable<IOutboundEnvelope> CreateOutboundEnvelope(object message, IOutboundRoute route)
+        {
+            var headers = new MessageHeaderCollection();
+            var endpoints = route.Router.GetDestinationEndpoints(message, headers);
+
+            foreach (var endpoint in endpoints)
+            {
+                yield return (IOutboundEnvelope) Activator.CreateInstance(
+                    typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
+                    message,
+                    headers,
+                    endpoint,
+                    route.OutboundConnectorType,
+                    _routing.PublishOutboundMessagesToInternalBus);
+            }
+        }
 
         public int SortIndex { get; } = IntegrationBehaviorsSortIndexes.OutboundRouter;
     }

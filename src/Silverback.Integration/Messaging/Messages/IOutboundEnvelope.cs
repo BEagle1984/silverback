@@ -3,14 +3,12 @@
 
 namespace Silverback.Messaging.Messages
 {
+    /// <inheritdoc cref="IRawOutboundEnvelope" />
     public interface IOutboundEnvelope : IBrokerEnvelope, IRawOutboundEnvelope
     {
-        /// <summary>
-        ///     Gets the destination endpoint.
-        /// </summary>
-        new IProducerEndpoint Endpoint { get; }
     }
 
+    /// <inheritdoc />
     public interface IOutboundEnvelope<out TMessage> : IOutboundEnvelope
     {
         /// <summary>

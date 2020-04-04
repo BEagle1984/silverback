@@ -11,17 +11,17 @@ namespace Silverback.Messaging.Connectors
     internal static class ConnectorCollectionsExtensions
     {
         public static IOutboundConnector GetConnectorInstance(
-            this IEnumerable<IOutboundConnector> connectors,
+            this IReadOnlyCollection<IOutboundConnector> connectors,
             Type connectorType) =>
             GetConnectorInstance<IOutboundConnector>(connectors, connectorType);
 
         public static IInboundConnector GetConnectorInstance(
-            this IEnumerable<IInboundConnector> connectors,
+            this IReadOnlyCollection<IInboundConnector> connectors,
             Type connectorType) =>
             GetConnectorInstance<IInboundConnector>(connectors, connectorType);
 
         private static TConnector GetConnectorInstance<TConnector>(
-            this IEnumerable<TConnector> connectors,
+            this IReadOnlyCollection<TConnector> connectors,
             Type connectorType)
         {
             TConnector connector;

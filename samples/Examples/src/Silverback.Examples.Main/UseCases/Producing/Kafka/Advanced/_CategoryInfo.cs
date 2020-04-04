@@ -29,7 +29,9 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             typeof(ProduceByteArrayUseCase),
             typeof(ProduceEmptyMessageUseCase),
             typeof(EncryptionUseCase),
-            typeof(EncryptionAvroUseCase)
+            typeof(EncryptionAvroUseCase),
+            typeof(CustomRoutingUseCase),
+            typeof(BroadcastUseCase)
         };
     }
 }

@@ -125,7 +125,7 @@ public class LogHeadersBehavior : IConsumerBehavior
 
 Because of the way the Silverback's broker integration works `IProducerBehavior` and `IConsumerBehavior` implementations can only be registered as singleton. An `IProducerBehaviorFactory` or `IConsumerBehaviorFactory` can be used to create an instance per each `IConsumer` or `IProducer` that gets intantiated.
 
-If a scoped instance is needed you have to either use the `IServiceProvider` or use an `IBehavior` (that can still be used to accomplish most of the tasks, as shown in the next example).
+If a scoped instance is needed you have to either inject the `IServiceScopeFactory` (or `IServiceProvider`) or use an `IBehavior` (that can still be used to accomplish most of the tasks, as shown in the next example).
 
 ```c#
 public class TracingBehavior : IBehavior

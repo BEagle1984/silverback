@@ -5,6 +5,7 @@ using System;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 
@@ -105,11 +106,11 @@ namespace Microsoft.Extensions.DependencyInjection
 
         #endregion
 
-        #region BrokerBehaviors (AddSingletonBrokerBehavior)
+        #region AddSingletonBrokerBehavior
 
         /// <summary>
         ///     Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the
-        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="behaviorType">The type of the behavior to register and the implementation to use.</param>
@@ -122,7 +123,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         /// <summary>
         ///     Adds a singleton behavior of the type specified in <typeparamref name="TBehavior" /> to the
-        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBehavior">The type of the behavior to add.</typeparam>
         /// <param name="builder"></param>
@@ -137,7 +138,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         ///     Adds a singleton behavior with a
         ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
@@ -153,7 +154,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         ///     Adds a singleton behavior with an
         ///     instance specified in <paramref name="implementationInstance" /> to the
-        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="implementationInstance">The instance of the service.</param>
@@ -164,6 +165,70 @@ namespace Microsoft.Extensions.DependencyInjection
             IBrokerBehavior implementationInstance)
         {
             builder.Services.AddSingletonBrokerBehavior(implementationInstance);
+            return builder;
+        }
+
+        #endregion
+
+        #region AddSingletonOutboundRouter
+
+        /// <summary>
+        ///     Adds a singleton outbound router of the type specified in <paramref name="routerType" /> to the
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="routerType">The type of the outbound router to register and the implementation to use.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static ISilverbackBuilder AddSingletonOutboundRouter(this ISilverbackBuilder builder, Type routerType)
+        {
+            builder.Services.AddSingletonOutboundRouter(routerType);
+            return builder;
+        }
+
+        /// <summary>
+        ///     Adds a singleton outbound router of the type specified in <typeparamref name="TRouter" /> to the
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TRouter">The type of the outbound router to add.</typeparam>
+        /// <param name="builder"></param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static ISilverbackBuilder AddSingletonOutboundRouter<TRouter>(this ISilverbackBuilder builder)
+            where TRouter : class, IOutboundRouter
+        {
+            builder.Services.AddSingletonOutboundRouter<TRouter>();
+            return builder;
+        }
+
+        /// <summary>
+        ///     Adds a singleton outbound router with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="implementationFactory">The factory that creates the service.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static ISilverbackBuilder AddSingletonOutboundRouter(
+            this ISilverbackBuilder builder,
+            Func<IServiceProvider, IOutboundRouter> implementationFactory)
+        {
+            builder.Services.AddSingletonOutboundRouter(implementationFactory);
+            return builder;
+        }
+
+        /// <summary>
+        ///     Adds a singleton outbound router with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="implementationInstance">The instance of the service.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
+        public static ISilverbackBuilder AddSingletonOutboundRouter(
+            this ISilverbackBuilder builder,
+            IOutboundRouter implementationInstance)
+        {
+            builder.Services.AddSingletonOutboundRouter(implementationInstance);
             return builder;
         }
 

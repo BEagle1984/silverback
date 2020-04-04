@@ -6,6 +6,7 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
+    /// <inheritdoc cref="IRawInboundEnvelope" />
     internal class InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
     {
         public InboundEnvelope(IRawInboundEnvelope envelope)
@@ -24,11 +25,14 @@ namespace Silverback.Messaging.Messages
         {
         }
 
+        /// <inheritdoc cref="IEnvelope" />
         public object Message { get; set; }
 
+        /// <inheritdoc cref="IEnvelope" />
         public bool AutoUnwrap { get; } = true;
     }
 
+    /// <inheritdoc cref="IInboundEnvelope{TMessage}" />
     internal class InboundEnvelope<TMessage> : InboundEnvelope, IInboundEnvelope<TMessage>
     {
         public InboundEnvelope(IRawInboundEnvelope envelope)
@@ -48,6 +52,7 @@ namespace Silverback.Messaging.Messages
         {
         }
 
+        /// <inheritdoc cref="IInboundEnvelope{TMessage}" />
         public new TMessage Message
         {
             get => (TMessage) base.Message;

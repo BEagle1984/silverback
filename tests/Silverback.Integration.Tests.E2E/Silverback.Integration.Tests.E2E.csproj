@@ -24,9 +24,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Silverback.Core.Model\Silverback.Core.Model.csproj" />
-        <ProjectReference Include="..\..\src\Silverback.Integration.InMemory\Silverback.Integration.InMemory.csproj" />
-        <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+        <PackageReference Include="Silverback.Core.Model" Version="$(BaseVersion)" />
+        <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
+        <PackageReference Include="Silverback.Integration.InMemory" Version="$(BaseVersion)" />
         <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
     </ItemGroup>
 

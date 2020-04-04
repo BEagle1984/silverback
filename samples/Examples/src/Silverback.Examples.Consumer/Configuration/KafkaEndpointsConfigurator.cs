@@ -30,7 +30,9 @@ namespace Silverback.Examples.Consumer.Configuration
             .AddInbound(new KafkaConsumerEndpoint(
                 "silverback-examples-events",
                 "silverback-examples-events-chunked",
-                "silverback-examples-events-sp")
+                "silverback-examples-events-sp",
+                "silverback-examples-events-2",
+                "silverback-examples-events-3")
             {
                 Configuration = new KafkaConsumerConfig
                 {

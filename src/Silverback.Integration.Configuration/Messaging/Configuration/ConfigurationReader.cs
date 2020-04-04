@@ -58,7 +58,7 @@ namespace Silverback.Messaging.Configuration
 
             foreach (var outbound in Outbound)
             {
-                builder.AddOutbound(outbound.MessageType, outbound.Endpoint, outbound.ConnectorType);
+                builder.AddOutbound(outbound.MessageType, new[] { outbound.Endpoint }, outbound.ConnectorType);
             }
         }
     }

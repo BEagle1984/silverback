@@ -107,7 +107,7 @@ public static BrokerOptionsBuilder AddMyCustomOutboundWorker(
 }
 ```
 
-### Subscribing locally
+## Subscribing locally
 
 The published messages that are routed to an outbound endpoint cannot be subscribed locally (within the same process), unless explicitely desired.
 
@@ -124,5 +124,134 @@ public void Configure(BusConfigurator busConfigurator)
 ```
 
 **Note:** What said above is only partially true, as you can subscribe to the wrapped message (`IOutboundEnvelope<TMessage>`) even without calling `PublishOutboundMessagesToInternalBus`.
+{: .notice--info}
+
+## Producing the same message to multiple endpoints
+
+An outbound route can point to multiple endpoints resulting in every message being broadcasted to all endpoints.
+
+```c#
+public void Configure(BusConfigurator busConfigurator)
+{
+    busConfigurator
+        .Connect(endpoints => endpoints
+            .AddOutbound<IIntegrationCommand>(
+                new KafkaProducerEndpoint("topic-1")
+                {
+                    ...
+                },
+                new KafkaProducerEndpoint("topic-2")
+                {
+                    ...
+                }));
+    ...
+}
+```
+
+A message will also be routed to all outbound endpoint mapped to a type that matches the message type. In the example below an `OrderCreatedMessage` (that inherits from `OrderMessage`) would be sent to both endpoints.
+
+```c#
+public void Configure(BusConfigurator busConfigurator)
+{
+    busConfigurator
+        .Connect(endpoints => endpoints
+            .AddOutbound<OrderMessage>(
+                new KafkaProducerEndpoint("topic-1")
+                {
+                    ...
+                })
+            .AddOutbound<OrderCreatedMessage>(
+                new KafkaProducerEndpoint("topic-1")
+                {
+                    ...
+                }));
+    ...
+}
+```
+
+## Dynamic custom routing
+
+By default Silverback routes the messages according to their type and the static configuration defined at startup. In some cases you may need more flexibility, being able to apply your own routing rules. In such cases it is possible to implement a fully customized router.
+
+In the following example a custom router is used to route the messages according to their priority (a copy is also sent to a catch-all topic).
+
+
+```c#
+public class PrioritizedRouter : OutboundRouter<IPrioritizedCommand>
+{
+    private static readonly IProducerEndpoint HighPriorityEndpoint =
+        new KafkaProducerEndpoint("high-priority")
+        {
+            ...
+        };
+    private static readonly IProducerEndpoint NormalPriorityEndpoint =
+        new KafkaProducerEndpoint("normal-priority")
+        {
+            ...
+        };
+    private static readonly IProducerEndpoint LowPriorityEndpoint =
+        new KafkaProducerEndpoint("low-priority")
+        {
+            ...
+        };
+    private static readonly IProducerEndpoint AllMessagesEndpoint =
+        new KafkaProducerEndpoint("all")
+        {
+            ...
+        };
+
+    public override IEnumerable<IProducerEndpoint> Endpoints
+    {
+        get
+        {
+            yield return AllMessagesEndpoint;
+            yield return LowPriorityEndpoint;
+            yield return NormalPriorityEndpoint;
+            yield return HighPriorityEndpoint;
+        }
+    }
+
+    public override IEnumerable<IProducerEndpoint> GetDestinationEndpoints(
+        IPrioritizedCommand message,
+        MessageHeaderCollection headers)
+    {
+        yield return AllMessagesEndpoint;
+        
+        switch (message.Priority)
+        {
+            case MessagePriority.Low:
+                yield return LowPriorityEndpoint;
+                break;
+            case MessagePriority.High:
+                yield return HighPriorityEndpoint;
+                break;
+            default:
+                yield return NormalPriorityEndpoint;
+                break;
+        }
+    }
+}
+
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka())
+            .AddSingletonOutboundRouter<PrioritizedRouter>();
+    }
+
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddOutbound<IPrioritizedCommand, PrioritizedRouter>());
+        ...
+    }
+}
+```
+
+**Note:** The outbound routers can only be registered as singleton. If a scoped instance is needed you have to inject the `IServiceScopeFactory` (or `IServiceProvider`).
 {: .notice--info}
 

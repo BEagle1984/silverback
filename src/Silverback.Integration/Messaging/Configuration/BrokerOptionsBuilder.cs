@@ -23,6 +23,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
+    /// <inheritdoc cref="IBrokerOptionsBuilder" />
     [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Local")]
     public class BrokerOptionsBuilder : IBrokerOptionsBuilder
     {
@@ -31,12 +32,10 @@ namespace Silverback.Messaging.Configuration
             SilverbackBuilder = silverbackBuilder;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public ISilverbackBuilder SilverbackBuilder { get; }
 
         #region AddBroker
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddBroker<TBroker>()
             where TBroker : class, IBroker
         {
@@ -85,7 +84,6 @@ namespace Silverback.Messaging.Configuration
 
         #region AddInboundConnector
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddInboundConnector<TConnector>()
             where TConnector : class, IInboundConnector
         {
@@ -99,10 +97,8 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddInboundConnector() => AddInboundConnector<InboundConnector>();
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddLoggedInboundConnector(Func<IServiceProvider, IInboundLog> inboundLogFactory)
         {
             AddInboundConnector<LoggedInboundConnector>();
@@ -110,7 +106,6 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddOffsetStoredInboundConnector(
             Func<IServiceProvider, IOffsetStore> offsetStoreFactory)
         {
@@ -119,13 +114,11 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddDbLoggedInboundConnector() =>
             AddLoggedInboundConnector(s =>
                 new DbInboundLog(s.GetRequiredService<IDbContext>(),
                     s.GetRequiredService<MessageIdProvider>()));
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddDbOffsetStoredInboundConnector() =>
             AddOffsetStoredInboundConnector(s =>
                 new DbOffsetStore(s.GetRequiredService<IDbContext>()));
@@ -134,7 +127,6 @@ namespace Silverback.Messaging.Configuration
 
         #region AddOutboundConnector
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddOutboundConnector<TConnector>()
             where TConnector : class, IOutboundConnector
         {
@@ -151,10 +143,8 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddOutboundConnector() => AddOutboundConnector<OutboundConnector>();
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddDeferredOutboundConnector(
             Func<IServiceProvider, IOutboundQueueProducer> outboundQueueProducerFactory)
         {
@@ -165,7 +155,6 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddDbOutboundConnector() =>
             AddDeferredOutboundConnector(s =>
                 new DbOutboundQueueProducer(s.GetRequiredService<IDbContext>()));
@@ -174,7 +163,6 @@ namespace Silverback.Messaging.Configuration
 
         #region AddOutboundWorker
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         // TODO: Test
         public IBrokerOptionsBuilder AddOutboundWorker(
             Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
@@ -184,7 +172,6 @@ namespace Silverback.Messaging.Configuration
             AddOutboundWorker(outboundQueueConsumerFactory, new DistributedLockSettings(), interval,
                 enforceMessageOrder, readPackageSize);
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         // TODO: Test
         public IBrokerOptionsBuilder AddOutboundWorker(
             Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
@@ -212,7 +199,6 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddDbOutboundWorker(
             TimeSpan? interval = null,
             bool enforceMessageOrder = true,
@@ -246,7 +232,6 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddDbOutboundWorker(
             DistributedLockSettings distributedLockSettings,
             TimeSpan? interval = null,
@@ -271,7 +256,6 @@ namespace Silverback.Messaging.Configuration
 
         #region AddChunkStore
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddChunkStore<TStore>()
             where TStore : class, IChunkStore
         {
@@ -280,7 +264,6 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddDbChunkStore() =>
             AddChunkStore<DbChunkStore>();
 
@@ -288,7 +271,6 @@ namespace Silverback.Messaging.Configuration
 
         #region AddMessageIdProvider
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder AddMessageIdProvider<TProvider>()
             where TProvider : class, IMessageIdProvider
         {
@@ -301,7 +283,6 @@ namespace Silverback.Messaging.Configuration
 
         #region RegisterConfigurator
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder RegisterConfigurator<TConfigurator>()
             where TConfigurator : class, IEndpointsConfigurator
         {
@@ -310,7 +291,6 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder RegisterConfigurator(Type configuratorType)
         {
             SilverbackBuilder.Services.AddTransient(typeof(IEndpointsConfigurator), configuratorType);
@@ -318,12 +298,73 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IBrokerOptionsBuilder" />
         public IBrokerOptionsBuilder RegisterConfigurator(
             Func<IServiceProvider, IEndpointsConfigurator> implementationFactory)
         {
             SilverbackBuilder.Services.AddTransient(implementationFactory);
 
+            return this;
+        }
+
+        #endregion
+
+        #region AddSingletonBrokerBehavior
+
+        public IBrokerOptionsBuilder AddSingletonBrokerBehavior(Type behaviorType)
+        {
+            SilverbackBuilder.Services.AddSingletonBrokerBehavior(behaviorType);
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddSingletonBrokerBehavior<TBehavior>()
+            where TBehavior : class, IBrokerBehavior
+        {
+            SilverbackBuilder.Services.AddSingletonBrokerBehavior<TBehavior>();
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddSingletonBrokerBehavior(
+            Func<IServiceProvider, IBrokerBehavior> implementationFactory)
+        {
+            SilverbackBuilder.Services.AddSingletonBrokerBehavior(implementationFactory);
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddSingletonBrokerBehavior(
+            IBrokerBehavior implementationInstance)
+        {
+            SilverbackBuilder.Services.AddSingletonBrokerBehavior(implementationInstance);
+            return this;
+        }
+
+        #endregion
+
+        #region AddSingletonOutboundRouter
+
+        public IBrokerOptionsBuilder AddSingletonOutboundRouter(Type routerType)
+        {
+            SilverbackBuilder.Services.AddSingletonOutboundRouter(routerType);
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddSingletonOutboundRouter<TRouter>()
+            where TRouter : class, IOutboundRouter
+        {
+            SilverbackBuilder.Services.AddSingletonOutboundRouter<TRouter>();
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddSingletonOutboundRouter(
+            Func<IServiceProvider, IOutboundRouter> implementationFactory)
+        {
+            SilverbackBuilder.Services.AddSingletonOutboundRouter(implementationFactory);
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddSingletonOutboundRouter(
+            IOutboundRouter implementationInstance)
+        {
+            SilverbackBuilder.Services.AddSingletonOutboundRouter(implementationInstance);
             return this;
         }
 

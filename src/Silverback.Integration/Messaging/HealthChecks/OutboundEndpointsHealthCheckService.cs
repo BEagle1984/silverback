@@ -30,21 +30,22 @@ namespace Silverback.Messaging.HealthChecks
                 return Enumerable.Empty<EndpointCheckResult>();
 
             var tasks = _outboundRoutingConfiguration.Routes
-                .Select(async route =>
-                {
-                    try
+                .SelectMany(route => route.Router.Endpoints
+                    .Select(async endpoint =>
                     {
-                        await _brokerCollection.GetProducer(route.DestinationEndpoint).ProduceAsync(PingMessage.New());
-                        return new EndpointCheckResult(route.DestinationEndpoint.Name, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        return new EndpointCheckResult(route.DestinationEndpoint.Name, false,
-                            $"[{ex.GetType().FullName}] {ex.Message}");
-                    }
-                });
+                        try
+                        {
+                            await _brokerCollection.GetProducer(endpoint).ProduceAsync(PingMessage.New());
+                            return new EndpointCheckResult(endpoint.Name, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            return new EndpointCheckResult(endpoint.Name, false,
+                                $"[{ex.GetType().FullName}] {ex.Message}");
+                        }
+                    }));
 
-            return await Task.WhenAll(tasks);
+            return (await Task.WhenAll(tasks));
         }
     }
 }

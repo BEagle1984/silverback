@@ -18,11 +18,11 @@ namespace Silverback.Messaging.Connectors.Behaviors
     /// </summary>
     public class OutboundProducerBehavior : IBehavior, ISorted
     {
-        private readonly IEnumerable<IOutboundConnector> _outboundConnectors;
+        private readonly IReadOnlyCollection<IOutboundConnector> _outboundConnectors;
 
         public OutboundProducerBehavior(IServiceProvider serviceProvider)
         {
-            _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>();
+            _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>().ToList();
         }
 
         public async Task<IReadOnlyCollection<object>> Handle(
@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
         {
             await messages.OfType<IOutboundEnvelopeInternal>()
                 .ForEachAsync(outboundMessage => _outboundConnectors
-                    .GetConnectorInstance(outboundMessage.Route.OutboundConnectorType)
+                    .GetConnectorInstance(outboundMessage.OutboundConnectorType)
                     .RelayMessage(outboundMessage));
 
             return await next(messages);

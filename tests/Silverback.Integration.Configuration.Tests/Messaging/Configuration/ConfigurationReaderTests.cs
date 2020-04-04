@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -475,7 +476,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 .Read(ConfigFileHelper.GetConfigSection("outbound.simplest"))
                 .Apply(_builder);
 
-            _builder.ReceivedWithAnyArgs(1).AddOutbound(null, null, null);
+            _builder.ReceivedWithAnyArgs(1).AddOutbound(null, (IEnumerable<IProducerEndpoint>) null, null);
         }
 
         [Fact]
@@ -487,11 +488,11 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
 
             _builder.Received(1).AddOutbound(
                 typeof(IIntegrationEvent),
-                Arg.Any<KafkaProducerEndpoint>(),
+                Arg.Any<IProducerEndpoint[]>(),
                 null);
             _builder.Received(1).AddOutbound(
                 typeof(IIntegrationCommand),
-                Arg.Any<KafkaProducerEndpoint>(),
+                Arg.Any<IProducerEndpoint[]>(),
                 typeof(DeferredOutboundConnector));
         }
 

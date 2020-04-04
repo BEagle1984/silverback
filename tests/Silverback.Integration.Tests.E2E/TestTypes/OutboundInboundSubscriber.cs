@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Silverback.Messaging.Messages;
@@ -11,17 +10,11 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
 {
     public class OutboundInboundSubscriber : ISubscriber
     {
-        private readonly ConcurrentBag<IOutboundEnvelope> _outboundEnvelopes;
-        private readonly ConcurrentBag<IInboundEnvelope> _inboundEnvelopes;
+        private readonly List<IOutboundEnvelope> _outboundEnvelopes = new List<IOutboundEnvelope>();
+        private readonly List<IInboundEnvelope> _inboundEnvelopes = new List<IInboundEnvelope>();
 
-        public OutboundInboundSubscriber()
-        {
-            _outboundEnvelopes = new ConcurrentBag<IOutboundEnvelope>();
-            _inboundEnvelopes = new ConcurrentBag<IInboundEnvelope>();
-        }
-
-        public IReadOnlyCollection<IOutboundEnvelope> OutboundEnvelopes => _outboundEnvelopes.ToList();
-        public IReadOnlyCollection<IInboundEnvelope> InboundEnvelopes => _inboundEnvelopes.ToList();
+        public IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes => _outboundEnvelopes.ToList();
+        public IReadOnlyList<IInboundEnvelope> InboundEnvelopes => _inboundEnvelopes.ToList();
 
         public void OnOutbound(IOutboundEnvelope envelope) => _outboundEnvelopes.Add(envelope);
 

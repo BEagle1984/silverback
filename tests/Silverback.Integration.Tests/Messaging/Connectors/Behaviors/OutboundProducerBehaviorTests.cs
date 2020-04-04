@@ -52,10 +52,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 new MessageHeader[0],
-                new OutboundRoutingConfiguration.OutboundRoute(
-                    typeof(TestEventOne),
-                    TestProducerEndpoint.GetDefault(),
-                    typeof(OutboundConnector)));
+                TestProducerEndpoint.GetDefault(),
+                typeof(OutboundConnector));
 
             await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult);
             await _outboundQueue.Commit();
@@ -71,10 +69,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 new MessageHeader[0],
-                new OutboundRoutingConfiguration.OutboundRoute(
-                    typeof(TestEventOne),
-                    TestProducerEndpoint.GetDefault(),
-                    typeof(DeferredOutboundConnector)));
+                TestProducerEndpoint.GetDefault(),
+                typeof(DeferredOutboundConnector));
 
             await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult);
             await _outboundQueue.Commit();

@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_DefaultSettings()
+        public async Task E2E_BrokerBehaviors_DefaultSettings()
         {
             var message = new TestEventOne
             {
@@ -91,7 +91,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_Chunking()
+        public async Task E2E_BrokerBehaviors_Chunking()
         {
             var message = new TestEventOne
             {
@@ -123,7 +123,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_BatchConsuming()
+        public async Task E2E_BrokerBehaviors_BatchConsuming()
         {
             var message1 = new TestEventOne
             {
@@ -164,7 +164,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_ChunkingWithBatchConsuming()
+        public async Task E2E_BrokerBehaviors_ChunkingWithBatchConsuming()
         {
             var message1 = new TestEventOne
             {
@@ -212,7 +212,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_Encryption()
+        public async Task E2E_BrokerBehaviors_Encryption()
         {
             var message = new TestEventOne
             {
@@ -254,7 +254,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_EncryptionAndChunking()
+        public async Task E2E_BrokerBehaviors_EncryptionAndChunking()
         {
             var message = new TestEventOne
             {
