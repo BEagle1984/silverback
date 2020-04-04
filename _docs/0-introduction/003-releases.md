@@ -13,6 +13,7 @@ toc: true
 * **[Kafka]** Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
 * **[Integration]** Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 * **[Integration]** End-to-End message encryption (see [Encryption]({{ site.baseurl }}/docs/advanced/encryption))
+* **[Integration]** Dynamic custom routing of outbound messages (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
 
 ### Breaking Changes
 These changes shouldn't affect you unless you built your own `IBroker` implementation or are interacting at low-level with the `IBroker` (this is why has been decided to still mark this as a minor release):
