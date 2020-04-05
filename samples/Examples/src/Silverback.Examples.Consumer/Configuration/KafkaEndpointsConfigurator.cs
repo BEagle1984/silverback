@@ -74,8 +74,8 @@ namespace Silverback.Examples.Consumer.Configuration
                             })
                         .Publish(messages => new MessageMovedEvent
                         {
-                            Identifiers = messages
-                                .Select(x => ((IInboundEnvelope<IIntegrationMessage>) x).Message?.Id ?? Guid.Empty).ToList(),
+                            Identifiers = messages.OfType<IInboundEnvelope<IIntegrationMessage>>()
+                                .Select(x => x.Message?.Id ?? Guid.Empty).ToList(),
                             Source = messages.First().Endpoint.Name,
                             Destination = "silverback-examples-events"
                         })))

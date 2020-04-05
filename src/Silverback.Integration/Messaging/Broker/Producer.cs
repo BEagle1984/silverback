@@ -58,32 +58,43 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer" />
         public void Produce(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() =>
-                ExecutePipeline(Behaviors, envelope, (finalEnvelope, _) =>
-                {
-                    ((RawOutboundEnvelope) finalEnvelope).Offset = ProduceImpl(finalEnvelope);
-                    return Task.CompletedTask;
-                }));
+                ExecutePipeline(
+                    Behaviors,
+                    new ProducerPipelineContext(envelope, this),
+                    finalContext =>
+                    {
+                        ((RawOutboundEnvelope) finalContext.Envelope).Offset =
+                            ProduceImpl(finalContext.Envelope);
+
+                        return Task.CompletedTask;
+                    }));
 
         /// <inheritdoc cref="IProducer" />
         public async Task ProduceAsync(IOutboundEnvelope envelope) =>
-            await ExecutePipeline(Behaviors, envelope, async (finalEnvelope, _) =>
-                ((RawOutboundEnvelope) finalEnvelope).Offset = await ProduceAsyncImpl(finalEnvelope));
+            await ExecutePipeline(
+                Behaviors,
+                new ProducerPipelineContext(envelope, this),
+                async finalContext =>
+                {
+                    ((RawOutboundEnvelope) finalContext.Envelope).Offset =
+                        await ProduceAsyncImpl(finalContext.Envelope);
+                });
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IProducerBehavior> behaviors,
-            IOutboundEnvelope envelope,
-            OutboundEnvelopeHandler finalAction)
+            ProducerPipelineContext context,
+            ProducerBehaviorHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
                 await behaviors.First()
-                    .Handle(envelope, this, (nextEnvelope, _) =>
-                        ExecutePipeline(behaviors.Skip(1).ToList(), nextEnvelope, finalAction));
+                    .Handle(context, nextContext =>
+                        ExecutePipeline(behaviors.Skip(1).ToList(), nextContext, finalAction));
             }
             else
             {
-                await finalAction(envelope, this);
-                _messageLogger.LogInformation(_logger, "Message produced.", envelope);
+                await finalAction(context);
+                _messageLogger.LogInformation(_logger, "Message produced.", context.Envelope);
             }
         }
 

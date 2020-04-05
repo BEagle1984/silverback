@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -16,8 +16,20 @@ namespace Silverback.Messaging.LargeMessages
     /// </summary>
     public class ChunkSplitterProducerBehavior : IProducerBehavior, ISorted
     {
-        public async Task Handle(IOutboundEnvelope envelope, IProducer producer, OutboundEnvelopeHandler next) =>
-            await ChunkIfNeeded(envelope).ForEachAsync(chunkEnvelope => next(chunkEnvelope, producer));
+        public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        {
+            var chunks = ChunkIfNeeded(context.Envelope).ToList();
+
+            if (chunks.Any())
+            {
+                await chunks.ForEachAsync(chunkEnvelope =>
+                    next(new ProducerPipelineContext(chunkEnvelope, context.Producer)));
+            }
+            else
+            {
+                await next(context);
+            }
+        }
 
         private IEnumerable<IOutboundEnvelope> ChunkIfNeeded(IOutboundEnvelope envelope)
         {
@@ -28,7 +40,6 @@ namespace Silverback.Messaging.LargeMessages
 
             if (envelope.RawMessage == null || chunkSize >= envelope.RawMessage.Length)
             {
-                yield return envelope;
                 yield break;
             }
 

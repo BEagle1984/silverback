@@ -79,11 +79,14 @@ namespace Silverback.Messaging.Connectors
 
             var inboundProcessor = inboundProcessors.First();
 
-            inboundProcessor.Batch = CreateMessageBatchIfNeeded(errorPolicy, settings);
+            inboundProcessor.Batch = CreateMessageBatchIfNeeded(errorPolicy, settings, consumer);
             inboundProcessor.ErrorPolicy = errorPolicy;
         }
 
-        private MessageBatch CreateMessageBatchIfNeeded(IErrorPolicy errorPolicy, InboundConnectorSettings settings)
+        private MessageBatch CreateMessageBatchIfNeeded(
+            IErrorPolicy errorPolicy,
+            InboundConnectorSettings settings,
+            IConsumer consumer)
         {
             if (settings.Batch.Size <= 1)
                 return null;
@@ -91,6 +94,7 @@ namespace Silverback.Messaging.Connectors
             return new MessageBatch(
                 settings.Batch,
                 errorPolicy,
+                consumer,
                 _serviceProvider);
         }
 

@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -17,26 +19,43 @@ namespace Silverback.Messaging.ErrorHandling
     {
         private readonly ILogger<ErrorPolicyHelper> _logger;
         private readonly MessageLogger _messageLogger;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public ErrorPolicyHelper(ILogger<ErrorPolicyHelper> logger, MessageLogger messageLogger)
+        public ErrorPolicyHelper(
+            ILogger<ErrorPolicyHelper> logger,
+            MessageLogger messageLogger,
+            IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger;
             _messageLogger = messageLogger;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public async Task TryProcessAsync(
-            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            ConsumerPipelineContext context,
             IErrorPolicy errorPolicy,
-            Func<IReadOnlyCollection<IRawInboundEnvelope>, Task> messagesHandler)
+            ConsumerBehaviorHandler messagesHandler,
+            ConsumerBehaviorHandler commitHandler,
+            ConsumerBehaviorErrorHandler rollbackHandler)
         {
-            var attempt = GetAttemptNumber(envelopes);
+            var attempt = GetAttemptNumber(context.Envelopes);
 
             while (true)
             {
-                var result = await HandleMessages(envelopes, messagesHandler, errorPolicy, attempt);
+                using var scope = _serviceScopeFactory.CreateScope();
+                var result = await HandleMessages(
+                    context,
+                    scope.ServiceProvider,
+                    messagesHandler,
+                    rollbackHandler,
+                    errorPolicy,
+                    attempt);
 
                 if (result.IsSuccessful || result.Action == ErrorAction.Skip)
+                {
+                    await commitHandler(context, scope.ServiceProvider);
                     return;
+                }
 
                 attempt++;
             }
@@ -54,32 +73,36 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         private async Task<MessageHandlerResult> HandleMessages(
-            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
-            Func<IReadOnlyCollection<IRawInboundEnvelope>, Task> messagesHandler,
+            ConsumerPipelineContext context,
+            IServiceProvider serviceProvider,
+            ConsumerBehaviorHandler messagesHandler,
+            ConsumerBehaviorErrorHandler rollbackHandler,
             IErrorPolicy errorPolicy,
             int attempt)
         {
             try
             {
-                _messageLogger.LogProcessing(_logger, envelopes);
+                _messageLogger.LogProcessing(_logger, context.Envelopes);
 
-                await messagesHandler(envelopes);
+                await messagesHandler(context, serviceProvider);
 
                 return MessageHandlerResult.Success;
             }
             catch (Exception ex)
             {
-                _messageLogger.LogProcessingError(_logger, envelopes, ex);
+                _messageLogger.LogProcessingError(_logger, context.Envelopes, ex);
+
+                await rollbackHandler(context, serviceProvider, ex);
 
                 if (errorPolicy == null)
                     throw;
 
-                UpdateFailedAttemptsHeader(envelopes, attempt);
+                UpdateFailedAttemptsHeader(context.Envelopes, attempt);
 
-                if (!errorPolicy.CanHandle(envelopes, ex))
+                if (!errorPolicy.CanHandle(context.Envelopes, ex))
                     throw;
 
-                var action = errorPolicy.HandleError(envelopes, ex);
+                var action = errorPolicy.HandleError(context.Envelopes, ex);
 
                 if (action == ErrorAction.StopConsuming)
                     throw;

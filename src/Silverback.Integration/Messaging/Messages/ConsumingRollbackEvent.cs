@@ -11,8 +11,15 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public class ConsumingAbortedEvent : ConsumingEvent
     {
-        public ConsumingAbortedEvent(IReadOnlyCollection<IRawInboundEnvelope> envelopes) : base(envelopes)
+        public ConsumingAbortedEvent(IReadOnlyCollection<IRawInboundEnvelope> envelopes, Exception exception)
+            : base(envelopes)
         {
+            Exception = exception;
         }
+
+        /// <summary>
+        ///     Gets the <see cref="Exception" /> that was thrown while trying to process the messages.
+        /// </summary>
+        public Exception Exception { get; }
     }
 }

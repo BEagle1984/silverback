@@ -102,34 +102,38 @@ namespace Silverback.Messaging.Broker
 
             await ExecutePipeline(
                 Behaviors,
-                new[] { new RawInboundEnvelope(message, headers, Endpoint, sourceEndpointName, offset) },
+                new ConsumerPipelineContext(
+                    new[]
+                    {
+                        new RawInboundEnvelope(message, headers, Endpoint, sourceEndpointName, offset)
+                    },
+                    this),
                 _serviceProvider,
-                (finalEnvelope, finalServiceProvider, _) => Received.Invoke(this,
-                    new MessagesReceivedEventArgs(finalEnvelope, finalServiceProvider)));
+                (context, serviceProvider) => Received.Invoke(this,
+                    new MessagesReceivedEventArgs(context.Envelopes, serviceProvider)));
         }
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IConsumerBehavior> behaviors,
-            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
-            RawInboundEnvelopeHandler finalAction)
+            ConsumerBehaviorHandler finalAction)
         {
             if (behaviors != null && behaviors.Any())
             {
                 await behaviors.First()
-                    .Handle(envelopes,
+                    .Handle(context,
                         serviceProvider,
-                        this,
-                        (nextEnvelopes, nextServiceProvider, _) =>
+                        (nextContext, nextServiceProvider) =>
                             ExecutePipeline(
                                 behaviors.Skip(1).ToList(),
-                                nextEnvelopes,
+                                nextContext,
                                 nextServiceProvider,
                                 finalAction));
             }
             else
             {
-                await finalAction(envelopes, serviceProvider, this);
+                await finalAction(context, serviceProvider);
             }
         }
     }

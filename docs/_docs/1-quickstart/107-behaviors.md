@@ -72,9 +72,13 @@ The following example demonstrate how to set a custom message header on each out
 ```c#
 public class CustomHeadersBehavior : IProducerBehavior
 {
-    public async Task Handle(RawBrokerMessage message, IProducer producer, RawOutboundEnvelopeHandler next)
+    public async Task Handle(
+        ProducerPipelineContext context, 
+        RawOutboundEnvelopeHandler next)
     {
-        message.Headers.Add("generated-by", "silverback");
+        context.Envelope.Message.Headers.Add("generated-by", "silverback");
+
+        await next(context);
     }
 }
 ```
@@ -94,20 +98,22 @@ public class LogHeadersBehavior : IConsumerBehavior
     }
 
     public async Task Handle(
-            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
-            IServiceProvider serviceProvider,
-            IConsumer consumer,
-            RawInboundEnvelopeHandler next)
+        ConsumerPipelineContext context, 
+        IServiceProvider serviceProvider,
+        RawInboundEnvelopeHandler next)
     {
-        foreach (var header in message.Headers)
+        foreach (var envelope in context.Envelopes)
         {
-            _logger.LogTrace(
-                "{key}={value}",
-                header.Key,
-                header.Value);
+            foreach (var header in envelope.Headers)
+            {
+                _logger.LogTrace(
+                    "{key}={value}",
+                    header.Key,
+                    header.Value);
+            }
         }
 
-        return await next(messages);
+        await next(context, serviceProvider);
     }
 }
 ```

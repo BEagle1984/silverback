@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Database;
 using Silverback.Infrastructure;
-using Silverback.Messaging.Connectors;
 
 namespace Silverback.Messaging.LargeMessages
 {

@@ -2,11 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -19,16 +17,16 @@ namespace Silverback.Messaging.LargeMessages
     public class ChunkAggregatorConsumerBehavior : IConsumerBehavior, ISorted
     {
         public async Task Handle(
-            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
-            IConsumer consumer,
-            RawInboundEnvelopeHandler next)
+            ConsumerBehaviorHandler next)
         {
-            var newEnvelopes = (await envelopes.SelectAsync(envelope => AggregateIfNeeded(envelope, serviceProvider)))
+            context.Envelopes = (await context.Envelopes.SelectAsync(envelope =>
+                    AggregateIfNeeded(envelope, serviceProvider)))
                 .Where(envelope => envelope != null).ToList();
 
-            if (newEnvelopes.Any())
-                await next(newEnvelopes, serviceProvider, consumer);
+            if (context.Envelopes.Any())
+                await next(context, serviceProvider);
         }
 
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.ChunkAggregator;
@@ -37,20 +35,28 @@ namespace Silverback.Messaging.LargeMessages
             IRawInboundEnvelope envelope,
             IServiceProvider serviceProvider)
         {
-            if (!envelope.Headers.Contains(DefaultMessageHeaders.ChunkId))
+            if (!envelope.Headers.Contains(DefaultMessageHeaders.ChunkId) ||
+                envelope.Headers.Contains(DefaultMessageHeaders.ChunkAggregated))
+            {
                 return envelope;
+            }
 
             var completeMessage =
                 await serviceProvider.GetRequiredService<ChunkAggregator>().AggregateIfComplete(envelope);
 
-            return completeMessage == null
-                ? null
-                : new RawInboundEnvelope(
-                    completeMessage,
-                    envelope.Headers,
-                    envelope.Endpoint,
-                    envelope.ActualEndpointName,
-                    envelope.Offset);
+            if (completeMessage == null)
+                return null;
+
+            var completeMessageEnvelope = new RawInboundEnvelope(
+                completeMessage,
+                envelope.Headers,
+                envelope.Endpoint,
+                envelope.ActualEndpointName,
+                envelope.Offset);
+
+            completeMessageEnvelope.Headers.Add(DefaultMessageHeaders.ChunkAggregated, "true");
+
+            return completeMessageEnvelope;
         }
     }
 }

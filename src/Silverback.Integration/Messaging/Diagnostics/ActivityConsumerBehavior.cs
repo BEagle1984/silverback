@@ -2,13 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Diagnostics
 {
@@ -16,17 +13,16 @@ namespace Silverback.Messaging.Diagnostics
     public class ActivityConsumerBehavior : IConsumerBehavior, ISorted
     {
         public async Task Handle(
-            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
-            IConsumer consumer,
-            RawInboundEnvelopeHandler next)
+            ConsumerBehaviorHandler next)
         {
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
             try
             {
-                activity.InitFromMessageHeaders(envelopes.Single().Headers);
+                activity.InitFromMessageHeaders(context.Envelopes.Single().Headers);
                 activity.Start();
-                await next(envelopes, serviceProvider, consumer);
+                await next(context, serviceProvider);
             }
             finally
             {

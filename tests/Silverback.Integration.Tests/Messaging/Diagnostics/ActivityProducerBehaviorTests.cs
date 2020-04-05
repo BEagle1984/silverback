@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -29,7 +30,9 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.Start();
             var envelope = new OutboundEnvelope(null, null, TestProducerEndpoint.GetDefault());
 
-            new ActivityProducerBehavior().Handle(envelope, null, (_, __) => Task.CompletedTask);
+            new ActivityProducerBehavior().Handle(
+                new ProducerPipelineContext(envelope, null),
+                _ => Task.CompletedTask);
 
             envelope.Headers.Should().Contain(
                 h => h.Key == DefaultMessageHeaders.TraceId &&
@@ -41,7 +44,9 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var envelope = new OutboundEnvelope(null, null, TestProducerEndpoint.GetDefault());
 
-            new ActivityProducerBehavior().Handle(envelope, null, (_, __) => Task.CompletedTask);
+            new ActivityProducerBehavior().Handle(
+                new ProducerPipelineContext(envelope, null),
+                _ => Task.CompletedTask);
 
             envelope.Headers.Should().Contain(
                 h => h.Key == DefaultMessageHeaders.TraceId && !string.IsNullOrEmpty(h.Value));

@@ -19,8 +19,8 @@ namespace Silverback.Messaging.Serialization
         /// <param name="context">The context information.</param>
         /// <returns></returns>
         byte[] Serialize(
-            object message, 
-            MessageHeaderCollection messageHeaders, 
+            object message,
+            MessageHeaderCollection messageHeaders,
             MessageSerializationContext context);
 
         /// <summary>

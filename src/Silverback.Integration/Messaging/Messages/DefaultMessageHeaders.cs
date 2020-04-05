@@ -43,6 +43,12 @@ namespace Silverback.Messaging.Messages
         public const string ChunksCount = "x-chunks-count";
 
         /// <summary>
+        ///     Used internally to the consumer pipeline to signal that the content of that chunk was replaced with
+        ///     the full message.
+        /// </summary>
+        internal const string ChunkAggregated = "x-chunk-aggregated";
+
+        /// <summary>
         ///     The unique id assigned to the messages batch, used mostly for tracing, when batch processing is enabled.
         /// </summary>
         public const string BatchId = "x-batch-id";

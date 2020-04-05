@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -34,10 +35,9 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             var entered = false;
             await new ActivityConsumerBehavior().Handle(
-                new[] { rawEnvelope },
+                new ConsumerPipelineContext( new[] { rawEnvelope }, null),
                 null,
-                null,
-                (_, __, ___) =>
+                (_, __) =>
                 {
                     Activity.Current.Should().NotBeNull();
                     Activity.Current.ParentId.Should().Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
@@ -65,10 +65,9 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             var entered = false;
             new ActivityConsumerBehavior().Handle(
-                new[] { rawEnvelope },
+                new ConsumerPipelineContext( new[] { rawEnvelope }, null),
                 null,
-                null,
-                (_, __, ___) =>
+                (_, __) =>
                 {
                     Activity.Current.Should().NotBeNull();
                     Activity.Current.Id.Should().NotBeNullOrEmpty();

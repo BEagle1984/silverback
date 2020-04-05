@@ -648,28 +648,28 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestConsume(buffer.Take(40).ToArray(), new[]
+            await consumer.TestConsume(buffer.Take(20).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
                 new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
-            await consumer.TestConsume(buffer.Skip(40).Take(40).ToArray(), new[]
+            await consumer.TestConsume(buffer.Skip(20).Take(20).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
                 new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
-            await consumer.TestConsume(buffer.Skip(80).Take(40).ToArray(), new[]
+            await consumer.TestConsume(buffer.Skip(40).Take(20).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
                 new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
-            await consumer.TestConsume(buffer.Skip(120).ToArray(), new[]
+            await consumer.TestConsume(buffer.Skip(60).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
                 new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),

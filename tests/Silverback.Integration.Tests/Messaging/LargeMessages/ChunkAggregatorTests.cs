@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NSubstitute;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
@@ -64,7 +63,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 },
                 null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);
 
-            var result = await new ChunkAggregator(_store,_transactionManager).AggregateIfComplete(chunks[0]);
+            var result = await new ChunkAggregator(_store, _transactionManager).AggregateIfComplete(chunks[0]);
             result.Should().BeNull();
             result = await new ChunkAggregator(_store, _transactionManager).AggregateIfComplete(chunks[1]);
             result.Should().BeNull();

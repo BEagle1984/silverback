@@ -2,10 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -18,19 +16,18 @@ namespace Silverback.Messaging.Serialization
     public class DeserializerConsumerBehavior : IConsumerBehavior, ISorted
     {
         public async Task Handle(
-            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
-            IConsumer consumer,
-            RawInboundEnvelopeHandler next)
+            ConsumerBehaviorHandler next)
         {
-            var newEnvelopes = await envelopes.SelectAsync(Deserialize);
+            context.Envelopes = (await context.Envelopes.SelectAsync(Deserialize)).ToList();
 
-            await next(newEnvelopes.ToList(), serviceProvider, consumer);
+            await next(context, serviceProvider);
         }
 
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Deserializer;
 
-        private async Task<IRawInboundEnvelope> Deserialize(IRawInboundEnvelope envelope)
+        public static async Task<IRawInboundEnvelope> Deserialize(IRawInboundEnvelope envelope)
         {
             if (envelope is IInboundEnvelope inboundEnvelope && inboundEnvelope.Message != null)
                 return inboundEnvelope;

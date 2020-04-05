@@ -2,9 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker.Behaviors
 {
@@ -17,24 +15,19 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <summary>
         ///     Process, handles or transforms the message being consumed.
         /// </summary>
-        /// <param name="envelopes">
-        ///     The envelopes containing the messages being consumed. It usually contains a single message
-        ///     unless batch consuming is enabled.
+        /// <param name="context">
+        ///     The context that is passed along the behaviors pipeline.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services
         ///     in the current pipeline.
         /// </param>
-        /// <param name="consumer">
-        ///     The <see cref="IConsumer" /> instance that is invoking this behavior.
-        /// </param>
         /// <param name="next">
         ///     The next behavior in the pipeline.
         /// </param>
         Task Handle(
-            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
-            IConsumer consumer,
-            RawInboundEnvelopeHandler next);
+            ConsumerBehaviorHandler next);
     }
 }

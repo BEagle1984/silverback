@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker.Behaviors
 {
@@ -15,15 +14,12 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <summary>
         ///     Process, handles or transforms the message being produced.
         /// </summary>
-        /// <param name="envelope">
-        ///     The envelope containing the message being produced.
-        /// </param>
-        /// <param name="producer">
-        ///     The <see cref="IProducer" /> instance that is invoking this behavior.
+        /// <param name="context">
+        ///     The context that is passed along the behaviors pipeline.
         /// </param>
         /// <param name="next">
         ///     The next behavior in the pipeline.
         /// </param>
-        Task Handle(IOutboundEnvelope envelope, IProducer producer, OutboundEnvelopeHandler next);
+        Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next);
     }
 }

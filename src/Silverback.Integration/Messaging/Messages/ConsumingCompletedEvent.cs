@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 
 namespace Silverback.Messaging.Messages
@@ -11,7 +10,8 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public class ConsumingCompletedEvent : ConsumingEvent
     {
-        public ConsumingCompletedEvent(IReadOnlyCollection<IRawInboundEnvelope> envelopes) : base(envelopes)
+        public ConsumingCompletedEvent(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
+            : base(envelopes)
         {
         }
     }

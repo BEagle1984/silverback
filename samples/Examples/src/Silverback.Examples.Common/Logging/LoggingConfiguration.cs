@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
-using Post.Common.Logging.Serilog.Formatting.Display;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;

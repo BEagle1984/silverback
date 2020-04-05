@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,12 +29,11 @@ namespace Silverback.Messaging.Broker.Behaviors
         public IErrorPolicy ErrorPolicy { get; set; }
 
         public async Task Handle(
-            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
-            IConsumer consumer,
-            RawInboundEnvelopeHandler next) =>
-            await new InboundProcessor(Batch, ErrorPolicy, _errorPolicyHelper, serviceProvider, consumer, next)
-                .Handle(envelopes);
+            ConsumerBehaviorHandler next) =>
+            await new InboundProcessor(Batch, ErrorPolicy, _errorPolicyHelper, context, next)
+                .ProcessEnvelopes();
 
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.InboundProcessor;
 
@@ -44,89 +42,73 @@ namespace Silverback.Messaging.Broker.Behaviors
             private readonly MessageBatch _batch;
             private readonly IErrorPolicy _errorPolicy;
             private readonly ErrorPolicyHelper _errorPolicyHelper;
-            private readonly IServiceProvider _serviceProvider;
-            private readonly IConsumer _consumer;
-            private readonly RawInboundEnvelopeHandler _next;
+            private readonly ConsumerPipelineContext _context;
+            private readonly ConsumerBehaviorHandler _next;
 
             public InboundProcessor(
                 MessageBatch batch,
                 IErrorPolicy errorPolicy,
                 ErrorPolicyHelper errorPolicyHelper,
-                IServiceProvider serviceProvider,
-                IConsumer consumer,
-                RawInboundEnvelopeHandler next)
+                ConsumerPipelineContext context,
+                ConsumerBehaviorHandler next)
             {
                 _batch = batch;
                 _errorPolicy = errorPolicy;
                 _errorPolicyHelper = errorPolicyHelper;
-                _serviceProvider = serviceProvider;
-                _consumer = consumer;
+                _context = context;
                 _next = next;
             }
 
-            public async Task Handle(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
+            public async Task ProcessEnvelopes()
             {
                 if (_batch != null)
-                    await ProcessMessagesInBatch(envelopes);
+                    await ProcessMessagesInBatch();
                 else
-                    await _errorPolicyHelper.TryProcessAsync(envelopes, _errorPolicy, ProcessMessages);
+                    await ProcessMessagesDirectly();
             }
 
-            private async Task ProcessMessagesInBatch(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
+            private async Task ProcessMessagesInBatch()
             {
                 _batch.BindOnce(
-                    (envelopeCollection, batchServiceProvider) =>
-                        ForwardMessages(envelopeCollection, batchServiceProvider),
+                    ForwardMessages,
                     Commit,
                     Rollback);
 
-                await _batch.AddMessages(envelopes);
+                await _batch.AddMessages(_context.Envelopes);
             }
 
-            private async Task ProcessMessages(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
+            private async Task ProcessMessagesDirectly()
             {
-                using var scope = _serviceProvider.CreateScope();
-
-                try
-                {
-                    await ForwardMessages(envelopes, scope.ServiceProvider);
-                    await Commit(envelopes, scope.ServiceProvider);
-                }
-                catch (Exception)
-                {
-                    await Rollback(envelopes, scope.ServiceProvider);
-                    throw;
-                }
+                await _errorPolicyHelper.TryProcessAsync(
+                    _context,
+                    _errorPolicy,
+                    ForwardMessages,
+                    Commit,
+                    Rollback);
             }
 
-            // Called by the MessageBatch as well (therefore must get the IServiceProvider as parameter)
-            private Task ForwardMessages(
-                IReadOnlyCollection<IRawInboundEnvelope> envelopes,
-                IServiceProvider serviceProvider) =>
-                _next(envelopes, serviceProvider, _consumer);
+            private Task ForwardMessages(ConsumerPipelineContext context, IServiceProvider serviceProvider) =>
+                _next(context, serviceProvider);
 
-            // Called by the MessageBatch as well (therefore must get the IServiceProvider as parameter)
-            private async Task Commit(
-                IReadOnlyCollection<IRawInboundEnvelope> envelopes,
-                IServiceProvider serviceProvider)
+            private async Task Commit(ConsumerPipelineContext context, IServiceProvider serviceProvider)
             {
-                var offsets = envelopes.Select(envelope => envelope.Offset).ToList();
+                var offsets = context.Envelopes.Select(envelope => envelope.Offset).ToList();
 
                 await serviceProvider.GetRequiredService<IPublisher>()
-                    .PublishAsync(new ConsumingCompletedEvent(envelopes));
-                await _consumer.Commit(offsets);
+                    .PublishAsync(new ConsumingCompletedEvent(context.Envelopes));
+                await _context.Consumer.Commit(offsets);
             }
 
-            // Called by the MessageBatch as well (therefore must get the IServiceProvider as parameter)
             private async Task Rollback(
-                IReadOnlyCollection<IRawInboundEnvelope> envelopes,
-                IServiceProvider serviceProvider)
+                ConsumerPipelineContext context,
+                IServiceProvider serviceProvider,
+                Exception exception)
             {
-                var offsets = envelopes.Select(envelope => envelope.Offset).ToList();
+                var offsets = context.Envelopes.Select(envelope => envelope.Offset).ToList();
 
-                await _consumer.Rollback(offsets);
+                await _context.Consumer.Rollback(offsets);
                 await serviceProvider.GetRequiredService<IPublisher>()
-                    .PublishAsync(new ConsumingAbortedEvent(envelopes));
+                    .PublishAsync(new ConsumingAbortedEvent(context.Envelopes, exception));
             }
         }
     }

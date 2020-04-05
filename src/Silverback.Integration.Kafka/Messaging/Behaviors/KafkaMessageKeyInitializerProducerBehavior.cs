@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
@@ -10,14 +9,14 @@ namespace Silverback.Messaging.Behaviors
 {
     public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior, ISorted
     {
-        public async Task Handle(IOutboundEnvelope envelope, IProducer producer, OutboundEnvelopeHandler next)
+        public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            var key = KafkaKeyHelper.GetMessageKey(envelope.Message);
+            var key = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
 
             if (key != null)
-                envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, key);
+                context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, key);
 
-            await next(envelope, producer);
+            await next(context);
         }
 
         public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;

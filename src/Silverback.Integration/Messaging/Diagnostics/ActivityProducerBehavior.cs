@@ -3,9 +3,7 @@
 
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Diagnostics
 {
@@ -14,14 +12,14 @@ namespace Silverback.Messaging.Diagnostics
     /// </summary>
     public class ActivityProducerBehavior : IProducerBehavior, ISorted
     {
-        public async Task Handle(IOutboundEnvelope envelope, IProducer producer, OutboundEnvelopeHandler next)
+        public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageProducing);
             try
             {
                 activity.Start();
-                activity.SetMessageHeaders(envelope.Headers);
-                await next(envelope, producer);
+                activity.SetMessageHeaders(context.Envelope.Headers);
+                await next(context);
             }
             finally
             {

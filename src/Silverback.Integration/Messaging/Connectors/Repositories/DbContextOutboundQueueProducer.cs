@@ -25,9 +25,9 @@ namespace Silverback.Messaging.Connectors.Repositories
             {
                 Content = envelope.RawMessage ??
                           envelope.Endpoint.Serializer.Serialize(
-                          envelope.Message, 
-                          envelope.Headers,
-                          new MessageSerializationContext(envelope.Endpoint)),
+                              envelope.Message,
+                              envelope.Headers,
+                              new MessageSerializationContext(envelope.Endpoint)),
                 Headers = DefaultSerializer.Serialize((IEnumerable<MessageHeader>) envelope.Headers),
                 Endpoint = DefaultSerializer.Serialize(envelope.Endpoint),
                 EndpointName = envelope.Endpoint.Name,

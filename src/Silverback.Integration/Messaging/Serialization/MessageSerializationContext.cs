@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Serialization
     public class MessageSerializationContext
     {
         /// <summary>
-        ///     Initializes a new instance of <see cref="MessageSerializationContext"/> with the provides endpoint
+        ///     Initializes a new instance of <see cref="MessageSerializationContext" /> with the provides endpoint
         ///     infr
         /// </summary>
         /// <param name="endpoint">The related endpoint configuration.</param>
@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Serialization
         ///     Gets the related endpoint configuration.
         /// </summary>
         public IEndpoint Endpoint { get; }
-        
+
         /// <summary>
         ///     Gets the name of the actual related endpoint (in case the <code>Endpoint</code> configuration
         ///     points to multiple endpoints, for example if consuming multiple topics with a single

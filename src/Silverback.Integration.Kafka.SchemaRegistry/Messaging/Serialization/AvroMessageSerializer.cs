@@ -64,7 +64,7 @@ namespace Silverback.Messaging.Serialization
             string key,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
-            AsyncHelper.RunSynchronously(() => 
+            AsyncHelper.RunSynchronously(() =>
                 SerializeAsync<string>(key, messageHeaders, MessageComponentType.Key, context));
 
         /// <inheritdoc cref="IKafkaMessageSerializer" />

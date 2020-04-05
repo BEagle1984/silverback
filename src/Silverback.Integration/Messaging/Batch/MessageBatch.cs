@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -21,6 +23,7 @@ namespace Silverback.Messaging.Batch
     {
         private readonly BatchSettings _settings;
         private readonly IErrorPolicy _errorPolicy;
+        private readonly IConsumer _consumer;
         private readonly ErrorPolicyHelper _errorPolicyHelper;
 
         private readonly IServiceProvider _serviceProvider;
@@ -31,20 +34,22 @@ namespace Silverback.Messaging.Batch
         private readonly Timer _waitTimer;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
-        private Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> _messagesHandler;
-        private Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> _commitHandler;
-        private Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> _rollbackHandler;
+        private ConsumerBehaviorHandler _messagesHandler;
+        private ConsumerBehaviorHandler _commitHandler;
+        private ConsumerBehaviorErrorHandler _rollbackHandler;
         private Exception _processingException;
 
         public MessageBatch(
             BatchSettings settings,
             IErrorPolicy errorPolicy,
+            IConsumer consumer,
             IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
 
             _errorPolicy = errorPolicy;
+            _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
             _settings = settings;
 
             _envelopes = new List<IRawInboundEnvelope>(_settings.Size);
@@ -64,10 +69,9 @@ namespace Silverback.Messaging.Batch
         public int CurrentSize => _envelopes.Count;
 
         public void BindOnce(
-            Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> messagesHandler,
-            Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> commitHandler,
-            Func<IReadOnlyCollection<IRawInboundEnvelope>, IServiceProvider, Task> rollbackHandler
-        )
+            ConsumerBehaviorHandler messagesHandler,
+            ConsumerBehaviorHandler commitHandler,
+            ConsumerBehaviorErrorHandler rollbackHandler)
         {
             if (_messagesHandler != null)
                 return;
@@ -119,20 +123,19 @@ namespace Silverback.Messaging.Batch
             _waitTimer?.Stop();
 
             Task.Run(async () =>
-                {
-                    await _semaphore.WaitAsync();
+            {
+                await _semaphore.WaitAsync();
 
-                    try
-                    {
-                        if (_envelopes.Any())
-                            await ProcessBatch();
-                    }
-                    finally
-                    {
-                        _semaphore.Release();
-                    }
+                try
+                {
+                    if (_envelopes.Any())
+                        await ProcessBatch();
                 }
-            );
+                finally
+                {
+                    _semaphore.Release();
+                }
+            });
         }
 
         private async Task ProcessBatch()
@@ -142,9 +145,11 @@ namespace Silverback.Messaging.Batch
                 AddHeaders(_envelopes);
 
                 await _errorPolicyHelper.TryProcessAsync(
-                    _envelopes,
+                    new ConsumerPipelineContext(_envelopes, _consumer),
                     _errorPolicy,
-                    ProcessEachMessageAndPublishEvents);
+                    ForwardMessages,
+                    Commit,
+                    Rollback);
 
                 _envelopes.Clear();
             }
@@ -164,27 +169,31 @@ namespace Silverback.Messaging.Batch
             }
         }
 
-        private async Task ProcessEachMessageAndPublishEvents(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
+        private async Task ForwardMessages(ConsumerPipelineContext context, IServiceProvider serviceProvider)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+            await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(
+                new BatchCompleteEvent(CurrentBatchId, context.Envelopes));
 
-            try
-            {
-                await publisher.PublishAsync(new BatchCompleteEvent(CurrentBatchId, envelopes));
-                await _messagesHandler(envelopes, scope.ServiceProvider);
-                await publisher.PublishAsync(new BatchProcessedEvent(CurrentBatchId, envelopes));
+            await _messagesHandler(context, serviceProvider);
+        }
 
-                await _commitHandler.Invoke(envelopes, scope.ServiceProvider);
-            }
-            catch (Exception ex)
-            {
-                await _rollbackHandler.Invoke(envelopes, scope.ServiceProvider);
+        private async Task Commit(ConsumerPipelineContext context, IServiceProvider serviceProvider)
+        {
+            await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(
+                new BatchProcessedEvent(CurrentBatchId, context.Envelopes));
 
-                await publisher.PublishAsync(new BatchAbortedEvent(CurrentBatchId, envelopes, ex));
+            await _commitHandler(context, serviceProvider);
+        }
 
-                throw;
-            }
+        private async Task Rollback(
+            ConsumerPipelineContext context,
+            IServiceProvider serviceProvider,
+            Exception exception)
+        {
+            await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(
+                new BatchAbortedEvent(CurrentBatchId, context.Envelopes, exception));
+
+            await _rollbackHandler(context, serviceProvider, exception);
         }
     }
 }

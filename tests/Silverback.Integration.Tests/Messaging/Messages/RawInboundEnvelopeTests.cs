@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         public void Constructor_NullRawMessage_NoExceptionIsThrown()
         {
             var envelope = new RawInboundEnvelope(
-                (byte[]) null,
+                null,
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 "test",

@@ -10,14 +10,14 @@ namespace Silverback.Messaging.Behaviors
 {
     public class RabbitRoutingKeyInitializerProducerBehavior : IProducerBehavior, ISorted
     {
-        public async Task Handle(IOutboundEnvelope envelope, IProducer producer, OutboundEnvelopeHandler next)
+        public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            var key = RoutingKeyHelper.GetRoutingKey(envelope.Message);
+            var key = RoutingKeyHelper.GetRoutingKey(context.Envelope.Message);
 
             if (key != null)
-                envelope.Headers.AddOrReplace(RabbitProducer.RoutingKeyHeaderKey, key);
+                context.Envelope.Headers.AddOrReplace(RabbitProducer.RoutingKeyHeaderKey, key);
 
-            await next(envelope, producer);
+            await next(context);
         }
 
         public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;

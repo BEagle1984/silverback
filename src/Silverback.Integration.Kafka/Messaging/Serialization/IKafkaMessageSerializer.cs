@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Serialization
         /// <param name="context">The context information.</param>
         /// <returns></returns>
         string DeserializeKey(
-            byte[] key, 
+            byte[] key,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context);
     }

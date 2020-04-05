@@ -8,7 +8,6 @@ using Silverback.Database;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {

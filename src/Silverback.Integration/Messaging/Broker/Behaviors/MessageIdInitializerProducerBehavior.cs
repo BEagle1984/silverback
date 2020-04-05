@@ -19,11 +19,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             _messageIdProvider = messageIdProvider;
         }
 
-        public async Task Handle(IOutboundEnvelope envelope, IProducer producer, OutboundEnvelopeHandler next)
+        public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            _messageIdProvider.EnsureKeyIsInitialized(envelope.Message, envelope.Headers);
+            _messageIdProvider.EnsureKeyIsInitialized(context.Envelope.Message, context.Envelope.Headers);
 
-            await next(envelope, producer);
+            await next(context);
         }
 
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer;

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -46,11 +47,10 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
 
             var chunks = new List<IOutboundEnvelope>();
             new ChunkSplitterProducerBehavior().Handle(
-                envelope,
-                Substitute.For<IProducer>(),
-                (chunk, _) =>
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                context =>
                 {
-                    chunks.Add(chunk);
+                    chunks.Add(context.Envelope);
                     return Task.CompletedTask;
                 });
 
@@ -87,11 +87,10 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
 
             var chunks = new List<IOutboundEnvelope>();
             new ChunkSplitterProducerBehavior().Handle(
-                envelope,
-                Substitute.For<IProducer>(),
-                (chunk, _) =>
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                context =>
                 {
-                    chunks.Add(chunk);
+                    chunks.Add(context.Envelope);
                     return Task.CompletedTask;
                 });
 
