@@ -1,7 +1,6 @@
 ﻿$repositoryLocation = "."
 [bool]$global:clearCache = $FALSE
 [bool]$global:build = $TRUE
-[bool]$global:buildSolution = $FALSE
 [bool]$global:restorePackagesAfterwards = $TRUE
 $global:buildConfiguration = "Release"
 
@@ -67,31 +66,22 @@ function Build()
 {
     if ($global:build)
     {
-        if ($global:buildSolution)
+        foreach ($source in Get-Sources)
         {
-            Write-Host "Building ($global:buildConfiguration)...`n" -ForegroundColor Yellow
-            dotnet build -c $global:buildConfiguration -v q ../Silverback.sln
-            Write-Host "" -ForegroundColor Yellow
-        }
-        else
-        {
-            foreach ($source in Get-Sources)
+            $name = $source[0]
+
+            Write-Host "Building $name ($global:buildConfiguration)...`n" -ForegroundColor Yellow
+
+            foreach ($sourcePath in $source[1])
             {
-                $name = $source[0]
-
-                Write-Host "Building $name ($global:buildConfiguration)...`n" -ForegroundColor Yellow
-
-                foreach ($sourcePath in $source[1])
-                {
-                    dotnet build -c $global:buildConfiguration -v q $sourcePath/.
-                }
-
-                Write-Host ""
-
-                Copy-Package $source
-
-                Write-Separator
+                dotnet pack -c $global:buildConfiguration -v q $sourcePath/.
             }
+
+            Write-Host ""
+
+            Copy-Package $source
+
+            Write-Separator
         }
     }
 }

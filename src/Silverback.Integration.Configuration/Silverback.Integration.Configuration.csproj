@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
     <RootNamespace>$(RootNamespace)</RootNamespace>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
     <Version>$(BaseVersion)</Version>
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>

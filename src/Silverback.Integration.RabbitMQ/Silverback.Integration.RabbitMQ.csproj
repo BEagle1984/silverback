@@ -11,7 +11,7 @@
         <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
         <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
         <RepositoryType>$(RepositoryType)</RepositoryType>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
         <Description>$(Description)
             This package contains an implementation of Silverback.Integration for the popular RabbitMQ message broker.</Description>
         <PackageIconUrl>$(IconUrl)</PackageIconUrl>

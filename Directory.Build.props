@@ -19,6 +19,7 @@
     <NetCoreTargetVersion>netcoreapp3.1</NetCoreTargetVersion>
     <LangVersion>8</LangVersion>
     <NoWarn>1701;1702;CS1591</NoWarn>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Label="Code">
