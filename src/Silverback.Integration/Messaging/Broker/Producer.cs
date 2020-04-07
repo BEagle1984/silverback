@@ -12,6 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="IProducer" />
     public abstract class Producer : IProducer
     {
         private readonly MessageLogger _messageLogger;
@@ -34,7 +35,6 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        /// <inheritdoc cref="IProducer" />
         public IReadOnlyCollection<IProducerBehavior> Behaviors { get; }
 
         /// <summary>
@@ -47,15 +47,12 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public IProducerEndpoint Endpoint { get; }
 
-        /// <inheritdoc cref="IProducer" />
         public void Produce(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
             Produce(new OutboundEnvelope(message, headers, Endpoint));
 
-        /// <inheritdoc cref="IProducer" />
         public Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
             ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
 
-        /// <inheritdoc cref="IProducer" />
         public void Produce(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() =>
                 ExecutePipeline(
@@ -69,7 +66,6 @@ namespace Silverback.Messaging.Broker
                         return Task.CompletedTask;
                     }));
 
-        /// <inheritdoc cref="IProducer" />
         public async Task ProduceAsync(IOutboundEnvelope envelope) =>
             await ExecutePipeline(
                 Behaviors,
@@ -113,6 +109,7 @@ namespace Silverback.Messaging.Broker
         protected abstract Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope);
     }
 
+    /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
     public abstract class Producer<TBroker, TEndpoint> : Producer
         where TBroker : IBroker
         where TEndpoint : IProducerEndpoint

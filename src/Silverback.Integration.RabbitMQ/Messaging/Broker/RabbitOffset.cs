@@ -3,6 +3,7 @@
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="IOffset" />
     public class RabbitOffset : IOffset
     {
         public RabbitOffset(string consumerTag, ulong deliveryTag)
@@ -21,12 +22,8 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public ulong DeliveryTag { get; }
 
-        /// <inheritdoc cref="IOffset" />
-        /// >
         public string Key => ConsumerTag;
 
-        /// <inheritdoc cref="IOffset" />
-        /// >
         public string Value => DeliveryTag.ToString();
     }
 }

@@ -5,10 +5,10 @@ using System;
 
 namespace Silverback.Messaging.Subscribers
 {
+    /// <inheritdoc cref="IMessageFilter" />
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
     public abstract class MessageFilterAttribute : Attribute, IMessageFilter
     {
-        /// <inheritdoc cref="IMessageFilter" />
         public abstract bool MustProcess(object message);
     }
 }

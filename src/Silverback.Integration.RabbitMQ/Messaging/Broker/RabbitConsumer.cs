@@ -13,6 +13,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
     public class RabbitConsumer : Consumer<RabbitBroker, RabbitConsumerEndpoint, RabbitOffset>
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
@@ -44,7 +45,6 @@ namespace Silverback.Messaging.Broker
         }
 
 
-        /// <inheritdoc cref="Consumer" />
         public override void Connect()
         {
             if (_consumer != null)
@@ -60,7 +60,6 @@ namespace Silverback.Messaging.Broker
                 consumer: _consumer);
         }
 
-        /// <inheritdoc cref="Consumer" />
         public override void Disconnect()
         {
             if (_consumer == null)
@@ -80,14 +79,12 @@ namespace Silverback.Messaging.Broker
             _disconnecting = false;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
         protected override Task Commit(IReadOnlyCollection<RabbitOffset> offsets)
         {
             CommitOrStoreOffset(offsets.OrderBy(offset => offset.DeliveryTag).Last());
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
         protected override Task Rollback(IReadOnlyCollection<RabbitOffset> offsets)
         {
             BasicNack(offsets.Max(offset => offset.DeliveryTag));

@@ -32,7 +32,6 @@ namespace Silverback.Messaging.Broker
                     broker => broker));
         }
 
-        /// <inheritdoc cref="IBrokerCollection" />
         public IProducer GetProducer(
             IProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors = null)
@@ -48,7 +47,6 @@ namespace Silverback.Messaging.Broker
                 .GetProducer(endpoint, behaviors);
         }
 
-        /// <inheritdoc cref="IBrokerCollection" />
         public IConsumer GetConsumer(
             IConsumerEndpoint endpoint,
             IReadOnlyCollection<IConsumerBehavior> behaviors = null)
@@ -64,10 +62,8 @@ namespace Silverback.Messaging.Broker
                 .GetConsumer(endpoint, behaviors);
         }
 
-        /// <inheritdoc cref="IBrokerCollection" />
         public void Connect() => _brokers.ForEach(broker => broker.Connect());
 
-        /// <inheritdoc cref="IBrokerCollection" />
         public void Disconnect() => _brokers.ForEach(broker => broker.Disconnect());
 
         private IBroker FindBroker(
@@ -83,13 +79,10 @@ namespace Silverback.Messaging.Broker
 
         #region IReadOnlyCollection implementation
 
-        /// <inheritdoc cref="IReadOnlyCollection{T}" />
         public IEnumerator<IBroker> GetEnumerator() => _brokers.GetEnumerator();
 
-        /// <inheritdoc cref="IReadOnlyCollection{T}" />
         IEnumerator IEnumerable.GetEnumerator() => _brokers.GetEnumerator();
 
-        /// <inheritdoc cref="IReadOnlyCollection{T}" />
         public int Count => _brokers.Count;
 
         #endregion

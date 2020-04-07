@@ -9,6 +9,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="Producer" />
     public class InMemoryProducer : Producer<InMemoryBroker, IProducerEndpoint>
     {
         public InMemoryProducer(
@@ -21,11 +22,9 @@ namespace Silverback.Messaging.Broker
         {
         }
 
-        /// <inheritdoc cref="Producer" />
         protected override IOffset ProduceImpl(IRawOutboundEnvelope envelope) =>
             Broker.GetTopic(Endpoint.Name).Publish(envelope.RawMessage, envelope.Headers);
 
-        /// <inheritdoc cref="Producer" />
         protected override Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope) =>
             Broker.GetTopic(Endpoint.Name).PublishAsync(envelope.RawMessage, envelope.Headers);
     }

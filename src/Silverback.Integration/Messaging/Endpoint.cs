@@ -8,6 +8,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging
 {
+    /// <inheritdoc cref="IEndpoint" />
     public abstract class Endpoint : IEndpoint
     {
         protected Endpoint(string name)
@@ -15,9 +16,6 @@ namespace Silverback.Messaging
             Name = name;
         }
 
-        /// <summary>
-        ///     Gets the name of the endpoint (being it a queue, topic, exchange, ...).
-        /// </summary>
         public string Name { get; protected set; }
 
         /// <summary>
@@ -44,7 +42,6 @@ namespace Silverback.Messaging
         /// </summary>
         public static IMessageSerializer DefaultSerializer { get; } = new JsonMessageSerializer();
 
-        /// <inheritdoc cref="IEndpoint" />
         public virtual void Validate()
         {
             if (string.IsNullOrEmpty(Name))

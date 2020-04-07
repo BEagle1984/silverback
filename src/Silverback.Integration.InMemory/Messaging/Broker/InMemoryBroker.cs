@@ -10,6 +10,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="Broker" />
     public class InMemoryBroker : Broker<IProducerEndpoint, IConsumerEndpoint>
     {
         private readonly MessageLogger _messageLogger;
@@ -30,7 +31,6 @@ namespace Silverback.Messaging.Broker
         internal InMemoryTopic GetTopic(string name) =>
             _topics.GetOrAdd(name, _ => new InMemoryTopic(name));
 
-        /// <inheritdoc cref="Broker" />
         protected override IProducer InstantiateProducer(
             IProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors,
@@ -42,7 +42,6 @@ namespace Silverback.Messaging.Broker
                 LoggerFactory.CreateLogger<InMemoryProducer>(),
                 _messageLogger);
 
-        /// <inheritdoc cref="Broker" />
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
             IReadOnlyCollection<IConsumerBehavior> behaviors,
@@ -54,7 +53,6 @@ namespace Silverback.Messaging.Broker
                 serviceProvider,
                 LoggerFactory.CreateLogger<InMemoryConsumer>()));
 
-        /// <inheritdoc cref="Broker" />
         protected override void Disconnect(IEnumerable<IConsumer> consumers)
         {
             base.Disconnect(consumers);

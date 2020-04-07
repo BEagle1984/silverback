@@ -12,6 +12,7 @@ namespace Silverback.Messaging.Broker
     /// <summary>
     ///     An <see cref="IBroker" /> implementation for RabbitMQ.
     /// </summary>
+    /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}" />
     public class RabbitBroker : Broker<RabbitProducerEndpoint, RabbitConsumerEndpoint>
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
@@ -31,7 +32,6 @@ namespace Silverback.Messaging.Broker
             _connectionFactory = connectionFactory;
         }
 
-        /// <inheritdoc cref="Broker" />
         protected override IProducer InstantiateProducer(
             RabbitProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors,
@@ -44,7 +44,6 @@ namespace Silverback.Messaging.Broker
                 _loggerFactory.CreateLogger<RabbitProducer>(),
                 _messageLogger);
 
-        /// <inheritdoc cref="Broker" />
         protected override IConsumer InstantiateConsumer(
             RabbitConsumerEndpoint endpoint,
             IReadOnlyCollection<IConsumerBehavior> behaviors,

@@ -11,6 +11,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="IConsumer" />
     public abstract class Consumer : IConsumer, IDisposable
     {
         private readonly IServiceProvider _serviceProvider;
@@ -33,7 +34,6 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        /// <inheritdoc cref="IConsumer" />
         public IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
 
         /// <summary>
@@ -46,25 +46,18 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public IConsumerEndpoint Endpoint { get; }
 
-        /// <inheritdoc cref="IConsumer" />
         public event MessageReceivedHandler Received;
 
-        /// <inheritdoc cref="IConsumer" />
         public Task Commit(IOffset offset) => Commit(new[] { offset });
 
-        /// <inheritdoc cref="IConsumer" />
         public abstract Task Commit(IReadOnlyCollection<IOffset> offsets);
 
-        /// <inheritdoc cref="IConsumer" />
         public Task Rollback(IOffset offset) => Rollback(new[] { offset });
 
-        /// <inheritdoc cref="IConsumer" />
         public abstract Task Rollback(IReadOnlyCollection<IOffset> offsets);
 
-        /// <inheritdoc cref="IConsumer" />
         public abstract void Connect();
 
-        /// <inheritdoc cref="IConsumer" />
         public abstract void Disconnect();
 
         public void Dispose()
@@ -138,6 +131,7 @@ namespace Silverback.Messaging.Broker
         }
     }
 
+    /// <inheritdoc cref="Consumer" />
     public abstract class Consumer<TBroker, TEndpoint, TOffset> : Consumer
         where TBroker : IBroker
         where TEndpoint : IConsumerEndpoint
@@ -163,7 +157,6 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         protected new TEndpoint Endpoint => (TEndpoint) base.Endpoint;
 
-        /// <inheritdoc cref="IConsumer" />
         public override Task Commit(IReadOnlyCollection<IOffset> offsets) => Commit(offsets.Cast<TOffset>().ToList());
 
         /// <summary>
@@ -176,7 +169,6 @@ namespace Silverback.Messaging.Broker
         /// <param name="offsets">The offsets to be committed.</param>
         protected abstract Task Commit(IReadOnlyCollection<TOffset> offsets);
 
-        /// <inheritdoc cref="IConsumer" />
         public override Task Rollback(IReadOnlyCollection<IOffset> offsets) =>
             Rollback(offsets.Cast<TOffset>().ToList());
 

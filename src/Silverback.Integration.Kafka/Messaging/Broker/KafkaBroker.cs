@@ -12,6 +12,7 @@ namespace Silverback.Messaging.Broker
     /// <summary>
     ///     An <see cref="IBroker" /> implementation for Apache Kafka.
     /// </summary>
+    /// <inheritdoc cref="Broker" />
     public class KafkaBroker : Broker<KafkaProducerEndpoint, KafkaConsumerEndpoint>
     {
         private readonly ILoggerFactory _loggerFactory;
@@ -28,7 +29,6 @@ namespace Silverback.Messaging.Broker
             _messageLogger = messageLogger;
         }
 
-        /// <inheritdoc cref="Broker" />
         protected override IProducer InstantiateProducer(
             KafkaProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors,
@@ -41,7 +41,6 @@ namespace Silverback.Messaging.Broker
                 serviceProvider,
                 _loggerFactory.CreateLogger<KafkaProducer>());
 
-        /// <inheritdoc cref="Broker" />
         protected override IConsumer InstantiateConsumer(
             KafkaConsumerEndpoint endpoint,
             IReadOnlyCollection<IConsumerBehavior> behaviors,

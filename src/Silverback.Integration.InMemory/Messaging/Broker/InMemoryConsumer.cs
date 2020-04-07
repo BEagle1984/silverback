@@ -11,6 +11,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="Consumer" />
     public class InMemoryConsumer : Consumer
     {
         public InMemoryConsumer(
@@ -23,26 +24,22 @@ namespace Silverback.Messaging.Broker
         {
         }
 
-        /// <inheritdoc cref="Consumer" />
         public override Task Commit(IReadOnlyCollection<IOffset> offsets)
         {
             // Do nothing
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer" />
         public override Task Rollback(IReadOnlyCollection<IOffset> offsets)
         {
             // Do nothing
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer" />
         public override void Connect()
         {
         }
 
-        /// <inheritdoc cref="Consumer" />
         public override void Disconnect()
         {
         }

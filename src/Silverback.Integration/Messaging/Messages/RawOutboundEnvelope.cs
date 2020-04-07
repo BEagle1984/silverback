@@ -26,7 +26,6 @@ namespace Silverback.Messaging.Messages
         {
         }
 
-        /// <inheritdoc cref="IRawOutboundEnvelope" />
         public new IProducerEndpoint Endpoint => (IProducerEndpoint) base.Endpoint;
     }
 }

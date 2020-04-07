@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="IOffset" />
     public sealed class KafkaOffset : IComparableOffset
     {
         [JsonConstructor]
@@ -40,10 +41,8 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public long Offset { get; }
 
-        /// <inheritdoc cref="IOffset" />
         public string Key { get; }
 
-        /// <inheritdoc cref="IOffset" />
         public string Value { get; }
 
         public int CompareTo(KafkaOffset other)

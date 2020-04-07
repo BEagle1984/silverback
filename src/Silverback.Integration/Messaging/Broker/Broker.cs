@@ -22,6 +22,7 @@ namespace Silverback.Messaging.Broker
     ///     The type of the <see cref="IConsumerEndpoint" /> that is being handled by this
     ///     broker implementation.
     /// </typeparam>
+    /// <inheritdoc cref="IBroker" />
     public abstract class Broker<TProducerEndpoint, TConsumerEndpoint> : IBroker, IDisposable
         where TProducerEndpoint : IProducerEndpoint
         where TConsumerEndpoint : IConsumerEndpoint
@@ -54,13 +55,10 @@ namespace Silverback.Messaging.Broker
 
         #region Producer / Consumer
 
-        /// <inheritdoc cref="IBroker" />
         public Type ProducerEndpointType { get; }
 
-        /// <inheritdoc cref="IBroker" />
         public Type ConsumerEndpointType { get; }
 
-        /// <inheritdoc cref="IBroker" />
         public virtual IProducer GetProducer(
             IProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors = null) =>
@@ -87,7 +85,6 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<IProducerBehavior> behaviors,
             IServiceProvider serviceProvider);
 
-        /// <inheritdoc cref="IBroker" />
         public virtual IConsumer GetConsumer(
             IConsumerEndpoint endpoint,
             IReadOnlyCollection<IConsumerBehavior> behaviors = null)
@@ -146,10 +143,8 @@ namespace Silverback.Messaging.Broker
 
         #region Connect / Disconnect
 
-        /// <inheritdoc cref="IBroker" />
         public bool IsConnected { get; private set; }
 
-        /// <inheritdoc cref="IBroker" />
         public void Connect()
         {
             if (IsConnected)
@@ -170,7 +165,6 @@ namespace Silverback.Messaging.Broker
         protected virtual void Connect(IEnumerable<IConsumer> consumers) =>
             consumers.ForEach(c => c.Connect());
 
-        /// <inheritdoc cref="IBroker" />
         public void Disconnect()
         {
             if (!IsConnected)

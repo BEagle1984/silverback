@@ -16,6 +16,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
     public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
         private readonly KafkaEventsHandler _kafkaEventsHandler;
@@ -43,11 +44,9 @@ namespace Silverback.Messaging.Broker
             _kafkaEventsHandler = serviceProvider.GetRequiredService<KafkaEventsHandler>();
         }
 
-        /// <inheritdoc cref="Producer" />
         protected override IOffset ProduceImpl(IRawOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceAsyncImpl(envelope));
 
-        /// <inheritdoc cref="Producer" />
         protected override async Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope)
         {
             try

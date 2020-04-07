@@ -14,6 +14,7 @@ namespace Silverback.Messaging.Serialization
     ///     to determine the message type upon deserialization. This default serializer
     ///     is ideal when the producer and the consumer are both using Silverback.
     /// </summary>
+    /// <inheritdoc cref="IMessageSerializer" />
     public class JsonMessageSerializer : IMessageSerializer
     {
         /// <summary>
@@ -34,7 +35,6 @@ namespace Silverback.Messaging.Serialization
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        /// <inheritdoc cref="IMessageSerializer" />
         public virtual byte[] Serialize(
             object message,
             MessageHeaderCollection messageHeaders,
@@ -58,7 +58,6 @@ namespace Silverback.Messaging.Serialization
             return GetEncoding().GetBytes(json);
         }
 
-        /// <inheritdoc cref="IMessageSerializer" />
         public virtual object Deserialize(
             byte[] message,
             MessageHeaderCollection messageHeaders,
@@ -76,14 +75,12 @@ namespace Silverback.Messaging.Serialization
             return JsonConvert.DeserializeObject(json, type, Settings);
         }
 
-        /// <inheritdoc cref="IMessageSerializer" />
         public virtual Task<byte[]> SerializeAsync(
             object message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Task.FromResult(Serialize(message, messageHeaders, context));
 
-        /// <inheritdoc cref="IMessageSerializer" />
         public virtual Task<object> DeserializeAsync(
             byte[] message,
             MessageHeaderCollection messageHeaders,
@@ -106,9 +103,9 @@ namespace Silverback.Messaging.Serialization
     ///     Serializes and deserializes the messages of type <typeparamref name="TMessage" /> in JSON format.
     /// </summary>
     /// <typeparam name="TMessage">The type of the messages to be serialized and/or deserialized.</typeparam>
+    /// <inheritdoc />
     public class JsonMessageSerializer<TMessage> : JsonMessageSerializer
     {
-        /// <inheritdoc cref="IMessageSerializer" />
         public override byte[] Serialize(
             object message,
             MessageHeaderCollection messageHeaders,
@@ -128,7 +125,6 @@ namespace Silverback.Messaging.Serialization
             return GetEncoding().GetBytes(json);
         }
 
-        /// <inheritdoc cref="IMessageSerializer" />
         public override object Deserialize(
             byte[] message,
             MessageHeaderCollection messageHeaders,

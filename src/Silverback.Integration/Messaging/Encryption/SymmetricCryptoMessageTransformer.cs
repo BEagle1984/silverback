@@ -12,6 +12,7 @@ namespace Silverback.Messaging.Encryption
     ///     The abstract implementation of either an <see cref="IMessageEncryptor" /> or <see cref="IMessageDecryptor" />
     ///     based on a <see cref="SymmetricAlgorithm" />.
     /// </summary>
+    /// <inheritdoc />
     public abstract class SymmetricCryptoMessageTransformer : IRawMessageTransformer
     {
         protected SymmetricCryptoMessageTransformer(SymmetricEncryptionSettings settings)
@@ -23,7 +24,6 @@ namespace Silverback.Messaging.Encryption
 
         protected SymmetricEncryptionSettings Settings { get; }
 
-        /// <inheritdoc cref="IRawMessageTransformer" />
         public async Task<byte[]> TransformAsync(byte[] message, MessageHeaderCollection headers)
         {
             if (message == null || message.Length == 0)

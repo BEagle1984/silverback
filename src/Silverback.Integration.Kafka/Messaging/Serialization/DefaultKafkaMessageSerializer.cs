@@ -12,6 +12,7 @@ namespace Silverback.Messaging.Serialization
     ///     the provided <see cref="IMessageSerializer" /> for the value and treats the key as a
     ///     UTF-8 encoded string.
     /// </summary>
+    /// <inheritdoc cref="IKafkaMessageSerializer" />
     public class DefaultKafkaMessageSerializer : IKafkaMessageSerializer
     {
         private readonly IMessageSerializer _serializer;
@@ -21,42 +22,36 @@ namespace Silverback.Messaging.Serialization
             _serializer = serializer;
         }
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         public byte[] Serialize(
             object message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             _serializer.Serialize(message, messageHeaders, context);
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         public object Deserialize(
             byte[] message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             _serializer.Deserialize(message, messageHeaders, context);
 
-        /// <inheritdoc cref="IMessageSerializer" />
         public Task<byte[]> SerializeAsync(
             object message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             _serializer.SerializeAsync(message, messageHeaders, context);
 
-        /// <inheritdoc cref="IMessageSerializer" />
         public Task<object> DeserializeAsync(
             byte[] message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             _serializer.DeserializeAsync(message, messageHeaders, context);
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         public byte[] SerializeKey(
             string key,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Encoding.UTF8.GetBytes(key);
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         public string DeserializeKey(
             byte[] key,
             MessageHeaderCollection messageHeaders,

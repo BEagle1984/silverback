@@ -15,6 +15,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
     public class RabbitProducer : Producer<RabbitBroker, RabbitProducerEndpoint>, IDisposable
     {
         internal const string RoutingKeyHeaderKey = "x-rabbit-routing-key";
@@ -41,11 +42,9 @@ namespace Silverback.Messaging.Broker
             Task.Run(() => ProcessQueue(_cancellationTokenSource.Token));
         }
 
-        /// <inheritdoc cref="Producer" />
         protected override IOffset ProduceImpl(IRawOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceAsyncImpl(envelope));
 
-        /// <inheritdoc cref="Producer" />
         protected override Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope)
         {
             var queuedMessage = new QueuedMessage(envelope);

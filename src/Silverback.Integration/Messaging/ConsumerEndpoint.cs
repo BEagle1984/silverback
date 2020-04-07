@@ -3,6 +3,7 @@
 
 namespace Silverback.Messaging
 {
+    /// <inheritdoc cref="IConsumerEndpoint" />
     public abstract class ConsumerEndpoint : Endpoint, IConsumerEndpoint
     {
         protected ConsumerEndpoint(string name)
@@ -10,7 +11,6 @@ namespace Silverback.Messaging
         {
         }
 
-        /// <inheritdoc cref="IConsumerEndpoint" />
         public abstract string GetUniqueConsumerGroupName();
     }
 }

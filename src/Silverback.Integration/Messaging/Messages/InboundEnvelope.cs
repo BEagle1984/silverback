@@ -25,10 +25,8 @@ namespace Silverback.Messaging.Messages
         {
         }
 
-        /// <inheritdoc cref="IEnvelope" />
         public object Message { get; set; }
 
-        /// <inheritdoc cref="IEnvelope" />
         public bool AutoUnwrap { get; } = true;
     }
 
@@ -52,7 +50,6 @@ namespace Silverback.Messaging.Messages
         {
         }
 
-        /// <inheritdoc cref="IInboundEnvelope{TMessage}" />
         public new TMessage Message
         {
             get => (TMessage) base.Message;

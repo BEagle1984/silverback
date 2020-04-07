@@ -14,6 +14,7 @@ namespace Silverback.Messaging.Serialization
     /// <summary>
     ///     Connects to the specified schema registry and serializes the messages in Apache Avro format.
     /// </summary>
+    /// <inheritdoc cref="IKafkaMessageSerializer" />
     public class AvroMessageSerializer<TMessage> : IKafkaMessageSerializer
     {
         /// <summary>
@@ -31,35 +32,30 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         public IEndpoint Endpoint { get; set; }
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         public byte[] Serialize(
             object message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             AsyncHelper.RunSynchronously(() => SerializeAsync(message, messageHeaders, context));
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         public object Deserialize(
             byte[] message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             AsyncHelper.RunSynchronously(() => DeserializeAsync(message, messageHeaders, context));
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         public async Task<byte[]> SerializeAsync(
             object message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             await SerializeAsync<TMessage>(message, messageHeaders, MessageComponentType.Value, context);
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         public async Task<object> DeserializeAsync(
             byte[] message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             await DeserializeAsync<TMessage>(message, messageHeaders, MessageComponentType.Value, context);
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         public byte[] SerializeKey(
             string key,
             MessageHeaderCollection messageHeaders,
@@ -67,7 +63,6 @@ namespace Silverback.Messaging.Serialization
             AsyncHelper.RunSynchronously(() =>
                 SerializeAsync<string>(key, messageHeaders, MessageComponentType.Key, context));
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         public string DeserializeKey(
             byte[] key,
             MessageHeaderCollection messageHeaders,
@@ -75,7 +70,6 @@ namespace Silverback.Messaging.Serialization
             AsyncHelper.RunSynchronously(() =>
                 DeserializeAsync<string>(key, messageHeaders, MessageComponentType.Key, context));
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         private async Task<byte[]> SerializeAsync<TValue>(
             object message,
             MessageHeaderCollection messageHeaders,
@@ -99,7 +93,6 @@ namespace Silverback.Messaging.Serialization
                     GetConfluentSerializationContext(componentType, context));
         }
 
-        /// <inheritdoc cref="IKafkaMessageSerializer" />
         private async Task<TValue> DeserializeAsync<TValue>(
             byte[] message,
             MessageHeaderCollection messageHeaders,

@@ -13,6 +13,7 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Broker
 {
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
     public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint, KafkaOffset>
     {
         private readonly ILogger<KafkaConsumer> _logger;
@@ -34,7 +35,6 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
-        /// <inheritdoc cref="Consumer" />
         public override void Connect()
         {
             if (_innerConsumer != null)
@@ -55,7 +55,6 @@ namespace Silverback.Messaging.Broker
                 Endpoint.Name, Endpoint.Configuration.BootstrapServers);
         }
 
-        /// <inheritdoc cref="Consumer" />
         public override void Disconnect()
         {
             if (_innerConsumer == null)
@@ -123,7 +122,6 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
         protected override Task Commit(IReadOnlyCollection<KafkaOffset> offsets)
         {
             var lastOffsets = offsets
@@ -144,7 +142,6 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
         protected override Task Rollback(IReadOnlyCollection<KafkaOffset> offsets)
         {
             // Nothing to do here. With Kafka the uncommitted messages will be implicitly re-consumed. 

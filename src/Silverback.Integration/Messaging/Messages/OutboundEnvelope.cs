@@ -24,13 +24,10 @@ namespace Silverback.Messaging.Messages
             AutoUnwrap = autoUnwrap;
         }
 
-        /// <inheritdoc cref="IEnvelope" />
         public object Message { get; }
 
-        /// <inheritdoc cref="IEnvelope" />
         public bool AutoUnwrap { get; }
 
-        /// <inheritdoc cref="IOutboundEnvelopeInternal" />
         public Type OutboundConnectorType { get; }
     }
 
@@ -47,7 +44,6 @@ namespace Silverback.Messaging.Messages
         {
         }
 
-        /// <inheritdoc cref="IOutboundEnvelope{TMessage}" />
         public new TMessage Message => (TMessage) base.Message;
     }
 }
