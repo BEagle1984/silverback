@@ -93,7 +93,15 @@ namespace Silverback.Messaging.Messages
 
             var firstMessage = envelopes.First();
 
-            properties.Add(("Endpoint", "endpointName", firstMessage.Endpoint?.Name));
+            if (firstMessage is IRawInboundEnvelope inboundEnvelope &&
+                !string.IsNullOrEmpty(inboundEnvelope.ActualEndpointName))
+            {
+                properties.Add(("Endpoint", "endpointName", inboundEnvelope.ActualEndpointName));
+            }
+            else
+            {
+                properties.Add(("Endpoint", "endpointName", firstMessage.Endpoint?.Name));
+            }
 
             var failedAttempts = firstMessage.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts);
             if (failedAttempts > 0)
