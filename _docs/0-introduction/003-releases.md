@@ -7,13 +7,14 @@ toc: true
 ## [2.1.0-rc2](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc1)
 
 ### What's new
-* **[Rabbit]** Added consumer `PrefetchSize` and `PrefetchCount` settings (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
-* **[Rabbit]** Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
-* **[Kafka]** The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
-* **[Kafka]** Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
 * **[Integration]** Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 * **[Integration]** End-to-End message encryption (see [Encryption]({{ site.baseurl }}/docs/advanced/encryption))
 * **[Integration]** Dynamic custom routing of outbound messages (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
+* **[Kafka]** The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
+* **[Kafka]** Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
+* **[Kafka]** Upgrade to [Confluent.Kafka 1.4.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.0)
+* **[Rabbit]** Added consumer `PrefetchSize` and `PrefetchCount` settings (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
+* **[Rabbit]** Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
 
 ### Breaking Changes
 These changes shouldn't affect you unless you built your own `IBroker` implementation or are interacting at low-level with the `IBroker` (this is why has been decided to still mark this as a minor release):
