@@ -11,7 +11,7 @@ The default implementation of `IMessageIdProvider` looks for a public property c
 
 If needed you can implement your own `IMessageIdProvider` and register it for dependency injection.
 
-```c#
+```csharp
 public class SampleMessageIdProvider : IMessageIdProvider
 {
     public bool CanHandle(object message) => message is SampleMessage;
@@ -27,16 +27,20 @@ public class SampleMessageIdProvider : IMessageIdProvider
     }
 }
 ```
-```c#
-public void ConfigureServices(IServiceCollection services)
-{
-    ...
 
-    services
-        .AddSilverback()
-        .WithConnectionToMessageBroker(options => options
-            .AddKafka()
-            .AddMessageIdProvider<SampleMessageIdProvider>());
-    ...
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddMessageIdProvider<SampleMessageIdProvider>());
+    }
 }
-```
+{% endhighlight %}
+</figure>

@@ -4,27 +4,27 @@ permalink: /docs/releases
 toc: true
 ---
 
-## [2.1.0-rc2](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc1)
+## [2.1.0-rc2](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc2)
 
 ### What's new
-* **[Integration]** Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
-* **[Integration]** End-to-End message encryption (see [Encryption]({{ site.baseurl }}/docs/advanced/encryption))
-* **[Integration]** Dynamic custom routing of outbound messages (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
-* **[Kafka]** The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
-* **[Kafka]** Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
-* **[Kafka]** Upgrade to [Confluent.Kafka 1.4.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.0)
-* **[Rabbit]** Added consumer `PrefetchSize` and `PrefetchCount` settings (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
-* **[Rabbit]** Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
+* <span class="area-integration" /> Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
+* <span class="area-integration" /> End-to-End message encryption (see [Encryption]({{ site.baseurl }}/docs/advanced/encryption))
+* <span class="area-integration" /> Dynamic custom routing of outbound messages (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
+* <span class="area-kafka" /> The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
+* <span class="area-kafka" /> Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
+* <span class="area-kafka" /> Upgrade to [Confluent.Kafka 1.4.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.0)
+* <span class="area-rabbit" /> Added consumer `PrefetchSize` and `PrefetchCount` settings (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
+* <span class="area-rabbit" /> Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
 
 ### Breaking Changes
 These changes shouldn't affect you unless you built your own `IBroker` implementation or are interacting at low-level with the `IBroker` (this is why has been decided to still mark this as a minor release):
-* **[Integration]** The `IBroker` inteface and `Broker` abstract base class have been modified to explicitly declare which endpoint type is being handled by the broker implementation
-* **[Integration]** The `IMessageSerializer` interfaces has been changed
-* **[Integration]** The `IConsumerBehavior` and `IProducerBehavior` interfaces have been changed and moved into `Integration.Broker.Behaviors` namespace
+* <span class="area-integration" /> The `IBroker` inteface and `Broker` abstract base class have been modified to explicitly declare which endpoint type is being handled by the broker implementation
+* <span class="area-integration" /> The `IMessageSerializer` interfaces has been changed
+* <span class="area-integration" /> The `IConsumerBehavior` and `IProducerBehavior` interfaces have been changed and moved into `Integration.Broker.Behaviors` namespace
 
 ### Announced Breaking Changes
 These aren't real breaking changes but some methods have been marked as deprecated and will be removed in one of the next major releases:
-* **[Integration]** `WithConnectionTo<>`, `WithConnectionToKafka` and `WithConnectionToRabbitMQ` are deprecated (they will still be supported in this version), please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit` methods (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
+* <span class="area-integration" /> `WithConnectionTo<>`, `WithConnectionToKafka` and `WithConnectionToRabbitMQ` are deprecated (they will still be supported in this version), please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit` methods (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 
 ## [2.0.0](https://github.com/BEagle1984/silverback/releases/tag/2.0.0)
 
@@ -116,8 +116,8 @@ These aren't real breaking changes but some methods have been marked as deprecat
 * Changes to the schema of the outbox table (`Silverback.Messaging.Connectors.Model.OutboundMessage`)
 * The configuration fluent API changed quite a bit, refer to the current documentation (e.g. [Using the Bus]({{ site.baseurl }}/docs/quickstart/bus) and [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 
-**Important!** `WithConnectionTo<KafkaBroker>` has to be replaced with `WithConnectionToKafka` in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see [Kafka Message Key]({{ site.baseurl }}/docs/kafka/message-key))
-{: .notice--warning}
+`WithConnectionTo<KafkaBroker>` has to be replaced with `WithConnectionToKafka` in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see [Kafka Message Key]({{ site.baseurl }}/docs/kafka/message-key))
+{: .notice--important}
 
 * `Silverback.Integration.EntityFrameworkCore` and `Silverback.EventSourcing.EntityFrameworkCore` have been deprecated (`Silverback.Core.EntityFrameworkCore` contains all the necessary logic to use EF as store)
 * `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Message Key]({{ site.baseurl }}/docs/kafka/message-key))

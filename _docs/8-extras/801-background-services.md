@@ -9,7 +9,7 @@ To implement the `OutboundWorker` we had to create a database based locking mech
 
 Two base classes are available in Silverback.Core: `DistributedBackgroundWorkerService` implements the basic locking mechanism, while `RecurringDistributedBackgroundService` adds on top of it the ability to run a task as specified intervals.
 
-```c#
+```csharp
 using Silverback.Background;
 
 namespace Silverback.Messaging.Connectors
@@ -36,5 +36,5 @@ namespace Silverback.Messaging.Connectors
 }
 ```
 
-**Note:** A `DistributedLockSettings` object can be passed to the constructor of the base class to customize lock timeout, heartbeat interval, etc.
-{: .notice--info}
+A `DistributedLockSettings` object can be passed to the constructor of the base class to customize lock timeout, heartbeat interval, etc.
+{: .notice--note}

@@ -25,7 +25,7 @@ Property | Description
 `Configuration.BootstrapServers`, ...| All properties inherited from `Confluent.Kafka.ProducerConfig`. See [confluent-kafka-dotnet documentation](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.ProducerConfig.html) for details.
 `Configuration.ThrowIfNotAcknowledged` | When set to `true` an exception will be thrown in the producer if no acknowledge is received by the broker (`PersistenceStatus.PossiblyPersisted`). The default is `true`.
 
-```c#
+```csharp
 new KafkaProducerEndpoint("basket-events")
 {
     Configuration = new KafkaProducerConfig
@@ -50,7 +50,7 @@ Property | Description
 `Configuration.CommitOffsetEach` | When auto-commit is disable, defines the number of message processed before committing the offset to the server. The most reliable level is 1 but it reduces throughput.
 `EnableAutoRecovery` | When set to `true` the consumer will be automatically restarted if a `KafkaException` is thrown while polling/consuming. The default is `true`.
 
-```c#
+```csharp
 new KafkaConsumerEndpoint(
     "order-events", 
     "inventory-events")
@@ -64,8 +64,8 @@ new KafkaConsumerEndpoint(
 }
 ```
 
-**Note:** You can decide whether to use one consumer per topic or subscribe multiple topics with the same consumer (passing multiple topic names in the endpoint constructor, as shown in the example above). There are advantages and disadvantages of both solutions and the best choice really depends on your specific requirements, the amount of messages being produced, etc. Anyway the main difference is that when subscribing multiple topics you will still consume one message after the other but they will simply be interleaved (this may or may not be an issue, it depends) and on the other hand each consumer will use some resources, so creating multiple consumers will result in a bigger overhead.
-{: .notice--info}
+You can decide whether to use one consumer per topic or subscribe multiple topics with the same consumer (passing multiple topic names in the endpoint constructor, as shown in the example above). There are advantages and disadvantages of both solutions and the best choice really depends on your specific requirements, the amount of messages being produced, etc. Anyway the main difference is that when subscribing multiple topics you will still consume one message after the other but they will simply be interleaved (this may or may not be an issue, it depends) and on the other hand each consumer will use some resources, so creating multiple consumers will result in a bigger overhead.
+{: .notice--note}
 
 ## RabbitMQ
 
@@ -92,7 +92,7 @@ Property | Description
 `Queue.Arguments` | The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.
 `ConfirmationTimeout` | The maximum amount of time to wait for the message produce to be acknowledge before considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment. The default is a quite conservative `5 seconds`.
 
-```c#
+```csharp
 new RabbitQueueProducerEndpoint("inventory-commands-queue")
 {
     Connection = new RabbitConnectionConfig
@@ -129,7 +129,7 @@ Property | Description
 `Exchange.Arguments` | The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.
 `ConfirmationTimeout` | The maximum amount of time to wait for the message produce to be acknowledge before considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment. The default is a quite conservative `5 seconds`.
 
-```c#
+```csharp
 new RabbitExchangeProducerEndpoint("order-events")
 {
     Connection = new RabbitConnectionConfig
@@ -167,7 +167,7 @@ Property | Description
 `PrefetchSize` | Defines the QoS prefetch size parameter for the consumer. See [RabbitMQ Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) documentation for details.
 `PrefetchCount` | Defines the QoS prefetch count parameter for the consumer. See [RabbitMQ Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) documentation for details.
 
-```c#
+```csharp
 new RabbitQueueConsumerEndpoint("inventory-commands-queue")
 {
     Connection = new RabbitConnectionConfig
@@ -213,7 +213,7 @@ Property | Description
 `PrefetchSize` | Defines the QoS prefetch size parameter for the consumer. See [RabbitMQ Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) documentation for details.
 `PrefetchCount` | Defines the QoS prefetch count parameter for the consumer. See [RabbitMQ Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) documentation for details.
 
-```c#
+```csharp
 new RabbitExchangeConsumerEndpoint("order-events")
 {
     Connection = new RabbitConnectionConfig

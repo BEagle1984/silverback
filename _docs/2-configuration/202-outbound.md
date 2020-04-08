@@ -13,31 +13,33 @@ Multiple implementations of the connector are available, offering a variable deg
 
 The basic `OutboundConnector` is very simple and relays the messages synchronously. This is the easiest, better performing and most lightweight option but it doesn't allow for any transactionality (once the message is fired, is fired) nor resiliency to the message broker failure.
 
-```c#
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    ...
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddOutboundConnector());
+    }
 
-    services
-        .AddSilverback()
-        .WithConnectionToMessageBroker(options => options
-            .AddKafka()
-            .AddOutboundConnector());
-    ...
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddOutbound<IIntegrationEvent>(
+                    new KafkaProducerEndpoint("basket-events")
+                    {
+                        ...
+                    }));
+    }
 }
-
-public void Configure(BusConfigurator busConfigurator)
-{
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddOutbound<IIntegrationEvent>(
-                new KafkaProducerEndpoint("basket-events")
-                {
-                    ...
-                }));
-    ...
-}
-```
+{% endhighlight %}
+</figure>
 
 ### Deferred
 
@@ -47,45 +49,48 @@ When using entity framework (`UseDbContext<TDbContext>`) the outbound messages a
 
 The `DbContext` must include a `DbSet<OutboundMessage>` and an `OutboundWorker` is to be started to process the outbound queue.
 
-**Important!** The current `OutboundWorker` cannot be horizontally scaled and starting multiple instances will cause the messages to be produced multiple times. In the following example a distributed lock in the database is used to ensure that only one instance is running and another one will _immediatly_ take over when it stops (the `DbContext` must include a `DbSet<Lock>` as well).
-{: .notice--warning}
+The current `OutboundWorker` cannot be horizontally scaled and starting multiple instances will cause the messages to be produced multiple times. In the following example a distributed lock in the database is used to ensure that only one instance is running and another one will _immediatly_ take over when it stops (the `DbContext` must include a `DbSet<Lock>` as well).
+{: .notice--important}
 
-```c#
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    ...
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
 
-    services
-        .AddSilverback()
+            // Initialize Silverback to use MyDbContext as database storage.
+            .UseDbContext<MyDbContext>()
 
-        // Initialize Silverback to use MyDbContext as database storage.
-        .UseDbContext<MyDbContext>()
+            // Setup the lock manager using the database
+            // to handle the distributed locks.
+            // If this line is omitted the OutboundWorker will still
+            // work without locking. 
+            .AddDbDistributedLockManager()
 
-        // Setup the lock manager using the database
-        // to handle the distributed locks.
-        // If this line is omitted the OutboundWorker will still
-        // work without locking. 
-        .AddDbDistributedLockManager()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                // Use a deferred outbound connector
+                .AddDbOutboundConnector()
 
-        .WithConnectionToMessageBroker(options => options
-            .AddKafka()
-            // Use a deferred outbound connector
-            .AddDbOutboundConnector()
-
-            // Add the IHostedService processing the outbound queue
-            // (overloads are available to specify custom interval,
-            // lock timeout, etc.)
-            .AddDbOutboundWorker();
-    ...
+                // Add the IHostedService processing the outbound queue
+                // (overloads are available to specify custom interval,
+                // lock timeout, etc.)
+                .AddDbOutboundWorker();
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
 #### Extensibility
 
 You can easily create another implementation targeting another kind of storage, simply creating your own `IOutboundQueueProducer` and `IOutboundQueueConsumer`.
 It is then suggested to create an extension method for the `BrokerOptionsBuilder` to register your own types.
 
-```c#
+```csharp
 public static BrokerOptionsBuilder AddMyCustomOutboundConnector(
     this BrokerOptionsBuilder builder)
 {
@@ -111,63 +116,78 @@ public static BrokerOptionsBuilder AddMyCustomOutboundWorker(
 
 The published messages that are routed to an outbound endpoint cannot be subscribed locally (within the same process), unless explicitely desired.
 
-```c#
-public void Configure(BusConfigurator busConfigurator)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddOutbound<IIntegrationEvent>(...)
-            .PublishOutboundMessagesToInternalBus()
-        );
-    ...
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddOutbound<IIntegrationEvent>(...)
+                .PublishOutboundMessagesToInternalBus()
+            );
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
-**Note:** What said above is only partially true, as you can subscribe to the wrapped message (`IOutboundEnvelope<TMessage>`) even without calling `PublishOutboundMessagesToInternalBus`.
-{: .notice--info}
+What said above is only partially true, as you can subscribe to the wrapped message (`IOutboundEnvelope<TMessage>`) even without calling `PublishOutboundMessagesToInternalBus`.
+{: .notice--note}
 
 ## Producing the same message to multiple endpoints
 
 An outbound route can point to multiple endpoints resulting in every message being broadcasted to all endpoints.
 
-```c#
-public void Configure(BusConfigurator busConfigurator)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddOutbound<IIntegrationCommand>(
-                new KafkaProducerEndpoint("topic-1")
-                {
-                    ...
-                },
-                new KafkaProducerEndpoint("topic-2")
-                {
-                    ...
-                }));
-    ...
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddOutbound<IIntegrationCommand>(
+                    new KafkaProducerEndpoint("topic-1")
+                    {
+                        ...
+                    },
+                    new KafkaProducerEndpoint("topic-2")
+                    {
+                        ...
+                    }));
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
 A message will also be routed to all outbound endpoint mapped to a type that matches the message type. In the example below an `OrderCreatedMessage` (that inherits from `OrderMessage`) would be sent to both endpoints.
 
-```c#
-public void Configure(BusConfigurator busConfigurator)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddOutbound<OrderMessage>(
-                new KafkaProducerEndpoint("topic-1")
-                {
-                    ...
-                })
-            .AddOutbound<OrderCreatedMessage>(
-                new KafkaProducerEndpoint("topic-1")
-                {
-                    ...
-                }));
-    ...
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddOutbound<OrderMessage>(
+                    new KafkaProducerEndpoint("topic-1")
+                    {
+                        ...
+                    })
+                .AddOutbound<OrderCreatedMessage>(
+                    new KafkaProducerEndpoint("topic-1")
+                    {
+                        ...
+                    }));
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
 ## Dynamic custom routing
 
@@ -176,7 +196,7 @@ By default Silverback routes the messages according to their type and the static
 In the following example a custom router is used to route the messages according to their priority (a copy is also sent to a catch-all topic).
 
 
-```c#
+```csharp
 public class PrioritizedRouter : OutboundRouter<IPrioritizedCommand>
 {
     private static readonly IProducerEndpoint HighPriorityEndpoint =
@@ -231,7 +251,11 @@ public class PrioritizedRouter : OutboundRouter<IPrioritizedCommand>
         }
     }
 }
+```
 
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
@@ -247,11 +271,11 @@ public class Startup
         busConfigurator
             .Connect(endpoints => endpoints
                 .AddOutbound<IPrioritizedCommand, PrioritizedRouter>());
-        ...
     }
 }
-```
+{% endhighlight %}
+</figure>
 
-**Note:** The outbound routers can only be registered as singleton. If a scoped instance is needed you have to inject the `IServiceScopeFactory` (or `IServiceProvider`).
-{: .notice--info}
+The outbound routers can only be registered as singleton. If a scoped instance is needed you have to inject the `IServiceScopeFactory` (or `IServiceProvider`).
+{: .notice--note}
 

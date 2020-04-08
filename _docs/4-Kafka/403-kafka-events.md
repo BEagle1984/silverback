@@ -23,7 +23,7 @@ Event | Description
 
 In the following example the `KafkaPartitionsAssignedEvent` is subscribed in order to reset the start offsets and replay the past messages.
 
-```c#
+```csharp
 public class KafkaEventsSubscriber : ISubscriber
 {
     public void OnPartitionsAssigned(KafkaPartitionsAssignedEvent message)

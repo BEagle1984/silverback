@@ -1,6 +1,8 @@
 ---
 layout: splash
 permalink: /
+title: Silverback
+excerpt: A simple but feature-rich framework to build reactive/event-driven applications with .net core
 header:
   overlay_color: "#5e616c"
   overlay_image: /assets/images/splash.jpg
@@ -9,7 +11,6 @@ header:
       url: "https://github.com/BEagle1984/silverback/"
     - label: "<i class='fas fa-arrow-alt-circle-down'></i> Get from NuGet"
       url: "https://www.nuget.org/packages?q=Silverback"
-excerpt: Silverback is a simple but feature-rich framework to build reactive/event-driven applications with .net core.
 features:
   - title: "Simple yet Powerful"
     excerpt: "A very simple and not too invasive framework with just enough features to cover most of the real world use cases when it comes to messaging and microservices integration."
@@ -18,7 +19,7 @@ features:
     btn_class: "btn--primary"
   - title: "Flexible and Extensible"
     excerpt: "It is designed to be highly configurable and extensible to cover as many use cases as possible."
-    url: "/docs/architecture"
+    url: "/docs/introduction"
     btn_label: "View Documentation"
     btn_class: "btn--primary"
   - title: "Open Source"

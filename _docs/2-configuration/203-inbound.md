@@ -5,8 +5,8 @@ permalink: /docs/configuration/inbound
 
 The inbound connector is used to automatically consume a topic/queue and relay the messages to the internal bus.
 
-**Note:** The inbound connector abstracts the message broker completely and the messages are automatically acknowledged if the subscribers complete without throwing an exception (unless error handling policies are defined and unless batch processing).
-{: .notice--info}
+The inbound connector abstracts the message broker completely and the messages are automatically acknowledged if the subscribers complete without throwing an exception (unless error handling policies are defined and unless batch processing).
+{: .notice--note}
 
 ## Implementations
 
@@ -16,27 +16,33 @@ Multiple implementations are available, offering a variable degree of reliabilit
 
 The basic `InboundConnector` is very simple and just forwards the consumed messages to the internal bus. If no exception is thrown, the message is committed and the next one is consumed.
 
-```c#
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    services
-        .AddSilverback()
-        .WithConnectionToMessageBroker(options => options
-            .AddKafka()
-            .AddInboundConnector());
-}
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddInboundConnector());
+    }
 
-public void Configure(BusConfigurator busConfigurator)
-{
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddInbound(
-                new KafkaConsumerEndpoint("basket-events")
-                {
-                    ...
-                }));
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddInbound(
+                    new KafkaConsumerEndpoint("basket-events")
+                    {
+                        ...
+                    }));
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
 ### Exactly-once processing
 
@@ -46,46 +52,58 @@ Silverback is able to keep track of the messages that have been consumed in orde
 
 The `DbOffsetStoredInboundConnector` will store the offset of the latest processed message (of each topic/partition) into a database table.
 
-**Note:** The `DbContext` must include a `DbSet<StoredOffset>`.
-{: .notice--info}
+The `DbContext` must include a `DbSet<StoredOffset>`.
+{: .notice--note}
 
-```c#
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    services
-        .AddSilverback()
-        .UseDbContext<MyDbContext>()
-        .WithConnectionToMessageBroker(options => options
-            .AddKafka()
-            .AddDbOffsetStoredInboundConnector());
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .UseDbContext<MyDbContext>()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddDbOffsetStoredInboundConnector());
+    }
 }
-``` 
+{% endhighlight %}
+</figure>
 
 #### Logged
 
 The `DbLoggedInboundConnector` will store all the processed messages into a database table. This has the double purpose of serving as a log in addition to preventing double processing.
 
-**Note:** The `DbContext` must include a `DbSet<InboundMessage>`.
-{: .notice--info}
+The `DbContext` must include a `DbSet<InboundMessage>`.
+{: .notice--note}
 
-```c#
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    services
-        .AddSilverback()
-        .UseDbContext<MyDbContext>()
-        .WithConnectionToMessageBroker(options => options
-            .AddKafka()
-            .AddDbLoggedInboundConnector());
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .UseDbContext<MyDbContext>()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddDbLoggedInboundConnector());
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
 #### Extensibility
 
 You can easily implement your own storage for the offsets or the messages, simply creating your own `IOffsetStore` or `IInboundLog`.
 It is then suggested to create an extension method for the `BrokerOptionsBuilder` to register your own types.
 
-```c#
+```csharp
 public static BrokerOptionsBuilder AddMyCustomLoggedInboundConnector(
     this BrokerOptionsBuilder builder)
 {
@@ -116,50 +134,56 @@ Policy | Description
 `Move` | Used to re-publish the message to the specified endpoint, this policy is very flexible and allow quite a few scenarios: move to same topic to retry later on without blocking, move to a retry topic to delay the retry or move to a failed messages topic. The message can also be transformed, to allow adding useful information (e.g. source, error type, etc.) that will allow for better handling while reprocessing.
 `Chain` | Combine different policies, for example to move the message to a dead letter after some retries.
 
-```c#
-public void Configure(BusConfigurator busConfigurator)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddInbound(
-                new KafkaConsumerEndpoint("some-events")
-                {
-                    ...
-                },
-                policy => policy.Chain(
-                    policy.Retry().MaxFailedAttempts(3),
-                    policy.Move(new KafkaProducerEndpoint("bad-messages")
-                        {
-                            ...
-                        }
-                    ))));
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddInbound(
+                    new KafkaConsumerEndpoint("some-events")
+                    {
+                        ...
+                    },
+                    policy => policy.Chain(
+                        policy.Retry().MaxFailedAttempts(3),
+                        policy.Move(new KafkaProducerEndpoint("bad-messages")
+                            {
+                                ...
+                            }
+                        ))));
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
-**Important!** If the processing still fails after the last policy is applied the inbound connector will return the exception to the consumer, causing it to stop. A `Retry` (with limited amount of attempts) alone is therefore not recommendend and it should be combined with `Skip` or `Move`.
-{: .notice--warning}
+If the processing still fails after the last policy is applied the inbound connector will return the exception to the consumer, causing it to stop. A `Retry` (with limited amount of attempts) alone is therefore not recommendend and it should be combined with `Skip` or `Move`.
+{: .notice--important}
 
 ### Retries
 
 `Retry` and `Move` policies can be used to retry over and over the same message. Use `MaxFailedAttempts` to limit the number of attempts.
 
-```c#
+```csharp
 policy.Chain(
     policy.Retry(TimeSpan.FromSeconds(1)).MaxFailedAttempts(3),
     policy.Skip())
 ```
 
-**Note:** A message can be moved to the same topic to simply be moved to the end of the queue.
-{: .notice--info}
+A message can be moved to the same topic to simply be moved to the end of the queue.
+{: .notice--note}
 
-**Important!** The Retry policy will prevent the message broker to be polled for the entire comulative duration of the attempts and it could lead to timeouts. With Kafka you should for example set the `max.poll.interval.ms` settings to an higher value.
-{: .notice--warning}
+The Retry policy will prevent the message broker to be polled for the entire comulative duration of the attempts and it could lead to timeouts. With Kafka you should for example set the `max.poll.interval.ms` settings to an higher value.
+{: .notice--important}
 
 ### Apply rules
 
 Use `ApplyTo` and `Exclude` methods to decide which exceptions must be handled by the error policy or take advantage of  `ApplyWhen` to specify a custom apply rule.
 
-```c#
+```csharp
 policy.Move(new KafkaProducerEndpoint("same-endpoint") { ... })
     .Exclude<MyException>()
     .ApplyWhen((msg, ex) => msg.Xy == myValue)
@@ -169,26 +193,34 @@ policy.Move(new KafkaProducerEndpoint("same-endpoint") { ... })
 
 Messages can be published when a policy is applied, in order to execute custom code.
 
-```c#
-public void Configure(BusConfigurator busConfigurator)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddInbound(
-                new KafkaConsumerEndpoint("some-events")
-                {
-                    ...
-                },
-                policy => policy.Chain(
-                    policy
-                        .Retry(TimeSpan.FromMilliseconds(500))
-                        .MaxFailedAttempts(3),
-                    policy
-                        .Skip()
-                        .Publish(msg => new ProcessingFailedEvent(msg))
-                )));
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddInbound(
+                    new KafkaConsumerEndpoint("some-events")
+                    {
+                        ...
+                    },
+                    policy => policy.Chain(
+                        policy
+                            .Retry(TimeSpan.FromMilliseconds(500))
+                            .MaxFailedAttempts(3),
+                        policy
+                            .Skip()
+                            .Publish(msg => new ProcessingFailedEvent(msg))
+                    )));
+    }
 }
+{% endhighlight %}
+</figure>
 
+```csharp
 public void OnProcessingFailed(ProcessingFailedEvent @event)
 {
     _processingStatusService.SetFailed(@event.Message.Id);
@@ -207,29 +239,36 @@ Property | Description
 `Batch.MaxWaitTime` | The maximum amount of time to wait for the batch to be filled. After this time the batch will be processed even if the desired Size is not reached. Set it to `TimeSpan.MaxValue` to disable this feature. The default is `TimeSpan.MaxValue`.
 `Batch.MaxDegreeOfParallelism` | The maximum number of parallel threads used to process the messages in the batch. The default is 1.
 
-```c#
-public void Configure(BusConfigurator busConfigurator)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddInbound(
-                new KafkaConsumerEndpoint("basket-events")
-                {
-                    ...
-                },
-                settings: new InboundConnectorSettings
-                {
-                    Batch = new Messaging.Batch.BatchSettings
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddInbound(
+                    new KafkaConsumerEndpoint("basket-events")
                     {
-                        Size = 5,
-                        MaxWaitTime = TimeSpan.FromSeconds(5)
-                    }
-                }));
+                        ...
+                    },
+                    settings: new InboundConnectorSettings
+                    {
+                        Batch = new Messaging.Batch.BatchSettings
+                        {
+                            Size = 5,
+                            MaxWaitTime = TimeSpan.FromSeconds(5)
+                        }
+                    }));
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
-**Note:** The batch is consider a unit of work: it will be processed in the same DI scope, it will be atomically committed, the error policies will be applied to the batch as a whole and all messages will be acknowledged at once when the batch is successfully processed.
-{: .notice--info}
+
+The batch is consider a unit of work: it will be processed in the same DI scope, it will be atomically committed, the error policies will be applied to the batch as a whole and all messages will be acknowledged at once when the batch is successfully processed.
+{: .notice--note}
 
 Some additional events are published to the internal bus when batch processing:
 
@@ -242,7 +281,7 @@ Event | Description
 
 The usage should be similar to the following examples.
 
-```c#
+```csharp
 public class InventoryService : ISubscriber
 {
     private DbContext _db;
@@ -285,7 +324,7 @@ public class InventoryService : ISubscriber
 
 ...or...
 
-```c#
+```csharp
 public class InventoryService : ISubscriber
 {
     private DbContext _db;
@@ -320,26 +359,32 @@ public class InventoryService : ISubscriber
 }
 ```
 
-**Note:** The method `OnMessageReceived` could declare an argument of type `IReadOnlyCollection<InventoryUpdateEvent>` instead of `IEnumerable<InventoryUpdateEvent>`. (Silverback will in any case always forward a materialized `IList` of messages, but explicitly declaring the paramter as `IReadOnlyCollection<T>` avoids any false positive *"possible multiple enumeration of IEnumerable"* issue that may be detected by a static code analysis tool.)
-{: .notice--info}
+The method `OnMessageReceived` could declare an argument of type `IReadOnlyCollection<InventoryUpdateEvent>` instead of `IEnumerable<InventoryUpdateEvent>`. (Silverback will in any case always forward a materialized `IList` of messages, but explicitly declaring the paramter as `IReadOnlyCollection<T>` avoids any false positive *"possible multiple enumeration of IEnumerable"* issue that may be detected by a static code analysis tool.)
+{: .notice--note}
 
 ## Multi-threaded consuming
 
 Multiple consumers can be created for the same endpoint to consume in parallel in multiple threads (you need multiple partitions in Kafka).
 
-```c#
-public void Configure(BusConfigurator busConfigurator)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddInbound(
-                new KafkaConsumerEndpoint("basket-events")
-                {
-                    ...
-                },
-                settings: new InboundConnectorSettings
-                {
-                    Consumers: 2
-                }));
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddInbound(
+                    new KafkaConsumerEndpoint("basket-events")
+                    {
+                        ...
+                    },
+                    settings: new InboundConnectorSettings
+                    {
+                        Consumers: 2
+                    }));
+    }
 }
-```
+{% endhighlight %}
+</figure>

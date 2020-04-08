@@ -10,7 +10,7 @@ The `Silverback.Integration.InMemory` package allows to perform end-to-end tests
 
 Here an example of an xUnit test build using the `InMemoryBroker`.
 
-```c#
+```csharp
 public class InMemoryBrokerTests
 {
     private readonly IServiceProvider _serviceProvider;
@@ -70,9 +70,8 @@ An alternative technique is to leverage the [ASP.NET Core integration tests](htt
 
 The following code shows the most simple integration test possible, in which an object is published to the broker and e.g. a subscriber is called.
 
-```c#
-public class IntegrationTests
-    : IClassFixture<WebApplicationFactory<Startup>>
+```csharp
+public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
 {
     private readonly WebApplicationFactory<Startup> _factory;
 
@@ -111,7 +110,7 @@ public class IntegrationTests
 As topics represents APIs there might be more complex scenarios in which one wants to test the serialization as well to ensure compatibility.
 The code below shows a test which assumes that an use case is to consume from a topic, transform the record and produce to another topic.
 
-```c#
+```csharp
 public class IntegrationTests
     : IClassFixture<WebApplicationFactory<Startup>>
 {

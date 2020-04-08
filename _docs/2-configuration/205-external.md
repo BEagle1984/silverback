@@ -8,20 +8,26 @@ Alternatively the package `Silverback.Integration.Configuration` can be used to 
 
 To do so the startup code has to be slightly adapted as follows.
 
-```c#
-public Startup(IConfiguration configuration)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-   Configuration = configuration;
-}
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
 
-public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; }
 
-public void Configure(IApplicationBuilder app, BusConfigurator busConfigurator))
-{
-    busConfigurator.Connect(endpoints => endpoints
-        .ReadConfig(Configuration, app.ApplicationServices));
+    public void Configure(IApplicationBuilder app, BusConfigurator busConfigurator))
+    {
+        busConfigurator.Connect(endpoints => endpoints
+            .ReadConfig(Configuration, app.ApplicationServices));
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
 And here is an example of configuration in the appsettings.json file:
 ```json
@@ -80,5 +86,9 @@ And here is an example of configuration in the appsettings.json file:
     ]
   }
 }
-
 ```
+
+This approach is discouraged and the package may even be discontinued in a future release because
+not all features and all the possible configurations can be supported. The configuration will also quickly become very verbose and repetitive.
+For these reasons it is advised to use the fluent API to configure Silverback.
+{: .notice--warning}

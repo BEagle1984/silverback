@@ -1,6 +1,6 @@
 ---
 title: DDD and Domain Events
-permalink: /docs/quickstart/domain-events
+permalink: /docs/quickstart/ddd
 toc: false
 ---
 
@@ -8,10 +8,10 @@ One of the core features of Silverback is the ability to publish the domain even
 
 The `Silverback.Core.Model` package contains a sample implementation of a `DomainEntity` but you can also implement you own type. 
 
-**Important!** In case of a custom implementation the only constraint is that you must implement the `IMessagesSource` interface in order for Silverback to be able to access the associated events.
-{: .notice--warning}
+In case of a custom implementation the only constraint is that you must implement the `IMessagesSource` interface in order for Silverback to be able to access the associated events.
+{: .notice--important}
 
-```c#
+```csharp
 using Silverback.Domain;
 
 namespace Sample
@@ -24,6 +24,12 @@ namespace Sample
         {
         }
 
+        public Basket(Guid userId)
+        {
+            UserId = userId;
+            Created = DateTime.UtcNow;
+        }
+
         [Key]
         public int Id { get; private set; }
         public IEnumerable<BasketItem> Items => _items.AsReadOnly();
@@ -31,22 +37,12 @@ namespace Sample
         public DateTime Created { get; private set; }
         public DateTime? CheckoutDate { get; private set; }
 
-        public static Basket Create(Guid userId)
+        public void Checkout()
         {
-            return new Basket
-            {
-                UserId = userId,
-                Created = DateTime.UtcNow
-            };
+            CheckoutDate = DateTime.UtcNow;
+
+            AddEvent<BasketCheckoutEvent>();
         }
-
-    ...
-
-    public void Checkout()
-    {
-        CheckoutDate = DateTime.UtcNow;
-
-        AddEvent<BasketCheckoutEvent>();
     }
 }
 ```
@@ -55,7 +51,7 @@ The `AddEvent<TEvent>()` method adds the domain event to the events collection, 
 
 To enable this mechanism we just need to override the various `SaveChanges` methods to plug-in the `DbContextEventsPublisher` contained in the `Silverback.Core.EntityFrameworkCore` package.
 
-```c#
+```csharp
 public class MyDbContext : DbContext
 {
     private readonly DbContextEventsPublisher _eventsPublisher;

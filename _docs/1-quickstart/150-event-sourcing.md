@@ -9,15 +9,18 @@ permalink: /docs/quickstart/event-sourcing
 
 The only needed configuration is the call to `UseDbContext<TDbContext>` when initializing Silverback.
 
-```c#
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    ...
-
-    services.AddSilverback().UseDbContext<MyDbContext>()
-    ...
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSilverback().UseDbContext<MyDbContext>()
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
 ## Creating the Event Store
 
@@ -28,7 +31,7 @@ Creating an event store is very straightforward and requires basically just 3 co
 The aggregate entity have to extend `EventSourcingDomainEntity` (or a custom class implementing `IEventSourcingDomainEntity`).
 The two generic type parameters refer to the type of the key (entity unique identifier) and the base type for the domain events (can be omited if you don't need domain events).
 
-```c#
+```csharp
 public class Person : EventSourcingDomainEntity<int, PersonDomainEvent>
 {
     public Person()
@@ -46,12 +49,12 @@ public class Person : EventSourcingDomainEntity<int, PersonDomainEvent>
 }
 ```
 
-**Important!** The domain entity must have a constructor able to rebuild the entity state from the stored events.
-{: .notice--warning}
+The domain entity must have a constructor able to rebuild the entity state from the stored events.
+{: .notice--important}
 
 The `AddAndApplyEvent` protected method must be used to add new events.
 
-```c#
+```csharp
 public class Person : EventSourcingDomainEntity<int, PersonDomainEvent>
 {
     public void ChangeName(string newName) =>
@@ -76,7 +79,7 @@ public class Person : EventSourcingDomainEntity<int, PersonDomainEvent>
 
 An _Apply_ method is needed for each event type to modify the entity current state according to the described mutation.
 
-```c#
+```csharp
 public class Person : EventSourcingDomainEntity<int, PersonDomainEvent>
 {
     private void Apply(NameChangedEvent @event) => Name = @event.NewName;
@@ -94,13 +97,13 @@ public class Person : EventSourcingDomainEntity<int, PersonDomainEvent>
 }
 ```
 
-**Note:** The apply method can be private but it must have a specific signature: its name must begin with _"Apply"_ and have a parameter of the specific event type (or base type).
+The apply method can be private but it must have a specific signature: its name must begin with _"Apply"_ and have a parameter of the specific event type (or base type).
 It can also receive an additional boolean parameter (`isReplaying`) that will let you differentiate between new events and events that are being reapplied because loaded from the store.
-{: .notice--info}
+{: .notice--note}
 
 The events are just models inheriting from `EntityEvent` (or another custom class implementing `IEntityEvent`).
 
-```c#
+```csharp
 public class NameChangedEvent : EntityEvent 
 { 
     public string NewName { get; set; } 
@@ -121,7 +124,7 @@ public class PhoneNumberChangedEvent : EntityEvent
 
 The event store basically consists of an _EventStore_ entity and related event (they either inherit from `EventStoreEntity` and `EventEntity` or implement the interfaces `IEventStoreEntity` and `IEventEntity` respectively).
 
-```c#
+```csharp
 public class PersonEventStore : EventStoreEntity<PersonEvent>
 {
     [Key]
@@ -137,15 +140,15 @@ public class PersonEvent : EventEntity
 }
 ```
 
-**Note:** The event store record can be extended with extra fields (see `SocialSecurityNumber` in the example above).
-{: .notice--info}
+The event store record can be extended with extra fields (see `SocialSecurityNumber` in the example above).
+{: .notice--note}
 
-**Important!** It is advised to add some indexes and a concurrency token, to ensure proper performance and consistency.
-{: .notice--warning}
+It is advised to add some indexes and a concurrency token, to ensure proper performance and consistency.
+{: .notice--important}
 
 A DbSet must also be mapped to the defined event store entity and that's it.
 
-```c#
+```csharp
 public class MyDbContext : DbContext
 {
     public MyDbContext(DbContextOptions options) : base(options)
@@ -168,7 +171,7 @@ The repository must inherit from `DbContextEventStoreRepository` and the 4 gener
 
 The only thing left to implement is the mapping between the aggregate entity and the event store entity.
 
-```c#
+```csharp
 public class PersonEventStoreRepository
     : DbContextEventStoreRepository<Person, int, PersonEventStore, PersonEvent>
 {
@@ -191,7 +194,7 @@ public class PersonEventStoreRepository
 
 Using the `EventStoreRepository` to store and retrieve aggregate entities is fairly simple. Have a look at the following code snippet to get an idea.
 
-```c#
+```csharp
 public class PersonService
 {
     private readonly MyDbContext _dbContext;
@@ -230,7 +233,7 @@ public class PersonService
 
 You may need to merge events coming from different sources and/or being received with a certain latency. In the example below the _Apply_ method checks whether another (newer) conflicting event was added already in the meantime.
 
-```c#
+```csharp
 private void Apply(NameChangedEvent @event, bool isReplaying)
 {
     // Skip if a newer event exists
