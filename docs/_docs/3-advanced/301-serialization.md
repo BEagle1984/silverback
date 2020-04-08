@@ -23,62 +23,72 @@ If you are consuming a message coming from another system (not based on Silverba
 
 In that case you can resort to the typed `JsonMessageSerializer<TMessage>`. This serializer works like the default one but the message type is hard-coded, instead of being expected in the header.
 
-```c#
-public void Configure(BusConfigurator busConfigurator)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddInbound(
-                new KafkaConsumerEndpoint("order-events")
-                {
-                    ...
-                    Serializer = new JsonMessageSerializer<OrderEvent>
-                }));
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddInbound(
+                    new KafkaConsumerEndpoint("order-events")
+                    {
+                        Serializer = new JsonMessageSerializer<OrderEvent>
+                    }));
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
-**Note:** The `JsonMessageSerializer` can be also be tweaked modifying its `Settings` and `Encoding`.
-{: .notice--info}
+The `JsonMessageSerializer` can be also be tweaked modifying its `Settings` and `Encoding`.
+{: .notice--note}
 
 ## Apache Avro
 
 The `AvroSerializer` contained in the `Silverback.Integration.Kafka.SchemaRegistry` package can be used to connect with a schema registry and exchange messages in [Apache Avro](https://avro.apache.org/) format.
 
-```c#
-public void Configure(BusConfigurator busConfigurator)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    busConfigurator
-        .Connect(endpoints => endpoints
-            .AddOutbound<OrderEvent>(
-                new KafkaConsumerEndpoint("order-events")
-                {
-                    ...
-                    Serializer = new AvroMessageSerializer<OrderEvent>
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddOutbound<OrderEvent>(
+                    new KafkaConsumerEndpoint("order-events")
                     {
-                        SchemaRegistryConfig = new SchemaRegistryConfig
+                        Serializer = new AvroMessageSerializer<OrderEvent>
                         {
-                            Url = "schema-registry:8081"
+                            SchemaRegistryConfig = new SchemaRegistryConfig
+                            {
+                                Url = "schema-registry:8081"
+                            },
+                            AvroSerializerConfig = new AvroSerializerConfig
+                            {
+                                AutoRegisterSchemas = true
+                            }
                         },
-                        AvroSerializerConfig = new AvroSerializerConfig
-                        {
-                            AutoRegisterSchemas = true
-                        }
-                    },
-                }));
+                    }));
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
-**Note:** The C# message models can be generated from an Avro schema using [AvroGen](https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/).
-{: .notice--info}
+The C# message models can be generated from an Avro schema using [AvroGen](https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/).
+{: .notice--note}
 
-**Note:** This serializer is built for Kafka but it could work with other brokers, as long as a schema registry is available.
-{: .notice--info}
+This serializer is built for Kafka but it could work with other brokers, as long as a schema registry is available.
+{: .notice--note}
 
 ## Custom serializer
 
 In some cases you may want to build your very own custom serializer implementing `IMessageSerializer` directly.
 
-```c#
+```csharp
 public class MyCustomSerializer : IMessageSerializer
 {
     public byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
@@ -125,5 +135,5 @@ public class MyCustomSerializer : IMessageSerializer
 }
 ```
 
-**Note:** You may need to implement `IKafkaMessageSerializer` if you want to have full control over the serialization of the Kafka key as well.
-{: .notice--info}
+You may need to implement `IKafkaMessageSerializer` if you want to have full control over the serialization of the Kafka key as well.
+{: .notice--note}

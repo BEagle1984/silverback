@@ -2,7 +2,7 @@ repository: beagle1984/silverback
 
 title: Silverback
 masthead_title: hide
-description: "A framework to build reactive, event-driven, microservices with .net core"
+description: "A simple but feature-rich framework to build reactive/event-driven applications with .net core."
 logo: assets/images/logo.png
 
 name: &name "Sergio Aquilini"
@@ -17,9 +17,6 @@ footer:
       icon: "fas fa-fw fa-envelope"
       url: mailto:silverback-project@outlook.com
 
-#remote_theme: "mmistakes/minimal-mistakes@4.14.1"
-
-minimal_mistakes_skin: "silverback"
 baseurl: /silverback
 
 paginate: 5
@@ -62,8 +59,8 @@ defaults:
       author_profile: false
       share: false
       toc: true
-      toc_label: Contents
-      toc_icon: stream
+      toc_sticky: true
+      toc_label: "In this page:"
       sidebar:
         nav: docs
   - scope:

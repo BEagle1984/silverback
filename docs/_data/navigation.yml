@@ -1,6 +1,6 @@
 main:
   - title: Documentation
-    url: /docs/architecture
+    url: /docs/introduction
   - title: Releases
     url: /docs/releases
   - title: About
@@ -20,23 +20,27 @@ blog:
         url: /blog/tags
 docs:
   - title: Introduction
-    children:
-      - title: Architecture
-        url: /docs/architecture
-      - title: Features
-        url: /docs/features
-      - title: Releases
-        url: /docs/releases
+    url: /docs/introduction
+  - title: Features
+    url: /docs/features
+  - title: Releases
+    url: /docs/releases
   - title: Quickstart
     children:
-      - title: Key Concepts
-        url: /docs/quickstart/key-concepts
+      - title: Glossary
+        url: /docs/quickstart/glossary
       - title: Using the Bus
-        url: /docs/quickstart/bus
-      - title: Model
-        url: /docs/quickstart/model
+        children:
+          - title: Enabling the Bus
+            url: /docs/quickstart/bus
+          - title: Creating the Message model
+            url: /docs/quickstart/model
+          - title: Publishing
+            url: /docs/quickstart/publish
+          - title: Subscribing
+            url: /docs/quickstart/subscribe
       - title: DDD and Domain Events
-        url: /docs/quickstart/domain-events
+        url: /docs/quickstart/ddd
       - title: Connecting a Message Broker
         url: /docs/quickstart/message-broker
       - title: Translating Messages

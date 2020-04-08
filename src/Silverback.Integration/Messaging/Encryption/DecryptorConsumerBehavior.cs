@@ -10,6 +10,9 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Encryption
 {
+    /// <summary>
+    ///     Decrypts the message according to the <see cref="EncryptionSettings"/>.
+    /// </summary>
     public class DecryptorConsumerBehavior : IConsumerBehavior, ISorted
     {
         private readonly IMessageTransformerFactory _factory;

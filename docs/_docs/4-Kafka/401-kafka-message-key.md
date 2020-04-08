@@ -10,7 +10,7 @@ Apache Kafka require a message key for different purposes, such as:
 
 Silverback offers a convenient way to specify the message key. It is enough to decorate the properties that must be part of the key with `KafkaKeyMemberAttribute`.
 
-```c#
+```csharp
 public class MultipleKeyMembersMessage : IIntegrationMessage
 {
     public Guid Id { get; set; }
@@ -27,5 +27,5 @@ public class MultipleKeyMembersMessage : IIntegrationMessage
 
 If no key members are specified no key will be generated and the messages will land in a random partition.
 
-**Note:** The message key will also be submitted as header (see [Default Message Headers]({{ site.baseurl }}/docs/advanced/headers) for details).
-{: .notice--info}
+The message key will also be submitted as header (see [Default Message Headers]({{ site.baseurl }}/docs/advanced/headers) for details).
+{: .notice--note}

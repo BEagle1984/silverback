@@ -9,7 +9,7 @@ The message brokers are usually very efficient at handling huge amount of relati
 
 The producer endpoint can be configured to split the message into chunks by specifying their maximum size (in byte).
 
-```c#
+```csharp
 new KafkaProducerEndpoint("silverback-examples-events")
 {
     Configuration = new KafkaProducerConfig
@@ -27,20 +27,26 @@ new KafkaProducerEndpoint("silverback-examples-events")
 
 The `DbChunkStore` will temporary store the chunks into a database table and the inbound connector will rebuild the original message as soon as all chunks have been received.
 
-**Note:** The `DbContext` must include a `DbSet<TemporaryMessageChunk>`.
-{: .notice--info}
+The `DbContext` must include a `DbSet<TemporaryMessageChunk>`.
+{: .notice--note}
 
-```c#
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    services
-        .AddSilverback()
-        .UseDbContext<MyDbContext>()
-        .WithConnectionToMessageBroker(options => options
-            .AddKafka()
-            .AddDbChunkStore());
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .UseDbContext<MyDbContext>()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddDbChunkStore());
+    }
 }
-``` 
+{% endhighlight %}
+</figure>
 
 It is of course possible to create other implementations of `IChunkStore` to use another kind of storage for the message chunks.
 

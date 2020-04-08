@@ -7,6 +7,12 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Behaviors
 {
+    /// <summary>
+    ///     Sets the message key header with the value from the properties decorated with the
+    ///     <see cref="KafkaKeyMemberAttribute"/>.
+    ///     The header will be used by the <see cref="Messaging.Broker.KafkaProducer"/> to set
+    ///     the actual message key.
+    /// </summary>
     public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior, ISorted
     {
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)

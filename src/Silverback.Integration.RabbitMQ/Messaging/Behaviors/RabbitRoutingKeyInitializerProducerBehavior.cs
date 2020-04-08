@@ -8,6 +8,12 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Behaviors
 {
+    /// <summary>
+    ///     Sets the routing key header with the value from the property decorated with the
+    ///     <see cref="RabbitRoutingKeyAttribute"/>.
+    ///     The header will be used by the <see cref="Messaging.Broker.RabbitProducer"/> to set
+    ///     the actual routing key.
+    /// </summary>
     public class RabbitRoutingKeyInitializerProducerBehavior : IProducerBehavior, ISorted
     {
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)

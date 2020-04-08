@@ -20,21 +20,24 @@ The basic concepts:
 
 The following sample demonstrates how to setup some inbound and outbound endpoints against an Apache Kafka broker.
 
-```c#
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    services
-        .AddSilverback()
-        .WithConnectionToMessageBroker(options => options
-            .AddKafka()
-            .AddInboundConnector()
-            .AddOutboundConnector());
-}
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddInboundConnector()
+                .AddOutboundConnector());
+    }
 
-public void Configure(BusConfigurator busConfigurator)
-{
-    busConfigurator
-        .Connect(endpoints => endpoints
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator.Connect(endpoints => endpoints
             .AddInbound(
                 new KafkaConsumerEndpoint("basket-events")
                 {
@@ -61,27 +64,33 @@ public void Configure(BusConfigurator busConfigurator)
                         BootstrapServers = "PLAINTEXT://kafka:9092"
                     }
                 }));
-```
+    }
+}
+{% endhighlight %}
+</figure>
 
 ### Basic RabbitMQ configuration
 
 The following sample demonstrates how to setup some inbound and outbound endpoints against a RabbitMQ broker.
 
-```c#
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    services
-        .AddSilverback()
-        .WithConnectionToMessageBroker(options => options
-            .AddRabbit()
-            .AddInboundConnector()
-            .AddOutboundConnector());
-}
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddRabbit()
+                .AddInboundConnector()
+                .AddOutboundConnector());
+    }
 
-public void Configure(BusConfigurator busConfigurator)
-{
-    busConfigurator
-        .Connect(endpoints => endpoints
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator.Connect(endpoints => endpoints
             .AddInbound(
                 new RabbitExchangeConsumerEndpoint("basket-events")
                 {
@@ -144,27 +153,33 @@ public void Configure(BusConfigurator busConfigurator)
                         ExchangeType = ExchangeType.Fanout
                     }
                 }));
-```
+    }
+}
+{% endhighlight %}
+</figure>
 
 ### Multiple brokers
 
 It is possible to use multiple message brokers together in the same application. The following sample demonstrates how to consume from both Apache Kafka and RabbitMQ.
 
-```c#
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    services
-        .AddSilverback()
-        .WithConnectionToMessageBroker(options => options
-            .AddKafka()
-            .AddRabbit()
-            .AddInboundConnector());
-}
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddRabbit()
+                .AddInboundConnector());
+    }
 
-public void Configure(BusConfigurator busConfigurator)
-{
-    busConfigurator
-        .Connect(endpoints => endpoints
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator.Connect(endpoints => endpoints
             .AddInbound(
                 new RabbitExchangeConsumerEndpoint("rabbit-events")
                 {
@@ -175,13 +190,16 @@ public void Configure(BusConfigurator busConfigurator)
                 {
                     ...
                 }));
-```
+    }
+}
+{% endhighlight %}
+</figure>
 
 ## Using IEndpointsConfigurator
 
 The endpoints configuration can be split into multiple types implementing the `IEndpointsConfigurator` interface.
 
-```c#
+```csharp
 private class MyFeatureConfigurator : IEndpointsConfigurator
 {
     public void Configure(IEndpointsConfigurationBuilder builder)
@@ -205,7 +223,9 @@ private class MyFeatureConfigurator : IEndpointsConfigurator
 
 The configurators can be registered using either the `RegisterConfigurator` or `AddEndpointsConfigurator` methods.
 
-```c#
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
@@ -217,24 +237,33 @@ public class Startup
                 .RegisterConfigurator<MyFeatureConfigurator>());
     }
 }
-```
-
-```c#
+{% endhighlight %}
+</figure>
+...or...
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka());
+
         services.AddEndpointsConfigurator<MyFeatureConfigurator>());
     }
 }
-```
+{% endhighlight %}
+</figure>
 
 ### Using assembly scanning
 
 You can of course use the assembly scanning capabilities of your  Dependency Injection framework (e.g. [Autofac](https://autofac.org/)) to register all the `IEndpointsConfigurator`.
 
 Example using Autofac:
-```c#
+```csharp
 public class EndpointsConfiguratorsModule : Module
 {
     protected override void Load(ContainerBuilder builder)
@@ -250,13 +279,20 @@ public class EndpointsConfiguratorsModule : Module
 
 It is important to properly close the consumers using the `Disconnect` method before exiting. The offsets have to be committed and the broker has to be notified (it will then proceed to reassign the partitions as needed).
 
-```c#
-public void Configure(BusConfigurator busConfigurator)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    var brokers = busConfigurator.Connect(...);
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        var brokers = busConfigurator.Connect(...);
 
-    appLifetime.ApplicationStopping.Register(() => brokers.Disconnect());
-```
+        appLifetime.ApplicationStopping.Register(() => brokers.Disconnect());
+    }
+}
+{% endhighlight %}
+</figure>
 
 ## Health Monitoring
 
@@ -268,26 +304,25 @@ Currently two checks exists:
 
 The usage is very simple, you just need to configure the checks in the Startup.cs, as shown in the following example.
 
-```c#
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        ...
         services.AddHealthChecks()
             .AddOutboundEndpointsCheck()
             .AddOutboundQueueCheck();
-        ...
     }
 
     public void Configure(IApplicationBuilder app)
     {
-        ...
         app.UseHealthChecks("/health");
-        ...
     }
 }
-```
+{% endhighlight %}
+</figure>
 
 
 

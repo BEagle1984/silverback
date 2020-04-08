@@ -6,6 +6,9 @@ using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Encryption
 {
+    /// <summary>
+    ///     Encrypts the message according to the <see cref="EncryptionSettings"/>.
+    /// </summary>
     public class EncryptorProducerBehavior : IProducerBehavior, ISorted
     {
         private readonly IMessageTransformerFactory _factory;

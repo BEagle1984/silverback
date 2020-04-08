@@ -8,7 +8,7 @@ With RabbitMQ a routing key can be used to route the mssages to a specific queue
 
 Silverback offers a convenient way to specify the routing key. It is enough to decorate a property with `RabbitRoutingKeyAttribute`.
 
-```c#
+```csharp
 public class MyMessage : IIntegrationMessage
 {
     public Guid Id { get; set; }

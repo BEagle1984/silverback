@@ -9,7 +9,9 @@ using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Diagnostics
 {
-    // TODO: Test
+    /// <summary>
+    ///     Starts an <see cref="Activity" /> with the tracing information from the message headers.
+    /// </summary>
     public class ActivityConsumerBehavior : IConsumerBehavior, ISorted
     {
         public async Task Handle(

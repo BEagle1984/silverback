@@ -5,8 +5,6 @@ permalink: /docs/features
 excerpt: Silverback is a simple but feature rich framework to build reactive/event-driven applications or microservices
 
 toc: true
-toc_label: Features
-toc_icon: star
 ---
 
 Silverback is a simple but feature rich framework to build reactive/event-driven applications or microservices

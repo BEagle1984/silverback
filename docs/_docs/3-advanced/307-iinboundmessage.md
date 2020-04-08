@@ -11,7 +11,7 @@ You can take advantage of this mechanism to gain access to the transport informa
 
 Subscribing to the `IInboundEnvelope` works exactly the same as subscribing to any other message.
 
-```c#
+```csharp
 using Silverback.Messaging.Subscribers;
 
 public class SubscribingService : ISubscriber
@@ -28,5 +28,5 @@ public class SubscribingService : ISubscriber
 }
 ```
 
-**Note:** Subscribing to the non-generic `IInboundEnvelope` or `IInboundRawEnvelope` it is possible to catch even the messages with an empty body.
-{: .notice--info}
+Subscribing to the non-generic `IInboundEnvelope` or `IInboundRawEnvelope` it is possible to catch even the messages with an empty body.
+{: .notice--note}

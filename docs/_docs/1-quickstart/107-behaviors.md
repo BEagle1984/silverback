@@ -16,7 +16,7 @@ At every call to `IPublisher.Publish` the `Handle` method of each registered beh
 
 The following example demonstrates how to use a behavior to trace the messages.
 
-```c#
+```csharp
 using Silverback.Messaging.Publishing;
 
 public class TracingBehavior : IBehavior
@@ -41,15 +41,15 @@ public class TracingBehavior : IBehavior
 }
 ```
 
-**Note:** The `Handle` receives a collection of `object` because a bunch of messages can be published at once via `IPublisher` or the consumer can be configured to process the messages in batch.
-{: .notice--info}
+The `Handle` receives a collection of `object` because a bunch of messages can be published at once via `IPublisher` or the consumer can be configured to process the messages in batch.
+{: .notice--note}
 
-**Note:** `IInboundEnvelope` and `IOutboundEnvelope` are internally used by Silverback to wrap the messages being sent to or received from the message broker and will be received by the `IBroker`. Those interfaces contains the message plus the additional data like endpoint, headers, offset, etc.
-{: .notice--info}
+`IInboundEnvelope` and `IOutboundEnvelope` are internally used by Silverback to wrap the messages being sent to or received from the message broker and will be received by the `IBroker`. Those interfaces contains the message plus the additional data like endpoint, headers, offset, etc.
+{: .notice--note}
 
 The `IBehavior` implementation have simply to be registered for DI.
 
-```c#
+```csharp
 public void ConfigureServices(IServiceCollection services)
 {
     services
@@ -57,9 +57,8 @@ public void ConfigureServices(IServiceCollection services)
         .AddScopedBehavior<TracingBehavior>();
 ```
 
-**Note:** All `Add*Behavior` methods are available also as extensions to the `IServiceCollection` and it isn't therefore mandatory to call them immediately after `AddSilverback`.
-{: .notice--info}
-
+All `Add*Behavior` methods are available also as extensions to the `IServiceCollection` and it isn't therefore mandatory to call them immediately after `AddSilverback`.
+{: .notice--note}
 
 ## IProducerBehavior and IConsumerBehavior
 
@@ -69,7 +68,7 @@ The `IProducerBehavior` and `IConsumerBehavior` are similar to the `IBehavior` b
 
 The following example demonstrate how to set a custom message header on each outbound message.
 
-```c#
+```csharp
 public class CustomHeadersBehavior : IProducerBehavior
 {
     public async Task Handle(
@@ -87,7 +86,7 @@ public class CustomHeadersBehavior : IProducerBehavior
 
 The following example demonstrate how to log the headers received with each inbound message.
 
-```c#
+```csharp
 public class LogHeadersBehavior : IConsumerBehavior
 {
     private readonly ILogger<LogHeadersBehavior> _logger;
@@ -118,16 +117,16 @@ public class LogHeadersBehavior : IConsumerBehavior
 }
 ```
 
-**Note:** The `Handle` method reaceives an instance of `IServiceProvider` that can be either the root service provider or the scoped service provider for the processing of the consumed message (depending on the position of the behavior in the pipeline).
-{: .notice--info}
+The `Handle` method reaceives an instance of `IServiceProvider` that can be either the root service provider or the scoped service provider for the processing of the consumed message (depending on the position of the behavior in the pipeline).
+{: .notice--note}
 
 ### Limitations
 
 Because of the way the Silverback's broker integration works `IProducerBehavior` and `IConsumerBehavior` implementations can only be registered as singleton. An `IProducerBehaviorFactory` or `IConsumerBehaviorFactory` can be used to create an instance per each `IConsumer` or `IProducer` that gets intantiated.
 
-If a scoped instance is needed you have to either inject the `IServiceScopeFactory` (or `IServiceProvider`) or use an `IBehavior` (that can still be used to accomplish most of the tasks, as shown in the next example).
+If a scoped instance is needed you have to either inject the `IServiceScopeFactory` (or `IServiceProvider`) or use an `IBehavior` (that can still be used to accomplish most of the tasks, as shown in the next examples).
 
-```c#
+```csharp
 public class TracingBehavior : IBehavior
 {
     private readonly IDbLogger _dbLogger;
@@ -156,3 +155,92 @@ public class TracingBehavior : IBehavior
     }
 }
 ```
+
+```csharp
+public class MapHeadersBehavior : IBehavior
+{
+    private readonly IDbLogger _dbLogger;
+
+    public TracingBehavior(IDbLogger _dbLogger)
+    {
+        _dbLogger = dbLogger;
+    }
+
+    public async Task<IReadOnlyCollection<object>> Handle(
+        IReadOnlyCollection<object> messages, 
+        MessagesHandler next)
+    {
+        foreach (var envelope in messages.OfType<IInboundEnvelope<MyMessage>>())
+        {
+            envelope.Headers.AddOrReplace(
+                "x-some-header", 
+                envelope.Message.SomeProperty)
+        }
+
+        return await next(messages);
+    }
+}
+```
+
+## Ordering
+
+The order in which the behaviors are executed does obviously matter and it is possible to precisely define it implementing the `ISorted` interface.
+
+```csharp
+public class SortedBehavior : IBehavior, ISorted
+{
+    public int SortIndex => 120;
+
+    public Task<IReadOnlyCollection<object>> Handle(
+        IReadOnlyCollection<object> messages, 
+        MessagesHandler next)
+    {
+        // ...your logic...
+
+        return next(messages);
+    }
+}
+```
+
+The sort index of the built-in behaviors is described in the next chapter.
+
+## Built-in behaviors
+
+Silverback itself strongly relies on the behaviors to implement its features and combine them all together. In this chapter you find the list of the existing behaviorS and their respective sort index.
+
+### IBehavior
+
+This behaviors act in the internal bus pipeline.
+
+Name | Index | Description
+:-- | --: | :--
+`OutboundProducerBehavior` | 200 | Produces the `IOutboundEnvelope<TMessage>` through the correct `IOutboundConnector` instance.
+`OutboundRouterBehavior` | 300 | Routes the messages to the outbound endpoint by wrapping them in an `IOutboundEnvelope<TMessage>` that is republished to the bus.
+
+The sort index is counterintoutive, as the `OutboundRouterBehavior` is actually needed **before** the `OutboundProducerBehavior`, but that happen in two separate and consecutive pipelines to give you the chance to subscribe to the `IOutboundEnvelope` if needed. So the `OutboundRouterBehavior` creates the `IOutboundEnvelope` and publishes it to the internal bus for the next `OutboundProducerBehavior` to catch it and forward it to the configured `IOutboundConnector` (at this point the message is not forwaded anymore to the next behavior in the pipeline).
+{: .notice--note}
+
+### IProducerBehavior
+
+This behaviors build the producer pipeline and contain the actual logic to properly serialize the messages according to the applied configuration.
+
+Name | Index | Description
+:-- | --: | :--
+`ActivityProducerBehavior` | 100 | Starts an `Activity` and adds the tracing information to the message headers.
+`MessageIdInitializerProducerBehavior` | 200 | Ensures that the message id property has been set, using the registered `IMessageIdProvider` to generate a unique value for it.
+`BrokerKeyHeaderInitializer` | 300 | Provided by the message broker implementation (e.g. `KafkaMessageKeyInitializerProducerBehavior` or `RabbitRoutingKeyInitializerProducerBehavior`), sets the message key header that will be used by the `IProducer` implementation to set the actual message key.
+`SerializerProducerBehavior` | 400 | Serializes the message being produced using the configured `IMessageSerializer`.
+`EncryptorProducerBehavior` | 500 | Encrypts the message according to the `EncryptionSettings`.
+`ChunkSplitterProducerBehavior` | 600 | Splits the messages into chunks according to the `ChunkSettings`.
+
+### IConsumerBehavior
+
+This behaviors are the foundation of the consumer pipeline and contain the actual logic to deserialize the incoming messages.
+
+Name | Index | Description
+:-- | --: | :--
+`ActivityConsumerBehavior` | 100 | Starts an `Activity` with the tracing information from the message headers.
+`InboundProcessorConsumerBehavior` | 200 | Handles the retry policies, batch consuming and scope management of the messages that are consumed via an inbound connector.
+`ChunkAggregatorConsumerBehavior` | 300 | Temporary stores and aggregates the message chunks to rebuild the original message.
+`DecryptorConsumerBehavior` | 400 | Decrypts the message according to the `EncryptionSettings`.
+`DeserializerConsumerBehavior` | 500 | Deserializes the messages being consumed using the configured `IMessageSerializer`.

@@ -30,6 +30,11 @@ layout: default
           {% if page.read_time %}
             <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> {% include read-time.html %}</p>
           {% endif %}
+          {% if page.last_modified_at %}
+            <p class="page__date"><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Updated:" }} <time datetime="{{ page.last_modified_at | date: "%Y-%m-%d" }}">{{ page.last_modified_at | date: "%B %d, %Y" }}</time></p>
+          {% elsif page.date %}
+            <p class="page__date"><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Updated:" }} <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time></p>
+          {% endif %}
         </header>
       {% endunless %}
 
@@ -37,7 +42,7 @@ layout: default
         {% if page.toc %}
           <aside class="sidebar__right {% if page.toc_sticky %}sticky{% endif %}">
             <nav class="toc">
-              <header><h4 class="nav__title"><i class="fas fa-{{ page.toc_icon | default: 'file-alt' }}"></i> {{ page.toc_label | default: site.data.ui-text[site.locale].toc_label | default: "On this page" }}</h4></header>
+              <header><h4 class="nav__title">{{ page.toc_label | default: site.data.ui-text[site.locale].toc_label | default: "On this page" }}</h4></header>
               {% include toc.html sanitize=true html=content h_min=1 h_max=6 class="toc__menu" %}
             </nav>
           </aside>
@@ -46,7 +51,8 @@ layout: default
         {% if page.link %}<div><a href="{{ page.link }}" class="btn btn--primary">{{ site.data.ui-text[site.locale].ext_link_label | default: "Direct Link" }}</a></div>{% endif %}
       </section>
 
-      <footer class="page__meta">
+      {% comment %}
+      <!-- <footer class="page__meta">
         {% if site.data.ui-text[site.locale].meta_label %}
           <h4 class="page__meta-title">{{ site.data.ui-text[site.locale].meta_label }}</h4>
         {% endif %}
@@ -56,7 +62,8 @@ layout: default
         {% elsif page.date %}
           <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Updated:" }}</strong> <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time></p>
         {% endif %}
-      </footer>
+      </footer> -->
+      {% endcomment %}
 
       {% if page.share %}{% include social-share.html %}{% endif %}
 
