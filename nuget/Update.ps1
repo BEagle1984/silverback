@@ -115,19 +115,6 @@ function Copy-Package($source)
     Write-Host "OK" -ForegroundColor Green    
 }
 
-function Copy-All()
-{
-    if ($global:buildSolution -eq $false)
-    {   
-       return
-    }
-
-    foreach ($source in Get-Sources)
-    {
-        Copy-Package($source)
-    }
-}
-
 function Ensure-Folder-Exists([string]$path)
 {
     if (!(Test-Path $path))
@@ -266,7 +253,7 @@ function Restore()
     Write-Host "Restoring nuget packages in Silverback.sln..." -ForegroundColor Yellow
     dotnet restore ../Silverback.sln
     Write-Host "Restoring nuget packages in Silverback.Examples.sln..." -ForegroundColor Yellow
-    dotnet restore ..\samples\Examples\Silverback.Examples.sln
+    dotnet restore ../samples/Examples/Silverback.Examples.sln
 
     Write-Separator
 }
@@ -283,6 +270,5 @@ Check-Location
 Delete-All
 Delete-Cache
 Build
-Copy-All
 Restore
 Show-Summary
