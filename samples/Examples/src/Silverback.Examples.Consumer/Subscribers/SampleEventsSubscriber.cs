@@ -27,7 +27,7 @@ namespace Silverback.Examples.Consumer.Subscribers
         [Subscribe(Parallel = true)]
         public void OnIntegrationEventReceived(IntegrationEvent message)
         {
-            _logger.LogInformation($"Received IntegrationEvent '{message.Content}'");
+            _logger.LogInformation("Received IntegrationEvent {@message}", message);
         }
 
         [Subscribe(Parallel = true)]
@@ -42,12 +42,12 @@ namespace Silverback.Examples.Consumer.Subscribers
         public void OnIntegrationEventReceived(IObservable<IntegrationEvent> messages) =>
             messages.Subscribe(message =>
             {
-                _logger.LogInformation($"Observed IntegrationEvent '{message.Content}'");
+                _logger.LogInformation("Observed IntegrationEvent {@message}", message);
             });
 
         public async Task OnBadEventReceived(BadIntegrationEvent message)
         {
-            _logger.LogInformation($"Message '{message.Content}' is BAD...throwing exception!");
+            _logger.LogInformation("Message {@message} is BAD...throwing exception!", message);
 
             await DoFail();
         }
@@ -60,7 +60,7 @@ namespace Silverback.Examples.Consumer.Subscribers
 
         public void OnAvroMessageReceived(AvroMessage message)
         {
-            _logger.LogInformation($"Received AvroMessage '{message.content}'");
+            _logger.LogInformation("Received AvroMessage {@message}", message);
         }
 
         private Task DoFail()

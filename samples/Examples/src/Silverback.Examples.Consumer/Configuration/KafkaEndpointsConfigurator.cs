@@ -32,7 +32,8 @@ namespace Silverback.Examples.Consumer.Configuration
                 "silverback-examples-events-chunked",
                 "silverback-examples-events-sp",
                 "silverback-examples-events-2",
-                "silverback-examples-events-3")
+                "silverback-examples-events-3",
+                "silverback-examples-binaries")
             {
                 Configuration = new KafkaConsumerConfig
                 {

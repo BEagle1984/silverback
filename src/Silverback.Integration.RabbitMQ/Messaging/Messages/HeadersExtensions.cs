@@ -14,14 +14,24 @@ namespace Silverback.Messaging.Messages
         public static IDictionary<string, object> ToRabbitHeaders(this IEnumerable<MessageHeader> headers) =>
             headers.ToDictionary(
                 header => header.Key,
-                header => (object) Encoding.GetBytes(header.Value));
+                header => (object) Encode(header.Value));
 
         public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(
             this IDictionary<string, object> rabbitHeaders) =>
             rabbitHeaders.Select(rabbitHeader =>
                     new MessageHeader(
                         rabbitHeader.Key,
-                        Encoding.GetString((byte[]) rabbitHeader.Value)))
+                        Decode((byte[]) rabbitHeader.Value)))
                 .ToList();
+
+        private static byte[] Encode(string value) =>
+            value != null
+                ? Encoding.GetBytes(value)
+                : null;
+
+        private static string Decode(byte[] value) =>
+            value != null
+                ? Encoding.GetString(value)
+                : null;
     }
 }

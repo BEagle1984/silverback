@@ -18,13 +18,18 @@ namespace Silverback.Messaging.Serialization
     public class JsonMessageSerializer : IMessageSerializer
     {
         /// <summary>
+        ///     Gets the default static instance of <see cref="JsonMessageSerializer"/>.
+        /// </summary>
+        public static JsonMessageSerializer Default { get; } = new JsonMessageSerializer();
+        
+        /// <summary>
         ///     Gets or sets the message encoding. The default is UTF8.
         /// </summary>
         [DefaultValue("UTF8")]
         public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
 
         /// <summary>
-        ///     Gets or sets the settings to be applied to the Newtosoft.Json serializer.
+        ///     Gets or sets the settings to be applied to the Json.NET serializer.
         /// </summary>
         public JsonSerializerSettings Settings { get; set; } = new JsonSerializerSettings
         {
@@ -69,8 +74,7 @@ namespace Silverback.Messaging.Serialization
                 return null;
 
             var json = GetEncoding().GetString(message);
-            var typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
-            var type = typeName != null ? Type.GetType(typeName) : typeof(object);
+            var type = SerializationHelper.GetTypeFromHeaders<object>(messageHeaders);
 
             return JsonConvert.DeserializeObject(json, type, Settings);
         }
@@ -106,6 +110,8 @@ namespace Silverback.Messaging.Serialization
     /// <inheritdoc />
     public class JsonMessageSerializer<TMessage> : JsonMessageSerializer
     {
+        private readonly Type _type = typeof(TMessage);
+        
         public override byte[] Serialize(
             object message,
             MessageHeaderCollection messageHeaders,
@@ -114,13 +120,12 @@ namespace Silverback.Messaging.Serialization
             switch (message)
             {
                 case null:
-                    return new byte[0];
+                    return null;
                 case byte[] bytes:
                     return bytes;
             }
 
-            var type = typeof(TMessage);
-            var json = JsonConvert.SerializeObject(message, type, Settings);
+            var json = JsonConvert.SerializeObject(message, _type, Settings);
 
             return GetEncoding().GetBytes(json);
         }
@@ -133,10 +138,9 @@ namespace Silverback.Messaging.Serialization
             if (message == null || message.Length == 0)
                 return null;
 
-            var type = typeof(TMessage);
             var json = GetEncoding().GetString(message);
 
-            return JsonConvert.DeserializeObject(json, type, Settings);
+            return JsonConvert.DeserializeObject(json, _type, Settings);
         }
     }
 }

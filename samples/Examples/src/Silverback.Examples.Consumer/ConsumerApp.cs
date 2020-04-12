@@ -37,6 +37,7 @@ namespace Silverback.Examples.Consumer
             .AddScopedSubscriber<SilverbackEventsSubscriber>()
             .AddScopedSubscriber<KafkaEventsSubscriber>()
             .AddSingletonSubscriber<LocalEventsSubscriber>()
+            .AddTransientSubscriber<BinaryFilesSubscriber>()
             // Behaviors
             .AddScopedBehavior<LogHeadersBehavior>();
 

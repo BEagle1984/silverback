@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
@@ -30,14 +31,26 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     <para>
         ///         Returns the value of the header with the specified key, casting it to the specified
-        ///         type <typeparamref name="T"/>.
+        ///         type <typeparamref name="T" />.
         ///     </para>
         ///     <para>
         ///         It will return <c>null</c> if no header with that key is found in the collection.
         ///     </para>
         /// </summary>
         public static T? GetValue<T>(this IEnumerable<MessageHeader> headers, string key)
-            where T : struct
+            where T : struct =>
+            (T?) headers.GetValue(key, typeof(T));
+
+        /// <summary>
+        ///     <para>
+        ///         Returns the value of the header with the specified key, casting it to the specified
+        ///         type.
+        ///     </para>
+        ///     <para>
+        ///         It will return <c>null</c> if no header with that key is found in the collection.
+        ///     </para>
+        /// </summary>
+        public static object GetValue(this IEnumerable<MessageHeader> headers, string key, Type targetType)
         {
             var value = headers.FirstOrDefault(h => h.Key == key)?.Value;
 
@@ -46,7 +59,7 @@ namespace Silverback.Messaging.Messages
 
             try
             {
-                return (T) Convert.ChangeType(value, typeof(T));
+                return Convert.ChangeType(value, targetType);
             }
             catch
             {
@@ -57,15 +70,28 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     <para>
         ///         Returns the value of the header with the specified key, casting it to the specified
-        ///         type <typeparamref name="T"/>.
+        ///         type <typeparamref name="T" />.
         ///     </para>
         ///     <para>
-        ///         It will return the default value for the type <typeparamref name="T"/> if no header
+        ///         It will return the default value for the type <typeparamref name="T" /> if no header
         ///         with that key is found in the collection.
         ///     </para>
         /// </summary>
         public static T GetValueOrDefault<T>(this IEnumerable<MessageHeader> headers, string key)
             where T : struct =>
             GetValue<T>(headers, key) ?? default;
+
+        /// <summary>
+        ///     <para>
+        ///         Returns the value of the header with the specified key, casting it to the specified
+        ///         type.
+        ///     </para>
+        ///     <para>
+        ///         It will return the default value for the target type if no header
+        ///         with that key is found in the collection.
+        ///     </para>
+        /// </summary>
+        public static object GetValueOrDefault(this IEnumerable<MessageHeader> headers, string key, Type targetType) =>
+            GetValue(headers, key, targetType) ?? targetType.GetDefaultValue();
     }
 }

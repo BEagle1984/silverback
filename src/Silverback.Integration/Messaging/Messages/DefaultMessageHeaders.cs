@@ -84,5 +84,10 @@ namespace Silverback.Messaging.Messages
         ///     This is not part of the w3c standard
         /// </remarks>
         public const string TraceBaggage = "tracebaggage";
+
+        /// <summary>
+        ///     The MIME type of a binary file. See <see cref="IBinaryFileMessage" />.
+        /// </summary>
+        public const string ContentType = "content-type";
     }
 }

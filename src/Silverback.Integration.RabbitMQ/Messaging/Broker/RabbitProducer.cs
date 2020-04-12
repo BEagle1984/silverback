@@ -18,8 +18,6 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
     public class RabbitProducer : Producer<RabbitBroker, RabbitProducerEndpoint>, IDisposable
     {
-        internal const string RoutingKeyHeaderKey = "x-rabbit-routing-key";
-
         private readonly IRabbitConnectionFactory _connectionFactory;
         private readonly ILogger<Producer> _logger;
         private readonly BlockingCollection<QueuedMessage> _queue = new BlockingCollection<QueuedMessage>();
@@ -113,7 +111,7 @@ namespace Silverback.Messaging.Broker
         }
 
         private string GetRoutingKey(IEnumerable<MessageHeader> headers) =>
-            headers?.FirstOrDefault(header => header.Key == RoutingKeyHeaderKey)?.Value ?? "";
+            headers?.FirstOrDefault(header => header.Key == RabbitMessageHeaders.RoutingKey)?.Value ?? "";
 
         private void Flush()
         {

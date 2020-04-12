@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Background;
 using Silverback.Database;
+using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Connectors;
@@ -16,6 +17,7 @@ using Silverback.Messaging.Connectors.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Headers;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -42,16 +44,20 @@ namespace Silverback.Messaging.Configuration
             if (!SilverbackBuilder.Services.ContainsAny<IBroker>())
             {
                 SilverbackBuilder.Services
-                    .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>()
                     .AddSingletonBrokerBehavior<SerializerProducerBehavior>()
-                    .AddSingletonBrokerBehavior<ChunkSplitterProducerBehavior>()
-                    .AddSingletonBrokerBehavior<EncryptorProducerBehavior>()
-                    .AddSingletonBrokerBehavior<InboundProcessorConsumerBehaviorFactory>()
                     .AddSingletonBrokerBehavior<DeserializerConsumerBehavior>()
-                    .AddSingletonBrokerBehavior<ChunkAggregatorConsumerBehavior>()
+                    .AddSingletonBrokerBehavior<EncryptorProducerBehavior>()
                     .AddSingletonBrokerBehavior<DecryptorConsumerBehavior>()
-                    .AddScoped<ChunkAggregator>()
+                    .AddSingletonBrokerBehavior<HeadersWriterProducerBehavior>()
+                    .AddSingletonBrokerBehavior<HeadersReaderConsumerBehavior>()
                     .AddSingleton<IMessageTransformerFactory, MessageTransformerFactory>()
+                    .AddSingletonBrokerBehavior<ChunkSplitterProducerBehavior>()
+                    .AddSingletonBrokerBehavior<ChunkAggregatorConsumerBehavior>()
+                    .AddScoped<ChunkAggregator>()
+                    .AddSingletonBrokerBehavior<BinaryFileHandlerProducerBehavior>()
+                    .AddSingletonBrokerBehavior<BinaryFileHandlerConsumerBehavior>()
+                    .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>()
+                    .AddSingletonBrokerBehavior<InboundProcessorConsumerBehaviorFactory>()
                     .AddScopedSubscriber<ConsumerTransactionManager>();
 
                 AddMessageIdProvider<DefaultPropertiesMessageIdProvider>();

@@ -27,9 +27,7 @@ namespace Silverback.Examples.Consumer.Behaviors
             {
                 if (message.Headers != null && message.Headers.Any())
                 {
-                    _logger.LogInformation(
-                        "Headers: {headers}",
-                        string.Join(", ", message.Headers.Select(h => $"{h.Key}={h.Value}")));
+                    _logger.LogInformation("Headers: {@headers}", message.Headers);
                 }
             }
 

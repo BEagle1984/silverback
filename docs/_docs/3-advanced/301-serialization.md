@@ -15,7 +15,7 @@ The deserializer function provided by `JsonMessageSerializer` will obviously try
 
 This is the suggested serialization strategy when both producer and consumer are based on Silverback but may not be ideal for interoperability.
 
-Have a look at the [Default Message Headers]({{ site.baseurl }}/docs/advanced/headers) section for an overview on the headers that are appended to the messages.
+Have a look at the [Message Headers]({{ site.baseurl }}/docs/quickstart/headers) section for an overview on the headers that are appended to the messages.
 
 ## Fixed-type JSON for interoperability
 
@@ -137,3 +137,7 @@ public class MyCustomSerializer : IMessageSerializer
 
 You may need to implement `IKafkaMessageSerializer` if you want to have full control over the serialization of the Kafka key as well.
 {: .notice--note}
+
+## Binary Files
+
+Please refer to the [Binary Files]({{ site.baseurl }}/docs/quickstart/headers) page if you need to prduce or consume raw binary files.

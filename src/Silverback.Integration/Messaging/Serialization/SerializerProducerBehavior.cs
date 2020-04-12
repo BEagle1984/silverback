@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Serialization
     {
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            context.Envelope.RawMessage =
+            context.Envelope.RawMessage ??=
                 await context.Envelope.Endpoint.Serializer.SerializeAsync(
                     context.Envelope.Message,
                     context.Envelope.Headers,

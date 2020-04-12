@@ -40,7 +40,7 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Gets the default serializer instance (a <see cref="JsonMessageSerializer" /> with default settings).
         /// </summary>
-        public static IMessageSerializer DefaultSerializer { get; } = new JsonMessageSerializer();
+        public static IMessageSerializer DefaultSerializer { get; } = JsonMessageSerializer.Default;
 
         public virtual void Validate()
         {

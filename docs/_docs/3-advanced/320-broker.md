@@ -100,7 +100,7 @@ var producer = _broker.GetProducer(new KafkaProducerEndpoint("topic-name")
     }
 });
 
-producer.Produce(myMessage);
+await producer.ProduceAsync(message, headers);
 ```
 
 `GetProducer` (unlike `GetConsumer`) can be called at any time, even after `Connect` as been called.

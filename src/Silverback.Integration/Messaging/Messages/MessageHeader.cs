@@ -14,10 +14,15 @@ namespace Silverback.Messaging.Messages
         {
         }
 
+        public MessageHeader(string key, object value)
+            : this(key, value?.ToString())
+        {
+        }
+
         public MessageHeader(string key, string value)
         {
             Key = key ?? throw new ArgumentNullException(nameof(key));
-            Value = value ?? throw new ArgumentNullException(nameof(value));
+            Value = value;
         }
 
         public string Key
@@ -29,7 +34,7 @@ namespace Silverback.Messaging.Messages
         public string Value
         {
             get => _value;
-            set => _value = value ?? throw new ArgumentNullException(nameof(Value));
+            set => _value = value;
         }
     }
 }

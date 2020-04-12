@@ -156,32 +156,6 @@ public class TracingBehavior : IBehavior
 }
 ```
 
-```csharp
-public class MapHeadersBehavior : IBehavior
-{
-    private readonly IDbLogger _dbLogger;
-
-    public TracingBehavior(IDbLogger _dbLogger)
-    {
-        _dbLogger = dbLogger;
-    }
-
-    public async Task<IReadOnlyCollection<object>> Handle(
-        IReadOnlyCollection<object> messages, 
-        MessagesHandler next)
-    {
-        foreach (var envelope in messages.OfType<IInboundEnvelope<MyMessage>>())
-        {
-            envelope.Headers.AddOrReplace(
-                "x-some-header", 
-                envelope.Message.SomeProperty)
-        }
-
-        return await next(messages);
-    }
-}
-```
-
 ## Ordering
 
 The order in which the behaviors are executed does obviously matter and it is possible to precisely define it implementing the `ISorted` interface.
@@ -228,10 +202,12 @@ Name | Index | Description
 :-- | --: | :--
 `ActivityProducerBehavior` | 100 | Starts an `Activity` and adds the tracing information to the message headers.
 `MessageIdInitializerProducerBehavior` | 200 | Ensures that the message id property has been set, using the registered `IMessageIdProvider` to generate a unique value for it.
-`BrokerKeyHeaderInitializer` | 300 | Provided by the message broker implementation (e.g. `KafkaMessageKeyInitializerProducerBehavior` or `RabbitRoutingKeyInitializerProducerBehavior`), sets the message key header that will be used by the `IProducer` implementation to set the actual message key.
-`SerializerProducerBehavior` | 400 | Serializes the message being produced using the configured `IMessageSerializer`.
-`EncryptorProducerBehavior` | 500 | Encrypts the message according to the `EncryptionSettings`.
-`ChunkSplitterProducerBehavior` | 600 | Splits the messages into chunks according to the `ChunkSettings`.
+`BrokerKeyHeaderInitializer` | 210 | Provided by the message broker implementation (e.g. `KafkaMessageKeyInitializerProducerBehavior` or `RabbitRoutingKeyInitializerProducerBehavior`), sets the message key header that will be used by the `IProducer` implementation to set the actual message key.
+`HeadersWriterProducerBehavior` | 300 | Maps the properties decorated with the `HeaderAttribute` to the message headers.
+`BinaryFileHandlerProducerBehavior` | 500 | Switches to the `BinaryFileMessageSerializer` if the message being produced implements the `IBinaryFileMessage` interface.
+`SerializerProducerBehavior` | 900 | Serializes the message being produced using the configured `IMessageSerializer`.
+`EncryptorProducerBehavior` | 950 | Encrypts the message according to the `EncryptionSettings`.
+`ChunkSplitterProducerBehavior` | 1000 | Splits the messages into chunks according to the `ChunkSettings`.
 
 ### IConsumerBehavior
 
@@ -243,4 +219,6 @@ Name | Index | Description
 `InboundProcessorConsumerBehavior` | 200 | Handles the retry policies, batch consuming and scope management of the messages that are consumed via an inbound connector.
 `ChunkAggregatorConsumerBehavior` | 300 | Temporary stores and aggregates the message chunks to rebuild the original message.
 `DecryptorConsumerBehavior` | 400 | Decrypts the message according to the `EncryptionSettings`.
-`DeserializerConsumerBehavior` | 500 | Deserializes the messages being consumed using the configured `IMessageSerializer`.
+`BinaryFileHandlerProducerBehavior` | 500 | Switches to the `BinaryFileMessageSerializer` if the message being consumed is a binary message (according to the `x-message-type` header.
+`DeserializerConsumerBehavior` | 600 | Deserializes the messages being consumed using the configured `IMessageSerializer`.
+`HeadersReaderConsumerBehavior` | 700 | Maps the headers with the properties decorated with the `HeaderAttribute`.

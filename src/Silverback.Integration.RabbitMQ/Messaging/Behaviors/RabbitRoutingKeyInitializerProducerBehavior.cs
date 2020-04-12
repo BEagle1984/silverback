@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
@@ -21,7 +20,7 @@ namespace Silverback.Messaging.Behaviors
             var key = RoutingKeyHelper.GetRoutingKey(context.Envelope.Message);
 
             if (key != null)
-                context.Envelope.Headers.AddOrReplace(RabbitProducer.RoutingKeyHeaderKey, key);
+                context.Envelope.Headers.AddOrReplace(RabbitMessageHeaders.RoutingKey, key);
 
             await next(context);
         }

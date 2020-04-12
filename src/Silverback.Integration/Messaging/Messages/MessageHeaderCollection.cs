@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Messages
         public string this[string key]
         {
             get => GetValue(key) ??
-                    throw new ArgumentOutOfRangeException(nameof(key));
+                   throw new ArgumentOutOfRangeException(nameof(key));
             set => AddOrReplace(key, value);
         }
 
@@ -53,13 +53,13 @@ namespace Silverback.Messaging.Messages
             RemoveAll(x => x.Key == key);
 
         /// <summary>
-        ///     Adds a new header or replaces the header with the same key. 
+        ///     Adds a new header or replaces the header with the same key.
         /// </summary>
         public void AddOrReplace(string key, object newValue) =>
             AddOrReplace(key, newValue.ToString());
 
         /// <summary>
-        ///     Adds a new header or replaces the header with the same key. 
+        ///     Adds a new header or replaces the header with the same key.
         /// </summary>
         public void AddOrReplace(string key, string newValue)
         {
@@ -86,28 +86,52 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     <para>
         ///         Returns the value of the header with the specified key, casting it to the specified
-        ///         type <typeparamref name="T"/>.
+        ///         type <typeparamref name="T" />.
         ///     </para>
         ///     <para>
         ///         It will return <c>null</c> if no header with that key is found in the collection.
         ///     </para>
         /// </summary>
-        public T? GetValue<T>(string key) 
-            where T : struct => 
+        public T? GetValue<T>(string key)
+            where T : struct =>
             this.AsEnumerable().GetValue<T>(key);
 
         /// <summary>
         ///     <para>
         ///         Returns the value of the header with the specified key, casting it to the specified
-        ///         type <typeparamref name="T"/>.
+        ///         type.
         ///     </para>
         ///     <para>
-        ///         It will return the default value for the type <typeparamref name="T"/> if no header
+        ///         It will return <c>null</c> if no header with that key is found in the collection.
+        ///     </para>
+        /// </summary>
+        public object GetValue(string key, Type targetType) => this.AsEnumerable().GetValue(key, targetType);
+
+        /// <summary>
+        ///     <para>
+        ///         Returns the value of the header with the specified key, casting it to the specified
+        ///         type <typeparamref name="T" />.
+        ///     </para>
+        ///     <para>
+        ///         It will return the default value for the type <typeparamref name="T" /> if no header
         ///         with that key is found in the collection.
         ///     </para>
         /// </summary>
         public T GetValueOrDefault<T>(string key)
-            where T : struct => 
+            where T : struct =>
             this.AsEnumerable().GetValueOrDefault<T>(key);
+
+        /// <summary>
+        ///     <para>
+        ///         Returns the value of the header with the specified key, casting it to the specified
+        ///         type.
+        ///     </para>
+        ///     <para>
+        ///         It will return the default value for the target type if no header
+        ///         with that key is found in the collection.
+        ///     </para>
+        /// </summary>
+        public object GetValueOrDefault(string key, Type targetType) =>
+            this.AsEnumerable().GetValueOrDefault(key, targetType);
     }
 }

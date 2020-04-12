@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.E2E
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
-            
+
             InMemoryChunkStore.Clear();
         }
 
@@ -92,6 +92,36 @@ namespace Silverback.Tests.Integration.E2E
             _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
             _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);
         }
+        
+        [Fact]
+        public async Task E2E_BrokerBehaviors_CustomHeaders()
+        {
+            var message = new TestEventWithHeaders()
+            {
+                Id = Guid.NewGuid(),
+                Content = "Hello E2E!",
+                CustomHeader = "Hello header!",
+                CustomHeader2 = false
+            };
+
+            _configurator.Connect(endpoints => endpoints
+                .AddOutbound<IIntegrationEvent>(
+                    new KafkaProducerEndpoint("test-e2e"))
+                .AddInbound(
+                    new KafkaConsumerEndpoint("test-e2e")));
+
+            using var scope = _serviceProvider.CreateScope();
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(message);
+
+            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);
+            _spyBehavior.InboundEnvelopes.First().Headers.Should().ContainEquivalentOf(
+                new MessageHeader("x-custom-header", "Hello header!"));
+            _spyBehavior.InboundEnvelopes.First().Headers.Should().ContainEquivalentOf(
+                new MessageHeader("x-custom-header2", "False"));
+        }
 
         [Fact]
         public async Task E2E_BrokerBehaviors_Chunking()
@@ -101,6 +131,10 @@ namespace Silverback.Tests.Integration.E2E
                 Id = Guid.NewGuid(),
                 Content = "Hello E2E!"
             };
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+                message,
+                new MessageHeaderCollection(),
+                MessageSerializationContext.Empty);
 
             _configurator.Connect(endpoints => endpoints
                 .AddOutbound<IIntegrationEvent>(
@@ -120,6 +154,8 @@ namespace Silverback.Tests.Integration.E2E
             await publisher.PublishAsync(message);
 
             _spyBehavior.OutboundEnvelopes.Count.Should().Be(7);
+            _spyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
+                .BeEquivalentTo(rawMessage);
             _spyBehavior.OutboundEnvelopes.ForEach(envelope => envelope.RawMessage.Length.Should().BeLessOrEqualTo(10));
             _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
             _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);
@@ -296,10 +332,8 @@ namespace Silverback.Tests.Integration.E2E
 
             await publisher.PublishAsync(message);
 
-            _subscriber.OutboundEnvelopes.Count.Should().Be(1);
-            _subscriber.OutboundEnvelopes.First().RawMessage.Should().NotBeEquivalentTo(rawMessage);
-
             _spyBehavior.OutboundEnvelopes.Count.Should().Be(10);
+            _spyBehavior.OutboundEnvelopes.First().RawMessage.Should().NotBeEquivalentTo(rawMessage.Take(10));
             _spyBehavior.OutboundEnvelopes.ForEach(envelope => envelope.RawMessage.Length.Should().BeLessOrEqualTo(10));
             _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
             _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);

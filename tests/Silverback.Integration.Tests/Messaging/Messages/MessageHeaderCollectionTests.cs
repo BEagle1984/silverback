@@ -23,7 +23,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection[1].Should().BeEquivalentTo(new MessageHeader("two", "2"));
         }
-        
+
         [Fact]
         public void StringIndexer_GetExistingKey_HeaderReturned()
         {
@@ -36,7 +36,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection["two"].Should().BeEquivalentTo("2");
         }
-        
+
         [Fact]
         public void StringIndexer_GetNonExistingKey_ExceptionThrown()
         {
@@ -51,7 +51,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             act.Should().Throw<ArgumentOutOfRangeException>();
         }
-        
+
         [Fact]
         public void StringIndexer_SetNonExistingKey_HeaderAdded()
         {
@@ -66,7 +66,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection.Last().Should().BeEquivalentTo(new MessageHeader("four", "4"));
         }
-        
+
         [Fact]
         public void StringIndexer_SetExistingKey_HeaderReplaced()
         {
@@ -81,7 +81,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection.GetValue("two").Should().Be("2!");
         }
-        
+
         [Fact]
         public void Add_SomeHeaders_HeadersAdded()
         {
@@ -157,7 +157,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection.Contains("four").Should().BeFalse();
         }
-        
+
         [Fact]
         public void GetValue_ExistingKey_HeaderReturned()
         {
@@ -170,7 +170,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection.GetValue("two").Should().BeEquivalentTo("2");
         }
-        
+
         [Fact]
         public void GetValue_NonExistingKey_NullIsReturned()
         {
@@ -183,7 +183,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection.GetValue("four").Should().BeEquivalentTo(null);
         }
-        
+
         [Fact]
         public void TypedGetValue_ExistingKey_HeaderReturned()
         {
@@ -196,7 +196,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection.GetValue<int>("two").Should().Be(2);
         }
-        
+
         [Fact]
         public void TypedGetValue_NonExistingKey_NullIsReturned()
         {
@@ -209,7 +209,33 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection.GetValue<int>("four").Should().Be(null);
         }
-        
+
+        [Fact]
+        public void GetValueOrDefault_ExistingKey_HeaderReturned()
+        {
+            var collection = new MessageHeaderCollection
+            {
+                { "one", "1" },
+                { "two", "2" },
+                { "three", "3" }
+            };
+
+            collection.GetValueOrDefault("two", typeof(int)).Should().Be(2);
+        }
+
+        [Fact]
+        public void GetValueOrDefault_NonExistingKey_DefaultValueIsReturned()
+        {
+            var collection = new MessageHeaderCollection
+            {
+                { "one", "1" },
+                { "two", "2" },
+                { "three", "3" }
+            };
+
+            collection.GetValueOrDefault("four", typeof(int)).Should().Be(0);
+        }
+
         [Fact]
         public void TypedGetValueOrDefault_ExistingKey_HeaderReturned()
         {
@@ -222,7 +248,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection.GetValueOrDefault<int>("two").Should().Be(2);
         }
-        
+
         [Fact]
         public void TypedGetValueOrDefault_NonExistingKey_DefaultValueIsReturned()
         {

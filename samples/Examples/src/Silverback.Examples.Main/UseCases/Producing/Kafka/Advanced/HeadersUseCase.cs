@@ -20,8 +20,8 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
         public HeadersUseCase()
         {
             Title = "Custom message headers";
-            Description = "An behavior is used to add some extra headers ('generated-by' and 'timestamp')" +
-                          " to the messages being published.";
+            Description = "The Timestamp property of the message is published as header. Additionally a behavior is " +
+                          "used to add an extra 'generated-by' header.";
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
@@ -44,8 +44,13 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent
-                { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new EventWithHeaders
+            {
+                Content = DateTime.Now.ToString("HH:mm:ss.fff"),
+                StringHeader = "hello!",
+                IntHeader = 42,
+                BoolHeader = false,
+            });
         }
 
         public class CustomHeadersBehavior : IBehavior
@@ -58,7 +63,6 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
                 foreach (var message in messages.OfType<IOutboundEnvelope>())
                 {
                     message.Headers.Add("generated-by", "silverback");
-                    message.Headers.Add("timestamp", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                 }
 
                 return await next(messages);

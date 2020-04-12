@@ -14,6 +14,7 @@ namespace Silverback.Examples.Main.Menu
         private readonly MenuRenderer _renderer = new MenuRenderer();
         private readonly Stack<ICategory> _breadcrumbs = new Stack<ICategory>();
         private bool _exiting;
+        private IMenuItemInfo _preSelectedItem = null;
 
         public MenuApp()
         {
@@ -27,7 +28,7 @@ namespace Silverback.Examples.Main.Menu
         {
             while (!_exiting)
             {
-                _renderer.ShowMenu(_breadcrumbs, GetOptions());
+                _renderer.ShowMenu(_breadcrumbs, GetOptions(), _preSelectedItem);
             }
         }
 
@@ -57,6 +58,7 @@ namespace Silverback.Examples.Main.Menu
                     _breadcrumbs.Push(category);
                     break;
                 case IUseCase useCase:
+                    _preSelectedItem = useCase;
                     RunUseCase(useCase);
                     break;
                 case BackMenu _:
@@ -70,7 +72,7 @@ namespace Silverback.Examples.Main.Menu
 
         private void OnBack(object sender, EventArgs args)
         {
-            _breadcrumbs.Pop();
+            _preSelectedItem = _breadcrumbs.Pop();
 
             if (!_breadcrumbs.Any())
                 _exiting = true;

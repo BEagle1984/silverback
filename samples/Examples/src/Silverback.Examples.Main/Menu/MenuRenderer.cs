@@ -14,9 +14,14 @@ namespace Silverback.Examples.Main.Menu
         public event EventHandler<IMenuItemInfo> Chosen;
         public event EventHandler Back;
 
-        public void ShowMenu(IEnumerable<IMenuItemInfo> breadcrumbs, IMenuItemInfo[] options)
+        public void ShowMenu(
+            IReadOnlyCollection<IMenuItemInfo> breadcrumbs,
+            IMenuItemInfo[] options,
+            IMenuItemInfo selectedItem = null)
         {
-            var selected = GetFirstCategoryOrUseCaseIndex(options);
+            var selectedIndex = selectedItem != null
+                ? GetIndex(options, selectedItem)
+                : GetFirstCategoryOrUseCaseIndex(options);
 
             do
             {
@@ -24,25 +29,31 @@ namespace Silverback.Examples.Main.Menu
                 ConsoleHelper.ResetColor();
 
                 WriteHeader(breadcrumbs);
-                WriteOptions(options, selected);
+                WriteOptions(options, selectedIndex);
 
-                WriteSelectionDescription(options[selected]);
+                WriteSelectionDescription(options[selectedIndex]);
 
-                HandleInput(options, ref selected);
-            } while (selected != -1);
+                HandleInput(options, ref selectedIndex);
+            } while (selectedIndex != -1);
         }
 
+        private int GetIndex(IMenuItemInfo[] options, IMenuItemInfo selectedItem)
+        {
+            var selectedOption = options.FirstOrDefault(item => item.GetType() == selectedItem.GetType());
+            return selectedOption != null ? Array.IndexOf(options, selectedOption) : 0;
+        }
+        
         private int GetFirstCategoryOrUseCaseIndex(IMenuItemInfo[] options)
         {
             var firstItem = options.FirstOrDefault(item => !(item is IBackMenu));
             return firstItem != null ? Array.IndexOf(options, firstItem) : 0;
         }
 
-        private static void WriteOptions(IMenuItemInfo[] options, int selected)
+        private static void WriteOptions(IMenuItemInfo[] options, int selectedIndex)
         {
             for (var i = 0; i < options.Length; i++)
             {
-                if (i == selected)
+                if (i == selectedIndex)
                 {
                     Console.ForegroundColor = Constants.AccentColor;
                     WriteSelectedGlyph(options[i]);
@@ -63,7 +74,7 @@ namespace Silverback.Examples.Main.Menu
                     }
                 }
 
-                if (i == selected)
+                if (i == selectedIndex)
                     Console.ForegroundColor = Constants.PrimaryColor;
                 else
                     ConsoleHelper.ResetColor();
@@ -117,6 +128,7 @@ namespace Silverback.Examples.Main.Menu
                         selected++;
                     break;
                 }
+                case ConsoleKey.Backspace:
                 case ConsoleKey.Escape:
                 {
                     Back?.Invoke(this, EventArgs.Empty);
@@ -149,7 +161,7 @@ namespace Silverback.Examples.Main.Menu
             }
         }
 
-        private static void WriteHeader(IEnumerable<IMenuItemInfo> breadcrumbs)
+        private static void WriteHeader(IReadOnlyCollection<IMenuItemInfo> breadcrumbs)
         {
             if (breadcrumbs.IsRoot())
             {

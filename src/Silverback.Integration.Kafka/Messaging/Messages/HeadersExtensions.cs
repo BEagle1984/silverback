@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Messages
         public static Confluent.Kafka.Headers ToConfluentHeaders(this IEnumerable<MessageHeader> headers)
         {
             var kafkaHeaders = new Confluent.Kafka.Headers();
-            headers.ForEach(header => kafkaHeaders.Add(header.Key, Encoding.GetBytes(header.Value)));
+            headers.ForEach(header => kafkaHeaders.Add(header.Key, Encode(header.Value)));
             return kafkaHeaders;
         }
 
@@ -24,7 +24,17 @@ namespace Silverback.Messaging.Messages
             kafkaHeaders.Select(kafkaHeader =>
                     new MessageHeader(
                         kafkaHeader.Key,
-                        Encoding.GetString(kafkaHeader.GetValueBytes())))
+                        Decode(kafkaHeader.GetValueBytes())))
                 .ToList();
+
+        private static byte[] Encode(string value) =>
+            value != null
+                ? Encoding.GetBytes(value)
+                : null;
+
+        private static string Decode(byte[] value) =>
+            value != null
+                ? Encoding.GetString(value)
+                : null;
     }
 }

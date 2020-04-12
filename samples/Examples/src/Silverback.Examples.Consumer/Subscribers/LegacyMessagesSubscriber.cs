@@ -21,7 +21,7 @@ namespace Silverback.Examples.Consumer.Subscribers
         [Subscribe]
         private void OnLegacyMessageReceived(LegacyMessage message)
         {
-            _logger.LogInformation($"Received legacy message '{message.Content}'");
+            _logger.LogInformation("Received legacy message {@message}", message);
         }
     }
 }

@@ -26,6 +26,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             typeof(MultipleOutboundConnectorsUseCase),
             typeof(SameProcessUseCase),
             typeof(MultipleConsumerGroupsUseCase),
+            typeof(BinaryFileUseCase),
             typeof(ProduceByteArrayUseCase),
             typeof(ProduceEmptyMessageUseCase),
             typeof(EncryptionUseCase),

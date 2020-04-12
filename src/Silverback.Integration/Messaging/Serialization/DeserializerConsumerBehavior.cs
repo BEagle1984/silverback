@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Serialization
         public static async Task<IRawInboundEnvelope> Deserialize(IRawInboundEnvelope envelope)
         {
             if (envelope is IInboundEnvelope inboundEnvelope && inboundEnvelope.Message != null)
-                return inboundEnvelope;
+                return envelope;
 
             var deserialized = await
                 envelope.Endpoint.Serializer.DeserializeAsync(
@@ -42,13 +42,7 @@ namespace Silverback.Messaging.Serialization
                 return envelope;
 
             // Create typed message for easier specific subscription
-            var typedInboundMessage = (InboundEnvelope) Activator.CreateInstance(
-                typeof(InboundEnvelope<>).MakeGenericType(deserialized.GetType()),
-                envelope);
-
-            typedInboundMessage.Message = deserialized;
-
-            return typedInboundMessage;
+            return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserialized);
         }
     }
 }
