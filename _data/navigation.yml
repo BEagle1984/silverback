@@ -41,10 +41,14 @@ docs:
             url: /docs/quickstart/subscribe
       - title: DDD and Domain Events
         url: /docs/quickstart/ddd
-      - title: Connecting a Message Broker
-        url: /docs/quickstart/message-broker
-      - title: Translating Messages
-        url: /docs/quickstart/translating
+      - title: Integration using a Message Broker
+        children:
+          - title: Connecting a Message Broker
+            url: /docs/quickstart/message-broker
+          - title: Translating Messages
+            url: /docs/quickstart/translating
+          - title: Message Headers
+            url: /docs/quickstart/headers
       - title: Behaviors
         url: /docs/quickstart/behaviors
       - title: Testing
@@ -71,6 +75,8 @@ docs:
         url: /docs/advanced/chunking
       - title: Encryption
         url: /docs/advanced/encryption
+      - title: Binary Files
+        url: /docs/advanced/binary-files
       - title: Observable Bus
         url: /docs/advanced/rx
       - title: Using IBroker
@@ -79,8 +85,6 @@ docs:
         url: /docs/advanced/message-id
       - title: IInboundMessage
         url: /docs/advanced/iinboundmessage
-      - title: Default Message Headers
-        url: /docs/advanced/headers
   - title: Kafka Specific
     children:
       - title: Message Key (partitioning)

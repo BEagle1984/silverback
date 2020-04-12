@@ -4,12 +4,14 @@ permalink: /docs/releases
 toc: true
 ---
 
-## [2.1.0-rc2](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc2)
+## [2.1.0-rc3](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc3)
 
 ### What's new
 * <span class="area-integration" /> Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 * <span class="area-integration" /> End-to-End message encryption (see [Encryption]({{ site.baseurl }}/docs/advanced/encryption))
 * <span class="area-integration" /> Dynamic custom routing of outbound messages (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
+* <span class="area-integration" /> Better support for message headers (see [Message Headers]({{ site.baseurl }}/docs/quickstart/headers))
+* <span class="area-integration" /> Binary files support (see [Binary Files]({{ site.baseurl }}/docs/advanced/binary-files))
 * <span class="area-kafka" /> The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
 * <span class="area-kafka" /> Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
 * <span class="area-kafka" /> Upgrade to [Confluent.Kafka 1.4.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.0)

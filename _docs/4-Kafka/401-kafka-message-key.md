@@ -27,5 +27,5 @@ public class MultipleKeyMembersMessage : IIntegrationMessage
 
 If no key members are specified no key will be generated and the messages will land in a random partition.
 
-The message key will also be submitted as header (see [Default Message Headers]({{ site.baseurl }}/docs/advanced/headers) for details).
+The message key will also be submitted as header (see [Message Headers]({{ site.baseurl }}/docs/quickstart/headers) for details).
 {: .notice--note}
