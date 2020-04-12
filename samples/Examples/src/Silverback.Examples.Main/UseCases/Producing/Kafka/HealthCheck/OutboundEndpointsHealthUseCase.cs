@@ -48,7 +48,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.HealthCheck
                         MessageTimeoutMs = 1000
                     }
                 })
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events-two")
+                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events-2")
                 {
                     Configuration = new KafkaProducerConfig
                     {

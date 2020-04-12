@@ -20,8 +20,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Rabbit
         public IEnumerable<Type> Children => new List<Type>
         {
             typeof(Basic._CategoryInfo),
-            typeof(Deferred._CategoryInfo),
-            typeof(StartConsumerUserCase)
+            typeof(Deferred._CategoryInfo)
         };
     }
 }
