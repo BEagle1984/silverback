@@ -15,6 +15,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Broker
 {
+    [Collection("StaticInMemory")]
     public class ConsumerTests
     {
         private readonly TestBroker _broker;
@@ -36,6 +37,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 
             _broker = serviceProvider.GetRequiredService<TestBroker>();
             _silverbackEventsSubscriber = serviceProvider.GetRequiredService<SilverbackEventsSubscriber>();
+            
+            InMemoryChunkStore.Clear();
         }
 
         [Fact]

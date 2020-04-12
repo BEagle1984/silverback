@@ -20,6 +20,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
+    [Collection("StaticInMemory")]
     public class InboundConnectorTests
     {
         private readonly TestSubscriber _testSubscriber;
@@ -58,6 +59,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 serviceProvider,
                 serviceProvider.GetRequiredService<ILogger<InboundConnector>>());
             _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
+            
+            InMemoryChunkStore.Clear();
         }
 
         #region Messages Received

@@ -23,6 +23,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E
 {
+    [Collection("StaticInMemory")]
     public class BrokerBehaviorsPipelineTests
     {
         private static readonly byte[] AesEncryptionKey =
@@ -55,6 +56,8 @@ namespace Silverback.Tests.Integration.E2E
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
+            
+            InMemoryChunkStore.Clear();
         }
 
         [Fact]

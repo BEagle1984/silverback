@@ -16,6 +16,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E
 {
+    [Collection("StaticInMemory")]
     public class OutboundRoutingTests
     {
         private readonly ServiceProvider _serviceProvider;
@@ -41,6 +42,8 @@ namespace Silverback.Tests.Integration.E2E
 
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
+            
+            InMemoryChunkStore.Clear();
         }
 
         [Fact]

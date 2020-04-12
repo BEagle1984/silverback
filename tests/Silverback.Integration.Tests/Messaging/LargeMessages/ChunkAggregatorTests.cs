@@ -15,12 +15,18 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.LargeMessages
 {
+    [Collection("StaticInMemory")]
     public class ChunkAggregatorTests
     {
         private readonly IChunkStore _store = new InMemoryChunkStore();
         private readonly ConsumerTransactionManager _transactionManager = new ConsumerTransactionManager();
         private readonly IMessageSerializer _serializer = new JsonMessageSerializer();
 
+        public ChunkAggregatorTests()
+        {
+            InMemoryChunkStore.Clear();
+        }
+        
         [Fact]
         public async Task AggregateIfComplete_AllChunks_Joined()
         {

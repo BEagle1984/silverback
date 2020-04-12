@@ -18,6 +18,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Configuration
 {
+    [Collection("StaticInMemory")]
     public class BusConfiguratorTests
     {
         private readonly IServiceCollection _services;
