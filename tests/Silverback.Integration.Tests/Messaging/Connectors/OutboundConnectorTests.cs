@@ -53,7 +53,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 _broker.ProducedMessages.First().Message,
                 new MessageHeaderCollection(_broker.ProducedMessages.First().Headers),
                 MessageSerializationContext.Empty) as TestEventOne;
-            producedMessage.Id.Should().Be(envelope.Message.Id);
+            producedMessage.Should().BeEquivalentTo(envelope.Message);
         }
 
         [Fact]

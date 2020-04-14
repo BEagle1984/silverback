@@ -111,7 +111,6 @@ namespace Silverback.Examples.Consumer.Configuration
                         .Transform(
                             (msg, ex) => new IntegrationEventA
                             {
-                                Id = Guid.NewGuid(),
                                 Content = $"Transformed BadEvent (exception: {ex.Message})"
                             },
                             (headers, ex) =>
@@ -121,8 +120,6 @@ namespace Silverback.Examples.Consumer.Configuration
                             })
                         .Publish(messages => new MessageMovedEvent
                         {
-                            Identifiers = messages.OfType<IInboundEnvelope<IIntegrationMessage>>()
-                                .Select(x => x.Message?.Id ?? Guid.Empty).ToList(),
                             Source = messages.First().Endpoint.Name,
                             Destination = "silverback-examples-events"
                         })))

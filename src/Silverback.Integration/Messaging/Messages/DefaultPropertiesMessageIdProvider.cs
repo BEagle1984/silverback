@@ -4,6 +4,8 @@
 using System;
 using System.Reflection;
 
+#pragma warning disable 618
+
 namespace Silverback.Messaging.Messages
 {
     public class DefaultPropertiesMessageIdProvider : IMessageIdProvider
@@ -15,8 +17,6 @@ namespace Silverback.Messaging.Messages
             return idProperty != null &&
                    (idProperty.PropertyType == typeof(Guid) || idProperty.PropertyType == typeof(string));
         }
-
-        public string GetId(object message) => GetIdProperty(message)?.GetValue(message).ToString();
 
         public string EnsureIdentifierIsInitialized(object message)
         {

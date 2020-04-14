@@ -30,15 +30,12 @@ namespace Silverback.Messaging.Connectors
         {
             var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
 
-            if (!(envelope is IInboundEnvelope deserializedEnvelope) || deserializedEnvelope.Message == null)
-                return true;
-
-            if (await inboundLog.Exists(deserializedEnvelope.Message, envelope.Endpoint))
+            if (await inboundLog.Exists(envelope))
                 return false;
 
             serviceProvider.GetRequiredService<ConsumerTransactionManager>().Enlist(inboundLog);
 
-            await inboundLog.Add(deserializedEnvelope.Message, envelope.Endpoint);
+            await inboundLog.Add(envelope);
             return true;
         }
     }

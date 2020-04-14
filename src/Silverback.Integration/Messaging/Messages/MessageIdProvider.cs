@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#pragma warning disable 618 //Obsolete
+
 namespace Silverback.Messaging.Messages
 {
     // TODO: Test + Cache?
@@ -17,30 +19,17 @@ namespace Silverback.Messaging.Messages
             _providers = providers.ToList();
         }
 
-        public string GetKey(object message, bool throwIfCannotGet = true)
-        {
-            if (message == null)
-                return null;
+        public string GetMessageId(MessageHeaderCollection headers) =>
+            headers.GetValue(DefaultMessageHeaders.MessageId) ??
+            throw new InvalidOperationException($"No {DefaultMessageHeaders.MessageId} header was found.");
 
-            var provider = _providers.FirstOrDefault(p => p.CanHandle(message));
-
-            if (provider == null)
-                return throwIfCannotGet
-                    ? throw new SilverbackException(
-                        $"No IMessageIdProvider suitable for the message of type {message.GetType().FullName} " +
-                        $"has been found. Consider registering an appropriate IMessageIdProvider implementation or add " +
-                        $"an Id or MessageId property of type Guid or String to your messages.")
-                    : (string) null;
-
-            return provider.GetId(message);
-        }
-
-        public void EnsureKeyIsInitialized(object message, MessageHeaderCollection headers)
+        public void EnsureMessageIdIsInitialized(object message, MessageHeaderCollection headers)
         {
             var key = _providers.FirstOrDefault(p =>
                 p.CanHandle(message))?.EnsureIdentifierIsInitialized(message);
 
-            headers.AddOrReplace(DefaultMessageHeaders.MessageId, key ?? Guid.NewGuid().ToString().ToLower());
+            if (!headers.Contains(DefaultMessageHeaders.MessageId))
+                headers.Add(DefaultMessageHeaders.MessageId, key ?? Guid.NewGuid().ToString().ToLower());
         }
     }
 }

@@ -8,7 +8,6 @@ namespace Silverback.Examples.Common.Messages
 {
     public class IntegrationEvent : IIntegrationEvent
     {
-        public Guid Id { get; set; }
         public string Content { get; set; }
     }
 }

@@ -60,7 +60,9 @@ namespace Silverback.Messaging.Configuration
                     .AddSingletonBrokerBehavior<InboundProcessorConsumerBehaviorFactory>()
                     .AddScopedSubscriber<ConsumerTransactionManager>();
 
+#pragma warning disable 618
                 AddMessageIdProvider<DefaultPropertiesMessageIdProvider>();
+#pragma warning restore 618
             }
 
             SilverbackBuilder.Services
@@ -277,6 +279,8 @@ namespace Silverback.Messaging.Configuration
 
         #region AddMessageIdProvider
 
+#pragma warning disable 618
+        [Obsolete("This feature will be removed in a future release. Please use a behavior instead.")]
         public IBrokerOptionsBuilder AddMessageIdProvider<TProvider>()
             where TProvider : class, IMessageIdProvider
         {
@@ -284,6 +288,7 @@ namespace Silverback.Messaging.Configuration
 
             return this;
         }
+#pragma warning restore 618
 
         #endregion
 

@@ -201,9 +201,9 @@ This behaviors build the producer pipeline and contain the actual logic to prope
 Name | Index | Description
 :-- | --: | :--
 `ActivityProducerBehavior` | 100 | Starts an `Activity` and adds the tracing information to the message headers.
-`MessageIdInitializerProducerBehavior` | 200 | Ensures that the message id property has been set, using the registered `IMessageIdProvider` to generate a unique value for it.
-`BrokerKeyHeaderInitializer` | 210 | Provided by the message broker implementation (e.g. `KafkaMessageKeyInitializerProducerBehavior` or `RabbitRoutingKeyInitializerProducerBehavior`), sets the message key header that will be used by the `IProducer` implementation to set the actual message key.
-`HeadersWriterProducerBehavior` | 300 | Maps the properties decorated with the `HeaderAttribute` to the message headers.
+`HeadersWriterProducerBehavior` | 200 | Maps the properties decorated with the `HeaderAttribute` to the message headers.
+`MessageIdInitializerProducerBehavior` | 300 | It ensures that an x-message-id header is always produced.
+`BrokerKeyHeaderInitializer` | 310 | Provided by the message broker implementation (e.g. `KafkaMessageKeyInitializerProducerBehavior` or `RabbitRoutingKeyInitializerProducerBehavior`), sets the message key header that will be used by the `IProducer` implementation to set the actual message key.
 `BinaryFileHandlerProducerBehavior` | 500 | Switches to the `BinaryFileMessageSerializer` if the message being produced implements the `IBinaryFileMessage` interface.
 `SerializerProducerBehavior` | 900 | Serializes the message being produced using the configured `IMessageSerializer`.
 `EncryptorProducerBehavior` | 950 | Encrypts the message according to the `EncryptionSettings`.

@@ -12,6 +12,7 @@ toc: true
 * <span class="area-integration" /> Dynamic custom routing of outbound messages (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
 * <span class="area-integration" /> Better support for message headers (see [Message Headers]({{ site.baseurl }}/docs/quickstart/headers))
 * <span class="area-integration" /> Binary files support (see [Binary Files]({{ site.baseurl }}/docs/advanced/binary-files))
+* <span class="area-integration" /> The `IIntegrationMessage` is not required to have an `Id` property anymore (the `x-message-id` header will still be generated and if the property exists will continue to be automatically initialized)
 * <span class="area-kafka" /> The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
 * <span class="area-kafka" /> Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
 * <span class="area-kafka" /> Upgrade to [Confluent.Kafka 1.4.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.0)

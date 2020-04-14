@@ -16,12 +16,13 @@ namespace Silverback.Messaging.Connectors.Repositories
             _messageIdProvider = messageIdProvider;
         }
 
-        public Task Add(object message, IConsumerEndpoint endpoint) =>
-            Add(new InMemoryInboundLogEntry(_messageIdProvider.GetKey(message), endpoint.GetUniqueConsumerGroupName()));
+        public Task Add(IRawInboundEnvelope envelope) =>
+            Add(new InMemoryInboundLogEntry(_messageIdProvider.GetMessageId(envelope.Headers),
+                envelope.Endpoint.GetUniqueConsumerGroupName()));
 
-        public Task<bool> Exists(object message, IConsumerEndpoint endpoint) =>
+        public Task<bool> Exists(IRawInboundEnvelope envelope) =>
             Task.FromResult(Entries.Union(UncommittedEntries).Any(e =>
-                e.MessageId == _messageIdProvider.GetKey(message) &&
-                e.EndpointName == endpoint.GetUniqueConsumerGroupName()));
+                e.MessageId == _messageIdProvider.GetMessageId(envelope.Headers) &&
+                e.EndpointName == envelope.Endpoint.GetUniqueConsumerGroupName()));
     }
 }

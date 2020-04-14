@@ -126,11 +126,11 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                 .AddInbound(TestConsumerEndpoint.GetDefault()));
 
             var consumer = GetBroker().Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             _testSubscriber.ReceivedMessages
                 .Count(message => !(message is ISilverbackEvent))
@@ -149,11 +149,11 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                 .AddInbound(TestConsumerEndpoint.GetDefault()));
 
             var consumer = GetBroker().Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             _testSubscriber.ReceivedMessages
                 .Count(message => !(message is ISilverbackEvent))
@@ -174,11 +174,31 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             var consumer = GetBroker().Consumers.First();
             var duplicatedId = Guid.NewGuid();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = duplicatedId });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = duplicatedId });
+            await consumer.TestHandleMessage(new TestEventOne(),
+                new[]
+                {
+                    new MessageHeader("x-message-id", Guid.NewGuid().ToString())
+                });
+            await consumer.TestHandleMessage(new TestEventOne(),
+                new[]
+                {
+                    new MessageHeader("x-message-id", duplicatedId.ToString())
+                });
+            await consumer.TestHandleMessage(new TestEventOne(),
+                new[]
+                {
+                    new MessageHeader("x-message-id", Guid.NewGuid().ToString())
+                });
+            await consumer.TestHandleMessage(new TestEventOne(),
+                new[]
+                {
+                    new MessageHeader("x-message-id", Guid.NewGuid().ToString())
+                });
+            await consumer.TestHandleMessage(new TestEventOne(),
+                new[]
+                {
+                    new MessageHeader("x-message-id", duplicatedId.ToString())
+                });
 
             _testSubscriber.ReceivedMessages
                 .Count(message => !(message is ISilverbackEvent))
@@ -198,22 +218,22 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             var consumer = GetBroker().Consumers.First();
             await consumer.TestHandleMessage(
-                new TestEventOne { Id = Guid.NewGuid() },
+                new TestEventOne(),
                 offset: new TestOffset("test-1", "1"));
             await consumer.TestHandleMessage(
-                new TestEventTwo { Id = Guid.NewGuid() },
+                new TestEventTwo(),
                 offset: new TestOffset("test-2", "1"));
             await consumer.TestHandleMessage(
-                new TestEventOne { Id = Guid.NewGuid() },
+                new TestEventOne(),
                 offset: new TestOffset("test-1", "2"));
             await consumer.TestHandleMessage(
-                new TestEventTwo { Id = Guid.NewGuid() },
+                new TestEventTwo(),
                 offset: new TestOffset("test-2", "1"));
             await consumer.TestHandleMessage(
-                new TestEventOne { Id = Guid.NewGuid() },
+                new TestEventOne(),
                 offset: new TestOffset("test-1", "3"));
             await consumer.TestHandleMessage(
-                new TestEventTwo { Id = Guid.NewGuid() },
+                new TestEventTwo(),
                 offset: new TestOffset("test-2", "2"));
 
             _testSubscriber.ReceivedMessages

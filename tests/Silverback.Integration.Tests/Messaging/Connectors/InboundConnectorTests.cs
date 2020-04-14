@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 serviceProvider,
                 serviceProvider.GetRequiredService<ILogger<InboundConnector>>());
             _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
-            
+
             InMemoryChunkStore.Clear();
         }
 
@@ -72,11 +72,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(5);
@@ -104,11 +104,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             _inboundSubscriber.ReceivedEnvelopes.OfType<InboundEnvelope<TestEventOne>>().Count().Should().Be(2);
             _inboundSubscriber.ReceivedEnvelopes.OfType<InboundEnvelope<TestEventTwo>>().Count().Should().Be(3);
@@ -121,9 +121,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() },
+            await consumer.TestHandleMessage(new TestEventOne(),
                 new[] { new MessageHeader { Key = "key", Value = "value1" } });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() },
+            await consumer.TestHandleMessage(new TestEventOne(),
                 new[] { new MessageHeader { Key = "key", Value = "value2" } });
 
             var envelopes = _inboundSubscriber.ReceivedEnvelopes.OfType<IInboundEnvelope>().ToList();
@@ -144,8 +144,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() },
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventOne(),
                 new[] { new MessageHeader { Key = DefaultMessageHeaders.FailedAttempts, Value = "3" } });
 
             var inboundMessages = _inboundSubscriber.ReceivedEnvelopes.OfType<IInboundEnvelope>().ToList();
@@ -167,15 +167,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(0);
 
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(5);
@@ -195,15 +195,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
 
             _testSubscriber.ReceivedMessages.Count(message => message is BatchStartedEvent)
                 .Should().Be(1);
 
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             _testSubscriber.ReceivedMessages.Count(message => message is BatchCompleteEvent)
                 .Should().Be(1);
@@ -227,21 +227,21 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(5);
             _testSubscriber.ReceivedMessages.Clear();
 
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(5);
@@ -261,7 +261,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             {
                 foreach (var consumer in _broker.Consumers)
                 {
-                    await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+                    await consumer.TestHandleMessage(new TestEventOne());
                 }
             }
 
@@ -287,7 +287,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             {
                 foreach (var consumer in _broker.Consumers)
                 {
-                    await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+                    await consumer.TestHandleMessage(new TestEventOne());
                 }
             }
 
@@ -296,7 +296,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             foreach (var consumer in _broker.Consumers.Take(3))
             {
-                await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+                await consumer.TestHandleMessage(new TestEventOne());
             }
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
@@ -306,7 +306,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             foreach (var consumer in _broker.Consumers.Skip(3))
             {
-                await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+                await consumer.TestHandleMessage(new TestEventOne());
             }
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
@@ -473,11 +473,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             consumer.AcknowledgeCount.Should().Be(5);
         }
@@ -496,14 +496,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             consumer.AcknowledgeCount.Should().Be(0);
 
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             consumer.AcknowledgeCount.Should().Be(5);
         }
@@ -522,19 +522,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo());
 
             consumer.AcknowledgeCount.Should().Be(5);
 
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne());
 
             consumer.AcknowledgeCount.Should().Be(10);
         }
@@ -553,7 +553,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             {
                 foreach (var consumer in _broker.Consumers)
                 {
-                    await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+                    await consumer.TestHandleMessage(new TestEventOne());
                 }
             }
 
@@ -581,7 +581,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             {
                 foreach (var consumer in _broker.Consumers)
                 {
-                    await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+                    await consumer.TestHandleMessage(new TestEventOne());
                 }
             }
 
@@ -589,14 +589,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             foreach (var consumer in _broker.Consumers.Take(3))
             {
-                await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+                await consumer.TestHandleMessage(new TestEventOne());
             }
 
             _broker.Consumers.Sum(c => c.AcknowledgeCount).Should().Be(15);
 
             foreach (var consumer in _broker.Consumers.Skip(3))
             {
-                await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
+                await consumer.TestHandleMessage(new TestEventOne());
             }
 
             _broker.Consumers.Sum(c => c.AcknowledgeCount).Should().Be(25);
@@ -614,7 +614,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             _testSubscriber.FailCount.Should().Be(3);
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
@@ -632,7 +632,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             testSerializer.FailCount.Should().Be(3);
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent).Should().Be(1);
@@ -697,7 +697,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("bad"));
 
@@ -717,7 +717,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("bad"));
 
@@ -741,8 +741,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
+            await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             _testSubscriber.FailCount.Should().Be(3);
             _testSubscriber.ReceivedMessages.OfType<TestEventOne>().Count().Should().Be(5);
@@ -764,8 +764,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
+            await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             _testSubscriber.FailCount.Should().Be(3);
             _testSubscriber.ReceivedMessages.OfType<BatchAbortedEvent>().Count().Should().Be(3);
@@ -792,8 +792,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventOne { Content = "Test", Id = Guid.NewGuid() });
+            await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
+            await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             testSerializer.FailCount.Should().Be(3);
             _testSubscriber.ReceivedMessages.OfType<BatchCompleteEvent>().Count().Should().Be(4);

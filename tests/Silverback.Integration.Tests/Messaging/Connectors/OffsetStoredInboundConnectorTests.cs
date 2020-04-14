@@ -62,9 +62,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() },
+            await consumer.TestHandleMessage(new TestEventOne(),
                 offset: new TestOffset("a", "1"));
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() },
+            await consumer.TestHandleMessage(new TestEventTwo(),
                 offset: new TestOffset("a", "2"));
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
@@ -74,8 +74,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_EachIsConsumedOnce()
         {
-            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+            var e1 = new TestEventOne { Content = "Test" };
+            var e2 = new TestEventTwo { Content = "Test" };
             var o1 = new TestOffset("a", "1");
             var o2 = new TestOffset("a", "2");
 
@@ -96,7 +96,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesFromDifferentTopics_EachIsConsumedOnce()
         {
-            var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
+            var e = new TestEventOne { Content = "Test" };
             var o1 = new TestOffset("a", "1");
             var o2 = new TestOffset("b", "1");
 
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_OffsetStored()
         {
-            var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
+            var e = new TestEventOne { Content = "Test" };
             var o1 = new TestOffset("a", "1");
             var o2 = new TestOffset("b", "1");
             var o3 = new TestOffset("a", "2");
@@ -138,7 +138,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_EachIsConsumedOnce()
         {
-            var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
+            var e = new TestEventOne { Content = "Test" };
             var o1 = new TestOffset("a", "1");
             var o2 = new TestOffset("b", "1");
             var o3 = new TestOffset("a", "2");
@@ -166,7 +166,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_OffsetStored()
         {
-            var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
+            var e = new TestEventOne { Content = "Test" };
             var o1 = new TestOffset("a", "1");
             var o2 = new TestOffset("b", "1");
             var o3 = new TestOffset("a", "2");
@@ -193,8 +193,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_OnlyOffsetOfCommittedBatchStored()
         {
-            var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-            var fail = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
+            var e = new TestEventOne { Content = "Test" };
+            var fail = new TestEventOne { Content = "FAIL" };
             var o1 = new TestOffset("a", "1");
             var o2 = new TestOffset("a", "2");
             var o3 = new TestOffset("a", "3");
@@ -209,7 +209,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             });
             _broker.Connect();
 
-            _testSubscriber.FailCondition = m => m is TestEventOne m2 && m2.Id == fail.Id;
+            _testSubscriber.FailCondition = m => m is TestEventOne m2 && m2.Content == "FAIL";
 
             var consumer = _broker.Consumers.First();
 
@@ -253,8 +253,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatchToMultipleConsumers_OnlyOffsetOfCommittedBatchStored()
         {
-            var e = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-            var fail = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
+            var e = new TestEventOne { Content = "Test" };
+            var fail = new TestEventOne { Content = "FAIL" };
             var o1 = new TestOffset("a", "1");
             var o2 = new TestOffset("a", "2");
             var o3 = new TestOffset("a", "3");
@@ -270,7 +270,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             });
             _broker.Connect();
 
-            _testSubscriber.FailCondition = m => m is TestEventOne m2 && m2.Id == fail.Id;
+            _testSubscriber.FailCondition = m => m is TestEventOne m2 && m2.Content == "FAIL";
 
             var consumer1 = _broker.Consumers[0];
             var consumer2 = _broker.Consumers[1];

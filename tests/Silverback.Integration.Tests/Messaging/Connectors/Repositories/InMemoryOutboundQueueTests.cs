@@ -27,7 +27,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
-        public async Task EnqueueTest()
+        public async Task Enqueue_MultipleTimesInParallelNoCommit_QueueLooksEmpty()
         {
             Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundEnvelope); });
 
@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
-        public async Task EnqueueCommitTest()
+        public async Task Enqueue_MultipleTimesInParallelAndCommit_QueueFilled()
         {
             Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundEnvelope); });
 
@@ -45,7 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
-        public async Task EnqueueRollbackTest()
+        public async Task Enqueue_MultipleTimesInParallelAndRollback_QueueIsEmpty()
         {
             Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundEnvelope); });
 
@@ -55,7 +55,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
-        public async Task EnqueueCommitRollbackCommitTest()
+        public async Task Enqueue_SomeEnvelopes_OnlyCommittedEnvelopesAreEnqueued()
         {
             await _queue.Enqueue(_sampleOutboundEnvelope);
             await _queue.Commit();
@@ -71,7 +71,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [InlineData(3, 3)]
         [InlineData(5, 5)]
         [InlineData(10, 5)]
-        public async Task DequeueTest(int count, int expected)
+        public async Task Dequeue_WithCommittedEnvelopes_ExpectedEnvelopesReturned(int count, int expected)
         {
             for (var i = 0; i < 5; i++)
             {
@@ -82,11 +82,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
             var result = await _queue.Dequeue(count);
 
-            result.Count().Should().Be(expected);
+            result.Count.Should().Be(expected);
         }
 
         [Fact]
-        public async Task AcknowledgeRetryTest()
+        public async Task AcknowledgeAndRetry_RetriedAreStillEnqueued()
         {
             for (var i = 0; i < 5; i++)
             {

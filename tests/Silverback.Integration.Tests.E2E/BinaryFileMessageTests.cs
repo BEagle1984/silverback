@@ -21,6 +21,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E
 {
+    [Collection("StaticInMemory")]
     public class BinaryFileMessageTests
     {
         private static readonly byte[] AesEncryptionKey =
@@ -53,7 +54,7 @@ namespace Silverback.Tests.Integration.E2E
 
             InMemoryChunkStore.Clear();
         }
-        
+
         [Fact]
         public async Task E2E_BrokerBehaviors_BinaryFileMessage()
         {
@@ -81,7 +82,7 @@ namespace Silverback.Tests.Integration.E2E
             _spyBehavior.InboundEnvelopes.First().Headers.Should().ContainEquivalentOf(
                 new MessageHeader("content-type", "application/pdf"));
         }
-        
+
         [Fact]
         public async Task E2E_BrokerBehaviors_InheritedBinaryFileMessageWithCustomHeaders()
         {
@@ -117,7 +118,7 @@ namespace Silverback.Tests.Integration.E2E
         public async Task E2E_BrokerBehaviors_BinaryFileMessageWithoutHeaders()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-            
+
             _configurator.Connect(endpoints => endpoints
                 .AddInbound(
                     new KafkaConsumerEndpoint("test-e2e")
@@ -139,12 +140,12 @@ namespace Silverback.Tests.Integration.E2E
             _spyBehavior.InboundEnvelopes.First().Message.As<IBinaryFileMessage>().Content.Should()
                 .BeEquivalentTo(rawContent);
         }
-        
+
         [Fact]
         public async Task E2E_BrokerBehaviors_InheritedBinaryWithoutTypeHeader()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-            
+
             _configurator.Connect(endpoints => endpoints
                 .AddInbound(
                     new KafkaConsumerEndpoint("test-e2e")
@@ -173,7 +174,7 @@ namespace Silverback.Tests.Integration.E2E
             _spyBehavior.InboundEnvelopes.First().Message.As<InheritedBinaryFileMessage>().CustomHeader.Should()
                 .Be("hello!");
         }
-        
+
         [Fact]
         public async Task E2E_BrokerBehaviors_EncryptionAndChunkingOfBinaryFileMessage()
         {
@@ -218,7 +219,8 @@ namespace Silverback.Tests.Integration.E2E
             _spyBehavior.OutboundEnvelopes.Count.Should().Be(5);
             _spyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
                 .NotBeEquivalentTo(message.Content);
-            _spyBehavior.OutboundEnvelopes.ForEach(envelope => AssertionExtensions.Should(envelope.RawMessage.Length).BeLessOrEqualTo(30));
+            _spyBehavior.OutboundEnvelopes.ForEach(envelope =>
+                envelope.RawMessage.Length.Should().BeLessOrEqualTo(30));
             _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
             _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);
         }

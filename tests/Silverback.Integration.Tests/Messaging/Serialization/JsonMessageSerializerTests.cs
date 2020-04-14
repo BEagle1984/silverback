@@ -1,11 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes.Domain;

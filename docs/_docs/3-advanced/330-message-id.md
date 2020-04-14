@@ -5,7 +5,13 @@ permalink: /docs/advanced/message-id
 toc: false
 ---
 
-Silverback must be able to get a unique indentifier for the integration messages in order to be able to use the exactly-once inbound or the deferred outbound connectors.
+Silverback will ensure that an `x-message-id` header is always sent with each message. This header is important not only for tracing purpose but also to enable exactly-once consuming, chunking and other features.
+
+By default it will be initialized with a new `Guid` upon producing, unless already set (see the [Message Headers]({{ site.baseurl }}/docs/quickstart/headers) section in the quick start to see how to set an header).
+
+## IMessageIdProvider
+
+An `IMessageIdProvider` is used to automatically initialize the message model with the message id that is later published as header.
 
 The default implementation of `IMessageIdProvider` looks for a public property called either `Id` or `MessageId` and supports `Guid` or `String` as data type.
 
@@ -16,14 +22,14 @@ public class SampleMessageIdProvider : IMessageIdProvider
 {
     public bool CanHandle(object message) => message is SampleMessage;
 
-    public string GetId(object message) => ((SampleMessage)message).Sequence;
-
-    public void EnsureIdentifierIsInitialized(object message)
+    public string EnsureIdentifierIsInitialized(object message)
     {
         var sampleMessage = (SampleMessage)message;
 
         if (sampleMessage.Sequence = 0)
             sempleMessage.Sequence = SequenceHelper.GetNext();
+
+        return sampleMessage.Sequence.ToString();
     }
 }
 ```
@@ -44,3 +50,6 @@ public class Startup
 }
 {% endhighlight %}
 </figure>
+
+This feature will probably be removed in one of the next releases. It is advised to use an `IBehavior` to accomplish this kind of task, if still necessary.
+{: .notice--warning}

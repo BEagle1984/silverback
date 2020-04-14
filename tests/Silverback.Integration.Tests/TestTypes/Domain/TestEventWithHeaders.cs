@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.TestTypes.Domain
@@ -15,7 +14,6 @@ namespace Silverback.Tests.Integration.TestTypes.Domain
     public class TestEventWithHeaders : IIntegrationEvent, ITestEventWithHeaders
     {
         public string Content { get; set; }
-        public Guid Id { get; set; }
 
         [Header("x-string")]
         public string StringHeader { get; set; }
@@ -34,8 +32,7 @@ namespace Silverback.Tests.Integration.TestTypes.Domain
 
         [Header("x-readonly-int")]
         public int ReadOnlyIntHeader { get; } = 42;
-        
+
         public string InheritedHeader { get; set; }
     }
-    
 }

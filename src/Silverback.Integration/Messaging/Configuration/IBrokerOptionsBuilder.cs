@@ -207,6 +207,7 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <typeparam name="TProvider">The type of the <see cref="IMessageIdProvider" /> to add.</typeparam>
         /// <returns></returns>
+        [Obsolete("This feature will be removed in a future release. Please use a behavior instead.")]
         IBrokerOptionsBuilder AddMessageIdProvider<TProvider>()
             where TProvider : class, IMessageIdProvider;
 

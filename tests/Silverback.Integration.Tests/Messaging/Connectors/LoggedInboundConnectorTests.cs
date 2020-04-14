@@ -59,9 +59,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne { Id = Guid.NewGuid() });
-            await consumer.TestHandleMessage(new TestEventTwo { Id = Guid.NewGuid() });
-
+            await consumer.TestHandleMessage(
+                new TestEventOne(), new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
+            await consumer.TestHandleMessage(
+                new TestEventOne(), new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(2);
         }
@@ -69,18 +70,25 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_EachIsConsumedOnce()
         {
-            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+            var e1 = new TestEventOne { Content = "Test" };
+            var e2 = new TestEventTwo { Content = "Test" };
+            var id1 = Guid.NewGuid();
+            var id2 = Guid.NewGuid();
 
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(e1);
-            await consumer.TestHandleMessage(e2);
-            await consumer.TestHandleMessage(e1);
-            await consumer.TestHandleMessage(e2);
-            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id1) });
+            await consumer.TestHandleMessage(
+                e2, new[] { new MessageHeader("x-message-id", id2) });
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id1) });
+            await consumer.TestHandleMessage(
+                e2, new[] { new MessageHeader("x-message-id", id2) });
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id2) });
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(2);
@@ -89,18 +97,25 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessages_WrittenToLog()
         {
-            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+            var e1 = new TestEventOne { Content = "Test" };
+            var e2 = new TestEventTwo { Content = "Test" };
+            var id1 = Guid.NewGuid();
+            var id2 = Guid.NewGuid();
 
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(e1);
-            await consumer.TestHandleMessage(e2);
-            await consumer.TestHandleMessage(e1);
-            await consumer.TestHandleMessage(e2);
-            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id1) });
+            await consumer.TestHandleMessage(
+                e2, new[] { new MessageHeader("x-message-id", id2) });
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id1) });
+            await consumer.TestHandleMessage(
+                e2, new[] { new MessageHeader("x-message-id", id2) });
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id2) });
 
             (await _serviceProvider.GetRequiredService<IInboundLog>().GetLength()).Should().Be(2);
         }
@@ -108,8 +123,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_EachIsConsumedOnce()
         {
-            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+            var e1 = new TestEventOne { Content = "Test" };
+            var e2 = new TestEventTwo { Content = "Test" };
+            var id1 = Guid.NewGuid();
+            var id2 = Guid.NewGuid();
 
             _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
@@ -121,11 +138,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(e1);
-            await consumer.TestHandleMessage(e2);
-            await consumer.TestHandleMessage(e1);
-            await consumer.TestHandleMessage(e2);
-            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id1) });
+            await consumer.TestHandleMessage(
+                e2, new[] { new MessageHeader("x-message-id", id2) });
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id1) });
+            await consumer.TestHandleMessage(
+                e2, new[] { new MessageHeader("x-message-id", id2) });
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id2) });
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(2);
@@ -134,9 +156,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_WrittenToLog()
         {
-            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
-
+            var e1 = new TestEventOne { Content = "Test" };
+            var e2 = new TestEventTwo { Content = "Test" };
+            var id1 = Guid.NewGuid();
+            var id2 = Guid.NewGuid();
             _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
                 Batch = new Silverback.Messaging.Batch.BatchSettings
@@ -147,11 +170,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = _broker.Consumers.First();
-            await consumer.TestHandleMessage(e1);
-            await consumer.TestHandleMessage(e2);
-            await consumer.TestHandleMessage(e1);
-            await consumer.TestHandleMessage(e2);
-            await consumer.TestHandleMessage(e1);
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id1) });
+            await consumer.TestHandleMessage(
+                e2, new[] { new MessageHeader("x-message-id", id2) });
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id1) });
+            await consumer.TestHandleMessage(
+                e2, new[] { new MessageHeader("x-message-id", id2) });
+            await consumer.TestHandleMessage(
+                e1, new[] { new MessageHeader("x-message-id", id2) });
 
             (await _serviceProvider.GetRequiredService<IInboundLog>().GetLength()).Should().Be(2);
         }
@@ -159,10 +187,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_OnlyCommittedBatchWrittenToLog()
         {
-            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
-            var e3 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
-            var e4 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+            var e1 = new TestEventOne { Content = "Test" };
+            var e2 = new TestEventTwo { Content = "Test" };
+            var e3 = new TestEventTwo { Content = "Test" };
+            var e4 = new TestEventTwo { Content = "FAIL" };
 
             _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
@@ -173,13 +201,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             });
             _broker.Connect();
 
-            _testSubscriber.FailCondition = m => m is TestEventTwo m2 && m2.Id == e4.Id;
+            _testSubscriber.FailCondition = m => m is TestEventTwo m2 && m2.Content == "FAIL";
 
             var consumer = _broker.Consumers.First();
 
             try
             {
-                await consumer.TestHandleMessage(e1);
+                await consumer.TestHandleMessage(
+                    e1, new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
             }
             catch
             {
@@ -187,7 +216,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             try
             {
-                await consumer.TestHandleMessage(e2);
+                await consumer.TestHandleMessage(
+                    e2, new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
             }
             catch
             {
@@ -195,7 +225,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             try
             {
-                await consumer.TestHandleMessage(e3);
+                await consumer.TestHandleMessage(
+                    e3, new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
             }
             catch
             {
@@ -203,7 +234,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             try
             {
-                await consumer.TestHandleMessage(e4);
+                await consumer.TestHandleMessage(
+                    e4, new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
             }
             catch
             {
@@ -215,10 +247,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact, Trait("CI", "false")]
         public async Task Bind_PushMessagesInBatchToMultipleConsumers_OnlyCommittedBatchWrittenToLog()
         {
-            var e1 = new TestEventOne { Content = "Test", Id = Guid.NewGuid() };
-            var e2 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
-            var e3 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
-            var e4 = new TestEventTwo { Content = "Test", Id = Guid.NewGuid() };
+            var e1 = new TestEventOne { Content = "Test" };
+            var e2 = new TestEventTwo { Content = "FAIL" };
+            var e3 = new TestEventTwo { Content = "Test" };
+            var e4 = new TestEventTwo { Content = "Test" };
 
             _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
             {
@@ -230,7 +262,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             });
             _broker.Connect();
 
-            _testSubscriber.FailCondition = m => m is TestEventTwo m2 && m2.Id == e2.Id;
+            _testSubscriber.FailCondition = m => m is TestEventTwo m2 && m2.Content == "FAIL";
 
             var consumer1 = _broker.Consumers[0];
             var consumer2 = _broker.Consumers[1];
@@ -241,8 +273,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 {
                     try
                     {
-                        await consumer1.TestHandleMessage(e1);
-                        await consumer1.TestHandleMessage(e2);
+                        await consumer1.TestHandleMessage(
+                            e1, new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
+                        await consumer1.TestHandleMessage(
+                            e2, new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
                     }
                     catch (Exception)
                     {
@@ -250,8 +284,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 }),
                 Task.Run(async () =>
                 {
-                    await consumer2.TestHandleMessage(e3);
-                    await consumer2.TestHandleMessage(e4);
+                    await consumer2.TestHandleMessage(
+                        e3, new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
+                    await consumer2.TestHandleMessage(
+                        e4, new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
                 })
             };
 

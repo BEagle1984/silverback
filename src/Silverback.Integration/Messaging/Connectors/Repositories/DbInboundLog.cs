@@ -23,19 +23,23 @@ namespace Silverback.Messaging.Connectors.Repositories
             _messageIdProvider = messageIdProvider;
         }
 
-        public async Task Add(object message, IConsumerEndpoint endpoint)
+        public async Task Add(IRawInboundEnvelope envelope)
         {
             await _semaphore.WaitAsync();
 
             try
             {
-                DbSet.Add(new InboundMessage
+                var inboundMessage = DbSet.Add(new InboundMessage
                 {
-                    MessageId = _messageIdProvider.GetKey(message),
-                    Message = DefaultSerializer.Serialize(message),
-                    EndpointName = endpoint.GetUniqueConsumerGroupName(),
+                    MessageId = _messageIdProvider.GetMessageId(envelope.Headers),
+                    EndpointName = envelope.Endpoint.GetUniqueConsumerGroupName(),
                     Consumed = DateTime.UtcNow
                 });
+
+                if (envelope is IInboundEnvelope deserializedEnvelope && deserializedEnvelope.Message != null)
+                {
+                    inboundMessage.Message = DefaultSerializer.Serialize(deserializedEnvelope.Message);
+                }
             }
             finally
             {
@@ -64,10 +68,10 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        public Task<bool> Exists(object message, IConsumerEndpoint endpoint)
+        public Task<bool> Exists(IRawInboundEnvelope envelope)
         {
-            var key = _messageIdProvider.GetKey(message);
-            var consumerGroupName = endpoint.GetUniqueConsumerGroupName();
+            var key = _messageIdProvider.GetMessageId(envelope.Headers);
+            var consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();
             return DbSet.AsQueryable().AnyAsync(m => m.MessageId == key && m.EndpointName == consumerGroupName);
         }
 
