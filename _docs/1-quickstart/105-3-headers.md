@@ -60,6 +60,7 @@ Header Key | Description
 `x-source-endpoint` | This will be set by the `Move` is being moved from.
 `x-chunk-id` | The unique id of the message chunk, used when [chunking]({{ site.baseurl }}/docs/advanced/chunking) is enabled.
 `x-chunks-count` | The total number of chunks the message was split into, used when [chunking]({{ site.baseurl }}/docs/advanced/chunking) is enabled.
+`x-first-chunk-offset` | The `IOffset` value of the first chunk of the same message, used when [chunking]({{ site.baseurl }}/docs/advanced/chunking) is enabled.
 `x-batch-id` | The unique id assigned to the messages batch, used mostly for tracing, when [batch processing]({{ site.baseurl }}/docs/configuration/inbound#batch-processing) is enabled.
 `x-batch-size` | The total number of messages in the batch, used mostly for tracing, when [batch processing]({{ site.baseurl }}/docs/configuration/inbound#batch-processing) is enabled.
 `traceparent` | The current `Activity.Id`, used by the `IConsumer` implementation to set the `Activity.ParentId`, thus enabling distributed tracing across the message broker. Note that an `Activity` is automatically started by the default `IProducer` implementation. See [System.Diagnostics documentation](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=netcore-3.1) for details about `Activity` and distributed tracing in asp.net core and [W3C Trace Context proposal](https://www.w3.org/TR/trace-context-1) for details about the headers.
@@ -79,6 +80,7 @@ Header Key | Constant
 `x-source-endpoint` | `DefaultMessageHeaders.SourceEndpoint`
 `x-chunk-id` | `DefaultMessageHeaders.ChunkId`
 `x-chunks-count` | `DefaultMessageHeaders.ChunksCount`
+`x-first-chunk-offset` | `DefaultMessageHeaders.FirstChunkOffset`
 `x-batch-id` | `DefaultMessageHeaders.BatchId`
 `x-batch-size` | `DefaultMessageHeaders.BatchSize`
 `traceparent` | `DefaultMessageHeaders.TraceId`
