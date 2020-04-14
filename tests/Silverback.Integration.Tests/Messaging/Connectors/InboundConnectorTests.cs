@@ -326,28 +326,28 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await consumer.TestConsume(buffer.Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(40).Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(80).Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(120).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
@@ -371,28 +371,28 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await consumer.TestConsume(buffer.Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(120).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(80).Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(40).Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
@@ -416,42 +416,42 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await consumer.TestConsume(buffer.Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(120).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(80).Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(120).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(80).Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(40).Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
@@ -655,28 +655,28 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await consumer.TestConsume(buffer.Take(20).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(20).Take(20).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(40).Take(20).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "3"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             await consumer.TestConsume(buffer.Skip(60).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkId, "4"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });

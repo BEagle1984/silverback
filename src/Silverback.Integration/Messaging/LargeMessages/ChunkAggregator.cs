@@ -22,17 +22,17 @@ namespace Silverback.Messaging.LargeMessages
 
         public async Task<byte[]> AggregateIfComplete(IRawInboundEnvelope envelope)
         {
-            var (messageId, chunkId, chunksCount) = ExtractHeadersValues(envelope);
+            var (messageId, chunkIndex, chunksCount) = ExtractHeadersValues(envelope);
 
             var count = await _store.CountChunks(messageId);
 
             if (count >= chunksCount - 1)
             {
                 var chunks = await _store.GetChunks(messageId);
-                if (chunks.ContainsKey(chunkId))
+                if (chunks.ContainsKey(chunkIndex))
                     return null;
 
-                chunks.Add(chunkId, envelope.RawMessage);
+                chunks.Add(chunkIndex, envelope.RawMessage);
 
                 var completeMessage = Join(chunks);
 
@@ -42,29 +42,29 @@ namespace Silverback.Messaging.LargeMessages
             }
             else
             {
-                await _store.Store(messageId, chunkId, chunksCount, envelope.RawMessage);
+                await _store.Store(messageId, chunkIndex, chunksCount, envelope.RawMessage);
                 return null;
             }
         }
 
-        private (string messageId, int chinkId, int chunksCount) ExtractHeadersValues(IRawInboundEnvelope envelope)
+        private (string messageId, int chunkIndex, int chunksCount) ExtractHeadersValues(IRawInboundEnvelope envelope)
         {
             var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
 
-            var chunkId = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkId);
+            var chunkIndex = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex);
 
             var chunksCount = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
 
             if (string.IsNullOrEmpty(messageId))
                 throw new InvalidOperationException("Message id header not found or invalid.");
 
-            if (chunkId == null)
+            if (chunkIndex == null)
                 throw new InvalidOperationException("Chunk id header not found or invalid.");
 
             if (chunksCount == null)
                 throw new InvalidOperationException("Chunks count header not found or invalid.");
 
-            return (messageId, chunkId.Value, chunksCount.Value);
+            return (messageId, chunkIndex.Value, chunksCount.Value);
         }
 
         public Task Commit() => _store.Commit();

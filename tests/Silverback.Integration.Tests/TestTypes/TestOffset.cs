@@ -22,5 +22,6 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public string Key { get; }
         public string Value { get; }
+        public string ToLogString() => Value;
     }
 }

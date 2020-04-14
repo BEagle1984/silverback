@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <inheritdoc cref="IOffset" />
+    /// <inheritdoc cref="IComparableOffset" />
     public sealed class KafkaOffset : IComparableOffset
     {
         [JsonConstructor]
@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Broker
             Offset = offset;
 
             Key = $"{topic}[{partition}]";
-            Value = $"{partition}@{offset}";
+            Value = $"{offset}";
         }
 
         public KafkaOffset(Confluent.Kafka.TopicPartitionOffset topicPartitionOffset)
@@ -44,6 +44,8 @@ namespace Silverback.Messaging.Broker
         public string Key { get; }
 
         public string Value { get; }
+
+        public string ToLogString() => $"{Partition}@{Offset}";
 
         public int CompareTo(KafkaOffset other)
         {

@@ -22,6 +22,8 @@ namespace Silverback.Messaging.Broker
 
         public int Offset { get; }
 
+        public string ToLogString() => Offset.ToString();
+        
         public int CompareTo(InMemoryOffset other)
         {
             if (ReferenceEquals(this, other)) return 0;

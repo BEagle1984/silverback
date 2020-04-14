@@ -40,7 +40,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 new[]
                 {
                     new MessageHeader(DefaultMessageHeaders.MessageId, originalMessage.MessageId.ToString()),
-                    new MessageHeader(DefaultMessageHeaders.ChunkId, "0"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
                     new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 },
                 null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 new[]
                 {
                     new MessageHeader(DefaultMessageHeaders.MessageId, originalMessage.MessageId.ToString()),
-                    new MessageHeader(DefaultMessageHeaders.ChunkId, "1"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
                     new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 },
                 null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);
@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 new[]
                 {
                     new MessageHeader(DefaultMessageHeaders.MessageId, originalMessage.MessageId.ToString()),
-                    new MessageHeader(DefaultMessageHeaders.ChunkId, "2"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
                     new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 },
                 null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);

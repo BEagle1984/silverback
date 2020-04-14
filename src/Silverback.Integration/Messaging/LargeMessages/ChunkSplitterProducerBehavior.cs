@@ -22,8 +22,13 @@ namespace Silverback.Messaging.LargeMessages
 
             if (chunks.Any())
             {
-                await chunks.ForEachAsync(chunkEnvelope =>
-                    next(new ProducerPipelineContext(chunkEnvelope, context.Producer)));
+                var firstChunkEnvelope = chunks.First();
+                await InvokeNext(context, next, firstChunkEnvelope);
+                await chunks.Skip(1).ForEachAsync(chunkEnvelope =>
+                {
+                    chunkEnvelope.Headers.Add(DefaultMessageHeaders.FirstChunkOffset, firstChunkEnvelope.Offset.Value);
+                    return InvokeNext(context, next, chunkEnvelope);
+                });
             }
             else
             {
@@ -47,7 +52,7 @@ namespace Silverback.Messaging.LargeMessages
             {
                 throw new InvalidOperationException(
                     "Dividing into chunks is pointless if no unique MessageId can be retrieved. " +
-                    "Please add an Id or MessageId property to the message model or use a custom IMessageIdProvider.");
+                    $"Please set the {DefaultMessageHeaders.MessageId} header.");
             }
 
             var span = envelope.RawMessage.AsMemory();
@@ -62,7 +67,7 @@ namespace Silverback.Messaging.LargeMessages
                     RawMessage = slice
                 };
 
-                messageChunk.Headers.AddOrReplace(DefaultMessageHeaders.ChunkId, i);
+                messageChunk.Headers.AddOrReplace(DefaultMessageHeaders.ChunkIndex, i);
                 messageChunk.Headers.AddOrReplace(DefaultMessageHeaders.ChunksCount, chunksCount);
 
                 yield return messageChunk;
@@ -70,6 +75,12 @@ namespace Silverback.Messaging.LargeMessages
                 offset += chunkSize;
             }
         }
+
+        private Task InvokeNext(
+            ProducerPipelineContext context,
+            ProducerBehaviorHandler next,
+            IOutboundEnvelope chunkEnvelope) => 
+            next(new ProducerPipelineContext(chunkEnvelope, context.Producer));
 
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.ChunkSplitter;
     }

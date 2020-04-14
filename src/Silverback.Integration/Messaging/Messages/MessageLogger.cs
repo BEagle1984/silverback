@@ -114,7 +114,7 @@ namespace Silverback.Messaging.Messages
                 properties.Add(("Id", "messageId", firstMessage.Headers.GetValue(DefaultMessageHeaders.MessageId)));
 
                 if (firstMessage.Offset != null)
-                    properties.Add(("Offset", "offset", $"{firstMessage.Offset.Value}"));
+                    properties.Add(("Offset", "offset", $"{firstMessage.Offset.ToLogString()}"));
             }
 
             properties.Add(("BatchId", "batchId", firstMessage.Headers.GetValue(DefaultMessageHeaders.BatchId)));

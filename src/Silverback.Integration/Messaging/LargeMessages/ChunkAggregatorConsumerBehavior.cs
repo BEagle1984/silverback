@@ -35,7 +35,7 @@ namespace Silverback.Messaging.LargeMessages
             IRawInboundEnvelope envelope,
             IServiceProvider serviceProvider)
         {
-            if (!envelope.Headers.Contains(DefaultMessageHeaders.ChunkId) ||
+            if (!envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex) ||
                 envelope.Headers.Contains(DefaultMessageHeaders.ChunkAggregated))
             {
                 return envelope;

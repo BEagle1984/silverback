@@ -25,5 +25,7 @@ namespace Silverback.Messaging.Broker
         public string Key => ConsumerTag;
 
         public string Value => DeliveryTag.ToString();
+
+        public string ToLogString() => DeliveryTag.ToString();
     }
 }

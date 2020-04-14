@@ -14,6 +14,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.LargeMessages
@@ -59,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         }
 
         [Fact]
-        public void Handle_LargeMessage_SplitIntoChunks()
+        public async Task Handle_LargeMessage_SplitIntoChunks()
         {
             var message = new BinaryMessage
             {
@@ -68,7 +69,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
             var headers = new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.MessageId, "1234" }
+                { "x-message-id", "1234" }
             };
 
             var serializedMessage = _serializer.Serialize(message, headers, MessageSerializationContext.Empty);
@@ -86,11 +87,12 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 };
 
             var chunks = new List<IOutboundEnvelope>();
-            new ChunkSplitterProducerBehavior().Handle(
+            await new ChunkSplitterProducerBehavior().Handle(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 context =>
                 {
                     chunks.Add(context.Envelope);
+                    ((RawOutboundEnvelope) context.Envelope).Offset = new TestOffset("k", chunks.Count.ToString());
                     return Task.CompletedTask;
                 });
 
@@ -98,6 +100,48 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             chunks.Should().Match(c => c.All(m => m.RawMessage.Length < 1000));
         }
 
+        [Fact]
+        public void Handle_LargeMessage_FirstChunkOffsetHeaderProduced()
+        {
+            var message = new BinaryMessage
+            {
+                MessageId = Guid.NewGuid(),
+                Content = GetByteArray(30)
+            };
+            var headers = new MessageHeaderCollection
+            {
+                { "x-message-id", "1234" }
+            };
+
+            var serializedMessage = _serializer.Serialize(message, headers, MessageSerializationContext.Empty);
+            var envelope =
+                new OutboundEnvelope(message, headers,
+                    new TestProducerEndpoint("test")
+                    {
+                        Chunk = new ChunkSettings
+                        {
+                            Size = 10
+                        }
+                    })
+                {
+                    RawMessage = serializedMessage
+                };
+
+            var chunks = new List<IOutboundEnvelope>();
+            new ChunkSplitterProducerBehavior().Handle(
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                context =>
+                {
+                    chunks.Add(context.Envelope);
+                    ((RawOutboundEnvelope) context.Envelope).Offset = new TestOffset("k", chunks.Count.ToString());
+                    return Task.CompletedTask;
+                });
+
+            chunks.Count.Should().BeGreaterThan(2);
+            chunks.Skip(1).ForEach(chunk =>
+                chunk.Headers.Should().ContainEquivalentOf(new MessageHeader("x-first-chunk-offset", "1")));
+        }
+        
         private byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte) 255).ToArray();
     }
 }

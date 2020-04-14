@@ -33,14 +33,19 @@ namespace Silverback.Messaging.Messages
         public const string SourceEndpoint = "x-source-endpoint";
 
         /// <summary>
-        ///     The unique id of the message chunk, used when chunking is enabled.
+        ///     The message chunk index, used when chunking is enabled.
         /// </summary>
-        public const string ChunkId = "x-chunk-id";
+        public const string ChunkIndex = "x-chunk-id";
 
         /// <summary>
         ///     The total number of chunks the message was split into, used when chunking is enabled.
         /// </summary>
         public const string ChunksCount = "x-chunks-count";
+
+        /// <summary>
+        ///     The <see cref="IOffset"/> value of the first chunk of the same message.
+        /// </summary>
+        public const string FirstChunkOffset = "x-first-chunk-offset";
 
         /// <summary>
         ///     Used internally to the consumer pipeline to signal that the content of that chunk was replaced with
