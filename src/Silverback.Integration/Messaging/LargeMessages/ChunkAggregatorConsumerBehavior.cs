@@ -36,7 +36,7 @@ namespace Silverback.Messaging.LargeMessages
             IServiceProvider serviceProvider)
         {
             if (!envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex) ||
-                envelope.Headers.Contains(DefaultMessageHeaders.ChunkAggregated))
+                envelope.Headers.Contains(DefaultMessageHeaders.ChunksAggregated))
             {
                 return envelope;
             }
@@ -54,7 +54,7 @@ namespace Silverback.Messaging.LargeMessages
                 envelope.ActualEndpointName,
                 envelope.Offset);
 
-            completeMessageEnvelope.Headers.Add(DefaultMessageHeaders.ChunkAggregated, "true");
+            completeMessageEnvelope.Headers.Add(DefaultMessageHeaders.ChunksAggregated, true);
 
             return completeMessageEnvelope;
         }

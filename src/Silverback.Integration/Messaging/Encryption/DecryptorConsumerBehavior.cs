@@ -33,11 +33,14 @@ namespace Silverback.Messaging.Encryption
 
         private async Task<IRawInboundEnvelope> Decrypt(IRawInboundEnvelope envelope)
         {
-            if (envelope.Endpoint.Encryption != null)
+            if (envelope.Endpoint.Encryption != null && 
+                !envelope.Headers.Contains(DefaultMessageHeaders.Decrypted))
             {
                 envelope.RawMessage = await _factory
                     .GetDecryptor(envelope.Endpoint.Encryption)
                     .TransformAsync(envelope.RawMessage, envelope.Headers);
+                
+                envelope.Headers.Add(DefaultMessageHeaders.Decrypted, true);
             }
 
             return envelope;

@@ -14,7 +14,6 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.ErrorHandling
 {
-    // TODO: Test
     public class ErrorPolicyHelper
     {
         private readonly ILogger<ErrorPolicyHelper> _logger;
@@ -43,21 +42,31 @@ namespace Silverback.Messaging.ErrorHandling
             while (true)
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                var result = await HandleMessages(
-                    context,
-                    scope.ServiceProvider,
-                    messagesHandler,
-                    rollbackHandler,
-                    errorPolicy,
-                    attempt);
 
-                if (result.IsSuccessful || result.Action == ErrorAction.Skip)
+                try
                 {
-                    await commitHandler(context, scope.ServiceProvider);
-                    return;
-                }
+                    var result = await HandleMessages(
+                        context,
+                        scope.ServiceProvider,
+                        messagesHandler,
+                        rollbackHandler,
+                        errorPolicy,
+                        attempt);
 
-                attempt++;
+                    if (result.IsSuccessful || result.Action == ErrorAction.Skip)
+                    {
+                        await commitHandler(context, scope.ServiceProvider);
+                        return;
+                    }
+
+                    attempt++;
+                }
+                catch (Exception ex)
+                {
+                    await rollbackHandler(context, scope.ServiceProvider, ex);
+
+                    throw;
+                }
             }
         }
 
@@ -92,8 +101,6 @@ namespace Silverback.Messaging.ErrorHandling
             {
                 _messageLogger.LogProcessingError(_logger, context.Envelopes, ex);
 
-                await rollbackHandler(context, serviceProvider, ex);
-
                 if (errorPolicy == null)
                     throw;
 
@@ -106,6 +113,14 @@ namespace Silverback.Messaging.ErrorHandling
 
                 if (action == ErrorAction.StopConsuming)
                     throw;
+
+                // Rollback database transactions only (ignore offsets)
+                await rollbackHandler(
+                    new ConsumerPipelineContext(
+                        context.Envelopes,
+                        context.Consumer,
+                        Enumerable.Empty<IOffset>()),
+                    serviceProvider, ex);
 
                 return MessageHandlerResult.Error(action);
             }

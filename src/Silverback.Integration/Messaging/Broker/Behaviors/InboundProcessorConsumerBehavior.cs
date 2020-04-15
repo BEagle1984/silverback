@@ -92,11 +92,11 @@ namespace Silverback.Messaging.Broker.Behaviors
 
             private async Task Commit(ConsumerPipelineContext context, IServiceProvider serviceProvider)
             {
-                var offsets = context.Envelopes.Select(envelope => envelope.Offset).ToList();
-
                 await serviceProvider.GetRequiredService<IPublisher>()
                     .PublishAsync(new ConsumingCompletedEvent(context.Envelopes));
-                await _context.Consumer.Commit(offsets);
+
+                if (context.CommitOffsets.Any())
+                    await _context.Consumer.Commit(context.CommitOffsets);
             }
 
             private async Task Rollback(
@@ -104,11 +104,11 @@ namespace Silverback.Messaging.Broker.Behaviors
                 IServiceProvider serviceProvider,
                 Exception exception)
             {
-                var offsets = context.Envelopes.Select(envelope => envelope.Offset).ToList();
-
-                await _context.Consumer.Rollback(offsets);
                 await serviceProvider.GetRequiredService<IPublisher>()
                     .PublishAsync(new ConsumingAbortedEvent(context.Envelopes, exception));
+
+                if (context.CommitOffsets.Any())
+                    await _context.Consumer.Rollback(context.CommitOffsets);
             }
         }
     }

@@ -8,15 +8,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
-namespace Silverback.Tests.Integration.E2E
+namespace Silverback.Tests.Integration.E2E.Broker
 {
-    [Collection("StaticInMemory")]
+    [Trait("Category", "E2E")]
     public class OutboundRoutingTests
     {
         private readonly ServiceProvider _serviceProvider;
@@ -33,7 +32,6 @@ namespace Silverback.Tests.Integration.E2E
                 .UseModel()
                 .WithConnectionToMessageBroker(options => options
                     .AddInMemoryBroker()
-                    .AddChunkStore<InMemoryChunkStore>()
                     .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                     .AddSingletonOutboundRouter<TestPrioritizedOutboundRouter>())
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
@@ -42,12 +40,10 @@ namespace Silverback.Tests.Integration.E2E
 
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
-            
-            InMemoryChunkStore.Clear();
         }
 
         [Fact]
-        public async Task E2E_OutboundRouting_StaticSingleEndpoint()
+        public async Task StaticSingleEndpoint_RoutedCorrectly()
         {
             _configurator.Connect(endpoints => endpoints
                 .AddOutbound<TestEventOne>(
@@ -72,7 +68,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_OutboundRouting_StaticBroadcasting()
+        public async Task StaticBroadcast_RoutedCorrectly()
         {
             _configurator.Connect(endpoints => endpoints
                 .AddOutbound<TestEventOne>(
@@ -94,7 +90,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_OutboundRouting_DynamicCustomRouting()
+        public async Task DynamicCustomRouting_RoutedCorrectly()
         {
             _configurator.Connect(endpoints => endpoints
                 .AddOutbound<TestPrioritizedCommand, TestPrioritizedOutboundRouter>());

@@ -26,7 +26,7 @@ namespace Silverback.Messaging.LargeMessages
                 await InvokeNext(context, next, firstChunkEnvelope);
                 await chunks.Skip(1).ForEachAsync(chunkEnvelope =>
                 {
-                    chunkEnvelope.Headers.Add(DefaultMessageHeaders.FirstChunkOffset, firstChunkEnvelope.Offset.Value);
+                    chunkEnvelope.Headers.Add(DefaultMessageHeaders.FirstChunkOffset, firstChunkEnvelope.Offset?.Value);
                     return InvokeNext(context, next, chunkEnvelope);
                 });
             }
@@ -79,7 +79,7 @@ namespace Silverback.Messaging.LargeMessages
         private Task InvokeNext(
             ProducerPipelineContext context,
             ProducerBehaviorHandler next,
-            IOutboundEnvelope chunkEnvelope) => 
+            IOutboundEnvelope chunkEnvelope) =>
             next(new ProducerPipelineContext(chunkEnvelope, context.Producer));
 
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.ChunkSplitter;

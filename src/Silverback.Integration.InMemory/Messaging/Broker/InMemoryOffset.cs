@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Silverback.Messaging.Broker
 {
     /// <inheritdoc cref="IOffset" />
-    public class InMemoryOffset : IOffset
+    public class InMemoryOffset : IComparableOffset
     {
         public InMemoryOffset(string key, int offset)
         {
@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Broker
         public int Offset { get; }
 
         public string ToLogString() => Offset.ToString();
-        
+
         public int CompareTo(InMemoryOffset other)
         {
             if (ReferenceEquals(this, other)) return 0;

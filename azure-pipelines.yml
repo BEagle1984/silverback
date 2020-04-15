@@ -33,7 +33,7 @@ steps:
       targetType: 'inline'
       script: |
         cd nuget
-        ./Update.ps1 -l
+        ./Update.ps1 --no-rebuild
         cd ..
   # Build and test
   - script: dotnet build Silverback.sln --configuration $(buildConfiguration)
@@ -43,11 +43,13 @@ steps:
   # Publish results
   - task: PublishTestResults@2
     displayName: 'Publish test results'
+    condition: succeededOrFailed()
     inputs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish code coverage results'
+    condition: succeededOrFailed()
     inputs:
       summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml
       codecoverageTool: cobertura

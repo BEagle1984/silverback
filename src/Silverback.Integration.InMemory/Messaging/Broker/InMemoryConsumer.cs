@@ -24,15 +24,20 @@ namespace Silverback.Messaging.Broker
         {
         }
 
+        public event EventHandler<IReadOnlyCollection<IOffset>> CommitCalled;
+        public event EventHandler<IReadOnlyCollection<IOffset>> RollbackCalled;
+
         public override Task Commit(IReadOnlyCollection<IOffset> offsets)
         {
-            // Do nothing
+            CommitCalled?.Invoke(this, offsets);
+
             return Task.CompletedTask;
         }
 
         public override Task Rollback(IReadOnlyCollection<IOffset> offsets)
         {
-            // Do nothing
+            RollbackCalled?.Invoke(this, offsets);
+
             return Task.CompletedTask;
         }
 
@@ -45,7 +50,7 @@ namespace Silverback.Messaging.Broker
         }
 
         // TODO: Should pass the actual endpoint name via header (Endpoint.Name may contain a list of topics)
-        internal Task Receive(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset) =>
+        public Task Receive(byte[] message, IEnumerable<MessageHeader> headers, IOffset offset) =>
             HandleMessage(message, headers.ToList(), Endpoint.Name, offset);
     }
 }

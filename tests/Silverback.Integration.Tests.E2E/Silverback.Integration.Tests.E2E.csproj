@@ -12,7 +12,9 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
         <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
         <PackageReference Include="NSubstitute" Version="4.2.1" />
@@ -21,12 +23,13 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Silverback.Core.Model" Version="$(BaseVersion)" />
         <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
         <PackageReference Include="Silverback.Integration.InMemory" Version="$(BaseVersion)" />
+        <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="3.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
     </ItemGroup>
 

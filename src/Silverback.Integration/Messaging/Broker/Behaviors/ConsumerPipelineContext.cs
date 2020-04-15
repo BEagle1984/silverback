@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Linq;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker.Behaviors
@@ -11,10 +12,14 @@ namespace Silverback.Messaging.Broker.Behaviors
     /// </summary>
     public class ConsumerPipelineContext
     {
-        public ConsumerPipelineContext(IReadOnlyCollection<IRawInboundEnvelope> envelopes, IConsumer consumer)
+        public ConsumerPipelineContext(
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            IConsumer consumer,
+            IEnumerable<IOffset> commitOffsets = null)
         {
             Envelopes = envelopes;
             Consumer = consumer;
+            CommitOffsets = commitOffsets?.ToList() ?? envelopes.Select(envelope => envelope.Offset).ToList();
         }
 
         /// <summary>
@@ -26,5 +31,12 @@ namespace Silverback.Messaging.Broker.Behaviors
         ///     Gets the instance of <see cref="IConsumer" /> that triggered this pipeline.
         /// </summary>
         public IConsumer Consumer { get; }
+
+        /// <summary>
+        ///     Gets the collection of <see cref="IOffset" /> that will be committed if the messages are successfully
+        ///     processed. The collection is initialized with the offsets of all messages being consumed in this
+        ///     pipeline but can be modified if the commit needs to be delayed or manually controlled.
+        /// </summary>
+        public List<IOffset> CommitOffsets { get; }
     }
 }

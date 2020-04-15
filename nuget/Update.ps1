@@ -1,7 +1,7 @@
 ﻿$repositoryLocation = "."
 [bool]$global:clearCache = $FALSE
-[bool]$global:build = $TRUE
 [bool]$global:restorePackagesAfterwards = $TRUE
+[bool]$global:rebuildSolutionsAfterwards = $TRUE
 $global:buildConfiguration = "Release"
 
 function Check-Location()
@@ -28,17 +28,13 @@ function Check-Args([string[]]$argsArray)
         {
            $global:clearCache = $TRUE
         }
-        elseif ($arg -eq "--no-build")
-        {
-           $global:build = $FALSE
-        }
-        elseif ($arg -eq "--build-solution" -Or $arg -eq "-s")
-        {
-           $global:buildSolution = $TRUE
-        }
         elseif ($arg -eq "--no-restore")
         {
             $global:restorePackagesAfterwards = $FALSE
+        }
+        elseif ($arg -eq "--no-rebuild")
+        {
+            $global:rebuildSolutionsAfterwards = $FALSE
         }
     }
 }
@@ -62,27 +58,28 @@ function Get-Sources()
     return $sources
 }
 
-function Build()
+function Pack-All()
 {
-    if ($global:build)
+    foreach ($source in Get-Sources)
     {
-        foreach ($source in Get-Sources)
+        $name = $source[0]
+
+        Write-Host "Packing $name ($global:buildConfiguration)...`n" -ForegroundColor Yellow
+
+        foreach ($sourcePath in $source[1])
         {
-            $name = $source[0]
-
-            Write-Host "Building $name ($global:buildConfiguration)...`n" -ForegroundColor Yellow
-
-            foreach ($sourcePath in $source[1])
-            {
-                dotnet pack -c $global:buildConfiguration -v q $sourcePath/.
-            }
-
+            Write-Host "Building..."
+            dotnet build -c $global:buildConfiguration -v q $sourcePath/. --no-incremental
             Write-Host ""
-
-            Copy-Package $source
-
-            Write-Separator
+            Write-Host "Packing..."
+            dotnet pack -c $global:buildConfiguration -v q $sourcePath/. --no-build
         }
+
+        Write-Host ""
+
+        Copy-Package $source
+
+        Write-Separator
     }
 }
 
@@ -243,19 +240,31 @@ function Delete-Cache([string]$name)
     Write-Separator
 }
 
-function Restore()
+function Rebuild-All()
 {
     if ($global:restorePackagesAfterwards -eq $false)
     {
         return
     }
 
-    Write-Host "Restoring nuget packages in Silverback.sln..." -ForegroundColor Yellow
-    dotnet restore ../Silverback.sln
-    Write-Host "Restoring nuget packages in Silverback.Examples.sln..." -ForegroundColor Yellow
-    dotnet restore ../samples/Examples/Silverback.Examples.sln
+    RebuildSolution "Silverback.sln" "../Silverback.sln"
+    RebuildSolution "Silverback.Examples.sln" "../samples/Examples/Silverback.Examples.sln"
 
     Write-Separator
+}
+
+function RebuildSolution([string]$solutionName, [string]$solutionPath)
+{
+    if ($global:rebuildSolutionsAfterwards -eq $true)
+    {
+        Write-Host "Rebuilding $solutionName..." -ForegroundColor Yellow
+        dotnet build $solutionPath --no-incremental
+    }
+    else
+    {
+        Write-Host "Restoring nuget packages in $solutionName..." -ForegroundColor Yellow
+        dotnet restore $solutionPath
+    }
 }
 
 function Write-Separator()
@@ -263,12 +272,19 @@ function Write-Separator()
     Write-Host "`n##################################################################`n" -ForegroundColor Yellow
 }
 
+$stopwatch = [system.diagnostics.stopwatch]::StartNew()
+
 Write-Separator
 
 Check-Args $args
 Check-Location
 Delete-All
 Delete-Cache
-Build
-Restore
+Pack-All
+Rebuild-All
 Show-Summary
+
+$stopwatch.Stop()
+
+Write-Host "Elapsed time $($stopwatch.Elapsed)"
+Write-Host "" 

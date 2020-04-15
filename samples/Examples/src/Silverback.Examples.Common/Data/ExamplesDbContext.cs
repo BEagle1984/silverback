@@ -30,6 +30,7 @@ namespace Silverback.Examples.Common.Data
         public DbSet<OutboundMessage> OutboundMessages { get; set; }
         public DbSet<InboundMessage> InboundMessages { get; set; }
         public DbSet<StoredOffset> StoredOffsets { get; set; }
+        public DbSet<TemporaryMessageChunk> Chunks { get; set; }
         public DbSet<Lock> Locks { get; set; }
 
         public DbSet<Customer> Customers { get; set; }

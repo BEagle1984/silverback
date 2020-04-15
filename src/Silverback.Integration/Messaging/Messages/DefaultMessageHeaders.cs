@@ -48,12 +48,6 @@ namespace Silverback.Messaging.Messages
         public const string FirstChunkOffset = "x-first-chunk-offset";
 
         /// <summary>
-        ///     Used internally to the consumer pipeline to signal that the content of that chunk was replaced with
-        ///     the full message.
-        /// </summary>
-        internal const string ChunkAggregated = "x-chunk-aggregated";
-
-        /// <summary>
         ///     The unique id assigned to the messages batch, used mostly for tracing, when batch processing is enabled.
         /// </summary>
         public const string BatchId = "x-batch-id";
@@ -94,5 +88,17 @@ namespace Silverback.Messaging.Messages
         ///     The MIME type of a binary file. See <see cref="IBinaryFileMessage" />.
         /// </summary>
         public const string ContentType = "content-type";
+        
+        /// <summary>
+        ///     Used internally by the consumer pipeline to signal that the content of that chunk was replaced with
+        ///     the full message.
+        /// </summary>
+        internal const string ChunksAggregated = "x-internal-chunks-aggregated";
+        
+        /// <summary>
+        ///     Used internally by the consumer pipeline to signal that the message has been decrypted already.
+        /// </summary>
+        internal const string Decrypted = "x-internal-dectypted";
+
     }
 }

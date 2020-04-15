@@ -19,9 +19,9 @@ using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.E2E
+namespace Silverback.Tests.Integration.E2E.Broker
 {
-    [Collection("StaticInMemory")]
+    [Trait("Category", "E2E"),Collection("StaticInMemory")]
     public class BinaryFileMessageTests
     {
         private static readonly byte[] AesEncryptionKey =
@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_BrokerBehaviors_BinaryFileMessage()
+        public async Task DefaultSettings_ProducedAndConsumed()
         {
             var message = new BinaryFileMessage
             {
@@ -84,7 +84,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_BrokerBehaviors_InheritedBinaryFileMessageWithCustomHeaders()
+        public async Task InheritedBinaryFileMessage_ProducedAndConsumed()
         {
             var message = new InheritedBinaryFileMessage
             {
@@ -115,7 +115,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_BrokerBehaviors_BinaryFileMessageWithoutHeaders()
+        public async Task BinaryFileMessageWithoutHeaders_ProducedAndConsumed()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
 
@@ -142,7 +142,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_BrokerBehaviors_InheritedBinaryWithoutTypeHeader()
+        public async Task InheritedBinaryWithoutTypeHeader_ProducedAndConsumed()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
 
@@ -176,7 +176,7 @@ namespace Silverback.Tests.Integration.E2E
         }
 
         [Fact]
-        public async Task E2E_BrokerBehaviors_EncryptionAndChunkingOfBinaryFileMessage()
+        public async Task EncryptionAndChunking_EncryptedAndChunkedThenAggregatedAndDecrypted()
         {
             var message = new BinaryFileMessage
             {

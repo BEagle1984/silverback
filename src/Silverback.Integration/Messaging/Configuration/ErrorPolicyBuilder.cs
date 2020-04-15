@@ -10,7 +10,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Configuration
 {
-    public class ErrorPolicyBuilder // TODO: Test
+    public class ErrorPolicyBuilder
     {
         private readonly ILoggerFactory _loggerFactory;
         private readonly IServiceProvider _serviceProvider;

@@ -171,7 +171,6 @@ namespace Silverback.Messaging.Configuration
 
         #region AddOutboundWorker
 
-        // TODO: Test
         public IBrokerOptionsBuilder AddOutboundWorker(
             Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
             TimeSpan? interval = null,
@@ -180,7 +179,6 @@ namespace Silverback.Messaging.Configuration
             AddOutboundWorker(outboundQueueConsumerFactory, new DistributedLockSettings(), interval,
                 enforceMessageOrder, readPackageSize);
 
-        // TODO: Test
         public IBrokerOptionsBuilder AddOutboundWorker(
             Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
             DistributedLockSettings distributedLockSettings,
