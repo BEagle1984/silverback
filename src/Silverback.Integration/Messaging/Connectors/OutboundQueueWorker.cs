@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Connectors
 {
     public class OutboundQueueWorker : IOutboundQueueWorker
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IBrokerCollection _brokerCollection;
         private readonly MessageLogger _messageLogger;
         private readonly ILogger<OutboundQueueWorker> _logger;
@@ -25,14 +25,14 @@ namespace Silverback.Messaging.Connectors
         private readonly bool _enforceMessageOrder;
 
         public OutboundQueueWorker(
-            IServiceProvider serviceProvider,
+            IServiceScopeFactory serviceScopeFactory,
             IBrokerCollection brokerCollection,
             ILogger<OutboundQueueWorker> logger,
             MessageLogger messageLogger,
             bool enforceMessageOrder,
             int readPackageSize)
         {
-            _serviceProvider = serviceProvider;
+            _serviceScopeFactory = serviceScopeFactory;
             _brokerCollection = brokerCollection;
             _messageLogger = messageLogger;
             _logger = logger;
@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Connectors
         {
             try
             {
-                using var scope = _serviceProvider.CreateScope();
+                using var scope = _serviceScopeFactory.CreateScope();
                 await ProcessQueue(scope.ServiceProvider.GetRequiredService<IOutboundQueueConsumer>(), stoppingToken);
             }
             catch (Exception ex)

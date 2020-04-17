@@ -98,30 +98,43 @@ public class Startup
 {% endhighlight %}
 </figure>
 
-#### Extensibility
+#### Custom store
 
-You can easily implement your own storage for the offsets or the messages, simply creating your own `IOffsetStore` or `IInboundLog`.
-It is then suggested to create an extension method for the `BrokerOptionsBuilder` to register your own types.
+You can easily implement your own storage for the offsets or the messages, simply creating your own `IOffsetStore` or `IInboundLog` and plugging them in.
 
-```csharp
-public static BrokerOptionsBuilder AddMyCustomLoggedInboundConnector(
-    this BrokerOptionsBuilder builder)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    builder.AddInboundConnector<LoggedInboundConnector>();
-    builder.Services.AddScoped<IInboundLog, MyCustomInboundLog>();
-
-    return builder;
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddLoggedInboundConnector<SomeCustomInboundLog>());
+    }
 }
+{% endhighlight %}
+</figure>
 
-public static BrokerOptionsBuilder AddMyCustomOffsetStoredInboundConnector(
-    this BrokerOptionsBuilder builder)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    builder.AddInboundConnector<OffsetStoredInboundConnector>();
-    builder.Services.AddScoped<IOffsetStore, MyCustomOffsetStore>();
-
-    return builder;
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddOffsetStoredInboundConnector<SomeCustomOffsetStore>());
+    }
 }
-```
+{% endhighlight %}
+</figure>
 
 ## Error handling
 

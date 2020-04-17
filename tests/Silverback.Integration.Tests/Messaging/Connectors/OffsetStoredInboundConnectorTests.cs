@@ -18,7 +18,6 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
-    [Collection("StaticInMemory")]
     [SuppressMessage("ReSharper", "EmptyGeneralCatchClause")]
     public class OffsetStoredInboundConnectorTests
     {
@@ -51,8 +50,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 serviceProvider.GetRequiredService<ILogger<OffsetStoredInboundConnector>>(),
                 serviceProvider.GetRequiredService<MessageLogger>());
             _scopedServiceProvider = serviceProvider.CreateScope().ServiceProvider;
-
-            InMemoryOffsetStore.Clear();
         }
 
         [Fact]
@@ -61,7 +58,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne(),
                 offset: new TestOffset("a", "1"));
             await consumer.TestHandleMessage(new TestEventTwo(),
@@ -82,7 +79,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(e1, offset: o1);
             await consumer.TestHandleMessage(e2, offset: o2);
             await consumer.TestHandleMessage(e1, offset: o1);
@@ -103,7 +100,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(e, offset: o1);
             await consumer.TestHandleMessage(e, offset: o2);
             await consumer.TestHandleMessage(e, offset: o1);
@@ -125,14 +122,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(e, offset: o1);
             await consumer.TestHandleMessage(e, offset: o2);
             await consumer.TestHandleMessage(e, offset: o3);
             await consumer.TestHandleMessage(e, offset: o2);
             await consumer.TestHandleMessage(e, offset: o1);
 
-            _scopedServiceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>().Count.Should().Be(2);
+            _scopedServiceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>()
+                .CommittedItemsCount.Should().Be(2);
         }
 
         [Fact]
@@ -152,7 +150,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             });
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(e, offset: o1);
             await consumer.TestHandleMessage(e, offset: o2);
             await consumer.TestHandleMessage(e, offset: o3);
@@ -180,14 +178,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             });
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(e, offset: o1);
             await consumer.TestHandleMessage(e, offset: o2);
             await consumer.TestHandleMessage(e, offset: o3);
             await consumer.TestHandleMessage(e, offset: o2);
             await consumer.TestHandleMessage(e, offset: o1);
 
-            _scopedServiceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>().Count.Should().Be(2);
+            _scopedServiceProvider.GetRequiredService<IOffsetStore>().As<InMemoryOffsetStore>()
+                .CommittedItemsCount.Should().Be(2);
         }
 
         [Fact]
@@ -211,7 +210,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _testSubscriber.FailCondition = m => m is TestEventOne m2 && m2.Content == "FAIL";
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
 
             try
             {
@@ -272,8 +271,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _testSubscriber.FailCondition = m => m is TestEventOne m2 && m2.Content == "FAIL";
 
-            var consumer1 = _broker.Consumers[0];
-            var consumer2 = _broker.Consumers[1];
+            var consumer1 = (TestConsumer) _broker.Consumers[0];
+            var consumer2 = (TestConsumer) _broker.Consumers[1];
 
             var tasks = new[]
             {

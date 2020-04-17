@@ -8,11 +8,11 @@ using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 {
-    [Collection("StaticInMemory")]
     public class InMemoryOutboundQueueTests
     {
         private readonly InMemoryOutboundQueue _queue;
@@ -22,8 +22,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
         public InMemoryOutboundQueueTests()
         {
-            _queue = new InMemoryOutboundQueue();
-            InMemoryOutboundQueue.Clear();
+            _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
         }
 
         [Fact]

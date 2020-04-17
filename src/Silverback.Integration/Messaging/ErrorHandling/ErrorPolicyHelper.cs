@@ -38,6 +38,7 @@ namespace Silverback.Messaging.ErrorHandling
             ConsumerBehaviorErrorHandler rollbackHandler)
         {
             var attempt = GetAttemptNumber(context.Envelopes);
+            var offsets = context.CommitOffsets;
 
             while (true)
             {
@@ -60,6 +61,10 @@ namespace Silverback.Messaging.ErrorHandling
                     }
 
                     attempt++;
+
+                    // Reset the offsets at each retry because they might have been modified
+                    // to handle commit and rollback (especially by the ChunkAggregatorConsumerBehavior)
+                    context.CommitOffsets = offsets;
                 }
                 catch (Exception ex)
                 {
@@ -115,12 +120,8 @@ namespace Silverback.Messaging.ErrorHandling
                     throw;
 
                 // Rollback database transactions only (ignore offsets)
-                await rollbackHandler(
-                    new ConsumerPipelineContext(
-                        context.Envelopes,
-                        context.Consumer,
-                        Enumerable.Empty<IOffset>()),
-                    serviceProvider, ex);
+                context.CommitOffsets = null;
+                await rollbackHandler(context, serviceProvider, ex);
 
                 return MessageHandlerResult.Error(action);
             }

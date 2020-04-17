@@ -9,14 +9,6 @@ namespace Silverback.Background
 {
     public interface IDistributedLockManager
     {
-        Task<DistributedLock> Acquire(
-            string resourceName,
-            string uniqueId,
-            TimeSpan? acquireTimeout = null,
-            TimeSpan? acquireRetryInterval = null,
-            TimeSpan? heartbeatTimeout = null,
-            CancellationToken cancellationToken = default);
-
         Task<DistributedLock> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default);
 
         Task<bool> CheckIsStillLocked(DistributedLockSettings settings);

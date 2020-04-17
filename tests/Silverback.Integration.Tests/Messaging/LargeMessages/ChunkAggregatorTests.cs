@@ -11,13 +11,16 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.LargeMessages
 {
     public class ChunkAggregatorTests
     {
-        private readonly IChunkStore _store = new InMemoryChunkStore();
+        private readonly IChunkStore _store =
+            new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+
         private readonly ConsumerTransactionManager _transactionManager = new ConsumerTransactionManager();
         private readonly IMessageSerializer _serializer = new JsonMessageSerializer();
 

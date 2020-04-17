@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 .UseModel()
                 .WithConnectionToMessageBroker(options => options
                     .AddInMemoryBroker()
-                    .AddDbChunkStore())
+                    .AddDbChunkStore(retention: TimeSpan.FromMilliseconds(250)))
                 .UseDbContext<TestDbContext>()
                 .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
@@ -144,6 +144,67 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
             committedOffsets.Count.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task IncompleteMessages_CleanupAfterDefinedTimeout()
+        {
+            var committedOffsets = new List<IOffset>();
+
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+                message,
+                new MessageHeaderCollection(),
+                MessageSerializationContext.Empty);
+
+            var broker = _configurator.Connect(endpoints => endpoints
+                .AddInbound(
+                    new KafkaConsumerEndpoint("test-e2e"))).First();
+
+            ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
+                (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
+
+            var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
+
+            await producer.ProduceAsync(rawMessage.Take(10).ToArray(), new[]
+            {
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+            });
+            await producer.ProduceAsync(rawMessage.Skip(10).Take(10).ToArray(), new[]
+            {
+                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+            });
+
+            var chunkStore = _serviceProvider.GetRequiredService<IChunkStore>();
+            (await chunkStore.CountChunks("123")).Should().Be(2);
+
+            await Task.Delay(250);
+
+            await producer.ProduceAsync(rawMessage.Take(10).ToArray(), new[]
+            {
+                new MessageHeader(DefaultMessageHeaders.MessageId, "456"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+            });
+            await producer.ProduceAsync(rawMessage.Skip(10).Take(10).ToArray(), new[]
+            {
+                new MessageHeader(DefaultMessageHeaders.MessageId, "456"),
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+            });
+
+            await _serviceProvider.GetRequiredService<ChunkStoreCleaner>().Cleanup();
+
+            (await chunkStore.CountChunks("123")).Should().Be(0);
+            (await chunkStore.CountChunks("456")).Should().Be(2);
         }
 
         public void Dispose()

@@ -7,8 +7,6 @@ namespace Silverback.Messaging.Broker.Behaviors
     ///     Can be used to build an instance of the actual <see cref="IBrokerBehavior" /> per each
     ///     <see cref="IProducer" /> or <see cref="IConsumer" /> that gets instantiated.
     /// </summary>
-    /// <seealso cref="IProducerBehaviorFactory" />
-    /// <seealso cref="IConsumerBehaviorFactory" />
     public interface IBrokerBehaviorFactory<TBehavior> : IBrokerBehavior
         where TBehavior : IBrokerBehavior
     {

@@ -7,21 +7,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
     /// <summary>
     ///     An outbound queue persisted in memory. Note that writing in the queue is thread-safe but
     ///     reading is not.
+    ///     Implements both <see cref="IOutboundQueueProducer" /> and <see cref="IOutboundQueueConsumer" />.
     /// </summary>
-    /// <seealso cref="IOutboundQueueProducer" />
-    /// <seealso cref="IOutboundQueueConsumer" />
     public class InMemoryOutboundQueue
-        : TransactionalList<QueuedMessage>,
-            IOutboundQueueProducer,
-            IOutboundQueueConsumer
+        : TransactionalList<QueuedMessage>, IOutboundQueueProducer, IOutboundQueueConsumer
     {
-        #region Writer
+        public InMemoryOutboundQueue(TransactionalListSharedItems<QueuedMessage> sharedItems)
+            : base(sharedItems)
+        {
+        }
+
+        #region Producer
 
         public Task Enqueue(IOutboundEnvelope envelope)
         {
@@ -36,26 +39,16 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        public new Task Commit()
-        {
-            base.Commit();
-            return Task.CompletedTask;
-        }
-
-        public new Task Rollback()
-        {
-            base.Rollback();
-            return Task.CompletedTask;
-        }
-
         #endregion
 
-        #region Reader
+        #region Consumer
+
+        public Task<int> GetLength() => Task.FromResult(CommittedItemsCount);
 
         public Task<TimeSpan> GetMaxAge() => Task.FromResult(TimeSpan.Zero);
 
         public Task<IReadOnlyCollection<QueuedMessage>> Dequeue(int count) =>
-            Task.FromResult((IReadOnlyCollection<QueuedMessage>) Entries.Take(count).ToList());
+            Task.FromResult((IReadOnlyCollection<QueuedMessage>) Items.Take(count).Select(item => item.Entry).ToList());
 
         public Task Retry(QueuedMessage queuedMessage)
         {

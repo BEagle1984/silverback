@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -24,7 +25,10 @@ namespace Silverback.Tests.Integration.E2E.Connectors
     public class OffsetStoredInboundConnectorTests : IDisposable
     {
         private readonly SqliteConnection _connection;
+
+        [SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable")]
         private readonly ServiceProvider _serviceProvider;
+
         private readonly BusConfigurator _configurator;
         private readonly OutboundInboundSubscriber _subscriber;
 

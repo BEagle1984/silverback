@@ -159,7 +159,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="builder"></param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
         public static ISilverbackBuilder AddSingletonBrokerBehavior(
             this ISilverbackBuilder builder,
             IBrokerBehavior implementationInstance)
@@ -223,7 +222,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="builder"></param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
         public static ISilverbackBuilder AddSingletonOutboundRouter(
             this ISilverbackBuilder builder,
             IOutboundRouter implementationInstance)

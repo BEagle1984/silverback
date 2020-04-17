@@ -48,36 +48,33 @@ namespace Silverback.Messaging.Serialization
             object message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
-            await SerializeAsync<TMessage>(message, messageHeaders, MessageComponentType.Value, context);
+            await SerializeAsync<TMessage>(message, MessageComponentType.Value, context);
 
         public async Task<object> DeserializeAsync(
             byte[] message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
-            await DeserializeAsync<TMessage>(message, messageHeaders, MessageComponentType.Value, context);
+            await DeserializeAsync<TMessage>(message, MessageComponentType.Value, context);
 
         public byte[] SerializeKey(
             string key,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             AsyncHelper.RunSynchronously(() =>
-                SerializeAsync<string>(key, messageHeaders, MessageComponentType.Key, context));
+                SerializeAsync<string>(key, MessageComponentType.Key, context));
 
         public string DeserializeKey(
             byte[] key,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             AsyncHelper.RunSynchronously(() =>
-                DeserializeAsync<string>(key, messageHeaders, MessageComponentType.Key, context));
+                DeserializeAsync<string>(key, MessageComponentType.Key, context));
 
         private async Task<byte[]> SerializeAsync<TValue>(
             object message,
-            MessageHeaderCollection messageHeaders,
             MessageComponentType componentType,
             MessageSerializationContext context)
         {
-            if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
-
             switch (message)
             {
                 case null:
@@ -95,12 +92,9 @@ namespace Silverback.Messaging.Serialization
 
         private async Task<TValue> DeserializeAsync<TValue>(
             byte[] message,
-            MessageHeaderCollection messageHeaders,
             MessageComponentType componentType,
             MessageSerializationContext context)
         {
-            if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
-
             if (message == null || message.Length == 0)
                 return default;
 

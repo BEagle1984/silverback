@@ -11,6 +11,10 @@ using Silverback.Infrastructure;
 
 namespace Silverback.Messaging.LargeMessages
 {
+    /// <summary>
+    ///     Stores the message chunks into the database, waiting for the full message to be available.
+    /// </summary>
+    /// <inheritdoc cref="IChunkStore" />
     public class DbChunkStore : RepositoryBase<TemporaryMessageChunk>, IChunkStore
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
@@ -19,6 +23,8 @@ namespace Silverback.Messaging.LargeMessages
             : base(dbContext)
         {
         }
+
+        public bool HasNotPersistedChunks { get; } = false;
 
         public async Task Store(string messageId, int chunkId, int chunksCount, byte[] content)
         {
@@ -67,12 +73,12 @@ namespace Silverback.Messaging.LargeMessages
         }
 
         public Task<int> CountChunks(string messageId) =>
-            DbSet.AsQueryable().CountAsync(c => c.OriginalMessageId == messageId);
+            DbSet.AsQueryable().CountAsync(chunk => chunk.OriginalMessageId == messageId);
 
         public Task<Dictionary<int, byte[]>> GetChunks(string messageId) =>
             DbSet.AsQueryable()
-                .Where(c => c.OriginalMessageId == messageId)
-                .ToDictionaryAsync(c => c.ChunkId, c => c.Content);
+                .Where(chunk => chunk.OriginalMessageId == messageId)
+                .ToDictionaryAsync(chunk => chunk.ChunkId, chunk => chunk.Content);
 
         public async Task Cleanup(string messageId)
         {
@@ -88,8 +94,8 @@ namespace Silverback.Messaging.LargeMessages
                 {
                     entities = (await DbSet
                             .AsQueryable()
-                            .Where(c => c.OriginalMessageId == messageId)
-                            .Select(c => c.ChunkId)
+                            .Where(chunk => chunk.OriginalMessageId == messageId)
+                            .Select(chunk => chunk.ChunkId)
                             .ToListAsync())
                         .Select(chunkId => new TemporaryMessageChunk
                             { OriginalMessageId = messageId, ChunkId = chunkId })
@@ -102,6 +108,22 @@ namespace Silverback.Messaging.LargeMessages
             {
                 _semaphore.Release();
             }
+        }
+
+        public async Task Cleanup(DateTime threshold)
+        {
+            var expiredEntities = (await DbSet
+                    .AsQueryable()
+                    .Where(chunk => chunk.Received < threshold)
+                    .Select(chunk => new { chunk.ChunkId, chunk.OriginalMessageId })
+                    .ToListAsync())
+                .Select(chunk => new TemporaryMessageChunk
+                    { OriginalMessageId = chunk.OriginalMessageId, ChunkId = chunk.ChunkId })
+                .ToList();
+
+            DbSet.RemoveRange(expiredEntities);
+
+            await DbContext.SaveChangesAsync();
         }
     }
 }

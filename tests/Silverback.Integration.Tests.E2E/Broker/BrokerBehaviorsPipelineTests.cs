@@ -23,7 +23,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Broker
 {
-    [Trait("Category", "E2E"), Collection("StaticInMemory")]
+    [Trait("Category", "E2E")]
     public class BrokerBehaviorsPipelineTests
     {
         private static readonly byte[] AesEncryptionKey =
@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .UseModel()
                 .WithConnectionToMessageBroker(options => options
                     .AddInMemoryBroker()
-                    .AddChunkStore<InMemoryChunkStore>())
+                    .AddInMemoryChunkStore())
                 .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
 
@@ -56,8 +56,6 @@ namespace Silverback.Tests.Integration.E2E.Broker
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
-
-            InMemoryChunkStore.Clear();
         }
 
         [Fact]
@@ -99,10 +97,6 @@ namespace Silverback.Tests.Integration.E2E.Broker
             {
                 Content = "Hello E2E!"
             };
-            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
             var tryCount = 0;
 
             _configurator

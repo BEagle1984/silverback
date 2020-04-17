@@ -44,9 +44,10 @@ namespace Silverback.Messaging
             Configuration.Validate();
         }
 
-        public override string GetUniqueConsumerGroupName() => (!string.IsNullOrEmpty(Configuration.GroupId))
-            ? Configuration.GroupId
-            : Name;
+        public override string GetUniqueConsumerGroupName() =>
+            !string.IsNullOrEmpty(Configuration.GroupId)
+                ? Configuration.GroupId
+                : Name;
 
         #region Equality
 

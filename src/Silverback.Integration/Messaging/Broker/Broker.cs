@@ -59,10 +59,10 @@ namespace Silverback.Messaging.Broker
 
         public Type ConsumerEndpointType { get; }
 
-        public IReadOnlyCollection<IProducer> Producers => _producers.Values.ToList();
+        public IReadOnlyList<IProducer> Producers => _producers.Values.ToList();
 
-        public IReadOnlyCollection<IConsumer> Consumers => _consumers;
-        
+        public IReadOnlyList<IConsumer> Consumers => _consumers.ToList();
+
         public virtual IProducer GetProducer(
             IProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors = null) =>

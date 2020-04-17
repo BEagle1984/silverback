@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -18,7 +17,6 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Configuration
 {
-    [Collection("StaticInMemory")]
     public class BusConfiguratorTests
     {
         private readonly IServiceCollection _services;
@@ -46,9 +44,6 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             _serviceProvider = null; // Creation deferred to after AddBroker() has been called
             _serviceScope = null;
-
-            InMemoryInboundLog.Clear();
-            InMemoryOutboundQueue.Clear();
         }
 
         [Fact]

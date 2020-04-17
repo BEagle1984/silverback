@@ -2,11 +2,15 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.LargeMessages
@@ -14,35 +18,101 @@ namespace Silverback.Messaging.LargeMessages
     /// <summary>
     ///     Temporary stores and aggregates the message chunks to rebuild the original message.
     /// </summary>
-    public class ChunkAggregatorConsumerBehavior : IConsumerBehavior, ISorted
+    public class ChunkAggregatorConsumerBehavior : IConsumerBehavior, ISorted, ISubscriber
     {
+        private readonly ConcurrentDictionary<IConsumer, List<IOffset>> _pendingOffsetsByConsumer;
+
+        public ChunkAggregatorConsumerBehavior()
+        {
+            _pendingOffsetsByConsumer = new ConcurrentDictionary<IConsumer, List<IOffset>>();
+        }
+
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
+            List<IOffset> pendingOffsets = null;
+            var chunkStore = serviceProvider.GetService<IChunkStore>();
+            if (chunkStore != null)
+                pendingOffsets = _pendingOffsetsByConsumer.GetOrAdd(context.Consumer, _ => new List<IOffset>());
+
             context.Envelopes = (await context.Envelopes.SelectAsync(envelope =>
                     AggregateIfNeeded(envelope, serviceProvider)))
                 .Where(envelope => envelope != null).ToList();
 
-            if (context.Envelopes.Any())
-                await next(context, serviceProvider);
+            try
+            {
+                if (context.Envelopes.Any())
+                    await next(context, serviceProvider);
+
+                if (chunkStore != null && chunkStore.HasNotPersistedChunks)
+                {
+                    if (context.CommitOffsets != null)
+                        pendingOffsets.AddRange(context.CommitOffsets);
+
+                    context.CommitOffsets = null;
+                }
+                else if (pendingOffsets != null && pendingOffsets.Any())
+                {
+                    if (context.CommitOffsets != null)
+                        pendingOffsets.AddRange(context.CommitOffsets);
+
+                    context.CommitOffsets = pendingOffsets.ToList(); // Intentional clone
+                    pendingOffsets.Clear();
+                }
+            }
+            catch (Exception)
+            {
+                // In case of exception all offsets must be rollback back (if a rollback takes place, so only
+                // after all the error policies are applied -> since the actual offset rollback is driven by
+                // the ErrorPolicyHelper the pendingOffsets list is not cleared yet)
+                if (pendingOffsets != null && pendingOffsets.Any())
+                {
+                    var clonedPendingOffsets = pendingOffsets.ToList();
+
+                    if (context.CommitOffsets != null)
+                        clonedPendingOffsets.AddRange(context.CommitOffsets);
+
+                    context.CommitOffsets = clonedPendingOffsets;
+                }
+
+                throw;
+            }
         }
 
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.ChunkAggregator;
+
+        public void OnRollback(ConsumingAbortedEvent message)
+        {
+            if (message.Context.CommitOffsets == null || !message.Context.CommitOffsets.Any())
+                return;
+
+            // Remove pending offsets when rolled back for real, just in case the consumer will be restarted
+            // (not yet possible!)
+            if (_pendingOffsetsByConsumer.TryGetValue(message.Context.Consumer, out var pendingOffsets))
+            {
+                pendingOffsets.RemoveAll(offset => message.Context.CommitOffsets.Contains(offset));
+            }
+        }
 
         private async Task<IRawInboundEnvelope> AggregateIfNeeded(
             IRawInboundEnvelope envelope,
             IServiceProvider serviceProvider)
         {
-            if (!envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex) ||
-                envelope.Headers.Contains(DefaultMessageHeaders.ChunksAggregated))
+            if (!envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex))
+                return envelope;
+
+            var chunkAggregator = serviceProvider.GetRequiredService<ChunkAggregator>();
+            if (envelope.Headers.Contains(DefaultMessageHeaders.ChunksAggregated))
             {
+                // If this is a retry the cleanup wasn't committed the run before
+                await chunkAggregator.Cleanup(envelope);
+
                 return envelope;
             }
 
-            var completeMessage =
-                await serviceProvider.GetRequiredService<ChunkAggregator>().AggregateIfComplete(envelope);
+            var completeMessage = await chunkAggregator.AggregateIfComplete(envelope);
 
             if (completeMessage == null)
                 return null;

@@ -21,7 +21,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Broker
 {
-    [Trait("Category", "E2E"),Collection("StaticInMemory")]
+    [Trait("Category", "E2E")]
     public class BinaryFileMessageTests
     {
         private static readonly byte[] AesEncryptionKey =
@@ -44,15 +44,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .UseModel()
                 .WithConnectionToMessageBroker(options => options
                     .AddInMemoryBroker()
-                    .AddChunkStore<InMemoryChunkStore>())
+                    .AddInMemoryChunkStore())
                 .AddSingletonBrokerBehavior<SpyBrokerBehavior>();
 
             _serviceProvider = services.BuildServiceProvider();
 
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
-
-            InMemoryChunkStore.Clear();
         }
 
         [Fact]

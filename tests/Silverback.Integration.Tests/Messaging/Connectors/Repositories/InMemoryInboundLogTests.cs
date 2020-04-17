@@ -7,19 +7,20 @@ using FluentAssertions;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 {
-    [Collection("StaticInMemory")]
     public class InMemoryInboundLogTests
     {
         private readonly InMemoryInboundLog _log;
 
         public InMemoryInboundLogTests()
         {
-            _log = new InMemoryInboundLog(new MessageIdProvider(new[] { new DefaultPropertiesMessageIdProvider() }));
-            InMemoryInboundLog.Clear();
+            _log = new InMemoryInboundLog(
+                new MessageIdProvider(new[] { new DefaultPropertiesMessageIdProvider() }),
+                new TransactionalListSharedItems<InMemoryInboundLogEntry>());
         }
 
         [Fact]

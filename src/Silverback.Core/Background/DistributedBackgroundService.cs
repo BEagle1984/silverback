@@ -10,11 +10,9 @@ using Microsoft.Extensions.Logging;
 namespace Silverback.Background
 {
     /// <summary>
-    ///     Extends the <seealso cref="Microsoft.Extensions.Hosting.BackgroundService" /> adding a distributed lock mechanism
-    ///     to prevent
-    ///     concurrent executions.
+    ///     Extends the <see cref="Microsoft.Extensions.Hosting.BackgroundService" /> adding a distributed lock
+    ///     mechanism to prevent concurrent executions.
     /// </summary>
-    /// <seealso cref="Microsoft.Extensions.Hosting.BackgroundService" />
     public abstract class DistributedBackgroundService : BackgroundService
     {
         private readonly DistributedLockSettings _distributedLockSettings;
@@ -35,13 +33,10 @@ namespace Silverback.Background
             IDistributedLockManager distributedLockManager,
             ILogger<DistributedBackgroundService> logger)
         {
-            _distributedLockSettings = distributedLockSettings ?? new DistributedLockSettings();
-            _distributedLockManager =
+            _distributedLockSettings = distributedLockSettings ?? new DistributedLockSettings(GetType().FullName);
+            _distributedLockManager = 
                 distributedLockManager ?? throw new ArgumentNullException(nameof(distributedLockManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            if (string.IsNullOrEmpty(_distributedLockSettings.ResourceName))
-                _distributedLockSettings.ResourceName = GetType().FullName;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)

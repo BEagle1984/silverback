@@ -15,12 +15,9 @@ namespace Silverback.Messaging.Connectors.Repositories
     // TODO: Test
     public class DbOutboundQueueConsumer : RepositoryBase<OutboundMessage>, IOutboundQueueConsumer
     {
-        private readonly bool _removeProduced;
-
-        public DbOutboundQueueConsumer(IDbContext dbContext, bool removeProduced)
+        public DbOutboundQueueConsumer(IDbContext dbContext)
             : base(dbContext)
         {
-            _removeProduced = removeProduced;
         }
 
         public async Task<TimeSpan> GetMaxAge()
@@ -62,11 +59,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                 throw new InvalidOperationException("A DbQueuedMessage is expected.");
 
             var entity = await DbSet.FindAsync(dbQueuedMessage.Id);
-
-            if (_removeProduced)
-                DbSet.Remove(entity);
-            else
-                entity.Produced = DateTime.UtcNow;
+            DbSet.Remove(entity);
 
             await DbContext.SaveChangesAsync();
         }

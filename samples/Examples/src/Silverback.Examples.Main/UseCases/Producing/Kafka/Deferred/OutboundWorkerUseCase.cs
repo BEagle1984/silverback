@@ -37,7 +37,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Deferred
                     .AddKafka()
                     .AddDbOutboundConnector()
                     .AddDbOutboundWorker(
-                        new DistributedLockSettings(
+                        distributedLockSettings: new DistributedLockSettings(
                             acquireRetryInterval: TimeSpan.FromSeconds(1),
                             heartbeatTimeout: TimeSpan.FromSeconds(10),
                             heartbeatInterval: TimeSpan.FromSeconds(1))));

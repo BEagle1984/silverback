@@ -16,6 +16,7 @@ namespace Silverback.Background
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
+        private static readonly IDistributedLockManager NullLockManager = new NullLockManager();
 
         public DbDistributedLockManager(IServiceProvider serviceProvider)
         {
@@ -23,21 +24,17 @@ namespace Silverback.Background
             _logger = serviceProvider.GetRequiredService<ILogger<DbDistributedLockManager>>();
         }
 
-        public Task<DistributedLock> Acquire(
-            string resourceName,
-            string uniqueId,
-            TimeSpan? acquireTimeout = null,
-            TimeSpan? acquireRetryInterval = null,
-            TimeSpan? heartbeatTimeout = null,
-            CancellationToken cancellationToken = default) =>
-            Acquire(new DistributedLockSettings(
-                resourceName, uniqueId, acquireTimeout, acquireRetryInterval, heartbeatTimeout));
-
         public async Task<DistributedLock> Acquire(
             DistributedLockSettings settings,
             CancellationToken cancellationToken = default)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
+            if (string.IsNullOrEmpty(settings.ResourceName)) 
+                throw new InvalidOperationException(
+                    "ResourceName cannot be null. Please provide a valid resource name in the settings.");
+            
+            if (settings is NullLockSettings)
+                return await NullLockManager.Acquire(settings, cancellationToken);
 
             _logger.LogInformation("Trying to acquire lock {lockName} ({lockUniqueId})...", settings.ResourceName,
                 settings.UniqueId);
@@ -63,6 +60,11 @@ namespace Silverback.Background
 
         public async Task<bool> CheckIsStillLocked(DistributedLockSettings settings)
         {
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
+
+            if (settings is NullLockSettings)
+                return await NullLockManager.CheckIsStillLocked(settings);
+
             try
             {
                 using var scope = _serviceProvider.CreateScope();
@@ -81,8 +83,12 @@ namespace Silverback.Background
 
         public async Task<bool> SendHeartbeat(DistributedLockSettings settings)
         {
-            try
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
 
+            if (settings is NullLockSettings)
+                return await NullLockManager.SendHeartbeat(settings);
+
+            try
             {
                 using var scope = _serviceProvider.CreateScope();
                 return await SendHeartbeat(settings.ResourceName, settings.UniqueId, scope.ServiceProvider);
@@ -99,6 +105,11 @@ namespace Silverback.Background
 
         public async Task Release(DistributedLockSettings settings)
         {
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
+
+            if (settings is NullLockSettings)
+                await NullLockManager.Release(settings);
+
             try
             {
                 using var scope = _serviceProvider.CreateScope();

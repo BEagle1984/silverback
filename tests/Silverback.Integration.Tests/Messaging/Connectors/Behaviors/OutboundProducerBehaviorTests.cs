@@ -12,11 +12,11 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 {
-    [Collection("StaticInMemory")]
     public class OutboundProducingBehaviorTests
     {
         private readonly OutboundProducerBehavior _behavior;
@@ -27,13 +27,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             var services = new ServiceCollection();
 
-            _outboundQueue = new InMemoryOutboundQueue();
+            _outboundQueue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
+
+            services.AddSingleton<IOutboundQueueProducer>(_outboundQueue);
 
             services.AddSilverback()
                 .WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>()
                     .AddOutboundConnector()
-                    .AddDeferredOutboundConnector(_ => _outboundQueue));
+                    .AddDeferredOutboundConnector());
 
             services.AddNullLogger();
 
@@ -42,8 +44,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             _behavior = (OutboundProducerBehavior) serviceProvider.GetServices<IBehavior>()
                 .First(s => s is OutboundProducerBehavior);
             _broker = serviceProvider.GetRequiredService<TestBroker>();
-
-            InMemoryOutboundQueue.Clear();
         }
 
         [Fact]

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -15,7 +14,6 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Broker
 {
-    [Collection("StaticInMemory")]
     public class ConsumerTests
     {
         private readonly TestBroker _broker;
@@ -30,15 +28,13 @@ namespace Silverback.Tests.Integration.Messaging.Broker
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>()
-                    .AddChunkStore<InMemoryChunkStore>())
+                    .AddInMemoryChunkStore())
                 .AddSingletonSubscriber<SilverbackEventsSubscriber>();
 
             var serviceProvider = services.BuildServiceProvider();
 
             _broker = serviceProvider.GetRequiredService<TestBroker>();
             _silverbackEventsSubscriber = serviceProvider.GetRequiredService<SilverbackEventsSubscriber>();
-
-            InMemoryChunkStore.Clear();
         }
 
         [Fact]

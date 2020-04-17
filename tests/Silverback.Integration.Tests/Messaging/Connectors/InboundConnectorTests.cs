@@ -12,7 +12,6 @@ using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
-using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -20,7 +19,6 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
-    [Collection("StaticInMemory")]
     public class InboundConnectorTests
     {
         private readonly TestSubscriber _testSubscriber;
@@ -47,7 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 .AddSingletonSubscriber(_someUnhandledMessageSubscriber)
                 .WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>()
-                    .AddChunkStore<InMemoryChunkStore>());
+                    .AddInMemoryChunkStore());
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
             {
@@ -59,8 +57,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 serviceProvider,
                 serviceProvider.GetRequiredService<ILogger<InboundConnector>>());
             _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
-
-            InMemoryChunkStore.Clear();
         }
 
         #region Messages Received
@@ -71,7 +67,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -89,7 +85,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new SomeUnhandledMessage { Content = "abc" });
             await consumer.TestHandleMessage(new SomeUnhandledMessage { Content = "def" });
             await consumer.TestHandleMessage(new SomeUnhandledMessage { Content = "ghi" });
@@ -103,7 +99,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -120,7 +116,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne(),
                 new[] { new MessageHeader { Key = "key", Value = "value1" } });
             await consumer.TestHandleMessage(new TestEventOne(),
@@ -143,7 +139,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventOne(),
                 new[] { new MessageHeader { Key = DefaultMessageHeaders.FailedAttempts, Value = "3" } });
@@ -166,7 +162,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -194,7 +190,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
 
             _testSubscriber.ReceivedMessages.Count(message => message is BatchStartedEvent)
@@ -226,7 +222,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -259,7 +255,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             for (int i = 0; i < 3; i++)
             {
-                foreach (var consumer in _broker.Consumers)
+                foreach (var consumer in _broker.Consumers.OfType<TestConsumer>())
                 {
                     await consumer.TestHandleMessage(new TestEventOne());
                 }
@@ -285,7 +281,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             for (int i = 0; i < 4; i++)
             {
-                foreach (var consumer in _broker.Consumers)
+                foreach (var consumer in _broker.Consumers.OfType<TestConsumer>())
                 {
                     await consumer.TestHandleMessage(new TestEventOne());
                 }
@@ -294,7 +290,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(0);
 
-            foreach (var consumer in _broker.Consumers.Take(3))
+            foreach (var consumer in _broker.Consumers.OfType<TestConsumer>().Take(3))
             {
                 await consumer.TestHandleMessage(new TestEventOne());
             }
@@ -304,7 +300,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _testSubscriber.ReceivedMessages.Clear();
 
-            foreach (var consumer in _broker.Consumers.Skip(3))
+            foreach (var consumer in _broker.Consumers.OfType<TestConsumer>().Skip(3))
             {
                 await consumer.TestHandleMessage(new TestEventOne());
             }
@@ -322,7 +318,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var buffer = Convert.FromBase64String(
                 "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestConsume(buffer.Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
@@ -367,7 +363,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var buffer = Convert.FromBase64String(
                 "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestConsume(buffer.Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
@@ -412,7 +408,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var buffer = Convert.FromBase64String(
                 "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestConsume(buffer.Take(40).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
@@ -472,7 +468,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -495,7 +491,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -521,7 +517,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -551,13 +547,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             for (int i = 0; i < 3; i++)
             {
-                foreach (var consumer in _broker.Consumers)
+                foreach (var consumer in _broker.Consumers.OfType<TestConsumer>())
                 {
                     await consumer.TestHandleMessage(new TestEventOne());
                 }
             }
 
-            foreach (var consumer in _broker.Consumers)
+            foreach (var consumer in _broker.Consumers.OfType<TestConsumer>())
             {
                 consumer.AcknowledgeCount.Should().Be(3);
             }
@@ -579,27 +575,27 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             for (int i = 0; i < 4; i++)
             {
-                foreach (var consumer in _broker.Consumers)
+                foreach (var consumer in _broker.Consumers.OfType<TestConsumer>())
                 {
                     await consumer.TestHandleMessage(new TestEventOne());
                 }
             }
 
-            _broker.Consumers.Sum(c => c.AcknowledgeCount).Should().Be(0);
+            _broker.Consumers.OfType<TestConsumer>().Sum(c => c.AcknowledgeCount).Should().Be(0);
 
-            foreach (var consumer in _broker.Consumers.Take(3))
+            foreach (var consumer in _broker.Consumers.OfType<TestConsumer>().Take(3))
             {
                 await consumer.TestHandleMessage(new TestEventOne());
             }
 
-            _broker.Consumers.Sum(c => c.AcknowledgeCount).Should().Be(15);
+            _broker.Consumers.OfType<TestConsumer>().Sum(c => c.AcknowledgeCount).Should().Be(15);
 
-            foreach (var consumer in _broker.Consumers.Skip(3))
+            foreach (var consumer in _broker.Consumers.OfType<TestConsumer>().Skip(3))
             {
                 await consumer.TestHandleMessage(new TestEventOne());
             }
 
-            _broker.Consumers.Sum(c => c.AcknowledgeCount).Should().Be(25);
+            _broker.Consumers.OfType<TestConsumer>().Sum(c => c.AcknowledgeCount).Should().Be(25);
         }
 
         #endregion
@@ -613,7 +609,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault(), _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             _testSubscriber.FailCount.Should().Be(3);
@@ -631,7 +627,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             }, _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             testSerializer.FailCount.Should().Be(3);
@@ -651,7 +647,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var buffer = Convert.FromBase64String(
                 "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestConsume(buffer.Take(20).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
@@ -696,7 +692,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 _errorPolicyBuilder.Move(new TestProducerEndpoint("bad"))));
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("bad"));
@@ -716,7 +712,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 _errorPolicyBuilder.Move(new TestProducerEndpoint("bad"))));
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("bad"));
@@ -740,7 +736,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 });
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
@@ -763,7 +759,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 });
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
@@ -791,7 +787,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 });
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 

@@ -350,7 +350,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services
                 .AddSingleton(subscriberType)
-                .AddSingleton(baseType, subscriberType);
+                .AddSingleton(baseType, serviceProvider => serviceProvider.GetRequiredService(subscriberType));
 
             return services;
         }
@@ -415,7 +415,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services
                 .AddSingleton(subscriberType, implementationFactory)
-                .AddSingleton(baseType, implementationFactory);
+                .AddSingleton(baseType, serviceProvider => serviceProvider.GetRequiredService(subscriberType));
 
             return services;
         }
@@ -498,7 +498,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services
                 .AddSingleton(subscriberType, implementationInstance)
-                .AddSingleton(baseType, implementationInstance);
+                .AddSingleton(baseType, serviceProvider => serviceProvider.GetRequiredService(subscriberType));
 
             return services;
         }
@@ -749,7 +749,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
         public static IServiceCollection AddSingletonBehavior(
             this IServiceCollection services,
             IBehavior implementationInstance)

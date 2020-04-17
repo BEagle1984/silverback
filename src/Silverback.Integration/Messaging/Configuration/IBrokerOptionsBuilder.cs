@@ -34,43 +34,61 @@ namespace Silverback.Messaging.Configuration
         #region AddInboundConnector
 
         /// <summary>
-        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
-        ///     bus.
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the
+        ///     internal bus.
         /// </summary>
         IBrokerOptionsBuilder AddInboundConnector<TConnector>()
             where TConnector : class, IInboundConnector;
 
         /// <summary>
-        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
-        ///     bus.
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the
+        ///     internal bus.
         /// </summary>
         IBrokerOptionsBuilder AddInboundConnector();
 
         /// <summary>
-        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
-        ///     bus. This implementation logs the incoming messages and prevents duplicated processing of the same message.
-        /// </summary>
-        IBrokerOptionsBuilder AddLoggedInboundConnector(Func<IServiceProvider, IInboundLog> inboundLogFactory);
-
-        /// <summary>
-        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
-        ///     bus. This implementation stores the offset of the latest consumed messages and prevents duplicated processing of
-        ///     the
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the
+        ///     internal bus. This implementation logs the incoming messages and prevents duplicated processing of the
         ///     same message.
         /// </summary>
-        IBrokerOptionsBuilder AddOffsetStoredInboundConnector(Func<IServiceProvider, IOffsetStore> offsetStoreFactory);
+        IBrokerOptionsBuilder AddLoggedInboundConnector();
 
         /// <summary>
-        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
-        ///     bus. This implementation logs the incoming messages in the database and prevents duplicated processing of the same
-        ///     message.
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the
+        ///     internal bus. This implementation logs the incoming messages and prevents duplicated processing of the
+        ///     same message.
+        /// </summary>
+        /// <typeparam name="TLog">The type of the <see cref="IInboundLog" /> to be used.</typeparam>
+        IBrokerOptionsBuilder AddLoggedInboundConnector<TLog>()
+            where TLog : class, IInboundLog;
+
+        /// <summary>
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the
+        ///     internal bus. This implementation stores the offset of the latest consumed messages and prevents
+        ///     duplicated processing of the same message.
+        /// </summary>
+        IBrokerOptionsBuilder AddOffsetStoredInboundConnector();
+
+        /// <summary>
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the
+        ///     internal bus. This implementation stores the offset of the latest consumed messages and prevents
+        ///     duplicated processing of the same message.
+        /// </summary>
+        /// <typeparam name="TStore">The type of the <see cref="IOffsetStore" /> to be used.</typeparam>
+        IBrokerOptionsBuilder AddOffsetStoredInboundConnector<TStore>()
+            where TStore : class, IOffsetStore;
+
+        /// <summary>
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the
+        ///     internal bus. This implementation logs the incoming messages in the database and prevents duplicated
+        ///     processing of the same message.
         /// </summary>
         IBrokerOptionsBuilder AddDbLoggedInboundConnector();
 
         /// <summary>
-        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the internal
-        ///     bus. This implementation stores the offset of the latest consumed messages in the database and prevents duplicated
-        ///     processing of the same message.
+        ///     Adds a connector to subscribe to a message broker and forward the incoming integration messages to the
+        ///     internal bus. This implementation stores the offset of the latest consumed messages in the database and
+        ///     prevents duplicated processing of the same message.
         /// </summary>
         IBrokerOptionsBuilder AddDbOffsetStoredInboundConnector();
 
@@ -93,8 +111,15 @@ namespace Silverback.Messaging.Configuration
         ///     Adds a connector to publish the integration messages to the configured message broker.
         ///     This implementation stores the outbound messages into an intermediate queue.
         /// </summary>
-        IBrokerOptionsBuilder AddDeferredOutboundConnector(
-            Func<IServiceProvider, IOutboundQueueProducer> outboundQueueProducerFactory);
+        IBrokerOptionsBuilder AddDeferredOutboundConnector();
+
+        /// <summary>
+        ///     Adds a connector to publish the integration messages to the configured message broker.
+        ///     This implementation stores the outbound messages into an intermediate queue.
+        /// </summary>
+        /// <typeparam name="TQueueProducer">The type of the <see cref="IOutboundQueueProducer" /> to be used.</typeparam>
+        IBrokerOptionsBuilder AddDeferredOutboundConnector<TQueueProducer>()
+            where TQueueProducer : class, IOutboundQueueProducer;
 
         /// <summary>
         ///     Adds a connector to publish the integration messages to the configured message broker.
@@ -110,76 +135,58 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
-        /// <param name="outboundQueueConsumerFactory"></param>
         /// <param name="interval">The interval between each run (default is 500ms).</param>
         /// <param name="enforceMessageOrder">
-        ///     If set to <c>true</c> the message order will be preserved (no message will be
-        ///     skipped).
+        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be
+        ///     successfully produced.
         /// </param>
         /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
-        IBrokerOptionsBuilder AddOutboundWorker(
-            Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
-            TimeSpan? interval = null,
-            bool enforceMessageOrder = true,
-            int readPackageSize = 100);
-
-        /// <summary>
-        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
-        /// </summary>
-        /// <param name="outboundQueueConsumerFactory"></param>
-        /// <param name="distributedLockSettings">The settings for the locking mechanism.</param>
-        /// <param name="interval">The interval between each run (default is 500ms).</param>
-        /// <param name="enforceMessageOrder">
-        ///     If set to <c>true</c> the message order will be preserved (no message will be
-        ///     skipped).
+        /// <param name="distributedLockSettings">
+        ///     The settings for the locking mechanism (default settings will be used if not specified).
         /// </param>
-        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
-        IBrokerOptionsBuilder AddOutboundWorker(
-            Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
-            DistributedLockSettings distributedLockSettings,
-            TimeSpan? interval = null,
-            bool enforceMessageOrder = true,
-            int readPackageSize = 100);
-
-        /// <summary>
-        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
-        /// </summary>
-        /// <param name="distributedLockSettings">The settings for the locking mechanism.</param>
-        /// <param name="interval">The interval between each run (default is 500ms).</param>
-        /// <param name="enforceMessageOrder">
-        ///     if set to <c>true</c> the message order will be preserved (no message will be
-        ///     skipped).
-        /// </param>
-        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
-        /// <param name="removeProduced">
-        ///     if set to <c>true</c> the messages will be removed from the database immediately after
-        ///     being produced.
-        /// </param>
-        IBrokerOptionsBuilder AddDbOutboundWorker(
-            DistributedLockSettings distributedLockSettings,
+        public IBrokerOptionsBuilder AddOutboundWorker(
             TimeSpan? interval = null,
             bool enforceMessageOrder = true,
             int readPackageSize = 100,
-            bool removeProduced = true);
+            DistributedLockSettings distributedLockSettings = null);
+
+        /// <summary>
+        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        /// </summary>
+        /// <typeparam name="TQueueConsumer">The type of the <see cref="IOutboundQueueConsumer" /> to be used.</typeparam>
+        /// <param name="interval">The interval between each run (default is 500ms).</param>
+        /// <param name="enforceMessageOrder">
+        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be
+        ///     successfully produced.
+        /// </param>
+        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
+        /// <param name="distributedLockSettings">
+        ///     The settings for the locking mechanism (default settings will be used if not specified).
+        /// </param>
+        IBrokerOptionsBuilder AddOutboundWorker<TQueueConsumer>(
+            TimeSpan? interval = null,
+            bool enforceMessageOrder = true,
+            int readPackageSize = 100,
+            DistributedLockSettings distributedLockSettings = null)
+            where TQueueConsumer : class, IOutboundQueueConsumer;
 
         /// <summary>
         ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <param name="interval">The interval between each run (default is 500ms).</param>
         /// <param name="enforceMessageOrder">
-        ///     if set to <c>true</c> the message order will be preserved (no message will be
-        ///     skipped).
+        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be
+        ///     successfully produced.
         /// </param>
         /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
-        /// <param name="removeProduced">
-        ///     if set to <c>true</c> the messages will be removed from the database immediately after
-        ///     being produced.
+        /// <param name="distributedLockSettings">
+        ///     The settings for the locking mechanism (default settings will be used if not specified).
         /// </param>
         IBrokerOptionsBuilder AddDbOutboundWorker(
             TimeSpan? interval = null,
             bool enforceMessageOrder = true,
             int readPackageSize = 100,
-            bool removeProduced = true);
+            DistributedLockSettings distributedLockSettings = null);
 
         #endregion
 
@@ -188,14 +195,49 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Adds a chunk store to temporary save the message chunks until the full message has been received.
         /// </summary>
-        IBrokerOptionsBuilder AddChunkStore<TStore>()
+        /// <param name="retention">
+        ///     The retention time of the stored chunks. The chunks will be discarded after this time is elapsed
+        ///     (default is 1 hour).
+        /// </param>
+        /// <param name="cleanupInterval">The interval between each cleanup (default is 10 minutes).</param>
+        /// <param name="distributedLockSettings">
+        ///     The settings for the locking mechanism (default settings will be used if not specified).
+        /// </param>
+        IBrokerOptionsBuilder AddChunkStore<TStore>(
+            TimeSpan? retention = null,
+            TimeSpan? cleanupInterval = null,
+            DistributedLockSettings distributedLockSettings = null)
             where TStore : class, IChunkStore;
+
+        /// <summary>
+        ///     Adds a chunk store to temporary save the message chunks until the full message has been received.
+        ///     This implementation stores the message chunks in memory.
+        /// </summary>
+        /// <param name="retention">
+        ///     The retention time of the stored chunks. The chunks will be discarded after this time is elapsed
+        ///     (default is 1 hour).
+        /// </param>
+        /// <param name="cleanupInterval">The interval between each cleanup (default is 10 minutes).</param>
+        IBrokerOptionsBuilder AddInMemoryChunkStore(
+            TimeSpan? retention = null,
+            TimeSpan? cleanupInterval = null);
 
         /// <summary>
         ///     Adds a chunk store to temporary save the message chunks until the full message has been received.
         ///     This implementation stores the message chunks in the database.
         /// </summary>
-        IBrokerOptionsBuilder AddDbChunkStore();
+        /// <param name="retention">
+        ///     The retention time of the stored chunks. The chunks will be discarded after this time is elapsed
+        ///     (default is 1 hour).
+        /// </param>
+        /// <param name="cleanupInterval">The interval between each cleanup (default is 10 minutes).</param>
+        /// <param name="distributedLockSettings">
+        ///     The settings for the locking mechanism (default settings will be used if not specified).
+        /// </param>
+        IBrokerOptionsBuilder AddDbChunkStore(
+            TimeSpan? retention = null,
+            TimeSpan? cleanupInterval = null,
+            DistributedLockSettings distributedLockSettings = null);
 
         #endregion
 
@@ -275,7 +317,6 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
         IBrokerOptionsBuilder AddSingletonBrokerBehavior(IBrokerBehavior implementationInstance);
 
         #endregion
@@ -315,7 +356,6 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        /// <seealso cref="F:Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton" />
         IBrokerOptionsBuilder AddSingletonOutboundRouter(IOutboundRouter implementationInstance);
 
         #endregion

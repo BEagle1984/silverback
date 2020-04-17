@@ -14,11 +14,11 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 {
-    [Collection("StaticInMemory")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class OutboundRouterBehaviorTests
     {
@@ -33,14 +33,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             var services = new ServiceCollection();
 
-            _outboundQueue = new InMemoryOutboundQueue();
+            _outboundQueue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
             _testSubscriber = new TestSubscriber();
+
+            services.AddSingleton<IOutboundQueueProducer>(_outboundQueue);
 
             services.AddSilverback()
                 .WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>()
                     .AddBroker<TestOtherBroker>()
-                    .AddDeferredOutboundConnector(_ => _outboundQueue)
+                    .AddDeferredOutboundConnector()
                     .AddOutboundConnector());
 
             services.AddSingletonSubscriber(_testSubscriber);
@@ -55,8 +57,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 (OutboundRoutingConfiguration) serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
             _broker = serviceProvider.GetRequiredService<TestBroker>();
             _otherBroker = serviceProvider.GetRequiredService<TestOtherBroker>();
-
-            InMemoryOutboundQueue.Clear();
         }
 
         [Theory, MemberData(nameof(Handle_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]

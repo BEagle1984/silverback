@@ -11,11 +11,11 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
-    [Collection("StaticInMemory")]
     public class DeferredOutboundConnectorTests
     {
         private readonly InMemoryOutboundQueue _queue;
@@ -24,11 +24,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
         public DeferredOutboundConnectorTests()
         {
-            _queue = new InMemoryOutboundQueue();
+            _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
             _connector = new DeferredOutboundConnector(_queue, new NullLogger<DeferredOutboundConnector>(),
                 new MessageLogger());
             _transactionManager = new DeferredOutboundConnectorTransactionManager(_queue);
-            InMemoryOutboundQueue.Clear();
         }
 
         [Fact]

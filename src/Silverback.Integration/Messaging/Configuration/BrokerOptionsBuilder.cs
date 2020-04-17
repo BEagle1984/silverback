@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Background;
-using Silverback.Database;
 using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -44,23 +43,36 @@ namespace Silverback.Messaging.Configuration
             if (!SilverbackBuilder.Services.ContainsAny<IBroker>())
             {
                 SilverbackBuilder.Services
+                    // Pipeline - Serialization
                     .AddSingletonBrokerBehavior<SerializerProducerBehavior>()
                     .AddSingletonBrokerBehavior<DeserializerConsumerBehavior>()
+                    // Pipeline - Encryption
                     .AddSingletonBrokerBehavior<EncryptorProducerBehavior>()
                     .AddSingletonBrokerBehavior<DecryptorConsumerBehavior>()
+                    // Pipeline - Headers
                     .AddSingletonBrokerBehavior<HeadersWriterProducerBehavior>()
                     .AddSingletonBrokerBehavior<HeadersReaderConsumerBehavior>()
                     .AddSingleton<IMessageTransformerFactory, MessageTransformerFactory>()
+                    // Pipeline - Chunking
                     .AddSingletonBrokerBehavior<ChunkSplitterProducerBehavior>()
-                    .AddSingletonBrokerBehavior<ChunkAggregatorConsumerBehavior>()
+                    .AddSingletonBrokerBehavior(serviceProvider =>
+                        serviceProvider.GetRequiredService<ChunkAggregatorConsumerBehavior>())
+                    .AddSingletonSubscriber<ChunkAggregatorConsumerBehavior>()
                     .AddScoped<ChunkAggregator>()
+                    // Pipeline - Binary File
                     .AddSingletonBrokerBehavior<BinaryFileHandlerProducerBehavior>()
                     .AddSingletonBrokerBehavior<BinaryFileHandlerConsumerBehavior>()
+                    // Pipeline - Message Id Initializer
                     .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>()
+                    // Pipeline - Inbound Processor
                     .AddSingletonBrokerBehavior<InboundProcessorConsumerBehaviorFactory>()
-                    .AddScopedSubscriber<ConsumerTransactionManager>();
+                    .AddScopedSubscriber<ConsumerTransactionManager>()
+                    // Support - Transactional Lists 
+                    .AddSingleton(typeof(TransactionalListSharedItems<>))
+                    .AddSingleton(typeof(TransactionalDictionarySharedItems<,>));
 
 #pragma warning disable 618
+                // Deprecated
                 AddMessageIdProvider<DefaultPropertiesMessageIdProvider>();
 #pragma warning restore 618
             }
@@ -107,29 +119,51 @@ namespace Silverback.Messaging.Configuration
 
         public IBrokerOptionsBuilder AddInboundConnector() => AddInboundConnector<InboundConnector>();
 
-        public IBrokerOptionsBuilder AddLoggedInboundConnector(Func<IServiceProvider, IInboundLog> inboundLogFactory)
+        public IBrokerOptionsBuilder AddLoggedInboundConnector()
         {
             AddInboundConnector<LoggedInboundConnector>();
-            SilverbackBuilder.Services.AddScoped(inboundLogFactory);
+
             return this;
         }
 
-        public IBrokerOptionsBuilder AddOffsetStoredInboundConnector(
-            Func<IServiceProvider, IOffsetStore> offsetStoreFactory)
+        public IBrokerOptionsBuilder AddLoggedInboundConnector<TLog>()
+            where TLog : class, IInboundLog
+        {
+            AddLoggedInboundConnector();
+            SilverbackBuilder.Services.AddScoped<IInboundLog, TLog>();
+
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddOffsetStoredInboundConnector()
         {
             AddInboundConnector<OffsetStoredInboundConnector>();
-            SilverbackBuilder.Services.AddScoped(offsetStoreFactory);
+
             return this;
         }
 
-        public IBrokerOptionsBuilder AddDbLoggedInboundConnector() =>
-            AddLoggedInboundConnector(s =>
-                new DbInboundLog(s.GetRequiredService<IDbContext>(),
-                    s.GetRequiredService<MessageIdProvider>()));
+        public IBrokerOptionsBuilder AddOffsetStoredInboundConnector<TStore>()
+            where TStore : class, IOffsetStore
+        {
+            AddOffsetStoredInboundConnector();
+            SilverbackBuilder.Services.AddScoped<IOffsetStore, TStore>();
 
-        public IBrokerOptionsBuilder AddDbOffsetStoredInboundConnector() =>
-            AddOffsetStoredInboundConnector(s =>
-                new DbOffsetStore(s.GetRequiredService<IDbContext>()));
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddDbLoggedInboundConnector()
+        {
+            AddLoggedInboundConnector<DbInboundLog>();
+
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddDbOffsetStoredInboundConnector()
+        {
+            AddOffsetStoredInboundConnector<DbOffsetStore>();
+
+            return this;
+        }
 
         #endregion
 
@@ -153,107 +187,90 @@ namespace Silverback.Messaging.Configuration
 
         public IBrokerOptionsBuilder AddOutboundConnector() => AddOutboundConnector<OutboundConnector>();
 
-        public IBrokerOptionsBuilder AddDeferredOutboundConnector(
-            Func<IServiceProvider, IOutboundQueueProducer> outboundQueueProducerFactory)
+        public IBrokerOptionsBuilder AddDeferredOutboundConnector()
         {
             AddOutboundConnector<DeferredOutboundConnector>();
             SilverbackBuilder.AddScopedSubscriber<DeferredOutboundConnectorTransactionManager>();
-            SilverbackBuilder.Services.AddScoped(outboundQueueProducerFactory);
 
             return this;
         }
 
-        public IBrokerOptionsBuilder AddDbOutboundConnector() =>
-            AddDeferredOutboundConnector(s =>
-                new DbOutboundQueueProducer(s.GetRequiredService<IDbContext>()));
+        public IBrokerOptionsBuilder AddDeferredOutboundConnector<TQueueProducer>()
+            where TQueueProducer : class, IOutboundQueueProducer
+        {
+            AddDeferredOutboundConnector();
+            SilverbackBuilder.Services.AddScoped<IOutboundQueueProducer, TQueueProducer>();
+
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddDbOutboundConnector()
+        {
+            AddDeferredOutboundConnector<DbOutboundQueueProducer>();
+
+            return this;
+        }
 
         #endregion
 
         #region AddOutboundWorker
 
         public IBrokerOptionsBuilder AddOutboundWorker(
-            Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
-            TimeSpan? interval = null,
-            bool enforceMessageOrder = true,
-            int readPackageSize = 100) =>
-            AddOutboundWorker(outboundQueueConsumerFactory, new DistributedLockSettings(), interval,
-                enforceMessageOrder, readPackageSize);
-
-        public IBrokerOptionsBuilder AddOutboundWorker(
-            Func<IServiceProvider, IOutboundQueueConsumer> outboundQueueConsumerFactory,
-            DistributedLockSettings distributedLockSettings,
-            TimeSpan? interval = null,
-            bool enforceMessageOrder = true,
-            int readPackageSize = 100)
-        {
-            if (outboundQueueConsumerFactory == null)
-                throw new ArgumentNullException(nameof(outboundQueueConsumerFactory));
-            if (distributedLockSettings == null) throw new ArgumentNullException(nameof(distributedLockSettings));
-
-            if (string.IsNullOrEmpty(distributedLockSettings.ResourceName))
-                distributedLockSettings.ResourceName = "OutboundQueueWorker";
-
-            AddOutboundWorker(
-                interval ?? TimeSpan.FromMilliseconds(500),
-                distributedLockSettings,
-                enforceMessageOrder,
-                readPackageSize);
-
-            SilverbackBuilder.Services
-                .AddScoped(outboundQueueConsumerFactory);
-
-            return this;
-        }
-
-        public IBrokerOptionsBuilder AddDbOutboundWorker(
             TimeSpan? interval = null,
             bool enforceMessageOrder = true,
             int readPackageSize = 100,
-            bool removeProduced = true)
+            DistributedLockSettings distributedLockSettings = null)
         {
-            return AddDbOutboundWorker(new DistributedLockSettings(), interval,
-                enforceMessageOrder, readPackageSize, removeProduced);
-        }
+            distributedLockSettings ??= new DistributedLockSettings();
+            distributedLockSettings.ResourceName ??= "OutboundQueueWorker";
 
-        private BrokerOptionsBuilder AddOutboundWorker(
-            TimeSpan interval,
-            DistributedLockSettings distributedLockSettings,
-            bool enforceMessageOrder,
-            int readPackageSize)
-        {
             SilverbackBuilder.Services
-                .AddSingleton<IOutboundQueueWorker>(s => new OutboundQueueWorker(
-                    s.GetRequiredService<IServiceProvider>(),
-                    s.GetRequiredService<IBrokerCollection>(),
-                    s.GetRequiredService<ILogger<OutboundQueueWorker>>(),
-                    s.GetRequiredService<MessageLogger>(),
+                .AddSingleton<IOutboundQueueWorker>(serviceProvider => new OutboundQueueWorker(
+                    serviceProvider.GetRequiredService<IServiceScopeFactory>(),
+                    serviceProvider.GetRequiredService<IBrokerCollection>(),
+                    serviceProvider.GetRequiredService<ILogger<OutboundQueueWorker>>(),
+                    serviceProvider.GetRequiredService<MessageLogger>(),
                     enforceMessageOrder, readPackageSize))
-                .AddSingleton<IHostedService>(s => new OutboundQueueWorkerService(
-                    interval,
-                    s.GetRequiredService<IOutboundQueueWorker>(),
+                .AddSingleton<IHostedService>(serviceProvider => new OutboundQueueWorkerService(
+                    interval ?? TimeSpan.FromMilliseconds(500),
+                    serviceProvider.GetRequiredService<IOutboundQueueWorker>(),
                     distributedLockSettings,
-                    s.GetService<IDistributedLockManager>() ?? new NullLockManager(),
-                    s.GetRequiredService<ILogger<OutboundQueueWorkerService>>()));
+                    serviceProvider.GetService<IDistributedLockManager>() ?? new NullLockManager(),
+                    serviceProvider.GetRequiredService<ILogger<OutboundQueueWorkerService>>()));
+
+            return this;
+        }
+
+        public IBrokerOptionsBuilder AddOutboundWorker<TQueueConsumer>(
+            TimeSpan? interval = null,
+            bool enforceMessageOrder = true,
+            int readPackageSize = 100,
+            DistributedLockSettings distributedLockSettings = null)
+            where TQueueConsumer : class, IOutboundQueueConsumer
+        {
+            AddOutboundWorker(
+                interval,
+                enforceMessageOrder,
+                readPackageSize,
+                distributedLockSettings);
+
+            SilverbackBuilder.Services
+                .AddScoped<IOutboundQueueConsumer, TQueueConsumer>();
 
             return this;
         }
 
         public IBrokerOptionsBuilder AddDbOutboundWorker(
-            DistributedLockSettings distributedLockSettings,
             TimeSpan? interval = null,
             bool enforceMessageOrder = true,
             int readPackageSize = 100,
-            bool removeProduced = true)
+            DistributedLockSettings distributedLockSettings = null)
         {
-            if (distributedLockSettings == null) throw new ArgumentNullException(nameof(distributedLockSettings));
-
-            if (string.IsNullOrEmpty(distributedLockSettings.ResourceName))
-                distributedLockSettings.ResourceName = "DbOutboundQueueWorker";
-
-            AddOutboundWorker(
-                s => new DbOutboundQueueConsumer(s.GetRequiredService<IDbContext>(), removeProduced),
-                distributedLockSettings, interval,
-                enforceMessageOrder, readPackageSize);
+            AddOutboundWorker<DbOutboundQueueConsumer>(
+                interval,
+                enforceMessageOrder,
+                readPackageSize,
+                distributedLockSettings);
 
             return this;
         }
@@ -262,16 +279,41 @@ namespace Silverback.Messaging.Configuration
 
         #region AddChunkStore
 
-        public IBrokerOptionsBuilder AddChunkStore<TStore>()
+        public IBrokerOptionsBuilder AddChunkStore<TStore>(
+            TimeSpan? retention = null,
+            TimeSpan? cleanupInterval = null,
+            DistributedLockSettings distributedLockSettings = null)
             where TStore : class, IChunkStore
         {
-            SilverbackBuilder.Services.AddScoped<IChunkStore, TStore>();
+            distributedLockSettings ??= new DistributedLockSettings();
+            distributedLockSettings.ResourceName ??= "ChunkStoreCleaner";
+            
+            SilverbackBuilder.Services
+                .AddScoped<IChunkStore, TStore>()
+                .AddScoped(serviceProvider => new ChunkStoreCleaner(
+                    retention ?? TimeSpan.FromDays(1),
+                    serviceProvider.GetRequiredService<IServiceScopeFactory>(),
+                    serviceProvider.GetRequiredService<ILogger<ChunkStoreCleaner>>()))
+                .AddSingleton<IHostedService>(serviceProvider => new ChunkStoreCleanerService(
+                    cleanupInterval ?? TimeSpan.FromMinutes(10),
+                    serviceProvider.GetRequiredService<ChunkStoreCleaner>(),
+                    distributedLockSettings,
+                    serviceProvider.GetService<IDistributedLockManager>() ?? new NullLockManager(),
+                    serviceProvider.GetRequiredService<ILogger<ChunkStoreCleanerService>>()));
 
             return this;
         }
 
-        public IBrokerOptionsBuilder AddDbChunkStore() =>
-            AddChunkStore<DbChunkStore>();
+        public IBrokerOptionsBuilder AddDbChunkStore(
+            TimeSpan? retention = null,
+            TimeSpan? cleanupInterval = null,
+            DistributedLockSettings distributedLockSettings = null) =>
+            AddChunkStore<DbChunkStore>(retention, cleanupInterval, distributedLockSettings);
+
+        public IBrokerOptionsBuilder AddInMemoryChunkStore(
+            TimeSpan? retention = null,
+            TimeSpan? cleanupInterval = null) =>
+            AddChunkStore<InMemoryChunkStore>(retention, cleanupInterval, DistributedLockSettings.NoLock);
 
         #endregion
 

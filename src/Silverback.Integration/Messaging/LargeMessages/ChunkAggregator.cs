@@ -47,6 +47,9 @@ namespace Silverback.Messaging.LargeMessages
             }
         }
 
+        public async Task Cleanup(IRawInboundEnvelope envelope) =>
+            await _store.Cleanup(envelope.Headers.GetValue(DefaultMessageHeaders.MessageId));
+
         private (string messageId, int chunkIndex, int chunksCount) ExtractHeadersValues(IRawInboundEnvelope envelope)
         {
             var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);

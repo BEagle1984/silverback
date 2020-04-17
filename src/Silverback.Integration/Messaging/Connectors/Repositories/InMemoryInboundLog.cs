@@ -4,6 +4,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -11,7 +12,10 @@ namespace Silverback.Messaging.Connectors.Repositories
     {
         private readonly MessageIdProvider _messageIdProvider;
 
-        public InMemoryInboundLog(MessageIdProvider messageIdProvider)
+        public InMemoryInboundLog(
+            MessageIdProvider messageIdProvider,
+            TransactionalListSharedItems<InMemoryInboundLogEntry> sharedItems)
+            : base(sharedItems)
         {
             _messageIdProvider = messageIdProvider;
         }
@@ -21,8 +25,10 @@ namespace Silverback.Messaging.Connectors.Repositories
                 envelope.Endpoint.GetUniqueConsumerGroupName()));
 
         public Task<bool> Exists(IRawInboundEnvelope envelope) =>
-            Task.FromResult(Entries.Union(UncommittedEntries).Any(e =>
-                e.MessageId == _messageIdProvider.GetMessageId(envelope.Headers) &&
-                e.EndpointName == envelope.Endpoint.GetUniqueConsumerGroupName()));
+            Task.FromResult(Items.Union(UncommittedItems).Any(item =>
+                item.Entry.MessageId == _messageIdProvider.GetMessageId(envelope.Headers) &&
+                item.Entry.EndpointName == envelope.Endpoint.GetUniqueConsumerGroupName()));
+
+        public Task<int> GetLength() => Task.FromResult(CommittedItemsCount);
     }
 }

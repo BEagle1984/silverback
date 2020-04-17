@@ -19,7 +19,6 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
-    [Collection("StaticInMemory")]
     public class LoggedInboundConnectorTests
     {
         private readonly TestSubscriber _testSubscriber;
@@ -49,7 +48,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 _serviceProvider,
                 _serviceProvider.GetRequiredService<ILogger<LoggedInboundConnector>>(),
                 _serviceProvider.GetRequiredService<MessageLogger>());
-            InMemoryInboundLog.Clear();
         }
 
         [Fact]
@@ -58,7 +56,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(
                 new TestEventOne(), new[] { new MessageHeader("x-message-id", Guid.NewGuid()) });
             await consumer.TestHandleMessage(
@@ -78,7 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(
                 e1, new[] { new MessageHeader("x-message-id", id1) });
             await consumer.TestHandleMessage(
@@ -105,7 +103,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(
                 e1, new[] { new MessageHeader("x-message-id", id1) });
             await consumer.TestHandleMessage(
@@ -137,7 +135,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             });
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(
                 e1, new[] { new MessageHeader("x-message-id", id1) });
             await consumer.TestHandleMessage(
@@ -169,7 +167,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             });
             _broker.Connect();
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
             await consumer.TestHandleMessage(
                 e1, new[] { new MessageHeader("x-message-id", id1) });
             await consumer.TestHandleMessage(
@@ -203,7 +201,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _testSubscriber.FailCondition = m => m is TestEventTwo m2 && m2.Content == "FAIL";
 
-            var consumer = _broker.Consumers.First();
+            var consumer = (TestConsumer) _broker.Consumers.First();
 
             try
             {
@@ -264,8 +262,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _testSubscriber.FailCondition = m => m is TestEventTwo m2 && m2.Content == "FAIL";
 
-            var consumer1 = _broker.Consumers[0];
-            var consumer2 = _broker.Consumers[1];
+            var consumer1 = (TestConsumer) _broker.Consumers[0];
+            var consumer2 = (TestConsumer) _broker.Consumers[1];
 
             var tasks = new[]
             {

@@ -286,5 +286,5 @@ Show-Summary
 
 $stopwatch.Stop()
 
-Write-Host "Elapsed time $($stopwatch.Elapsed)"
+Write-Host "Elapsed time $($stopwatch.Elapsed), finished at $((get-date).ToString("T"))"
 Write-Host "" 

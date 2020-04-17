@@ -12,7 +12,6 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public interface IBroker
     {
-               
         /// <summary>
         ///     Gets the type of the <see cref="IProducerEndpoint" /> that is being handled by this
         ///     broker implementation.
@@ -24,16 +23,16 @@ namespace Silverback.Messaging.Broker
         ///     broker implementation.
         /// </summary>
         Type ConsumerEndpointType { get; }
-        
+
         /// <summary>
-        ///     Gets the collection of <see cref="IProducer"/> that have been created so far.
+        ///     Gets the collection of <see cref="IProducer" /> that have been created so far.
         /// </summary>
-        IReadOnlyCollection<IProducer> Producers { get; }
-        
+        IReadOnlyList<IProducer> Producers { get; }
+
         /// <summary>
-        ///     Gets the collection of <see cref="IConsumer"/> that have been created so far.
+        ///     Gets the collection of <see cref="IConsumer" /> that have been created so far.
         /// </summary>
-        IReadOnlyCollection<IConsumer> Consumers { get; }
+        IReadOnlyList<IConsumer> Consumers { get; }
 
         /// <summary>
         ///     Returns an <see cref="IProducer" /> to be used to produce to

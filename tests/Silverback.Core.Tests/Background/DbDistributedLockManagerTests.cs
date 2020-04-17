@@ -50,25 +50,24 @@ namespace Silverback.Tests.Core.Background
             dbContext.Locks.Count().Should().Be(1);
             dbContext.Locks.Single().Name.Should().Be("test.resource");
         }
-
+        
         [Fact]
-        public async Task Acquire_DefaultArguments_LockIsAcquired()
+        public async Task Acquire_NullLockSettings_NoLockIsAcquired()
         {
             var distributedLock = await new DbDistributedLockManager(_servicesProvider)
-                .Acquire("test.resource", "unique");
+                .Acquire(DistributedLockSettings.NoLock);
 
-            distributedLock.Should().NotBeNull();
+            distributedLock.Should().BeNull();
         }
-
+        
         [Fact]
-        public async Task Acquire_DefaultArguments_LockIsWrittenToDb()
+        public async Task Acquire_NullLockSettings_LockIsNotWrittenToDb()
         {
             await new DbDistributedLockManager(_servicesProvider)
-                .Acquire("test.resource", "unique");
+                .Acquire(DistributedLockSettings.NoLock);
 
             var dbContext = GetDbContext();
-            dbContext.Locks.Count().Should().Be(1);
-            dbContext.Locks.Single().Name.Should().Be("test.resource");
+            dbContext.Locks.Count().Should().Be(0);
         }
 
         [Fact]
@@ -85,11 +84,10 @@ namespace Silverback.Tests.Core.Background
             db.SaveChanges();
 
             var distributedLock = await new DbDistributedLockManager(_servicesProvider)
-                .Acquire("test.resource", "unique");
+                .Acquire(new DistributedLockSettings("test.resource", "unique"));
 
             distributedLock.Should().NotBeNull();
         }
-
 
         [Fact]
         public async Task Acquire_ExistingExpiredLockWithDifferentUniqueId_LockIsAcquired()
@@ -105,7 +103,7 @@ namespace Silverback.Tests.Core.Background
             db.SaveChanges();
 
             var distributedLock = await new DbDistributedLockManager(_servicesProvider)
-                .Acquire("test.resource", "unique");
+                .Acquire(new DistributedLockSettings("test.resource", "unique"));
 
             distributedLock.Should().NotBeNull();
         }
@@ -123,7 +121,7 @@ namespace Silverback.Tests.Core.Background
             db.SaveChanges();
 
             await new DbDistributedLockManager(_servicesProvider)
-                .Acquire("test.resource", "unique");
+                .Acquire(new DistributedLockSettings("test.resource", "unique"));
 
             var dbContext = GetDbContext();
             dbContext.Locks.Count().Should().Be(1);
@@ -135,12 +133,24 @@ namespace Silverback.Tests.Core.Background
         public async Task Acquire_ResourceAlreadyLocked_TimeoutExceptionIsThrown()
         {
             await new DbDistributedLockManager(_servicesProvider)
-                .Acquire("test.resource", "unique", TimeSpan.FromMilliseconds(100));
+                .Acquire(new DistributedLockSettings("test.resource", "unique", TimeSpan.FromMilliseconds(100)));
 
             Func<Task> act = () => new DbDistributedLockManager(_servicesProvider)
-                .Acquire("test.resource", "unique", TimeSpan.FromMilliseconds(100));
+                .Acquire(new DistributedLockSettings("test.resource", "unique", TimeSpan.FromMilliseconds(100)));
 
             await act.Should().ThrowAsync<TimeoutException>();
+        }
+        
+        [Fact]
+        public async Task Acquire_NullLockSettings_LockIgnoredButNoLockAcquired()
+        {
+            await new DbDistributedLockManager(_servicesProvider)
+                .Acquire(new DistributedLockSettings("test.resource", "unique", TimeSpan.FromMilliseconds(100)));
+
+            var distributedLock = await new DbDistributedLockManager(_servicesProvider)
+                .Acquire(DistributedLockSettings.NoLock);
+
+            distributedLock.Should().BeNull();
         }
 
         [Fact]
@@ -152,11 +162,11 @@ namespace Silverback.Tests.Core.Background
                     try
                     {
                         return await new DbDistributedLockManager(_servicesProvider)
-                            .Acquire(
+                            .Acquire(new DistributedLockSettings(
                                 "test.resource",
                                 "unique",
                                 acquireTimeout: TimeSpan.FromMilliseconds(100),
-                                acquireRetryInterval: TimeSpan.FromMilliseconds(20));
+                                acquireRetryInterval: TimeSpan.FromMilliseconds(20)));
                     }
                     catch (TimeoutException)
                     {

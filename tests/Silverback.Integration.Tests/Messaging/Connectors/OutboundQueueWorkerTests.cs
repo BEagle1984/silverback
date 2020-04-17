@@ -13,11 +13,11 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
-    [Collection("StaticInMemory")]
     public class OutboundQueueWorkerTests
     {
         private readonly InMemoryOutboundQueue _queue;
@@ -28,17 +28,20 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
         public OutboundQueueWorkerTests()
         {
-            _queue = new InMemoryOutboundQueue();
+            _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
 
             var services = new ServiceCollection();
 
             services
+                .AddSingleton<IOutboundQueueProducer>(_queue)
+                .AddSingleton<IOutboundQueueConsumer>(_queue);
+
+            services
                 .AddNullLogger()
-                .AddSingleton<IOutboundQueueConsumer, InMemoryOutboundQueue>()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options
                     .AddBroker<TestBroker>()
-                    .AddDeferredOutboundConnector(_ => new InMemoryOutboundQueue()));
+                    .AddDeferredOutboundConnector());
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
@@ -48,12 +51,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
 
-            _worker = new OutboundQueueWorker(serviceProvider,
+            _worker = new OutboundQueueWorker(
+                serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                 new BrokerCollection(new[] { _broker }),
                 new NullLogger<OutboundQueueWorker>(),
                 new MessageLogger(), true, 100); // TODO: Test order not enforced
-
-            InMemoryOutboundQueue.Clear();
 
             _sampleOutboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "Test" }, null, TestProducerEndpoint.GetDefault());

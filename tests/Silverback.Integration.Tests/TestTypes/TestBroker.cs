@@ -17,8 +17,6 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        public List<TestConsumer> Consumers { get; } = new List<TestConsumer>();
-
         public List<ProducedMessage> ProducedMessages { get; } = new List<ProducedMessage>();
 
         protected override IProducer InstantiateProducer(
@@ -30,17 +28,12 @@ namespace Silverback.Tests.Integration.TestTypes
         protected override IConsumer InstantiateConsumer(
             TestConsumerEndpoint endpoint,
             IReadOnlyCollection<IConsumerBehavior> behaviors,
-            IServiceProvider serviceProvider)
-        {
-            var consumer = new TestConsumer(
+            IServiceProvider serviceProvider) =>
+            new TestConsumer(
                 this,
                 endpoint,
                 behaviors,
                 serviceProvider,
                 LoggerFactory.CreateLogger<TestConsumer>());
-
-            Consumers.Add(consumer);
-            return consumer;
-        }
     }
 }

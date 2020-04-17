@@ -33,10 +33,10 @@ namespace Silverback.Messaging.Broker.Behaviors
         public IConsumer Consumer { get; }
 
         /// <summary>
-        ///     Gets the collection of <see cref="IOffset" /> that will be committed if the messages are successfully
+        ///     Gets or sets the collection of <see cref="IOffset" /> that will be committed if the messages are successfully
         ///     processed. The collection is initialized with the offsets of all messages being consumed in this
         ///     pipeline but can be modified if the commit needs to be delayed or manually controlled.
         /// </summary>
-        public List<IOffset> CommitOffsets { get; }
+        public List<IOffset> CommitOffsets { get; set; }
     }
 }
