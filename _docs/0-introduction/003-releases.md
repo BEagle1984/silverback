@@ -25,6 +25,7 @@ These changes shouldn't affect you unless you built your own `IBroker` implement
 * <span class="area-integration" /> The `IBroker` inteface and `Broker` abstract base class have been modified to explicitly declare which endpoint type is being handled by the broker implementation
 * <span class="area-integration" /> The `IMessageSerializer` interfaces has been changed
 * <span class="area-integration" /> The `IConsumerBehavior` and `IProducerBehavior` interfaces have been changed and moved into `Integration.Broker.Behaviors` namespace
+* <span class="area-integration" /> Changed the parameters order in some less used overloads in the `IBrokerOptionBuilders`
 
 ### Announced Breaking Changes
 These aren't real breaking changes but some methods have been marked as deprecated and will be removed in one of the next major releases:

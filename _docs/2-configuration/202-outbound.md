@@ -43,7 +43,15 @@ public class Startup
 
 ### Deferred
 
-The `DbOutboundConnector` will store the outbound messages into a database table and produce them asynchronously. This allows to take advantage of database transactions, preventing inconsistencies. And in addition allows the system to retry indefinitely if the message broker is not available.
+The `DeferredOutboundConnector` stores the messages into a local queue to be forwarded to the message broker in a separate step.
+
+This approach has two main advantages:
+1. Fault tollerance: you depend on the database only and if the message broker is unavailable the produce will be automatically retried later on
+1. Transactionality: when using the database a storage you can commit the changes to the local database and the outbound messages inside a single atomic transaction (this pattern is called [transactional outbox](https://microservices.io/patterns/data/transactional-outbox.html))
+
+#### Database outbox table
+
+The `DbOutboundConnector` will store the outbound messages into a database table.
 
 When using entity framework (`UseDbContext<TDbContext>`) the outbound messages are stored into a DbSet and are therefore implicitly saved in the same transaction used to save all other changes.
 
@@ -85,32 +93,28 @@ public class Startup
 {% endhighlight %}
 </figure>
 
-#### Extensibility
+#### Custom outbound queue
 
-You can easily create another implementation targeting another kind of storage, simply creating your own `IOutboundQueueProducer` and `IOutboundQueueConsumer`.
-It is then suggested to create an extension method for the `BrokerOptionsBuilder` to register your own types.
+You can easily create another implementation targeting another kind of storage, simply creating your own `IOutboundQueueProducer` and `IOutboundQueueConsumer` and plug them in.
 
-```csharp
-public static BrokerOptionsBuilder AddMyCustomOutboundConnector(
-    this BrokerOptionsBuilder builder)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    builder.AddOutboundConnector<DeferredOutboundConnector>();
-    builder.Services.AddScoped<IOutboundQueueProducer, MyCustomQueueProducer>();
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .AddDbDistributedLockManager()
 
-    return builder;
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddOutboundConnector<SomeCustomQueueProducer>()
+                .AddOutboundWorker<SomeCustomQueueConsumer>();
+    }
 }
-
-public static BrokerOptionsBuilder AddMyCustomOutboundWorker(
-    this BrokerOptionsBuilder builder,
-    bool enforceMessageOrder = true, 
-    int readPackageSize = 100)
-{
-    builder.AddOutboundWorker(enforceMessageOrder, readPackageSize);
-    builder.Services.AddScoped<IOutboundQueueConsumer, MyCustomQueueConsumer>();
-
-    return builder;
-}
-```
+{% endhighlight %}
 
 ## Subscribing locally
 
