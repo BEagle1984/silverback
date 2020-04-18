@@ -261,6 +261,8 @@ figcaption {
   color: $muted-text-color;
   font-family: $caption-font-family;
   font-size: $type-size-8;
+  font-style: italic;
+  width: 100%;
 
   a {
     -webkit-transition: $global-transition;

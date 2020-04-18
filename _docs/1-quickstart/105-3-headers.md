@@ -53,7 +53,7 @@ Silverback will add some headers to the produced messages. They may vary dependi
 Here is the list of the default headers that may be sent.
 
 Header Key | Description
-:-- | :-: | :--
+:-- | :--
 `x-message-id` | The message [unique identifier]({{ site.baseurl }}/docs/advanced/message-id).
 `x-message-type` | The assembly qualified name of the message type. Used by the default `JsonMessageSerializer`.
 `x-failed-attempts` | If an exception if thrown the failed attempts will be incremented and stored as header. This is necessary for the [error policies]({{ site.baseurl }}/docs/configuration/inbound#error-handling) to work.
@@ -68,7 +68,6 @@ Header Key | Description
 `tracebaggage` | The string representation of the `Activity.Baggage` dictionary. See [System.Diagnostics documentation](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=netcore-3.1) for details.
 `content-type` | The content type of the [binary file]({{ site.baseurl }}/docs/advanced/binary-files), used when producing or consuming an `IBinaryFileMessage`.
 `x-kafka-message-key` | When using Kafka, the [kafka message key]({{ site.baseurl }}/docs/kafka/message-key) will also be submitted as header (see [Kafka Message Key (Partitioning)]({{ site.baseurl }}/docs/kafka/message-key) to know how to define a message key)
-`x-rabbit-routing-key` | When using Rabbit, the [routing key]({{ site.baseurl }}/docs/rabbit/routing-key) will also be submitted as header (see [Routing Key]({{ site.baseurl }}/docs/rabbit/routing-key) to know how to define a routing key)
 
 Some constants for the headers name are also provided as reported in the following table.
 
@@ -88,4 +87,3 @@ Header Key | Constant
 `tracebaggage` | `DefaultMessageHeaders.TraceBaggage`
 `content-type` | `DefaultMessageHeaders.ContentType`
 `x-kafka-message-key` | `KafkaMessageHeaders.KafkaKey`
-`x-rabbit-routing-key` | `RabbitMessageHeaders.RoutingKey`

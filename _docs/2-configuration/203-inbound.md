@@ -16,6 +16,11 @@ Multiple implementations are available, offering a variable degree of reliabilit
 
 The basic `InboundConnector` is very simple and just forwards the consumed messages to the internal bus. If no exception is thrown, the message is committed and the next one is consumed.
 
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/diagrams/inbound-basic.png"><img src="{{ site.baseurl }}/assets/images/diagrams/inbound-basic.png"></a>
+    <figcaption>The messages are consumed directly.</figcaption>
+</figure>
+
 <figure class="csharp">
 <figcaption>Startup.cs</figcaption>
 {% highlight csharp %}
@@ -46,11 +51,16 @@ public class Startup
 
 ### Exactly-once processing
 
-Silverback is able to keep track of the messages that have been consumed in order to guarantee that each one is processed exactly once.
+Silverback is able to keep track of the messages that have been consumed in order to guarantee that each message is processed exactly once.
 
 #### Offset storage
 
 The `DbOffsetStoredInboundConnector` will store the offset of the latest processed message (of each topic/partition) into a database table.
+
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/diagrams/inbound-offsetstore.png"><img src="{{ site.baseurl }}/assets/images/diagrams/inbound-offsetstore.png"></a>
+    <figcaption>The offsets are being stored to prevent the very same message to be consumed twice.</figcaption>
+</figure>
 
 The `DbContext` must include a `DbSet<StoredOffset>`.
 {: .notice--note}
@@ -76,6 +86,11 @@ public class Startup
 #### Logged
 
 The `DbLoggedInboundConnector` will store all the processed messages into a database table. This has the double purpose of serving as a log in addition to preventing double processing.
+
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/diagrams/inbound-log.png"><img src="{{ site.baseurl }}/assets/images/diagrams/inbound-log.png"></a>
+    <figcaption>The inbound messages are logged to prevent two messages with the same key to be consumed.</figcaption>
+</figure>
 
 The `DbContext` must include a `DbSet<InboundMessage>`.
 {: .notice--note}
@@ -245,6 +260,11 @@ public void OnProcessingFailed(ProcessingFailedEvent @event)
 ## Batch processing
 
 The inbound connector can be configured to process the messages in batches.
+
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/diagrams/inbound-batch.png"><img src="{{ site.baseurl }}/assets/images/diagrams/inbound-batch.png"></a>
+    <figcaption>The messages are processed in batches.</figcaption>
+</figure>
 
 Property | Description
 :-- | :--

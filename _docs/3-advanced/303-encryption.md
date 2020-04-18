@@ -5,6 +5,11 @@ permalink: /docs/advanced/encryption
 
 The end-to-end message encryption in Silverback is handled transparently in the produce/consume pipeline and works independently from the used [serializer]({{ site.baseurl }}/docs/advanced/serialization) or other features like [chunking]({{ site.baseurl }}/docs/advanced/chunking).
 
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/diagrams/encryption.png"><img src="{{ site.baseurl }}/assets/images/diagrams/encryption.png"></a>
+    <figcaption>The messages are transparently encrypted and decrypted.</figcaption>
+</figure>
+
 ## Symmetric encryption
 
 Enabling the end-to-end encryption using a symmetric algorithm just require an extra configuration in the endpoint (a `KafkaConsumerEndpoint` is used in the example below but the `Enryption` property is available in all enpoint types).
