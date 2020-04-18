@@ -1,7 +1,16 @@
 ---
-title: Glossary
+title: Introduction and Glossary
 permalink: /docs/quickstart/glossary
 ---
+
+Silverback is essentially a bus that can be either used internally to an application or connected to a message broker to integrate different applications or microservices.
+
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/diagrams/overview-detailed.png"><img src="{{ site.baseurl }}/assets/images/diagrams/overview-detailed.png"></a>
+    <figcaption>Silverback is used to produce the messages 1 and 3 to the message broker, while the messages 2 and 3 are also consumed locally, within the same application.</figcaption>
+</figure>
+
+## Glossary
 
 The following list serves as introduction to the terminology and types used in Silverback.
 

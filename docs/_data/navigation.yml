@@ -27,7 +27,7 @@ docs:
     url: /docs/releases
   - title: Quickstart
     children:
-      - title: Glossary
+      - title: Introduction and Glossary
         url: /docs/quickstart/glossary
       - title: Using the Bus
         children:

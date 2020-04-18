@@ -13,6 +13,11 @@ Multiple implementations of the connector are available, offering a variable deg
 
 The basic `OutboundConnector` is very simple and relays the messages synchronously. This is the easiest, better performing and most lightweight option but it doesn't allow for any transactionality (once the message is fired, is fired) nor resiliency to the message broker failure.
 
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/diagrams/outbound-basic.png"><img src="{{ site.baseurl }}/assets/images/diagrams/outbound-basic.png"></a>
+    <figcaption>Messages 1, 2 and 3 are directly produced to the message broker.</figcaption>
+</figure>
+
 <figure class="csharp">
 <figcaption>Startup.cs</figcaption>
 {% highlight csharp %}
@@ -48,6 +53,11 @@ The `DeferredOutboundConnector` stores the messages into a local queue to be for
 This approach has two main advantages:
 1. Fault tollerance: you depend on the database only and if the message broker is unavailable the produce will be automatically retried later on
 1. Transactionality: when using the database a storage you can commit the changes to the local database and the outbound messages inside a single atomic transaction (this pattern is called [transactional outbox](https://microservices.io/patterns/data/transactional-outbox.html))
+
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/diagrams/outbound-outboxtable.png"><img src="{{ site.baseurl }}/assets/images/diagrams/outbound-outboxtable.png"></a>
+    <figcaption>Messages 1, 2 and 3 are stored in the outbox table and produced by a separate thread or process.</figcaption>
+</figure>
 
 #### Database outbox table
 
@@ -115,6 +125,7 @@ public class Startup
     }
 }
 {% endhighlight %}
+</figure>
 
 ## Subscribing locally
 
@@ -143,6 +154,11 @@ What said above is only partially true, as you can subscribe to the wrapped mess
 ## Producing the same message to multiple endpoints
 
 An outbound route can point to multiple endpoints resulting in every message being broadcasted to all endpoints.
+
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/diagrams/outbound-broadcast.png"><img src="{{ site.baseurl }}/assets/images/diagrams/outbound-broadcast.png"></a>
+    <figcaption>Messages 1, 2 and 3 are published to both topics simultaneously.</figcaption>
+</figure>
 
 <figure class="csharp">
 <figcaption>Startup.cs</figcaption>
@@ -197,8 +213,12 @@ public class Startup
 
 By default Silverback routes the messages according to their type and the static configuration defined at startup. In some cases you may need more flexibility, being able to apply your own routing rules. In such cases it is possible to implement a fully customized router.
 
-In the following example a custom router is used to route the messages according to their priority (a copy is also sent to a catch-all topic).
+<figure>
+	<a href="{{ site.baseurl }}/assets/images/diagrams/outbound-customrouting.png"><img src="{{ site.baseurl }}/assets/images/diagrams/outbound-customrouting.png"></a>
+    <figcaption>The messages are dynamically routed to the appropriate endpoint.</figcaption>
+</figure>
 
+In the following example a custom router is used to route the messages according to their priority (a copy is also sent to a catch-all topic).
 
 ```csharp
 public class PrioritizedRouter : OutboundRouter<IPrioritizedCommand>
