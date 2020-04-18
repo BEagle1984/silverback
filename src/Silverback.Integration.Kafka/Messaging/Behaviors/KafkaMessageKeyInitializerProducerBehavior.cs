@@ -20,7 +20,16 @@ namespace Silverback.Messaging.Behaviors
             var key = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
 
             if (key != null)
+            {
                 context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, key);
+            }
+            else
+            {
+                var messageId = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
+                
+                if (messageId != null)
+                    context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, messageId);
+            }
 
             await next(context);
         }

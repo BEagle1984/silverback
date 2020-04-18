@@ -276,6 +276,41 @@ namespace Silverback.Tests.Integration.E2E.Broker
         }
 
         [Fact]
+        public async Task ChunkingWithWithCustomHeaders_HeadersTransferred()
+        {
+            var message = new TestEventWithHeaders()
+            {
+                Content = "Hello E2E!",
+                CustomHeader = "Hello header!",
+                CustomHeader2 = false
+            };
+
+            _configurator.Connect(endpoints => endpoints
+                .AddOutbound<IIntegrationEvent>(
+                    new KafkaProducerEndpoint("test-e2e")
+                    {
+                        Chunk = new ChunkSettings
+                        {
+                            Size = 10 
+                        }
+                    })
+                .AddInbound(
+                    new KafkaConsumerEndpoint("test-e2e")));
+
+            using var scope = _serviceProvider.CreateScope();
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(message);
+
+            _spyBehavior.InboundEnvelopes.Count.Should().BeGreaterThan(1);
+            _spyBehavior.InboundEnvelopes.ForEach(envelope =>
+            {
+                envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header", "Hello header!"));
+                envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header2", "False"));
+            });
+        }
+        
+        [Fact]
         public async Task Encryption_EncryptedAndDecrypted()
         {
             var message = new TestEventOne
