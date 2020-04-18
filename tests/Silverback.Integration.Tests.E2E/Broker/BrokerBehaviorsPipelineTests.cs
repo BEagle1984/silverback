@@ -302,12 +302,12 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             await publisher.PublishAsync(message);
 
-            _spyBehavior.InboundEnvelopes.Count.Should().BeGreaterThan(1);
-            _spyBehavior.InboundEnvelopes.ForEach(envelope =>
-            {
-                envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header", "Hello header!"));
-                envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header2", "False"));
-            });
+            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);
+            _spyBehavior.InboundEnvelopes.First().Headers.Should().ContainEquivalentOf(
+                new MessageHeader("x-custom-header", "Hello header!"));
+            _spyBehavior.InboundEnvelopes.First().Headers.Should().ContainEquivalentOf(
+                new MessageHeader("x-custom-header2", "False"));
         }
         
         [Fact]
