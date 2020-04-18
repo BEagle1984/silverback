@@ -275,6 +275,14 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        public IBrokerOptionsBuilder AddDbOutboundWorker(
+            DistributedLockSettings distributedLockSettings,
+            TimeSpan? interval = null,
+            bool enforceMessageOrder = true,
+            int readPackageSize = 100,
+            bool removeProduced = true) =>
+            AddDbOutboundWorker(interval, enforceMessageOrder, readPackageSize, distributedLockSettings);
+
         #endregion
 
         #region AddChunkStore

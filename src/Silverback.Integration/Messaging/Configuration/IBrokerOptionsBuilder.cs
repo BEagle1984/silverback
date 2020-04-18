@@ -188,6 +188,28 @@ namespace Silverback.Messaging.Configuration
             int readPackageSize = 100,
             DistributedLockSettings distributedLockSettings = null);
 
+        /// <summary>
+        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
+        /// </summary>
+        /// <param name="distributedLockSettings">The settings for the locking mechanism.</param>
+        /// <param name="interval">The interval between each run (default is 500ms).</param>
+        /// <param name="enforceMessageOrder">
+        ///     if set to <c>true</c> the message order will be preserved (no message will be
+        ///     skipped).
+        /// </param>
+        /// <param name="readPackageSize">The number of messages to be loaded from the queue at once.</param>
+        /// <param name="removeProduced">
+        ///     if set to <c>true</c> the messages will be removed from the database immediately after
+        ///     being produced.
+        /// </param>
+        [Obsolete("Use the other AddDbOutboundWorker overload.")]
+        IBrokerOptionsBuilder AddDbOutboundWorker(
+            DistributedLockSettings distributedLockSettings,
+            TimeSpan? interval = null,
+            bool enforceMessageOrder = true,
+            int readPackageSize = 100,
+            bool removeProduced = true);
+        
         #endregion
 
         #region AddChunkStore

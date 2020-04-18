@@ -7,13 +7,13 @@ toc: true
 ## [2.1.0-rc3](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc3)
 
 ### What's new
-* <span class="area-integration" /> Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
-* <span class="area-integration" /> End-to-End message encryption (see [Encryption]({{ site.baseurl }}/docs/advanced/encryption))
-* <span class="area-integration" /> Dynamic custom routing of outbound messages (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
-* <span class="area-integration" /> Better support for message headers (see [Message Headers]({{ site.baseurl }}/docs/quickstart/headers))
-* <span class="area-integration" /> Binary files support (see [Binary Files]({{ site.baseurl }}/docs/advanced/binary-files))
-* <span class="area-integration" /> The `IIntegrationMessage` is not required to have an `Id` property anymore (the `x-message-id` header will still be generated and if the property exists will continue to be automatically initialized)
-* <span class="area-integration" /> Added `x-first-chunk-offset` header by default (see [Message Headers]({{ site.baseurl }}/docs/quickstart/headers))
+* Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
+* End-to-End message encryption (see [Encryption]({{ site.baseurl }}/docs/advanced/encryption))
+* Dynamic custom routing of outbound messages (see [Outbound Connector]({{ site.baseurl }}/docs/configuration/outbound))
+* Better support for message headers (see [Message Headers]({{ site.baseurl }}/docs/quickstart/headers))
+* Binary files support (see [Binary Files]({{ site.baseurl }}/docs/advanced/binary-files))
+* The `IIntegrationMessage` is not required to have an `Id` property anymore (the `x-message-id` header will still be generated and if the property exists will continue to be automatically initialized)
+* Added `x-first-chunk-offset` header by default (see [Message Headers]({{ site.baseurl }}/docs/quickstart/headers))
 * <span class="area-kafka" /> The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
 * <span class="area-kafka" /> Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
 * <span class="area-kafka" /> Upgrade to [Confluent.Kafka 1.4.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.0)
@@ -22,14 +22,14 @@ toc: true
 
 ### Breaking Changes
 These changes shouldn't affect you unless you built your own `IBroker` implementation or are interacting at low-level with the `IBroker` (this is why has been decided to still mark this as a minor release):
-* <span class="area-integration" /> The `IBroker` inteface and `Broker` abstract base class have been modified to explicitly declare which endpoint type is being handled by the broker implementation
-* <span class="area-integration" /> The `IMessageSerializer` interfaces has been changed
-* <span class="area-integration" /> The `IConsumerBehavior` and `IProducerBehavior` interfaces have been changed and moved into `Integration.Broker.Behaviors` namespace
-* <span class="area-integration" /> Changed the parameters order in some less used overloads in the `IBrokerOptionBuilders`
+* The `IBroker` inteface and `Broker` abstract base class have been modified to explicitly declare which endpoint type is being handled by the broker implementation
+* The `IMessageSerializer` interfaces has been changed
+* The `IConsumerBehavior` and `IProducerBehavior` interfaces have been changed and moved into `Integration.Broker.Behaviors` namespace
+* Changed the parameters order in some less used overloads in the `IBrokerOptionBuilders`
 
 ### Announced Breaking Changes
 These aren't real breaking changes but some methods have been marked as deprecated and will be removed in one of the next major releases:
-* <span class="area-integration" /> `WithConnectionTo<>`, `WithConnectionToKafka` and `WithConnectionToRabbitMQ` are deprecated (they will still be supported in this version), please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit` methods (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
+* `WithConnectionTo<>`, `WithConnectionToKafka` and `WithConnectionToRabbitMQ` are deprecated (they will still be supported in this version), please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit` methods (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 
 ## [2.0.0](https://github.com/BEagle1984/silverback/releases/tag/2.0.0)
 
