@@ -92,7 +92,7 @@ The `DbChunkStore` will temporary store the chunks into a database table and the
     <figcaption>The chunks are persisted to a database table that is shared across the consumers.</figcaption>
 </figure>
 
-The `DbContext` must include a `DbSet<TemporaryMessageChunk>`.
+The `Silverback.EntityFrameworkCore` package is also required and the `DbContext` must include a `DbSet<TemporaryMessageChunk>`. See also the [sample DbContext]({{ site.baseurl }}/docs/extra/dbcontext).
 {: .notice--note}
 
 <figure class="csharp">

@@ -99,6 +99,8 @@ docs:
         url: /docs/rabbit/routing-key
   - title: Extras
     children:
+      - title: Sample DbContext (EF Core)
+        url: /docs/extra/dbcontext
       - title: Distributed Background Services
         url: /docs/extras/background-services
   - title: Source Code

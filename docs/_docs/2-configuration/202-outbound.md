@@ -63,11 +63,12 @@ This approach has two main advantages:
 
 The `DbOutboundConnector` will store the outbound messages into a database table.
 
-When using entity framework (`UseDbContext<TDbContext>`) the outbound messages are stored into a DbSet and are therefore implicitly saved in the same transaction used to save all other changes.
+When using entity framework (`UseDbContext<TDbContext>` contained in the `Silverback.EntityFrameworkCore` package) the outbound messages are stored into a `DbSet` and are therefore implicitly saved in the same transaction used to save all other changes.
 
-The `DbContext` must include a `DbSet<OutboundMessage>` and an `OutboundWorker` is to be started to process the outbound queue.
+The `DbContext` must include a `DbSet<OutboundMessage>` and an `OutboundWorker` is to be started to process the outbound queue. See also the [sample DbContext]({{ site.baseurl }}/docs/extra/dbcontext).
+{: .notice--note}
 
-The current `OutboundWorker` cannot be horizontally scaled and starting multiple instances will cause the messages to be produced multiple times. In the following example a distributed lock in the database is used to ensure that only one instance is running and another one will _immediatly_ take over when it stops (the `DbContext` must include a `DbSet<Lock>` as well).
+The current `OutboundWorker` cannot be horizontally scaled and starting multiple instances will cause the messages to be produced multiple times. In the following example a distributed lock in the database is used to ensure that only one instance is running and another one will _immediatly_ take over when it stops (the `DbContext` must include a `DbSet<Lock>` as well, see also the [sample DbContext]({{ site.baseurl }}/docs/extra/dbcontext)). 
 {: .notice--important}
 
 <figure class="csharp">
