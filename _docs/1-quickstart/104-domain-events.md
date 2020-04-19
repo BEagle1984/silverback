@@ -52,39 +52,41 @@ The `AddEvent<TEvent>()` method adds the domain event to the events collection, 
 To enable this mechanism we just need to override the various `SaveChanges` methods to plug-in the `DbContextEventsPublisher` contained in the `Silverback.Core.EntityFrameworkCore` package.
 
 ```csharp
-public class MyDbContext : DbContext
+using Microsoft.EntityFrameworkCore;
+using Silverback.EntityFrameworkCore;
+using Silverback.Messaging.Publishing;
+
+namespace Sample
 {
-    private readonly DbContextEventsPublisher _eventsPublisher;
-
-    public MyDbContext(IPublisher publisher)
+   public class SampleDbContext : DbContext
     {
-        _eventsPublisher = new DbContextEventsPublisher(publisher, this);
+        private readonly DbContextEventsPublisher _eventsPublisher;
+
+        public SampleDbContext(IPublisher publisher)
+        {
+            _eventsPublisher = new DbContextEventsPublisher(publisher, this);
+        }
+
+        public SampleDbContext(DbContextOptions options, IPublisher publisher)
+            : base(options)
+        {
+            _eventsPublisher = new DbContextEventsPublisher(publisher, this);
+        }
+
+        public override int SaveChanges()
+            => SaveChanges(true);
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+            => _eventsPublisher.ExecuteSaveTransaction(() => base.SaveChanges(acceptAllChangesOnSuccess));
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+            => SaveChangesAsync(true, cancellationToken);
+
+        public override Task<int> SaveChangesAsync(
+            bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
+            => _eventsPublisher.ExecuteSaveTransactionAsync(() =>
+                base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
     }
-
-    public MyDbContext(DbContextOptions options, IPublisher publisher)
-        : base(options)
-    {
-        _eventsPublisher = new DbContextEventsPublisher(publisher, this);
-    }
-
-    public override int SaveChanges()
-        => SaveChanges(true);
-
-    public override int SaveChanges(
-        bool acceptAllChangesOnSuccess)
-        => _eventsPublisher.ExecuteSaveTransaction(() => 
-            base.SaveChanges(acceptAllChangesOnSuccess));
-
-    public override Task<int> SaveChangesAsync(
-        CancellationToken cancellationToken = default)
-        => SaveChangesAsync(true, cancellationToken);
-
-    public override Task<int> SaveChangesAsync(
-        bool acceptAllChangesOnSuccess, 
-        CancellationToken cancellationToken = default)
-        => _eventsPublisher.ExecuteSaveTransactionAsync(() =>
-            base.SaveChangesAsync(
-                acceptAllChangesOnSuccess, 
-                cancellationToken));
 }
 ```

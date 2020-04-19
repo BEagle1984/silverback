@@ -62,7 +62,7 @@ The `DbOffsetStoredInboundConnector` will store the offset of the latest process
     <figcaption>The offsets are being stored to prevent the very same message to be consumed twice.</figcaption>
 </figure>
 
-The `DbContext` must include a `DbSet<StoredOffset>`.
+The `Silverback.EntityFrameworkCore` package is also required and the `DbContext` must include a `DbSet<StoredOffset>`. See also the [sample DbContext]({{ site.baseurl }}/docs/extra/dbcontext).
 {: .notice--note}
 
 <figure class="csharp">
@@ -92,7 +92,7 @@ The `DbLoggedInboundConnector` will store all the processed messages into a data
     <figcaption>The inbound messages are logged to prevent two messages with the same key to be consumed.</figcaption>
 </figure>
 
-The `DbContext` must include a `DbSet<InboundMessage>`.
+The `Silverback.EntityFrameworkCore` package is also required and the `DbContext` must include a `DbSet<InboundMessage>`. See also the [sample DbContext]({{ site.baseurl }}/docs/extra/dbcontext).
 {: .notice--note}
 
 <figure class="csharp">

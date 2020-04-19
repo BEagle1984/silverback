@@ -19,7 +19,7 @@ The headers value will also automatically be mapped back to the property upon co
 ```csharp
 using Silverback.Messaging.Messages;
 
-namespace SomeNamespace
+namespace Sample
 {
     public class OrderCreatedEvent
     {
