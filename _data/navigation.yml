@@ -28,7 +28,7 @@ docs:
   - title: Quickstart
     children:
       - title: Introduction and Glossary
-        url: /docs/quickstart/glossary
+        url: /docs/quickstart
       - title: Using the Bus
         children:
           - title: Enabling the Bus
