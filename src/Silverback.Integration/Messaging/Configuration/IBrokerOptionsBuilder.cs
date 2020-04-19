@@ -202,7 +202,6 @@ namespace Silverback.Messaging.Configuration
         ///     if set to <c>true</c> the messages will be removed from the database immediately after
         ///     being produced.
         /// </param>
-        [Obsolete("Use the other AddDbOutboundWorker overload.")]
         IBrokerOptionsBuilder AddDbOutboundWorker(
             DistributedLockSettings distributedLockSettings,
             TimeSpan? interval = null,

@@ -38,7 +38,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Rabbit.Deferred
                     .AddRabbit()
                     .AddDbOutboundConnector()
                     .AddDbOutboundWorker(
-                        distributedLockSettings: new DistributedLockSettings(
+                        new DistributedLockSettings(
                             acquireRetryInterval: TimeSpan.FromSeconds(1),
                             heartbeatTimeout: TimeSpan.FromSeconds(10),
                             heartbeatInterval: TimeSpan.FromSeconds(1))));
