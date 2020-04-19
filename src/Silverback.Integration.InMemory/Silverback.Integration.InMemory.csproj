@@ -31,7 +31,7 @@ This package includes a mocked message broker to be used for testing only.</Desc
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
   </ItemGroup>
 
 </Project>

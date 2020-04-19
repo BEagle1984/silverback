@@ -33,6 +33,9 @@ This package contains the extensions for Microsoft.Extensions.Diagnostics.Health
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="2.2.0" />
-    <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
   </ItemGroup>
 </Project>

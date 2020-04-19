@@ -66,6 +66,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		README.md = README.md
 		nuget\Update.ps1 = nuget\Update.ps1
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.RabbitMQ", "src\Silverback.Integration.RabbitMQ\Silverback.Integration.RabbitMQ.csproj", "{0627B10F-67B1-4025-9CEA-31B9994CC2FA}"

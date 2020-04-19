@@ -48,7 +48,10 @@ This package It contains the storage implementation to integrate Silverback with
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
-    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

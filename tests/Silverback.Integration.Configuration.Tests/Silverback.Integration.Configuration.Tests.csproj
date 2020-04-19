@@ -22,11 +22,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Silverback.Integration.Configuration\Silverback.Integration.Configuration.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
   </ItemGroup>
 
   <ItemGroup>

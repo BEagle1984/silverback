@@ -31,7 +31,7 @@ This package contains the default messages interfaces and domain entity implemen
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
   </ItemGroup>
-
+  
 </Project>

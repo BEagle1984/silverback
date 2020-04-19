@@ -1,7 +1,5 @@
 ﻿$repositoryLocation = "."
 [bool]$global:clearCache = $FALSE
-[bool]$global:restorePackagesAfterwards = $TRUE
-[bool]$global:rebuildSolutionsAfterwards = $TRUE
 $global:buildConfiguration = "Release"
 
 function Check-Location()
@@ -28,59 +26,80 @@ function Check-Args([string[]]$argsArray)
         {
            $global:clearCache = $TRUE
         }
-        elseif ($arg -eq "--no-restore")
-        {
-            $global:restorePackagesAfterwards = $FALSE
-        }
-        elseif ($arg -eq "--no-rebuild")
-        {
-            $global:rebuildSolutionsAfterwards = $FALSE
-        }
     }
-}
-
-function Get-Sources() 
-{
-    $sources = 
-        ("Silverback.Core", ("..\src\Silverback.Core\")),
-        ("Silverback.Core.EntityFrameworkCore", ("..\src\Silverback.Core.EFCore30\", "..\src\Silverback.Core.EFCore22\")),
-        ("Silverback.Core.Model", ("..\src\Silverback.Core.Model\")),
-        ("Silverback.Core.Rx", ("..\src\Silverback.Core.Rx\")),
-        ("Silverback.EventSourcing", ("..\src\Silverback.EventSourcing\")),
-        ("Silverback.Integration", ("..\src\Silverback.Integration\")),
-        ("Silverback.Integration.Configuration", ("..\src\Silverback.Integration.Configuration\")),
-        ("Silverback.Integration.HealthChecks", ("..\src\Silverback.Integration.HealthChecks\")),
-        ("Silverback.Integration.InMemory", ("..\src\Silverback.Integration.InMemory\")),
-        ("Silverback.Integration.Kafka", ("..\src\Silverback.Integration.Kafka\")),
-        ("Silverback.Integration.Kafka.SchemaRegistry", ("..\src\Silverback.Integration.Kafka.SchemaRegistry\")),
-        ("Silverback.Integration.RabbitMQ", ("..\src\Silverback.Integration.RabbitMQ\"))
-
-    return $sources
 }
 
 function Pack-All()
 {
-    foreach ($source in Get-Sources)
+    foreach ($sourceProjectName in Get-SourceProjectNames)
     {
-        $name = $source[0]
+        Write-Host "Packing $sourceProjectName ($global:buildConfiguration)...`n" -ForegroundColor Yellow
 
-        Write-Host "Packing $name ($global:buildConfiguration)...`n" -ForegroundColor Yellow
-
-        foreach ($sourcePath in $source[1])
-        {
-            Write-Host "Building..."
-            dotnet build -c $global:buildConfiguration -v q $sourcePath/. --no-incremental
-            Write-Host ""
-            Write-Host "Packing..."
-            dotnet pack -c $global:buildConfiguration -v q $sourcePath/. --no-build
-        }
-
+        $projectFilePath = "../src/$sourceProjectName/$sourceProjectName.csproj"
+        
+        Backup-ProjectFile $projectFilePath
+        Remove-ProjectReferences $projectFilePath
+        
+        Write-Host "Building..."
+        dotnet build -c $global:buildConfiguration $projectFilePath --no-incremental --nologo -v q 
+        Write-Host ""
+        Write-Host "Packing..."
+        dotnet pack -c $global:buildConfiguration $projectFilePath -o . --no-build --nologo -v q
         Write-Host ""
 
-        Copy-Package $source
+        Restore-ProjectFile $projectFilePath
 
         Write-Separator
     }
+}
+
+function Get-SourceProjectNames() 
+{
+    return Get-ChildItem -Path ../src -Directory | Select-Object -ExpandProperty Name
+}
+
+function Remove-ProjectReferences([string]$projectFilePath)
+{
+    Remove-ProjectReference $projectFilePath "Silverback.Core" "Silverback.Core" '$(BaseVersion)'
+    Remove-ProjectReference $projectFilePath "Silverback.Integration" "Silverback.Integration" '$(BaseVersion)'
+    Remove-ProjectReference $projectFilePath "Silverback.Integration.Kafka" "Silverback.Integration.Kafka" '$(BaseVersion)'
+    
+    Test-ProjectReferenceReplaced $projectFilePath
+}
+
+function Remove-ProjectReference([string] $projectFilePath, [string]$projectToReplace, [string]$packageName, [string]$packageVersion)
+{
+    Write-Host "Replace $projectToReplace reference..." -NoNewline
+    $find = "<ProjectReference Include=`"..\\$projectToReplace\\$projectToReplace.csproj`" />"
+    $replace = "<PackageReference Include=`"$projectToReplace`" Version=`"$packageVersion`" />"
+    ((Get-Content -path $projectFilePath -Raw) -replace $find, $replace) | Set-Content -Path $projectFilePath
+    Write-Host "OK" -ForegroundColor Green
+}
+
+function Test-ProjectReferenceReplaced([string]$projectFilePath)
+{
+    $result = Select-String -Path $projectFilePath -Pattern ".csproj"
+    
+    if ($result -ne $null)
+    {
+        Restore-ProjectFile $projectFilePath 
+        throw "The file $projectFilePath still contains one or more references to another .csproj file."
+    }
+}
+
+function Backup-ProjectFile([string] $projectFilePath)
+{
+    Write-Host "Backing up project file..." -NoNewline
+    Copy-Item $projectFilePath -Destination "$projectFilePath.original"
+    Write-Host "OK" -ForegroundColor Green
+}
+
+function Restore-ProjectFile([string] $projectFilePath)
+{
+    Write-Host "Restoring project file..." -NoNewline
+    Copy-Item $projectFilePath -Destination "$projectFilePath.modified"
+    Copy-Item "$projectFilePath.original" -Destination $projectFilePath
+    Write-Host "OK" -ForegroundColor Green
 }
 
 function Delete-All()
@@ -94,39 +113,6 @@ function Delete-All()
     Write-Host "OK" -ForegroundColor Green
 
     Write-Separator
-}
-
-function Copy-Package($source) 
-{
-    $name = $source[0]
-
-    Write-Host "Copying $name..." -NoNewline
-
-    foreach ($sourcePath in $source[1])
-    {
-        $sourcePath = Join-Path $sourcePath "bin\$global:buildConfiguration\*.nupkg"
-
-        Copy-Item $sourcePath -Destination $repositoryLocation -Recurse
-    }
-
-    Write-Host "OK" -ForegroundColor Green    
-}
-
-function Ensure-Folder-Exists([string]$path)
-{
-    if (!(Test-Path $path))
-    {
-        New-Item -ItemType Directory -Force -Path $path | Out-Null
-    }
-}
-
-function Show-Files([string]$path)
-{
-    Get-ChildItem $path -Recurse -Filter *.nupkg | 
-    Foreach-Object {
-        Write-Host "`t" -NoNewline
-        Write-Host $_.Name.Substring(0, $_.Name.Length - ".nupkg".Length)
-    }
 }
 
 function Show-Summary()
@@ -143,9 +129,16 @@ function Show-Summary()
         Add-Version $file $hashtable
     }
 
-    foreach ($source in Get-Sources)
+    foreach ($key in Get-SourceProjectNames)
     {
-        $key = $source[0]
+        if ($key -eq "Silverback.Core.EFCore22")
+        {
+            continue
+        }
+        elseif ($key -eq "Silverback.Core.EFCore30")
+        {
+            $key = "Silverback.Core.EntityFrameworkCore"
+        }
         
         Write-Host "[" -NoNewline
         Write-Host "$($hashtable[$key].major).$($hashtable[$key].minor).$($hashtable[$key].patch)$($hashtable[$key].suffix)" -NoNewline -ForegroundColor Green
@@ -240,33 +233,6 @@ function Delete-Cache([string]$name)
     Write-Separator
 }
 
-function Rebuild-All()
-{
-    if ($global:restorePackagesAfterwards -eq $false)
-    {
-        return
-    }
-
-    RebuildSolution "Silverback.sln" "../Silverback.sln"
-    RebuildSolution "Silverback.Examples.sln" "../samples/Examples/Silverback.Examples.sln"
-
-    Write-Separator
-}
-
-function RebuildSolution([string]$solutionName, [string]$solutionPath)
-{
-    if ($global:rebuildSolutionsAfterwards -eq $true)
-    {
-        Write-Host "Rebuilding $solutionName..." -ForegroundColor Yellow
-        dotnet build $solutionPath --no-incremental
-    }
-    else
-    {
-        Write-Host "Restoring nuget packages in $solutionName..." -ForegroundColor Yellow
-        dotnet restore $solutionPath
-    }
-}
-
 function Write-Separator()
 {
     Write-Host "`n##################################################################`n" -ForegroundColor Yellow
@@ -274,14 +240,11 @@ function Write-Separator()
 
 $stopwatch = [system.diagnostics.stopwatch]::StartNew()
 
-Write-Separator
-
 Check-Args $args
 Check-Location
 Delete-All
 Delete-Cache
 Pack-All
-Rebuild-All
 Show-Summary
 
 $stopwatch.Stop()

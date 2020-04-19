@@ -26,15 +26,6 @@ steps:
     inputs:
       packageType: 'sdk'
       version: '3.1.x'
-  # Build nuget packages
-  - task: PowerShell@2
-    displayName: 'Build nuget packages (nuget/Update.ps1)'
-    inputs:
-      targetType: 'inline'
-      script: |
-        cd nuget
-        ./Update.ps1 --no-rebuild
-        cd ..
   # Build and test
   - script: dotnet build Silverback.sln --configuration $(buildConfiguration)
     displayName: 'Build (dotnet build $(buildConfiguration))'

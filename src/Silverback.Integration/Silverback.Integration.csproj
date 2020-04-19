@@ -34,8 +34,11 @@ This package contains the message broker and connectors abstractions.</Descripti
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
     <PackageReference Include="System.Memory" Version="4.5.3" /> <!-- Might be removed after update all dependencies. -->
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
   </ItemGroup>
 </Project>

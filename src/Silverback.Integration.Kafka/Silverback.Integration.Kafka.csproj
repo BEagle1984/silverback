@@ -32,7 +32,10 @@ This package contains an implementation of Silverback.Integration for the popula
 
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="1.4.0" />
-    <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
   </ItemGroup>
 
   <ItemGroup>

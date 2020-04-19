@@ -1,38 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
-        <RootNamespace>$(RootNamespace)</RootNamespace>
-        <Version>$(BaseVersion)</Version>
-        <Authors>$(Authors)</Authors>
-        <Company>$(Company)</Company>
-        <PackageLicenseExpression>$(License)</PackageLicenseExpression>
-        <Copyright>$(Copyright)</Copyright>
-        <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
-        <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
-        <RepositoryType>$(RepositoryType)</RepositoryType>
-        <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
-        <Description>$(Description)
-            This package contains an implementation of Silverback.Integration for the popular RabbitMQ message broker.</Description>
-        <PackageIconUrl>$(IconUrl)</PackageIconUrl>
-        <PackageTags>$(Tags)</PackageTags>
-        <LangVersion>$(LangVersion)</LangVersion>
-        <NoWarn>$(NoWarn)</NoWarn>
-        <PackageId>Silverback.Integration.RabbitMQ</PackageId>
-        <Product>Silverback.Integration.RabbitMQ</Product>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
+    <RootNamespace>$(RootNamespace)</RootNamespace>
+    <Version>$(BaseVersion)</Version>
+    <Authors>$(Authors)</Authors>
+    <Company>$(Company)</Company>
+    <PackageLicenseExpression>$(License)</PackageLicenseExpression>
+    <Copyright>$(Copyright)</Copyright>
+    <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
+    <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
+    <RepositoryType>$(RepositoryType)</RepositoryType>
+    <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
+    <Description>$(Description)
+This package contains an implementation of Silverback.Integration for the popular RabbitMQ message broker.</Description>
+    <PackageIconUrl>$(IconUrl)</PackageIconUrl>
+    <PackageTags>$(Tags)</PackageTags>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <NoWarn>$(NoWarn)</NoWarn>
+    <PackageId>Silverback.Integration.RabbitMQ</PackageId>
+    <Product>Silverback.Integration.RabbitMQ</Product>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.RabbitMQ.xml</DocumentationFile>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.RabbitMQ.xml</DocumentationFile>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <DocumentationFile>bin\Release\netstandard2.0\Silverback.Integration.RabbitMQ.xml</DocumentationFile>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DocumentationFile>bin\Release\netstandard2.0\Silverback.Integration.RabbitMQ.xml</DocumentationFile>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="RabbitMQ.Client" Version="6.0.0-rc1" />
-        <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />
-    </ItemGroup>
+  <ItemGroup>
+      <PackageReference Include="RabbitMQ.Client" Version="6.0.0-rc1" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
+  </ItemGroup>
 </Project>

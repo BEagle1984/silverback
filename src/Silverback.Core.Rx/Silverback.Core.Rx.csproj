@@ -32,7 +32,10 @@ This package adds the ability to create an Observable from the internal bus mess
 
   <ItemGroup>
     <PackageReference Include="System.Reactive" Version="4.1.3" />
-    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+  </ItemGroup>
+  
   </Project>

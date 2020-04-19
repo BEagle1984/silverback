@@ -32,6 +32,9 @@ This package contains an implementation of an event store that perfectly integra
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
   </ItemGroup>
 </Project>
