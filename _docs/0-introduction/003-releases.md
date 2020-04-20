@@ -20,7 +20,7 @@ toc: true
 * <span class="area-rabbit" /> Added consumer `PrefetchSize` and `PrefetchCount` settings (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
 * <span class="area-rabbit" /> Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
 * Improved message type resolution performance and reliability in `JsonMessageSerializer`
-* `LogWithLevel` method added to `SkipMessageErrorPolicy` to specify the level for the "Message skippd" log entry (the default is now increased to `Error`)
+* `LogWithLevel` method added to `SkipMessageErrorPolicy` to specify the desired level for the "Message skipped" log entry (the default is now increased to `Error`)
 
 ### Breaking Changes
 These changes shouldn't affect you unless you built your own `IBroker` implementation or are interacting at low-level with the `IBroker` (this is why has been decided to still mark this as a minor release):
