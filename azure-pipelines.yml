@@ -1,8 +1,3 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
   - master
   - develop
@@ -27,9 +22,17 @@ steps:
       packageType: 'sdk'
       version: '3.1.x'
   # Build and test
-  - script: dotnet build Silverback.sln --configuration $(buildConfiguration)
+  - script: |
+      dotnet build Silverback.sln --configuration $(buildConfiguration)
     displayName: 'Build (dotnet build $(buildConfiguration))'
-  - script: dotnet test Silverback.sln --logger trx --collect "Code coverage" --filter CI!=false -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:Exclude="[xunit.*]*"
+  - script: |
+      dotnet test Silverback.sln \
+        --logger trx \
+        --collect "Code coverage" \
+        --filter CI!=false \
+        -p:CollectCoverage=true \
+        -p:CoverletOutputFormat=cobertura \
+        -p:Exclude="[xunit.*]*%2c[Silverback.Tests.Common]*"
     displayName: 'Test: (dotnet test)'
   # Publish results
   - task: PublishTestResults@2

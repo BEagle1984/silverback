@@ -157,7 +157,7 @@ If an exceptions is thrown by the methods consuming the incoming messages (subsc
 
 Policy | Description
 :-- | :--
-`Skip` | This is the simplest policy: just ignore the message and go ahead.
+`Skip` | This is the simplest policy: just ignore the message and go ahead. Use the `LogWithLevel` method to specify the log level to be applied the "message skipped" log entry (default is `Error`).
 `Retry` | Define how many times and at which interval to retry to process the message. Be aware that this will block the consumer.
 `Move` | Used to re-publish the message to the specified endpoint, this policy is very flexible and allow quite a few scenarios: move to same topic to retry later on without blocking, move to a retry topic to delay the retry or move to a failed messages topic. The message can also be transformed, to allow adding useful information (e.g. source, error type, etc.) that will allow for better handling while reprocessing.
 `Chain` | Combine different policies, for example to move the message to a dead letter after some retries.
@@ -198,7 +198,7 @@ If the processing still fails after the last policy is applied the inbound conne
 ```csharp
 policy.Chain(
     policy.Retry(TimeSpan.FromSeconds(1)).MaxFailedAttempts(3),
-    policy.Skip())
+    policy.Skip().LogWithLevel(LogLevel.Critical))
 ```
 
 A message can be moved to the same topic to simply be moved to the end of the queue.

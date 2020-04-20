@@ -55,7 +55,7 @@ docs:
         url: /docs/quickstart/testing
       - title: Event Sourcing
         url: /docs/quickstart/event-sourcing
-  - title: Broker Configuration Explained
+  - title: Broker Configuration
     children:
       - title: Endpoint
         url: /docs/configuration/endpoint
@@ -63,11 +63,11 @@ docs:
         url: /docs/configuration/outbound
       - title: Inbound Connector
         url: /docs/configuration/inbound
-      - title: Multiple Configurations
-        url: /docs/configuration/multiple
-      - title: External Configurations
+      - title: Mixed Configurations
+        url: /docs/configuration/mixed
+      - title: External Configuration
         url: /docs/configuration/external
-  - title: Advanced Topics
+  - title: Advanced
     children:
       - title: Serialization
         url: /docs/advanced/serialization
@@ -83,8 +83,8 @@ docs:
         url: /docs/advanced/broker
       - title: Message Identifier
         url: /docs/advanced/message-id
-      - title: IInboundMessage
-        url: /docs/advanced/iinboundmessage
+      - title: IInboundEnvelope
+        url: /docs/advanced/iinboundenvelope
   - title: Kafka Specific
     children:
       - title: Message Key (partitioning)
