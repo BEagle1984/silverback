@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry;
+using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Messages;
 using Silverback.Examples.Messages;
@@ -12,7 +13,6 @@ using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Encryption;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Examples.Consumer.Configuration
@@ -79,15 +79,15 @@ namespace Silverback.Examples.Consumer.Configuration
                     Consumers = 2
                 })
             .AddInbound(new KafkaConsumerEndpoint("silverback-examples-error-events")
-            {
-                Configuration = new KafkaConsumerConfig
                 {
-                    BootstrapServers = "PLAINTEXT://localhost:9092",
-                    GroupId = _app.ConsumerGroupName,
-                    AutoOffsetReset = AutoOffsetReset.Earliest
-                }
-            }, policy => policy
-                .Chain(
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://localhost:9092",
+                        GroupId = _app.ConsumerGroupName,
+                        AutoOffsetReset = AutoOffsetReset.Earliest
+                    }
+                },
+                policy => policy.Chain(
                     policy
                         .Retry(TimeSpan.FromMilliseconds(500))
                         .MaxFailedAttempts(2),
@@ -123,6 +123,18 @@ namespace Silverback.Examples.Consumer.Configuration
                             Source = messages.First().Endpoint.Name,
                             Destination = "silverback-examples-events"
                         })))
+            .AddInbound(new KafkaConsumerEndpoint("silverback-examples-error-events2")
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://localhost:9092",
+                        GroupId = _app.ConsumerGroupName,
+                        AutoOffsetReset = AutoOffsetReset.Earliest
+                    }
+                },
+                policy => policy.Chain(
+                    policy.Retry().MaxFailedAttempts(2),
+                    policy.Skip().LogWithLevel(LogLevel.Critical)))
             .AddInbound(new KafkaConsumerEndpoint("silverback-examples-custom-serializer")
             {
                 Configuration = new KafkaConsumerConfig

@@ -12,14 +12,13 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
 {
-    public class RetryAndMoveErrorPolicyUseCase : UseCase
+    public class RetryAndSkipErrorPolicyUseCase : UseCase
     {
-        public RetryAndMoveErrorPolicyUseCase()
+        public RetryAndSkipErrorPolicyUseCase()
         {
-            Title = "Simulate a processing error (Retry + Move)";
-            Description = "The consumer will retry to process the message (x2), " +
-                          "then move it at the end of the topic (x2) and finally " +
-                          "move it to another topic.";
+            Title = "Simulate a processing error (Retry + Skip)";
+            Description = "The consumer will retry to process the message (x2) and " +
+                          "finally skip it.";
             ExecutionsCount = 1;
         }
 
@@ -30,7 +29,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-error-events")
+                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-error-events2")
                 {
                     Configuration = new KafkaProducerConfig
                     {

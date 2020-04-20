@@ -13,14 +13,14 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
 {
-    public class RetryAndMoveErrorPolicyUseCase2 : UseCase
+    public class RetryAndSkipErrorPolicyUseCase2 : UseCase
     {
-        public RetryAndMoveErrorPolicyUseCase2()
+        public RetryAndSkipErrorPolicyUseCase2()
         {
-            Title = "Simulate a deserialization error";
-            Description = "The consumer will retry to process the message (x2), " +
-                          "then move it at the end of the topic (x2) and finally " +
-                          "moving it to another topic.";
+            Title = "Simulate a deserialization error (Retry + Skip)";
+            Description = "The consumer will retry to process the message (x2) and " +
+                          "finally skip it.";
+            ExecutionsCount = 1;
         }
 
         protected override void ConfigureServices(IServiceCollection services) => services
@@ -30,7 +30,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
 
         protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-error-events")
+                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-error-events2")
                 {
                     Configuration = new KafkaProducerConfig
                     {

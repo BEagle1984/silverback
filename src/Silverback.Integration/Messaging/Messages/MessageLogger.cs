@@ -82,7 +82,7 @@ namespace Silverback.Messaging.Messages
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, LogLevel.Critical, exception, logMessage, envelopes);
 
-        private void Log(
+        public void Log(
             ILogger logger,
             LogLevel logLevel,
             Exception exception,
