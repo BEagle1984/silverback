@@ -12,7 +12,7 @@ The end-to-end message encryption in Silverback is handled transparently in the 
 
 ## Symmetric encryption
 
-Enabling the end-to-end encryption using a symmetric algorithm just require an extra configuration in the endpoint (a `KafkaConsumerEndpoint` is used in the example below but the `Enryption` property is available in all enpoint types).
+Enabling the end-to-end encryption using a symmetric algorithm just require an extra configuration in the endpoint (a `KafkaConsumerEndpoint` is used in the example below but the `Encryption` property is available in all enpoint types).
 
 ```csharp
 new KafkaConsumerEndpoint("sensitive-data")

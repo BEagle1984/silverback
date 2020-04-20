@@ -4,7 +4,7 @@ permalink: /docs/releases
 toc: true
 ---
 
-## [2.1.0-rc3](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc3)
+## [2.1.0-rc4](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc4)
 
 ### What's new
 * Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
@@ -19,13 +19,15 @@ toc: true
 * <span class="area-kafka" /> Upgrade to [Confluent.Kafka 1.4.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.0)
 * <span class="area-rabbit" /> Added consumer `PrefetchSize` and `PrefetchCount` settings (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
 * <span class="area-rabbit" /> Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
+* Improved message type resolution performance and reliability in `JsonMessageSerializer`
+* `LogWithLevel` method added to `SkipMessageErrorPolicy` to specify the level for the "Message skippd" log entry (the default is now increased to `Error`)
 
 ### Breaking Changes
 These changes shouldn't affect you unless you built your own `IBroker` implementation or are interacting at low-level with the `IBroker` (this is why has been decided to still mark this as a minor release):
 * The `IBroker` inteface and `Broker` abstract base class have been modified to explicitly declare which endpoint type is being handled by the broker implementation
 * The `IMessageSerializer` interfaces has been changed
 * The `IConsumerBehavior` and `IProducerBehavior` interfaces have been changed and moved into `Integration.Broker.Behaviors` namespace
-* Changed the parameters order in some less used overloads in the `IBrokerOptionBuilders`
+* Changed the parameters order in some less used overloads in the `IBrokerOptionBuilder`
 
 ### Announced Breaking Changes
 These aren't real breaking changes but some methods have been marked as deprecated and will be removed in one of the next major releases:

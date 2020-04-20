@@ -1,6 +1,6 @@
 ---
-title: IInboundMessage
-permalink: /docs/advanced/iinboundmessage
+title: IInboundEnvelope
+permalink: /docs/advanced/iinboundenvelope
 
 toc: false
 ---
