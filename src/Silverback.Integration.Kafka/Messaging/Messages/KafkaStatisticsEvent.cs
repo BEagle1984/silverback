@@ -7,7 +7,7 @@ using Silverback.Messaging.Messages.Statistics;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     The event fired when statistics are received. Statistics are provided as a JSON formatted string
+    ///     The event published when statistics are received. Statistics are provided as a JSON formatted string
     ///     as defined here: https://github.com/edenhill/librdkafka/blob/master/STATISTICS.md
     ///     and also as <see cref="KafkaStatistics" /> object.
     /// </summary>

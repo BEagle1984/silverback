@@ -62,7 +62,7 @@ If the message wasn't produced by Silverback chances are that the message type h
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints
@@ -91,7 +91,7 @@ public class MyBinaryFileMessage : BinaryFileMessage
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints

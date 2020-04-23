@@ -3,8 +3,14 @@
 
 namespace Silverback.Messaging.Messages
 {
+    /// <summary>
+    ///     Exposes a <c>Source</c> property referencing the object that generated the message.
+    /// </summary>
     public interface IMessageWithSource
     {
-        object Source { get; set; }
+        /// <summary>
+        ///     Gets or sets the reference to the object that generated the message.
+        /// </summary>
+        object? Source { get; set; }
     }
 }

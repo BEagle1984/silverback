@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -17,27 +18,34 @@ namespace Silverback.Messaging.Broker
     public class RabbitConsumer : Consumer<RabbitBroker, RabbitConsumerEndpoint, RabbitOffset>
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
+
         private readonly ILogger<RabbitConsumer> _logger;
 
+        private readonly object _pendingOffsetLock = new object();
+
         private IModel _channel;
+
         private string _queueName;
+
         private AsyncEventingBasicConsumer _consumer;
+
         private string _consumerTag;
 
         private bool _disconnecting;
 
         private int _pendingOffsetsCount;
-        private RabbitOffset _pendingOffset;
-        private readonly object _pendingOffsetLock = new object();
+
+        private RabbitOffset? _pendingOffset;
 
         public RabbitConsumer(
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
+            MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior> behaviors,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
             ILogger<RabbitConsumer> logger)
-            : base(broker, endpoint, behaviors, serviceProvider, logger)
+            : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
 
         {
             _connectionFactory = connectionFactory;
@@ -45,6 +53,7 @@ namespace Silverback.Messaging.Broker
         }
 
 
+        /// <inheritdoc />
         public override void Connect()
         {
             if (_consumer != null)
@@ -55,11 +64,13 @@ namespace Silverback.Messaging.Broker
             _consumer = new AsyncEventingBasicConsumer(_channel);
             _consumer.Received += TryHandleMessage;
 
-            _consumerTag = _channel.BasicConsume(queue: _queueName,
-                autoAck: false,
-                consumer: _consumer);
+            _consumerTag = _channel.BasicConsume(
+                _queueName,
+                false,
+                _consumer);
         }
 
+        /// <inheritdoc />
         public override void Disconnect()
         {
             if (_consumer == null)
@@ -79,28 +90,33 @@ namespace Silverback.Messaging.Broker
             _disconnecting = false;
         }
 
+        /// <inheritdoc />
         protected override Task Commit(IReadOnlyCollection<RabbitOffset> offsets)
         {
             CommitOrStoreOffset(offsets.OrderBy(offset => offset.DeliveryTag).Last());
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         protected override Task Rollback(IReadOnlyCollection<RabbitOffset> offsets)
         {
             BasicNack(offsets.Max(offset => offset.DeliveryTag));
             return Task.CompletedTask;
         }
 
+        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task TryHandleMessage(object sender, BasicDeliverEventArgs deliverEventArgs)
         {
-            RabbitOffset offset = null;
+            RabbitOffset? offset = null;
 
             try
             {
                 offset = new RabbitOffset(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
 
-                _logger.LogDebug("Consuming message {offset} from endpoint {endpointName}.",
-                    offset.Value, Endpoint.Name);
+                _logger.LogDebug(
+                    "Consuming message {offset} from endpoint {endpointName}.",
+                    offset.Value,
+                    Endpoint.Name);
 
                 if (_disconnecting)
                     return;
@@ -113,10 +129,10 @@ namespace Silverback.Messaging.Broker
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex,
+                const string errorMessage =
                     "Fatal error occurred consuming the message {offset} from endpoint {endpointName}. " +
-                    "The consumer will be stopped.",
-                    offset?.Value, Endpoint.Name);
+                    "The consumer will be stopped.";
+                _logger.LogCritical(ex, errorMessage, offset?.Value, Endpoint.Name);
 
                 Disconnect();
             }
@@ -159,7 +175,8 @@ namespace Silverback.Messaging.Broker
             {
                 _channel.BasicAck(deliveryTag, true);
 
-                _logger.LogDebug("Successfully committed (basic.ack) the delivery tag {deliveryTag}.",
+                _logger.LogDebug(
+                    "Successfully committed (basic.ack) the delivery tag {deliveryTag}.",
                     deliveryTag);
             }
             catch (Exception ex)
@@ -179,7 +196,8 @@ namespace Silverback.Messaging.Broker
             {
                 _channel.BasicNack(deliveryTag, true, true);
 
-                _logger.LogDebug("Successfully rolled back (basic.nack) the delivery tag {deliveryTag}.",
+                _logger.LogDebug(
+                    "Successfully rolled back (basic.nack) the delivery tag {deliveryTag}.",
                     deliveryTag);
             }
             catch (Exception ex)

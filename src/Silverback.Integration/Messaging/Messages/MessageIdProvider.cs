@@ -19,9 +19,7 @@ namespace Silverback.Messaging.Messages
             _providers = providers.ToList();
         }
 
-        public string GetMessageId(MessageHeaderCollection headers) =>
-            headers.GetValue(DefaultMessageHeaders.MessageId) ??
-            throw new InvalidOperationException($"No {DefaultMessageHeaders.MessageId} header was found.");
+
 
         public void EnsureMessageIdIsInitialized(object message, MessageHeaderCollection headers)
         {

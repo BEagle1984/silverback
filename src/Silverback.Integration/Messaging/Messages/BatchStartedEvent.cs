@@ -6,7 +6,7 @@ using System;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     The event fired just before the first message in a new batch is published.
+    ///     The event published just before the first message in a new batch is published.
     /// </summary>
     public class BatchStartedEvent : BatchEvent
     {

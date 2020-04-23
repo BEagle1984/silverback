@@ -44,7 +44,7 @@ namespace Sample
 
             modelBuilder.Entity<InboundMessage>()
                 .ToTable("Silverback_InboundMessages")
-                .HasKey(t => new { t.MessageId, t.EndpointName });
+                .HasKey(t => new { t.MessageId, t.ConsumerGroupName });
 
             modelBuilder.Entity<StoredOffset>()
                 .ToTable("Silverback_StoredOffsets");

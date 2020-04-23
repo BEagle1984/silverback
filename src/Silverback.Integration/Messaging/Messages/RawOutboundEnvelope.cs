@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Messages
         public RawOutboundEnvelope(
             IEnumerable<MessageHeader> headers,
             IProducerEndpoint endpoint,
-            IOffset offset = null)
+            IOffset? offset = null)
             : this(null, headers, endpoint, offset)
         {
         }
@@ -21,11 +21,11 @@ namespace Silverback.Messaging.Messages
             byte[] rawMessage,
             IEnumerable<MessageHeader> headers,
             IProducerEndpoint endpoint,
-            IOffset offset = null)
+            IOffset? offset = null)
             : base(rawMessage, headers, endpoint, offset)
         {
         }
 
-        public new IProducerEndpoint Endpoint => (IProducerEndpoint) base.Endpoint;
+        public new IProducerEndpoint Endpoint => (IProducerEndpoint)base.Endpoint;
     }
 }

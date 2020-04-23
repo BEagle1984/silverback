@@ -28,11 +28,17 @@ namespace Silverback.Tests.Core.Messaging.Publishing
     public class PublisherTests
     {
         private readonly TestSubscriber _syncSubscriber;
+
         private readonly TestAsyncSubscriber _asyncSubscriber;
+
         private readonly TestEnumerableSubscriber _syncEnumerableSubscriber;
+
         private readonly TestAsyncEnumerableSubscriber _asyncEnumerableSubscriber;
+
         private readonly TestReadOnlyCollectionSubscriber _syncReadOnlyCollectionSubscriber;
+
         private readonly TestAsyncReadOnlyCollectionSubscriber _asyncReadOnlyCollectionSubscriber;
+
         private readonly TestFilteredSubscriber _filteredSubscriber;
 
         public PublisherTests()
@@ -51,14 +57,15 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         private IPublisher GetPublisher(params ISubscriber[] subscribers) =>
             GetPublisher(null, subscribers);
 
-        private IPublisher GetPublisher(Action<BusConfigurator> configAction, params ISubscriber[] subscribers) =>
+        private IPublisher GetPublisher(Action<IBusConfigurator> configAction, params ISubscriber[] subscribers) =>
             GetPublisher(configAction, null, subscribers);
 
         private IPublisher GetPublisher(
-            Action<BusConfigurator> configAction,
+            Action<IBusConfigurator> configAction,
             IBehavior[] behaviors,
             params ISubscriber[] subscribers) =>
-            GetPublisher(builder =>
+            GetPublisher(
+                builder =>
                 {
                     if (behaviors != null)
                     {
@@ -75,12 +82,12 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
         private IPublisher GetPublisher(
             Action<ISilverbackBuilder> buildAction,
-            Action<BusConfigurator> configAction = null) =>
+            Action<IBusConfigurator> configAction = null) =>
             GetServiceProvider(buildAction, configAction).GetRequiredService<IPublisher>();
 
         private IServiceProvider GetServiceProvider(
             Action<ISilverbackBuilder> buildAction,
-            Action<BusConfigurator> configAction = null)
+            Action<IBusConfigurator> configAction = null)
         {
             var services = new ServiceCollection();
             var builder = services.AddSilverback();
@@ -91,7 +98,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var serviceProvider = services.BuildServiceProvider();
 
-            configAction?.Invoke(serviceProvider.GetRequiredService<BusConfigurator>());
+            configAction?.Invoke(serviceProvider.GetRequiredService<IBusConfigurator>());
 
             return serviceProvider;
         }
@@ -124,8 +131,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         public void Publish_SomeMessages_ReceivedByDelegateSubscription()
         {
             int count = 0;
-            var publisher = GetPublisher(config => config
-                .Subscribe((object _) => count++));
+            var publisher = GetPublisher(
+                config => config
+                    .Subscribe((object _) => count++));
 
             publisher.Publish(new TestCommandOne());
             publisher.Publish(new TestCommandTwo());
@@ -137,8 +145,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         public async Task PublishAsync_SomeMessages_ReceivedByDelegateSubscription()
         {
             int count = 0;
-            var publisher = GetPublisher(config => config
-                .Subscribe((object _) => count++));
+            var publisher = GetPublisher(
+                config => config
+                    .Subscribe((object _) => count++));
 
             await publisher.PublishAsync(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandTwo());
@@ -150,8 +159,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         public void Publish_SomeMessages_ReceivedByDelegateSubscriptionWithAdditionalParameters()
         {
             int count = 0;
-            var publisher = GetPublisher(config => config
-                .Subscribe<object>((msg, sp) => sp != null ? count++ : count = 0));
+            var publisher = GetPublisher(
+                config => config
+                    .Subscribe<object>((msg, sp) => sp != null ? count++ : count = 0));
 
             publisher.Publish(new TestCommandOne());
             publisher.Publish(new TestCommandTwo());
@@ -163,8 +173,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         public async Task PublishAsync_SomeMessages_ReceivedByDelegateSubscriptionWithAdditionalParameters()
         {
             int count = 0;
-            var publisher = GetPublisher(config => config
-                .Subscribe<object>((msg, sp) => sp != null ? count++ : count = 0));
+            var publisher = GetPublisher(
+                config => config
+                    .Subscribe<object>((msg, sp) => sp != null ? count++ : count = 0));
 
             await publisher.PublishAsync(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandTwo());
@@ -365,7 +376,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public void Publish_SomeHandlersReturnValueOfWrongType_ValuesOfCorrectTypeAreReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier(),
+            var publisher = GetPublisher(
+                config => config.Subscribe<ISubscriber>(false),
+                new TestRequestReplier(),
                 new TestRequestReplierWithWrongResponseType());
 
             var results = publisher.Publish<string>(new TestRequestCommandOne());
@@ -376,7 +389,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public void Publish_HandlersReturnNull_EmptyResultReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false),
+            var publisher = GetPublisher(
+                config => config.Subscribe<ISubscriber>(false),
                 new TestRequestReplierReturningNull());
 
             var results = publisher.Publish<string>(new TestRequestCommandOne());
@@ -407,7 +421,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_SomeHandlersReturnValueOfWrongType_ValuesOfCorrectTypeAreReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier(),
+            var publisher = GetPublisher(
+                config => config.Subscribe<ISubscriber>(false),
+                new TestRequestReplier(),
                 new TestRequestReplierWithWrongResponseType());
 
             var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
@@ -418,7 +434,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_HandlersReturnNull_EmptyResultReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false),
+            var publisher = GetPublisher(
+                config => config.Subscribe<ISubscriber>(false),
                 new TestRequestReplierReturningNull());
 
             var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
@@ -541,8 +558,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(_syncSubscriber, _asyncSubscriber);
 
-            await publisher.PublishAsync(new ICommand[]
-                { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+            await publisher.PublishAsync(
+                new ICommand[]
+                    { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
 
             _syncSubscriber.ReceivedMessagesCount.Should().Be(3);
             _asyncSubscriber.ReceivedMessagesCount.Should().Be(3);
@@ -566,8 +584,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(_syncEnumerableSubscriber, _asyncEnumerableSubscriber);
 
-            await publisher.PublishAsync(new ICommand[]
-                { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+            await publisher.PublishAsync(
+                new ICommand[]
+                    { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
 
             _syncEnumerableSubscriber.ReceivedBatchesCount.Should().Be(1);
             _syncEnumerableSubscriber.ReceivedMessagesCount.Should().Be(3);
@@ -593,8 +612,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(_syncReadOnlyCollectionSubscriber, _asyncReadOnlyCollectionSubscriber);
 
-            await publisher.PublishAsync(new ICommand[]
-                { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+            await publisher.PublishAsync(
+                new ICommand[]
+                    { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
 
             _syncReadOnlyCollectionSubscriber.ReceivedBatchesCount.Should().Be(1);
             _syncReadOnlyCollectionSubscriber.ReceivedMessagesCount.Should().Be(3);
@@ -607,8 +627,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
 
-            var results = await publisher.PublishAsync<IEnumerable<string>>(new[]
-                { new TestRequestCommandTwo(), new TestRequestCommandTwo() });
+            var results = await publisher.PublishAsync<IEnumerable<string>>(
+                new[]
+                    { new TestRequestCommandTwo(), new TestRequestCommandTwo() });
 
             results.SelectMany(x => x).Should().Equal("one", "two", "one", "two");
         }
@@ -618,8 +639,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
 
-            var results = publisher.Publish<IEnumerable<string>>(new[]
-                { new TestRequestCommandTwo(), new TestRequestCommandTwo() });
+            var results = publisher.Publish<IEnumerable<string>>(
+                new[]
+                    { new TestRequestCommandTwo(), new TestRequestCommandTwo() });
 
             results.SelectMany(x => x).Should().Equal("one", "two", "one", "two");
         }
@@ -629,14 +651,16 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
 
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe((ITestMessage msg) => receivedMessagesCount++)
-                    .Subscribe(async (ITestMessage msg) =>
-                    {
-                        await Task.Delay(1);
-                        asyncReceivedMessagesCount++;
-                    }));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe((ITestMessage msg) => receivedMessagesCount++)
+                        .Subscribe(
+                            async (ITestMessage msg) =>
+                            {
+                                await Task.Delay(1);
+                                asyncReceivedMessagesCount++;
+                            }));
 
             publisher.Publish(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
 
@@ -649,17 +673,20 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
 
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe((ITestMessage msg) => receivedMessagesCount++)
-                    .Subscribe(async (ITestMessage msg) =>
-                    {
-                        await Task.Delay(1);
-                        asyncReceivedMessagesCount++;
-                    }));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe((ITestMessage msg) => receivedMessagesCount++)
+                        .Subscribe(
+                            async (ITestMessage msg) =>
+                            {
+                                await Task.Delay(1);
+                                asyncReceivedMessagesCount++;
+                            }));
 
-            await publisher.PublishAsync(new ICommand[]
-                { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+            await publisher.PublishAsync(
+                new ICommand[]
+                    { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
 
             receivedMessagesCount.Should().Be(3);
             asyncReceivedMessagesCount.Should().Be(3);
@@ -670,14 +697,16 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
 
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe((IEnumerable<ITestMessage> msg) => receivedMessagesCount += msg.Count())
-                    .Subscribe(async (IEnumerable<ITestMessage> msg) =>
-                    {
-                        await Task.Delay(1);
-                        asyncReceivedMessagesCount += msg.Count();
-                    }));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe((IEnumerable<ITestMessage> msg) => receivedMessagesCount += msg.Count())
+                        .Subscribe(
+                            async (IEnumerable<ITestMessage> msg) =>
+                            {
+                                await Task.Delay(1);
+                                asyncReceivedMessagesCount += msg.Count();
+                            }));
 
             publisher.Publish(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
 
@@ -690,17 +719,20 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             int receivedMessagesCount = 0, asyncReceivedMessagesCount = 0;
 
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe((IEnumerable<ITestMessage> msg) => receivedMessagesCount += msg.Count())
-                    .Subscribe(async (IEnumerable<ITestMessage> msg) =>
-                    {
-                        await Task.Delay(1);
-                        asyncReceivedMessagesCount += msg.Count();
-                    }));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe((IEnumerable<ITestMessage> msg) => receivedMessagesCount += msg.Count())
+                        .Subscribe(
+                            async (IEnumerable<ITestMessage> msg) =>
+                            {
+                                await Task.Delay(1);
+                                asyncReceivedMessagesCount += msg.Count();
+                            }));
 
-            await publisher.PublishAsync(new ICommand[]
-                { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+            await publisher.PublishAsync(
+                new ICommand[]
+                    { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
 
             receivedMessagesCount.Should().Be(3);
             asyncReceivedMessagesCount.Should().Be(3);
@@ -710,14 +742,16 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         public void Publish_NewMessagesReturnedByDelegateSubscription_MessagesRepublished()
         {
             var subscriber = new TestSubscriber();
-            var publisher = GetPublisher(config =>
+            var publisher = GetPublisher(
+                config =>
                     config
                         .Subscribe((TestCommandTwo msg) => new TestCommandOne())
-                        .Subscribe(async (TestCommandTwo msg) =>
-                        {
-                            await Task.Delay(1);
-                            return new TestCommandOne();
-                        }),
+                        .Subscribe(
+                            async (TestCommandTwo msg) =>
+                            {
+                                await Task.Delay(1);
+                                return new TestCommandOne();
+                            }),
                 subscriber);
 
             publisher.Publish(new TestCommandTwo());
@@ -774,13 +808,13 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var parallel = new ParallelTestingUtil();
 
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe(
-                        (ICommand _) => parallel.DoWork())
-                    .Subscribe(
-                        async (ICommand _) => await parallel.DoWorkAsync(),
-                        new SubscriptionOptions { Exclusive = true }));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe((ICommand _) => parallel.DoWork())
+                        .Subscribe(
+                            async (ICommand _) => await parallel.DoWorkAsync(),
+                            new SubscriptionOptions { Exclusive = true }));
 
             publisher.Publish(new TestCommandOne());
 
@@ -792,14 +826,15 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var parallel = new ParallelTestingUtil();
 
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe(
-                        (ICommand _) => parallel.DoWork(),
-                        new SubscriptionOptions { Exclusive = false })
-                    .Subscribe(
-                        (ICommand _) => parallel.DoWorkAsync(),
-                        new SubscriptionOptions { Exclusive = false }));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe(
+                            (ICommand _) => parallel.DoWork(),
+                            new SubscriptionOptions { Exclusive = false })
+                        .Subscribe(
+                            (ICommand _) => parallel.DoWorkAsync(),
+                            new SubscriptionOptions { Exclusive = false }));
 
             publisher.Publish(new TestCommandOne());
 
@@ -812,11 +847,12 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var subscriber = new NonParallelSubscriberTestService();
             var publisher = GetPublisher(subscriber);
 
-            publisher.Publish(new ICommand[]
-            {
-                new TestCommandOne(),
-                new TestCommandTwo(),
-            });
+            publisher.Publish(
+                new ICommand[]
+                {
+                    new TestCommandOne(),
+                    new TestCommandTwo(),
+                });
 
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 2, 3, 4);
         }
@@ -827,11 +863,12 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var subscriber = new ParallelSubscriberTestService();
             var publisher = GetPublisher(subscriber);
 
-            publisher.Publish(new ICommand[]
-            {
-                new TestCommandOne(),
-                new TestCommandTwo(),
-            });
+            publisher.Publish(
+                new ICommand[]
+                {
+                    new TestCommandOne(),
+                    new TestCommandTwo(),
+                });
 
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
         }
@@ -841,20 +878,22 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var parallel = new ParallelTestingUtil();
 
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe(
-                        (ICommand _) => parallel.DoWork(),
-                        new SubscriptionOptions { Parallel = false })
-                    .Subscribe(
-                        async (ICommand _) => await parallel.DoWorkAsync(),
-                        new SubscriptionOptions { Parallel = false }));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe(
+                            (ICommand _) => parallel.DoWork(),
+                            new SubscriptionOptions { Parallel = false })
+                        .Subscribe(
+                            async (ICommand _) => await parallel.DoWorkAsync(),
+                            new SubscriptionOptions { Parallel = false }));
 
-            publisher.Publish(new ICommand[]
-            {
-                new TestCommandOne(),
-                new TestCommandTwo(),
-            });
+            publisher.Publish(
+                new ICommand[]
+                {
+                    new TestCommandOne(),
+                    new TestCommandTwo(),
+                });
 
             parallel.Steps.Should().BeEquivalentTo(1, 2, 3, 4);
         }
@@ -864,20 +903,22 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var parallel = new ParallelTestingUtil();
 
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe(
-                        (ICommand _) => parallel.DoWork(),
-                        new SubscriptionOptions { Parallel = true })
-                    .Subscribe(
-                        async (ICommand _) => await parallel.DoWorkAsync(),
-                        new SubscriptionOptions { Parallel = true }));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe(
+                            (ICommand _) => parallel.DoWork(),
+                            new SubscriptionOptions { Parallel = true })
+                        .Subscribe(
+                            async (ICommand _) => await parallel.DoWorkAsync(),
+                            new SubscriptionOptions { Parallel = true }));
 
-            publisher.Publish(new ICommand[]
-            {
-                new TestCommandOne(),
-                new TestCommandTwo(),
-            });
+            publisher.Publish(
+                new ICommand[]
+                {
+                    new TestCommandOne(),
+                    new TestCommandTwo(),
+                });
 
             parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
         }
@@ -888,11 +929,12 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var subscriber = new LimitedParallelSubscriberTestService();
             var publisher = GetPublisher(subscriber);
 
-            publisher.Publish(new ICommand[]
-            {
-                new TestCommandOne(),
-                new TestCommandTwo(),
-            });
+            publisher.Publish(
+                new ICommand[]
+                {
+                    new TestCommandOne(),
+                    new TestCommandTwo(),
+                });
 
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
         }
@@ -903,12 +945,13 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var subscriber = new LimitedParallelSubscriberTestService();
             var publisher = GetPublisher(subscriber);
 
-            await publisher.PublishAsync(new ICommand[]
-            {
-                new TestCommandOne(),
-                new TestCommandTwo(),
-                new TestCommandOne(),
-            });
+            await publisher.PublishAsync(
+                new ICommand[]
+                {
+                    new TestCommandOne(),
+                    new TestCommandTwo(),
+                    new TestCommandOne(),
+                });
 
             subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
@@ -918,21 +961,23 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var parallel = new ParallelTestingUtil();
 
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe(
-                        (ICommand _) => parallel.DoWork(),
-                        new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 })
-                    .Subscribe(
-                        async (ICommand _) => await parallel.DoWorkAsync(),
-                        new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 }));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe(
+                            (ICommand _) => parallel.DoWork(),
+                            new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 })
+                        .Subscribe(
+                            async (ICommand _) => await parallel.DoWorkAsync(),
+                            new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 }));
 
-            publisher.Publish(new ICommand[]
-            {
-                new TestCommandOne(),
-                new TestCommandTwo(),
-                new TestCommandOne(),
-            });
+            publisher.Publish(
+                new ICommand[]
+                {
+                    new TestCommandOne(),
+                    new TestCommandTwo(),
+                    new TestCommandOne(),
+                });
 
             parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
@@ -942,21 +987,23 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var parallel = new ParallelTestingUtil();
 
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe(
-                        (ICommand _) => parallel.DoWork(),
-                        new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 })
-                    .Subscribe(
-                        async (ICommand _) => await parallel.DoWorkAsync(),
-                        new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 }));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe(
+                            (ICommand _) => parallel.DoWork(),
+                            new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 })
+                        .Subscribe(
+                            async (ICommand _) => await parallel.DoWorkAsync(),
+                            new SubscriptionOptions { Parallel = true, MaxDegreeOfParallelism = 2 }));
 
-            await publisher.PublishAsync(new ICommand[]
-            {
-                new TestCommandOne(),
-                new TestCommandTwo(),
-                new TestCommandOne(),
-            });
+            await publisher.PublishAsync(
+                new ICommand[]
+                {
+                    new TestCommandOne(),
+                    new TestCommandTwo(),
+                    new TestCommandOne(),
+                });
 
             parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 4, 4, 6);
         }
@@ -1023,8 +1070,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var behavior4 = new TestSortedBehavior(-100, callsSequence);
             var behavior5 = new TestBehavior(callsSequence);
 
-            var publisher = GetPublisher(null,
-                new IBehavior[] { behavior1, behavior2, behavior3, behavior4, behavior5 }, _asyncSubscriber);
+            var publisher = GetPublisher(
+                null,
+                new IBehavior[] { behavior1, behavior2, behavior3, behavior4, behavior5 },
+                _asyncSubscriber);
 
             publisher.Publish(new TestCommandOne());
 
@@ -1043,8 +1092,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var behavior4 = new TestSortedBehavior(-100, callsSequence);
             var behavior5 = new TestBehavior(callsSequence);
 
-            var publisher = GetPublisher(null,
-                new IBehavior[] { behavior1, behavior2, behavior3, behavior4, behavior5 }, _asyncSubscriber);
+            var publisher = GetPublisher(
+                null,
+                new IBehavior[] { behavior1, behavior2, behavior3, behavior4, behavior5 },
+                _asyncSubscriber);
 
             await publisher.PublishAsync(new TestCommandOne());
 
@@ -1056,8 +1107,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public void Publish_MessageChangingBehavior_BehaviorExecuted()
         {
-            var behavior = new ChangeMessageBehavior<TestCommandOne>(_ => new[]
-                { new TestCommandTwo(), new TestCommandTwo(), new TestCommandTwo() });
+            var behavior = new ChangeMessageBehavior<TestCommandOne>(
+                _ => new[]
+                    { new TestCommandTwo(), new TestCommandTwo(), new TestCommandTwo() });
 
             var publisher = GetPublisher(null, new[] { behavior }, _asyncSubscriber);
 
@@ -1070,8 +1122,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_MessageChangingBehavior_BehaviorExecuted()
         {
-            var behavior = new ChangeMessageBehavior<TestCommandOne>(_ => new[]
-                { new TestCommandTwo(), new TestCommandTwo(), new TestCommandTwo() });
+            var behavior = new ChangeMessageBehavior<TestCommandOne>(
+                _ => new[]
+                    { new TestCommandTwo(), new TestCommandTwo(), new TestCommandTwo() });
 
             var publisher = GetPublisher(null, new[] { behavior }, _asyncSubscriber);
 
@@ -1191,8 +1244,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var receivedMessages = 0;
 
-            var publisher = GetPublisher(config =>
-                config.Subscribe((IEnumerable<TestEventOne> x) => receivedMessages += x.Count()));
+            var publisher = GetPublisher(
+                config =>
+                    config.Subscribe((IEnumerable<TestEventOne> x) => receivedMessages += x.Count()));
 
             publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1204,8 +1258,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var receivedMessages = 0;
 
-            var publisher = GetPublisher(config =>
-                config.Subscribe((IEnumerable<TestEventOne> x) => receivedMessages += x.Count()));
+            var publisher = GetPublisher(
+                config =>
+                    config.Subscribe((IEnumerable<TestEventOne> x) => receivedMessages += x.Count()));
 
             await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1217,8 +1272,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var receivedMessages = 0;
 
-            var publisher = GetPublisher(config =>
-                config.Subscribe((IEnumerable<IEvent> x) => receivedMessages += x.Count()));
+            var publisher = GetPublisher(
+                config =>
+                    config.Subscribe((IEnumerable<IEvent> x) => receivedMessages += x.Count()));
 
             publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1230,8 +1286,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var receivedMessages = 0;
 
-            var publisher = GetPublisher(config =>
-                config.Subscribe((IEnumerable<IEvent> x) => receivedMessages += x.Count()));
+            var publisher = GetPublisher(
+                config =>
+                    config.Subscribe((IEnumerable<IEvent> x) => receivedMessages += x.Count()));
 
             await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1267,17 +1324,20 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var resolved = 0;
 
-            var serviceProvider = GetServiceProvider(builder => builder
-                .AddScopedSubscriber(_ =>
-                {
-                    resolved++;
-                    return new TestServiceOne();
-                })
-                .AddScopedSubscriber(_ =>
-                {
-                    resolved++;
-                    return new TestServiceTwo();
-                }));
+            var serviceProvider = GetServiceProvider(
+                builder => builder
+                    .AddScopedSubscriber(
+                        _ =>
+                        {
+                            resolved++;
+                            return new TestServiceOne();
+                        })
+                    .AddScopedSubscriber(
+                        _ =>
+                        {
+                            resolved++;
+                            return new TestServiceTwo();
+                        }));
 
             using (var scope = serviceProvider.CreateScope())
             {
@@ -1307,17 +1367,20 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var resolved = 0;
 
-            var serviceProvider = GetServiceProvider(builder => builder
-                .AddScopedSubscriber(_ =>
-                {
-                    resolved++;
-                    return new TestServiceOne();
-                })
-                .AddScopedSubscriber(_ =>
-                {
-                    resolved++;
-                    return new TestServiceTwo();
-                }));
+            var serviceProvider = GetServiceProvider(
+                builder => builder
+                    .AddScopedSubscriber(
+                        _ =>
+                        {
+                            resolved++;
+                            return new TestServiceOne();
+                        })
+                    .AddScopedSubscriber(
+                        _ =>
+                        {
+                            resolved++;
+                            return new TestServiceTwo();
+                        }));
 
             using (var scope = serviceProvider.CreateScope())
             {
@@ -1346,19 +1409,22 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var resolved = 0;
 
-            var serviceProvider = GetServiceProvider(builder => builder
-                .AddScopedSubscriber(_ =>
-                {
-                    resolved++;
-                    return new TestServiceOne();
-                })
-                .AddScopedSubscriber(_ =>
-                {
-                    resolved++;
-                    return new TestServiceTwo();
-                }));
+            var serviceProvider = GetServiceProvider(
+                builder => builder
+                    .AddScopedSubscriber(
+                        _ =>
+                        {
+                            resolved++;
+                            return new TestServiceOne();
+                        })
+                    .AddScopedSubscriber(
+                        _ =>
+                        {
+                            resolved++;
+                            return new TestServiceTwo();
+                        }));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .ScanSubscribers();
 
             resolved.Should().Be(2);
@@ -1380,8 +1446,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public void Publish_SubscriberNotRegisteredAsSelf_InvalidOperationExceptionIsThrown()
         {
-            var publisher = GetPublisher(builder => builder
-                .Services.AddScoped<ISubscriber>(_ => new TestServiceOne()));
+            var publisher = GetPublisher(
+                builder => builder
+                    .Services.AddScoped<ISubscriber>(_ => new TestServiceOne()));
 
             Action act = () => publisher.Publish(new object[] { new TestCommandOne() });
 
@@ -1392,9 +1459,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         public void Publish_Envelope_EnvelopeAndUnwrappedReceived()
         {
             var messages = new List<object>();
-            var publisher = GetPublisher(builder => builder
-                .Subscribe((object message) => messages.Add(message))
-                .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
+            var publisher = GetPublisher(
+                builder => builder
+                    .Subscribe((object message) => messages.Add(message))
+                    .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
 
             publisher.Publish(new TestEnvelope(new TestCommandOne()));
 
@@ -1406,9 +1474,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         public async Task PublishAsync_Envelope_EnvelopeAndUnwrappedReceived()
         {
             var messages = new List<object>();
-            var publisher = GetPublisher(builder => builder
-                .Subscribe((object message) => messages.Add(message))
-                .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
+            var publisher = GetPublisher(
+                builder => builder
+                    .Subscribe((object message) => messages.Add(message))
+                    .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
 
             await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
 
@@ -1420,9 +1489,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         public void Publish_EnvelopeWithoutAutoUnwrap_EnvelopeOnlyIsReceived()
         {
             var messages = new List<object>();
-            var publisher = GetPublisher(builder => builder
-                .Subscribe((object message) => messages.Add(message))
-                .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
+            var publisher = GetPublisher(
+                builder => builder
+                    .Subscribe((object message) => messages.Add(message))
+                    .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
 
             publisher.Publish(new TestEnvelope(new TestCommandOne(), false));
 
@@ -1434,9 +1504,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         public async Task PublishAsync_EnvelopeWithoutAutoUnwrap_EnvelopeOnlyIsReceived()
         {
             var messages = new List<object>();
-            var publisher = GetPublisher(builder => builder
-                .Subscribe((object message) => messages.Add(message))
-                .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
+            var publisher = GetPublisher(
+                builder => builder
+                    .Subscribe((object message) => messages.Add(message))
+                    .Subscribe((IEnvelope envelope) => messages.Add(envelope)));
 
             await publisher.PublishAsync(new TestEnvelope(new TestCommandOne(), false));
 

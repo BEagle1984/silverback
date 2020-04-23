@@ -44,29 +44,34 @@ namespace Silverback.Tests.EventSourcing.TestTypes
         {
         }
 
-        public string Ssn { get; private set; }
+        public string? Ssn { get; private set; }
 
-        public string Name { get; private set; }
+        public string? Name { get; private set; }
+
         public int Age { get; private set; }
-        public string PhoneNumber { get; private set; }
+
+        public string? PhoneNumber { get; private set; }
 
         public void ChangeName(string newName) =>
-            AddAndApplyEvent(new NameChangedEvent
-            {
-                NewName = newName
-            });
+            AddAndApplyEvent(
+                new NameChangedEvent
+                {
+                    NewName = newName
+                });
 
         public void ChangeAge(int newAge) =>
-            AddAndApplyEvent(new AgeChangedEvent
-            {
-                NewAge = newAge
-            });
+            AddAndApplyEvent(
+                new AgeChangedEvent
+                {
+                    NewAge = newAge
+                });
 
         public void ChangePhoneNumber(string newPhoneNumber) =>
-            AddAndApplyEvent(new PhoneNumberChangedEvent
-            {
-                NewPhoneNumber = newPhoneNumber
-            });
+            AddAndApplyEvent(
+                new PhoneNumberChangedEvent
+                {
+                    NewPhoneNumber = newPhoneNumber
+                });
 
         public IEnumerable<IEntityEvent> MergeEvents(IEnumerable<IEntityEvent> events) =>
             events.Select(AddAndApplyEvent).ToList();

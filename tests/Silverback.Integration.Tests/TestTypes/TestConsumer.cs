@@ -18,10 +18,11 @@ namespace Silverback.Tests.Integration.TestTypes
         public TestConsumer(
             TestBroker broker,
             TestConsumerEndpoint endpoint,
+            MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior> behaviors,
             IServiceProvider serviceProvider,
             ILogger<TestConsumer> logger)
-            : base(broker, endpoint, behaviors, serviceProvider, logger)
+            : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
         {
         }
 

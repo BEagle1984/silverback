@@ -35,7 +35,7 @@ public class Startup
                 .AddInboundConnector());
     }
 
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints
@@ -167,7 +167,7 @@ Policy | Description
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints
@@ -226,7 +226,7 @@ Messages can be published when a policy is applied, in order to execute custom c
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints
@@ -277,7 +277,7 @@ Property | Description
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints
@@ -404,7 +404,7 @@ Multiple consumers can be created for the same endpoint to consume in parallel i
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints

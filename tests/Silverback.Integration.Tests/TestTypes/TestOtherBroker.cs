@@ -27,11 +27,13 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override IConsumer InstantiateConsumer(
             TestOtherConsumerEndpoint endpoint,
+            MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior> behaviors,
             IServiceProvider serviceProvider) =>
             new TestOtherConsumer(
                 this,
                 endpoint,
+                callback,
                 behaviors,
                 serviceProvider,
                 LoggerFactory.CreateLogger<TestOtherConsumer>());

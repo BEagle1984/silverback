@@ -33,8 +33,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var services = new ServiceCollection();
 
             services
-                .AddSingleton<IOutboundQueueProducer>(_queue)
-                .AddSingleton<IOutboundQueueConsumer>(_queue);
+                .AddSingleton<IOutboundQueueWriter>(_queue)
+                .AddSingleton<IOutboundQueueReader>(_queue);
 
             services
                 .AddNullLogger()

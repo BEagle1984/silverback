@@ -20,14 +20,15 @@ namespace Silverback.Util
             int? maxDegreeOfParallelism = null)
         {
             var values = new ConcurrentBag<TResult>();
-            Parallel.ForEach(source,
+            Parallel.ForEach(
+                source,
                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism ?? -1 },
                 s => values.Add(selector(s)));
             return values;
         }
 
         // http://blog.briandrupieski.com/throttling-asynchronous-methods-in-csharp
-        [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Task is awaited")]
         public static async Task<IEnumerable<TResult>> ParallelSelectAsync<T, TResult>(
             this IEnumerable<T> source,
             Func<T, Task<TResult>> selector,
@@ -41,18 +42,19 @@ namespace Silverback.Util
 
             using var semaphore = new SemaphoreSlim(maxDegreeOfParallelism.Value);
 
-            var tasks = source.ParallelSelect(async s =>
-            {
-                await semaphore.WaitAsync();
-                try
+            var tasks = source.ParallelSelect(
+                async s =>
                 {
-                    return await selector(s);
-                }
-                finally
-                {
-                    semaphore.Release();
-                }
-            });
+                    await semaphore.WaitAsync();
+                    try
+                    {
+                        return await selector(s);
+                    }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
+                });
 
             return await Task.WhenAll(tasks);
         }
@@ -110,11 +112,12 @@ namespace Silverback.Util
             Func<T, Task<bool>> predicate)
         {
             var results = new List<T>();
-            await source.ForEachAsync(async s =>
-            {
-                if (await predicate(s))
-                    results.Add(s);
-            });
+            await source.ForEachAsync(
+                async s =>
+                {
+                    if (await predicate(s))
+                        results.Add(s);
+                });
             return results;
         }
     }

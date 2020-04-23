@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,14 +17,17 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker
 {
     /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
-    public class RabbitProducer : Producer<RabbitBroker, RabbitProducerEndpoint>, IDisposable
+    public sealed class RabbitProducer : Producer<RabbitBroker, RabbitProducerEndpoint>, IDisposable
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
+
         private readonly ILogger<Producer> _logger;
+
         private readonly BlockingCollection<QueuedMessage> _queue = new BlockingCollection<QueuedMessage>();
+
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-        private IModel _channel;
+        private IModel? _channel;
 
         public RabbitProducer(
             RabbitBroker broker,
@@ -40,10 +44,12 @@ namespace Silverback.Messaging.Broker
             Task.Run(() => ProcessQueue(_cancellationTokenSource.Token));
         }
 
-        protected override IOffset ProduceImpl(IRawOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsyncImpl(envelope));
+        /// <inheritdoc />
+        protected override IOffset ProduceCore(IRawOutboundEnvelope envelope) =>
+            AsyncHelper.RunSynchronously(() => ProduceAsyncCore(envelope));
 
-        protected override Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope)
+        /// <inheritdoc />
+        protected override Task<IOffset> ProduceAsyncCore(IRawOutboundEnvelope envelope)
         {
             var queuedMessage = new QueuedMessage(envelope);
 
@@ -52,6 +58,7 @@ namespace Silverback.Messaging.Broker
             return queuedMessage.TaskCompletionSource.Task;
         }
 
+        [SuppressMessage("ReSharper", "CA1031", Justification = "Exception is returned")]
         private void ProcessQueue(CancellationToken cancellationToken)
         {
             try
@@ -68,7 +75,7 @@ namespace Silverback.Messaging.Broker
                     }
                     catch (Exception ex)
                     {
-                        queuedMessage.TaskCompletionSource.SetException(ex);
+                        queuedMessage.TaskCompletionSource.SetException(new ProduceException("Error occurred producing the message. See inner exception for details.", ex));
                     }
                 }
             }
@@ -84,7 +91,7 @@ namespace Silverback.Messaging.Broker
 
             var properties = _channel.CreateBasicProperties();
             properties.Persistent = true; // TODO: Make it configurable?
-            properties.Headers = envelope.Headers.ToDictionary(header => header.Key, header => (object) header.Value);
+            properties.Headers = envelope.Headers.ToDictionary(header => header.Key, header => (object)header.Value);
 
             switch (Endpoint)
             {
@@ -103,7 +110,7 @@ namespace Silverback.Messaging.Broker
                         envelope.RawMessage);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentException("Unhandled endpoint type.");
             }
 
             if (Endpoint.ConfirmationTimeout.HasValue)
@@ -121,6 +128,7 @@ namespace Silverback.Messaging.Broker
                 Task.Delay(100).Wait();
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             Flush();
@@ -140,6 +148,7 @@ namespace Silverback.Messaging.Broker
             }
 
             public IRawOutboundEnvelope Envelope { get; }
+
             public TaskCompletionSource<IOffset> TaskCompletionSource { get; }
         }
     }

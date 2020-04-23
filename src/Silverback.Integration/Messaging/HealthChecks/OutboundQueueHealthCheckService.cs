@@ -11,9 +11,9 @@ namespace Silverback.Messaging.HealthChecks
     {
         private static readonly TimeSpan DefaultMaxAge = TimeSpan.FromSeconds(30);
 
-        private readonly IOutboundQueueConsumer _queue;
+        private readonly IOutboundQueueReader _queue;
 
-        public OutboundQueueHealthCheckService(IOutboundQueueConsumer queue)
+        public OutboundQueueHealthCheckService(IOutboundQueueReader queue)
         {
             _queue = queue;
         }

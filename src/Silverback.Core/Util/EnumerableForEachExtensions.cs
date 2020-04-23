@@ -30,7 +30,8 @@ namespace Silverback.Util
             this IEnumerable<T> source,
             Action<T> action,
             int? maxDegreeOfParallelism = null) =>
-            Parallel.ForEach(source,
+            Parallel.ForEach(
+                source,
                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism ?? -1 },
                 action);
 
@@ -39,10 +40,12 @@ namespace Silverback.Util
             this IEnumerable<T> source,
             Func<T, Task> action,
             int? maxDegreeOfParallelism = null) =>
-            source.ParallelSelectAsync(async s =>
-            {
-                await action(s);
-                return 0;
-            }, maxDegreeOfParallelism);
+            source.ParallelSelectAsync(
+                async s =>
+                {
+                    await action(s);
+                    return 0;
+                },
+                maxDegreeOfParallelism);
     }
 }

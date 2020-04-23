@@ -6,13 +6,17 @@ using System.Collections.Generic;
 
 namespace Silverback.Messaging.Subscribers.Subscriptions
 {
-    public class DelegateSubscription : ISubscription
+    /// <summary>
+    ///     Represents a subscription initialized with a method delegate.
+    /// </summary>
+    internal class DelegateSubscription : ISubscription
     {
         private readonly SubscribedMethod _method;
 
-        public DelegateSubscription(Delegate handler, SubscriptionOptions options)
+        public DelegateSubscription(Delegate handler, SubscriptionOptions? options)
         {
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
 
             _method = new SubscribedMethod(
                 _ => handler.Target,
@@ -22,7 +26,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 options?.MaxDegreeOfParallelism);
         }
 
-        public IEnumerable<SubscribedMethod> GetSubscribedMethods(IServiceProvider _) =>
+        public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
             new[] { _method };
     }
 }

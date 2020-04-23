@@ -10,28 +10,35 @@ namespace Silverback.Messaging.Connectors
     /// <summary>
     ///     Routes all messages to a static collection of pre-defined endpoints.
     /// </summary>
-    /// <inheritdoc />
     public class StaticOutboundRouter : OutboundRouter<object>
     {
         private readonly IReadOnlyCollection<IProducerEndpoint> _endpoints;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="StaticOutboundRouter" /> class.
+        /// </summary>
+        /// <param name="endpoints"> The endpoints to route the messages to. </param>
         public StaticOutboundRouter(IEnumerable<IProducerEndpoint> endpoints)
         {
             _endpoints = endpoints.ToList();
         }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="StaticOutboundRouter" /> class.
+        /// </summary>
+        /// <param name="endpoints"> The endpoints to route the messages to. </param>
         public StaticOutboundRouter(params IProducerEndpoint[] endpoints)
             : this(endpoints.AsEnumerable())
         {
         }
 
+        /// <inheritdoc />
         public override IEnumerable<IProducerEndpoint> Endpoints => _endpoints;
 
-        /// <summary>
+        /// <inheritdoc />
+        /// <remarks>
         ///     Always returns the endpoints provided in the constructor.
-        /// </summary>
-        /// <param name="message">The message to be routed.</param>
-        /// <param name="headers">The message headers collection.</param>
+        /// </remarks>
         public override IEnumerable<IProducerEndpoint> GetDestinationEndpoints(
             object message,
             MessageHeaderCollection headers) =>

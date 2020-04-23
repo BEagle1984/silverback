@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
     {
         private readonly SqliteConnection _connection;
         private readonly ServiceProvider _serviceProvider;
-        private readonly BusConfigurator _configurator;
+        private readonly IBusConfigurator _configurator;
         private readonly OutboundInboundSubscriber _subscriber;
 
         public DeferredOutboundConnectorTests()
@@ -45,6 +45,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                     .AddInMemoryBroker()
                     .AddDbOutboundConnector()
                     .AddDbOutboundWorker())
+                .AddDbDistributedLockManager()
                 .UseDbContext<TestDbContext>()
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
 
@@ -53,7 +54,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                 ValidateScopes = true
             });
 
-            _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
+            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
 
             using var scope = _serviceProvider.CreateScope();

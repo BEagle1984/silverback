@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             Endpoint = endpoint;
         }
 
-        public byte[] Content { get; }
+        public byte[]? Content { get; }
 
         public IReadOnlyCollection<MessageHeader> Headers { get; }
 

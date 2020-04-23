@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Configuration.Reflection
                 if (parameter.HasDefaultValue)
                     return null;
 
-                throw new SilverbackConfigurationException(
+                throw new ConfigurationException(
                     $"Couldn't activate type {type.FullName}: " +
                     $"unable to find a value for the constructor parameter '{parameter.Name}' " +
                     "neither in the configuration nor in the registered services.");

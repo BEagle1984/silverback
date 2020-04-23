@@ -17,7 +17,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 {
     public class PublisherTests
     {
-        private IPublisher GetPublisher(Action<BusConfigurator> configAction, params ISubscriber[] subscribers)
+        private IPublisher GetPublisher(Action<IBusConfigurator> configAction, params ISubscriber[] subscribers)
         {
             var services = new ServiceCollection();
             services.AddSilverback().AsObservable();
@@ -29,7 +29,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
-            configAction?.Invoke(serviceProvider.GetRequiredService<BusConfigurator>());
+            configAction?.Invoke(serviceProvider.GetRequiredService<IBusConfigurator>());
 
             return serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IPublisher>();
         }

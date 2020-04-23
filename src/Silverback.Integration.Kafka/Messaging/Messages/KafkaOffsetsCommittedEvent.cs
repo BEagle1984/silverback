@@ -8,7 +8,7 @@ using System.Linq;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     The event fired to report the result of the offset commits.
+    ///     The event published to report the result of the offset commits.
     /// </summary>
     /// <remarks>
     ///     Possible error conditions:

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
     <RootNamespace>Silverback.Tests.Integration.Kafka</RootNamespace>
-  </PropertyGroup>
+    </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\statistics.json" />

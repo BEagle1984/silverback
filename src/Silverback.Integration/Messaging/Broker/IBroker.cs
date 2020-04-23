@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Broker
 {
@@ -13,14 +12,14 @@ namespace Silverback.Messaging.Broker
     public interface IBroker
     {
         /// <summary>
-        ///     Gets the type of the <see cref="IProducerEndpoint" /> that is being handled by this
-        ///     broker implementation.
+        ///     Gets the type of the <see cref="IProducerEndpoint" /> that is being handled by this broker
+        ///     implementation.
         /// </summary>
         Type ProducerEndpointType { get; }
 
         /// <summary>
-        ///     Gets the type of the <see cref="IConsumerEndpoint" /> that is being handled by this
-        ///     broker implementation.
+        ///     Gets the type of the <see cref="IConsumerEndpoint" /> that is being handled by this broker
+        ///     implementation.
         /// </summary>
         Type ConsumerEndpointType { get; }
 
@@ -35,35 +34,38 @@ namespace Silverback.Messaging.Broker
         IReadOnlyList<IConsumer> Consumers { get; }
 
         /// <summary>
-        ///     Returns an <see cref="IProducer" /> to be used to produce to
-        ///     the specified endpoint.
-        /// </summary>
-        /// <param name="endpoint">
-        ///     The target endpoint.
-        /// </param>
-        /// <param name="behaviors">
-        ///     A collection of behaviors to be added to this producer instance in addition to the ones registered for
-        ///     dependency injection.
-        /// </param>
-        IProducer GetProducer(IProducerEndpoint endpoint, IReadOnlyCollection<IProducerBehavior> behaviors = null);
-
-        /// <summary>
-        ///     Returns an <see cref="IConsumer" /> to be used to consume from
-        ///     the specified endpoint.
-        /// </summary>
-        /// <param name="endpoint">
-        ///     The source endpoint.
-        /// </param>
-        /// <param name="behaviors">
-        ///     A collection of behaviors to be added to this consumer instance in addition to the ones registered for
-        ///     dependency injection.
-        /// </param>
-        IConsumer GetConsumer(IConsumerEndpoint endpoint, IReadOnlyCollection<IConsumerBehavior> behaviors = null);
-
-        /// <summary>
-        ///     A boolean value indicating whether this instance is currently connected.
+        ///     Gets a value indicating whether this broker is currently connected.
         /// </summary>
         bool IsConnected { get; }
+
+        /// <summary>
+        ///     Returns an <see cref="IProducer" /> to be used to produce to the specified endpoint.
+        /// </summary>
+        /// <param name="endpoint"> The target endpoint. </param>
+        /// <returns>
+        ///     The <see cref="IProducer" /> for the specified endpoint.
+        /// </returns>
+        IProducer GetProducer(IProducerEndpoint endpoint);
+
+        /// <summary>
+        ///     Returns an <see cref="IConsumer" /> to be used to consume from the specified endpoint.
+        /// </summary>
+        /// <param name="endpoint"> The source endpoint. </param>
+        /// <param name="callback"> The delegate to be invoked when a message is received. </param>
+        /// <returns>
+        ///     The <see cref="IConsumer" /> for the specified endpoint.
+        /// </returns>
+        IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback);
+
+        /// <summary>
+        ///     Returns an <see cref="IConsumer" /> to be used to consume from the specified endpoint.
+        /// </summary>
+        /// <param name="endpoint"> The source endpoint. </param>
+        /// <param name="callback"> The delegate to be invoked when a message is received. </param>
+        /// <returns>
+        ///     The <see cref="IConsumer" /> for the specified endpoint.
+        /// </returns>
+        IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback);
 
         /// <summary>
         ///     Connect to the message broker to start consuming.

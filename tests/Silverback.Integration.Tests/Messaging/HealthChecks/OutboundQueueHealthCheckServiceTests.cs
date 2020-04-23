@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         [Fact]
         public async Task CheckIsHealthy_WithoutMaxLength_LengthIsNotChecked()
         {
-            var queue = Substitute.For<IOutboundQueueConsumer>();
+            var queue = Substitute.For<IOutboundQueueReader>();
             queue.GetLength().Returns(100);
             var service = new OutboundQueueHealthCheckService(queue);
 
@@ -30,7 +30,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         [InlineData(101, false)]
         public async Task CheckIsHealthy_WithMaxLength_LengthIsNotChecked(int currentLength, bool expected)
         {
-            var queue = Substitute.For<IOutboundQueueConsumer>();
+            var queue = Substitute.For<IOutboundQueueReader>();
             queue.GetLength().Returns(currentLength);
             var service = new OutboundQueueHealthCheckService(queue);
 
@@ -44,7 +44,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         [InlineData(31, false)]
         public async Task CheckIsHealthy_WithDefaultMaxAge_MaxAgeIsChecked(int currentMaxAgeInSeconds, bool expected)
         {
-            var queue = Substitute.For<IOutboundQueueConsumer>();
+            var queue = Substitute.For<IOutboundQueueReader>();
             queue.GetLength().Returns(10);
             queue.GetMaxAge().Returns(TimeSpan.FromSeconds(currentMaxAgeInSeconds));
             var service = new OutboundQueueHealthCheckService(queue);
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         [InlineData(121, false)]
         public async Task CheckIsHealthy_WithCustomMaxAge_MaxAgeIsChecked(int currentMaxAgeInSeconds, bool expected)
         {
-            var queue = Substitute.For<IOutboundQueueConsumer>();
+            var queue = Substitute.For<IOutboundQueueReader>();
             queue.GetLength().Returns(10);
             queue.GetMaxAge().Returns(TimeSpan.FromSeconds(currentMaxAgeInSeconds));
             var service = new OutboundQueueHealthCheckService(queue);

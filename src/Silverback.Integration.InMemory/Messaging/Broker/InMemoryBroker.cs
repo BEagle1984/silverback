@@ -44,11 +44,13 @@ namespace Silverback.Messaging.Broker
 
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
+            MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior> behaviors,
             IServiceProvider serviceProvider) =>
             GetTopic(endpoint.Name).Subscribe(new InMemoryConsumer(
                 this,
                 endpoint,
+                callback,
                 behaviors,
                 serviceProvider,
                 LoggerFactory.CreateLogger<InMemoryConsumer>()));

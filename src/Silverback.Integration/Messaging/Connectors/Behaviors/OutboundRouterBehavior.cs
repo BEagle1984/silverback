@@ -18,18 +18,30 @@ namespace Silverback.Messaging.Connectors.Behaviors
     public class OutboundRouterBehavior : IBehavior, ISorted
     {
         private readonly IServiceProvider _serviceProvider;
+
         private readonly IOutboundRoutingConfiguration _routing;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="OutboundRouterBehavior" /> class.
+        /// </summary>
+        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
         public OutboundRouterBehavior(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _routing = serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
         }
 
-        public async Task<IReadOnlyCollection<object>> Handle(
+        /// <inheritdoc />
+        public int SortIndex { get; } = IntegrationBehaviorsSortIndexes.OutboundRouter;
+
+        /// <inheritdoc />
+        public async Task<IReadOnlyCollection<object?>> Handle(
             IReadOnlyCollection<object> messages,
             MessagesHandler next)
         {
+            if (next == null)
+                throw new ArgumentNullException(nameof(next));
+
             var routedMessages = await WrapAndRepublishRoutedMessages(messages);
 
             // The routed messages are discarded because they have been republished
@@ -44,17 +56,21 @@ namespace Silverback.Messaging.Connectors.Behaviors
         {
             var wrappedMessages = messages
                 .Where(message => !(message is IOutboundEnvelope))
-                .SelectMany(message =>
-                    _routing
-                        .GetRoutesForMessage(message)
-                        .SelectMany(route =>
-                            CreateOutboundEnvelope(message, route)))
+                .SelectMany(
+                    message =>
+                        _routing
+                            .GetRoutesForMessage(message)
+                            .SelectMany(
+                                route =>
+                                    CreateOutboundEnvelope(message, route)))
                 .ToList();
 
             if (wrappedMessages.Any())
+            {
                 await _serviceProvider
                     .GetRequiredService<IPublisher>()
                     .PublishAsync(wrappedMessages);
+            }
 
             return wrappedMessages.Select(m => m.Message).ToList();
         }
@@ -66,7 +82,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
 
             foreach (var endpoint in endpoints)
             {
-                yield return (IOutboundEnvelope) Activator.CreateInstance(
+                yield return (IOutboundEnvelope)Activator.CreateInstance(
                     typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
                     message,
                     headers,
@@ -75,7 +91,5 @@ namespace Silverback.Messaging.Connectors.Behaviors
                     _routing.PublishOutboundMessagesToInternalBus);
             }
         }
-
-        public int SortIndex { get; } = IntegrationBehaviorsSortIndexes.OutboundRouter;
     }
 }

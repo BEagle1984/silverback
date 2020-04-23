@@ -13,6 +13,6 @@ namespace Silverback.Messaging.Messages
         ///     Gets the type of the <see cref="IOutboundConnector" /> to be used when publishing these messages.
         ///     If <c>null</c>, the default <see cref="IOutboundConnector" /> will be used.
         /// </summary>
-        Type OutboundConnectorType { get; }
+        Type? OutboundConnectorType { get; }
     }
 }

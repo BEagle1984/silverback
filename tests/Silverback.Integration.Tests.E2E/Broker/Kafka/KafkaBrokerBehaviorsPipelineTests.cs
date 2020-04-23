@@ -22,7 +22,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
     public class KafkaBrokerBehaviorsPipelineTests
     {
         private readonly ServiceProvider _serviceProvider;
-        private readonly BusConfigurator _configurator;
+        private readonly IBusConfigurator _configurator;
         private readonly SpyBrokerBehavior _spyBehavior;
 
         public KafkaBrokerBehaviorsPipelineTests()
@@ -45,7 +45,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                 ValidateScopes = true
             });
             
-            _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
+            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
         }
 

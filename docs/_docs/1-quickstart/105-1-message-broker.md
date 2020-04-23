@@ -35,7 +35,7 @@ public class Startup
                 .AddOutboundConnector());
     }
 
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator.Connect(endpoints => endpoints
             .AddInbound(
@@ -88,7 +88,7 @@ public class Startup
                 .AddOutboundConnector());
     }
 
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator.Connect(endpoints => endpoints
             .AddInbound(
@@ -177,7 +177,7 @@ public class Startup
                 .AddInboundConnector());
     }
 
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator.Connect(endpoints => endpoints
             .AddInbound(
@@ -284,7 +284,7 @@ It is important to properly close the consumers using the `Disconnect` method be
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         var brokers = busConfigurator.Connect(...);
 

@@ -32,7 +32,7 @@ public class Startup
                 .AddOutboundConnector());
     }
 
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints
@@ -106,7 +106,7 @@ public class Startup
 
 #### Custom outbound queue
 
-You can easily create another implementation targeting another kind of storage, simply creating your own `IOutboundQueueProducer` and `IOutboundQueueConsumer` and plug them in.
+You can easily create another implementation targeting another kind of storage, simply creating your own `IOutboundQueueWriter` and `IOutboundQueueReader` and plug them in.
 
 <figure class="csharp">
 <figcaption>Startup.cs</figcaption>
@@ -121,8 +121,8 @@ public class Startup
 
             .WithConnectionToMessageBroker(options => options
                 .AddKafka()
-                .AddOutboundConnector<SomeCustomQueueProducer>()
-                .AddOutboundWorker<SomeCustomQueueConsumer>();
+                .AddOutboundConnector<SomeCustomQueueWriter>()
+                .AddOutboundWorker<SomeCustomQueueReader>();
     }
 }
 {% endhighlight %}
@@ -137,7 +137,7 @@ The published messages that are routed to an outbound endpoint cannot be subscri
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints
@@ -166,7 +166,7 @@ An outbound route can point to multiple endpoints resulting in every message bei
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints
@@ -191,7 +191,7 @@ A message will also be routed to all outbound endpoint mapped to a type that mat
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints
@@ -291,7 +291,7 @@ public class Startup
             .AddSingletonOutboundRouter<PrioritizedRouter>();
     }
 
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints

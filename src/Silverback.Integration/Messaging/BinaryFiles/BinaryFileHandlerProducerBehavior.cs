@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -16,8 +17,18 @@ namespace Silverback.Messaging.BinaryFiles
     {
         private readonly BinaryFileMessageSerializer _binaryFileMessageSerializer = new BinaryFileMessageSerializer();
 
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BinaryFileHandler;
+
+        /// <inheritdoc />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
+            if (next == null)
+                throw new ArgumentNullException(nameof(next));
+
             if (context.Envelope.Message is IBinaryFileMessage &&
                 !(context.Envelope.Endpoint.Serializer is BinaryFileMessageSerializer))
             {
@@ -29,7 +40,5 @@ namespace Silverback.Messaging.BinaryFiles
 
             await next(context);
         }
-
-        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BinaryFileHandler;
     }
 }

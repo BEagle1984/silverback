@@ -7,28 +7,27 @@ using System.Linq;
 
 namespace Silverback.Messaging.Connectors
 {
-    /// <inheritdoc />
-    public class OutboundRoutingConfiguration : IOutboundRoutingConfiguration
+    internal class OutboundRoutingConfiguration : IOutboundRoutingConfiguration
     {
         private readonly List<OutboundRoute> _routes = new List<OutboundRoute>();
 
+        public IReadOnlyCollection<IOutboundRoute> Routes => _routes.AsReadOnly();
+
         public bool PublishOutboundMessagesToInternalBus { get; set; }
 
-        public IEnumerable<IOutboundRoute> Routes => _routes.AsReadOnly();
-
-        public IOutboundRoutingConfiguration Add<TMessage>(IOutboundRouter router, Type outboundConnectorType) =>
+        public IOutboundRoutingConfiguration Add<TMessage>(IOutboundRouter router, Type? outboundConnectorType) =>
             Add(typeof(TMessage), router, outboundConnectorType);
 
         public IOutboundRoutingConfiguration Add(
             Type messageType,
             IOutboundRouter router,
-            Type outboundConnectorType = null)
+            Type? outboundConnectorType = null)
         {
             _routes.Add(new OutboundRoute(messageType, router, outboundConnectorType));
             return this;
         }
 
-        public IEnumerable<IOutboundRoute> GetRoutesForMessage(object message) =>
+        public IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(object message) =>
             _routes.Where(r => r.MessageType.IsInstanceOfType(message)).ToList();
     }
 }
