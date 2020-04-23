@@ -51,7 +51,10 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true
+            });
 
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();

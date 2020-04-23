@@ -298,7 +298,7 @@ namespace Silverback.Messaging.Configuration
             
             SilverbackBuilder.Services
                 .AddScoped<IChunkStore, TStore>()
-                .AddScoped(serviceProvider => new ChunkStoreCleaner(
+                .AddSingleton(serviceProvider => new ChunkStoreCleaner(
                     retention ?? TimeSpan.FromDays(1),
                     serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                     serviceProvider.GetRequiredService<ILogger<ChunkStoreCleaner>>()))

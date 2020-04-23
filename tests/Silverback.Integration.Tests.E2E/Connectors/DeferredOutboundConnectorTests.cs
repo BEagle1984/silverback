@@ -48,12 +48,16 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                 .UseDbContext<TestDbContext>()
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true
+            });
 
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
 
-            _serviceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
+            using var scope = _serviceProvider.CreateScope();
+            scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
         }
 
         [Fact]

@@ -40,7 +40,10 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
 
             services.OverrideWithInMemoryBroker();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true
+            });
             
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();

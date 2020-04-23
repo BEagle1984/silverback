@@ -52,7 +52,10 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 .UseDbContext<TestDbContext>()
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true
+            });
 
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();

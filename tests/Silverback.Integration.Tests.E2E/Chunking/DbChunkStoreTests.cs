@@ -53,12 +53,16 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true
+            });
 
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
 
-            _serviceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
+            using var scope = _serviceProvider.CreateScope();
+            scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
         }
 
         [Fact]
@@ -181,8 +185,11 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
 
-            var chunkStore = _serviceProvider.GetRequiredService<IChunkStore>();
-            (await chunkStore.CountChunks("123")).Should().Be(2);
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var chunkStore = scope.ServiceProvider.GetRequiredService<IChunkStore>();
+                (await chunkStore.CountChunks("123")).Should().Be(2);
+            }
 
             await Task.Delay(250);
 
@@ -202,9 +209,12 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             });
 
             await _serviceProvider.GetRequiredService<ChunkStoreCleaner>().Cleanup();
-
-            (await chunkStore.CountChunks("123")).Should().Be(0);
-            (await chunkStore.CountChunks("456")).Should().Be(2);
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var chunkStore = scope.ServiceProvider.GetRequiredService<IChunkStore>();
+                (await chunkStore.CountChunks("123")).Should().Be(0);
+                (await chunkStore.CountChunks("456")).Should().Be(2);
+            }
         }
 
         public void Dispose()

@@ -47,7 +47,10 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     .AddInMemoryChunkStore())
                 .AddSingletonBrokerBehavior<SpyBrokerBehavior>();
 
-            _serviceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true
+            });
 
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
