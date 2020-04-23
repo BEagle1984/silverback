@@ -207,7 +207,10 @@ namespace Silverback.Tests.Integration.E2E.Chunking
         // Note: This is expected to work just because of the OffsetStoredInboundConnector
         public async Task InterleavedMessages_SimulateConsumerCrashWith_MessagesProcessedOnce()
         {
-            await _serviceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreatedAsync();
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
+            }
 
             var message1 = new TestEventOne { Content = "Hello E2E!" };
             var rawMessage1 = await Endpoint.DefaultSerializer.SerializeAsync(
@@ -347,8 +350,11 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
 
-            var chunkStore = _serviceProvider.GetRequiredService<IChunkStore>();
-            (await chunkStore.CountChunks("123")).Should().Be(2);
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var chunkStore = scope.ServiceProvider.GetRequiredService<IChunkStore>();
+                (await chunkStore.CountChunks("123")).Should().Be(2);
+            }
 
             await Task.Delay(250);
 
@@ -369,8 +375,12 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             await _serviceProvider.GetRequiredService<ChunkStoreCleaner>().Cleanup();
 
-            (await chunkStore.CountChunks("123")).Should().Be(0);
-            (await chunkStore.CountChunks("456")).Should().Be(2);
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var chunkStore = scope.ServiceProvider.GetRequiredService<IChunkStore>();
+                (await chunkStore.CountChunks("123")).Should().Be(0);
+                (await chunkStore.CountChunks("456")).Should().Be(2);
+            }
         }
 
         public void Dispose()
