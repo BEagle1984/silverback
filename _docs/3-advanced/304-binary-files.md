@@ -75,3 +75,32 @@ public class Startup
 }
 {% endhighlight %}
 </figure>
+
+If you need to read additional headers you can either subscribe to an `IInboundEnvelope<BinaryFileMessage>` or extend the `BinaryFileMessage` (or implement the `IBinaryFileMessage` interface from scratch). In this case you need to adapt the serializer configuration as well.
+
+```csharp
+public class MyBinaryFileMessage : BinaryFileMessage
+{
+    [Header("x-user-id")]
+    public Guid UserId { get; set; }
+}
+```
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
+{
+    public void Configure(BusConfigurator busConfigurator)
+    {
+        busConfigurator
+            .Connect(endpoints => endpoints
+                .AddInbound(
+                    new KafkaConsumerEndpoint("basket-events")
+                    {
+                        Serializer = new BinaryFileMessageSerializer<MyBinaryFileMessage>()
+                    }));
+    }
+}
+{% endhighlight %}
+</figure>
