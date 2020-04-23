@@ -36,7 +36,8 @@ namespace Silverback.Background
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Lock.Renew();
+                if (Lock != null)
+                    await Lock.Renew();
 
                 await ExecuteRecurringAsync(stoppingToken);
 

@@ -47,6 +47,23 @@ namespace Silverback.Tests.Core.Background
 
             executed.Should().BeTrue();
         }
+        
+        [Fact]
+        public async Task StartAsync_WithNullLockManager_TaskIsExecuted()
+        {
+            bool executed = false;
+
+            var service = new TestRecurringDistributedBackgroundService(_ =>
+            {
+                executed = true;
+                return Task.CompletedTask;
+            }, new NullLockManager());
+            await service.StartAsync(CancellationToken.None);
+
+            AsyncTestingUtil.Wait(() => executed);
+
+            executed.Should().BeTrue();
+        }
 
         [Fact]
         public async Task StartAsync_WithDbLockManager_OnlyOneTaskIsExecutedSimultaneously()

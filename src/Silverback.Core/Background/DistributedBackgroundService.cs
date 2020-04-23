@@ -50,7 +50,8 @@ namespace Silverback.Background
                 {
                     Lock = await _distributedLockManager.Acquire(_distributedLockSettings, stoppingToken);
 
-                    _logger.LogInformation($"Lock acquired, executing background service {GetType().FullName}.");
+                    if (Lock != null)
+                        _logger.LogInformation($"Lock acquired, executing background service {GetType().FullName}.");
 
                     await ExecuteLockedAsync(stoppingToken);
                 }
