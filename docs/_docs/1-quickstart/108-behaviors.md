@@ -49,13 +49,20 @@ The `Handle` receives a collection of `object` because a bunch of messages can b
 
 The `IBehavior` implementation have simply to be registered for DI.
 
-```csharp
-public void ConfigureServices(IServiceCollection services)
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
 {
-    services
-        .AddSilverback()
-        .AddScopedBehavior<TracingBehavior>();
-```
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .AddScopedBehavior<TracingBehavior>();
+    }
+}
+{% endhighlight csharp %}
+</figure>
 
 All `Add*Behavior` methods are available also as extensions to the `IServiceCollection` and it isn't therefore mandatory to call them immediately after `AddSilverback`.
 {: .notice--note}
@@ -81,6 +88,24 @@ public class CustomHeadersBehavior : IProducerBehavior
     }
 }
 ```
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToKafka(options => options
+                .AddSingletonBrokerBehavior<CustomHeadersBehavior>()
+            );
+    }
+}
+{% endhighlight csharp %}
+</figure>
+
 
 ### IConsumerBehavior example
 
@@ -116,6 +141,23 @@ public class LogHeadersBehavior : IConsumerBehavior
     }
 }
 ```
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+{% highlight csharp %}
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToKafka(options => options
+                .AddSingletonBrokerBehavior<LogHeadersBehavior>()
+            );
+    }
+}
+{% endhighlight csharp %}
+</figure>
 
 The `Handle` method reaceives an instance of `IServiceProvider` that can be either the root service provider or the scoped service provider for the processing of the consumed message (depending on the position of the behavior in the pipeline).
 {: .notice--note}
