@@ -30,6 +30,10 @@ namespace Silverback.Messaging.Configuration
             _serviceProvider = serviceProvider;
         }
 
+        public IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IProducerEndpoint endpoint)
+            where TConnector : IOutboundConnector =>
+            AddOutbound<TMessage, TConnector>(new[] {endpoint});
+
         public IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(params IProducerEndpoint[] endpoints)
             where TConnector : IOutboundConnector =>
             AddOutbound(typeof(TMessage), endpoints, typeof(TConnector));
@@ -41,6 +45,11 @@ namespace Silverback.Messaging.Configuration
 
         public IEndpointsConfigurationBuilder AddOutbound<TMessage>(params IProducerEndpoint[] endpoints) =>
             AddOutbound(typeof(TMessage), endpoints, null);
+
+        public IEndpointsConfigurationBuilder AddOutbound<TMessage>(
+            IProducerEndpoint endpoint,
+            Type outboundConnectorType = null) =>
+            AddOutbound<TMessage>(new[] {endpoint}, outboundConnectorType);
 
         public IEndpointsConfigurationBuilder AddOutbound<TMessage>(
             IEnumerable<IProducerEndpoint> endpoints,

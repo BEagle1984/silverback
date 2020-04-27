@@ -225,5 +225,60 @@ namespace Silverback.Tests.Integration.E2E.Broker
             _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
             _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);
         }
+        
+           [Fact]
+        public async Task EncryptionAndChunkingOfInheritedBinary_EncryptedAndChunkedThenAggregatedAndDecrypted()
+        {
+            var message = new InheritedBinaryFileMessage
+            {
+                Content = new byte[]
+                {
+                    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10,
+                    0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x20,
+                    0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30
+                },
+                ContentType = "application/pdf",
+                CustomHeader = "hello!"
+            };
+
+            _configurator.Connect(endpoints => endpoints
+                .AddOutbound<IBinaryFileMessage>(
+                    new KafkaProducerEndpoint("test-e2e")
+                    {
+                        Chunk = new ChunkSettings
+                        {
+                            Size = 10
+                        },
+                        Encryption = new SymmetricEncryptionSettings
+                        {
+                            Key = AesEncryptionKey
+                        }
+                    })
+                .AddInbound(
+                    new KafkaConsumerEndpoint("test-e2e")
+                    {
+                        Encryption = new SymmetricEncryptionSettings
+                        {
+                            Key = AesEncryptionKey
+                        }
+                    }));
+
+            using var scope = _serviceProvider.CreateScope();
+            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+
+            await publisher.PublishAsync(message);
+
+            _spyBehavior.OutboundEnvelopes.Count.Should().Be(5);
+            _spyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
+                .NotBeEquivalentTo(message.Content);
+            _spyBehavior.OutboundEnvelopes.ForEach(envelope =>
+                envelope.RawMessage.Length.Should().BeLessOrEqualTo(30));
+            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            _spyBehavior.InboundEnvelopes.First().Message.Should().BeOfType<InheritedBinaryFileMessage>();
+            _spyBehavior.InboundEnvelopes.First().Message.As<InheritedBinaryFileMessage>().Content.Should()
+                .BeEquivalentTo(message.Content);
+            _spyBehavior.InboundEnvelopes.First().Message.As<InheritedBinaryFileMessage>().CustomHeader.Should()
+                .Be("hello!");
+        }
     }
 }

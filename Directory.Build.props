@@ -5,7 +5,7 @@
     <Description>Silverback is a simple but feature-rich framework to build reactive/event-driven applications or microservices.</Description>
     <License>MIT</License>
     <Copyright>Copyright (c) 2020 Sergio Aquilini</Copyright>
-    <VersionSuffix>-rc6</VersionSuffix>
+    <VersionSuffix>-rc7</VersionSuffix>
     <BaseVersion>2.1.0$(VersionSuffix)</BaseVersion>
     <ProjectUrl>https://beagle1984.github.io/silverback/</ProjectUrl>
     <RepositoryUrl>https://github.com/BEagle1984/silverback/</RepositoryUrl>

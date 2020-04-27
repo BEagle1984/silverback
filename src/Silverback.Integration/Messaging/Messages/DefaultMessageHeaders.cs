@@ -98,7 +98,6 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Used internally by the consumer pipeline to signal that the message has been decrypted already.
         /// </summary>
-        internal const string Decrypted = "x-internal-dectypted";
-
+        internal const string Decrypted = "x-internal-decrypted";
     }
 }
