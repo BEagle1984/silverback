@@ -61,15 +61,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
         {
             var message = new BinaryFileMessage
             {
-                Content = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 },
+                Content = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05},
                 ContentType = "application/pdf"
             };
 
             _configurator.Connect(endpoints => endpoints
-                .AddOutbound<IBinaryFileMessage>(
-                    new KafkaProducerEndpoint("test-e2e"))
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e")));
+                .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e"))
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
@@ -83,22 +81,20 @@ namespace Silverback.Tests.Integration.E2E.Broker
             _spyBehavior.InboundEnvelopes.First().Headers.Should().ContainEquivalentOf(
                 new MessageHeader("content-type", "application/pdf"));
         }
-
+        
         [Fact]
         public async Task InheritedBinaryFileMessage_ProducedAndConsumed()
         {
             var message = new InheritedBinaryFileMessage
             {
-                Content = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 },
+                Content = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05},
                 ContentType = "application/pdf",
                 CustomHeader = "hello!"
             };
 
             _configurator.Connect(endpoints => endpoints
-                .AddOutbound<IBinaryFileMessage>(
-                    new KafkaProducerEndpoint("test-e2e"))
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e")));
+                .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e"))
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
@@ -116,16 +112,76 @@ namespace Silverback.Tests.Integration.E2E.Broker
         }
 
         [Fact]
-        public async Task BinaryFileMessageWithoutHeaders_ProducedAndConsumed()
+        public async Task ForcedDefaultBinaryFileDeserializer_ProducedAndConsumed()
         {
-            var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+            var message = new BinaryFileMessage
+            {
+                Content = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05},
+                ContentType = "application/pdf"
+            };
 
             _configurator.Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e")
-                    {
-                        Serializer = BinaryFileMessageSerializer.Default
-                    }));
+                .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e"))
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e")
+                {
+                    Serializer = BinaryFileMessageSerializer.Default
+                }));
+
+            using var scope = _serviceProvider.CreateScope();
+            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+
+            await publisher.PublishAsync(message);
+
+            _spyBehavior.OutboundEnvelopes.Count.Should().Be(1);
+            _spyBehavior.OutboundEnvelopes.First().RawMessage.Should().BeEquivalentTo(message.Content);
+            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);
+            _spyBehavior.InboundEnvelopes.First().Headers.Should().ContainEquivalentOf(
+                new MessageHeader("content-type", "application/pdf"));
+        }
+        
+        [Fact]
+        public async Task ForcedDefaultBinaryFileSerializerAndDeserializer_ProducedAndConsumed()
+        {
+            var message = new BinaryFileMessage
+            {
+                Content = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05},
+                ContentType = "application/pdf"
+            };
+
+            _configurator.Connect(endpoints => endpoints
+                .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e")
+                {
+                    Serializer = BinaryFileMessageSerializer.Default
+                })
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e")
+                {
+                    Serializer = BinaryFileMessageSerializer.Default
+                }));
+
+            using var scope = _serviceProvider.CreateScope();
+            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+
+            await publisher.PublishAsync(message);
+
+            _spyBehavior.OutboundEnvelopes.Count.Should().Be(1);
+            _spyBehavior.OutboundEnvelopes.First().RawMessage.Should().BeEquivalentTo(message.Content);
+            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);
+            _spyBehavior.InboundEnvelopes.First().Headers.Should().ContainEquivalentOf(
+                new MessageHeader("content-type", "application/pdf"));
+        }
+        
+        [Fact]
+        public async Task BinaryFileMessageWithoutHeaders_ProducedAndConsumed()
+        {
+            var rawContent = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05};
+
+            _configurator.Connect(endpoints => endpoints
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e")
+                {
+                    Serializer = BinaryFileMessageSerializer.Default
+                }));
 
             using var scope = _serviceProvider.CreateScope();
             var broker = scope.ServiceProvider.GetRequiredService<IBroker>();
@@ -143,23 +199,47 @@ namespace Silverback.Tests.Integration.E2E.Broker
         }
 
         [Fact]
-        public async Task InheritedBinaryWithoutTypeHeader_ProducedAndConsumed()
+        public async Task BinaryFileMessageWithoutHeadersAndForcedDeserializer_ProducedAndConsumed()
         {
-            var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+            var rawContent = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05};
 
             _configurator.Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e")
-                    {
-                        Serializer = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>()
-                    }));
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e")
+                {
+                    Serializer = BinaryFileMessageSerializer.Default
+                }));
 
             using var scope = _serviceProvider.CreateScope();
             var broker = scope.ServiceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
-            await producer.ProduceAsync(
-                rawContent,
+            await producer.ProduceAsync(rawContent);
+
+            _spyBehavior.OutboundEnvelopes.Count.Should().Be(1);
+            _spyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
+                .BeEquivalentTo(rawContent);
+            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            _spyBehavior.InboundEnvelopes.First().Message.Should().BeAssignableTo<IBinaryFileMessage>();
+            _spyBehavior.InboundEnvelopes.First().Message.As<IBinaryFileMessage>().Content.Should()
+                .BeEquivalentTo(rawContent);
+        }
+        
+        [Fact]
+        public async Task InheritedBinaryWithoutTypeHeader_ProducedAndConsumed()
+        {
+            var rawContent = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05};
+
+            _configurator.Connect(endpoints => endpoints
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e")
+                {
+                    Serializer = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>()
+                }));
+
+            using var scope = _serviceProvider.CreateScope();
+            var broker = scope.ServiceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
+
+            await producer.ProduceAsync(rawContent,
                 new[]
                 {
                     new MessageHeader("x-custom-header", "hello!")
@@ -191,26 +271,24 @@ namespace Silverback.Tests.Integration.E2E.Broker
             };
 
             _configurator.Connect(endpoints => endpoints
-                .AddOutbound<IBinaryFileMessage>(
-                    new KafkaProducerEndpoint("test-e2e")
+                .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e")
+                {
+                    Chunk = new ChunkSettings
                     {
-                        Chunk = new ChunkSettings
-                        {
-                            Size = 10
-                        },
-                        Encryption = new SymmetricEncryptionSettings
-                        {
-                            Key = AesEncryptionKey
-                        }
-                    })
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e")
+                        Size = 10
+                    },
+                    Encryption = new SymmetricEncryptionSettings
                     {
-                        Encryption = new SymmetricEncryptionSettings
-                        {
-                            Key = AesEncryptionKey
-                        }
-                    }));
+                        Key = AesEncryptionKey
+                    }
+                })
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e")
+                {
+                    Encryption = new SymmetricEncryptionSettings
+                    {
+                        Key = AesEncryptionKey
+                    }
+                }));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
@@ -225,8 +303,8 @@ namespace Silverback.Tests.Integration.E2E.Broker
             _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
             _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);
         }
-        
-           [Fact]
+
+        [Fact]
         public async Task EncryptionAndChunkingOfInheritedBinary_EncryptedAndChunkedThenAggregatedAndDecrypted()
         {
             var message = new InheritedBinaryFileMessage
@@ -242,26 +320,24 @@ namespace Silverback.Tests.Integration.E2E.Broker
             };
 
             _configurator.Connect(endpoints => endpoints
-                .AddOutbound<IBinaryFileMessage>(
-                    new KafkaProducerEndpoint("test-e2e")
+                .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e")
+                {
+                    Chunk = new ChunkSettings
                     {
-                        Chunk = new ChunkSettings
-                        {
-                            Size = 10
-                        },
-                        Encryption = new SymmetricEncryptionSettings
-                        {
-                            Key = AesEncryptionKey
-                        }
-                    })
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e")
+                        Size = 10
+                    },
+                    Encryption = new SymmetricEncryptionSettings
                     {
-                        Encryption = new SymmetricEncryptionSettings
-                        {
-                            Key = AesEncryptionKey
-                        }
-                    }));
+                        Key = AesEncryptionKey
+                    }
+                })
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e")
+                {
+                    Encryption = new SymmetricEncryptionSettings
+                    {
+                        Key = AesEncryptionKey
+                    }
+                }));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();

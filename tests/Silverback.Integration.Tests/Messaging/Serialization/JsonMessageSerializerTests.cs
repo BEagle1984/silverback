@@ -262,7 +262,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             message.Should().BeOfType<TestEventOne>();
             message.As<TestEventOne>().Content.Should().Be("the message");
         }
-        
+     
         [Fact]
         public void Deserialize_NullMessage_NullIsReturned()
         {

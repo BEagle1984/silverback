@@ -4,7 +4,7 @@ permalink: /docs/releases
 toc: true
 ---
 
-## [2.1.0-rc6](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc6)
+## [2.1.0-rc8](https://github.com/BEagle1984/silverback/releases/tag/2.1.0-rc8)
 
 ### What's new
 * Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))

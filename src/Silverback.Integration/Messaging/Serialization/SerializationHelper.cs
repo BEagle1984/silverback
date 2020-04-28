@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Serialization
     internal static class SerializationHelper
     {
         public static readonly ConcurrentDictionary<string, Type> TypesCache = new ConcurrentDictionary<string, Type>();
-        
+
         public static Type GetTypeFromHeaders<TDefault>(MessageHeaderCollection messageHeaders)
         {
             var typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
@@ -18,21 +18,8 @@ namespace Silverback.Messaging.Serialization
                 return typeof(TDefault);
 
             return TypesCache.GetOrAdd(typeName, _ =>
-            {
-                Type type = null;
-                try
-                {
-                    type = Type.GetType(typeName);
-                }
-                catch (Exception)
-                {
-                    // Ignore
-                }
-                
-                type ??= Type.GetType(CleanAssemblyQualifiedName(typeName));
-
-                return type;
-            });
+                Type.GetType(typeName) ??
+                Type.GetType(CleanAssemblyQualifiedName(typeName), true));
         }
 
         public static IRawInboundEnvelope CreateTypedInboundEnvelope(
