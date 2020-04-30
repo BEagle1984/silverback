@@ -74,7 +74,7 @@ namespace Silverback.Messaging.Serialization
                 return null;
 
             var json = GetEncoding().GetString(message);
-            var type = SerializationHelper.GetTypeFromHeaders<object>(messageHeaders);
+            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders);
 
             return JsonConvert.DeserializeObject(json, type, Settings);
         }

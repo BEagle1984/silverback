@@ -11,15 +11,20 @@ namespace Silverback.Messaging.Serialization
     {
         public static readonly ConcurrentDictionary<string, Type> TypesCache = new ConcurrentDictionary<string, Type>();
 
-        public static Type GetTypeFromHeaders<TDefault>(MessageHeaderCollection messageHeaders)
+        
+        public static Type GetTypeFromHeaders(MessageHeaderCollection messageHeaders)
         {
             var typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
             if (string.IsNullOrEmpty(typeName))
-                return typeof(TDefault);
+                throw new SilverbackException("Missing type header.");
 
-            return TypesCache.GetOrAdd(typeName, _ =>
-                Type.GetType(typeName) ??
-                Type.GetType(CleanAssemblyQualifiedName(typeName), true));
+            return GetType(typeName);
+        }
+
+        public static Type GetTypeFromHeaders<TDefault>(MessageHeaderCollection messageHeaders)
+        {
+            var typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
+            return !string.IsNullOrEmpty(typeName) ? GetType(typeName) : typeof(TDefault);
         }
 
         public static IRawInboundEnvelope CreateTypedInboundEnvelope(
@@ -34,6 +39,25 @@ namespace Silverback.Messaging.Serialization
 
             return typedInboundMessage;
         }
+
+        private static Type GetType(string typeName) =>
+            TypesCache.GetOrAdd(typeName, _ =>
+            {
+                Type type = null;
+
+                try
+                {
+                    type = Type.GetType(typeName);
+                }
+                catch
+                {
+                    // Ignore
+                }
+
+                type ??= Type.GetType(CleanAssemblyQualifiedName(typeName), true);
+
+                return type;
+            });
 
         private static string CleanAssemblyQualifiedName(string typeAssemblyQualifiedName)
         {

@@ -10,6 +10,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Serialization
 {
+    // Note: the SerializationHelper is also implicitly tested by the serializer tests
     public class SerializationHelperTests
     {
         [Fact]
