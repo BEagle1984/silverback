@@ -54,18 +54,16 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public void Handle_WithoutActivityHeaders_NewActivityIsStarted()
         {
-            var rawEnvelope = new RawInboundEnvelope(
-                new byte[5],
+            var rawEnvelope = new RawInboundEnvelope(new byte[5],
                 new MessageHeaderCollection
                 {
-                    { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
+                    {DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"}
                 },
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
 
             var entered = false;
-            new ActivityConsumerBehavior().Handle(
-                new ConsumerPipelineContext( new[] { rawEnvelope }, null),
+            new ActivityConsumerBehavior().Handle(new ConsumerPipelineContext(new[] {rawEnvelope}, null),
                 null,
                 (_, __) =>
                 {
@@ -76,46 +74,6 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
                     return Task.CompletedTask;
                 });
-
-            entered.Should().BeTrue();
-        }
-
-        [Fact]
-        public async Task Handle_FromConsume_NewActivityStartedAndParentIdIsSet()
-        {
-            var services = new ServiceCollection();
-            services
-                .AddNullLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>());
-            var serviceProvider = services.BuildServiceProvider();
-            var broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
-
-            var rawEnvelope = new RawInboundEnvelope(
-                new byte[5],
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
-                },
-                TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
-
-            var consumer = (TestConsumer) broker.GetConsumer(TestConsumerEndpoint.GetDefault());
-            var entered = false;
-            consumer.Received += (sender, args) =>
-            {
-                Activity.Current.Should().NotBeNull();
-                Activity.Current.ParentId.Should().Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
-                Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
-
-                entered = true;
-
-                return Task.CompletedTask;
-            };
-
-            broker.Connect();
-            await consumer.TestHandleMessage(rawEnvelope.RawMessage, rawEnvelope.Headers);
 
             entered.Should().BeTrue();
         }
