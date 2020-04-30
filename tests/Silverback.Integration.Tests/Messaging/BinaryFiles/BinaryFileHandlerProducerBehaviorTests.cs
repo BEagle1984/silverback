@@ -59,6 +59,30 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         [Fact]
         public async Task Handle_NonBinaryFileMessage_EnvelopeUntouched()
         {
+            var message = new BinaryFileMessage
+            {
+                Content = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 }
+            };
+            var endpoint = TestProducerEndpoint.GetDefault();
+            endpoint.Serializer = new BinaryFileMessageSerializer();
+            var envelope = new OutboundEnvelope(message, null, endpoint);
+
+            IOutboundEnvelope result = null;
+            await new BinaryFileHandlerProducerBehavior().Handle(
+                new ProducerPipelineContext(envelope, null),
+                context =>
+                {
+                    result = context.Envelope;
+                    return Task.CompletedTask;
+                });
+
+            result.Should().BeSameAs(envelope);
+        }
+
+        
+        [Fact]
+        public async Task Handle_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
+        {
             var message = new TestEventOne
             {
                 Content = "hey!"
@@ -76,7 +100,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             result.Should().BeSameAs(envelope);
         }
-
+        
         private class InheritedBinaryFileMessage : BinaryFileMessage
         {
         }

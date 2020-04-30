@@ -30,6 +30,9 @@ namespace Silverback.Messaging.BinaryFiles
 
         private IRawInboundEnvelope Handle(IRawInboundEnvelope envelope)
         {
+            if (envelope.Endpoint.Serializer is BinaryFileMessageSerializer)
+                return envelope;
+
             var messageType = SerializationHelper.GetTypeFromHeaders<object>(envelope.Headers);
             if (messageType == null || !typeof(IBinaryFileMessage).IsAssignableFrom(messageType)) 
                 return envelope;

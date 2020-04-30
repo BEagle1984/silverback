@@ -62,5 +62,32 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             result.Should().BeSameAs(envelope);
         }
+        
+        [Fact]
+        public async Task Handle_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
+        {
+            var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+            var endpoint = TestConsumerEndpoint.GetDefault();
+            endpoint.Serializer = new BinaryFileMessageSerializer();
+            var envelope = new RawInboundEnvelope(
+                rawContent,
+                new[]
+                {
+                    new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName),
+                },
+                endpoint, "test");
+
+            IRawInboundEnvelope result = null;
+            await new BinaryFileHandlerConsumerBehavior().Handle(
+                new ConsumerPipelineContext(new[] { envelope }, null),
+                null,
+                (context, _) =>
+                {
+                    result = context.Envelopes.First();
+                    return Task.CompletedTask;
+                });
+
+            result.Should().BeSameAs(envelope);
+        }
     }
 }
