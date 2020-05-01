@@ -35,7 +35,7 @@ Package | Latest Version | Downloads
 
 ## Usage
 
-Have a look at the [project's website](https://beagle1984.github.io/silverback/docs/architecture) for usage details, snippets and examples.
+Have a look at the [project's website](https://beagle1984.github.io/silverback/) for usage details, snippets and examples.
 
 ## Contributing
 
