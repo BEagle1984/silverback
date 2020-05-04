@@ -58,7 +58,6 @@ namespace Silverback.Messaging.Configuration
                     .AddSingletonBrokerBehavior(serviceProvider =>
                         serviceProvider.GetRequiredService<ChunkAggregatorConsumerBehavior>())
                     .AddSingletonSubscriber<ChunkAggregatorConsumerBehavior>()
-                    .AddScoped<ChunkAggregator>()
                     // Pipeline - Binary File
                     .AddSingletonBrokerBehavior<BinaryFileHandlerProducerBehavior>()
                     .AddSingletonBrokerBehavior<BinaryFileHandlerConsumerBehavior>()
@@ -298,6 +297,7 @@ namespace Silverback.Messaging.Configuration
             
             SilverbackBuilder.Services
                 .AddScoped<IChunkStore, TStore>()
+                .AddScoped<ChunkAggregator>()
                 .AddSingleton(serviceProvider => new ChunkStoreCleaner(
                     retention ?? TimeSpan.FromDays(1),
                     serviceProvider.GetRequiredService<IServiceScopeFactory>(),
