@@ -30,7 +30,6 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
         private readonly ServiceProvider _serviceProvider;
         private readonly SpyBrokerBehavior _spyBehavior;
-        private readonly OutboundInboundSubscriber _subscriber;
 
         private static readonly byte[] AesEncryptionKey =
         {
@@ -49,8 +48,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .WithConnectionToMessageBroker(options => options
                     .AddInMemoryBroker()
                     .AddInMemoryChunkStore())
-                .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                .AddSingletonSubscriber<OutboundInboundSubscriber>();
+                .AddSingletonBrokerBehavior<SpyBrokerBehavior>();
 
             _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
             {
@@ -58,7 +56,6 @@ namespace Silverback.Tests.Integration.E2E.Broker
             });
 
             _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
-            _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
         }
 
@@ -132,8 +129,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             committedOffsets.Count.Should().Be(1);
             notCommittedOffsets.Count.Should().Be(0);
         }
-        
-        
+
         [Fact]
         public void RetryPolicyWithoutSuccess_OffsetNotCommitted()
         {
@@ -298,9 +294,12 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             }
                         },
                         policy => policy.Retry().MaxFailedAttempts(10)));
+
             using var scope = _serviceProvider.CreateScope();
+            
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
+
             _spyBehavior.OutboundEnvelopes.Count.Should().Be(5);
             _spyBehavior.OutboundEnvelopes.First().RawMessage.Should().NotBeEquivalentTo(rawMessage.Take(10));
             _spyBehavior.OutboundEnvelopes.ForEach(envelope => envelope.RawMessage.Length.Should().BeLessOrEqualTo(10));
