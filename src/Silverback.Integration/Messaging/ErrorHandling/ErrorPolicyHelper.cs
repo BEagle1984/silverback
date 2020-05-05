@@ -63,7 +63,8 @@ namespace Silverback.Messaging.ErrorHandling
                     attempt++;
 
                     // Reset the offsets at each retry because they might have been modified
-                    // to handle commit and rollback (especially by the ChunkAggregatorConsumerBehavior)
+                    // (e.g. by the ChunkAggregatorConsumerBehavior) to handle commit and
+                    // rollback and it's safer to rerun the pipeline with the very same state 
                     context.CommitOffsets = offsets;
                 }
                 catch (Exception ex)
@@ -119,9 +120,17 @@ namespace Silverback.Messaging.ErrorHandling
                 if (action == ErrorAction.StopConsuming)
                     throw;
 
+                var offsets = context.CommitOffsets;
+                
                 // Rollback database transactions only (ignore offsets)
                 context.CommitOffsets = null;
                 await rollbackHandler(context, serviceProvider, ex);
+
+                if (action == ErrorAction.Skip)
+                {
+                    // Reset offsets to always commit them even in case of Skip
+                    context.CommitOffsets = offsets;
+                }
 
                 return MessageHandlerResult.Error(action);
             }

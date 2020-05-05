@@ -15,7 +15,7 @@ namespace Silverback.Examples.Common.Logging
             "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}) {Message:lj} {Exception} {Properties}{NewLine}";
 
         private const string CompactOutputTemplate =
-            "[{Timestamp:HH:mm:s} {Level:u3}] {Message:lj} {Exception} ({ActivityId}){NewLine}";
+            "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Exception} ({ActivityId}){NewLine}";
 
         public static void Setup()
         {

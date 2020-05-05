@@ -26,9 +26,9 @@ namespace Silverback.Tests.Integration.E2E.Chunking
     [Trait("Category", "E2E")]
     public class InMemoryChunkStoreTests : IDisposable
     {
+        private readonly BusConfigurator _configurator;
         private readonly SqliteConnection _connection;
         private readonly ServiceProvider _serviceProvider;
-        private readonly BusConfigurator _configurator;
         private readonly OutboundInboundSubscriber _subscriber;
 
         public InMemoryChunkStoreTests()
@@ -46,7 +46,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 .UseModel()
                 .WithConnectionToMessageBroker(options => options
                     .AddInMemoryBroker()
-                    .AddInMemoryChunkStore(retention: TimeSpan.FromMilliseconds(250))
+                    .AddInMemoryChunkStore(TimeSpan.FromMilliseconds(250))
                     .AddInboundConnector()
                     .AddDbOffsetStoredInboundConnector())
                 .UseDbContext<TestDbContext>()
@@ -61,10 +61,16 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
         }
 
-        [Fact(Skip = "Tested in BrokerBehaviorsPipelineTests")]
-        public Task Chunking_ChunkedAndAggregatedCorrectly()
+        public void Dispose()
         {
-            throw new NotImplementedException();
+            _connection?.Close();
+            _connection?.Dispose();
+        }
+
+        [Fact]
+        public void Chunking_ChunkedAndAggregatedCorrectly()
+        {
+            // Tested in BrokerBehaviorsPipelineTests
         }
 
         [Fact]
@@ -72,15 +78,13 @@ namespace Silverback.Tests.Integration.E2E.Chunking
         {
             var committedOffsets = new List<IOffset>();
 
-            var message = new TestEventOne { Content = "Hello E2E!" };
-            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
+            var message = new TestEventOne {Content = "Hello E2E!"};
+            byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(message,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
             var broker = _configurator.Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e"))).First();
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
 
             ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
                 (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
@@ -120,20 +124,17 @@ namespace Silverback.Tests.Integration.E2E.Chunking
         {
             var committedOffsets = new List<IOffset>();
 
-            var message1 = new TestEventOne { Content = "Hello E2E!" };
-            var rawMessage1 = await Endpoint.DefaultSerializer.SerializeAsync(
-                message1,
+            var message1 = new TestEventOne {Content = "Hello E2E!"};
+            byte[] rawMessage1 = await Endpoint.DefaultSerializer.SerializeAsync(message1,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
-            var message2 = new TestEventOne { Content = "Hello E2E!" };
-            var rawMessage2 = await Endpoint.DefaultSerializer.SerializeAsync(
-                message2,
+            var message2 = new TestEventOne {Content = "Hello E2E!"};
+            byte[] rawMessage2 = await Endpoint.DefaultSerializer.SerializeAsync(message2,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
             var broker = _configurator.Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e"))).First();
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
 
             ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
                 (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
@@ -212,20 +213,17 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
             }
 
-            var message1 = new TestEventOne { Content = "Hello E2E!" };
-            var rawMessage1 = await Endpoint.DefaultSerializer.SerializeAsync(
-                message1,
+            var message1 = new TestEventOne {Content = "Hello E2E!"};
+            byte[] rawMessage1 = await Endpoint.DefaultSerializer.SerializeAsync(message1,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
-            var message2 = new TestEventOne { Content = "Hello E2E!" };
-            var rawMessage2 = await Endpoint.DefaultSerializer.SerializeAsync(
-                message2,
+            var message2 = new TestEventOne {Content = "Hello E2E!"};
+            byte[] rawMessage2 = await Endpoint.DefaultSerializer.SerializeAsync(message2,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
             var broker = _configurator.Connect(endpoints => endpoints
-                .AddInbound<OffsetStoredInboundConnector>(
-                    new KafkaConsumerEndpoint("test-e2e"))).First();
+                .AddInbound<OffsetStoredInboundConnector>(new KafkaConsumerEndpoint("test-e2e"))).First();
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
@@ -257,14 +255,13 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
             });
-            
+
             _subscriber.InboundEnvelopes.Count.Should().Be(1);
             _subscriber.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
 
             broker.Disconnect();
             broker = _configurator.Connect(endpoints => endpoints
-                .AddInbound<OffsetStoredInboundConnector>(
-                    new KafkaConsumerEndpoint("test-e2e"))).First();
+                .AddInbound<OffsetStoredInboundConnector>(new KafkaConsumerEndpoint("test-e2e"))).First();
 
             producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
@@ -295,7 +292,8 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });await producer.ProduceAsync(rawMessage2.Skip(10).Take(10).ToArray(), new[]
+            });
+            await producer.ProduceAsync(rawMessage2.Skip(10).Take(10).ToArray(), new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, "456"),
                 new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
@@ -320,15 +318,13 @@ namespace Silverback.Tests.Integration.E2E.Chunking
         {
             var committedOffsets = new List<IOffset>();
 
-            var message = new TestEventOne { Content = "Hello E2E!" };
-            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
+            var message = new TestEventOne {Content = "Hello E2E!"};
+            byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(message,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
             var broker = _configurator.Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e"))).First();
+                .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
 
             ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
                 (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
@@ -381,12 +377,6 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 (await chunkStore.CountChunks("123")).Should().Be(0);
                 (await chunkStore.CountChunks("456")).Should().Be(2);
             }
-        }
-
-        public void Dispose()
-        {
-            _connection?.Close();
-            _connection?.Dispose();
         }
     }
 }

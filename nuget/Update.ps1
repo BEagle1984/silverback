@@ -159,7 +159,7 @@ function Add-Version([string]$path, [hashtable]$hashtable)
 
     foreach ($token in $path.Replace("-", ".").Split("."))
     {
-        if ($token -match "^\d+$")
+        if ($token -match "^\d+$" -And $versionTokenIndex -lt 3)
         {
             if ($versionTokenIndex -eq 0)
             {
@@ -178,23 +178,30 @@ function Add-Version([string]$path, [hashtable]$hashtable)
         }
         else
         {
-            if ($versionTokenIndex -gt 0 -And $token -ne "nupkg")
+            if ($versionTokenIndex -gt 0)
             {
-                $suffix = "-" + $token
-                break
+                if ($token -eq "nupkg")
+                {
+                    break
+                }
+                elseif ($suffix.Length -eq 0)
+                {
+                    $suffix = "-" + $token
+                }
+                else
+                {
+                    $suffix = $suffix + "." + $token
+                }
             }
-
-            if ($token -eq "nupkg")
+            else
             {
-                break
+                if ($name.Length -gt 0)
+                {
+                    $name += "."
+                }
+    
+                $name += $token
             }
-
-            if ($name.Length -gt 0)
-            {
-                $name += "."
-            }
-
-            $name += $token
         }
     }
 
