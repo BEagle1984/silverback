@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RootNamespace>Silverback.Tests.Performance</RootNamespace>
+        <LangVersion>$(LangVersion)</LangVersion>
+        <OutputType>exe</OutputType>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj" />
+      <ProjectReference Include="..\Silverback.Integration.Tests\Silverback.Integration.Tests.csproj" />
+    </ItemGroup>
+
+</Project>
