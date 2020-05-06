@@ -8,15 +8,16 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public interface IEnvelope
     {
-        /// <summary>
-        ///     Gets the message body.
-        /// </summary>
-        object Message { get; }
+        /// <summary> Gets the message body. </summary>
+        object? Message { get; }
 
         /// <summary>
-        ///     Gets a value indicating whether this envelope can be automatically unwrapped and the
-        ///     message contained message can be forwarded to the matching subscribers in its pure form.
+        ///     Gets a value indicating whether this envelope can be automatically unwrapped and the contained
+        ///     message can be forwarded to the matching subscribers in its pure form.
         /// </summary>
+        /// <remarks>
+        ///     This is internally used to avoid mortal loops.
+        /// </remarks>
         bool AutoUnwrap { get; }
     }
 }

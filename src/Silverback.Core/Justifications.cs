@@ -9,7 +9,7 @@ namespace Silverback
             "Intentionally a marker interface";
 
         public const string NullableTypesSpacingFalsePositive =
-            "[]?, []!, ()? and ()! are recognized as wrongly spaced (probably a small bug in the analyzer)";
+            "[]?, []!, ()? and ()! are recognized as wrongly spaced (bug in the analyzer, fixed with StyleCop.Analyzers 1.2.0)";
 
         public const string CalledBySilverback =
             "The method is called by Silverback internals and don't need to check for null";

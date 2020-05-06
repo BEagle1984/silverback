@@ -7,13 +7,4 @@ namespace Silverback.Messaging.Messages
     public interface IOutboundEnvelope : IBrokerEnvelope, IRawOutboundEnvelope
     {
     }
-
-    /// <inheritdoc />
-    public interface IOutboundEnvelope<out TMessage> : IOutboundEnvelope
-    {
-        /// <summary>
-        ///     Gets the deserialized message body.
-        /// </summary>
-        new TMessage Message { get; }
-    }
 }

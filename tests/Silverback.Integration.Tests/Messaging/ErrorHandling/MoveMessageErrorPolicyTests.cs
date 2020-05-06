@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());
 
             var producedMessage = producer.ProducedMessages.Last();
-            var deserializedMessage =
+            var (deserializedMessage, _) =
                 producedMessage.Endpoint.Serializer.Deserialize(producedMessage.Message, producedMessage.Headers,
                     MessageSerializationContext.Empty);
             deserializedMessage.Should().BeEquivalentTo(envelope.Message);
@@ -159,7 +159,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             }, new Exception("test"));
 
             var producer = (TestProducer) _broker.GetProducer(TestProducerEndpoint.GetDefault());
-            var producedMessage = producer.Endpoint.Serializer.Deserialize(
+            var (producedMessage, _) = producer.Endpoint.Serializer.Deserialize(
                 producer.ProducedMessages[0].Message,
                 producer.ProducedMessages[0].Headers,
                 MessageSerializationContext.Empty);

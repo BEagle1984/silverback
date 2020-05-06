@@ -30,13 +30,13 @@ namespace Silverback.Messaging.Serialization
 
         public static IRawInboundEnvelope CreateTypedInboundEnvelope(
             IRawInboundEnvelope rawInboundEnvelope,
-            object deserializedMessage)
+            object? deserializedMessage,
+            Type messageType)
         {
             var typedInboundMessage = (InboundEnvelope)Activator.CreateInstance(
-                typeof(InboundEnvelope<>).MakeGenericType(deserializedMessage.GetType()),
-                rawInboundEnvelope);
-
-            typedInboundMessage.Message = deserializedMessage;
+                typeof(InboundEnvelope<>).MakeGenericType(messageType),
+                rawInboundEnvelope,
+                deserializedMessage);
 
             return typedInboundMessage;
         }

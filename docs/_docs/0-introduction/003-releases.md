@@ -25,6 +25,7 @@ toc: true
 * `Received` event in the `Consumer` replaced by a callback delegate
 * Some changes to the database schema (`InboundMessage`)
 * `IQueueProduer` and `IQueueConsumer` renamed to `IQueueWriter` and `IQueueReader`
+* Messages with a `null` or `empty` body can be subscribed as `IInboundEnvelope<TMessage>` as well, as long as the `x-message-type` header is set or a typed serializer such as `JsonMessageSerializer<TMessage>` is used
 
 ## [2.1.1](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1)
 

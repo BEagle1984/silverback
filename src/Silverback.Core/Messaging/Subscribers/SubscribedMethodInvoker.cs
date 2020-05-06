@@ -103,7 +103,7 @@ namespace Silverback.Messaging.Subscribers
             {
                 if (message is IEnvelope envelope)
                 {
-                    if (envelope.AutoUnwrap)
+                    if (envelope.AutoUnwrap && envelope.Message != null)
                         yield return envelope.Message;
                 }
                 else

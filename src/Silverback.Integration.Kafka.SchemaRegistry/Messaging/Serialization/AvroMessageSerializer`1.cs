@@ -16,6 +16,7 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     /// <inheritdoc cref="IKafkaMessageSerializer" />
     public class AvroMessageSerializer<TMessage> : IKafkaMessageSerializer
+        where TMessage : class
     {
         /// <summary>
         ///     Gets or sets the schema registry configuration.
@@ -27,48 +28,66 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         public AvroSerializerConfig AvroSerializerConfig { get; set; } = new AvroSerializerConfig();
 
-        /// <summary>
-        ///     Gets or sets
-        /// </summary>
-        public IEndpoint Endpoint { get; set; }
-
-        public byte[] Serialize(
-            object message,
+        /// <inheritdoc />
+        public byte[]? Serialize(
+            object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             AsyncHelper.RunSynchronously(() => SerializeAsync(message, messageHeaders, context));
 
-        public object Deserialize(
-            byte[] message,
+        /// <inheritdoc />
+        public (object?, Type) Deserialize(
+            byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             AsyncHelper.RunSynchronously(() => DeserializeAsync(message, messageHeaders, context));
 
-        public async Task<byte[]> SerializeAsync(
-            object message,
+        /// <inheritdoc />
+        public async Task<byte[]?> SerializeAsync(
+            object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             await SerializeAsync<TMessage>(message, MessageComponentType.Value, context);
 
-        public async Task<object> DeserializeAsync(
-            byte[] message,
+        /// <inheritdoc />
+        public async Task<(object?, Type)> DeserializeAsync(
+            byte[]? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            await DeserializeAsync<TMessage>(message, MessageComponentType.Value, context);
+            MessageSerializationContext context)
+        {
+            var deserialized = await DeserializeAsync<TMessage>(message, MessageComponentType.Value, context);
+            var type = deserialized?.GetType() ?? typeof(TMessage);
 
+            return (deserialized, type);
+        }
+
+        /// <inheritdoc />
         public byte[] SerializeKey(
             string key,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            AsyncHelper.RunSynchronously(() =>
-                SerializeAsync<string>(key, MessageComponentType.Key, context));
+            MessageSerializationContext context)
+        {
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentException("Value cannot be null or empty.", nameof(key));
 
+            return AsyncHelper.RunSynchronously(
+                () =>
+                    SerializeAsync<string>(key, MessageComponentType.Key, context));
+        }
+
+        /// <inheritdoc />
         public string DeserializeKey(
             byte[] key,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            AsyncHelper.RunSynchronously(() =>
-                DeserializeAsync<string>(key, MessageComponentType.Key, context));
+            MessageSerializationContext context)
+        {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+
+            return AsyncHelper.RunSynchronously(
+                () =>
+                    DeserializeAsync<string>(key, MessageComponentType.Key, context))!;
+        }
 
         private async Task<byte[]> SerializeAsync<TValue>(
             object message,
@@ -78,32 +97,38 @@ namespace Silverback.Messaging.Serialization
             switch (message)
             {
                 case null:
-                    return new byte[0];
+                    return Array.Empty<byte>();
                 case byte[] bytes:
                     return bytes;
             }
 
             return await new AvroSerializer<TValue>(
-                    SchemaRegistryClientFactory.GetClient(SchemaRegistryConfig), AvroSerializerConfig)
+                    SchemaRegistryClientFactory.GetClient(SchemaRegistryConfig),
+                    AvroSerializerConfig)
                 .SerializeAsync(
-                    (TValue) message,
+                    (TValue)message,
                     GetConfluentSerializationContext(componentType, context));
         }
 
-        private async Task<TValue> DeserializeAsync<TValue>(
-            byte[] message,
+        private async Task<TValue?> DeserializeAsync<TValue>(
+            byte[]? message,
             MessageComponentType componentType,
             MessageSerializationContext context)
+            where TValue : class
         {
             if (message == null || message.Length == 0)
-                return default;
+                return null;
 
-            return await new AvroDeserializer<TValue>(
-                    SchemaRegistryClientFactory.GetClient(SchemaRegistryConfig), AvroSerializerConfig)
-                .DeserializeAsync(
-                    new ReadOnlyMemory<byte>(message),
-                    false,
-                    GetConfluentSerializationContext(componentType, context));
+            var avroDeserializer = new AvroDeserializer<TValue>(
+                SchemaRegistryClientFactory.GetClient(SchemaRegistryConfig),
+                AvroSerializerConfig);
+
+            var confluentSerializationContext = GetConfluentSerializationContext(componentType, context);
+
+            return await avroDeserializer.DeserializeAsync(
+                new ReadOnlyMemory<byte>(message),
+                false,
+                confluentSerializationContext);
         }
 
         private SerializationContext GetConfluentSerializationContext(

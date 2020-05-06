@@ -53,7 +53,7 @@ namespace Silverback.Messaging.BinaryFiles
 
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public virtual object? Deserialize(
+        public virtual (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
@@ -66,7 +66,7 @@ namespace Silverback.Messaging.BinaryFiles
             var messageModel = (IBinaryFileMessage)Activator.CreateInstance(type);
             messageModel.Content = message;
 
-            return messageModel;
+            return (messageModel, type);
         }
 
         /// <inheritdoc />
@@ -79,7 +79,7 @@ namespace Silverback.Messaging.BinaryFiles
 
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public Task<object?> DeserializeAsync(
+        public Task<(object?, Type)> DeserializeAsync(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>

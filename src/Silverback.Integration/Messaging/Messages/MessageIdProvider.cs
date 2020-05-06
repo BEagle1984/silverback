@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 #pragma warning disable 618 //Obsolete
@@ -19,15 +20,26 @@ namespace Silverback.Messaging.Messages
             _providers = providers.ToList();
         }
 
-
-
-        public void EnsureMessageIdIsInitialized(object message, MessageHeaderCollection headers)
+        public void EnsureMessageIdIsInitialized(object? message, MessageHeaderCollection headers)
         {
-            var key = _providers.FirstOrDefault(p =>
-                p.CanHandle(message))?.EnsureIdentifierIsInitialized(message);
+            if (headers == null)
+                throw new ArgumentNullException(nameof(headers));
+
+            string? messageKey = null;
+
+            if (message != null)
+            {
+                messageKey = _providers.FirstOrDefault(
+                    p =>
+                        p.CanHandle(message))?.EnsureIdentifierIsInitialized(message);
+            }
 
             if (!headers.Contains(DefaultMessageHeaders.MessageId))
-                headers.Add(DefaultMessageHeaders.MessageId, key ?? Guid.NewGuid().ToString().ToLower());
+            {
+                headers.Add(
+                    DefaultMessageHeaders.MessageId,
+                    messageKey ?? Guid.NewGuid().ToString().ToLowerInvariant());
+            }
         }
     }
 }

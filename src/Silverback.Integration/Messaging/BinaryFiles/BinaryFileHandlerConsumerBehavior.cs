@@ -46,16 +46,13 @@ namespace Silverback.Messaging.BinaryFiles
             if (messageType == null || !typeof(IBinaryFileMessage).IsAssignableFrom(messageType))
                 return envelope;
 
-            var deserialized = await BinaryFileMessageSerializer.Default.DeserializeAsync(
+            var (deserializedObject, deserializedType) = await BinaryFileMessageSerializer.Default.DeserializeAsync(
                 envelope.RawMessage,
                 envelope.Headers,
                 MessageSerializationContext.Empty);
 
-            if (deserialized == null)
-                throw new InvalidOperationException("The BinaryFileMessageSerializer returned null.");
-
             // Create typed message for easier specific subscription
-            return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserialized);
+            return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);
         }
     }
 }
