@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Text;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -22,36 +23,42 @@ namespace Silverback.Messaging.Serialization
             _serializer = serializer;
         }
 
-        public byte[] Serialize(
-            object message,
+        /// <inheritdoc />
+        public byte[]? Serialize(
+            object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             _serializer.Serialize(message, messageHeaders, context);
 
-        public object Deserialize(
-            byte[] message,
+        /// <inheritdoc />
+        public (object?, Type) Deserialize(
+            byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             _serializer.Deserialize(message, messageHeaders, context);
 
-        public Task<byte[]> SerializeAsync(
-            object message,
+        /// <inheritdoc />
+        public Task<byte[]?> SerializeAsync(
+            object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             _serializer.SerializeAsync(message, messageHeaders, context);
 
-        public Task<object> DeserializeAsync(
-            byte[] message,
+        /// <inheritdoc />
+        public Task<(object?, Type)> DeserializeAsync(
+            byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             _serializer.DeserializeAsync(message, messageHeaders, context);
 
+        /// <inheritdoc />
         public byte[] SerializeKey(
             string key,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Encoding.UTF8.GetBytes(key);
 
+        /// <inheritdoc />
         public string DeserializeKey(
             byte[] key,
             MessageHeaderCollection messageHeaders,

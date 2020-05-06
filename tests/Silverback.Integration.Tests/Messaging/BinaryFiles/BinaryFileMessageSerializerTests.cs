@@ -28,8 +28,10 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             var serialized = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
-            var message2 = serializer
-                .Deserialize(serialized, headers, MessageSerializationContext.Empty) as BinaryFileMessage;
+            var (deserialized, _) = serializer
+                .Deserialize(serialized, headers, MessageSerializationContext.Empty);
+
+            var message2 = deserialized as BinaryFileMessage;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -48,8 +50,10 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             var serialized = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            var message2 = await serializer
-                .DeserializeAsync(serialized, headers, MessageSerializationContext.Empty) as BinaryFileMessage;
+            var (deserialized, _) = await serializer
+                .DeserializeAsync(serialized, headers, MessageSerializationContext.Empty);
+
+            var message2 = deserialized as BinaryFileMessage;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -67,8 +71,10 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var serializer = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>();
             var serialized = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
-            var message2 = serializer
-                .Deserialize(serialized, headers, MessageSerializationContext.Empty) as BinaryFileMessage;
+            var (deserialized, _) = serializer
+                .Deserialize(serialized, headers, MessageSerializationContext.Empty);
+
+            var message2 = deserialized as BinaryFileMessage;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -86,8 +92,10 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var serializer = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>();
             var serialized = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            var message2 = await serializer
-                .DeserializeAsync(serialized, headers, MessageSerializationContext.Empty) as BinaryFileMessage;
+            var (deserialized, _) = await serializer
+                .DeserializeAsync(serialized, headers, MessageSerializationContext.Empty);
+
+            var message2 = deserialized as BinaryFileMessage;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -327,15 +335,16 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new MessageHeaderCollection();
 
-            var result = new BinaryFileMessageSerializer()
+            var (deserializedObject, type) = new BinaryFileMessageSerializer()
                 .Deserialize(rawContent, headers, MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<BinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<BinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new BinaryFileMessage
                 {
                     Content = rawContent
                 });
+            type.Should().Be(typeof(BinaryFileMessage));
         }
 
         [Fact]
@@ -344,15 +353,16 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new MessageHeaderCollection();
 
-            var result = await new BinaryFileMessageSerializer()
+            var (deserializedObject, type) = await new BinaryFileMessageSerializer()
                 .DeserializeAsync(rawContent, headers, MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<BinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<BinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new BinaryFileMessage
                 {
                     Content = rawContent
                 });
+            type.Should().Be(typeof(BinaryFileMessage));
         }
 
         [Fact]
@@ -364,15 +374,16 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 { "x-message-type", typeof(InheritedBinaryFileMessage).AssemblyQualifiedName! }
             };
 
-            var result = new BinaryFileMessageSerializer()
+            var (deserializedObject, type) = new BinaryFileMessageSerializer()
                 .Deserialize(rawContent, headers, MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<InheritedBinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new InheritedBinaryFileMessage
                 {
                     Content = rawContent
                 });
+            type.Should().Be(typeof(InheritedBinaryFileMessage));
         }
 
         [Fact]
@@ -384,15 +395,16 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 { "x-message-type", typeof(InheritedBinaryFileMessage).AssemblyQualifiedName! }
             };
 
-            var result = await new BinaryFileMessageSerializer()
+            var (deserializedObject, type) = await new BinaryFileMessageSerializer()
                 .DeserializeAsync(rawContent, headers, MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<InheritedBinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new InheritedBinaryFileMessage
                 {
                     Content = rawContent
                 });
+            type.Should().Be(typeof(InheritedBinaryFileMessage));
         }
 
         [Fact]
@@ -401,15 +413,16 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new MessageHeaderCollection();
 
-            var result = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>()
+            var (deserializedObject, type) = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>()
                 .Deserialize(rawContent, headers, MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<InheritedBinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new InheritedBinaryFileMessage
                 {
                     Content = rawContent
                 });
+            type.Should().Be(typeof(InheritedBinaryFileMessage));
         }
 
         [Fact]
@@ -418,151 +431,196 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new MessageHeaderCollection();
 
-            var result = await new BinaryFileMessageSerializer<InheritedBinaryFileMessage>()
+            var (deserializedObject, type) = await new BinaryFileMessageSerializer<InheritedBinaryFileMessage>()
                 .DeserializeAsync(rawContent, headers, MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<InheritedBinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new InheritedBinaryFileMessage
                 {
                     Content = rawContent
                 });
+            type.Should().Be(typeof(InheritedBinaryFileMessage));
         }
 
         [Fact]
-        public void Deserialize_NullMessage_NullContentReturned()
+        public void Deserialize_NullMessage_BinaryFileWithNullContentReturned()
         {
-            var result = new BinaryFileMessageSerializer()
+            var (deserializedObject, type) = new BinaryFileMessageSerializer()
                 .Deserialize(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<BinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<BinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new BinaryFileMessage
                 {
                     Content = null
                 });
+            type.Should().Be(typeof(BinaryFileMessage));
         }
 
         [Fact]
-        public async Task DeserializeAsync_NullMessage_NullContentReturned()
+        public async Task DeserializeAsync_NullMessage_BinaryFileWithNullContentReturned()
         {
-            var result = await new BinaryFileMessageSerializer()
+            var (deserializedObject, type) = await new BinaryFileMessageSerializer()
                 .DeserializeAsync(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<BinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<BinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new BinaryFileMessage
                 {
                     Content = null
                 });
+            type.Should().Be(typeof(BinaryFileMessage));
         }
 
         [Fact]
-        public void Deserialize_EmptyMessage_EmptyContentReturned()
+        public void Deserialize_EmptyMessage_BinaryFileWithEmptyContentReturned()
         {
-            var result = new BinaryFileMessageSerializer()
+            var (deserializedObject, type) = new BinaryFileMessageSerializer()
                 .Deserialize(Array.Empty<byte>(), new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<BinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<BinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new BinaryFileMessage
                 {
                     Content = Array.Empty<byte>()
                 });
+            type.Should().Be(typeof(BinaryFileMessage));
         }
 
         [Fact]
-        public async Task DeserializeAsync_EmptyMessage_EmptyContentReturned()
+        public async Task DeserializeAsync_EmptyMessage_BinaryFileWithEmptyContentReturned()
         {
-            var result = await new BinaryFileMessageSerializer()
+            var (deserializedObject, type) = await new BinaryFileMessageSerializer()
                 .DeserializeAsync(
                     Array.Empty<byte>(),
                     new MessageHeaderCollection(),
                     MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<BinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<BinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new BinaryFileMessage
                 {
                     Content = Array.Empty<byte>()
                 });
+            type.Should().Be(typeof(BinaryFileMessage));
         }
 
         [Fact]
-        public void Deserialize_MissingTypeHeader_DefaultTypeDeserialized()
-        {
-            var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-            var headers = new MessageHeaderCollection();
-
-            var serializer = new BinaryFileMessageSerializer();
-
-            var result = serializer
-                .Deserialize(rawContent, headers, MessageSerializationContext.Empty);
-
-            result.Should().BeOfType<BinaryFileMessage>();
-            result.Should().BeEquivalentTo(
-                new BinaryFileMessage
-                {
-                    Content = rawContent
-                });
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_MissingTypeHeader_DefaultTypeDeserialized()
-        {
-            var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-            var headers = new MessageHeaderCollection();
-
-            var serializer = new BinaryFileMessageSerializer();
-
-            var result = await serializer
-                .DeserializeAsync(rawContent, headers, MessageSerializationContext.Empty);
-
-            result.Should().BeOfType<BinaryFileMessage>();
-            result.Should().BeEquivalentTo(
-                new BinaryFileMessage
-                {
-                    Content = rawContent
-                });
-        }
-
-        [Fact]
-        public void Deserialize_MissingTypeHeaderWithHardcodedType_DefaultTypeDeserialized()
+        public void Deserialize_WithHardcodedType_CustomBinaryFileReturned()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new MessageHeaderCollection();
 
             var serializer = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>();
 
-            var result = serializer
+            var (deserializedObject, type) = serializer
                 .Deserialize(rawContent, headers, MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<InheritedBinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new InheritedBinaryFileMessage
                 {
                     Content = rawContent
                 });
+            type.Should().Be(typeof(InheritedBinaryFileMessage));
         }
 
-
         [Fact]
-        public async Task DeserializeAsync_MissingTypeHeaderWithHardcodedType_DefaultTypeDeserialized()
+        public async Task DeserializeAsync_WithHardcodedType_CustomBinaryFileReturned()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new MessageHeaderCollection();
 
             var serializer = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>();
 
-            var result = await serializer
+            var (deserializedObject, type) = await serializer
                 .DeserializeAsync(rawContent, headers, MessageSerializationContext.Empty);
 
-            result.Should().BeOfType<InheritedBinaryFileMessage>();
-            result.Should().BeEquivalentTo(
+            deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
                 new InheritedBinaryFileMessage
                 {
                     Content = rawContent
                 });
+            type.Should().Be(typeof(InheritedBinaryFileMessage));
+        }
+
+        [Fact]
+        public void Deserialize_NullMessageWithHardcodedType_CustomBinaryFileReturned()
+        {
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>();
+
+            var (deserializedObject, type) = serializer
+                .Deserialize(null, headers, MessageSerializationContext.Empty);
+
+            deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
+                new InheritedBinaryFileMessage
+                {
+                    Content = null
+                });
+            type.Should().Be(typeof(InheritedBinaryFileMessage));
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_NullMessageWithHardcodedType_CustomBinaryFileReturned()
+        {
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>();
+
+            var (deserializedObject, type) = await serializer
+                .DeserializeAsync(null, headers, MessageSerializationContext.Empty);
+
+            deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
+                new InheritedBinaryFileMessage
+                {
+                    Content = null
+                });
+            type.Should().Be(typeof(InheritedBinaryFileMessage));
+        }
+
+
+        [Fact]
+        public void Deserialize_EmptyMessageWithHardcodedType_CustomBinaryFileReturned()
+        {
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>();
+
+            var (deserializedObject, type) = serializer
+                .Deserialize(Array.Empty<byte>(), headers, MessageSerializationContext.Empty);
+
+            deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
+                new InheritedBinaryFileMessage
+                {
+                    Content = Array.Empty<byte>()
+                });
+            type.Should().Be(typeof(InheritedBinaryFileMessage));
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_EmptyMessageWithHardcodedType_CustomBinaryFileReturned()
+        {
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new BinaryFileMessageSerializer<InheritedBinaryFileMessage>();
+
+            var (deserializedObject, type) = await serializer
+                .DeserializeAsync(Array.Empty<byte>(), headers, MessageSerializationContext.Empty);
+
+            deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
+            deserializedObject.Should().BeEquivalentTo(
+                new InheritedBinaryFileMessage
+                {
+                    Content = Array.Empty<byte>()
+                });
+            type.Should().Be(typeof(InheritedBinaryFileMessage));
         }
 
         [Fact]

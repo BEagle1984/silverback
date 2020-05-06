@@ -22,6 +22,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
 
         private readonly ConsumerTransactionManager _transactionManager = new ConsumerTransactionManager();
+
         private readonly IMessageSerializer _serializer = new JsonMessageSerializer();
 
         [Fact]
@@ -35,7 +36,9 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             };
 
             var originalSerializedMessage = _serializer.Serialize(
-                originalMessage, headers, MessageSerializationContext.Empty);
+                originalMessage,
+                headers,
+                MessageSerializationContext.Empty);
 
             var chunks = new InboundEnvelope[3];
             chunks[0] = new InboundEnvelope(
@@ -46,7 +49,9 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
                     new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 },
-                null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);
+                null,
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
             chunks[1] = new InboundEnvelope(
                 originalSerializedMessage.AsMemory().Slice(300, 300).ToArray(),
                 new[]
@@ -55,7 +60,9 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
                     new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 },
-                null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);
+                null,
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
             chunks[2] = new InboundEnvelope(
                 originalSerializedMessage.AsMemory().Slice(600).ToArray(),
                 new[]
@@ -64,7 +71,9 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                     new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
                     new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
                 },
-                null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);
+                null,
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
 
             var result = await new ChunkAggregator(_store, _transactionManager).AggregateIfComplete(chunks[0]);
             result.Should().BeNull();
@@ -73,11 +82,14 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             result = await new ChunkAggregator(_store, _transactionManager).AggregateIfComplete(chunks[2]);
             result.Should().NotBeNull();
 
-            var deserializedResult = (BinaryMessage) _serializer.Deserialize(
-                result, headers, MessageSerializationContext.Empty);
-            deserializedResult.Content.Should().BeEquivalentTo(originalMessage.Content);
+            var deserializedResult = (BinaryMessage)_serializer.Deserialize(
+                result,
+                headers,
+                MessageSerializationContext.Empty).Item1!;
+
+            deserializedResult?.Content.Should().BeEquivalentTo(originalMessage.Content);
         }
 
-        private byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte) 255).ToArray();
+        private byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte)255).ToArray();
     }
 }

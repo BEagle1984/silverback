@@ -14,6 +14,14 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 {
     public class JsonMessageSerializerTests
     {
+        private static MessageHeaderCollection _testEventOneMessageTypeHeaders = new MessageHeaderCollection
+        {
+            {
+                "x-message-type",
+                "Silverback.Tests.Integration.TestTypes.Domain.TestEventOne, Silverback.Integration.Tests"
+            }
+        };
+
         [Fact]
         public void SerializeDeserialize_Message_CorrectlyDeserialized()
         {
@@ -24,8 +32,10 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serialized = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
-            var message2 = serializer
-                .Deserialize(serialized, headers, MessageSerializationContext.Empty) as TestEventOne;
+            var (deserialized, _) = serializer
+                .Deserialize(serialized, headers, MessageSerializationContext.Empty);
+
+            var message2 = deserialized as TestEventOne;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -41,8 +51,10 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serialized = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            var message2 = await serializer
-                .DeserializeAsync(serialized, headers, MessageSerializationContext.Empty) as TestEventOne;
+            var (deserialized, _) = await serializer
+                .DeserializeAsync(serialized, headers, MessageSerializationContext.Empty);
+
+            var message2 = deserialized as TestEventOne;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -60,8 +72,10 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             Encoding.UTF8.GetString(serialized).Should().NotContain("TestEventOne");
 
-            var message2 = serializer
-                .Deserialize(serialized, headers, MessageSerializationContext.Empty) as TestEventOne;
+            var (deserialized, _) = serializer
+                .Deserialize(serialized, headers, MessageSerializationContext.Empty);
+
+            var message2 = deserialized as TestEventOne;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -79,8 +93,10 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             Encoding.UTF8.GetString(serialized).Should().NotContain("TestEventOne");
 
-            var message2 = await serializer
-                .DeserializeAsync(serialized, headers, MessageSerializationContext.Empty) as TestEventOne;
+            var (deserialized, _) = await serializer
+                .DeserializeAsync(serialized, headers, MessageSerializationContext.Empty);
+
+            var message2 = deserialized as TestEventOne;
 
             message2.Should().NotBeNull();
             message2.Should().BeEquivalentTo(message);
@@ -96,7 +112,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
-            headers.Should().ContainEquivalentOf(new MessageHeader("x-message-type", typeof(TestEventOne).AssemblyQualifiedName));
+            headers.Should().ContainEquivalentOf(
+                new MessageHeader("x-message-type", typeof(TestEventOne).AssemblyQualifiedName));
         }
 
         [Fact]
@@ -109,7 +126,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            headers.Should().ContainEquivalentOf(new MessageHeader("x-message-type", typeof(TestEventOne).AssemblyQualifiedName));
+            headers.Should().ContainEquivalentOf(
+                new MessageHeader("x-message-type", typeof(TestEventOne).AssemblyQualifiedName));
         }
 
         [Fact]
@@ -173,7 +191,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         }
 
         [Fact]
-        public void Serialize_NullMessage_NullIsReturned()
+        public void Serialize_NullMessage_NullReturned()
         {
             var serializer = new JsonMessageSerializer();
 
@@ -186,7 +204,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         }
 
         [Fact]
-        public async Task SerializeAsync_NullMessage_NullIsReturned()
+        public async Task SerializeAsync_NullMessage_NullReturned()
         {
             var serializer = new JsonMessageSerializer();
 
@@ -199,7 +217,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         }
 
         [Fact]
-        public void Serialize_NullMessageWithHardcodedType_NullIsReturned()
+        public void Serialize_NullMessageWithHardcodedType_NullReturned()
         {
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
@@ -210,7 +228,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         }
 
         [Fact]
-        public async Task SerializeAsync_NullMessageWithHardcodedType_NullIsReturned()
+        public async Task SerializeAsync_NullMessageWithHardcodedType_NullReturned()
         {
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
@@ -219,79 +237,89 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             serialized.Should().BeNull();
         }
-        
+
         [Fact]
-        public void Deserialize_MessageWithIncompleteTypeHeader_CorrectlyDeserialized()
+        public void Deserialize_MessageWithIncompleteTypeHeader_Deserialized()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
-            var headers = new MessageHeaderCollection
-            {
-                {
-                    "x-message-type",
-                    "Silverback.Tests.Integration.TestTypes.Domain.TestEventOne, Silverback.Integration.Tests"
-                }
-            };
-
             var serializer = new JsonMessageSerializer();
+            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
 
-            var message = serializer
-                .Deserialize(rawMessage, headers, MessageSerializationContext.Empty) as TestEventOne;
+            var (deserializedObject, _) = serializer
+                .Deserialize(rawMessage, _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            var message = deserializedObject as TestEventOne;
 
             message.Should().NotBeNull();
             message.Should().BeOfType<TestEventOne>();
             message.As<TestEventOne>().Content.Should().Be("the message");
         }
-        
+
         [Fact]
-        public async Task DeserializeAsync_MessageWithIncompleteTypeHeader_CorrectlyDeserialized()
+        public void Deserialize_MessageWithIncompleteTypeHeader_TypeReturned()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
-            var headers = new MessageHeaderCollection
-            {
-                {
-                    "x-message-type",
-                    "Silverback.Tests.Integration.TestTypes.Domain.TestEventOne, Silverback.Integration.Tests"
-                }
-            };
-
             var serializer = new JsonMessageSerializer();
+            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
 
-            var message = await serializer
-                .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty) as TestEventOne;
+            var (_, type) = serializer
+                .Deserialize(rawMessage, _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_MessageWithIncompleteTypeHeader_Deserialized()
+        {
+            var serializer = new JsonMessageSerializer();
+            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+
+            var (deserializedObject, _) = await serializer
+                .DeserializeAsync(rawMessage, _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            var message = deserializedObject as TestEventOne;
 
             message.Should().NotBeNull();
             message.Should().BeOfType<TestEventOne>();
             message.As<TestEventOne>().Content.Should().Be("the message");
         }
-     
+
+        [Fact]
+        public async Task DeserializeAsync_MessageWithIncompleteTypeHeader_TypeReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+
+            var (_, type) = await serializer
+                .DeserializeAsync(rawMessage, _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
+        }
+
         [Fact]
         public void Deserialize_MissingTypeHeader_ExceptionThrown()
         {
+            var serializer = new JsonMessageSerializer();
             var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
             var headers = new MessageHeaderCollection();
-
-            var serializer = new JsonMessageSerializer();
 
             Action act = () => serializer
                 .Deserialize(rawMessage, headers, MessageSerializationContext.Empty);
 
-            act.Should().Throw<SilverbackException>();
+            act.Should().Throw<MessageSerializerException>();
         }
-        
+
         [Fact]
         public void DeserializeAsync_MissingTypeHeader_ExceptionThrown()
         {
+            var serializer = new JsonMessageSerializer();
             var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
             var headers = new MessageHeaderCollection();
-
-            var serializer = new JsonMessageSerializer();
 
             Action act = () => serializer
                 .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
 
-            act.Should().Throw<SilverbackException>();
+            act.Should().Throw<MessageSerializerException>();
         }
-        
+
         [Fact]
         public void Deserialize_BadTypeHeader_ExceptionThrown()
         {
@@ -311,7 +339,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             act.Should().Throw<TypeLoadException>();
         }
-        
+
         [Fact]
         public void DeserializeAsync_BadTypeHeader_ExceptionThrown()
         {
@@ -330,158 +358,307 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             act.Should().Throw<TypeLoadException>();
         }
-        
+
         [Fact]
-        public void Deserialize_MissingTypeHeaderWithHardcodedType_DefaultTypeDeserialized()
+        public void Deserialize_MissingTypeHeaderWithHardcodedType_Deserialized()
         {
             var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var message = serializer
+            var (deserializedObject, _) = serializer
                 .Deserialize(rawMessage, headers, MessageSerializationContext.Empty);
 
-            message.Should().NotBeNull();
-            message.Should().BeOfType<TestEventOne>();
-            message.As<TestEventOne>().Content.Should().Be("the message");
+            deserializedObject.Should().NotBeNull();
+            deserializedObject.Should().BeOfType<TestEventOne>();
+            deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
         }
-        
+
         [Fact]
-        public async Task DeserializeAsync_MissingTypeHeaderWithHardcodedType_DefaultTypeDeserialized()
+        public void Deserialize_MissingTypeHeaderWithHardcodedType_TypeReturned()
         {
             var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var message = await serializer
-                .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
-
-            message.Should().NotBeNull();
-            message.Should().BeOfType<TestEventOne>();
-            message.As<TestEventOne>().Content.Should().Be("the message");
-        }
-        
-        [Fact]
-        public void Deserialize_WrongTypeHeaderWithHardcodedType_DefaultTypeDeserialized()
-        {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
-            var headers = new MessageHeaderCollection();
-
-            var serializer = new JsonMessageSerializer<TestEventOne>();
-
-            var message = serializer
+            var (_, type) = serializer
                 .Deserialize(rawMessage, headers, MessageSerializationContext.Empty);
 
-            message.Should().NotBeNull();
-            message.Should().BeOfType<TestEventOne>();
-            message.As<TestEventOne>().Content.Should().Be("the message");
-
+            type.Should().Be(typeof(TestEventOne));
         }
-        
+
         [Fact]
-        public async Task DeserializeAsync_MWrongTypeHeaderWithHardcodedType_DefaultTypeDeserialized()
+        public async Task DeserializeAsync_MissingTypeHeaderWithHardcodedType_Deserialized()
         {
             var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var message = await serializer
+            var (deserializedObject, _) = await serializer
                 .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
 
-            message.Should().NotBeNull();
-            message.Should().BeOfType<TestEventOne>();
-            message.As<TestEventOne>().Content.Should().Be("the message");
+            deserializedObject.Should().NotBeNull();
+            deserializedObject.Should().BeOfType<TestEventOne>();
+            deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
         }
-        
+
         [Fact]
-        public void Deserialize_NullMessage_NullIsReturned()
+        public async Task DeserializeAsync_MissingTypeHeaderWithHardcodedType_TypeReturned()
+        {
+            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var (_, type) = await serializer
+                .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
+        }
+
+        [Fact]
+        public void Deserialize_WrongTypeHeaderWithHardcodedType_Deserialized()
+        {
+            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var (deserializedObject, _) = serializer
+                .Deserialize(rawMessage, headers, MessageSerializationContext.Empty);
+
+            deserializedObject.Should().NotBeNull();
+            deserializedObject.Should().BeOfType<TestEventOne>();
+            deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
+        }
+
+        [Fact]
+        public void Deserialize_WrongTypeHeaderWithHardcodedType_TypeReturned()
+        {
+            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var (_, type) = serializer
+                .Deserialize(rawMessage, headers, MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_WrongTypeHeaderWithHardcodedType_Deserialized()
+        {
+            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var (deserializedObject, _) = await serializer
+                .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
+
+            deserializedObject.Should().NotBeNull();
+            deserializedObject.Should().BeOfType<TestEventOne>();
+            deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_WrongTypeHeaderWithHardcodedType_TypeReturned()
+        {
+            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var (_, type) = await serializer
+                .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
+        }
+
+        [Fact]
+        public void Deserialize_NullMessage_NullObjectReturned()
         {
             var serializer = new JsonMessageSerializer();
 
-            var deserialized = serializer
+            var (deserializedObject, _) = serializer
+                .Deserialize(null, _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            deserializedObject.Should().BeNull();
+        }
+
+        [Fact]
+        public void Deserialize_NullMessage_TypeReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+
+            var (_, type) = serializer
+                .Deserialize(null, _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_NullMessage_NullObjectReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+
+            var (deserializedObject, _) = await serializer
+                .DeserializeAsync(null, _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            deserializedObject.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_NullMessage_TypeReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+
+            var (_, type) = await serializer
+                .DeserializeAsync(null, _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
+        }
+
+        [Fact]
+        public void Deserialize_NullMessageWithHardcodedType_NullObjectReturned()
+        {
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var (deserializedObject, _) = serializer
                 .Deserialize(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
-            deserialized.Should().BeNull();
-        }
-        
-        [Fact]
-        public async Task DeserializeAsync_NullMessage_NullIsReturned()
-        {
-            var serializer = new JsonMessageSerializer();
-
-            var deserialized = await serializer
-                .DeserializeAsync(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
-
-            deserialized.Should().BeNull();
+            deserializedObject.Should().BeNull();
         }
 
         [Fact]
-        public void Deserialize_NullMessageWithHardcodedType_NullIsReturned()
+        public void Deserialize_NullMessageWithHardcodedType_TypeReturned()
         {
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var deserialized = serializer
+            var (_, type) = serializer
                 .Deserialize(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
-            deserialized.Should().BeNull();
+            type.Should().Be(typeof(TestEventOne));
         }
-        
+
         [Fact]
-        public async Task DeserializeAsync_NullMessageWithHardcodedType_NullIsReturned()
+        public async Task DeserializeAsync_NullMessageWithHardcodedType_NullObjectReturned()
         {
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var deserialized = await serializer
+            var (deserializedObject, _) = await serializer
                 .DeserializeAsync(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
-            deserialized.Should().BeNull();
+            deserializedObject.Should().BeNull();
         }
 
         [Fact]
-        public void Deserialize_EmptyArrayMessage_NullIsReturned()
-        {
-            var serializer = new JsonMessageSerializer();
-
-            var deserialized = serializer
-                .Deserialize(new byte[0], new MessageHeaderCollection(), MessageSerializationContext.Empty);
-
-            deserialized.Should().BeNull();
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_EmptyArrayMessage_NullIsReturned()
-        {
-            var serializer = new JsonMessageSerializer();
-
-            var deserialized = await serializer
-                .DeserializeAsync(new byte[0], new MessageHeaderCollection(), MessageSerializationContext.Empty);
-
-            deserialized.Should().BeNull();
-        }
-
-        [Fact]
-        public void Deserialize_EmptyArrayMessageWithHardcodedType_NullIsReturned()
+        public async Task DeserializeAsync_NullMessageWithHardcodedType_TypeReturned()
         {
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var deserialized = serializer
-                .Deserialize(new byte[0], new MessageHeaderCollection(), MessageSerializationContext.Empty);
+            var (_, type) = await serializer
+                .DeserializeAsync(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
-            deserialized.Should().BeNull();
+            type.Should().Be(typeof(TestEventOne));
+        }
+
+        [Fact]
+        public void Deserialize_EmptyArrayMessage_NullObjectReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+
+            var (deserializedObject, _) = serializer
+                .Deserialize(Array.Empty<byte>(), _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            deserializedObject.Should().BeNull();
+        }
+
+        [Fact]
+        public void Deserialize_EmptyArrayMessage_TypeReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+
+            var (_, type) = serializer
+                .Deserialize(Array.Empty<byte>(), _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_EmptyArrayMessage_NullObjectReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+
+            var (deserializedObject, _) = await serializer
+                .DeserializeAsync(Array.Empty<byte>(), _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            deserializedObject.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_EmptyArrayMessage_TypeReturned()
+        {
+            var serializer = new JsonMessageSerializer();
+
+            var (_, type) = await serializer
+                .DeserializeAsync(Array.Empty<byte>(), _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
         }
         
         [Fact]
-        public async Task DeserializeAsync_EmptyArrayMessageWithHardcodedType_NullIsReturned()
+        public void Deserialize_EmptyArrayMessageWithHardcodedType_NullObjectReturned()
         {
             var serializer = new JsonMessageSerializer<TestEventOne>();
 
-            var deserialized = await serializer
-                .DeserializeAsync(new byte[0], new MessageHeaderCollection(), MessageSerializationContext.Empty);
+            var (deserializedObject, _) = serializer
+                .Deserialize(Array.Empty<byte>(), new MessageHeaderCollection(), MessageSerializationContext.Empty);
 
-            deserialized.Should().BeNull();
+            deserializedObject.Should().BeNull();
+        }
+
+        [Fact]
+        public void Deserialize_EmptyArrayMessageWithHardcodedType_TypeReturned()
+        {
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var (_, type) = serializer
+                .Deserialize(Array.Empty<byte>(), new MessageHeaderCollection(), MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_EmptyArrayMessageWithHardcodedType_NullObjectReturned()
+        {
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var (deserializedObject, _) = await serializer
+                .DeserializeAsync(
+                    Array.Empty<byte>(),
+                    new MessageHeaderCollection(),
+                    MessageSerializationContext.Empty);
+
+            deserializedObject.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task DeserializeAsync_EmptyArrayMessageWithHardcodedType_TypeReturned()
+        {
+            var serializer = new JsonMessageSerializer<TestEventOne>();
+
+            var (_, type) = await serializer
+                .DeserializeAsync(
+                    Array.Empty<byte>(),
+                    new MessageHeaderCollection(),
+                    MessageSerializationContext.Empty);
+
+            type.Should().Be(typeof(TestEventOne));
         }
     }
 }

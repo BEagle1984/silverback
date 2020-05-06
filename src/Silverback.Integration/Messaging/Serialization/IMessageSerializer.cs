@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -32,10 +33,11 @@ namespace Silverback.Messaging.Serialization
         /// <param name="messageHeaders"> The message headers collection. </param>
         /// <param name="context"> The context information. </param>
         /// <returns>
-        ///     The deserialized message or <c> null </c> when the input is null or empty.
+        ///     The deserialized message (or <c> null </c> when the input is null or empty) and the type of the
+        ///     message.
         /// </returns>
         [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        object? Deserialize(
+        (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context);
@@ -64,10 +66,10 @@ namespace Silverback.Messaging.Serialization
         /// <param name="context"> The context information. </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
-        ///     deserialized message or <c> null </c> when the input is null or empty.
+        ///     deserialized message (or <c> null </c> when the input is null or empty) and the type of the message.
         /// </returns>
         [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        Task<object?> DeserializeAsync(
+        Task<(object?, Type)> DeserializeAsync(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context);

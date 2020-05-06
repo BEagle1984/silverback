@@ -32,17 +32,14 @@ namespace Silverback.Messaging.Serialization
             if (envelope is IInboundEnvelope inboundEnvelope && inboundEnvelope.Message != null)
                 return envelope;
 
-            var deserialized = await
+            var (deserializedObject, deserializedType) = await
                 envelope.Endpoint.Serializer.DeserializeAsync(
                     envelope.RawMessage,
                     envelope.Headers,
                     new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName));
 
-            if (deserialized == null)
-                return envelope;
-
             // Create typed message for easier specific subscription
-            return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserialized);
+            return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Serialization
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual byte[]? Serialize(
-            object message,
+            object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
@@ -66,35 +66,40 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc />
-        public virtual object? Deserialize(
-            byte[] message,
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public virtual (object?, Type) Deserialize(
+            byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
             if (messageHeaders == null)
                 throw new ArgumentNullException(nameof(messageHeaders));
 
-            if (message == null || message.Length == 0)
-                return null;
-
-            var json = GetSystemEncoding().GetString(message);
             var type = SerializationHelper.GetTypeFromHeaders(messageHeaders);
 
-            return JsonConvert.DeserializeObject(json, type, Settings) ??
+            if (message == null || message.Length == 0)
+                return (null, type);
+
+            var jsonString = GetSystemEncoding().GetString(message);
+
+            var deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings) ??
                    throw new MessageSerializerException("The deserialization returned null.");
+
+            return (deserializedObject, type);
         }
 
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual Task<byte[]?> SerializeAsync(
-            object message,
+            object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Task.FromResult(Serialize(message, messageHeaders, context));
 
         /// <inheritdoc />
-        public virtual Task<object?> DeserializeAsync(
-            byte[] message,
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public virtual Task<(object?, Type)> DeserializeAsync(
+            byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Task.FromResult(Deserialize(message, messageHeaders, context));

@@ -3,19 +3,12 @@
 
 namespace Silverback.Messaging.Messages
 {
+    /// <inheritdoc cref="IRawInboundEnvelope" />
     public interface IInboundEnvelope : IBrokerEnvelope, IRawInboundEnvelope
     {
         /// <summary>
         ///     Gets the source endpoint configuration.
         /// </summary>
         new IConsumerEndpoint Endpoint { get; }
-    }
-
-    public interface IInboundEnvelope<out TMessage> : IInboundEnvelope
-    {
-        /// <summary>
-        ///     Gets the deserialized message body.
-        /// </summary>
-        new TMessage Message { get; }
     }
 }
