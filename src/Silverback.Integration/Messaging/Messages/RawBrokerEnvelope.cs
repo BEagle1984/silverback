@@ -21,9 +21,12 @@ namespace Silverback.Messaging.Messages
             Offset = offset;
         }
 
-        public byte[] RawMessage { get; set; }
+        public byte[]? RawMessage { get; set; }
+
         public MessageHeaderCollection Headers { get; set; }
+
         public IOffset Offset { get; internal set; }
+
         public IEndpoint Endpoint { get; }
     }
 }

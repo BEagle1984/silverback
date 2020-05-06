@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -14,16 +15,18 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public int FailCount { get; private set; }
 
-        public byte[] Serialize(
-            object message,
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public byte[]? Serialize(
+            object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
             throw new NotImplementedException();
         }
 
-        public object Deserialize(
-            byte[] message,
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public (object?, Type) Deserialize(
+            byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
@@ -32,20 +35,22 @@ namespace Silverback.Tests.Integration.TestTypes
             if (MustFailCount > FailCount)
             {
                 FailCount++;
-                throw new Exception("Test failure");
+                throw new InvalidOperationException("Test failure");
             }
 
             return deserialized;
         }
 
-        public virtual Task<byte[]> SerializeAsync(
-            object message,
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public virtual Task<byte[]?> SerializeAsync(
+            object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Task.FromResult(Serialize(message, messageHeaders, context));
 
-        public virtual Task<object> DeserializeAsync(
-            byte[] message,
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public virtual Task<(object?, Type)> DeserializeAsync(
+            byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Task.FromResult(Deserialize(message, messageHeaders, context));

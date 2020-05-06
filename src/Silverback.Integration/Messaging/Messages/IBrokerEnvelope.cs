@@ -3,6 +3,9 @@
 
 namespace Silverback.Messaging.Messages
 {
+    /// <summary>
+    ///     Wraps the deserialized inbound or outbound message.
+    /// </summary>
     public interface IBrokerEnvelope : IRawBrokerEnvelope, IEnvelope
     {
     }

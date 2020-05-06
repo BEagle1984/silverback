@@ -19,6 +19,8 @@ namespace Silverback.Messaging.BinaryFiles
     public class BinaryFileMessageSerializer<TModel> : BinaryFileMessageSerializer
         where TModel : IBinaryFileMessage, new()
     {
+        private readonly Type _type = typeof(TModel);
+
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override byte[]? Serialize(
@@ -48,15 +50,14 @@ namespace Silverback.Messaging.BinaryFiles
 
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public override object? Deserialize(
+        public override (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (message == null || message.Length == 0)
-                return null;
+            var binaryFileMessage = new TModel { Content = message };
 
-            return new TModel { Content = message };
+            return (binaryFileMessage, _type);
         }
     }
 }

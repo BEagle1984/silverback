@@ -3,6 +3,9 @@
 
 namespace Silverback.Messaging.Messages
 {
+    /// <summary>
+    ///     Wraps the message that is being consumed from an inbound endpoint.
+    /// </summary>
     public interface IRawInboundEnvelope : IRawBrokerEnvelope
     {
         /// <summary>

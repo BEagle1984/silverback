@@ -52,7 +52,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var producedMessage = envelope.Endpoint.Serializer.Deserialize(
                 _broker.ProducedMessages.First().Message,
                 new MessageHeaderCollection(_broker.ProducedMessages.First().Headers),
-                MessageSerializationContext.Empty) as TestEventOne;
+                MessageSerializationContext.Empty).Item1 as TestEventOne;
             producedMessage.Should().BeEquivalentTo(envelope.Message);
         }
 

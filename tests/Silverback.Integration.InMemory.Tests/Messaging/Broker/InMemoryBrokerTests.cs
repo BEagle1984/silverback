@@ -76,7 +76,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
                     args.Envelopes.ForEach(
                         envelope =>
                         {
-                            var deserialized = envelope.Endpoint.Serializer.Deserialize(
+                            var (deserialized, _) = envelope.Endpoint.Serializer.Deserialize(
                                 envelope.RawMessage,
                                 new MessageHeaderCollection(envelope.Headers),
                                 MessageSerializationContext.Empty);
@@ -106,7 +106,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
                     args.Envelopes.ForEach(
                         envelope =>
                         {
-                            var deserialized = envelope.Endpoint.Serializer.Deserialize(
+                            var (deserialized, _) = envelope.Endpoint.Serializer.Deserialize(
                                 envelope.RawMessage,
                                 new MessageHeaderCollection(envelope.Headers),
                                 MessageSerializationContext.Empty);

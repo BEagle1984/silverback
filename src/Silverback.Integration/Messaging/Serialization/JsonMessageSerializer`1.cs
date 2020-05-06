@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Serialization
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override byte[]? Serialize(
-            object message,
+            object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
@@ -32,23 +32,24 @@ namespace Silverback.Messaging.Serialization
             if (message is byte[] bytes)
                 return bytes;
 
-            var json = JsonConvert.SerializeObject(message, _type, Settings);
+            var jsonString = JsonConvert.SerializeObject(message, _type, Settings);
 
-            return GetSystemEncoding().GetBytes(json);
+            return GetSystemEncoding().GetBytes(jsonString);
         }
 
         /// <inheritdoc />
-        public override object? Deserialize(
-            byte[] message,
+        public override (object?, Type) Deserialize(
+            byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
             if (message == null || message.Length == 0)
-                return null;
+                return (null, _type);
 
             var json = GetSystemEncoding().GetString(message);
 
-            return JsonConvert.DeserializeObject(json, _type, Settings);
+            var deserializedObject = JsonConvert.DeserializeObject(json, _type, Settings);
+            return (deserializedObject, _type);
         }
     }
 }
