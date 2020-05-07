@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
@@ -9,24 +9,44 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField")]
+    /// <summary>
+    ///     <para>
+    ///     Used by the <see cref="OffsetStoredInboundConnector" /> to keep track of the last processed offsets
+    ///     and guarantee that each message is processed only once.
+    ///     </para>
+    ///     <para> The log is simply persisted in memory. </para>
+    /// </summary>
     public class InMemoryOffsetStore : TransactionalDictionary<string, IComparableOffset>, IOffsetStore
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InMemoryOffsetStore"/> class.
+        /// </summary>
+        /// <param name="sharedItems">
+        ///     The offsets shared between the instances of this repository.
+        /// </param>
         public InMemoryOffsetStore(TransactionalDictionarySharedItems<string, IComparableOffset> sharedItems)
             : base(sharedItems)
         {
         }
 
+        /// <inheritdoc />
         public Task Store(IComparableOffset offset, IConsumerEndpoint endpoint)
         {
+            if (offset == null)
+                throw new ArgumentNullException(nameof(offset));
+
+            if (endpoint == null)
+                throw new ArgumentNullException(nameof(endpoint));
+
             AddOrReplace(GetKey(offset.Key, endpoint), offset);
 
             return Task.CompletedTask;
         }
 
-        public Task<IComparableOffset> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint) =>
+        /// <inheritdoc />
+        public Task<IComparableOffset?> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint) =>
             Task.FromResult(
-                Items.Union(UncommittedItems)
+                (IComparableOffset?)Items.Union(UncommittedItems)
                     .Where(pair => pair.Key == GetKey(offsetKey, endpoint))
                     .Select(pair => pair.Value)
                     .Max());

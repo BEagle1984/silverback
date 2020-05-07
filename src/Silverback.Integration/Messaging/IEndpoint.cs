@@ -6,6 +6,9 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging
 {
+    /// <summary>
+    ///     Represents a message broker endpoint such as a Kafka topic or RabbitMQ queue or exchange.
+    /// </summary>
     public interface IEndpoint
     {
         /// <summary>

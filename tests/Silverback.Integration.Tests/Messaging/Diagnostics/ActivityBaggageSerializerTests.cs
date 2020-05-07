@@ -3,15 +3,16 @@
 
 using System.Collections.Generic;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Diagnostics;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics
 {
-    public class BaggageConverterTests
+    public class ActivityBaggageSerializerTests
     {
         [Fact]
-        public void Serialize_SomeItems_ReturnsSerializedString()
+        public void Serialize_SomeItems_SerializedStringReturned()
         {
             var itemsToAdd = new List<KeyValuePair<string, string>>
             {
@@ -20,19 +21,18 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new KeyValuePair<string, string>("key3", "value3")
             };
 
-            var result = BaggageConverter.Serialize(itemsToAdd);
+            var result = ActivityBaggageSerializer.Serialize(itemsToAdd);
 
             result.Should().Be("key1=value1,key2=value2,key3=value3");
         }
 
         [Fact]
-        public void TryDeserialize_ValidString_CorrectlyDeserializesItems()
+        public void TryDeserialize_ValidString_CorrectlyDeserializedItems()
         {
             var value = "key1=value1, key2 = value2, invalidPair";
 
-            var deserialized = BaggageConverter.TryDeserialize(value, out var result);
+            var result = ActivityBaggageSerializer.Deserialize(value);
 
-            deserialized.Should().BeTrue();
             result.Should().ContainEquivalentOf(new KeyValuePair<string, string>("key1", "value1"));
             result.Should().ContainEquivalentOf(new KeyValuePair<string, string>("key2", "value2"));
         }
@@ -40,12 +40,11 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Theory]
         [InlineData("")]
         [InlineData(null)]
-        public void TryDeserialize_NullOrEmpty_ReturnsFalse(string deserializeValue)
+        public void TryDeserialize_NullOrEmpty_EmptyCollectionReturned(string deserializeValue)
         {
-            var deserialized = BaggageConverter.TryDeserialize(deserializeValue, out var result);
+            var result = ActivityBaggageSerializer.Deserialize(deserializeValue);
 
-            deserialized.Should().BeFalse();
-            result.Should().BeNull();
+            result.Should().BeEmpty();
         }
     }
 }

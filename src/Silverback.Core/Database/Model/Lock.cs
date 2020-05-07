@@ -4,11 +4,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using Silverback.Background;
 
-namespace Silverback.Background.Model
+namespace Silverback.Database.Model
 {
     /// <summary>
-    ///     The model of the persisted lock written by the <see cref="IDistributedLockManager"/>.
+    ///     The entity written in the locks table by the <see cref="DbDistributedLockManager"/>.
     /// </summary>
     public class Lock
     {

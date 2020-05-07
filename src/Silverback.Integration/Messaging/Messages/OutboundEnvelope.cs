@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Messages
     internal class OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelopeInternal
     {
         public OutboundEnvelope(
-            object message,
+            object? message,
             IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint,
             Type? outboundConnectorType = null,
@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Messages
             AutoUnwrap = autoUnwrap;
         }
 
-        public object Message { get; }
+        public object? Message { get; }
 
         public bool AutoUnwrap { get; }
 

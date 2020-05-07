@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Broker
         /// <summary> Publishes the specified message. </summary>
         /// <param name="message"> The message to be delivered. </param>
         /// <param name="headers"> The optional message headers. </param>
-        void Produce(object message, IReadOnlyCollection<MessageHeader>? headers = null);
+        void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary> Publishes the specified message. </summary>
         /// <param name="message"> The message to be delivered. </param>
@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader>? headers = null);
+        Task ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary> Publishes the specified message. </summary>
         /// <param name="envelope">
