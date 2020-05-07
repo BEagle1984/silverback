@@ -4,7 +4,7 @@ permalink: /docs/releases
 toc: true
 ---
 
-## [2.1.1-rc.11](https://github.com/BEagle1984/silverback/releases/tag/2.1.1-rc.11)
+## [2.1.1-rc.12](https://github.com/BEagle1984/silverback/releases/tag/2.1.1-rc.12)
 
 ### What's new
 * Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
@@ -16,9 +16,10 @@ toc: true
 * `x-first-chunk-offset` header added by default (see [Message Headers]({{ site.baseurl }}/docs/quickstart/headers))
 * <span class="area-kafka" /> The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
 * <span class="area-kafka" /> Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization]({{ site.baseurl }}/docs/advanced/serialization))
-* <span class="area-kafka" /> Upgrade to [Confluent.Kafka 1.4.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.0)
+* <span class="area-kafka" /> Upgrade to [Confluent.Kafka 1.4.2](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.2)
 * <span class="area-rabbit" /> Added consumer `PrefetchSize` and `PrefetchCount` settings (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
 * <span class="area-rabbit" /> Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint]({{ site.baseurl }}/docs/configuration/endpoint))
+* <span class="area-kafka" /> Upgrade to [RabbitMQ.Client 6.0.0](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.0.0)
 * Improved message type resolution performance and reliability in `JsonMessageSerializer`
 * `LogWithLevel` method added to `SkipMessageErrorPolicy` to specify the desired level for the "Message skipped" log entry (the default is now increased to `Error`)
 
