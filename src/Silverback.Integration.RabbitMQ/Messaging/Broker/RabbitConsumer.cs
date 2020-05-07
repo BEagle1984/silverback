@@ -106,7 +106,7 @@ namespace Silverback.Messaging.Broker
                     return;
 
                 await HandleMessage(
-                    deliverEventArgs.Body,
+                    deliverEventArgs.Body.ToArray(),
                     deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
                     Endpoint.Name,
                     offset);

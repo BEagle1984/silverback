@@ -8,59 +8,109 @@ namespace Silverback.Messaging.Configuration
 {
     internal static class ConnectionFactoryExtensions
     {
-        public static void ApplyConfiguration(this ConnectionFactory factory, RabbitConnectionConfig config)
+        public static void ApplyConfiguration(this ConnectionFactory connectionFactory, RabbitConnectionConfig config)
         {
-            if (factory == null) throw new ArgumentNullException(nameof(factory));
-            if (config == null) throw new ArgumentNullException(nameof(config));
+            if (connectionFactory == null)
+                throw new ArgumentNullException(nameof(connectionFactory));
+            if (config == null)
+                throw new ArgumentNullException(nameof(config));
 
-            factory.ApplyConfigIfNotNull(config, c => c.AmqpUriSslProtocols, (f, v) => f.AmqpUriSslProtocols = v);
-            factory.ApplyConfigIfNotNull(config, c => c.AutomaticRecoveryEnabled,
-                (f, v) => f.AutomaticRecoveryEnabled = v);
-            factory.ApplyConfigIfNotNull(config, c => c.HostName, (f, v) => f.HostName = v);
-            factory.ApplyConfigIfNotNull(config, c => c.NetworkRecoveryInterval,
-                (f, v) => f.NetworkRecoveryInterval = v);
-            factory.ApplyConfigIfNotNull(config, c => c.HandshakeContinuationTimeout,
-                (f, v) => f.HandshakeContinuationTimeout = v);
-            factory.ApplyConfigIfNotNull(config, c => c.ContinuationTimeout, (f, v) => f.ContinuationTimeout = v);
-            factory.ApplyConfigIfNotNull(config, c => c.Port, (f, v) => f.Port = v);
-            factory.ApplyConfigIfNotNull(config, c => c.RequestedConnectionTimeout,
-                (f, v) => f.RequestedConnectionTimeout = v);
-            factory.ApplyConfigIfNotNull(config, c => c.SocketReadTimeout, (f, v) => f.SocketReadTimeout = v);
-            factory.ApplyConfigIfNotNull(config, c => c.SocketWriteTimeout, (f, v) => f.SocketWriteTimeout = v);
-            factory.ApplyConfigIfNotNull(config, c => c.TopologyRecoveryEnabled,
-                (f, v) => f.TopologyRecoveryEnabled = v);
-            factory.ApplyConfigIfNotNull(config, c => c.ClientProperties, (f, v) => f.ClientProperties = v);
-            factory.ApplyConfigIfNotNull(config, c => c.Password, (f, v) => f.Password = v);
-            factory.ApplyConfigIfNotNull(config, c => c.RequestedChannelMax, (f, v) => f.RequestedChannelMax = v);
-            factory.ApplyConfigIfNotNull(config, c => c.RequestedFrameMax, (f, v) => f.RequestedFrameMax = v);
-            factory.ApplyConfigIfNotNull(config, c => c.RequestedHeartbeat, (f, v) => f.RequestedHeartbeat = v);
-            factory.ApplyConfigIfNotNull(config, c => c.UseBackgroundThreadsForIO,
-                (f, v) => f.UseBackgroundThreadsForIO = v);
-            factory.ApplyConfigIfNotNull(config, c => c.UserName, (f, v) => f.UserName = v);
-            factory.ApplyConfigIfNotNull(config, c => c.VirtualHost, (f, v) => f.VirtualHost = v);
-            factory.ApplyConfigIfNotNull(config, c => c.ClientProvidedName, (f, v) => f.ClientProvidedName = v);
-
-            factory.Ssl.ApplyConfiguration(config.Ssl);
+            connectionFactory
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.AmqpUriSslProtocols,
+                    (factory, value) => factory.AmqpUriSslProtocols = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.AutomaticRecoveryEnabled,
+                    (factory, value) => factory.AutomaticRecoveryEnabled = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.HostName,
+                    (factory, value) => factory.HostName = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.NetworkRecoveryInterval,
+                    (factory, value) => factory.NetworkRecoveryInterval = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.HandshakeContinuationTimeout,
+                    (factory, value) => factory.HandshakeContinuationTimeout = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.ContinuationTimeout,
+                    (factory, value) => factory.ContinuationTimeout = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.Port,
+                    (factory, value) => factory.Port = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.RequestedConnectionTimeout,
+                    (factory, value) => factory.RequestedConnectionTimeout = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.SocketReadTimeout,
+                    (factory, value) => factory.SocketReadTimeout = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.SocketWriteTimeout,
+                    (factory, value) => factory.SocketWriteTimeout = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.TopologyRecoveryEnabled,
+                    (factory, value) => factory.TopologyRecoveryEnabled = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.ClientProperties,
+                    (factory, value) => factory.ClientProperties = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.Password,
+                    (factory, value) => factory.Password = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.RequestedChannelMax,
+                    (factory, value) => factory.RequestedChannelMax = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.RequestedFrameMax,
+                    (factory, value) => factory.RequestedFrameMax = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.RequestedHeartbeat,
+                    (factory, value) => factory.RequestedHeartbeat = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.UseBackgroundThreadsForIO,
+                    (factory, value) => factory.UseBackgroundThreadsForIO = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.UserName,
+                    (factory, value) => factory.UserName = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.VirtualHost,
+                    (factory, value) => factory.VirtualHost = value)
+                .ApplyConfigIfNotNull(config,
+                    sourceConfig => sourceConfig.ClientProvidedName,
+                    (factory, value) => factory.ClientProvidedName = value)
+                .Ssl.ApplyConfiguration(config.Ssl);
         }
 
         private static void ApplyConfiguration(this SslOption destination, RabbitSslOption source)
         {
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (destination == null)
+                throw new ArgumentNullException(nameof(destination));
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
 
-            destination.ApplyConfigIfNotNull(source, c => c.AcceptablePolicyErrors,
-                (f, v) => f.AcceptablePolicyErrors = v);
-            destination.ApplyConfigIfNotNull(source, c => c.CertPassphrase, (f, v) => f.CertPassphrase = v);
-            destination.ApplyConfigIfNotNull(source, c => c.CertPath, (f, v) => f.CertPath = v);
-            destination.ApplyConfigIfNotNull(source, c => c.CheckCertificateRevocation,
-                (f, v) => f.CheckCertificateRevocation = v);
-            destination.ApplyConfigIfNotNull(source, c => c.Enabled, (f, v) => f.Enabled = v);
-            destination.ApplyConfigIfNotNull(source, c => c.ServerName, (f, v) => f.ServerName = v);
-
-            destination.ApplyConfigIfNotNull(source, c => c.Version, (f, v) => f.Version = v);
+            destination
+                .ApplyConfigIfNotNull(source,
+                    sourceConfig => sourceConfig.AcceptablePolicyErrors,
+                    (factory, value) => factory.AcceptablePolicyErrors = value)
+                .ApplyConfigIfNotNull(source,
+                    sourceConfig => sourceConfig.CertPassphrase,
+                    (factory, value) => factory.CertPassphrase = value)
+                .ApplyConfigIfNotNull(source,
+                    sourceConfig => sourceConfig.CertPath,
+                    (factory, value) => factory.CertPath = value)
+                .ApplyConfigIfNotNull(source,
+                    sourceConfig => sourceConfig.CheckCertificateRevocation,
+                    (factory, value) => factory.CheckCertificateRevocation = value)
+                .ApplyConfigIfNotNull(source,
+                    sourceConfig => sourceConfig.Enabled,
+                    (factory, value) => factory.Enabled = value)
+                .ApplyConfigIfNotNull(source,
+                    sourceConfig => sourceConfig.ServerName,
+                    (factory, value) => factory.ServerName = value)
+                .ApplyConfigIfNotNull(source,
+                    sourceConfig => sourceConfig.Version,
+                    (factory, value) => factory.Version = value);
         }
 
-        private static void ApplyConfigIfNotNull<TSource, TDestination, TValue>(
+        private static TDestination ApplyConfigIfNotNull<TSource, TDestination, TValue>(
             this TDestination destination,
             TSource source,
             Func<TSource, TValue> sourceFunction,
@@ -70,9 +120,11 @@ namespace Silverback.Messaging.Configuration
 
             if (value != null)
                 applyAction(destination, value);
+
+            return destination;
         }
 
-        private static void ApplyConfigIfNotNull<TSource, TDestination, TValue>(
+        private static TDestination ApplyConfigIfNotNull<TSource, TDestination, TValue>(
             this TDestination destination,
             TSource source,
             Func<TSource, TValue?> sourceFunction,
@@ -83,6 +135,8 @@ namespace Silverback.Messaging.Configuration
 
             if (value.HasValue)
                 applyAction(destination, value.Value);
+
+            return destination;
         }
     }
 }

@@ -31,7 +31,7 @@ This package contains an implementation of Silverback.Integration for the popula
   </PropertyGroup>
 
   <ItemGroup>
-      <PackageReference Include="RabbitMQ.Client" Version="6.0.0-rc1" />
+      <PackageReference Include="RabbitMQ.Client" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

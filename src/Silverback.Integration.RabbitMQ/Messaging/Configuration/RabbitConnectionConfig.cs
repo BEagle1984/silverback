@@ -66,19 +66,19 @@ namespace Silverback.Messaging.Configuration
         public int? Port { get; set; }
 
         /// <summary>
-        ///     Timeout setting for connection attempts (in milliseconds).
+        ///     Timeout setting for connection attempts.
         /// </summary>
-        public int? RequestedConnectionTimeout { get; set; }
+        public TimeSpan? RequestedConnectionTimeout { get; set; }
 
         /// <summary>
-        ///     Timeout setting for socket read operations (in milliseconds).
+        ///     Timeout setting for socket read operations.
         /// </summary>
-        public int? SocketReadTimeout { get; set; }
+        public TimeSpan? SocketReadTimeout { get; set; }
 
         /// <summary>
-        ///     Timeout setting for socket write operations (in milliseconds).
+        ///     Timeout setting for socket write operations.
         /// </summary>
-        public int? SocketWriteTimeout { get; set; }
+        public TimeSpan? SocketWriteTimeout { get; set; }
 
         /// <summary>Ssl options setting.</summary>
         public RabbitSslOption Ssl { get; set; } = new RabbitSslOption();
@@ -104,9 +104,9 @@ namespace Silverback.Messaging.Configuration
         public uint? RequestedFrameMax { get; set; }
 
         /// <summary>
-        ///     Heartbeat timeout to use when negotiating with the server (in seconds).
+        ///     Heartbeat timeout to use when negotiating with the server.
         /// </summary>
-        public ushort? RequestedHeartbeat { get; set; }
+        public TimeSpan? RequestedHeartbeat { get; set; }
 
         /// <summary>
         ///     When set to true, background thread will be used for the I/O loop.
