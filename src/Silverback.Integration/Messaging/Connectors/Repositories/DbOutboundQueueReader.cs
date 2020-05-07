@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Database;
+using Silverback.Database.Model;
 using Silverback.Infrastructure;
-using Silverback.Messaging.Connectors.Model;
+using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories

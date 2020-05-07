@@ -10,6 +10,12 @@ namespace Silverback.Util
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField")]
     public abstract class TransactionalList<T>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TransactionalList{T}"/> class.
+        /// </summary>
+        /// <param name="sharedItems">
+        ///     The items shared between the instances of this repository.
+        /// </param>
         protected TransactionalList(TransactionalListSharedItems<T> sharedItems)
         {
             Items = sharedItems.Items;

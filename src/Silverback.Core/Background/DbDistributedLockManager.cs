@@ -8,8 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Silverback.Background.Model;
 using Silverback.Database;
+using Silverback.Database.Model;
 
 namespace Silverback.Background
 {

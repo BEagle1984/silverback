@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
@@ -89,9 +90,10 @@ namespace Silverback.Messaging.Connectors
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         protected virtual Task ProduceMessage(
             byte[]? content,
-            IReadOnlyCollection<MessageHeader> headers,
+            IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint)
             => _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers);
 

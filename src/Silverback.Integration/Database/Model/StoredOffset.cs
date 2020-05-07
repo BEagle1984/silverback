@@ -3,7 +3,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Silverback.Messaging.Connectors.Model
+namespace Silverback.Database.Model
 {
     /// <summary>
     ///     The entity stored in the offset storage table.

@@ -60,11 +60,11 @@ namespace Silverback.Messaging.Broker
         public IReadOnlyCollection<IProducerBehavior> Behaviors { get; }
 
         /// <inheritdoc />
-        public void Produce(object message, IReadOnlyCollection<MessageHeader>? headers = null) =>
+        public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
             Produce(new OutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc />
-        public Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader>? headers = null) =>
+        public Task ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
             ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc />

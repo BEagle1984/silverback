@@ -6,9 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Silverback.Database;
+using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Connectors.Model;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {

@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Database.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -17,13 +18,15 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///     </para>
     ///     <para> The log is simply persisted in memory. </para>
     /// </summary>
-    public class InMemoryInboundLog : TransactionalList<InMemoryInboundLogEntry>, IInboundLog
+    public class InMemoryInboundLog : TransactionalList<InboundLogEntry>, IInboundLog
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="InMemoryInboundLog" /> class.
         /// </summary>
-        /// <param name="sharedItems"> The log entries shared between the instances. </param>
-        public InMemoryInboundLog(TransactionalListSharedItems<InMemoryInboundLogEntry> sharedItems)
+        /// <param name="sharedItems">
+        ///     The log entries shared between the instances of this repository.
+        /// </param>
+        public InMemoryInboundLog(TransactionalListSharedItems<InboundLogEntry> sharedItems)
             : base(sharedItems)
         {
         }
@@ -38,7 +41,13 @@ namespace Silverback.Messaging.Connectors.Repositories
             string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!;
             string consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();
 
-            return Add(new InMemoryInboundLogEntry(messageId, consumerGroupName));
+            var inboundMessage = new InboundLogEntry
+            {
+                MessageId = messageId,
+                ConsumerGroupName = consumerGroupName
+            };
+
+            return Add(inboundMessage);
         }
 
         /// <inheritdoc />
@@ -48,18 +57,20 @@ namespace Silverback.Messaging.Connectors.Repositories
             if (envelope == null)
                 throw new ArgumentNullException(nameof(envelope));
 
+            string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!;
+            string consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();
+
             return Task.FromResult(
                 Items.Union(UncommittedItems).Any(
                     item =>
-                    {
-                        string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!;
-
-                        return item.Entry.MessageId == messageId &&
-                               item.Entry.ConsumerGroupName == envelope.Endpoint.GetUniqueConsumerGroupName();
-                    }));
+                        item.Entry.MessageId == messageId &&
+                        item.Entry.ConsumerGroupName == consumerGroupName));
         }
 
         /// <inheritdoc />
-        public Task<int> GetLength() => Task.FromResult(CommittedItemsCount);
+        public Task<int> GetLength()
+        {
+            return Task.FromResult(CommittedItemsCount);
+        }
     }
 }
