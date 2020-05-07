@@ -11,9 +11,9 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics
 {
-    public class ActivityExtensionsTests
+    public class ActivityHelperTests
     {
-        public ActivityExtensionsTests()
+        public ActivityHelperTests()
         {
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
         }

@@ -23,9 +23,11 @@ toc: true
 * Removed the `IRequest<TResponse>` interface (it was implemented by both `IQuery<TResult>` and `ICommand<TResult>`)
 * Changed _Impl_ methods suffix with _Core_, this affects some virtual members in the `Broker` and other base classes
 * `Received` event in the `Consumer` replaced by a callback delegate
-* Some changes to the database schema (`InboundMessage`)
 * `IQueueProduer` and `IQueueConsumer` renamed to `IQueueWriter` and `IQueueReader`
 * Messages with a `null` or `empty` body can be subscribed as `IInboundEnvelope<TMessage>` as well, as long as the `x-message-type` header is set or a typed serializer such as `JsonMessageSerializer<TMessage>` is used
+* Moved all entities (used with Entity Framework Core) to the `Silverback.Database.Model` namespace
+* Replaced `InboundMessage` entity with `InboundLogEntry`
+* Moved and renamed some internally used types (e.g. `QueuedMessage`, `DbQueuedMessage`, ...)
 
 ## [2.1.1-rc.12](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1-rc.12)
 

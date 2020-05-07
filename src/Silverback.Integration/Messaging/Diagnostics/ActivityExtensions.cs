@@ -15,17 +15,25 @@ namespace Silverback.Messaging.Diagnostics
             this Activity activity,
             IEnumerable<KeyValuePair<string, string>> baggageItems)
         {
-            foreach (var baggageItem in baggageItems)
+            if (activity == null)
+                throw new ArgumentNullException(nameof(activity));
+
+            if (baggageItems == null)
+                throw new ArgumentNullException(nameof(baggageItems));
+
+            foreach ((string key, string value) in baggageItems)
             {
-                activity.AddBaggage(baggageItem.Key, baggageItem.Value);
+                activity.AddBaggage(key, value);
             }
         }
 
         public static void SetMessageHeaders(this Activity activity, MessageHeaderCollection headers)
         {
             if (activity?.Id == null)
+            {
                 throw new InvalidOperationException(
                     "Activity.Id is null. Consider to start a new activity, before calling this method.");
+            }
 
             headers.Add(new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
 
@@ -37,33 +45,38 @@ namespace Silverback.Messaging.Diagnostics
 
             if (activity.Baggage.Any())
             {
-                headers.Add(new MessageHeader(DefaultMessageHeaders.TraceBaggage,
-                    BaggageConverter.Serialize(activity.Baggage)));
+                headers.Add(
+                    new MessageHeader(
+                        DefaultMessageHeaders.TraceBaggage,
+                        ActivityBaggageSerializer.Serialize(activity.Baggage)));
             }
         }
 
         // See https://github.com/aspnet/AspNetCore/blob/master/src/Hosting/Hosting/src/Internal/HostingApplicationDiagnostics.cs
         public static void InitFromMessageHeaders(this Activity activity, MessageHeaderCollection headers)
         {
-            var traceId = headers.GetValue(DefaultMessageHeaders.TraceId);
+            string? traceId = headers.GetValue(DefaultMessageHeaders.TraceId);
+
             if (!string.IsNullOrEmpty(traceId))
             {
                 // This will reflect, that the current activity is a child of the activity
                 // which is represented in the message.
                 activity.SetParentId(traceId);
 
-                var traceState = headers.GetValue(DefaultMessageHeaders.TraceState);
+                string? traceState = headers.GetValue(DefaultMessageHeaders.TraceState);
                 if (!string.IsNullOrEmpty(traceState))
                 {
                     activity.TraceStateString = traceState;
                 }
 
+                // The baggage is parsed last, so if it fails to be deserialized the rest is still setup.
                 // We expect baggage to be empty by default.
                 // Only very advanced users will be using it in near future, we encourage them to keep baggage small (few items).
-                var baggage = headers.GetValue(DefaultMessageHeaders.TraceBaggage);
-                if (BaggageConverter.TryDeserialize(baggage, out var baggageItems))
+                string? baggage = headers.GetValue(DefaultMessageHeaders.TraceBaggage);
+                if (baggage != null)
                 {
-                    activity.AddBaggageRange(baggageItems);
+                    var baggageItems = ActivityBaggageSerializer.Deserialize(baggage);
+                    AddBaggageRange(activity, baggageItems);
                 }
             }
         }

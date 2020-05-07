@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Microsoft.EntityFrameworkCore;
-using Silverback.Background.Model;
+using Silverback.Database.Model;
 
 namespace Silverback.Tests.Core.TestTypes.Database
 {
@@ -17,6 +17,6 @@ namespace Silverback.Tests.Core.TestTypes.Database
         {
         }
 
-        public DbSet<Lock> Locks { get; set; }
+        public DbSet<Lock> Locks { get; set; } = null!;
     }
 }

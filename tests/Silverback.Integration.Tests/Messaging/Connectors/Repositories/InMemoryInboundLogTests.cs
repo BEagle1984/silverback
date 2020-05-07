@@ -4,7 +4,9 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Silverback.Database.Model;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Util;
@@ -18,7 +20,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
         public InMemoryInboundLogTests()
         {
-            _log = new InMemoryInboundLog(new TransactionalListSharedItems<InMemoryInboundLogEntry>());
+            _log = new InMemoryInboundLog(new TransactionalListSharedItems<InboundLogEntry>());
         }
 
         [Fact]

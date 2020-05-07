@@ -4,7 +4,6 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -13,23 +12,28 @@ using System.Xml;
 
 namespace Silverback.Integration.Kafka.ConfigClassGenerator
 {
-    [SuppressMessage("ReSharper", "RedundantStringInterpolation")]
-    class ProxyClassGenerator
+    internal class ProxyClassGenerator
     {
         private readonly Type _proxiedType;
+
         private readonly string _generatedClassName;
-        private readonly string _baseClassName;
+
+        private readonly string? _baseClassName;
+
         private readonly CodeDomProvider _codeDomProvider = CodeDomProvider.CreateProvider("C#");
+
         private readonly string _xmlDocumentationPath;
+
         private readonly bool _generateNamespace;
 
-        private StringBuilder _builder;
-        private XmlDocument _xmlDoc;
+        private StringBuilder? _builder;
+
+        private XmlDocument? _xmlDoc;
 
         public ProxyClassGenerator(
             Type proxiedType,
             string generatedClassName,
-            string baseClassName,
+            string? baseClassName,
             string xmlDocumentationPath,
             bool generateNamespace)
         {
@@ -48,40 +52,44 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
             MapProperties();
             GenerateFooter();
 
-            return _builder.ToString();
+            return _builder!.ToString();
         }
 
         private void GenerateHeading()
         {
             var proxiedTypeName = _proxiedType.FullName;
-            var baseClass = _baseClassName != null ? $" : {_baseClassName}" : "";
+            var baseClass = _baseClassName != null ? $" : {_baseClassName}" : string.Empty;
 
             if (_generateNamespace)
             {
-                _builder.AppendLine("namespace Silverback.Messaging.Proxies");
-                _builder.AppendLine("{");
+                _builder!.AppendLine("namespace Silverback.Messaging.Proxies");
+                _builder!.AppendLine("{");
             }
 
-            _builder.AppendLine($"    public abstract class {_generatedClassName}{baseClass}");
-            _builder.AppendLine($"    {{");
+            _builder!.AppendLine($"    public abstract class {_generatedClassName}{baseClass}");
+            _builder!.AppendLine("    {{");
 
             if (_baseClassName == null)
             {
-                _builder.AppendLine(
-                    $"        internal static readonly ConfigurationDictionaryComparer<string, string> ConfluentConfigComparer = new ConfigurationDictionaryComparer<string, string>();");
-                _builder.AppendLine();
-                _builder.AppendLine(
-                    $"        internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }}");
-                _builder.AppendLine();
-                _builder.AppendLine(
-                    $"        public abstract void Validate();");
+                _builder!.AppendLine(
+                    "        internal static readonly " +
+                    "ConfigurationDictionaryComparer<string, string> ConfluentConfigComparer = " +
+                    "new ConfigurationDictionaryComparer<string, string>();");
+                _builder!.AppendLine();
+                _builder!.AppendLine(
+                    "        internal abstract Confluent.Kafka.ClientConfig " +
+                    "ConfluentBaseConfig {{ get; }}");
+                _builder!.AppendLine();
+                _builder!.AppendLine("        public abstract void Validate();");
             }
             else
             {
-                _builder.AppendLine(
-                    $"        internal override Confluent.Kafka.ClientConfig ConfluentBaseConfig {{ get; }} = new {proxiedTypeName}();");
-                _builder.AppendLine(
-                    $"        internal {proxiedTypeName} ConfluentConfig => ({proxiedTypeName}) ConfluentBaseConfig;");
+                _builder!.AppendLine(
+                    "        internal override Confluent.Kafka.ClientConfig " +
+                    $"ConfluentBaseConfig {{ get; }} = new {proxiedTypeName}();");
+                _builder!.AppendLine(
+                    $"        internal {proxiedTypeName} ConfluentConfig => " +
+                    $"({proxiedTypeName}) ConfluentBaseConfig;");
             }
         }
 
@@ -94,38 +102,40 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
 
             foreach (var property in GetProperties())
             {
-                _builder.AppendLine();
+                _builder!.AppendLine();
 
                 var propertyType = GetPropertyTypeString(property.PropertyType);
                 var summary = GetSummary(property);
 
                 if (summary != null)
-                    _builder.AppendLine($"        ///{summary}");
+                    _builder!.AppendLine($"        ///{summary}");
 
-                _builder.AppendLine($"        public {propertyType} {property.Name}");
-                _builder.AppendLine($"        {{");
+                _builder!.AppendLine($"        public {propertyType} {property.Name}");
+                _builder!.AppendLine("        {{");
 
                 if (property.GetGetMethod() != null)
-                    _builder.AppendLine($"            get => {confluentConfigPropertyName}.{property.Name};");
+                    _builder!.AppendLine($"            get => {confluentConfigPropertyName}.{property.Name};");
 
                 if (property.Name == "DeliveryReportFields")
                 {
-                    _builder.AppendLine($"            set");
-                    _builder.AppendLine($"            {{");
-                    _builder.AppendLine($"                if (value != null)");
-                    _builder.AppendLine($"                    {confluentConfigPropertyName}.{property.Name} = value;");
-                    _builder.AppendLine($"            }}");
+                    _builder!.AppendLine("            set");
+                    _builder!.AppendLine("            {{");
+                    _builder!.AppendLine("                if (value != null)");
+                    _builder!.AppendLine($"                    {confluentConfigPropertyName}.{property.Name} = value;");
+                    _builder!.AppendLine("            }}");
                 }
                 else if (property.GetSetMethod() != null)
-                    _builder.AppendLine($"            set => {confluentConfigPropertyName}.{property.Name} = value;");
+                {
+                    _builder!.AppendLine($"            set => {confluentConfigPropertyName}.{property.Name} = value;");
+                }
 
-                _builder.AppendLine($"        }}");
+                _builder!.AppendLine("        }}");
             }
         }
 
         private PropertyInfo[] GetProperties()
         {
-            var bindingFlags = BindingFlags.Instance | BindingFlags.Public;
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public;
 
             if (_baseClassName != null)
                 bindingFlags |= BindingFlags.DeclaredOnly;
@@ -135,19 +145,17 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
 
         private void GenerateFooter()
         {
-            _builder.AppendLine("    }");
+            _builder!.AppendLine("    }");
 
             if (_generateNamespace)
-                _builder.Append("}");
+                _builder!.Append("}");
         }
 
         private string GetPropertyTypeString(Type propertyType)
         {
             var nullableType = Nullable.GetUnderlyingType(propertyType);
             if (nullableType != null)
-            {
                 return GetTypeName(nullableType) + "?";
-            }
 
             return GetTypeName(propertyType);
         }
@@ -155,15 +163,17 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
         private string GetTypeName(Type type)
         {
             var typeReferenceExpression = new CodeTypeReferenceExpression(new CodeTypeReference(type));
-            using (var writer = new StringWriter())
-            {
-                _codeDomProvider.GenerateCodeFromExpression(typeReferenceExpression, writer,
-                    new CodeGeneratorOptions());
-                return writer.GetStringBuilder().ToString();
-            }
+
+            using var writer = new StringWriter();
+
+            _codeDomProvider.GenerateCodeFromExpression(
+                typeReferenceExpression,
+                writer,
+                new CodeGeneratorOptions());
+            return writer.GetStringBuilder().ToString();
         }
 
-        private string GetSummary(PropertyInfo memberInfo)
+        private string? GetSummary(PropertyInfo memberInfo)
         {
             if (_xmlDoc == null)
                 LoadXmlDoc();

@@ -2,8 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Microsoft.EntityFrameworkCore;
-using Silverback.Background.Model;
-using Silverback.Messaging.Connectors.Model;
+using Silverback.Database.Model;
 using Silverback.Messaging.LargeMessages;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes.Database
@@ -17,7 +16,7 @@ namespace Silverback.Tests.Integration.E2E.TestTypes.Database
 
         public DbSet<OutboundMessage> OutboundMessages { get; set; } = null!;
 
-        public DbSet<InboundMessage> InboundMessages { get; set; } = null!;
+        public DbSet<InboundLogEntry> InboundMessages { get; set; } = null!;
 
         public DbSet<StoredOffset> StoredOffsets { get; set; } = null!;
 
@@ -27,7 +26,7 @@ namespace Silverback.Tests.Integration.E2E.TestTypes.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<InboundMessage>()
+            modelBuilder.Entity<InboundLogEntry>()
                 .HasKey(t => new { t.MessageId, t.ConsumerGroupName });
 
             modelBuilder.Entity<TemporaryMessageChunk>()

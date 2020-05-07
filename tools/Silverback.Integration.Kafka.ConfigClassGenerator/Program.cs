@@ -4,42 +4,48 @@
 using System;
 using System.IO;
 using System.Reflection;
+using Confluent.Kafka;
 
 namespace Silverback.Integration.Kafka.ConfigClassGenerator
 {
-    class Program
+    internal static class Program
     {
-        static void Main()
+        private static void Main()
         {
             var xmlDocumentationPath = Path.Combine(
-                Path.GetDirectoryName(
-                    Assembly.GetAssembly(typeof(Confluent.Kafka.ClientConfig)).Location),
+                Path.GetDirectoryName(Assembly.GetAssembly(typeof(ClientConfig)).Location),
                 "Confluent.Kafka.xml");
 
-            Console.Write(new ProxyClassGenerator(
-                    typeof(Confluent.Kafka.ClientConfig),
-                    "ConfluentClientConfigProxy",
-                    null,
-                    xmlDocumentationPath, false)
-                .Generate());
+            Console.Write(
+                new ProxyClassGenerator(
+                        typeof(ClientConfig),
+                        "ConfluentClientConfigProxy",
+                        null,
+                        xmlDocumentationPath,
+                        false)
+                    .Generate());
 
             Console.WriteLine();
 
-            Console.Write(new ProxyClassGenerator(
-                    typeof(Confluent.Kafka.ConsumerConfig),
-                    "ConfluentConsumerConfigProxy",
-                    "ConfluentClientConfigProxy",
-                    xmlDocumentationPath, false)
-                .Generate());
+            Console.Write(
+                new ProxyClassGenerator(
+                        typeof(ConsumerConfig),
+                        "ConfluentConsumerConfigProxy",
+                        "ConfluentClientConfigProxy",
+                        xmlDocumentationPath,
+                        false)
+                    .Generate());
 
             Console.WriteLine();
 
-            Console.Write(new ProxyClassGenerator(
-                    typeof(Confluent.Kafka.ProducerConfig),
-                    "ConfluentProducerConfigProxy",
-                    "ConfluentClientConfigProxy",
-                    xmlDocumentationPath, false)
-                .Generate());
+            Console.Write(
+                new ProxyClassGenerator(
+                        typeof(ProducerConfig),
+                        "ConfluentProducerConfigProxy",
+                        "ConfluentClientConfigProxy",
+                        xmlDocumentationPath,
+                        false)
+                    .Generate());
         }
     }
 }

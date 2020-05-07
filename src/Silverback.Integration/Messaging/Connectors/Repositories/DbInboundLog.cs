@@ -6,8 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Database;
+using Silverback.Database.Model;
 using Silverback.Infrastructure;
-using Silverback.Messaging.Connectors.Model;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors.Repositories
@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///     </para>
     /// </summary>
     // TODO: Test
-    public sealed class DbInboundLog : RepositoryBase<InboundMessage>, IInboundLog, IDisposable
+    public sealed class DbInboundLog : RepositoryBase<InboundLogEntry>, IInboundLog, IDisposable
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             try
             {
                 DbSet.Add(
-                    new InboundMessage
+                    new InboundLogEntry
                     {
                         MessageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!,
                         ConsumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName(),

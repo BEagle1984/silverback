@@ -3,13 +3,14 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using Silverback.Messaging;
 
-namespace Silverback.Messaging.Connectors.Model
+namespace Silverback.Database.Model
 {
     /// <summary>
     ///     The entity stored in the inbound log table.
     /// </summary>
-    public class InboundMessage
+    public class InboundLogEntry
     {
         /// <summary>
         ///     Gets or sets the unique identifier of the inbound message.

@@ -3,8 +3,11 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Diagnostics
@@ -14,16 +17,29 @@ namespace Silverback.Messaging.Diagnostics
     /// </summary>
     public class ActivityConsumerBehavior : IConsumerBehavior, ISorted
     {
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Activity;
+
+        /// <inheritdoc />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
+            if (serviceProvider == null)
+                throw new ArgumentNullException(nameof(serviceProvider));
+
+            if (next == null)
+                throw new ArgumentNullException(nameof(next));
+
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
             try
             {
-                activity.InitFromMessageHeaders(context.Envelopes.Single().Headers);
-                activity.Start();
+                TryInitActivity(context, activity, serviceProvider.GetService<ILogger<ActivityConsumerBehavior>>());
+
                 await next(context, serviceProvider);
             }
             finally
@@ -32,6 +48,19 @@ namespace Silverback.Messaging.Diagnostics
             }
         }
 
-        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Activity;
+        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        private static void TryInitActivity(ConsumerPipelineContext context, Activity activity, ILogger? logger)
+        {
+            try
+            {
+                activity.InitFromMessageHeaders(context.Envelopes.Single().Headers);
+            }
+            catch (Exception ex)
+            {
+                logger?.LogWarning(ex, "Failed to initialize the current activity from the message headers.");
+            }
+
+            activity.Start();
+        }
     }
 }

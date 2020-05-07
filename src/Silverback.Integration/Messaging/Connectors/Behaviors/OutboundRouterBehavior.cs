@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,9 +53,10 @@ namespace Silverback.Messaging.Connectors.Behaviors
             return await next(messages);
         }
 
+        [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private async Task<IReadOnlyCollection<object>> WrapAndRepublishRoutedMessages(IEnumerable<object> messages)
         {
-            var wrappedMessages = messages
+            var envelopesToRepublish = messages
                 .Where(message => !(message is IOutboundEnvelope))
                 .SelectMany(
                     message =>
@@ -65,14 +67,14 @@ namespace Silverback.Messaging.Connectors.Behaviors
                                     CreateOutboundEnvelope(message, route)))
                 .ToList();
 
-            if (wrappedMessages.Any())
+            if (envelopesToRepublish.Any())
             {
                 await _serviceProvider
                     .GetRequiredService<IPublisher>()
-                    .PublishAsync(wrappedMessages);
+                    .PublishAsync(envelopesToRepublish);
             }
 
-            return wrappedMessages.Select(m => m.Message).ToList();
+            return envelopesToRepublish.Select(m => m.Message).ToList()!;
         }
 
         private IEnumerable<IOutboundEnvelope> CreateOutboundEnvelope(object message, IOutboundRoute route)
