@@ -4,7 +4,7 @@ permalink: /docs/releases
 toc: true
 ---
 
-## [2.1.1-rc.12](https://github.com/BEagle1984/silverback/releases/tag/2.1.1-rc.12)
+## [2.1.1-rc.12](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1-rc.12)
 
 ### What's new
 * Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
@@ -34,7 +34,7 @@ These changes shouldn't affect you unless you built your own `IBroker` implement
 These aren't real breaking changes but some methods have been marked as deprecated and will be removed in one of the next major releases:
 * `WithConnectionTo<>`, `WithConnectionToKafka` and `WithConnectionToRabbitMQ` are deprecated (they will still be supported in this version), please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit` methods (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 
-## [2.0.0](https://github.com/BEagle1984/silverback/releases/tag/2.0.0)
+## [2.0.0](https://github.com/BEagle1984/silverback/releases/tag/v2.0.0)
 
 ### What's new
 * Created `Silverback.Integration.RabbitMQ` package to connect Silverback with RabbitMQ (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
@@ -51,12 +51,12 @@ These aren't real breaking changes but some methods have been marked as deprecat
 * `IInboundMessage`/`IOutboundMessage` (plus all the related types) have been renamed to `IInboundEnvelope`/`IOutboundEnvelope` and the property containing the actual message has been renamed from `Content` to `Message`
 * The `MustUnwrap` option has been removed from the inbound connector configuration (messages are unwrapped by default)
 
-## [1.2.0](https://github.com/BEagle1984/silverback/releases/tag/1.2.0)
+## [1.2.0](https://github.com/BEagle1984/silverback/releases/tag/v1.2.0)
 
 ### What's new
 * Some new events are published to the internal bus as a consequence to the Kafka events such as partitions assigned or revoked (see [Kafka Events]({{ site.baseurl }}/docs/kafka/events)) [[#34](https://github.com/BEagle1984/silverback/issues/34)]
 
-## [1.1.0](https://github.com/BEagle1984/silverback/releases/tag/1.1.0)
+## [1.1.0](https://github.com/BEagle1984/silverback/releases/tag/v1.1.0)
 
 ### What's new
 * Added `IEndpointsConfigurator` interface to allow splitting the endpoints configuration across multiple types (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker#using-iendpointsconfigurator))
@@ -66,7 +66,7 @@ These aren't real breaking changes but some methods have been marked as deprecat
 ### Breaking Changes
 * `ISortedBehavior` was removed and replaced by a generic `ISorted` interface
 
-## [1.0.5](https://github.com/BEagle1984/silverback/releases/tag/1.0.5)
+## [1.0.5](https://github.com/BEagle1984/silverback/releases/tag/v1.0.5)
 
 ### What's new
 * Upgrade to [Confluent.Kafka 1.3.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.3.0)
@@ -76,27 +76,27 @@ These aren't real breaking changes but some methods have been marked as deprecat
 * The `KafkaProducer` is not disposed by default anymore when a `KafkaException` in thrown (creating too many instances of the producer over a short time span could lead to too many active TCP connections)
 * Fixed the bug preventing a `KafkaConsumerEndpoint` pointing to multiple topics to be successfully subscribed
 
-## [1.0.4](https://github.com/BEagle1984/silverback/releases/tag/1.0.4)
+## [1.0.4](https://github.com/BEagle1984/silverback/releases/tag/v1.0.4)
 
 ### Fixes
 * It is finally safe to consume and produce the same type of messages from within the same process (in a natural way, without any extra configuration)
     * Since version [1.0.0](#100) the messages routed to an endpoint aren't forwarded to any subscriber directly
     * Now the inbound connector has been fixed as well, preventing the inbound messages to be immediately routed once again to the outbound endpoint and eliminating all possible causes of mortal loops
 
-## [1.0.3](https://github.com/BEagle1984/silverback/releases/tag/1.0.3)
+## [1.0.3](https://github.com/BEagle1984/silverback/releases/tag/v1.0.3)
 
 ### Fixes
 * Kafka message key is not hashed anymore to avoid possible collisions and simplify debugging
 * Not really a fix but `PartitioningKeyMemberAttribute` has been deprecated in favor of `KafkaKeyMemberAttribute`, since the message key isn't used just for partitioning (see [Kafka Message Key]({{ site.baseurl }}/docs/kafka/message-key))
 
-## [1.0.2](https://github.com/BEagle1984/silverback/releases/tag/1.0.2)
+## [1.0.2](https://github.com/BEagle1984/silverback/releases/tag/v1.0.2)
 
 ### Fixes
 * Reintroduced `Add*Subscriber` and `Add*Behavior` as `IServiceCollection` extension methods (for backward compatibility and greater flexibility) [[#41](https://github.com/BEagle1984/silverback/issues/41)]
 * Added `WithInMemoryBroker` and `OverrideWithInMemoryBroker` extension methods (see [Testing]({{ site.baseurl }}/docs/quickstart/testing))
 
 
-## [1.0.0](https://github.com/BEagle1984/silverback/releases/tag/1.0.0)
+## [1.0.0](https://github.com/BEagle1984/silverback/releases/tag/v1.0.0)
 
 ### What's new
 * Message size optimization (no wrappers anymore)
@@ -130,7 +130,7 @@ These aren't real breaking changes but some methods have been marked as deprecat
 * `Silverback.Integration.EntityFrameworkCore` and `Silverback.EventSourcing.EntityFrameworkCore` have been deprecated (`Silverback.Core.EntityFrameworkCore` contains all the necessary logic to use EF as store)
 * `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Message Key]({{ site.baseurl }}/docs/kafka/message-key))
 
-## [0.10.0](https://github.com/BEagle1984/silverback/releases/tag/0.10.0)
+## [0.10.0](https://github.com/BEagle1984/silverback/releases/tag/v0.10.0)
 
 ### What's new
 * Better error handling: now all exceptions, including the ones thrown by the `MessageSerializer` can be handled through the error policies
