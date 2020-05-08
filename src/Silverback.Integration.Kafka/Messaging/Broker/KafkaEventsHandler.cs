@@ -9,6 +9,7 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Broker
 {
+    // TODO: Test
     internal class KafkaEventsHandler
     {
         private readonly IServiceProvider _serviceProvider;
@@ -96,15 +97,29 @@ namespace Silverback.Messaging.Broker
                     // Ignore errors if not consuming anymore
                     // (lidrdkafka randomly throws some "brokers are down"
                     // while disconnecting)
-                    if (!ownerConsumer.IsConsuming) return;
+                    if (!ownerConsumer.IsConsuming)
+                        return;
 
+                    var kafkaErrorEvent = new KafkaErrorEvent(error);
+
+                    try
+                    {
+                        CreateScopeAndPublishEvent(kafkaErrorEvent);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error in KafkaErrorEvent subscriber.");
+                    }
+
+                    if (kafkaErrorEvent.Handled)
+                        return;
+                        
                     _logger.Log(
                         error.IsFatal ? LogLevel.Critical : LogLevel.Error,
                         "Error in Kafka consumer: {error} (topic(s): {topics})",
                         error,
                         ownerConsumer.Endpoint.Names);
 
-                    CreateScopeAndPublishEvent(new KafkaErrorEvent(error));
                 })
                 .SetStatisticsHandler((_, statistics) =>
                 {

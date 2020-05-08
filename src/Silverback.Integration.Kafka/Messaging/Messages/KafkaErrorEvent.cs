@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Confluent.Kafka;
+
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
@@ -11,7 +13,7 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public class KafkaErrorEvent : IKafkaEvent
     {
-        public KafkaErrorEvent(Confluent.Kafka.Error error)
+        public KafkaErrorEvent(Error error)
         {
             Error = error;
         }
@@ -20,6 +22,12 @@ namespace Silverback.Messaging.Messages
         ///     Gets an <see cref="Confluent.Kafka.Error" /> instance representing the error that occured when
         ///     interacting with the Kafka broker or the librdkafka library.
         /// </summary>
-        public Confluent.Kafka.Error Error { get; }
+        public Error Error { get; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether this error has been handled in the subscriber and doesn't need to be logged or
+        ///     handled in any other way by Silverback.
+        /// </summary>
+        public bool Handled { get; set; }
     }
 }
