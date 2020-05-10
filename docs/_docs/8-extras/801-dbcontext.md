@@ -17,10 +17,8 @@ This is what a `DbContext` built to support all the aforementioned features will
 
 ```csharp
 using Microsoft.EntityFrameworkCore;
-using Silverback.Background.Model;
+using Silverback.Database.Model;
 using Silverback.EntityFrameworkCore;
-using Silverback.Messaging.Connectors.Model;
-using Silverback.Messaging.LargeMessages;
 
 namespace Sample
 {

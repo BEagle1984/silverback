@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Connectors;
@@ -10,7 +11,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.LargeMessages
 {
-    public class ChunkAggregator
+    internal class ChunkAggregator
     {
         private readonly IChunkStore _store;
 
@@ -20,7 +21,8 @@ namespace Silverback.Messaging.LargeMessages
             transactionManager.Enlist(_store);
         }
 
-        public async Task<byte[]> AggregateIfComplete(IRawInboundEnvelope envelope)
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public async Task<byte[]?> AggregateIfComplete(IRawInboundEnvelope envelope)
         {
             var (messageId, chunkIndex, chunksCount) = ExtractHeadersValues(envelope);
 
@@ -32,7 +34,7 @@ namespace Silverback.Messaging.LargeMessages
                 if (chunks.ContainsKey(chunkIndex))
                     return null;
 
-                chunks.Add(chunkIndex, envelope.RawMessage);
+                chunks.Add(chunkIndex, envelope.RawMessage ?? Array.Empty<byte>());
 
                 var completeMessage = Join(chunks);
 
@@ -40,17 +42,23 @@ namespace Silverback.Messaging.LargeMessages
 
                 return completeMessage;
             }
-            else
-            {
-                await _store.Store(messageId, chunkIndex, chunksCount, envelope.RawMessage);
-                return null;
-            }
+
+            await _store.Store(messageId, chunkIndex, chunksCount, envelope.RawMessage ?? Array.Empty<byte>());
+            return null;
         }
 
-        public async Task Cleanup(IRawInboundEnvelope envelope) =>
-            await _store.Cleanup(envelope.Headers.GetValue(DefaultMessageHeaders.MessageId));
+        public async Task Cleanup(IRawInboundEnvelope envelope)
+        {
+            var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
 
-        private (string messageId, int chunkIndex, int chunksCount) ExtractHeadersValues(IRawInboundEnvelope envelope)
+            if (string.IsNullOrEmpty(messageId))
+                throw new InvalidOperationException("Message id header not found or invalid.");
+
+            await _store.Cleanup(messageId);
+        }
+
+        private static (string messageId, int chunkIndex, int chunksCount) ExtractHeadersValues(
+            IRawInboundEnvelope envelope)
         {
             var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
 
@@ -69,10 +77,6 @@ namespace Silverback.Messaging.LargeMessages
 
             return (messageId, chunkIndex.Value, chunksCount.Value);
         }
-
-        public Task Commit() => _store.Commit();
-
-        public Task Rollback() => _store.Rollback();
 
         private static byte[] Join(Dictionary<int, byte[]> chunks)
         {

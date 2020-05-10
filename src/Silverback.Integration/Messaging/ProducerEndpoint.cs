@@ -7,19 +7,25 @@ using Silverback.Messaging.LargeMessages;
 
 namespace Silverback.Messaging
 {
+    /// <inheritdoc cref="IProducerEndpoint" />
     public abstract class ProducerEndpoint : Endpoint, IProducerEndpoint
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="name"> The endpoint name. </param>
         protected ProducerEndpoint(string name)
             : base(name)
         {
         }
 
         /// <summary>
-        ///     Gets or sets the message chunking settings. This option can be used to split large messages
-        ///     into smaller chunks.
+        ///     Gets or sets the message chunking settings. This option can be used to split large messages into
+        ///     smaller chunks.
         /// </summary>
         public ChunkSettings Chunk { get; set; } = new ChunkSettings();
 
+        /// <inheritdoc />
         public override void Validate()
         {
             base.Validate();
@@ -27,18 +33,28 @@ namespace Silverback.Messaging
             Chunk?.Validate();
         }
 
-        #region Equality
-
-        protected bool Equals(ProducerEndpoint other) => base.Equals(other) && Equals(Chunk, other.Chunk);
-
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((ProducerEndpoint) obj);
+            if (ReferenceEquals(null, obj))
+                return false;
+            if (ReferenceEquals(this, obj))
+                return true;
+            if (obj.GetType() != GetType())
+                return false;
+            return Equals((ProducerEndpoint)obj);
         }
 
-        #endregion
+        /// <summary>
+        ///     Determines whether the specified <see cref="ProducerEndpoint" /> is equal to the current
+        ///     <see cref="ProducerEndpoint" />.
+        /// </summary>
+        /// <param name="other">
+        ///     The object to compare with the current object.
+        /// </param>
+        /// <returns>
+        ///     Returns a value indicating whether the other object is equal to the current object.
+        /// </returns>
+        protected bool Equals(ProducerEndpoint other) => base.Equals(other) && Equals(Chunk, other.Chunk);
     }
 }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,24 +23,37 @@ namespace Silverback.Messaging.LargeMessages
     {
         private readonly ConcurrentDictionary<IConsumer, List<IOffset>> _pendingOffsetsByConsumer;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ChunkAggregatorConsumerBehavior" /> class.
+        /// </summary>
         public ChunkAggregatorConsumerBehavior()
         {
             _pendingOffsetsByConsumer = new ConcurrentDictionary<IConsumer, List<IOffset>>();
         }
 
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.ChunkAggregator;
+
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
-            List<IOffset> pendingOffsets = null;
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
+            Check.NotNull(next, nameof(next));
+
+            List<IOffset>? pendingOffsets = null;
             var chunkStore = serviceProvider.GetService<IChunkStore>();
             if (chunkStore != null)
                 pendingOffsets = _pendingOffsetsByConsumer.GetOrAdd(context.Consumer, _ => new List<IOffset>());
 
-            context.Envelopes = (await context.Envelopes.SelectAsync(envelope =>
-                    AggregateIfNeeded(envelope, serviceProvider)))
-                .Where(envelope => envelope != null).ToList();
+            context.Envelopes =
+                (await context.Envelopes.SelectAsync(envelope => AggregateIfNeeded(envelope, serviceProvider)))
+                .Where(envelope => envelope != null)
+                .ToList()!;
 
             try
             {
@@ -49,7 +63,7 @@ namespace Silverback.Messaging.LargeMessages
                 if (chunkStore != null && chunkStore.HasNotPersistedChunks)
                 {
                     if (context.CommitOffsets != null)
-                        pendingOffsets.AddRange(context.CommitOffsets);
+                        pendingOffsets!.AddRange(context.CommitOffsets);
 
                     context.CommitOffsets = null;
                 }
@@ -81,10 +95,9 @@ namespace Silverback.Messaging.LargeMessages
             }
         }
 
-        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.ChunkAggregator;
-
         [Subscribe]
-        public void OnRollback(ConsumingAbortedEvent message)
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.Subscriber)]
+        private void OnRollback(ConsumingAbortedEvent message)
         {
             if (message.Context.CommitOffsets == null || !message.Context.CommitOffsets.Any())
                 return;
@@ -92,12 +105,10 @@ namespace Silverback.Messaging.LargeMessages
             // Remove pending offsets when rolled back for real, just in case the consumer will be restarted
             // (not yet possible!)
             if (_pendingOffsetsByConsumer.TryGetValue(message.Context.Consumer, out var pendingOffsets))
-            {
                 pendingOffsets.RemoveAll(offset => message.Context.CommitOffsets.Contains(offset));
-            }
         }
 
-        private async Task<IRawInboundEnvelope> AggregateIfNeeded(
+        private static async Task<IRawInboundEnvelope?> AggregateIfNeeded(
             IRawInboundEnvelope envelope,
             IServiceProvider serviceProvider)
         {

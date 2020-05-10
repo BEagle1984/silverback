@@ -48,7 +48,7 @@ namespace Silverback.Messaging.LargeMessages
             }
         }
 
-        private IEnumerable<IOutboundEnvelope> ChunkIfNeeded(IOutboundEnvelope envelope)
+        private static IEnumerable<IOutboundEnvelope> ChunkIfNeeded(IOutboundEnvelope envelope)
         {
             var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
             var settings = envelope.Endpoint.Chunk;

@@ -120,7 +120,7 @@ namespace Silverback.Messaging.Batch
 
                     using var scope = _serviceProvider.CreateScope();
                     await scope.ServiceProvider.GetRequiredService<IPublisher>()
-                        .PublishAsync(new BatchStartedEvent(CurrentBatchId));
+                        .PublishAsync(new BatchStartedEvent(CurrentBatchId, _envelopes));
                 }
                 else if (_envelopes.Count == _settings.Size)
                 {
