@@ -9,7 +9,8 @@ namespace Silverback
             "Intentionally a marker interface";
 
         public const string NullableTypesSpacingFalsePositive =
-            "[]?, []!, ()? and ()! are recognized as wrongly spaced (bug in the analyzer, fixed with StyleCop.Analyzers 1.2.0)";
+            "[]?, []!, ()? and ()! are recognized as wrongly spaced (bug in the analyzer, " +
+            "fixed with StyleCop.Analyzers 1.2.0)";
 
         public const string CalledBySilverback =
             "The method is called by Silverback internals and don't need to check for null";
@@ -29,5 +30,9 @@ namespace Silverback
 
         public const string Subscriber =
             "Subscriber method called by the IPublisher";
+
+        public const string Settings =
+            "Setting classes expose a setter for their properties but it's safe to assume that their value will not be " +
+            "modified after the application has been started";
     }
 }

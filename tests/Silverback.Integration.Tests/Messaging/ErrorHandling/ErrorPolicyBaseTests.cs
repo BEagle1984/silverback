@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -147,7 +148,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             };
 
         [Fact]
-        public void Publish_Exception_MessagePublished()
+        public async Task Publish_Exception_MessagePublished()
         {
             var publisher = Substitute.For<IPublisher>();
             var serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
@@ -161,9 +162,9 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name);
 
 
-            policy.HandleError(new[] { message }, new ArgumentNullException());
+            await policy.HandleError(new[] { message }, new ArgumentNullException());
 
-            publisher.Received().Publish(Arg.Any<TestEventTwo>());
+            publisher.Received().PublishAsync(Arg.Any<TestEventTwo>());
         }
 
         // TODO: Test with multiple messages (batch)

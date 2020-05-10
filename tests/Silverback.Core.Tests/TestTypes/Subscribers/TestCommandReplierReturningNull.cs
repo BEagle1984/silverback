@@ -7,26 +7,26 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    public class TestRequestReplierWithWrongResponseType : ISubscriber
+    public class TestCommandReplierReturningNull : ISubscriber
     {
         public int ReceivedMessagesCount { get; private set; }
 
         [Subscribe]
-        public int OnRequestReceived(IRequest<string> message)
+        public string OnRequestReceived(ICommand<string> message)
         {
             ReceivedMessagesCount++;
 
-            return 1;
+            return null;
         }
 
 
         [Subscribe]
-        public async Task<int> OnRequestReceived2(IRequest<string> message)
+        public async Task<string> OnRequestReceived2(ICommand<string> message)
         {
             await Task.Delay(1);
             ReceivedMessagesCount++;
 
-            return 2;
+            return null;
         }
     }
 }

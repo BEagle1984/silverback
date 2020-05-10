@@ -1,6 +1,8 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -9,22 +11,33 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Encryption
 {
     /// <summary>
-    ///     The abstract implementation of either an <see cref="IMessageEncryptor" /> or <see cref="IMessageDecryptor" />
-    ///     based on a <see cref="SymmetricAlgorithm" />.
+    ///     The abstract implementation of either an <see cref="IMessageEncryptor" /> or
+    ///     <see cref="IMessageDecryptor" /> based on a <see cref="SymmetricAlgorithm" />.
     /// </summary>
-    /// <inheritdoc />
     public abstract class SymmetricCryptoMessageTransformer : IRawMessageTransformer
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="SymmetricCryptoMessageTransformer" /> class.
+        /// </summary>
+        /// <param name="settings">
+        ///     The settings such as the algorithm to be used.
+        /// </param>
         protected SymmetricCryptoMessageTransformer(SymmetricEncryptionSettings settings)
         {
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
+
             settings.Validate();
 
             Settings = settings;
         }
 
+        /// <summary> Gets the current encryption settings. </summary>
         protected SymmetricEncryptionSettings Settings { get; }
 
-        public async Task<byte[]> TransformAsync(byte[] message, MessageHeaderCollection headers)
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public async Task<byte[]?> TransformAsync(byte[]? message, MessageHeaderCollection headers)
         {
             if (message == null || message.Length == 0)
                 return message;
@@ -33,11 +46,18 @@ namespace Silverback.Messaging.Encryption
             return await Transform(message, algorithm);
         }
 
+        /// <summary> Applies the encryption. </summary>
+        /// <param name="message"> The clear text message. </param>
+        /// <param name="algorithm"> The algorithm to be used. </param>
+        /// <returns> The cipher message. </returns>
         protected virtual async Task<byte[]> Transform(byte[] message, SymmetricAlgorithm algorithm)
         {
+            if (message == null)
+                throw new ArgumentNullException(nameof(message));
+
             using var cryptoTransform = CreateCryptoTransform(algorithm);
-            using var memoryStream = new MemoryStream();
-            using var cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Write);
+            await using var memoryStream = new MemoryStream();
+            await using var cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Write);
 
             await cryptoStream.WriteAsync(message, 0, message.Length);
             await cryptoStream.FlushAsync();
@@ -46,6 +66,12 @@ namespace Silverback.Messaging.Encryption
             return memoryStream.ToArray();
         }
 
+        /// <summary>
+        ///     Creates the <see cref="SymmetricAlgorithm" /> according to the current settings.
+        /// </summary>
+        /// <returns>
+        ///     The <see cref="SymmetricAlgorithm" /> setup with the current settings.
+        /// </returns>
         protected virtual SymmetricAlgorithm CreateSymmetricAlgorithm()
         {
             var algorithm = SymmetricAlgorithm.Create(Settings.AlgorithmName);
@@ -74,9 +100,13 @@ namespace Silverback.Messaging.Encryption
         }
 
         /// <summary>
-        ///     Create as new instance of an <see cref="ICryptoTransform" /> to be used to encrypt or decrypt the message.
+        ///     Create as new instance of an <see cref="ICryptoTransform" /> to be used to encrypt or decrypt the
+        ///     message.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="algorithm">
+        ///     The <see cref="SymmetricAlgorithm" /> to be used.
+        /// </param>
+        /// <returns> The <see cref="ICryptoTransform" />. </returns>
         protected abstract ICryptoTransform CreateCryptoTransform(SymmetricAlgorithm algorithm);
     }
 }

@@ -10,10 +10,12 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore22.Database
 {
-    public class EfCoreDbContextTests : IDisposable
+    public sealed class EfCoreDbContextTests : IDisposable
     {
         private readonly TestDbContextInitializer _dbInitializer;
+
         private readonly TestDbContext _dbContext;
+
         private readonly EfCoreDbContext<TestDbContext> _efCoreDbContext;
 
         public EfCoreDbContextTests()

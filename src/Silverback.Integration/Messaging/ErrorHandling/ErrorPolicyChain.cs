@@ -4,20 +4,30 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.ErrorHandling
 {
     /// <summary>
-    ///     A chain of error policies to be applied one after another.
+    ///     A chain of error policies to be sequentially applied.
     /// </summary>
     public class ErrorPolicyChain : ErrorPolicyBase
     {
         private readonly ILogger<ErrorPolicyChain> _logger;
+
         private readonly MessageLogger _messageLogger;
+
         private readonly IEnumerable<ErrorPolicyBase> _policies;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ErrorPolicyChain" /> class.
+        /// </summary>
+        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
+        /// <param name="policies"> The policies to be chained. </param>
         public ErrorPolicyChain(
             IServiceProvider serviceProvider,
             ILogger<ErrorPolicyChain> logger,
@@ -27,6 +37,13 @@ namespace Silverback.Messaging.ErrorHandling
         {
         }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ErrorPolicyChain" /> class.
+        /// </summary>
+        /// <param name="policies"> The policies to be chained. </param>
+        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         public ErrorPolicyChain(
             IEnumerable<ErrorPolicyBase> policies,
             IServiceProvider serviceProvider,
@@ -42,11 +59,15 @@ namespace Silverback.Messaging.ErrorHandling
             StackMaxFailedAttempts(policies);
 
             if (_policies.Any(p => p == null))
-                throw new ArgumentNullException(nameof(policies),
+            {
+                throw new ArgumentNullException(
+                    nameof(policies),
                     "One or more policies in the chain have a null value.");
+            }
         }
 
-        protected override ErrorAction ApplyPolicy(
+        /// <inheritdoc />
+        protected override Task<ErrorAction> ApplyPolicy(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
@@ -56,10 +77,11 @@ namespace Silverback.Messaging.ErrorHandling
                     return policy.HandleError(envelopes, exception);
             }
 
-            _messageLogger.LogDebug(_logger,
+            _messageLogger.LogDebug(
+                _logger,
                 "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.",
                 envelopes);
-            return ErrorAction.StopConsuming;
+            return Task.FromResult(ErrorAction.StopConsuming);
         }
 
         private static void StackMaxFailedAttempts(IEnumerable<ErrorPolicyBase> policies)

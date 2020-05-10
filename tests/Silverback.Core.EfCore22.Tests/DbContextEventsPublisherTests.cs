@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
@@ -17,11 +16,12 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore22
 {
-    [SuppressMessage("ReSharper", "EmptyGeneralCatchClause")]
-    public class DbContextEventsPublisherTests : IDisposable
+    public sealed class DbContextEventsPublisherTests : IDisposable
     {
         private readonly TestDbContext _dbContext;
+
         private readonly IPublisher _publisher;
+
         private readonly SqliteConnection _connection;
 
         public DbContextEventsPublisherTests()
@@ -78,11 +78,12 @@ namespace Silverback.Tests.Core.EFCore22
 
             _publisher
                 .When(x => x.Publish(Arg.Any<IEnumerable<object>>()))
-                .Do(x =>
-                {
-                    if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
-                        entity.Entity.AddEvent<TestDomainEventTwo>();
-                });
+                .Do(
+                    x =>
+                    {
+                        if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
+                            entity.Entity.AddEvent<TestDomainEventTwo>();
+                    });
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 
@@ -98,11 +99,12 @@ namespace Silverback.Tests.Core.EFCore22
 
             _publisher
                 .When(x => x.PublishAsync(Arg.Any<IEnumerable<object>>()))
-                .Do(x =>
-                {
-                    if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
-                        entity.Entity.AddEvent<TestDomainEventTwo>();
-                });
+                .Do(
+                    x =>
+                    {
+                        if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
+                            entity.Entity.AddEvent<TestDomainEventTwo>();
+                    });
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 
@@ -131,11 +133,12 @@ namespace Silverback.Tests.Core.EFCore22
 
             _publisher
                 .When(x => x.PublishAsync(Arg.Any<IEnumerable<object>>()))
-                .Do(x =>
-                {
-                    if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
-                        throw new Exception();
-                });
+                .Do(
+                    x =>
+                    {
+                        if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
+                            throw new InvalidOperationException();
+                    });
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 
@@ -145,6 +148,7 @@ namespace Silverback.Tests.Core.EFCore22
             }
             catch (Exception)
             {
+                // ignored
             }
 
             await _publisher.Received(1).PublishAsync(Arg.Any<TransactionStartedEvent>());

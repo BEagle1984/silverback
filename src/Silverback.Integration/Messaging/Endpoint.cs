@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
@@ -11,37 +12,30 @@ namespace Silverback.Messaging
     /// <inheritdoc cref="IEndpoint" />
     public abstract class Endpoint : IEndpoint
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Endpoint" /> class.
+        /// </summary>
+        /// <param name="name"> The endpoint name. </param>
         protected Endpoint(string name)
         {
             Name = name;
         }
-
-        public string Name { get; protected set; }
-
-        /// <summary>
-        ///     Gets or sets the <see cref="IMessageSerializer" /> to be used to serialize or deserialize
-        ///     the messages being produced or consumed.
-        /// </summary>
-        public IMessageSerializer Serializer { get; set; } = DefaultSerializer;
-
-        /// <summary>
-        ///     <para>
-        ///         Gets or sets the encryption settings. This optional settings enables the end-to-end message encryption.
-        ///     </para>
-        ///     <para>
-        ///         When enabled the messages are transparently encrypted by the producer and decrypted by the consumer.
-        ///     </para>
-        ///     <para>
-        ///         Set it to <c>null</c> (default) to disable this feature.
-        ///     </para>
-        /// </summary>
-        public EncryptionSettings Encryption { get; set; }
 
         /// <summary>
         ///     Gets the default serializer (a <see cref="JsonMessageSerializer" /> with default settings).
         /// </summary>
         public static IMessageSerializer DefaultSerializer { get; } = JsonMessageSerializer.Default;
 
+        /// <inheritdoc />
+        public string Name { get; protected set; }
+
+        /// <inheritdoc />
+        public IMessageSerializer Serializer { get; set; } = DefaultSerializer;
+
+        /// <inheritdoc />
+        public EncryptionSettings? Encryption { get; set; }
+
+        /// <inheritdoc />
         public virtual void Validate()
         {
             if (string.IsNullOrEmpty(Name))
@@ -53,23 +47,39 @@ namespace Silverback.Messaging
             Encryption?.Validate();
         }
 
-        #region Equality
-
-        protected bool Equals(Endpoint other) =>
-            Name == other.Name &&
-            ComparisonHelper.JsonEquals(Serializer, other.Serializer);
-
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Endpoint) obj);
+            if (ReferenceEquals(null, obj))
+                return false;
+            if (ReferenceEquals(this, obj))
+                return true;
+            if (obj.GetType() != GetType())
+                return false;
+            return Equals((Endpoint)obj);
         }
 
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
-        public override int GetHashCode() => Name != null ? Name.GetHashCode() : 0;
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
+        public override int GetHashCode()
+        {
+            return Name != null ? Name.GetHashCode(StringComparison.InvariantCulture) : 0;
+        }
 
-        #endregion
+        /// <summary>
+        ///     Determines whether the specified <see cref="Endpoint" /> is equal to the current
+        ///     <see cref="Endpoint" />.
+        /// </summary>
+        /// <param name="other">
+        ///     The object to compare with the current object.
+        /// </param>
+        /// <returns>
+        ///     Returns a value indicating whether the other object is equal to the current object.
+        /// </returns>
+        protected bool Equals(Endpoint other)
+        {
+            return Name == other?.Name &&
+                   ComparisonHelper.JsonEquals(Serializer, other.Serializer);
+        }
     }
 }
