@@ -9,6 +9,7 @@ using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -41,8 +42,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task Add(IRawInboundEnvelope envelope)
         {
-            if (envelope == null)
-                throw new ArgumentNullException(nameof(envelope));
+            Check.NotNull(envelope, nameof(envelope));
 
             await _semaphore.WaitAsync();
 
@@ -88,8 +88,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <inheritdoc />
         public Task<bool> Exists(IRawInboundEnvelope envelope)
         {
-            if (envelope == null)
-                throw new ArgumentNullException(nameof(envelope));
+            Check.NotNull(envelope, nameof(envelope));
 
             var key = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true);
             var consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();

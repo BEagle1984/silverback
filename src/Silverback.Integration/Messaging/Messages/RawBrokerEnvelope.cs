@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
@@ -17,7 +18,7 @@ namespace Silverback.Messaging.Messages
         {
             RawMessage = rawMessage;
             Headers = new MessageHeaderCollection(headers);
-            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
+            Endpoint = Check.NotNull(endpoint, nameof(endpoint));
             Offset = offset;
         }
 

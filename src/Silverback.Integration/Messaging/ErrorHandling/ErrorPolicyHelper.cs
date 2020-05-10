@@ -78,7 +78,7 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private int GetAttemptNumber(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
+        private static int GetAttemptNumber(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
             var minAttempts = envelopes.Min(
                 m =>
@@ -139,7 +139,7 @@ namespace Silverback.Messaging.ErrorHandling
             }
         }
 
-        private void UpdateFailedAttemptsHeader(IReadOnlyCollection<IRawInboundEnvelope> envelopes, int attempt) =>
+        private static void UpdateFailedAttemptsHeader(IReadOnlyCollection<IRawInboundEnvelope> envelopes, int attempt) =>
             envelopes?.ForEach(
                 msg =>
                 {

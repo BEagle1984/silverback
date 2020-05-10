@@ -35,8 +35,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <inheritdoc />
         public Task Enqueue(IOutboundEnvelope envelope)
         {
-            if (envelope == null)
-                throw new ArgumentNullException(nameof(envelope));
+            Check.NotNull(envelope, nameof(envelope));
 
             if (envelope.RawMessage == null)
             {

@@ -46,8 +46,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc />
         public IProducer GetProducer(IProducerEndpoint endpoint)
         {
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             var endpointType = endpoint.GetType();
 
@@ -61,8 +60,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc />
         public IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback)
         {
-            if (callback == null)
-                throw new ArgumentNullException(nameof(callback));
+            Check.NotNull(callback, nameof(callback));
 
             return GetConsumer(
                 endpoint,
@@ -76,8 +74,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc />
         public IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback)
         {
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             var endpointType = endpoint.GetType();
 

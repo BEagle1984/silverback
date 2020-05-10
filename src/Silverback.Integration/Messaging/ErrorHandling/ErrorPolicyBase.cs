@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -172,10 +173,8 @@ namespace Silverback.Messaging.ErrorHandling
         /// </remarks>
         public virtual bool CanHandle(IRawInboundEnvelope envelope, Exception exception)
         {
-            if (envelope == null)
-                throw new ArgumentNullException(nameof(envelope));
-            if (exception == null)
-                throw new ArgumentNullException(nameof(exception));
+            Check.NotNull(envelope, nameof(envelope));
+            Check.NotNull(exception, nameof(exception));
 
             var failedAttempts = envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts);
 

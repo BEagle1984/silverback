@@ -9,6 +9,8 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1506 // Excessive coupling -> this approach is anyway to be deprecated
+
 namespace Silverback.Database
 {
     [SuppressMessage("ReSharper", "SA1600", Justification = "Internal and about to be deprecated")]

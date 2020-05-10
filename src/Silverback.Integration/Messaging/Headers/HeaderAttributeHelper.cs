@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Headers
         private static readonly ConcurrentDictionary<string, IReadOnlyCollection<DecoratedProperty>> PropertiesCache =
             new ConcurrentDictionary<string, IReadOnlyCollection<DecoratedProperty>>();
 
-        public static IEnumerable<MessageHeader> GetHeaders(object message)
+        public static IEnumerable<MessageHeader> GetHeaders(object? message)
         {
             if (message == null)
                 yield break;
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Headers
             }
         }
 
-        public static void SetFromHeaders(object message, MessageHeaderCollection headers)
+        public static void SetFromHeaders(object? message, MessageHeaderCollection headers)
         {
             if (message == null)
                 return;
@@ -65,14 +65,17 @@ namespace Silverback.Messaging.Headers
         }
 
         private static IReadOnlyCollection<DecoratedProperty> GetDecoratedProperties(Type type) =>
-            PropertiesCache.GetOrAdd(type.Name, _ =>
-                type.GetProperties()
-                    .Select(propertyInfo =>
-                        new DecoratedProperty(
-                            propertyInfo,
-                            propertyInfo.GetCustomAttribute<HeaderAttribute>(true)))
-                    .Where(decoratedProperty => decoratedProperty.Attribute != null)
-                    .ToList());
+            PropertiesCache.GetOrAdd(
+                type.Name,
+                _ =>
+                    type.GetProperties()
+                        .Select(
+                            propertyInfo =>
+                                new DecoratedProperty(
+                                    propertyInfo,
+                                    propertyInfo.GetCustomAttribute<HeaderAttribute>(true)))
+                        .Where(decoratedProperty => decoratedProperty.Attribute != null)
+                        .ToList());
 
         private class DecoratedProperty
         {
@@ -83,6 +86,7 @@ namespace Silverback.Messaging.Headers
             }
 
             public PropertyInfo PropertyInfo { get; }
+
             public HeaderAttribute Attribute { get; }
         }
     }

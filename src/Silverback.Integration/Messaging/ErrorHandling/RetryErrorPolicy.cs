@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -12,8 +11,8 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.ErrorHandling
 {
     /// <summary>
-    ///     This policy retries the handler method multiple times in case of exception.
-    ///     An optional delay can be specified.
+    ///     This policy retries the handler method multiple times in case of exception. An optional delay can be
+    ///     specified.
     /// </summary>
     /// TODO: Exponential backoff variant
     public class RetryErrorPolicy : ErrorPolicyBase
@@ -26,6 +25,18 @@ namespace Silverback.Messaging.ErrorHandling
 
         private readonly MessageLogger _messageLogger;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RetryErrorPolicy" /> class.
+        /// </summary>
+        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
+        /// <param name="initialDelay">
+        ///     The optional delay to be applied to the first retry.
+        /// </param>
+        /// <param name="delayIncrement">
+        ///     The optional increment to the delay to be applied at each retry.
+        /// </param>
         public RetryErrorPolicy(
             IServiceProvider serviceProvider,
             ILogger<RetryErrorPolicy> logger,
@@ -40,6 +51,7 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
+        /// <inheritdoc />
         protected override async Task<ErrorAction> ApplyPolicy(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)

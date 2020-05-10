@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Background;
 using Silverback.Messaging.LargeMessages;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -45,8 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
             DistributedLockSettings? distributedLockSettings = null)
             where TStore : class, IChunkStore
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             distributedLockSettings ??= new DistributedLockSettings();
             distributedLockSettings.EnsureResourceNameIsSet("ChunkStoreCleaner");
@@ -97,8 +97,7 @@ namespace Microsoft.Extensions.DependencyInjection
             TimeSpan? cleanupInterval = null,
             DistributedLockSettings? distributedLockSettings = null)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             return brokerOptionsBuilder.AddChunkStore<DbChunkStore>(
                 retention,
@@ -129,8 +128,7 @@ namespace Microsoft.Extensions.DependencyInjection
             TimeSpan? retention = null,
             TimeSpan? cleanupInterval = null)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             return brokerOptionsBuilder.AddChunkStore<InMemoryChunkStore>(
                 retention,

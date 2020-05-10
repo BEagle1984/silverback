@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Configuration;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -29,8 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder)
             where TConfigurator : class, IEndpointsConfigurator
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddEndpointsConfigurator<TConfigurator>();
 
@@ -54,8 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type configuratorType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddEndpointsConfigurator(configuratorType);
 
@@ -79,8 +78,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Func<IServiceProvider, IEndpointsConfigurator> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddEndpointsConfigurator(implementationFactory);
 

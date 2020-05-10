@@ -52,7 +52,7 @@ namespace Silverback.Background
         /// </param>
         protected RecurringDistributedBackgroundService(
             TimeSpan interval,
-            DistributedLockSettings distributedLockSettings,
+            DistributedLockSettings? distributedLockSettings,
             IDistributedLockManager distributedLockManager,
             ILogger<RecurringDistributedBackgroundService> logger)
             : base(distributedLockSettings, distributedLockManager, logger)

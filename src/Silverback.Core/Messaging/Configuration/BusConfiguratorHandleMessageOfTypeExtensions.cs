@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -37,8 +38,7 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static IBusConfigurator HandleMessagesOfType(this IBusConfigurator busConfigurator, Type messageType)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
 
             if (!busConfigurator.BusOptions.MessageTypes.Contains(messageType))
                 busConfigurator.BusOptions.MessageTypes.Add(messageType);

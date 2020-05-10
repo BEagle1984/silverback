@@ -67,8 +67,7 @@ namespace Silverback.Messaging.Serialization
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentException("Value cannot be null or empty.", nameof(key));
+            Check.NotEmpty(key, nameof(key));
 
             return AsyncHelper.RunSynchronously(
                 () =>
@@ -81,8 +80,7 @@ namespace Silverback.Messaging.Serialization
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            Check.NotNull(key, nameof(key));
 
             return AsyncHelper.RunSynchronously(
                 () =>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Silverback.Database;
+using Silverback.Util;
 
 namespace Silverback.EventStore
 {
@@ -19,7 +20,7 @@ namespace Silverback.EventStore
 
         protected DbEventStoreRepository(IDbContext dbContext)
         {
-            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            Check.NotNull(dbContext, nameof(dbContext));
 
             _dbSet = dbContext.GetDbSet<TEventStoreEntity>();
         }

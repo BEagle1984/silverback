@@ -4,6 +4,7 @@
 using System;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Subscribers;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -35,10 +36,8 @@ namespace Microsoft.Extensions.DependencyInjection
             Type baseType,
             Type subscriberType)
         {
-            if (baseType == null)
-                throw new ArgumentNullException(nameof(baseType));
-            if (subscriberType == null)
-                throw new ArgumentNullException(nameof(subscriberType));
+            Check.NotNull(baseType, nameof(baseType));
+            Check.NotNull(subscriberType, nameof(subscriberType));
 
             services
                 .AddTransient(subscriberType)
@@ -125,12 +124,9 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            if (baseType == null)
-                throw new ArgumentNullException(nameof(baseType));
-            if (subscriberType == null)
-                throw new ArgumentNullException(nameof(subscriberType));
-            if (implementationFactory == null)
-                throw new ArgumentNullException(nameof(implementationFactory));
+            Check.NotNull(baseType, nameof(baseType));
+            Check.NotNull(subscriberType, nameof(subscriberType));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
             services
                 .AddTransient(subscriberType, implementationFactory)
@@ -226,10 +222,8 @@ namespace Microsoft.Extensions.DependencyInjection
             Type baseType,
             Type subscriberType)
         {
-            if (baseType == null)
-                throw new ArgumentNullException(nameof(baseType));
-            if (subscriberType == null)
-                throw new ArgumentNullException(nameof(subscriberType));
+            Check.NotNull(baseType, nameof(baseType));
+            Check.NotNull(subscriberType, nameof(subscriberType));
 
             services
                 .AddScoped(subscriberType)
@@ -315,12 +309,9 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            if (baseType == null)
-                throw new ArgumentNullException(nameof(baseType));
-            if (subscriberType == null)
-                throw new ArgumentNullException(nameof(subscriberType));
-            if (implementationFactory == null)
-                throw new ArgumentNullException(nameof(implementationFactory));
+            Check.NotNull(baseType, nameof(baseType));
+            Check.NotNull(subscriberType, nameof(subscriberType));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
             services
                 .AddScoped(subscriberType, implementationFactory)
@@ -416,10 +407,8 @@ namespace Microsoft.Extensions.DependencyInjection
             Type baseType,
             Type subscriberType)
         {
-            if (baseType == null)
-                throw new ArgumentNullException(nameof(baseType));
-            if (subscriberType == null)
-                throw new ArgumentNullException(nameof(subscriberType));
+            Check.NotNull(baseType, nameof(baseType));
+            Check.NotNull(subscriberType, nameof(subscriberType));
 
             services
                 .AddSingleton(subscriberType)
@@ -506,12 +495,9 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            if (baseType == null)
-                throw new ArgumentNullException(nameof(baseType));
-            if (subscriberType == null)
-                throw new ArgumentNullException(nameof(subscriberType));
-            if (implementationFactory == null)
-                throw new ArgumentNullException(nameof(implementationFactory));
+            Check.NotNull(baseType, nameof(baseType));
+            Check.NotNull(subscriberType, nameof(subscriberType));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
             services
                 .AddSingleton(subscriberType, implementationFactory)
@@ -610,8 +596,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             ISubscriber implementationInstance)
         {
-            if (implementationInstance == null)
-                throw new ArgumentNullException(nameof(implementationInstance));
+            Check.NotNull(implementationInstance, nameof(implementationInstance));
 
             services
                 .AddSingleton(subscriberType, implementationInstance)

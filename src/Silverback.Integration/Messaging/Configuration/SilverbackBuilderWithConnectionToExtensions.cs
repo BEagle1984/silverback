@@ -6,6 +6,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -30,8 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Action<IBrokerOptionsBuilder>? optionsAction = null)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services
                 .AddSingleton<IBrokerCollection, BrokerCollection>()
@@ -66,8 +66,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Action<IBrokerOptionsBuilder>? optionsAction = null)
             where T : class, IBroker
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             return silverbackBuilder.WithConnectionToMessageBroker(
                 options =>

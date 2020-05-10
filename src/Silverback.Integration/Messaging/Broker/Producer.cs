@@ -37,11 +37,11 @@ namespace Silverback.Messaging.Broker
             MessageLogger messageLogger)
         {
             Behaviors = behaviors ?? Array.Empty<IProducerBehavior>();
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _messageLogger = messageLogger ?? throw new ArgumentNullException(nameof(messageLogger));
+            _logger = Check.NotNull(logger, nameof(logger));
+            _messageLogger = Check.NotNull(messageLogger, nameof(messageLogger));
 
-            Broker = broker ?? throw new ArgumentNullException(nameof(broker));
-            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
+            Broker = Check.NotNull(broker, nameof(broker));
+            Endpoint = Check.NotNull(endpoint, nameof(endpoint));
 
             Endpoint.Validate();
         }

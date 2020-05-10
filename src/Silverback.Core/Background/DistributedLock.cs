@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Silverback.Util;
 
 namespace Silverback.Background
 {
@@ -28,8 +29,8 @@ namespace Silverback.Background
         /// </param>
         public DistributedLock(DistributedLockSettings settings, IDistributedLockManager lockManager)
         {
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _lockManager = lockManager ?? throw new ArgumentNullException(nameof(lockManager));
+            _settings = Check.NotNull(settings, nameof(settings));
+            _lockManager = Check.NotNull(lockManager, nameof(lockManager));
 
             Status = DistributedLockStatus.Acquired;
 

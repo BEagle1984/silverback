@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Serialization
 {
@@ -48,8 +49,7 @@ namespace Silverback.Messaging.Serialization
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (messageHeaders == null)
-                throw new ArgumentNullException(nameof(messageHeaders));
+            Check.NotNull(messageHeaders, nameof(messageHeaders));
 
             if (message == null)
                 return null;
@@ -72,8 +72,7 @@ namespace Silverback.Messaging.Serialization
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (messageHeaders == null)
-                throw new ArgumentNullException(nameof(messageHeaders));
+            Check.NotNull(messageHeaders, nameof(messageHeaders));
 
             var type = SerializationHelper.GetTypeFromHeaders(messageHeaders);
 

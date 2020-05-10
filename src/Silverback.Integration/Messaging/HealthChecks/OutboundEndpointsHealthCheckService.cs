@@ -3,49 +3,70 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
+using Silverback.Util;
 
 namespace Silverback.Messaging.HealthChecks
 {
+    /// <inheritdoc />
     public class OutboundEndpointsHealthCheckService : IOutboundEndpointsHealthCheckService
     {
         private readonly IOutboundRoutingConfiguration _outboundRoutingConfiguration;
+
         private readonly IBrokerCollection _brokerCollection;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="OutboundEndpointsHealthCheckService" /> class.
+        /// </summary>
+        /// <param name="outboundRoutingConfiguration">
+        ///     The <see cref="IOutboundRoutingConfiguration" /> to be used to retrieve the list of outbound
+        ///     endpoints.
+        /// </param>
+        /// <param name="brokerCollection">
+        ///     The collection containing the available brokers.
+        /// </param>
         public OutboundEndpointsHealthCheckService(
             IOutboundRoutingConfiguration outboundRoutingConfiguration,
             IBrokerCollection brokerCollection)
         {
-            _outboundRoutingConfiguration = outboundRoutingConfiguration ??
-                                            throw new ArgumentNullException(nameof(outboundRoutingConfiguration));
-            _brokerCollection = brokerCollection ?? throw new ArgumentNullException(nameof(brokerCollection));
+            _outboundRoutingConfiguration = Check.NotNull(
+                outboundRoutingConfiguration,
+                nameof(outboundRoutingConfiguration));
+            _brokerCollection = Check.NotNull(brokerCollection, nameof(brokerCollection));
         }
 
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "CA1031", Justification = "Exception is returned")]
         public async Task<IEnumerable<EndpointCheckResult>> PingAllEndpoints()
         {
             if (!_brokerCollection.All(broker => broker.IsConnected))
                 return Enumerable.Empty<EndpointCheckResult>();
 
             var tasks = _outboundRoutingConfiguration.Routes
-                .SelectMany(route => route.Router.Endpoints
-                    .Select(async endpoint =>
-                    {
-                        try
-                        {
-                            await _brokerCollection.GetProducer(endpoint).ProduceAsync(PingMessage.New());
-                            return new EndpointCheckResult(endpoint.Name, true);
-                        }
-                        catch (Exception ex)
-                        {
-                            return new EndpointCheckResult(endpoint.Name, false,
-                                $"[{ex.GetType().FullName}] {ex.Message}");
-                        }
-                    }));
+                .SelectMany(
+                    route => route.Router.Endpoints
+                        .Select(
+                            async endpoint =>
+                            {
+                                try
+                                {
+                                    await _brokerCollection.GetProducer(endpoint).ProduceAsync(PingMessage.New());
+                                    return new EndpointCheckResult(endpoint.Name, true);
+                                }
+                                catch (Exception ex)
+                                {
+                                    return new EndpointCheckResult(
+                                        endpoint.Name,
+                                        false,
+                                        $"[{ex.GetType().FullName}] {ex.Message}");
+                                }
+                            }));
 
-            return (await Task.WhenAll(tasks));
+            return await Task.WhenAll(tasks);
         }
     }
 }

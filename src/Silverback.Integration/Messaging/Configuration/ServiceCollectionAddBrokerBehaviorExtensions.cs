@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -28,8 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static IServiceCollection AddSingletonBrokerBehavior(this IServiceCollection services, Type behaviorType)
         {
-            if (behaviorType == null)
-                throw new ArgumentNullException(nameof(behaviorType));
+            Check.NotNull(behaviorType, nameof(behaviorType));
 
             services.AddSingleton(typeof(IBrokerBehavior), behaviorType);
 
@@ -69,8 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             Func<IServiceProvider, IBrokerBehavior> implementationFactory)
         {
-            if (implementationFactory == null)
-                throw new ArgumentNullException(nameof(implementationFactory));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
             services.AddSingleton(typeof(IBrokerBehavior), implementationFactory);
 
@@ -94,8 +93,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             IBrokerBehavior implementationInstance)
         {
-            if (implementationInstance == null)
-                throw new ArgumentNullException(nameof(implementationInstance));
+            Check.NotNull(implementationInstance, nameof(implementationInstance));
 
             services.AddSingleton(typeof(IBrokerBehavior), implementationInstance);
 

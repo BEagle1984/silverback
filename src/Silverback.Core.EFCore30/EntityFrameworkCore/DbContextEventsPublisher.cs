@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 namespace Silverback.EntityFrameworkCore
 {
@@ -64,10 +65,10 @@ namespace Silverback.EntityFrameworkCore
             IPublisher publisher,
             DbContext dbContext)
         {
-            _eventsSelector = eventsSelector ?? throw new ArgumentNullException(nameof(eventsSelector));
-            _clearEventsAction = clearEventsAction ?? throw new ArgumentNullException(nameof(clearEventsAction));
-            _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _eventsSelector = Check.NotNull(eventsSelector, nameof(eventsSelector));
+            _clearEventsAction = Check.NotNull(clearEventsAction, nameof(clearEventsAction));
+            _publisher = Check.NotNull(publisher, nameof(publisher));
+            _dbContext = Check.NotNull(dbContext, nameof(dbContext));
         }
 
         /// <summary>
@@ -83,8 +84,7 @@ namespace Silverback.EntityFrameworkCore
         /// </returns>
         public int ExecuteSaveTransaction(Func<int> saveChanges)
         {
-            if (saveChanges == null)
-                throw new ArgumentNullException(nameof(saveChanges));
+            Check.NotNull(saveChanges, nameof(saveChanges));
 
             return ExecuteSaveTransaction(() => Task.FromResult(saveChanges()), false).Result;
         }
@@ -103,8 +103,7 @@ namespace Silverback.EntityFrameworkCore
         /// </returns>
         public Task<int> ExecuteSaveTransactionAsync(Func<Task<int>> saveChangesAsync)
         {
-            if (saveChangesAsync == null)
-                throw new ArgumentNullException(nameof(saveChangesAsync));
+            Check.NotNull(saveChangesAsync, nameof(saveChangesAsync));
 
             return ExecuteSaveTransaction(saveChangesAsync, true);
         }

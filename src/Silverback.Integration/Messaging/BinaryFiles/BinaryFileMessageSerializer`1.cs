@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Messaging.BinaryFiles
 {
@@ -28,8 +29,7 @@ namespace Silverback.Messaging.BinaryFiles
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (messageHeaders == null)
-                throw new ArgumentNullException(nameof(messageHeaders));
+            Check.NotNull(messageHeaders, nameof(messageHeaders));
 
             if (message == null)
                 return null;

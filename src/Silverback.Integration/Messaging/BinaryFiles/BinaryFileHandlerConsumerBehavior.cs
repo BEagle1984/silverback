@@ -26,18 +26,15 @@ namespace Silverback.Messaging.BinaryFiles
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
-            if (next == null)
-                throw new ArgumentNullException(nameof(next));
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(next, nameof(next));
 
             context.Envelopes = (await context.Envelopes.SelectAsync(Handle)).ToList();
 
             await next(context, serviceProvider);
         }
 
-        private async Task<IRawInboundEnvelope> Handle(IRawInboundEnvelope envelope)
+        private static async Task<IRawInboundEnvelope> Handle(IRawInboundEnvelope envelope)
         {
             if (envelope.Endpoint.Serializer is BinaryFileMessageSerializer)
                 return envelope;
