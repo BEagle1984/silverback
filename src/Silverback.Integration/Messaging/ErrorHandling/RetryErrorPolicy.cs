@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 
@@ -18,8 +19,11 @@ namespace Silverback.Messaging.ErrorHandling
     public class RetryErrorPolicy : ErrorPolicyBase
     {
         private readonly TimeSpan _initialDelay;
+
         private readonly TimeSpan _delayIncrement;
+
         private readonly ILogger _logger;
+
         private readonly MessageLogger _messageLogger;
 
         public RetryErrorPolicy(
@@ -36,29 +40,32 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        protected override ErrorAction ApplyPolicy(
+        protected override async Task<ErrorAction> ApplyPolicy(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
-            ApplyDelay(envelopes);
+            await ApplyDelay(envelopes);
 
             _messageLogger.LogInformation(_logger, "The message(s) will be processed again.", envelopes);
 
             return ErrorAction.Retry;
         }
 
-        private void ApplyDelay(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
+        private async Task ApplyDelay(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
             var delay = _initialDelay.Milliseconds +
-                        envelopes.First().Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) *
-                        _delayIncrement.Milliseconds;
+                        (envelopes.First().Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) *
+                         _delayIncrement.Milliseconds);
 
             if (delay <= 0)
                 return;
 
-            _messageLogger.LogTrace(_logger, $"Waiting {delay} milliseconds before retrying to process the message(s).",
+            _messageLogger.LogTrace(
+                _logger,
+                $"Waiting {delay} milliseconds before retrying to process the message(s).",
                 envelopes);
-            Thread.Sleep(delay);
+
+            await Task.Delay(delay);
         }
     }
 }

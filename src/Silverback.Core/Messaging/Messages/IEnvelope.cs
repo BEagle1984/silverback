@@ -8,8 +8,8 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public interface IEnvelope
     {
-        /// <summary> Gets the message body. </summary>
-        object? Message { get; }
+        /// <summary> Gets or sets the message body. </summary>
+        object? Message { get; set; }
 
         /// <summary>
         ///     Gets a value indicating whether this envelope can be automatically unwrapped and the contained

@@ -73,7 +73,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
 
             public string Name { get; } = "";
             public IMessageSerializer Serializer { get; } = new JsonMessageSerializer();
-            public EncryptionSettings Encryption { get; } = null;
+            public EncryptionSettings? Encryption { get; } = null;
 
             public string GetUniqueConsumerGroupName() => Name;
         }

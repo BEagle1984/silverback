@@ -1,21 +1,25 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 namespace Silverback.Messaging.Encryption
 {
+    /// <summary>
+    ///     The symmetric encryption settings used to encrypt or decrypt the messages being sent through the message broker.
+    /// </summary>
     public class SymmetricEncryptionSettings : EncryptionSettings
     {
         /// <summary>
-        ///     The name of the specific implementation of the <see cref="SymmetricAlgorithm" /> class to use to
+        ///     Gets or sets the name of the specific implementation of the <see cref="SymmetricAlgorithm" /> class to use to
         ///     encrypt or decrypt the messages.
         /// </summary>
         public string AlgorithmName { get; set; } = "AES";
 
         /// <summary>
         ///     <para>
-        ///         The block size, in bits, of the cryptographic operation.
+        ///         Gets or sets the block size, in bits, of the cryptographic operation.
         ///     </para>
         ///     <para>
         ///         If <c>null</c>, the default value for the specified algorithm will be used.
@@ -25,7 +29,7 @@ namespace Silverback.Messaging.Encryption
 
         /// <summary>
         ///     <para>
-        ///         The feedback size, in bits, of the cryptographic operation for the Cipher Feedback (CFB)
+        ///         Gets or sets the feedback size, in bits, of the cryptographic operation for the Cipher Feedback (CFB)
         ///         and Output Feedback (OFB) cipher modes.
         ///     </para>
         ///     <para>
@@ -36,7 +40,7 @@ namespace Silverback.Messaging.Encryption
 
         /// <summary>
         ///     <para>
-        ///         The optional initialization vector (IV) for the symmetric algorithm.
+        ///         Gets or sets the optional initialization vector (IV) for the symmetric algorithm.
         ///     </para>
         ///     <para>
         ///         <b>Important:</b> If <c>null</c> no fixed IV is provided and the producer will automatically
@@ -44,16 +48,20 @@ namespace Silverback.Messaging.Encryption
         ///         to be available to the consumer.
         ///     </para>
         /// </summary>
-        public byte[] InitializationVector { get; set; }
+        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public byte[]? InitializationVector { get; set; }
 
         /// <summary>
-        ///     The secret key for the symmetric algorithm.
+        ///     Gets or sets the secret key for the symmetric algorithm.
         /// </summary>
-        public byte[] Key { get; set; }
+        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public byte[]? Key { get; set; }
 
         /// <summary>
         ///     <para>
-        ///         The mode for operation of the symmetric algorithm.
+        ///         Gets or sets the mode for operation of the symmetric algorithm.
         ///     </para>
         ///     <para>
         ///         If <c>null</c>, the default value for the specified algorithm will be used.
@@ -63,7 +71,7 @@ namespace Silverback.Messaging.Encryption
 
         /// <summary>
         ///     <para>
-        ///         The padding mode used in the symmetric algorithm.
+        ///         Gets or sets the padding mode used in the symmetric algorithm.
         ///     </para>
         ///     <para>
         ///         If <c>null</c>, the default value for the specified algorithm will be used.
@@ -71,6 +79,7 @@ namespace Silverback.Messaging.Encryption
         /// </summary>
         public PaddingMode? PaddingMode { get; set; }
 
+        /// <inheritdoc />
         public override void Validate()
         {
             if (string.IsNullOrEmpty(AlgorithmName))

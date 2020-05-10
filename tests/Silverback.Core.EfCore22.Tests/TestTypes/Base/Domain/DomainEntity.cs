@@ -2,21 +2,18 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Linq;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Core.EFCore22.TestTypes.Base.Domain
 {
     public abstract class DomainEntity : IMessagesSource
     {
-        private List<IDomainEvent> _domainEvents;
+        private List<IDomainEvent>? _domainEvents;
 
-        #region IMessagesSource
+        public IEnumerable<object> GetMessages() => _domainEvents ?? Enumerable.Empty<object>();
 
-        public IEnumerable<object> GetMessages() => _domainEvents;
-
-        public void ClearMessages() => _domainEvents.Clear();
-
-        #endregion
+        public void ClearMessages() => _domainEvents?.Clear();
 
         protected void AddEvent(IDomainEvent domainEvent)
         {

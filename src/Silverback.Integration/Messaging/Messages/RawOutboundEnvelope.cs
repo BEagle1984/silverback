@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Messages
         }
 
         public RawOutboundEnvelope(
-            byte[] rawMessage,
+            byte[]? rawMessage,
             IEnumerable<MessageHeader> headers,
             IProducerEndpoint endpoint,
             IOffset? offset = null)

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.ErrorHandling;
@@ -12,20 +13,19 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestErrorPolicy : ErrorPolicyBase
     {
-        public bool Applied { get; private set; }
-
         public TestErrorPolicy(IServiceProvider serviceProvider = null)
-            : base(serviceProvider,
-                NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>(), new MessageLogger())
+            : base(serviceProvider, NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>(), new MessageLogger())
         {
         }
 
-        protected override ErrorAction ApplyPolicy(
+        public bool Applied { get; private set; }
+
+        protected override Task<ErrorAction> ApplyPolicy(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
             Applied = true;
-            return ErrorAction.Skip;
+            return Task.FromResult(ErrorAction.Skip);
         }
     }
 }

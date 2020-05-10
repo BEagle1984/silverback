@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Messages
             AutoUnwrap = autoUnwrap;
         }
 
-        public object? Message { get; }
+        public object? Message { get; set; }
 
         public bool AutoUnwrap { get; }
 

@@ -7,12 +7,12 @@ using Silverback.Messaging.Serialization;
 namespace Silverback.Messaging
 {
     /// <summary>
-    ///     Represents a message broker endpoint such as a Kafka topic or RabbitMQ queue or exchange.
+    ///     Represents a message broker endpoint to connect to (such as a Kafka topic or RabbitMQ queue or exchange).
     /// </summary>
     public interface IEndpoint
     {
         /// <summary>
-        ///     Gets a string identifying the endpoint (being it a queue, topic, exchange, ...).
+        ///     Gets a string identifying the endpoint (the topic, queue or exchange name).
         /// </summary>
         string Name { get; }
 
@@ -33,7 +33,7 @@ namespace Silverback.Messaging
         ///         Set it to <c>null</c> (default) to disable this feature.
         ///     </para>
         /// </summary>
-        EncryptionSettings Encryption { get; }
+        EncryptionSettings? Encryption { get; }
 
         /// <summary>
         ///     Validates the endpoint configuration and throws an <see cref="EndpointConfigurationException" />

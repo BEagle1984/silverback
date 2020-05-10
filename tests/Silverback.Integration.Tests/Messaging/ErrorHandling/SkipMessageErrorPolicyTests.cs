@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.ErrorHandling;
@@ -23,15 +24,19 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Theory]
         [InlineData(1, ErrorAction.Skip)]
         [InlineData(333, ErrorAction.Skip)]
-        public void SkipTest(int failedAttempts, ErrorAction expectedAction)
+        public async Task SkipTest(int failedAttempts, ErrorAction expectedAction)
         {
-            var action = _policy.HandleError(new[]
+            var rawInboundEnvelopes = new[]
             {
                 new InboundEnvelope(
                     new byte[1],
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault(), TestConsumerEndpoint.GetDefault().Name),
-            }, new Exception("test"));
+                    null,
+                    TestConsumerEndpoint.GetDefault(),
+                    TestConsumerEndpoint.GetDefault().Name),
+            };
+
+            var action = await _policy.HandleError(rawInboundEnvelopes, new Exception("test"));
 
             action.Should().Be(expectedAction);
         }

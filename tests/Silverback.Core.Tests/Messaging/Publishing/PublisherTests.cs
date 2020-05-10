@@ -356,7 +356,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public void Publish_HandlersReturnValue_ResultsReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
             var results = publisher.Publish<string>(new TestRequestCommandOne());
 
@@ -366,7 +366,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public void Publish_HandlersReturnValueOfWrongType_EmptyResultReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
             var results = publisher.Publish<int>(new TestRequestCommandOne());
 
@@ -378,8 +378,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(
                 config => config.Subscribe<ISubscriber>(false),
-                new TestRequestReplier(),
-                new TestRequestReplierWithWrongResponseType());
+                new TestCommandReplier(),
+                new TestCommandReplierWithWrongResponseType());
 
             var results = publisher.Publish<string>(new TestRequestCommandOne());
 
@@ -391,7 +391,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(
                 config => config.Subscribe<ISubscriber>(false),
-                new TestRequestReplierReturningNull());
+                new TestCommandReplierReturningNull());
 
             var results = publisher.Publish<string>(new TestRequestCommandOne());
 
@@ -401,7 +401,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_HandlersReturnValue_ResultsReturned()
         {
-            var publisher = GetPublisher(new TestRequestReplier());
+            var publisher = GetPublisher(new TestCommandReplier());
 
             var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
 
@@ -411,7 +411,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_HandlersReturnValueOfWrongType_EmptyResultReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
             var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
 
@@ -423,8 +423,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(
                 config => config.Subscribe<ISubscriber>(false),
-                new TestRequestReplier(),
-                new TestRequestReplierWithWrongResponseType());
+                new TestCommandReplier(),
+                new TestCommandReplierWithWrongResponseType());
 
             var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
 
@@ -436,7 +436,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(
                 config => config.Subscribe<ISubscriber>(false),
-                new TestRequestReplierReturningNull());
+                new TestCommandReplierReturningNull());
 
             var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
 
@@ -446,7 +446,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public void Publish_HandlersReturnValue_EnumerableReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
             var results = publisher.Publish<IEnumerable<string>>(new TestRequestCommandTwo());
 
@@ -456,7 +456,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_HandlersReturnValue_EnumerableReturned()
         {
-            var publisher = GetPublisher(new TestRequestReplier());
+            var publisher = GetPublisher(new TestCommandReplier());
 
             var results = await publisher.PublishAsync<IEnumerable<string>>(new TestRequestCommandTwo());
 
@@ -467,7 +467,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public void Publish_HandlersReturnValue_EmptyEnumerableReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
             var results = publisher.Publish<IEnumerable<string>>(new TestRequestCommandThree());
 
@@ -478,7 +478,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_HandlersReturnValue_EmptyEnumerableReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
             var results = await publisher.PublishAsync<IEnumerable<string>>(new TestRequestCommandThree());
 
@@ -625,7 +625,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_MessagesBatch_ResultsReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
             var results = await publisher.PublishAsync<IEnumerable<string>>(
                 new[]
@@ -637,7 +637,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         [Fact]
         public void Publish_MessagesBatch_ResultsReturned()
         {
-            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestRequestReplier());
+            var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
             var results = publisher.Publish<IEnumerable<string>>(
                 new[]
