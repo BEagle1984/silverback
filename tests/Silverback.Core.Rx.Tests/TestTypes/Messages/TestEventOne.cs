@@ -7,6 +7,6 @@ namespace Silverback.Tests.Core.Rx.TestTypes.Messages
 {
     public class TestEventOne : IEvent, ITestMessage
     {
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 }

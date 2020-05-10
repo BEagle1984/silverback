@@ -358,7 +358,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
-            var results = publisher.Publish<string>(new TestRequestCommandOne());
+            var results = publisher.Publish<string>(new TestCommandWitReturnOne());
 
             results.Should().Equal("response", "response2");
         }
@@ -368,7 +368,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
-            var results = publisher.Publish<int>(new TestRequestCommandOne());
+            var results = publisher.Publish<int>(new TestCommandWitReturnOne());
 
             results.Should().BeEmpty();
         }
@@ -381,7 +381,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 new TestCommandReplier(),
                 new TestCommandReplierWithWrongResponseType());
 
-            var results = publisher.Publish<string>(new TestRequestCommandOne());
+            var results = publisher.Publish<string>(new TestCommandWitReturnOne());
 
             results.Should().Equal("response", "response2");
         }
@@ -393,7 +393,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 config => config.Subscribe<ISubscriber>(false),
                 new TestCommandReplierReturningNull());
 
-            var results = publisher.Publish<string>(new TestRequestCommandOne());
+            var results = publisher.Publish<string>(new TestCommandWitReturnOne());
 
             results.Should().BeEmpty();
         }
@@ -403,7 +403,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(new TestCommandReplier());
 
-            var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
+            var results = await publisher.PublishAsync<string>(new TestCommandWitReturnOne());
 
             results.Should().Equal("response", "response2");
         }
@@ -413,7 +413,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
-            var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
+            var results = await publisher.PublishAsync<string>(new TestCommandWitReturnOne());
 
             results.Should().Equal("response", "response2");
         }
@@ -426,7 +426,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 new TestCommandReplier(),
                 new TestCommandReplierWithWrongResponseType());
 
-            var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
+            var results = await publisher.PublishAsync<string>(new TestCommandWitReturnOne());
 
             results.Should().Equal("response", "response2");
         }
@@ -438,7 +438,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 config => config.Subscribe<ISubscriber>(false),
                 new TestCommandReplierReturningNull());
 
-            var results = await publisher.PublishAsync<string>(new TestRequestCommandOne());
+            var results = await publisher.PublishAsync<string>(new TestCommandWitReturnOne());
 
             results.Should().BeEmpty();
         }
@@ -448,7 +448,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
-            var results = publisher.Publish<IEnumerable<string>>(new TestRequestCommandTwo());
+            var results = publisher.Publish<IEnumerable<string>>(new TestCommandWithReturnTwo());
 
             results.SelectMany(x => x).Should().Equal("one", "two");
         }
@@ -458,7 +458,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(new TestCommandReplier());
 
-            var results = await publisher.PublishAsync<IEnumerable<string>>(new TestRequestCommandTwo());
+            var results = await publisher.PublishAsync<IEnumerable<string>>(new TestCommandWithReturnTwo());
 
             results.SelectMany(x => x).Should().Equal("one", "two");
         }
@@ -469,7 +469,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
-            var results = publisher.Publish<IEnumerable<string>>(new TestRequestCommandThree());
+            var results = publisher.Publish<IEnumerable<string>>(new TestCommandWithReturnThree());
 
             results.First().Should().NotBeNull();
             results.First().Should().BeEmpty();
@@ -480,7 +480,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var publisher = GetPublisher(config => config.Subscribe<ISubscriber>(false), new TestCommandReplier());
 
-            var results = await publisher.PublishAsync<IEnumerable<string>>(new TestRequestCommandThree());
+            var results = await publisher.PublishAsync<IEnumerable<string>>(new TestCommandWithReturnThree());
 
             results.First().Should().NotBeNull();
             results.First().Should().BeEmpty();
@@ -629,7 +629,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var results = await publisher.PublishAsync<IEnumerable<string>>(
                 new[]
-                    { new TestRequestCommandTwo(), new TestRequestCommandTwo() });
+                    { new TestCommandWithReturnTwo(), new TestCommandWithReturnTwo() });
 
             results.SelectMany(x => x).Should().Equal("one", "two", "one", "two");
         }
@@ -641,7 +641,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var results = publisher.Publish<IEnumerable<string>>(
                 new[]
-                    { new TestRequestCommandTwo(), new TestRequestCommandTwo() });
+                    { new TestCommandWithReturnTwo(), new TestCommandWithReturnTwo() });
 
             results.SelectMany(x => x).Should().Equal("one", "two", "one", "two");
         }

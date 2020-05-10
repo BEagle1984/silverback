@@ -25,9 +25,14 @@ toc: true
 * `Received` event in the `Consumer` replaced by a callback delegate
 * `IQueueProduer` and `IQueueConsumer` renamed to `IQueueWriter` and `IQueueReader`
 * Messages with a `null` or `empty` body can be subscribed as `IInboundEnvelope<TMessage>` as well, as long as the `x-message-type` header is set or a typed serializer such as `JsonMessageSerializer<TMessage>` is used
-* Moved all entities (used with Entity Framework Core) to the `Silverback.Database.Model` namespace
-* Replaced `InboundMessage` entity with `InboundLogEntry`
+* Database:
+    * Moved all entities (used with Entity Framework Core) to the `Silverback.Database.Model` namespace
+    * Replaced `InboundMessage` entity with `InboundLogEntry`
+    * Changed some fields in `TemporaryMessageChunk`
 * Moved and renamed some internally used types (e.g. `QueuedMessage`, `DbQueuedMessage`, ...)
+* Some changes to error policies:
+    * `Apply` method is now async
+    * Changed the signature of the transfor function in the `MovePolicy`
 
 ## [2.1.1-rc.12](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1-rc.12)
 

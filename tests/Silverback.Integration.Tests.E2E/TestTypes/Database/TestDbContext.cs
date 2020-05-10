@@ -30,7 +30,7 @@ namespace Silverback.Tests.Integration.E2E.TestTypes.Database
                 .HasKey(t => new { t.MessageId, t.ConsumerGroupName });
 
             modelBuilder.Entity<TemporaryMessageChunk>()
-                .HasKey(t => new { t.OriginalMessageId, t.ChunkId });
+                .HasKey(t => new { OriginalMessageId = t.MessageId, t.ChunkIndex });
         }
     }
 }

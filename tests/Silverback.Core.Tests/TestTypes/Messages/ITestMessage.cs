@@ -7,6 +7,6 @@ namespace Silverback.Tests.Core.TestTypes.Messages
 {
     public interface ITestMessage : IMessage
     {
-        string Message { get; }
+        string? Message { get; }
     }
 }

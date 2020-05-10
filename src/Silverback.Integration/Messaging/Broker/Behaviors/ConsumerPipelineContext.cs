@@ -56,6 +56,6 @@ namespace Silverback.Messaging.Broker.Behaviors
             "ReSharper",
             "CA2227",
             Justification = "Has to be writable to handle commits and rollbacks correctly (see usages)")]
-        public List<IOffset> CommitOffsets { get; set; }
+        public List<IOffset>? CommitOffsets { get; set; }
     }
 }

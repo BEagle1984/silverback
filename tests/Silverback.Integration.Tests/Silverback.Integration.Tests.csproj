@@ -28,8 +28,4 @@
     <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TestTypes\Repositories" />
-  </ItemGroup>
-
 </Project>
