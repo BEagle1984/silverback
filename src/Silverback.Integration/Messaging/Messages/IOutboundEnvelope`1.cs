@@ -5,10 +5,11 @@ namespace Silverback.Messaging.Messages
 {
     /// <inheritdoc />
     public interface IOutboundEnvelope<out TMessage> : IOutboundEnvelope
+        where TMessage : class
     {
         /// <summary>
         ///     Gets the deserialized message body.
         /// </summary>
-        new TMessage Message { get; }
+        new TMessage? Message { get; }
     }
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -16,13 +17,25 @@ namespace Silverback.Messaging.ErrorHandling
     public class MoveMessageErrorPolicy : ErrorPolicyBase
     {
         private readonly IProducer _producer;
-        private readonly IEndpoint _endpoint;
+
+        private readonly IProducerEndpoint _endpoint;
+
         private readonly ILogger _logger;
+
         private readonly MessageLogger _messageLogger;
 
-        private Func<object, Exception, object> _transformationFunction;
-        private Func<MessageHeaderCollection, Exception, MessageHeaderCollection> _headersTransformationFunction;
+        private Action<IOutboundEnvelope, Exception>? _transformationAction;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MoveMessageErrorPolicy" /> class.
+        /// </summary>
+        /// <param name="brokerCollection">
+        ///     The collection containing the available brokers.
+        /// </param>
+        /// <param name="endpoint"> The endpoint to move the message to. </param>
+        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         public MoveMessageErrorPolicy(
             IBrokerCollection brokerCollection,
             IProducerEndpoint endpoint,
@@ -31,9 +44,14 @@ namespace Silverback.Messaging.ErrorHandling
             MessageLogger messageLogger)
             : base(serviceProvider, logger, messageLogger)
         {
-            if (brokerCollection == null) throw new ArgumentNullException(nameof(brokerCollection));
-            if (endpoint == null) throw new ArgumentNullException(nameof(endpoint));
-            if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
+            if (brokerCollection == null)
+                throw new ArgumentNullException(nameof(brokerCollection));
+
+            if (endpoint == null)
+                throw new ArgumentNullException(nameof(endpoint));
+
+            if (serviceProvider == null)
+                throw new ArgumentNullException(nameof(serviceProvider));
 
             _producer = brokerCollection.GetProducer(endpoint);
             _endpoint = endpoint;
@@ -41,38 +59,56 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
+        /// <summary>
+        ///     Defines an <see cref="Action{T}"/> to be called to modify (or completely rewrite) the message being
+        ///     moved.
+        /// </summary>
+        /// <param name="transformationAction">
+        ///     The <see cref="Action{T}"/> to be called to modify the message. This function can be used to modify or
+        ///     replace the message body and its headers.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="MoveMessageErrorPolicy" /> so that additional calls can be chained.
+        /// </returns>
         public MoveMessageErrorPolicy Transform(
-            Func<object, Exception, object> transformationFunction,
-            Func<MessageHeaderCollection, Exception, MessageHeaderCollection> headersTransformationFunction = null)
+            Action<IOutboundEnvelope, Exception> transformationAction)
         {
-            _transformationFunction = transformationFunction;
-            _headersTransformationFunction = headersTransformationFunction;
+            _transformationAction = transformationAction;
             return this;
         }
 
-        protected override ErrorAction ApplyPolicy(
+        /// <inheritdoc />
+        protected override async Task<ErrorAction> ApplyPolicy(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
-            _messageLogger.LogInformation(_logger,
-                $"{envelopes.Count} message(s) will be  be moved to endpoint '{_endpoint.Name}'.", envelopes);
+            if (envelopes == null)
+                throw new ArgumentNullException(nameof(envelopes));
 
-            envelopes.ForEach(envelope => PublishToNewEndpoint(envelope, exception));
+            _messageLogger.LogInformation(
+                _logger,
+                $"{envelopes.Count} message(s) will be  be moved to endpoint '{_endpoint.Name}'.",
+                envelopes);
+
+            await envelopes.ForEachAsync(envelope => PublishToNewEndpoint(envelope, exception));
 
             return ErrorAction.Skip;
         }
 
-        private void PublishToNewEndpoint(IRawInboundEnvelope envelope, Exception exception)
+        private async Task PublishToNewEndpoint(IRawInboundEnvelope envelope, Exception exception)
         {
-            envelope.Headers.AddOrReplace(DefaultMessageHeaders.SourceEndpoint, envelope.Endpoint?.Name);
+            envelope.Headers.AddOrReplace(
+                DefaultMessageHeaders.SourceEndpoint,
+                envelope.Endpoint?.Name ?? string.Empty);
 
-            var originalMessage = envelope is IInboundEnvelope deserializedEnvelope
-                ? deserializedEnvelope.Message ?? deserializedEnvelope.RawMessage
-                : envelope.RawMessage;
+            IOutboundEnvelope? outboundEnvelope =
+                envelope is IInboundEnvelope deserializedEnvelope
+                    ? new OutboundEnvelope(deserializedEnvelope.Message, deserializedEnvelope.Headers, _endpoint)
+                    : new OutboundEnvelope(envelope.RawMessage, envelope.Headers, _endpoint);
 
-            _producer.Produce(
-                _transformationFunction?.Invoke(originalMessage, exception) ?? originalMessage,
-                _headersTransformationFunction?.Invoke(envelope.Headers, exception) ?? envelope.Headers);
+            _transformationAction?.Invoke((OutboundEnvelope)outboundEnvelope, exception);
+
+            await _producer.ProduceAsync(outboundEnvelope);
         }
     }
 }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -63,13 +64,13 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(2, ErrorAction.Retry)]
         [InlineData(3, ErrorAction.Skip)]
         [InlineData(4, ErrorAction.Skip)]
-        public void HandleError_RetryTwiceThenSkip_CorrectPolicyApplied(int failedAttempts, ErrorAction expectedAction)
+        public async Task HandleError_RetryTwiceThenSkip_CorrectPolicyApplied(int failedAttempts, ErrorAction expectedAction)
         {
             var chain = _errorPolicyBuilder.Chain(
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(2),
                 _errorPolicyBuilder.Skip());
 
-            var action = chain.HandleError(new[]
+            var action = await chain.HandleError(new[]
             {
                 new InboundEnvelope(
                     new byte[1],

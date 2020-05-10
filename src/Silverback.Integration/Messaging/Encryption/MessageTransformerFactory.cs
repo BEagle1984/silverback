@@ -5,9 +5,10 @@ using System;
 
 namespace Silverback.Messaging.Encryption
 {
+    /// <inheritdoc />
     public class MessageTransformerFactory : IMessageTransformerFactory
     {
-        /// <see cref="IMessageTransformerFactory" />
+        /// <inheritdoc />
         public IMessageEncryptor GetEncryptor(EncryptionSettings settings)
         {
             switch (settings)
@@ -15,11 +16,11 @@ namespace Silverback.Messaging.Encryption
                 case SymmetricEncryptionSettings symmetricEncryptionSettings:
                     return new SymmetricMessageEncryptor(symmetricEncryptionSettings);
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(settings));
             }
         }
 
-        /// <see cref="IMessageTransformerFactory" />
+        /// <inheritdoc />
         public IMessageDecryptor GetDecryptor(EncryptionSettings settings)
         {
             switch (settings)
@@ -27,7 +28,7 @@ namespace Silverback.Messaging.Encryption
                 case SymmetricEncryptionSettings symmetricEncryptionSettings:
                     return new SymmetricMessageDecryptor(symmetricEncryptionSettings);
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(settings));
             }
         }
     }

@@ -17,7 +17,9 @@ namespace Silverback.Messaging.ErrorHandling
     internal class ErrorPolicyHelper : IErrorPolicyHelper
     {
         private readonly ILogger<ErrorPolicyHelper> _logger;
+
         private readonly MessageLogger _messageLogger;
+
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public ErrorPolicyHelper(
@@ -64,7 +66,7 @@ namespace Silverback.Messaging.ErrorHandling
 
                     // Reset the offsets at each retry because they might have been modified
                     // (e.g. by the ChunkAggregatorConsumerBehavior) to handle commit and
-                    // rollback and it's safer to rerun the pipeline with the very same state 
+                    // rollback and it's safer to rerun the pipeline with the very same state
                     context.CommitOffsets = offsets;
                 }
                 catch (Exception ex)
@@ -78,8 +80,9 @@ namespace Silverback.Messaging.ErrorHandling
 
         private int GetAttemptNumber(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
-            var minAttempts = envelopes.Min(m =>
-                m.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts));
+            var minAttempts = envelopes.Min(
+                m =>
+                    m.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts));
 
             // Uniform failed attempts, just in case (mostly for consistent logging)
             UpdateFailedAttemptsHeader(envelopes, minAttempts);
@@ -115,13 +118,13 @@ namespace Silverback.Messaging.ErrorHandling
                 if (!errorPolicy.CanHandle(context.Envelopes, ex))
                     throw;
 
-                var action = errorPolicy.HandleError(context.Envelopes, ex);
+                var action = await errorPolicy.HandleError(context.Envelopes, ex);
 
                 if (action == ErrorAction.StopConsuming)
                     throw;
 
                 var offsets = context.CommitOffsets;
-                
+
                 // Rollback database transactions only (ignore offsets)
                 context.CommitOffsets = new List<IOffset>();
                 await rollbackHandler(context, serviceProvider, ex);
@@ -137,12 +140,13 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         private void UpdateFailedAttemptsHeader(IReadOnlyCollection<IRawInboundEnvelope> envelopes, int attempt) =>
-            envelopes?.ForEach(msg =>
-            {
-                if (attempt == 0)
-                    msg.Headers.Remove(DefaultMessageHeaders.FailedAttempts);
-                else
-                    msg.Headers.AddOrReplace(DefaultMessageHeaders.FailedAttempts, attempt);
-            });
+            envelopes?.ForEach(
+                msg =>
+                {
+                    if (attempt == 0)
+                        msg.Headers.Remove(DefaultMessageHeaders.FailedAttempts);
+                    else
+                        msg.Headers.AddOrReplace(DefaultMessageHeaders.FailedAttempts, attempt);
+                });
     }
 }

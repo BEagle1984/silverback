@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
@@ -11,15 +12,27 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.ErrorHandling
 {
+    /// <inheritdoc />
     public abstract class ErrorPolicyBase : IErrorPolicy
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<ErrorPolicyBase> _logger;
-        private readonly MessageLogger _messageLogger;
-        private readonly List<Type> _excludedExceptions = new List<Type>();
-        private readonly List<Type> _includedExceptions = new List<Type>();
-        private Func<IRawInboundEnvelope, Exception, bool> _applyRule;
 
+        private readonly ILogger<ErrorPolicyBase> _logger;
+
+        private readonly MessageLogger _messageLogger;
+
+        private readonly List<Type> _excludedExceptions = new List<Type>();
+
+        private readonly List<Type> _includedExceptions = new List<Type>();
+
+        private Func<IRawInboundEnvelope, Exception, bool>? _applyRule;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ErrorPolicyBase" /> class.
+        /// </summary>
+        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         protected ErrorPolicyBase(
             IServiceProvider serviceProvider,
             ILogger<ErrorPolicyBase> logger,
@@ -30,16 +43,18 @@ namespace Silverback.Messaging.ErrorHandling
             _messageLogger = messageLogger;
         }
 
-        internal Func<IReadOnlyCollection<IRawInboundEnvelope>, object> MessageToPublishFactory { get; private set; }
+        internal Func<IReadOnlyCollection<IRawInboundEnvelope>, object>? MessageToPublishFactory { get; private set; }
 
         internal int MaxFailedAttemptsSetting { get; private set; } = -1;
 
         /// <summary>
-        ///     Restricts the application of this policy to the specified exception type only.
-        ///     It is possible to combine multiple calls to <c>ApplyTo</c> and <c>Exclude</c>.
+        ///     Restricts the application of this policy to the specified exception type only. It is possible to
+        ///     combine multiple calls to <c> ApplyTo </c> and <c> Exclude </c>.
         /// </summary>
-        /// <typeparam name="T">The type of the exception to be handled.</typeparam>
-        /// <returns></returns>
+        /// <typeparam name="T"> The type of the exception to be handled. </typeparam>
+        /// <returns>
+        ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
+        /// </returns>
         public ErrorPolicyBase ApplyTo<T>()
             where T : Exception
         {
@@ -48,11 +63,13 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         /// <summary>
-        ///     Restricts the application of this policy to the specified exception type only.
-        ///     It is possible to combine multiple calls to <c>ApplyTo</c> and <c>Exclude</c>.
+        ///     Restricts the application of this policy to the specified exception type only. It is possible to
+        ///     combine multiple calls to <c> ApplyTo </c> and <c> Exclude </c>.
         /// </summary>
-        /// <param name="exceptionType">The type of the exception to be handled.</param>
-        /// <returns></returns>
+        /// <param name="exceptionType"> The type of the exception to be handled. </param>
+        /// <returns>
+        ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
+        /// </returns>
         public ErrorPolicyBase ApplyTo(Type exceptionType)
         {
             _includedExceptions.Add(exceptionType);
@@ -60,11 +77,13 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         /// <summary>
-        ///     Restricts the application of this policy to all exceptions but the specified type.
-        ///     It is possible to combine multiple calls to <c>ApplyTo</c> and <c>Exclude</c>.
+        ///     Restricts the application of this policy to all exceptions but the specified type. It is possible to
+        ///     combine multiple calls to <c> ApplyTo </c> and <c> Exclude </c>.
         /// </summary>
-        /// <typeparam name="T">The type of the exception to be ignored.</typeparam>
-        /// <returns></returns>
+        /// <typeparam name="T"> The type of the exception to be ignored. </typeparam>
+        /// <returns>
+        ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
+        /// </returns>
         public ErrorPolicyBase Exclude<T>()
             where T : Exception
         {
@@ -73,11 +92,13 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         /// <summary>
-        ///     Restricts the application of this policy to all exceptions but the specified type.
-        ///     It is possible to combine multiple calls to <c>ApplyTo</c> and <c>Exclude</c>.
+        ///     Restricts the application of this policy to all exceptions but the specified type. It is possible to
+        ///     combine multiple calls to <c> ApplyTo </c> and <c> Exclude </c>.
         /// </summary>
-        /// <param name="exceptionType">The type of the exception to be ignored.</param>
-        /// <returns></returns>
+        /// <param name="exceptionType"> The type of the exception to be ignored. </param>
+        /// <returns>
+        ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
+        /// </returns>
         public ErrorPolicyBase Exclude(Type exceptionType)
         {
             _excludedExceptions.Add(exceptionType);
@@ -85,11 +106,13 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         /// <summary>
-        ///     Specifies a predicate to be used to determine whether the policy has to be applied
-        ///     according to the current message and exception.
+        ///     Specifies a predicate to be used to determine whether the policy has to be applied according to the
+        ///     current message and exception.
         /// </summary>
-        /// <param name="applyRule">The predicate.</param>
-        /// <returns></returns>
+        /// <param name="applyRule"> The predicate. </param>
+        /// <returns>
+        ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
+        /// </returns>
         public ErrorPolicyBase ApplyWhen(Func<IRawInboundEnvelope, Exception, bool> applyRule)
         {
             _applyRule = applyRule;
@@ -97,14 +120,15 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         /// <summary>
-        ///     Specifies how many times this rule can be applied to the same message. Most useful
-        ///     for <see cref="RetryErrorPolicy" /> and <see cref="MoveMessageErrorPolicy" /> to limit the
-        ///     number of iterations.
-        ///     If multiple policies are chained in an <see cref="ErrorPolicyChain" /> then the next policy will
-        ///     be triggered after the allotted amount of retries.
+        ///     Specifies how many times this rule can be applied to the same message. Most useful for
+        ///     <see cref="RetryErrorPolicy" /> and <see cref="MoveMessageErrorPolicy" /> to limit the number of
+        ///     iterations. If multiple policies are chained in an <see cref="ErrorPolicyChain" /> then the next
+        ///     policy will be triggered after the allotted amount of retries.
         /// </summary>
-        /// <param name="maxFailedAttempts">The number of retries.</param>
-        /// <returns></returns>
+        /// <param name="maxFailedAttempts"> The number of retries. </param>
+        /// <returns>
+        ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
+        /// </returns>
         public ErrorPolicyBase MaxFailedAttempts(int maxFailedAttempts)
         {
             MaxFailedAttemptsSetting = maxFailedAttempts;
@@ -112,83 +136,122 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         /// <summary>
-        ///     Specify a delegate to create a message to be published to the internal bus
-        ///     when this policy is applied. Useful to execute some custom code.
+        ///     Specify a delegate to create a message to be published to the internal bus when this policy is
+        ///     applied. Useful to execute some custom code.
         /// </summary>
-        /// <param name="factory">The factory returning the message to be published.</param>
-        /// <returns></returns>
+        /// <param name="factory">
+        ///     The factory returning the message to be published.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
+        /// </returns>
         public ErrorPolicyBase Publish(Func<IReadOnlyCollection<IRawInboundEnvelope>, object> factory)
         {
             MessageToPublishFactory = factory;
             return this;
         }
 
+        /// <inheritdoc />
         public virtual bool CanHandle(IReadOnlyCollection<IRawInboundEnvelope> envelopes, Exception exception) =>
-            envelopes.All(envelope => CanHandle(envelope, exception)); // TODO: Check this
+            envelopes.All(envelope => CanHandle(envelope, exception));
 
+        /// <summary>
+        ///     Returns a boolean value indicating whether the policy can handle the specified envelope and the
+        ///     specified exception.
+        /// </summary>
+        /// <param name="envelope"> The envelope that failed to be processed. </param>
+        /// <param name="exception">
+        ///     The exception that was thrown during the processing.
+        /// </param>
+        /// <returns>
+        ///     A value indicating whether the specified envelopes and exception can be handled.
+        /// </returns>
+        /// <remarks>
+        ///     In the default implementation, this method is called for each envelope passed to the overload
+        ///     accepting a collection of envelopes.
+        /// </remarks>
         public virtual bool CanHandle(IRawInboundEnvelope envelope, Exception exception)
         {
             if (envelope == null)
-            {
-                _logger.LogTrace($"The policy '{GetType().Name}' cannot be applied because the message is null.");
-                return false;
-            }
+                throw new ArgumentNullException(nameof(envelope));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             var failedAttempts = envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts);
+
             if (MaxFailedAttemptsSetting >= 0 && failedAttempts > MaxFailedAttemptsSetting)
             {
-                _messageLogger.LogTrace(_logger,
-                    $"The policy '{GetType().Name}' will be skipped because the current failed attempts " +
-                    $"({failedAttempts}) exceeds the configured maximum attempts " +
-                    $"({MaxFailedAttemptsSetting}).", envelope);
+                var traceString = $"The policy '{GetType().Name}' will be skipped because the current failed " +
+                                  $"attempts ({failedAttempts}) exceeds the configured maximum attempts " +
+                                  $"({MaxFailedAttemptsSetting}).";
+
+                _messageLogger.LogTrace(_logger, traceString, envelope);
 
                 return false;
             }
 
             if (_includedExceptions.Any() && _includedExceptions.All(e => !e.IsInstanceOfType(exception)))
             {
-                _messageLogger.LogTrace(_logger,
-                    $"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
-                    "is not in the list of handled exceptions.", envelope);
+                var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
+                                  $"{exception.GetType().Name} is not in the list of handled exceptions.";
+
+                _messageLogger.LogTrace(_logger, traceString, envelope);
 
                 return false;
             }
 
             if (_excludedExceptions.Any(e => e.IsInstanceOfType(exception)))
             {
-                _messageLogger.LogTrace(_logger,
-                    $"The policy '{GetType().Name}' will be skipped because the {exception.GetType().Name} " +
-                    "is in the list of excluded exceptions.", envelope);
+                var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
+                                  $"{exception.GetType().Name} is in the list of excluded exceptions.";
+
+                _messageLogger.LogTrace(_logger, traceString, envelope);
 
                 return false;
             }
 
             if (_applyRule != null && !_applyRule.Invoke(envelope, exception))
             {
-                _messageLogger.LogTrace(_logger,
-                    $"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
-                    "evaluated and returned false.", envelope);
+                var traceString = $"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
+                                  "evaluated and returned false.";
+
+                _messageLogger.LogTrace(_logger, traceString, envelope);
+
                 return false;
             }
 
             return true;
         }
 
-        public ErrorAction HandleError(IReadOnlyCollection<IRawInboundEnvelope> envelopes, Exception exception)
+        /// <inheritdoc />
+        public async Task<ErrorAction> HandleError(
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            Exception exception)
         {
-            var result = ApplyPolicy(envelopes, exception);
+            ErrorAction result = await ApplyPolicy(envelopes, exception);
 
             if (MessageToPublishFactory != null)
             {
                 using var scope = _serviceProvider.CreateScope();
-                scope.ServiceProvider.GetRequiredService<IPublisher>()
-                    .Publish(MessageToPublishFactory.Invoke(envelopes));
+                await scope.ServiceProvider.GetRequiredService<IPublisher>()
+                    .PublishAsync(MessageToPublishFactory.Invoke(envelopes));
             }
 
             return result;
         }
 
-        protected abstract ErrorAction ApplyPolicy(
+        /// <summary>
+        ///     Executes the current policy and returns the <see cref="ErrorAction"/> to be performed by the consumer.
+        /// </summary>
+        /// <param name="envelopes"> The envelopes that failed to be processed. </param>
+        /// <param name="exception">
+        ///     The exception that was thrown during the processing.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the action
+        ///     that the consumer should perform (e.g. skip the message or stop consuming).
+        /// </returns>
+        protected abstract Task<ErrorAction> ApplyPolicy(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception);
     }

@@ -12,11 +12,16 @@ namespace Silverback.Messaging.Encryption
     /// </summary>
     public sealed class SymmetricMessageEncryptor : SymmetricCryptoMessageTransformer, IMessageEncryptor
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SymmetricMessageEncryptor"/> class.
+        /// </summary>
+        /// <param name="settings">The encryption settings.</param>
         public SymmetricMessageEncryptor(SymmetricEncryptionSettings settings)
             : base(settings)
         {
         }
 
+        /// <inheritdoc />
         protected override async Task<byte[]> Transform(byte[] message, SymmetricAlgorithm algorithm)
         {
             var encryptedMessage = await base.Transform(message, algorithm);
@@ -31,6 +36,7 @@ namespace Silverback.Messaging.Encryption
             return fullMessage;
         }
 
+        /// <inheritdoc />
         protected override ICryptoTransform CreateCryptoTransform(SymmetricAlgorithm algorithm) =>
             algorithm.CreateEncryptor();
     }

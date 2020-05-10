@@ -12,11 +12,16 @@ namespace Silverback.Messaging.Encryption
     /// </summary>
     public sealed class SymmetricMessageDecryptor : SymmetricCryptoMessageTransformer, IMessageDecryptor
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="SymmetricMessageDecryptor" /> class.
+        /// </summary>
+        /// <param name="settings"> The encryption settings. </param>
         public SymmetricMessageDecryptor(SymmetricEncryptionSettings settings)
             : base(settings)
         {
         }
 
+        /// <inheritdoc />
         protected override Task<byte[]> Transform(byte[] message, SymmetricAlgorithm algorithm)
         {
             if (Settings.InitializationVector == null)
@@ -28,7 +33,10 @@ namespace Silverback.Messaging.Encryption
             return base.Transform(message, algorithm);
         }
 
-        protected override ICryptoTransform CreateCryptoTransform(SymmetricAlgorithm algorithm) =>
-            algorithm.CreateDecryptor();
+        /// <inheritdoc />
+        protected override ICryptoTransform CreateCryptoTransform(SymmetricAlgorithm algorithm)
+        {
+            return algorithm.CreateDecryptor();
+        }
     }
 }

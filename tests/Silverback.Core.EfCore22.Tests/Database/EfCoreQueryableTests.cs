@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore22.Database
 {
-    public class EfCoreQueryableTests : IDisposable
+    public sealed class EfCoreQueryableTests : IDisposable
     {
         private readonly TestDbContextInitializer _dbInitializer;
         private readonly TestDbContext _dbContext;
@@ -97,7 +97,6 @@ namespace Silverback.Tests.Core.EFCore22.Database
             result.Should().NotBeNull();
             result.Age.Should().Be(20);
         }
-
 
         [Fact]
         public async Task FirstOrDefaultAsync_NotMatchingPredicate_NullIsReturned()

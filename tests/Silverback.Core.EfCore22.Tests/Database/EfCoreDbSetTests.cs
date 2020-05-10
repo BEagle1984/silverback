@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -14,8 +13,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore22.Database
 {
-    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-    public class EfCoreDbSetTests : IDisposable
+    public sealed class EfCoreDbSetTests : IDisposable
     {
         private readonly TestDbContextInitializer _dbInitializer;
         private readonly TestDbContext _dbContext;

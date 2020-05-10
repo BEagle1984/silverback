@@ -10,12 +10,12 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    public class TestRequestReplier : ISubscriber
+    public class TestCommandReplier : ISubscriber
     {
         public int ReceivedMessagesCount { get; private set; }
 
         [Subscribe]
-        public string OnRequestReceived(IRequest<string> message)
+        public string OnRequestReceived(ICommand<string> message)
         {
             ReceivedMessagesCount++;
 
@@ -23,7 +23,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         }
 
         [Subscribe]
-        public async Task<string> OnRequestReceived2(IRequest<string> message)
+        public async Task<string> OnRequestReceived2(ICommand<string> message)
         {
             await Task.Delay(1);
             ReceivedMessagesCount++;
@@ -33,14 +33,14 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
 
         // This method does nothing but it's here to ensure it doesn't break the publisher
         [Subscribe]
-        public void OnRequestReceived3(IRequest<string> message)
+        public void OnRequestReceived3(ICommand<string> message)
         {
             ReceivedMessagesCount++;
         }
 
         // This method does nothing but it's here to ensure it doesn't break the publisher
         [Subscribe]
-        public async Task OnRequestReceived4(IRequest<string> message)
+        public async Task OnRequestReceived4(ICommand<string> message)
         {
             await Task.Delay(1);
 
