@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Diagnostics
 {
@@ -26,14 +27,9 @@ namespace Silverback.Messaging.Diagnostics
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
-            if (serviceProvider == null)
-                throw new ArgumentNullException(nameof(serviceProvider));
-
-            if (next == null)
-                throw new ArgumentNullException(nameof(next));
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
+            Check.NotNull(next, nameof(next));
 
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
             try

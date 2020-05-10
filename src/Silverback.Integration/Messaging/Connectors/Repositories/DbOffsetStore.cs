@@ -9,6 +9,7 @@ using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Broker;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -50,11 +51,8 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <inheritdoc />
         public async Task Store(IComparableOffset offset, IConsumerEndpoint endpoint)
         {
-            if (offset == null)
-                throw new ArgumentNullException(nameof(offset));
-
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
+            Check.NotNull(offset, nameof(offset));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             await _semaphore.WaitAsync();
 
@@ -101,11 +99,8 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <inheritdoc />
         public async Task<IComparableOffset?> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint)
         {
-            if (offsetKey == null)
-                throw new ArgumentNullException(nameof(offsetKey));
-
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
+            Check.NotNull(offsetKey, nameof(offsetKey));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             var storedOffsetEntity = await DbSet.FindAsync(GetKey(offsetKey, endpoint)) ??
                                      await DbSet.FindAsync(offsetKey);
@@ -121,7 +116,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             _semaphore.Dispose();
         }
 
-        private string GetKey(string offsetKey, IConsumerEndpoint endpoint) =>
+        private static string GetKey(string offsetKey, IConsumerEndpoint endpoint) =>
             $"{endpoint.GetUniqueConsumerGroupName()}|{offsetKey}";
     }
 }

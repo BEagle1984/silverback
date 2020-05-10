@@ -4,6 +4,7 @@
 using System;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Subscribers;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -36,8 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type baseType,
             Type subscriberType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientSubscriber(baseType, subscriberType);
             return silverbackBuilder;
@@ -61,8 +61,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type subscriberType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientSubscriber(subscriberType);
             return silverbackBuilder;
@@ -87,8 +86,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientSubscriber<TBase, TSubscriber>();
             return silverbackBuilder;
@@ -109,8 +107,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddTransientSubscriber<TSubscriber>(this ISilverbackBuilder silverbackBuilder)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientSubscriber<TSubscriber>();
             return silverbackBuilder;
@@ -141,8 +138,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientSubscriber(baseType, subscriberType, implementationFactory);
             return silverbackBuilder;
@@ -169,8 +165,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             Func<IServiceProvider, ISubscriber> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientSubscriber(subscriberType, implementationFactory);
             return silverbackBuilder;
@@ -198,8 +193,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceProvider, TSubscriber> implementationFactory)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientSubscriber<TBase, TSubscriber>(implementationFactory);
             return silverbackBuilder;
@@ -224,8 +218,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceProvider, TSubscriber> implementationFactory)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientSubscriber(implementationFactory);
             return silverbackBuilder;
@@ -253,8 +246,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type baseType,
             Type subscriberType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedSubscriber(baseType, subscriberType);
             return silverbackBuilder;
@@ -278,8 +270,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type subscriberType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedSubscriber(subscriberType);
             return silverbackBuilder;
@@ -304,8 +295,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedSubscriber<TBase, TSubscriber>();
             return silverbackBuilder;
@@ -326,8 +316,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddScopedSubscriber<TSubscriber>(this ISilverbackBuilder silverbackBuilder)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedSubscriber<TSubscriber>();
             return silverbackBuilder;
@@ -358,8 +347,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedSubscriber(
                 baseType,
@@ -389,8 +377,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             Func<IServiceProvider, ISubscriber> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedSubscriber(subscriberType, implementationFactory);
             return silverbackBuilder;
@@ -418,8 +405,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceProvider, TSubscriber> implementationFactory)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedSubscriber<TBase, TSubscriber>(implementationFactory);
             return silverbackBuilder;
@@ -444,8 +430,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceProvider, TSubscriber> implementationFactory)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedSubscriber(implementationFactory);
             return silverbackBuilder;
@@ -473,8 +458,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type baseType,
             Type subscriberType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber(baseType, subscriberType);
             return silverbackBuilder;
@@ -498,8 +482,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type subscriberType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber(subscriberType);
             return silverbackBuilder;
@@ -524,8 +507,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber<TBase, TSubscriber>();
             return silverbackBuilder;
@@ -546,8 +528,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddSingletonSubscriber<TSubscriber>(this ISilverbackBuilder silverbackBuilder)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber<TSubscriber>();
             return silverbackBuilder;
@@ -578,8 +559,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber(baseType, subscriberType, implementationFactory);
             return silverbackBuilder;
@@ -606,8 +586,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             Func<IServiceProvider, ISubscriber> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber(subscriberType, implementationFactory);
             return silverbackBuilder;
@@ -635,8 +614,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceProvider, TSubscriber> implementationFactory)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber<TBase, TSubscriber>(implementationFactory);
             return silverbackBuilder;
@@ -661,8 +639,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceProvider, TSubscriber> implementationFactory)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber(implementationFactory);
             return silverbackBuilder;
@@ -693,8 +670,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             ISubscriber implementationInstance)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber(baseType, subscriberType, implementationInstance);
             return silverbackBuilder;
@@ -721,8 +697,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type subscriberType,
             ISubscriber implementationInstance)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber(subscriberType, implementationInstance);
             return silverbackBuilder;
@@ -752,8 +727,7 @@ namespace Microsoft.Extensions.DependencyInjection
             TSubscriber implementationInstance)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber<TBase, TSubscriber>(implementationInstance);
             return silverbackBuilder;
@@ -780,8 +754,7 @@ namespace Microsoft.Extensions.DependencyInjection
             TSubscriber implementationInstance)
             where TSubscriber : class, ISubscriber
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonSubscriber(implementationInstance);
             return silverbackBuilder;

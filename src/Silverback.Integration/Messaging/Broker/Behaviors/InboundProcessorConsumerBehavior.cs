@@ -9,6 +9,7 @@ using Silverback.Messaging.Batch;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Behaviors
 {
@@ -28,7 +29,7 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// </param>
         public InboundProcessorConsumerBehavior(IErrorPolicyHelper errorPolicyHelper)
         {
-            _errorPolicyHelper = errorPolicyHelper ?? throw new ArgumentNullException(nameof(errorPolicyHelper));
+            _errorPolicyHelper = Check.NotNull(errorPolicyHelper, nameof(errorPolicyHelper));
         }
 
         /// <inheritdoc />

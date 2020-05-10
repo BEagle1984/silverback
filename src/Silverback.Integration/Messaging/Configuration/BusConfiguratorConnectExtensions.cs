@@ -43,8 +43,7 @@ namespace Silverback.Messaging.Configuration
             this IBusConfigurator busConfigurator,
             Action<IEndpointsConfigurationBuilder>? endpointsConfigurationAction)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
 
             var endpointsConfigurationBuilder = new EndpointsConfigurationBuilder(busConfigurator.ServiceProvider);
 

@@ -108,31 +108,26 @@ namespace Silverback.Messaging.Messages
             Type targetType,
             bool throwIfNotFound = false)
         {
-            if (headers == null)
-                throw new ArgumentNullException(nameof(headers));
+            Check.NotNull(headers, nameof(headers));
+            Check.NotEmpty(key, nameof(key));
+            Check.NotNull(targetType, nameof(targetType));
 
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentException("Value cannot be null or empty.", nameof(key));
+            var header = headers.FirstOrDefault(h => h.Key == key);
 
-            if (targetType == null)
-                throw new ArgumentNullException(nameof(targetType));
-
-            var value = headers.FirstOrDefault(h => h.Key == key)?.Value;
-
-            if (value == null)
+            if (header == null)
             {
                 if (throwIfNotFound)
-                    throw new InvalidOperationException($"No '{key}' header was found.");
+                    throw new ArgumentOutOfRangeException(nameof(key), $"No '{key}' header was found.");
 
                 return null;
             }
 
             if (targetType == typeof(string))
-                return value;
+                return header.Value;
 
             try
             {
-                return Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+                return Convert.ChangeType(header.Value, targetType, CultureInfo.InvariantCulture);
             }
             catch (Exception ex)
             {

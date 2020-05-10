@@ -37,8 +37,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
             IReadOnlyCollection<object> messages,
             MessagesHandler next)
         {
-            if (next == null)
-                throw new ArgumentNullException(nameof(next));
+            Check.NotNull(next, nameof(next));
 
             await messages.OfType<IOutboundEnvelopeInternal>()
                 .ForEachAsync(

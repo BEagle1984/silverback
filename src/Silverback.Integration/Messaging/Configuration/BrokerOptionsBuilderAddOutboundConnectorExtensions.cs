@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
@@ -23,8 +22,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The type of the <see cref="IOutboundConnector" /> implementation to add.
         /// </typeparam>
         /// <param name="brokerOptionsBuilder">
-        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" />
-        ///     to add the services to.
+        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
         /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
@@ -33,8 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder)
             where TConnector : class, IOutboundConnector
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             if (!brokerOptionsBuilder.SilverbackBuilder.Services.ContainsAny<IOutboundConnector>())
             {
@@ -54,16 +52,15 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds a connector to publish the messages to the configured message broker.
         /// </summary>
         /// <param name="brokerOptionsBuilder">
-        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" />
-        ///     to add the services to.
+        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
         /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IBrokerOptionsBuilder AddOutboundConnector(this IBrokerOptionsBuilder brokerOptionsBuilder)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             return brokerOptionsBuilder.AddOutboundConnector<OutboundConnector>();
         }
@@ -73,8 +70,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     stores the outbound messages into an intermediate queue.
         /// </summary>
         /// <param name="brokerOptionsBuilder">
-        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" />
-        ///     to add the services to.
+        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
         /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
@@ -82,8 +79,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IBrokerOptionsBuilder AddDeferredOutboundConnector(
             this IBrokerOptionsBuilder brokerOptionsBuilder)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.AddOutboundConnector<DeferredOutboundConnector>();
             brokerOptionsBuilder.SilverbackBuilder.AddScopedSubscriber<DeferredOutboundConnectorTransactionManager>();
@@ -99,8 +95,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The type of the <see cref="IOutboundQueueWriter" /> to be used.
         /// </typeparam>
         /// <param name="brokerOptionsBuilder">
-        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" />
-        ///     to add the services to.
+        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
         /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
@@ -109,8 +105,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder)
             where TQueueWriter : class, IOutboundQueueWriter
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.AddDeferredOutboundConnector();
             brokerOptionsBuilder.SilverbackBuilder.Services.AddScoped<IOutboundQueueWriter, TQueueWriter>();
@@ -120,20 +115,19 @@ namespace Microsoft.Extensions.DependencyInjection
 
         /// <summary>
         ///     Adds a connector to publish the messages to the configured message broker. This implementation
-        ///     stores the outbound messages into an intermediate queue in the database and it is therefore
-        ///     fully transactional.
+        ///     stores the outbound messages into an intermediate queue in the database and it is therefore fully
+        ///     transactional.
         /// </summary>
         /// <param name="brokerOptionsBuilder">
-        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" />
-        ///     to add the services to.
+        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
         /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IBrokerOptionsBuilder AddDbOutboundConnector(this IBrokerOptionsBuilder brokerOptionsBuilder)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.AddDeferredOutboundConnector<DbOutboundQueueWriter>();
 

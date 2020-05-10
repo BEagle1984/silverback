@@ -13,14 +13,19 @@ namespace Silverback.Messaging.Headers
     /// </summary>
     public class HeadersWriterProducerBehavior : IProducerBehavior, ISorted
     {
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.HeadersWriter;
+
+        /// <inheritdoc />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(next, nameof(next));
+
             HeaderAttributeHelper.GetHeaders(context.Envelope.Message)
                 .ForEach(header => context.Envelope.Headers.AddOrReplace(header.Key, header.Value));
 
             await next(context);
         }
-
-        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.HeadersWriter;
     }
 }

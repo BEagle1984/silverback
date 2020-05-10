@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -9,7 +10,7 @@ namespace Silverback.Messaging.Configuration
     {
         public EndpointsConfigurationBuilder(IServiceProvider serviceProvider)
         {
-            ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         }
 
         public IServiceProvider ServiceProvider { get; }

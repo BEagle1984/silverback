@@ -39,8 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IBrokerOptionsBuilder AddBroker<TBroker>(this IBrokerOptionsBuilder brokerOptionsBuilder)
             where TBroker : class, IBroker
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             if (!brokerOptionsBuilder.SilverbackBuilder.Services.ContainsAny<IBroker>())
             {

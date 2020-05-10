@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -26,8 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static ISilverbackBuilder UseModel(this ISilverbackBuilder builder)
         {
-            if (builder == null)
-                throw new ArgumentNullException(nameof(builder));
+            Check.NotNull(builder, nameof(builder));
 
             builder.Services
                 .AddScoped<ICommandPublisher, CommandPublisher>()

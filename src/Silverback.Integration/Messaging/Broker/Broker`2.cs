@@ -64,8 +64,8 @@ namespace Silverback.Messaging.Broker
 
             _behaviors = behaviors?.ToList() ?? new List<IBrokerBehavior>();
 
-            LoggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            LoggerFactory = Check.NotNull(loggerFactory, nameof(loggerFactory));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _logger = loggerFactory.CreateLogger(GetType());
 
             ProducerEndpointType = typeof(TProducerEndpoint);
@@ -111,8 +111,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc />
         public virtual IProducer GetProducer(IProducerEndpoint endpoint)
         {
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             if (_producers == null)
                 throw new ObjectDisposedException(GetType().FullName);
@@ -135,8 +134,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc />
         public virtual IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback)
         {
-            if (callback == null)
-                throw new ArgumentNullException(nameof(callback));
+            Check.NotNull(callback, nameof(callback));
 
             return GetConsumer(
                 endpoint,
@@ -150,8 +148,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc />
         public virtual IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback)
         {
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             if (_consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);

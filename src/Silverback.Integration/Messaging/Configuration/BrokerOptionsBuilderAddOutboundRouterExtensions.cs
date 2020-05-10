@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Connectors;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -30,8 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder,
             Type routerType)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddSingletonOutboundRouter(routerType);
 
@@ -54,8 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder)
             where TRouter : class, IOutboundRouter
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddSingletonOutboundRouter<TRouter>();
 
@@ -79,8 +78,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder,
             Func<IServiceProvider, IOutboundRouter> implementationFactory)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddSingletonOutboundRouter(implementationFactory);
 
@@ -104,8 +102,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder,
             IOutboundRouter implementationInstance)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddSingletonOutboundRouter(implementationInstance);
 

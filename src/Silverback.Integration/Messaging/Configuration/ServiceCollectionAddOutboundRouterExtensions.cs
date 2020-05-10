@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Connectors;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -28,8 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static IServiceCollection AddSingletonOutboundRouter(this IServiceCollection services, Type routerType)
         {
-            if (routerType == null)
-                throw new ArgumentNullException(nameof(routerType));
+            Check.NotNull(routerType, nameof(routerType));
 
             services.AddSingleton(routerType);
 
@@ -69,8 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             Func<IServiceProvider, IOutboundRouter> implementationFactory)
         {
-            if (implementationFactory == null)
-                throw new ArgumentNullException(nameof(implementationFactory));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
             services.AddSingleton(implementationFactory);
 
@@ -94,8 +93,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             IOutboundRouter implementationInstance)
         {
-            if (implementationInstance == null)
-                throw new ArgumentNullException(nameof(implementationInstance));
+            Check.NotNull(implementationInstance, nameof(implementationInstance));
 
             services.AddSingleton(implementationInstance);
 

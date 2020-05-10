@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.ErrorHandling
 {
@@ -19,7 +20,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         private readonly MessageLogger _messageLogger;
 
-        private readonly IEnumerable<ErrorPolicyBase> _policies;
+        private readonly IReadOnlyCollection<ErrorPolicyBase> _policies;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorPolicyChain" /> class.
@@ -54,16 +55,10 @@ namespace Silverback.Messaging.ErrorHandling
             _logger = logger;
             _messageLogger = messageLogger;
 
-            _policies = policies ?? throw new ArgumentNullException(nameof(policies));
+            _policies = Check.NotNull(policies, nameof(policies)).ToList();
+            Check.HasNoNulls(_policies, nameof(policies));
 
             StackMaxFailedAttempts(policies);
-
-            if (_policies.Any(p => p == null))
-            {
-                throw new ArgumentNullException(
-                    nameof(policies),
-                    "One or more policies in the chain have a null value.");
-            }
         }
 
         /// <inheritdoc />

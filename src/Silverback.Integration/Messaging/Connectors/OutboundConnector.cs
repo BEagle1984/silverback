@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -25,8 +25,7 @@ namespace Silverback.Messaging.Connectors
         /// <inheritdoc />
         public Task RelayMessage(IOutboundEnvelope envelope)
         {
-            if (envelope == null)
-                throw new ArgumentNullException(nameof(envelope));
+            Check.NotNull(envelope, nameof(envelope));
 
             return _brokerCollection.GetProducer(envelope.Endpoint).ProduceAsync(envelope);
         }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Subscribers;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Publishing
 {
@@ -16,8 +17,8 @@ namespace Silverback.Messaging.Publishing
 
         public SubscribedMethodsLoader(BusOptions options, IServiceProvider serviceProvider)
         {
-            _options = options ?? throw new ArgumentNullException(nameof(options));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _options = Check.NotNull(options, nameof(options));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         }
 
         public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods() =>

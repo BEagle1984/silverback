@@ -44,14 +44,9 @@ namespace Silverback.Messaging.ErrorHandling
             MessageLogger messageLogger)
             : base(serviceProvider, logger, messageLogger)
         {
-            if (brokerCollection == null)
-                throw new ArgumentNullException(nameof(brokerCollection));
-
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
-
-            if (serviceProvider == null)
-                throw new ArgumentNullException(nameof(serviceProvider));
+            Check.NotNull(brokerCollection, nameof(brokerCollection));
+            Check.NotNull(endpoint, nameof(endpoint));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
 
             _producer = brokerCollection.GetProducer(endpoint);
             _endpoint = endpoint;
@@ -82,8 +77,7 @@ namespace Silverback.Messaging.ErrorHandling
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
-            if (envelopes == null)
-                throw new ArgumentNullException(nameof(envelopes));
+            Check.NotNull(envelopes, nameof(envelopes));
 
             _messageLogger.LogInformation(
                 _logger,

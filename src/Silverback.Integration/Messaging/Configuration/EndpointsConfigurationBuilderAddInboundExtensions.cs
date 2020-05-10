@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.ErrorHandling;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -35,8 +36,7 @@ namespace Silverback.Messaging.Configuration
             Func<IErrorPolicyBuilder, IErrorPolicy>? errorPolicyFactory = null,
             InboundConnectorSettings? settings = null)
         {
-            if (endpointsConfigurationBuilder == null)
-                throw new ArgumentNullException(nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
 
             endpointsConfigurationBuilder.AddInbound(endpoint, null, errorPolicyFactory, settings);
 
@@ -68,8 +68,7 @@ namespace Silverback.Messaging.Configuration
             InboundConnectorSettings? settings = null)
             where TConnector : IInboundConnector
         {
-            if (endpointsConfigurationBuilder == null)
-                throw new ArgumentNullException(nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
 
             endpointsConfigurationBuilder.AddInbound(endpoint, typeof(TConnector), errorPolicyFactory, settings);
 
@@ -102,8 +101,7 @@ namespace Silverback.Messaging.Configuration
             Func<IErrorPolicyBuilder, IErrorPolicy>? errorPolicyFactory = null,
             InboundConnectorSettings? settings = null)
         {
-            if (endpointsConfigurationBuilder == null)
-                throw new ArgumentNullException(nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
 
             var inboundConnectors = endpointsConfigurationBuilder.ServiceProvider
                 .GetServices<IInboundConnector>().ToList();

@@ -4,6 +4,7 @@
 using System;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -29,8 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static IServiceCollection AddTransientBehavior(this IServiceCollection services, Type behaviorType)
         {
-            if (behaviorType == null)
-                throw new ArgumentNullException(nameof(behaviorType));
+            Check.NotNull(behaviorType, nameof(behaviorType));
 
             services.AddTransient(typeof(IBehavior), behaviorType);
 
@@ -70,8 +70,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
-            if (implementationFactory == null)
-                throw new ArgumentNullException(nameof(implementationFactory));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
             services.AddTransient(typeof(IBehavior), implementationFactory);
 
@@ -94,8 +93,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static IServiceCollection AddScopedBehavior(this IServiceCollection services, Type behaviorType)
         {
-            if (behaviorType == null)
-                throw new ArgumentNullException(nameof(behaviorType));
+            Check.NotNull(behaviorType, nameof(behaviorType));
 
             services.AddScoped(typeof(IBehavior), behaviorType);
 
@@ -135,8 +133,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
-            if (implementationFactory == null)
-                throw new ArgumentNullException(nameof(implementationFactory));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
             services.AddScoped(typeof(IBehavior), implementationFactory);
 
@@ -159,8 +156,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static IServiceCollection AddSingletonBehavior(this IServiceCollection services, Type behaviorType)
         {
-            if (behaviorType == null)
-                throw new ArgumentNullException(nameof(behaviorType));
+            Check.NotNull(behaviorType, nameof(behaviorType));
 
             services.AddSingleton(typeof(IBehavior), behaviorType);
 
@@ -200,8 +196,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
-            if (implementationFactory == null)
-                throw new ArgumentNullException(nameof(implementationFactory));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
             services.AddSingleton(typeof(IBehavior), implementationFactory);
 
@@ -225,8 +220,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             IBehavior implementationInstance)
         {
-            if (implementationInstance == null)
-                throw new ArgumentNullException(nameof(implementationInstance));
+            Check.NotNull(implementationInstance, nameof(implementationInstance));
 
             services.AddSingleton(typeof(IBehavior), implementationInstance);
 

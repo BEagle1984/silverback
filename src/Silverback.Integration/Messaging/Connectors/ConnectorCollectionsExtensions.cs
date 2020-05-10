@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -25,11 +26,7 @@ namespace Silverback.Messaging.Connectors
             Type? connectorType)
             where TConnector : class
         {
-            if (connectors == null)
-                throw new ArgumentNullException(nameof(connectors));
-
-            if (connectors.Count == 0)
-                throw new ArgumentException("The collection is empty.", nameof(connectors));
+            Check.NotEmpty(connectors, nameof(connectors));
 
             if (connectorType == null)
             {

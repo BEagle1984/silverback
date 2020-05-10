@@ -6,6 +6,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -29,8 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static ISilverbackBuilder AsObservable(this ISilverbackBuilder silverbackBuilder)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services
                 .AddSingleton<IArgumentResolver, ObservableMessageArgumentResolver>()

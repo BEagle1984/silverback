@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Silverback.Util;
 
 namespace Silverback.Background
 {
@@ -52,7 +53,7 @@ namespace Silverback.Background
         ///     The <see cref="ILogger" />.
         /// </param>
         protected DistributedBackgroundService(
-            DistributedLockSettings distributedLockSettings,
+            DistributedLockSettings? distributedLockSettings,
             IDistributedLockManager distributedLockManager,
             ILogger<DistributedBackgroundService> logger)
         {
@@ -60,9 +61,8 @@ namespace Silverback.Background
 
             _distributedLockSettings.EnsureResourceNameIsSet(GetType().FullName);
 
-            _distributedLockManager =
-                distributedLockManager ?? throw new ArgumentNullException(nameof(distributedLockManager));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _distributedLockManager = Check.NotNull(distributedLockManager, nameof(distributedLockManager));
+            _logger = Check.NotNull(logger, nameof(logger));
         }
 
         /// <summary>

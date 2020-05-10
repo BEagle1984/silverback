@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Publishing
         ///     The type of the result that is expected to be returned by the subscribers.
         /// </typeparam>
         /// <returns>
-        ///     A collection of <see cref="TResult" />, since multiple subscribers could handle the message and
+        ///     A collection of <typeparamref name="TResult" />, since multiple subscribers could handle the message and
         ///     return a value.
         /// </returns>
         IReadOnlyCollection<TResult> Publish<TResult>(object message);
@@ -64,7 +64,7 @@ namespace Silverback.Messaging.Publishing
         /// </typeparam>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a
-        ///     collection of <see cref="TResult" />, since multiple subscribers could handle the message and
+        ///     collection of <typeparamref name="TResult" />, since multiple subscribers could handle the message and
         ///     return a value.
         /// </returns>
         Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message);
@@ -101,7 +101,7 @@ namespace Silverback.Messaging.Publishing
         ///     The type of the result that is expected to be returned by the subscribers.
         /// </typeparam>
         /// <returns>
-        ///     A collection of <see cref="TResult" />.
+        ///     A collection of <typeparamref name="TResult" />.
         /// </returns>
         IReadOnlyCollection<TResult> Publish<TResult>(IEnumerable<object> messages);
 
@@ -117,7 +117,7 @@ namespace Silverback.Messaging.Publishing
         /// </typeparam>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a
-        ///     collection of <see cref="TResult" />.
+        ///     collection of <typeparamref name="TResult" />.
         /// </returns>
         Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(IEnumerable<object> messages);
     }

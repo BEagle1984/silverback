@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
@@ -11,15 +10,15 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     /// <summary>
     ///     <para>
-    ///     Used by the <see cref="OffsetStoredInboundConnector" /> to keep track of the last processed offsets
-    ///     and guarantee that each message is processed only once.
+    ///         Used by the <see cref="OffsetStoredInboundConnector" /> to keep track of the last processed
+    ///         offsets and guarantee that each message is processed only once.
     ///     </para>
     ///     <para> The log is simply persisted in memory. </para>
     /// </summary>
     public class InMemoryOffsetStore : TransactionalDictionary<string, IComparableOffset>, IOffsetStore
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InMemoryOffsetStore"/> class.
+        ///     Initializes a new instance of the <see cref="InMemoryOffsetStore" /> class.
         /// </summary>
         /// <param name="sharedItems">
         ///     The offsets shared between the instances of this repository.
@@ -32,11 +31,8 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <inheritdoc />
         public Task Store(IComparableOffset offset, IConsumerEndpoint endpoint)
         {
-            if (offset == null)
-                throw new ArgumentNullException(nameof(offset));
-
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
+            Check.NotNull(offset, nameof(offset));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             AddOrReplace(GetKey(offset.Key, endpoint), offset);
 
@@ -51,7 +47,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                     .Select(pair => pair.Value)
                     .Max());
 
-        private string GetKey(string offsetKey, IConsumerEndpoint endpoint) =>
+        private static string GetKey(string offsetKey, IConsumerEndpoint endpoint) =>
             $"{endpoint.GetUniqueConsumerGroupName()}|{offsetKey}";
     }
 }

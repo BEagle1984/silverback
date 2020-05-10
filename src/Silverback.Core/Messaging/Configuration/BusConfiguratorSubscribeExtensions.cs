@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.Subscriptions;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -34,10 +35,8 @@ namespace Silverback.Messaging.Configuration
             Delegate handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -65,10 +64,8 @@ namespace Silverback.Messaging.Configuration
             Action<TMessage> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -96,10 +93,8 @@ namespace Silverback.Messaging.Configuration
             Func<TMessage, Task> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -127,10 +122,8 @@ namespace Silverback.Messaging.Configuration
             Func<TMessage, object> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -158,10 +151,8 @@ namespace Silverback.Messaging.Configuration
             Func<TMessage, Task<object>> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -189,10 +180,8 @@ namespace Silverback.Messaging.Configuration
             Action<IEnumerable<TMessage>> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -220,10 +209,8 @@ namespace Silverback.Messaging.Configuration
             Func<IReadOnlyCollection<TMessage>, Task> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -251,10 +238,8 @@ namespace Silverback.Messaging.Configuration
             Func<IReadOnlyCollection<TMessage>, object> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -282,10 +267,8 @@ namespace Silverback.Messaging.Configuration
             Func<IReadOnlyCollection<TMessage>, Task<object>> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -313,10 +296,8 @@ namespace Silverback.Messaging.Configuration
             Action<TMessage, IServiceProvider> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -344,10 +325,8 @@ namespace Silverback.Messaging.Configuration
             Func<TMessage, IServiceProvider, object> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -375,10 +354,8 @@ namespace Silverback.Messaging.Configuration
             Action<IEnumerable<TMessage>, IServiceProvider> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -406,10 +383,8 @@ namespace Silverback.Messaging.Configuration
             Func<IReadOnlyCollection<TMessage>, IServiceProvider, object> handler,
             SubscriptionOptions? options = null)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
 
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
@@ -463,10 +438,8 @@ namespace Silverback.Messaging.Configuration
             Type subscriberType,
             bool autoSubscribeAllPublicMethods = true)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
-            if (subscriberType == null)
-                throw new ArgumentNullException(nameof(subscriberType));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(subscriberType, nameof(subscriberType));
 
             var previousSubscription = busConfigurator.BusOptions.Subscriptions.OfType<TypeSubscription>()
                 .FirstOrDefault(sub => sub.SubscribedType == subscriberType);

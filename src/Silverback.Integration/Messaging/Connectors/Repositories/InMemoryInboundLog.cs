@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,8 +34,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task Add(IRawInboundEnvelope envelope)
         {
-            if (envelope == null)
-                throw new ArgumentNullException(nameof(envelope));
+            Check.NotNull(envelope, nameof(envelope));
 
             string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!;
             string consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();
@@ -54,8 +52,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<bool> Exists(IRawInboundEnvelope envelope)
         {
-            if (envelope == null)
-                throw new ArgumentNullException(nameof(envelope));
+            Check.NotNull(envelope, nameof(envelope));
 
             string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!;
             string consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();

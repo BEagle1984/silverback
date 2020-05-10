@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Diagnostics
 {
@@ -15,11 +16,8 @@ namespace Silverback.Messaging.Diagnostics
             this Activity activity,
             IEnumerable<KeyValuePair<string, string>> baggageItems)
         {
-            if (activity == null)
-                throw new ArgumentNullException(nameof(activity));
-
-            if (baggageItems == null)
-                throw new ArgumentNullException(nameof(baggageItems));
+            Check.NotNull(activity, nameof(activity));
+            Check.NotNull(baggageItems, nameof(baggageItems));
 
             foreach ((string key, string value) in baggageItems)
             {

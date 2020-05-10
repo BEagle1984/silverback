@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
@@ -26,10 +27,9 @@ namespace Silverback.Messaging.Messages
         ///     Gets or sets the value of the header with the specified key.
         /// </summary>
         /// <param name="key"> The header key. </param>
-        public string this[string key]
+        public string? this[string key]
         {
-            get => GetValue(key) ??
-                   throw new ArgumentOutOfRangeException(nameof(key));
+            get => GetValue(Check.NotNull(key, nameof(key)), true);
             set => AddOrReplace(key, value);
         }
 
@@ -38,11 +38,8 @@ namespace Silverback.Messaging.Messages
         /// <param name="value"> The header value. </param>
         public void Add(string key, object value)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
+            Check.NotNull(key, nameof(key));
+            Check.NotNull(value, nameof(value));
 
             Add(key, value.ToString());
         }
@@ -50,13 +47,9 @@ namespace Silverback.Messaging.Messages
         /// <summary> Adds a new header. </summary>
         /// <param name="key"> The header key. </param>
         /// <param name="value"> The header value. </param>
-        public void Add(string key, string value)
+        public void Add(string key, string? value)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
+            Check.NotNull(key, nameof(key));
 
             Add(new MessageHeader { Key = key, Value = value });
         }
@@ -71,15 +64,11 @@ namespace Silverback.Messaging.Messages
         /// </summary>
         /// <param name="key"> The header key. </param>
         /// <param name="newValue"> The new header value. </param>
-        public void AddOrReplace(string key, object newValue)
+        public void AddOrReplace(string key, object? newValue)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            Check.NotNull(key, nameof(key));
 
-            if (newValue == null)
-                throw new ArgumentNullException(nameof(newValue));
-
-            AddOrReplace(key, newValue.ToString());
+            AddOrReplace(key, newValue?.ToString());
         }
 
         /// <summary>
@@ -87,13 +76,9 @@ namespace Silverback.Messaging.Messages
         /// </summary>
         /// <param name="key"> The header key. </param>
         /// <param name="newValue"> The new header value. </param>
-        public void AddOrReplace(string key, string newValue)
+        public void AddOrReplace(string key, string? newValue)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-
-            if (newValue == null)
-                throw new ArgumentNullException(nameof(newValue));
+            Check.NotNull(key, nameof(key));
 
             Remove(key);
             Add(key, newValue);

@@ -3,6 +3,7 @@
 
 using System;
 using System.Globalization;
+using Silverback.Util;
 
 namespace Silverback.Background
 {
@@ -53,7 +54,7 @@ namespace Silverback.Background
             if (heartbeatInterval >= heartbeatTimeout)
                 throw new ArgumentException("The heartbeat interval must be shorter than the timeout.");
 
-            ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
+            ResourceName = Check.NotNull(resourceName, nameof(resourceName));
             UniqueId = uniqueId ?? Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture);
             AcquireTimeout = acquireTimeout;
             AcquireRetryInterval = acquireRetryInterval ?? DefaultAcquireRetryInterval;

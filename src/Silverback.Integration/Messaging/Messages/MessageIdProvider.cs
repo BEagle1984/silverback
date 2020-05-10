@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Silverback.Util;
 
 #pragma warning disable 618 //Obsolete
 
@@ -22,8 +23,7 @@ namespace Silverback.Messaging.Messages
 
         public void EnsureMessageIdIsInitialized(object? message, MessageHeaderCollection headers)
         {
-            if (headers == null)
-                throw new ArgumentNullException(nameof(headers));
+            Check.NotNull(headers, nameof(headers));
 
             string? messageKey = null;
 

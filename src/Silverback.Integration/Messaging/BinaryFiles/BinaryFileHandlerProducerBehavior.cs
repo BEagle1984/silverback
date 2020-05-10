@@ -1,11 +1,11 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Messaging.BinaryFiles
 {
@@ -23,11 +23,8 @@ namespace Silverback.Messaging.BinaryFiles
         /// <inheritdoc />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
-            if (next == null)
-                throw new ArgumentNullException(nameof(next));
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(next, nameof(next));
 
             if (context.Envelope.Message is IBinaryFileMessage &&
                 !(context.Envelope.Endpoint.Serializer is BinaryFileMessageSerializer))

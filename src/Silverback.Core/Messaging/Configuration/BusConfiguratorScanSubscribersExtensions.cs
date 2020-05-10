@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -13,8 +13,7 @@ namespace Silverback.Messaging.Configuration
     public static class BusConfiguratorScanSubscribersExtensions
     {
         /// <summary>
-        ///     Resolves all the subscribers and build the types cache to speed-up the first
-        ///     publish.
+        ///     Resolves all the subscribers and build the types cache to speed-up the first publish.
         /// </summary>
         /// <param name="busConfigurator">
         ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
@@ -24,11 +23,11 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static IBusConfigurator ScanSubscribers(this IBusConfigurator busConfigurator)
         {
-            if (busConfigurator == null)
-                throw new ArgumentNullException(nameof(busConfigurator));
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
 
             using var scope = busConfigurator.ServiceProvider.CreateScope();
             scope.ServiceProvider.GetRequiredService<SubscribedMethodsLoader>().GetSubscribedMethods();
+
             return busConfigurator;
         }
     }
