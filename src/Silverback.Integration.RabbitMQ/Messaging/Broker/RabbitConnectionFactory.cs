@@ -94,8 +94,10 @@ namespace Silverback.Messaging.Broker
 
         public IConnection GetConnection(RabbitConnectionConfig connectionConfig)
         {
-            if (connectionConfig == null) throw new ArgumentNullException(nameof(connectionConfig));
-            if (_connections == null) throw new ObjectDisposedException(null);
+            Check.NotNull(connectionConfig, nameof(connectionConfig));
+
+            if (_connections == null)
+                throw new ObjectDisposedException(null);
 
             return _connections.GetOrAdd(connectionConfig, _ => CreateConnection(connectionConfig));
         }

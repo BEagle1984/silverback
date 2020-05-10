@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers.Subscriptions
 {
@@ -15,8 +16,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
 
         public DelegateSubscription(Delegate handler, SubscriptionOptions? options)
         {
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
+            Check.NotNull(handler, nameof(handler));
 
             _method = new SubscribedMethod(
                 _ => handler.Target,

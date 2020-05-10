@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Messages
 
         /// <summary>
         ///     <para>
-        ///         Adds a new instance of <see cref="TEvent"/> to the collection of events related to this object.
+        ///         Adds a new instance of <typeparamref name="TEvent"/> to the collection of events related to this object.
         ///     </para>
         ///     <para>
         ///         In the case of an entity model the event will be published when the entity
@@ -56,7 +56,7 @@ namespace Silverback.Messaging.Messages
         /// </summary>
         /// <typeparam name="TEvent">The type of the event.</typeparam>
         /// <param name="allowMultiple">if set to <c>false</c> only one instance of the specified type <c>TEvent</c> will be added.</param>
-        /// <returns>The <see cref="TEvent"/> instance that was added.</returns>
+        /// <returns>The <typeparamref name="TEvent"/> instance that was added.</returns>
         protected TEvent AddEvent<TEvent>(bool allowMultiple = true)
             where TEvent : TBaseEvent, new()
         {

@@ -1,12 +1,12 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Encryption
 {
@@ -24,8 +24,7 @@ namespace Silverback.Messaging.Encryption
         /// </param>
         protected SymmetricCryptoMessageTransformer(SymmetricEncryptionSettings settings)
         {
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings));
+            Check.NotNull(settings, nameof(settings));
 
             settings.Validate();
 
@@ -52,8 +51,7 @@ namespace Silverback.Messaging.Encryption
         /// <returns> The cipher message. </returns>
         protected virtual async Task<byte[]> Transform(byte[] message, SymmetricAlgorithm algorithm)
         {
-            if (message == null)
-                throw new ArgumentNullException(nameof(message));
+            Check.NotNull(message, nameof(message));
 
             using var cryptoTransform = CreateCryptoTransform(algorithm);
             await using var memoryStream = new MemoryStream();

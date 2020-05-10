@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
@@ -44,19 +45,17 @@ namespace Silverback.Messaging.Broker
             IServiceProvider serviceProvider,
             ILogger<Consumer> logger)
         {
-            if (broker == null)
-                throw new ArgumentNullException(nameof(broker));
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
+            Check.NotNull(broker, nameof(broker));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             Behaviors = behaviors ?? Array.Empty<IConsumerBehavior>();
 
-            Broker = broker ?? throw new ArgumentNullException(nameof(broker));
-            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
+            Broker = Check.NotNull(broker, nameof(broker));
+            Endpoint = Check.NotNull(endpoint, nameof(endpoint));
 
-            _receivedCallback = receivedCallback ?? throw new ArgumentNullException(nameof(receivedCallback));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _receivedCallback = Check.NotNull(receivedCallback, nameof(receivedCallback));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _logger = Check.NotNull(logger, nameof(logger));
 
             Endpoint.Validate();
         }

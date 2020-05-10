@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -30,8 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder,
             Type behaviorType)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddSingletonBrokerBehavior(behaviorType);
 
@@ -54,8 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder)
             where TBehavior : class, IBrokerBehavior
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddSingletonBrokerBehavior<TBehavior>();
 
@@ -78,8 +77,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder,
             Func<IServiceProvider, IBrokerBehavior> implementationFactory)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddSingletonBrokerBehavior(implementationFactory);
 
@@ -102,8 +100,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder,
             IBrokerBehavior implementationInstance)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddSingletonBrokerBehavior(implementationInstance);
 

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.LargeMessages
 {
@@ -21,11 +22,8 @@ namespace Silverback.Messaging.LargeMessages
         /// <inheritdoc />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
-            if (next == null)
-                throw new ArgumentNullException(nameof(next));
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(next, nameof(next));
 
             var chunks = ChunkIfNeeded(context.Envelope).ToList();
 

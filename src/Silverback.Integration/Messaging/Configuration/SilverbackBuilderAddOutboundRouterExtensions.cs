@@ -4,6 +4,7 @@
 using System;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -31,8 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type routerType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonOutboundRouter(routerType);
 
@@ -54,8 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddSingletonOutboundRouter<TRouter>(this ISilverbackBuilder silverbackBuilder)
             where TRouter : class, IOutboundRouter
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonOutboundRouter<TRouter>();
 
@@ -79,8 +78,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Func<IServiceProvider, IOutboundRouter> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonOutboundRouter(implementationFactory);
 
@@ -104,8 +102,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             IOutboundRouter implementationInstance)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonOutboundRouter(implementationInstance);
 

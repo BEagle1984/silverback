@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Messaging.BinaryFiles
 {
@@ -27,8 +28,7 @@ namespace Silverback.Messaging.BinaryFiles
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (messageHeaders == null)
-                throw new ArgumentNullException(nameof(messageHeaders));
+            Check.NotNull(messageHeaders, nameof(messageHeaders));
 
             if (message == null)
                 return null;
@@ -58,8 +58,7 @@ namespace Silverback.Messaging.BinaryFiles
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (messageHeaders == null)
-                throw new ArgumentNullException(nameof(messageHeaders));
+            Check.NotNull(messageHeaders, nameof(messageHeaders));
 
             var type = SerializationHelper.GetTypeFromHeaders<BinaryFileMessage>(messageHeaders);
 

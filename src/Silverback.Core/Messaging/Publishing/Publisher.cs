@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Publishing
         /// </param>
         public Publisher(IServiceProvider serviceProvider, ILogger<Publisher> logger)
         {
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
 
             _logger = logger;
         }
@@ -44,8 +44,7 @@ namespace Silverback.Messaging.Publishing
         /// <inheritdoc />
         public void Publish(object message)
         {
-            if (message == null)
-                throw new ArgumentNullException(nameof(message));
+            Check.NotNull(message, nameof(message));
 
             Publish(new[] { message });
         }
@@ -53,8 +52,7 @@ namespace Silverback.Messaging.Publishing
         /// <inheritdoc />
         public Task PublishAsync(object message)
         {
-            if (message == null)
-                throw new ArgumentNullException(nameof(message));
+            Check.NotNull(message, nameof(message));
 
             return PublishAsync(new[] { message });
         }
@@ -62,8 +60,7 @@ namespace Silverback.Messaging.Publishing
         /// <inheritdoc />
         public IReadOnlyCollection<TResult> Publish<TResult>(object message)
         {
-            if (message == null)
-                throw new ArgumentNullException(nameof(message));
+            Check.NotNull(message, nameof(message));
 
             return Publish<TResult>(new[] { message });
         }
@@ -107,16 +104,14 @@ namespace Silverback.Messaging.Publishing
             IEnumerable<object> messages,
             bool executeAsync)
         {
-            if (messages == null)
-                throw new ArgumentNullException(nameof(messages));
+            Check.NotNull(messages, nameof(messages));
 
             var messagesList = messages.ToList(); // TODO: Avoid cloning?
 
             if (!messagesList.Any())
                 return Array.Empty<object>();
 
-            if (messagesList.Any(message => message == null))
-                throw new ArgumentException("The message cannot be null.", nameof(messages));
+            Check.HasNoNulls(messagesList, nameof(messages));
 
             return await ExecutePipeline(
                 GetBehaviors(),
@@ -127,7 +122,7 @@ namespace Silverback.Messaging.Publishing
                     .ToList());
         }
 
-        private Task<IReadOnlyCollection<object?>> ExecutePipeline(
+        private static Task<IReadOnlyCollection<object?>> ExecutePipeline(
             IReadOnlyCollection<IBehavior> behaviors,
             IReadOnlyCollection<object> messages,
             Func<IReadOnlyCollection<object>, Task<IReadOnlyCollection<object?>>> finalAction)

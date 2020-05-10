@@ -35,14 +35,9 @@ namespace Silverback.Messaging.Encryption
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
-            if (serviceProvider == null)
-                throw new ArgumentNullException(nameof(serviceProvider));
-
-            if (next == null)
-                throw new ArgumentNullException(nameof(next));
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
+            Check.NotNull(next, nameof(next));
 
             context.Envelopes = (await context.Envelopes.SelectAsync(Decrypt)).ToList();
 

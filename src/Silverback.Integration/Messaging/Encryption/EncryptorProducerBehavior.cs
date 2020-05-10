@@ -1,9 +1,9 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Encryption
 {
@@ -31,11 +31,8 @@ namespace Silverback.Messaging.Encryption
         /// <inheritdoc />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
-            if (next == null)
-                throw new ArgumentNullException(nameof(next));
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(next, nameof(next));
 
             if (context.Envelope.Endpoint.Encryption != null)
             {

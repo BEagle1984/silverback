@@ -9,6 +9,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -51,8 +52,7 @@ namespace Microsoft.Extensions.DependencyInjection
             int readPackageSize = 100,
             DistributedLockSettings? distributedLockSettings = null)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             distributedLockSettings ??= new DistributedLockSettings();
             distributedLockSettings.EnsureResourceNameIsSet("OutboundQueueWorker");
@@ -112,8 +112,7 @@ namespace Microsoft.Extensions.DependencyInjection
             DistributedLockSettings? distributedLockSettings = null)
             where TQueueReader : class, IOutboundQueueReader
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.AddOutboundWorker(
                 interval,
@@ -158,8 +157,7 @@ namespace Microsoft.Extensions.DependencyInjection
             int readPackageSize = 100,
             DistributedLockSettings? distributedLockSettings = null)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.AddOutboundWorker<DbOutboundQueueReader>(
                 interval,
@@ -198,8 +196,7 @@ namespace Microsoft.Extensions.DependencyInjection
             bool enforceMessageOrder = true,
             int readPackageSize = 100)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             return brokerOptionsBuilder.AddDbOutboundWorker(
                 interval,

@@ -4,6 +4,7 @@
 using System;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -32,8 +33,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type behaviorType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientBehavior(behaviorType);
             return silverbackBuilder;
@@ -54,8 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddTransientBehavior<TBehavior>(this ISilverbackBuilder silverbackBuilder)
             where TBehavior : class, IBehavior
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientBehavior<TBehavior>();
             return silverbackBuilder;
@@ -77,8 +76,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddTransientBehavior(implementationFactory);
             return silverbackBuilder;
@@ -100,8 +98,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static ISilverbackBuilder AddScopedBehavior(this ISilverbackBuilder silverbackBuilder, Type behaviorType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedBehavior(behaviorType);
             return silverbackBuilder;
@@ -122,8 +119,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddScopedBehavior<TBehavior>(this ISilverbackBuilder silverbackBuilder)
             where TBehavior : class, IBehavior
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedBehavior<TBehavior>();
             return silverbackBuilder;
@@ -146,8 +142,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddScopedBehavior(implementationFactory);
             return silverbackBuilder;
@@ -171,8 +166,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type behaviorType)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonBehavior(behaviorType);
             return silverbackBuilder;
@@ -193,8 +187,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddSingletonBehavior<TBehavior>(this ISilverbackBuilder silverbackBuilder)
             where TBehavior : class, IBehavior
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonBehavior<TBehavior>();
             return silverbackBuilder;
@@ -217,8 +210,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonBehavior(implementationFactory);
             return silverbackBuilder;
@@ -241,8 +233,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             IBehavior implementationInstance)
         {
-            if (silverbackBuilder == null)
-                throw new ArgumentNullException(nameof(silverbackBuilder));
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services.AddSingletonBehavior(implementationInstance);
             return silverbackBuilder;

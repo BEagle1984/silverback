@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Diagnostics
 {
@@ -19,11 +19,8 @@ namespace Silverback.Messaging.Diagnostics
         /// <inheritdoc />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
-            if (next == null)
-                throw new ArgumentNullException(nameof(next));
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(next, nameof(next));
 
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageProducing);
 

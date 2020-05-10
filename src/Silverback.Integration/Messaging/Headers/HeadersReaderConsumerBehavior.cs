@@ -15,19 +15,26 @@ namespace Silverback.Messaging.Headers
     /// </summary>
     public class HeadersReaderConsumerBehavior : IConsumerBehavior, ISorted
     {
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.HeadersReader;
+
+        /// <inheritdoc />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
+            Check.NotNull(next, nameof(next));
+
             context.Envelopes.OfType<InboundEnvelope>()
-                .ForEach(envelope => HeaderAttributeHelper.SetFromHeaders(
-                    envelope.Message,
-                    envelope.Headers));
+                .ForEach(
+                    envelope => HeaderAttributeHelper.SetFromHeaders(
+                        envelope.Message,
+                        envelope.Headers));
 
             await next(context, serviceProvider);
         }
-
-        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.HeadersReader;
     }
 }

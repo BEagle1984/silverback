@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -38,8 +39,7 @@ namespace Silverback.Messaging.Connectors
         /// <inheritdoc />
         protected override async Task<bool> MustProcess(IRawInboundEnvelope envelope, IServiceProvider serviceProvider)
         {
-            if (envelope == null)
-                throw new ArgumentNullException(nameof(envelope));
+            Check.NotNull(envelope, nameof(envelope));
 
             if (envelope.Offset == null || !(envelope.Offset is IComparableOffset comparableOffset))
             {

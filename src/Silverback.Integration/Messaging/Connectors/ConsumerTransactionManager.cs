@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -24,8 +23,7 @@ namespace Silverback.Messaging.Connectors
         /// <param name="transactionalService"> The service to be enlisted. </param>
         public void Enlist(ITransactional transactionalService)
         {
-            if (transactionalService == null)
-                throw new ArgumentNullException(nameof(transactionalService));
+            Check.NotNull(transactionalService, nameof(transactionalService));
 
             if (_transactionalServices.Contains(transactionalService))
                 return;

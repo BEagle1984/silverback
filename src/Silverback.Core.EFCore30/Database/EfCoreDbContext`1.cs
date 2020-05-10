@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Silverback.Database
@@ -27,7 +27,7 @@ namespace Silverback.Database
         /// </param>
         public EfCoreDbContext(TDbContext dbContext)
         {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _dbContext = Check.NotNull(dbContext, nameof(dbContext));
         }
 
         /// <inheritdoc />
@@ -35,7 +35,8 @@ namespace Silverback.Database
             where TEntity : class =>
             new EfCoreDbSet<TEntity>(
                 _dbContext.Set<TEntity>() ??
-                throw new DatabaseTableNotFoundException($"The DbContext doesn't contain a DbSet<{typeof(TEntity).FullName}>."));
+                throw new DatabaseTableNotFoundException(
+                    $"The DbContext doesn't contain a DbSet<{typeof(TEntity).FullName}>."));
 
         /// <inheritdoc />
         public void SaveChanges() => _dbContext.SaveChanges();

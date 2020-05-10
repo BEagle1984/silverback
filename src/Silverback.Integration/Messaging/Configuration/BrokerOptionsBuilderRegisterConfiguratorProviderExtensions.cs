@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Configuration;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -29,8 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder)
             where TConfigurator : class, IEndpointsConfigurator
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddTransient<IEndpointsConfigurator, TConfigurator>();
 
@@ -54,8 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder,
             Type configuratorType)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddTransient(
                 typeof(IEndpointsConfigurator),
@@ -81,8 +80,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder,
             Func<IServiceProvider, IEndpointsConfigurator> implementationFactory)
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddTransient(implementationFactory);
 

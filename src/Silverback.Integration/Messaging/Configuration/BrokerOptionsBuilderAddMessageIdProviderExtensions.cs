@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -33,8 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder)
             where TProvider : class, IMessageIdProvider
         {
-            if (brokerOptionsBuilder == null)
-                throw new ArgumentNullException(nameof(brokerOptionsBuilder));
+            Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddSingleton<IMessageIdProvider, TProvider>();
 

@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Database;
 using Silverback.Database.Model;
+using Silverback.Util;
 
 namespace Silverback.Background
 {
@@ -28,15 +29,13 @@ namespace Silverback.Background
         /// <param name="serviceScopeFactory">
         ///     The <see cref="IServiceScopeFactory" /> used to resolve the scoped types.
         /// </param>
-        /// <param name="logger">
-        ///     The <see cref="ILogger" />.
-        /// </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
         public DbDistributedLockManager(
             IServiceScopeFactory serviceScopeFactory,
             ILogger<DbDistributedLockManager> logger)
         {
-            _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
+            _logger = Check.NotNull(logger, nameof(logger));
         }
 
         /// <inheritdoc />
@@ -44,8 +43,7 @@ namespace Silverback.Background
             DistributedLockSettings settings,
             CancellationToken cancellationToken = default)
         {
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings));
+            Check.NotNull(settings, nameof(settings));
 
             if (string.IsNullOrEmpty(settings.ResourceName))
             {
@@ -86,8 +84,7 @@ namespace Silverback.Background
         [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task<bool> CheckIsStillLocked(DistributedLockSettings settings)
         {
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings));
+            Check.NotNull(settings, nameof(settings));
 
             if (settings is NullLockSettings)
                 return await NullLockManager.CheckIsStillLocked(settings);
@@ -117,8 +114,7 @@ namespace Silverback.Background
         [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task<bool> SendHeartbeat(DistributedLockSettings settings)
         {
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings));
+            Check.NotNull(settings, nameof(settings));
 
             if (settings is NullLockSettings)
                 return await NullLockManager.SendHeartbeat(settings);
@@ -144,8 +140,7 @@ namespace Silverback.Background
         [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task Release(DistributedLockSettings settings)
         {
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings));
+            Check.NotNull(settings, nameof(settings));
 
             if (settings is NullLockSettings)
                 await NullLockManager.Release(settings);
@@ -178,27 +173,7 @@ namespace Silverback.Background
             }
         }
 
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task<bool> TryAcquireLock(DistributedLockSettings settings)
-        {
-            try
-            {
-                using var scope = _serviceScopeFactory.CreateScope();
-                return await AcquireLock(settings, scope.ServiceProvider);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogDebug(
-                    ex,
-                    "Failed to acquire lock {lockName} ({lockUniqueId}). See inner exception for details.",
-                    settings.ResourceName,
-                    settings.UniqueId);
-            }
-
-            return false;
-        }
-
-        private async Task<bool> AcquireLock(DistributedLockSettings settings, IServiceProvider serviceProvider)
+        private static async Task<bool> AcquireLock(DistributedLockSettings settings, IServiceProvider serviceProvider)
         {
             var heartbeatThreshold = GetHeartbeatThreshold(settings.HeartbeatTimeout);
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
@@ -210,7 +185,7 @@ namespace Silverback.Background
             return await WriteLock(settings.ResourceName, settings.UniqueId, heartbeatThreshold, dbSet, dbContext);
         }
 
-        private async Task<bool> WriteLock(
+        private static async Task<bool> WriteLock(
             string resourceName,
             string uniqueId,
             DateTime heartbeatThreshold,
@@ -232,7 +207,7 @@ namespace Silverback.Background
             return true;
         }
 
-        private async Task<bool> CheckIsStillLocked(
+        private static async Task<bool> CheckIsStillLocked(
             string resourceName,
             string uniqueId,
             TimeSpan heartbeatTimeout,
@@ -247,7 +222,10 @@ namespace Silverback.Background
                      l.Heartbeat >= heartbeatThreshold);
         }
 
-        private async Task<bool> SendHeartbeat(string resourceName, string uniqueId, IServiceProvider serviceProvider)
+        private static async Task<bool> SendHeartbeat(
+            string resourceName,
+            string uniqueId,
+            IServiceProvider serviceProvider)
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
@@ -264,7 +242,38 @@ namespace Silverback.Background
             return true;
         }
 
-        private async Task Release(string resourceName, string uniqueId, IServiceProvider serviceProvider)
+        private static (IDbSet<Lock> dbSet, IDbContext dbContext) GetDbSet(IServiceProvider serviceProvider)
+        {
+            var dbContext = serviceProvider.GetRequiredService<IDbContext>();
+            var dbSet = dbContext.GetDbSet<Lock>();
+
+            return (dbSet, dbContext);
+        }
+
+        private static DateTime GetHeartbeatThreshold(TimeSpan heartbeatTimeout) =>
+            DateTime.UtcNow.Subtract(heartbeatTimeout);
+
+        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        private async Task<bool> TryAcquireLock(DistributedLockSettings settings)
+        {
+            try
+            {
+                using var scope = _serviceScopeFactory.CreateScope();
+                return await AcquireLock(settings, scope.ServiceProvider);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(
+                    ex,
+                    "Failed to acquire lock {lockName} ({lockUniqueId}). See inner exception for details.",
+                    settings.ResourceName,
+                    settings.UniqueId);
+            }
+
+            return false;
+        }
+
+        private static async Task Release(string resourceName, string uniqueId, IServiceProvider serviceProvider)
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
@@ -278,16 +287,5 @@ namespace Silverback.Background
 
             await dbContext.SaveChangesAsync();
         }
-
-        private (IDbSet<Lock> dbSet, IDbContext dbContext) GetDbSet(IServiceProvider serviceProvider)
-        {
-            var dbContext = serviceProvider.GetRequiredService<IDbContext>();
-            var dbSet = dbContext.GetDbSet<Lock>();
-
-            return (dbSet, dbContext);
-        }
-
-        private static DateTime GetHeartbeatThreshold(TimeSpan heartbeatTimeout) =>
-            DateTime.UtcNow.Subtract(heartbeatTimeout);
     }
 }

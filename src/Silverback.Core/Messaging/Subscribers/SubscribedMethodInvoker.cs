@@ -25,9 +25,9 @@ namespace Silverback.Messaging.Subscribers
             ReturnValueHandlerService returnValueHandler,
             IServiceProvider serviceProvider)
         {
-            _argumentsResolver = argumentsResolver ?? throw new ArgumentNullException(nameof(argumentsResolver));
-            _returnValueHandler = returnValueHandler ?? throw new ArgumentNullException(nameof(returnValueHandler));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _argumentsResolver = Check.NotNull(argumentsResolver, nameof(argumentsResolver));
+            _returnValueHandler = Check.NotNull(returnValueHandler, nameof(returnValueHandler));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         }
 
         public async Task<IEnumerable<object?>> Invoke(
@@ -122,12 +122,12 @@ namespace Silverback.Messaging.Subscribers
             new object[1].Concat(_argumentsResolver.GetAdditionalParameterValues(methodInfo))
                 .ToArray();
 
-        private Task<object?> Invoke(object target, SubscribedMethod method, object?[] parameters, bool executeAsync) =>
+        private static Task<object?> Invoke(object target, SubscribedMethod method, object?[] parameters, bool executeAsync) =>
             executeAsync
                 ? InvokeAsync(target, method, parameters)
                 : Task.FromResult(InvokeSync(target, method, parameters));
 
-        private object? InvokeSync(object target, SubscribedMethod method, object?[] parameters)
+        private static object? InvokeSync(object target, SubscribedMethod method, object?[] parameters)
         {
             if (!method.MethodInfo.ReturnsTask())
                 return method.MethodInfo.Invoke(target, parameters);
@@ -140,7 +140,7 @@ namespace Silverback.Messaging.Subscribers
                 });
         }
 
-        private Task<object?> InvokeAsync(object target, SubscribedMethod method, object?[] parameters)
+        private static Task<object?> InvokeAsync(object target, SubscribedMethod method, object?[] parameters)
         {
             if (!method.MethodInfo.ReturnsTask())
                 return Task.Run(() => (object?)method.MethodInfo.Invoke(target, parameters));

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Behaviors
 {
@@ -40,8 +41,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
             IReadOnlyCollection<object> messages,
             MessagesHandler next)
         {
-            if (next == null)
-                throw new ArgumentNullException(nameof(next));
+            Check.NotNull(next, nameof(next));
 
             var routedMessages = await WrapAndRepublishRoutedMessages(messages);
 

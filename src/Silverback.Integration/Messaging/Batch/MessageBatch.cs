@@ -14,6 +14,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 using Timer = System.Timers.Timer;
 
 namespace Silverback.Messaging.Batch
@@ -55,11 +56,11 @@ namespace Silverback.Messaging.Batch
             IConsumer consumer,
             IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _errorPolicyHelper = serviceProvider.GetRequiredService<IErrorPolicyHelper>();
 
             _errorPolicy = errorPolicy;
-            _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
+            _consumer = Check.NotNull(consumer, nameof(consumer));
             _settings = settings;
 
             _envelopes = new List<IRawInboundEnvelope>(_settings.Size);
@@ -86,9 +87,9 @@ namespace Silverback.Messaging.Batch
             if (_messagesHandler != null)
                 return;
 
-            _messagesHandler = messagesHandler ?? throw new ArgumentNullException(nameof(messagesHandler));
-            _commitHandler = commitHandler ?? throw new ArgumentNullException(nameof(commitHandler));
-            _rollbackHandler = rollbackHandler ?? throw new ArgumentNullException(nameof(rollbackHandler));
+            _messagesHandler = Check.NotNull(messagesHandler, nameof(messagesHandler));
+            _commitHandler = Check.NotNull(commitHandler, nameof(commitHandler));
+            _rollbackHandler = Check.NotNull(rollbackHandler, nameof(rollbackHandler));
         }
 
         public async Task AddMessages(IReadOnlyCollection<IRawInboundEnvelope> envelopes)

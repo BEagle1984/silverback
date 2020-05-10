@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers.Subscriptions
 {
@@ -20,7 +21,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
 
         public TypeSubscription(Type subscribedType, bool autoSubscribeAllPublicMethods = true)
         {
-            SubscribedType = subscribedType ?? throw new ArgumentNullException(nameof(subscribedType));
+            SubscribedType = Check.NotNull(subscribedType, nameof(subscribedType));
             _autoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods;
         }
 
@@ -41,7 +42,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 .ToList();
         }
 
-        private SubscribedMethod GetSubscribedMethod(Type targetType, MethodInfo methodInfo)
+        private static SubscribedMethod GetSubscribedMethod(Type targetType, MethodInfo methodInfo)
         {
             var subscribeAttribute = methodInfo.GetCustomAttribute<SubscribeAttribute>();
 

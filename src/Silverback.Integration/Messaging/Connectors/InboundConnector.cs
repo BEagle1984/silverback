@@ -13,6 +13,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -40,8 +41,8 @@ namespace Silverback.Messaging.Connectors
             IServiceProvider serviceProvider,
             ILogger<InboundConnector> logger)
         {
-            _brokerCollection = brokerCollection ?? throw new ArgumentNullException(nameof(brokerCollection));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _brokerCollection = Check.NotNull(brokerCollection, nameof(brokerCollection));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _logger = logger;
         }
 
@@ -51,8 +52,7 @@ namespace Silverback.Messaging.Connectors
             IErrorPolicy? errorPolicy = null,
             InboundConnectorSettings? settings = null)
         {
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             settings ??= new InboundConnectorSettings();
 
@@ -80,11 +80,8 @@ namespace Silverback.Messaging.Connectors
             IErrorPolicy? errorPolicy,
             InboundConnectorSettings settings)
         {
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
-
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings));
+            Check.NotNull(endpoint, nameof(endpoint));
+            Check.NotNull(settings, nameof(settings));
 
             _logger.LogTrace("Connecting to inbound endpoint '{endpointName}'...", endpoint.Name);
 
@@ -113,11 +110,8 @@ namespace Silverback.Messaging.Connectors
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             IServiceProvider serviceProvider)
         {
-            if (envelopes == null)
-                throw new ArgumentNullException(nameof(envelopes));
-
-            if (serviceProvider == null)
-                throw new ArgumentNullException(nameof(serviceProvider));
+            Check.NotNull(envelopes, nameof(envelopes));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
 
             await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(envelopes);
         }

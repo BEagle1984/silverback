@@ -9,6 +9,7 @@ using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -31,8 +32,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <inheritdoc />
         public Task Enqueue(IOutboundEnvelope envelope)
         {
-            if (envelope == null)
-                throw new ArgumentNullException(nameof(envelope));
+            Check.NotNull(envelope, nameof(envelope));
 
             DbSet.Add(
                 new OutboundMessage

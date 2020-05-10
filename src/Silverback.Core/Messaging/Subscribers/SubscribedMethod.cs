@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers
 {
@@ -43,8 +44,8 @@ namespace Silverback.Messaging.Subscribers
             bool? parallel,
             int? maxDegreeOfParallelism)
         {
-            _targetTypeFactory = targetTypeFactory ?? throw new ArgumentNullException(nameof(targetTypeFactory));
-            MethodInfo = methodInfo ?? throw new ArgumentNullException(nameof(methodInfo));
+            _targetTypeFactory = Check.NotNull(targetTypeFactory, nameof(targetTypeFactory));
+            MethodInfo = Check.NotNull(methodInfo, nameof(methodInfo));
             Parameters = methodInfo.GetParameters();
 
             if (!Parameters.Any())
