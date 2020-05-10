@@ -7,6 +7,6 @@ namespace Silverback.Tests.Core.TestTypes.Messages
 {
     public class TestCommandTwo : ICommand, ITestMessage
     {
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 }

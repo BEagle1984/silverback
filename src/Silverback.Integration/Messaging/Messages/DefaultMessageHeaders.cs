@@ -6,6 +6,9 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Messages
 {
+    /// <summary>
+    ///     Contains the constants with the names of the standard message headers used by Silverback.
+    /// </summary>
     public static class DefaultMessageHeaders
     {
         /// <summary>
@@ -64,7 +67,7 @@ namespace Silverback.Messaging.Messages
         ///     implementation.
         /// </summary>
         /// <remarks>
-        ///     The header is implemented according to https://www.w3.org/TR/trace-context-1/#traceparent-header
+        ///     The header is implemented according to https://www.w3.org/TR/trace-context-1/#traceparent-header.
         /// </remarks>
         public const string TraceId = "traceparent";
 
@@ -72,7 +75,7 @@ namespace Silverback.Messaging.Messages
         ///     The <c>Activity.TraceStateString</c>.
         /// </summary>
         /// <remarks>
-        ///     The header is implemented according to https://www.w3.org/TR/trace-context-1/#traceparent-header
+        ///     The header is implemented according to https://www.w3.org/TR/trace-context-1/#traceparent-header.
         /// </remarks>
         public const string TraceState = "tracestate";
 
@@ -80,7 +83,7 @@ namespace Silverback.Messaging.Messages
         ///     The string representation of the <c>Activity.Baggage</c> dictionary.
         /// </summary>
         /// <remarks>
-        ///     This is not part of the w3c standard
+        ///     This is not part of the w3c standard.
         /// </remarks>
         public const string TraceBaggage = "tracebaggage";
 
@@ -88,13 +91,13 @@ namespace Silverback.Messaging.Messages
         ///     The MIME type of a binary file. See <see cref="IBinaryFileMessage" />.
         /// </summary>
         public const string ContentType = "content-type";
-        
+
         /// <summary>
         ///     Used internally by the consumer pipeline to signal that the content of that chunk was replaced with
         ///     the full message.
         /// </summary>
         internal const string ChunksAggregated = "x-internal-chunks-aggregated";
-        
+
         /// <summary>
         ///     Used internally by the consumer pipeline to signal that the message has been decrypted already.
         /// </summary>

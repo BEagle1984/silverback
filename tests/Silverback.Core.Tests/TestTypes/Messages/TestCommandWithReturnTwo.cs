@@ -6,8 +6,8 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 
 namespace Silverback.Tests.Core.TestTypes.Messages
 {
-    public class TestRequestCommandThree : ICommand<IEnumerable<string>>, ITestMessage
+    public class TestCommandWithReturnTwo : ICommand<IEnumerable<string>>, ITestMessage
     {
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 }

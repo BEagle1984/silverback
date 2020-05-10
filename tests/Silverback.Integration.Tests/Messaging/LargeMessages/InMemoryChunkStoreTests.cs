@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.LargeMessages.Model;
 using Silverback.Util;
 using Xunit;
 
@@ -15,7 +16,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task Store_Chunk_ChunkStored()
         {
-            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
             await store.Store("123", 0, 10, new byte[10]);
             await store.Store("123", 1, 10, new byte[10]);
@@ -28,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task CountChunks_WithChunksFromMultipleMessages_CorrectCountReturned()
         {
-            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
             await store.Store("123", 0, 10, new byte[10]);
             await store.Store("123", 1, 10, new byte[10]);
@@ -45,7 +46,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task GetChunks_WithChunksFromMultipleMessages_CorrectChunksReturned()
         {
-            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
             await store.Store("123", 0, 10, new byte[10]);
             await store.Store("123", 1, 10, new byte[10]);
@@ -63,7 +64,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task GetChunks_CommittedChunksStoredFromMultipleInstances_AllChunksReturned()
         {
-            var sharedList = new TransactionalListSharedItems<InMemoryStoredChunk>();
+            var sharedList = new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>();
 
             var store = new InMemoryChunkStore(sharedList);
             await store.Store("123", 0, 10, new byte[10]);
@@ -83,7 +84,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task GetChunks_UncommittedChunksStoredFromMultipleInstances_OnlyCurrentScopeChunksReturned()
         {
-            var sharedList = new TransactionalListSharedItems<InMemoryStoredChunk>();
+            var sharedList = new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>();
 
             var store = new InMemoryChunkStore(sharedList);
             await store.Store("123", 0, 10, new byte[10]);
@@ -100,7 +101,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task CleanupMessage_WithCommittedAndUncommittedChunksFromMultipleMessages_CorrectChunksRemoved()
         {
-            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
             await store.Store("123", 0, 10, new byte[10]);
             await store.Store("123", 1, 10, new byte[10]);
@@ -122,7 +123,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task Commit_StoreAndCleanup_Committed()
         {
-            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
             await store.Store("123", 0, 10, new byte[10]);
             await store.Commit();
@@ -138,7 +139,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task Rollback_StoreAndCleanup_Reverted()
         {
-            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
             await store.Store("123", 0, 10, new byte[10]);
             await store.Commit();
@@ -159,7 +160,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task HasNotPersistedChunks_CommittedChunks_TrueReturned()
         {
-            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
             await store.Store("123", 0, 10, new byte[10]);
             await store.Commit();
@@ -169,7 +170,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task HasNotPersistedChunks_UncommittedChunks_TrueReturned()
         {
-            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
             await store.Store("123", 0, 10, new byte[10]);
             store.HasNotPersistedChunks.Should().BeTrue();
@@ -178,7 +179,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task HasNotPersistedChunks_UncommittedCleanup_FalseReturned()
         {
-            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
             await store.Store("123", 0, 10, new byte[10]);
             await store.Commit();
@@ -192,7 +193,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
         [Fact]
         public async Task CleanupByAge_CommittedChunks_OlderChunksRemoved()
         {
-            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            var store = new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
             await store.Store("123", 0, 10, new byte[10]);
             await store.Store("123", 1, 10, new byte[10]);

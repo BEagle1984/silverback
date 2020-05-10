@@ -23,7 +23,7 @@ namespace Silverback.Database
         ///     Initializes a new instance of the <see cref="EfCoreDbContext{TDbContext}" /> class.
         /// </summary>
         /// <param name="dbContext">
-        ///     The type of the underlying <see cref="DbContext" />.
+        ///     The wrapped <see cref="DbContext" />.
         /// </param>
         public EfCoreDbContext(TDbContext dbContext)
         {

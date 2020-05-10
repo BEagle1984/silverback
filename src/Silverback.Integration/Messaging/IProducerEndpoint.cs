@@ -5,6 +5,9 @@ using Silverback.Messaging.LargeMessages;
 
 namespace Silverback.Messaging
 {
+    /// <summary>
+    ///     Represents a message broker endpoint to produce to (such as a Kafka topic or RabbitMQ queue or exchange).
+    /// </summary>
     public interface IProducerEndpoint : IEndpoint
     {
         /// <summary>

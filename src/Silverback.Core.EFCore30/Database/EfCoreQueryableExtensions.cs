@@ -9,6 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
+#pragma warning disable CA1506 // Excessive coupling -> this approach is anyway to be deprecated
+
 // ReSharper disable once CheckNamespace
 namespace Silverback.Database
 {

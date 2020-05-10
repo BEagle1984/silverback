@@ -7,24 +7,30 @@ using Silverback.Messaging.Connectors.Repositories;
 
 namespace Silverback.Messaging.HealthChecks
 {
+    /// <inheritdoc />
     public class OutboundQueueHealthCheckService : IOutboundQueueHealthCheckService
     {
         private static readonly TimeSpan DefaultMaxAge = TimeSpan.FromSeconds(30);
 
-        private readonly IOutboundQueueReader _queue;
+        private readonly IOutboundQueueReader _queueReader;
 
-        public OutboundQueueHealthCheckService(IOutboundQueueReader queue)
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="OutboundQueueHealthCheckService" /> class.
+        /// </summary>
+        /// <param name="queueReader"> The <see cref="IOutboundQueueReader" />. </param>
+        public OutboundQueueHealthCheckService(IOutboundQueueReader queueReader)
         {
-            _queue = queue;
+            _queueReader = queueReader;
         }
 
+        /// <inheritdoc />
         public async Task<bool> CheckIsHealthy(TimeSpan? maxAge = null, int? maxQueueLength = null)
         {
             if (maxQueueLength != null &&
-                await _queue.GetLength() > maxQueueLength)
+                await _queueReader.GetLength() > maxQueueLength)
                 return false;
 
-            return await _queue.GetMaxAge() <= (maxAge ?? DefaultMaxAge);
+            return await _queueReader.GetMaxAge() <= (maxAge ?? DefaultMaxAge);
         }
     }
 }

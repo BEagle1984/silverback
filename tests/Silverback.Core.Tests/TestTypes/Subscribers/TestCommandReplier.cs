@@ -48,7 +48,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         }
 
         [Subscribe]
-        public async Task<IEnumerable<string>> OnRequestReceived2(TestRequestCommandTwo message)
+        public async Task<IEnumerable<string>> OnRequestReceived2(TestCommandWithReturnTwo message)
         {
             await Task.Delay(1);
             ReceivedMessagesCount++;
@@ -57,7 +57,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         }
 
         [Subscribe]
-        public async Task<IEnumerable<string>> OnRequestReceived2(TestRequestCommandThree message)
+        public async Task<IEnumerable<string>> OnRequestReceived2(TestCommandWithReturnThree message)
         {
             await Task.Delay(1);
             ReceivedMessagesCount++;

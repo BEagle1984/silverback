@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.LargeMessages.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
@@ -19,7 +20,7 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
     public class ChunkAggregatorTests
     {
         private readonly IChunkStore _store =
-            new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryStoredChunk>());
+            new InMemoryChunkStore(new TransactionalListSharedItems<InMemoryTemporaryMessageChunk>());
 
         private readonly ConsumerTransactionManager _transactionManager = new ConsumerTransactionManager();
 

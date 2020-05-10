@@ -1,13 +1,12 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
 
 namespace Silverback.Tests.Core.TestTypes.Messages
 {
-    public class TestRequestCommandTwo : ICommand<IEnumerable<string>>, ITestMessage
+    public class TestCommandWitReturnOne : ICommand<string>, ITestMessage
     {
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 }
