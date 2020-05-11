@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -81,6 +82,7 @@ namespace Silverback.Messaging.ErrorHandling
 
             _messageLogger.LogInformation(
                 _logger,
+                EventIds.MoveMessageErrorPolicyMoveMessages,
                 $"{envelopes.Count} message(s) will be  be moved to endpoint '{_endpoint.Name}'.",
                 envelopes);
 

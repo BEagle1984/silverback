@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Connectors.Repositories.Model;
@@ -77,7 +78,7 @@ namespace Silverback.Messaging.Connectors
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred processing the outbound queue. See inner exception for details.");
+                _logger.LogError(EventIds.OutboundQueueWorkerErrorWhileProcessingQueue, ex, "Error occurred processing the outbound queue. See inner exception for details.");
             }
         }
 
@@ -99,16 +100,16 @@ namespace Silverback.Messaging.Connectors
 
         private async Task ProcessQueue(IOutboundQueueReader queue, CancellationToken stoppingToken)
         {
-            _logger.LogTrace($"Reading outbound messages from queue (limit: {_readPackageSize}).");
+            _logger.LogTrace(EventIds.OutboundQueueWorkerReadingOutboundMessages, "Reading outbound messages from queue (limit: {readPackageSize}).", _readPackageSize);
 
             var messages = (await queue.Dequeue(_readPackageSize)).ToList();
 
             if (!messages.Any())
-                _logger.LogTrace("The outbound queue is empty.");
+                _logger.LogTrace(EventIds.OutboundQueueWorkerQueueEmpty, "The outbound queue is empty.");
 
             for (var i = 0; i < messages.Count; i++)
             {
-                _logger.LogDebug($"Processing message {i + 1} of {messages.Count}.");
+                _logger.LogDebug(EventIds.OutboundQueueWorkerProcessingMessage, "Processing message {currentMessageIndex} of {totalMessages}.", i + 1, messages.Count);
                 await ProcessMessage(messages[i], queue);
 
                 if (stoppingToken.IsCancellationRequested)
@@ -128,6 +129,7 @@ namespace Silverback.Messaging.Connectors
             {
                 _messageLogger.LogError(
                     _logger,
+                    EventIds.OutboundQueueWorkerFailedToPublishMessage,
                     ex,
                     "Failed to publish queued message.",
                     new OutboundEnvelope(message.Content, message.Headers, message.Endpoint));

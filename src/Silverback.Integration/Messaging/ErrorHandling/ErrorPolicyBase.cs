@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
@@ -184,7 +185,7 @@ namespace Silverback.Messaging.ErrorHandling
                                   $"attempts ({failedAttempts}) exceeds the configured maximum attempts " +
                                   $"({MaxFailedAttemptsSetting}).";
 
-                _messageLogger.LogTrace(_logger, traceString, envelope);
+                _messageLogger.LogTrace(_logger, EventIds.ErrorPolicyBaseSkipPolicyBecauseOfFailedAttempts, traceString, envelope);
 
                 return false;
             }
@@ -194,7 +195,7 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
                                   $"{exception.GetType().Name} is not in the list of handled exceptions.";
 
-                _messageLogger.LogTrace(_logger, traceString, envelope);
+                _messageLogger.LogTrace(_logger, EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsNotInlcuded, traceString, envelope);
 
                 return false;
             }
@@ -204,7 +205,7 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
                                   $"{exception.GetType().Name} is in the list of excluded exceptions.";
 
-                _messageLogger.LogTrace(_logger, traceString, envelope);
+                _messageLogger.LogTrace(_logger, EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsExcluded, traceString, envelope);
 
                 return false;
             }
@@ -214,7 +215,7 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
                                   "evaluated and returned false.";
 
-                _messageLogger.LogTrace(_logger, traceString, envelope);
+                _messageLogger.LogTrace(_logger, EventIds.ErrorPolicyBaseSkipPolicyBecauseOfApplyRule, traceString, envelope);
 
                 return false;
             }

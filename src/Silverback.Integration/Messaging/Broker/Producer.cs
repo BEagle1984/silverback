@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -130,7 +131,7 @@ namespace Silverback.Messaging.Broker
             else
             {
                 await finalAction(context);
-                _messageLogger.LogInformation(_logger, "Message produced.", context.Envelope);
+                _messageLogger.LogInformation(_logger, EventIds.ProducerMessageProduced,  "Message produced.", context.Envelope);
             }
         }
     }

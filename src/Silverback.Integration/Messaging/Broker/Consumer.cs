@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -147,6 +148,7 @@ namespace Silverback.Messaging.Broker
             catch (Exception ex)
             {
                 _logger.LogWarning(
+                    EventIds.ConsumerErrorWhileDisposing,
                     ex,
                     "Error occurred while disposing consumer from endpoint {endpoint}.",
                     Endpoint.Name);

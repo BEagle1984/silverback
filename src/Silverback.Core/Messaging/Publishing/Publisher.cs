@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
@@ -94,8 +95,10 @@ namespace Silverback.Messaging.Publishing
                 else
                 {
                     _logger.LogDebug(
-                        $"Discarding result of type '{result?.GetType().FullName}' because it doesn't match " +
-                        $"the expected return type '{typeof(TResult).FullName}'.");
+                        EventIds.PublisherDiscardingResult,
+                        "Discarding result of type '{Type}' because it doesn't match the expected return type '{ExpectedType}'.",
+                        result?.GetType().FullName,
+                        typeof(TResult).FullName);
                 }
             }
         }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.ErrorHandling
@@ -58,7 +59,7 @@ namespace Silverback.Messaging.ErrorHandling
         {
             await ApplyDelay(envelopes);
 
-            _messageLogger.LogInformation(_logger, "The message(s) will be processed again.", envelopes);
+            _messageLogger.LogInformation(_logger, EventIds.RetryErrorPolicyApplyPolicy, "The message(s) will be processed again.", envelopes);
 
             return ErrorAction.Retry;
         }
@@ -74,6 +75,7 @@ namespace Silverback.Messaging.ErrorHandling
 
             _messageLogger.LogTrace(
                 _logger,
+                EventIds.RetryErrorPolicyWaiting,
                 $"Waiting {delay} milliseconds before retrying to process the message(s).",
                 envelopes);
 

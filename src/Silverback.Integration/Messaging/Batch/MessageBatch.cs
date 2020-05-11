@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.ErrorHandling;
@@ -111,7 +112,7 @@ namespace Silverback.Messaging.Batch
 
                 _envelopes.ForEach(
                     envelope =>
-                        _messageLogger.LogInformation(_logger, "Message added to batch.", envelope));
+                        _messageLogger.LogInformation(_logger, EventIds.MessageBatchMessageAdded, "Message added to batch.", envelope));
 
                 if (_envelopes.Count == 1)
                 {

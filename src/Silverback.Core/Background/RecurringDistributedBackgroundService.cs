@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 
 namespace Silverback.Background
 {
@@ -77,7 +78,7 @@ namespace Silverback.Background
                 await Sleep(stoppingToken);
             }
 
-            _logger.LogInformation($"Background service {GetType().FullName} stopped.");
+            _logger.LogInformation(EventIds.RecurringDistributedBackgroundServiceBackgroundServiceStopped, "Background service {BackgroundService} stopped.", GetType().FullName);
         }
 
         /// <summary>
@@ -98,8 +99,11 @@ namespace Silverback.Background
             if (_interval <= TimeSpan.Zero)
                 return;
 
-            _logger.LogDebug($"Background service {GetType().FullName} " +
-                             $"sleeping for {_interval.TotalMilliseconds} milliseconds.");
+            _logger.LogDebug(
+                EventIds.RecurringDistributedBackgroundServiceBackgroundServiceSleeping,
+                "Background service {BackgroundService} sleeping for {sleepTimeInMilliseconds} milliseconds.",
+                GetType().FullName,
+                _interval.TotalMilliseconds);
 
             await Task.Delay(_interval, stoppingToken);
         }
