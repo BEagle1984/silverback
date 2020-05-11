@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -110,7 +111,7 @@ namespace Silverback.Messaging.Broker
 
         private Confluent.Kafka.IProducer<byte[], byte[]> CreateInnerProducer()
         {
-            _logger.LogDebug("Creating Confluent.Kafka.Producer...");
+            _logger.LogDebug(EventIds.KafkaProducerCreatingProducer, "Creating Confluent.Kafka.Producer...");
 
             var producerBuilder =
                 new Confluent.Kafka.ProducerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig);
@@ -132,7 +133,7 @@ namespace Silverback.Messaging.Broker
                 }
                 case Confluent.Kafka.PersistenceStatus.PossiblyPersisted:
                 {
-                    _logger.LogWarning("The message was transmitted to broker, but no acknowledgement was received.");
+                    _logger.LogWarning(EventIds.KafkaProducerMessageTransmittedWithoutAcknowledgement, "The message was transmitted to broker, but no acknowledgement was received.");
                     break;
                 }
                 case Confluent.Kafka.PersistenceStatus.NotPersisted:

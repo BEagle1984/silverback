@@ -4,6 +4,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
@@ -26,7 +27,7 @@ namespace Silverback.Messaging.Broker
             producerBuilder
                 .SetStatisticsHandler((_, statistics) =>
                 {
-                    _logger.LogDebug($"Statistics: {statistics}");
+                    _logger.LogDebug(EventIds.KafkaEventsHandlerProducerStatisticsReceived,  $"Statistics: {statistics}");
                     CreateScopeAndPublishEvent(new KafkaStatisticsEvent(statistics));
                 });
 
@@ -38,8 +39,12 @@ namespace Silverback.Messaging.Broker
                 {
                     partitions.ForEach(partition =>
                     {
-                        _logger.LogInformation("Assigned partition {topic} {partition}, member id: {memberId}",
-                            partition.Topic, partition.Partition, consumer.MemberId);
+                        _logger.LogInformation(
+                            EventIds.KafkaEventsHandlerPartitionsAssigned,
+                            "Assigned partition {topic} {partition}, member id: {memberId}",
+                            partition.Topic,
+                            partition.Partition,
+                            consumer.MemberId);
                     });
 
                     var partitionsAssignedEvent = new KafkaPartitionsAssignedEvent(partitions, consumer.MemberId);
@@ -50,7 +55,9 @@ namespace Silverback.Messaging.Broker
                     {
                         if (topicPartitionOffset.Offset != Confluent.Kafka.Offset.Unset)
                         {
-                            _logger.LogDebug("{topic} {partition} offset will be reset to {offset}.",
+                            _logger.LogDebug(
+                                EventIds.KafkaEventsHandlerPartitionOffsetReset,
+                                "{topic} {partition} offset will be reset to {offset}.",
                                 topicPartitionOffset.Topic,
                                 topicPartitionOffset.Partition,
                                 topicPartitionOffset.Offset);
@@ -63,7 +70,9 @@ namespace Silverback.Messaging.Broker
                 {
                     partitions.ForEach(partition =>
                     {
-                        _logger.LogInformation("Revoked partition {topic} {partition}, member id: {memberId}",
+                        _logger.LogInformation(
+                            EventIds.KafkaEventsHandlerPartitionsRevoked,
+                            "Revoked partition {topic} {partition}, member id: {memberId}",
                             partition.Topic, partition.Partition, consumer.MemberId);
                     });
 
@@ -79,13 +88,16 @@ namespace Silverback.Messaging.Broker
                         if (offset.Error != null && offset.Error.Code != Confluent.Kafka.ErrorCode.NoError)
                         {
                             _logger.LogError(
+                                EventIds.KafkaEventsHandlerErrorWhileCommittingOffset,
                                 "Error occurred committing the offset {topic} {partition} @{offset}: {errorCode} - {errorReason}",
                                 offset.Topic, offset.Partition, offset.Offset, offset.Error.Code,
                                 offset.Error.Reason);
                         }
                         else
                         {
-                            _logger.LogDebug("Successfully committed offset {topic} {partition} @{offset}",
+                            _logger.LogDebug(
+                                EventIds.KafkaEventsHandlerOffsetCommitted,
+                                "Successfully committed offset {topic} {partition} @{offset}",
                                 offset.Topic, offset.Partition, offset.Offset);
                         }
                     }
@@ -108,14 +120,15 @@ namespace Silverback.Messaging.Broker
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Error in KafkaErrorEvent subscriber.");
+                        _logger.LogError(EventIds.KafkaEventsHandlerUnhandledError,  ex, "Error in KafkaErrorEvent subscriber.");
                     }
 
                     if (kafkaErrorEvent.Handled)
                         return;
-                        
+
                     _logger.Log(
                         error.IsFatal ? LogLevel.Critical : LogLevel.Error,
+                        EventIds.KafkaEventsHandlerErrorInKafkaConsumer,
                         "Error in Kafka consumer: {error} (topic(s): {topics})",
                         error,
                         ownerConsumer.Endpoint.Names);
@@ -123,7 +136,7 @@ namespace Silverback.Messaging.Broker
                 })
                 .SetStatisticsHandler((_, statistics) =>
                 {
-                    _logger.LogDebug($"Statistics: {statistics}");
+                    _logger.LogDebug(EventIds.KafkaEventsHandlerConsumerStatisticsReceived, $"Statistics: {statistics}");
                     CreateScopeAndPublishEvent(new KafkaStatisticsEvent(statistics));
                 });
 

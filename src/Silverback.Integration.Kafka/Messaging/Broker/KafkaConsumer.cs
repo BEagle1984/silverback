@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -52,8 +53,11 @@ namespace Silverback.Messaging.Broker
             _innerConsumer.Received += OnMessageReceived;
             _innerConsumer.StartConsuming();
 
-            _logger.LogDebug("Connected consumer to topic {topic}. (BootstrapServers=\"{bootstrapServers}\")",
-                Endpoint.Name, Endpoint.Configuration.BootstrapServers);
+            _logger.LogDebug(
+                EventIds.KafkaConsumerConnected,
+                "Connected consumer to topic {topic}. (BootstrapServers=\"{bootstrapServers}\")",
+                Endpoint.Name,
+                Endpoint.Configuration.BootstrapServers);
         }
 
         public override void Disconnect()
@@ -69,8 +73,11 @@ namespace Silverback.Messaging.Broker
             _innerConsumer.Dispose();
             _innerConsumer = null;
 
-            _logger.LogDebug("Disconnected consumer from topic {topic}. (BootstrapServers=\"{bootstrapServers}\")",
-                Endpoint.Name, Endpoint.Configuration.BootstrapServers);
+            _logger.LogDebug(
+                EventIds.KafkaConsumerDisconnected,
+                "Disconnected consumer from topic {topic}. (BootstrapServers=\"{bootstrapServers}\")",
+                Endpoint.Name,
+                Endpoint.Configuration.BootstrapServers);
         }
 
         private async Task OnMessageReceived(
@@ -114,7 +121,9 @@ namespace Silverback.Messaging.Broker
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex,
+                _logger.LogCritical(
+                    EventIds.KafkaConsumerFatalError,
+                    ex,
                     "Fatal error occurred consuming the message {offset} from endpoint {endpointName}. " +
                     "The consumer will be stopped.",
                     offset?.Value, Endpoint.Name);
@@ -145,7 +154,7 @@ namespace Silverback.Messaging.Broker
 
         protected override Task Rollback(IReadOnlyCollection<KafkaOffset> offsets)
         {
-            // Nothing to do here. With Kafka the uncommitted messages will be implicitly re-consumed. 
+            // Nothing to do here. With Kafka the uncommitted messages will be implicitly re-consumed.
             return Task.CompletedTask;
         }
 

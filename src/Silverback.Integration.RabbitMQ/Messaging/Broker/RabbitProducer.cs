@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -81,7 +82,7 @@ namespace Silverback.Messaging.Broker
             }
             catch (OperationCanceledException ex)
             {
-                _logger.LogTrace(ex, "Producer queue processing was cancelled.");
+                _logger.LogTrace(EventIds.RabbitProducerQueueProcessingCancelled, ex, "Producer queue processing was cancelled.");
             }
         }
 
@@ -97,7 +98,7 @@ namespace Silverback.Messaging.Broker
             {
                 case RabbitQueueProducerEndpoint queueEndpoint:
                     _channel.BasicPublish(
-                        "",
+                        string.Empty,
                         queueEndpoint.Name,
                         properties,
                         envelope.RawMessage);

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -76,6 +77,7 @@ namespace Silverback.Messaging.Connectors
 
                     _messageLogger.LogDebug(
                         _logger,
+                        EventIds.ExactlyOnceInboundConnectorMessageAlreadyProcessed,
                         "Message is being skipped since it was already processed.",
                         envelope);
                     return false;

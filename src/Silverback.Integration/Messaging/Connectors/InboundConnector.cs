@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -83,7 +84,7 @@ namespace Silverback.Messaging.Connectors
             Check.NotNull(endpoint, nameof(endpoint));
             Check.NotNull(settings, nameof(settings));
 
-            _logger.LogTrace("Connecting to inbound endpoint '{endpointName}'...", endpoint.Name);
+            _logger.LogTrace(EventIds.InboundConnectorConnectingToInboundEndpoint, "Connecting to inbound endpoint '{endpointName}'...", endpoint.Name);
 
             settings.Validate();
 

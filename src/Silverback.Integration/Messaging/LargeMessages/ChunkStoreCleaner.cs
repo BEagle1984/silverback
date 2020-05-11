@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 
 namespace Silverback.Messaging.LargeMessages
 {
@@ -52,7 +53,7 @@ namespace Silverback.Messaging.LargeMessages
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to cleanup the chunk store.", ex);
+                _logger.LogError(EventIds.ChunkStoreCleanerFailedToCleanup, "Failed to cleanup the chunk store.", ex);
             }
         }
     }

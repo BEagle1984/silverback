@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
@@ -53,7 +54,7 @@ namespace Silverback.Messaging.Diagnostics
             }
             catch (Exception ex)
             {
-                logger?.LogWarning(ex, "Failed to initialize the current activity from the message headers.");
+                logger?.LogWarning(EventIds.ActivityConsumerBehaviorFailedToInitializeFromHeaders, ex, "Failed to initialize the current activity from the message headers.");
             }
 
             activity.Start();

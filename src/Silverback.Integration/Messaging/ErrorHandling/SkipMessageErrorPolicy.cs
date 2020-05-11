@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.ErrorHandling
@@ -54,7 +55,7 @@ namespace Silverback.Messaging.ErrorHandling
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
-            _messageLogger.Log(_logger, _logLevel, exception, "The message(s) will be skipped.", envelopes);
+            _messageLogger.Log(_logger, EventIds.SkipMessagePolicyMessageSkipped, _logLevel, exception, "The message(s) will be skipped.", envelopes);
 
             return Task.FromResult(ErrorAction.Skip);
         }
