@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
@@ -46,7 +47,6 @@ namespace Silverback.Messaging.Broker
             IServiceProvider serviceProvider,
             ILogger<RabbitConsumer> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
-
         {
             _connectionFactory = connectionFactory;
             _logger = logger;
@@ -114,6 +114,7 @@ namespace Silverback.Messaging.Broker
                 offset = new RabbitOffset(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
 
                 _logger.LogDebug(
+                    EventIds.RabbitConsumerConsumingMessage,
                     "Consuming message {offset} from endpoint {endpointName}.",
                     offset.Value,
                     Endpoint.Name);
@@ -132,7 +133,7 @@ namespace Silverback.Messaging.Broker
                 const string errorMessage =
                     "Fatal error occurred consuming the message {offset} from endpoint {endpointName}. " +
                     "The consumer will be stopped.";
-                _logger.LogCritical(ex, errorMessage, offset?.Value, Endpoint.Name);
+                _logger.LogCritical(EventIds.RabbitConsumerFatalError, ex, errorMessage, offset?.Value, Endpoint.Name);
 
                 Disconnect();
             }
@@ -176,12 +177,14 @@ namespace Silverback.Messaging.Broker
                 _channel.BasicAck(deliveryTag, true);
 
                 _logger.LogDebug(
+                    EventIds.RabbitConsumerSuccessfullyCommited,
                     "Successfully committed (basic.ack) the delivery tag {deliveryTag}.",
                     deliveryTag);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
+                    EventIds.RabbitConsumerErrorWhileCommitting,
                     ex,
                     "Error occurred committing (basic.ack) the delivery tag {deliveryTag}.",
                     deliveryTag);
@@ -197,12 +200,14 @@ namespace Silverback.Messaging.Broker
                 _channel.BasicNack(deliveryTag, true, true);
 
                 _logger.LogDebug(
+                    EventIds.RabbitConsumerSuccessfullySentBasicNack,
                     "Successfully rolled back (basic.nack) the delivery tag {deliveryTag}.",
                     deliveryTag);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
+                    EventIds.RabbitConsumerErrorWhileSendingBasicNack,
                     ex,
                     "Error occurred rolled back (basic.nack) the delivery tag {deliveryTag}.",
                     deliveryTag);

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -74,6 +75,7 @@ namespace Silverback.Messaging.ErrorHandling
 
             _messageLogger.LogDebug(
                 _logger,
+                EventIds.ErrorPolicyChainStopConsumer,
                 "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.",
                 envelopes);
             return Task.FromResult(ErrorAction.StopConsuming);

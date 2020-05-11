@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Util;
 
 namespace Silverback.Background
@@ -74,7 +75,7 @@ namespace Silverback.Background
         [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation($"Starting background service {GetType().FullName}...");
+            _logger.LogInformation(EventIds.DistributedBackgroundServiceStartingBackgroundService, "Starting background service {BackgroundService}...", GetType().FullName);
 
             // Run another task to avoid deadlocks
             return Task.Run(
@@ -87,7 +88,9 @@ namespace Silverback.Background
                         if (Lock != null)
                         {
                             _logger.LogInformation(
-                                $"Lock acquired, executing background service {GetType().FullName}.");
+                                EventIds.DistributedBackgroundServiceExecute,
+                                "Lock acquired, executing background service {BackgroundService}.",
+                                GetType().FullName);
                         }
 
                         await ExecuteLockedAsync(stoppingToken);
@@ -98,7 +101,7 @@ namespace Silverback.Background
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, $"Background service '{GetType().FullName}' failed.");
+                        _logger.LogError(EventIds.DistributedBackgroundServiceUnhandledException, ex, "Background service '{BackgroundService}' failed.", GetType().FullName);
                     }
                     finally
                     {

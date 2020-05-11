@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 
@@ -50,7 +51,7 @@ namespace Silverback.Messaging.Connectors
         /// </returns>
         public async Task RelayMessage(IOutboundEnvelope envelope)
         {
-            _messageLogger.LogDebug(_logger, "Enqueuing outbound message for deferred produce.", envelope);
+            _messageLogger.LogDebug(_logger, EventIds.DeferredOutboundConnectorEnqueueMessage, "Enqueuing outbound message for deferred produce.", envelope);
             await _queueWriter.Enqueue(envelope);
         }
     }

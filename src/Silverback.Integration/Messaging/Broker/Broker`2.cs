@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
@@ -121,9 +122,11 @@ namespace Silverback.Messaging.Broker
                 _ =>
                 {
                     _logger.LogInformation(
+                        EventIds.BrokerCreateProducer,
                         "Creating new producer for endpoint {endpointName}. " +
-                        $"(Total producers: {_producers.Count + 1})",
-                        endpoint.Name);
+                        "(Total producers: {ProducerCount})",
+                        endpoint.Name,
+                        _producers.Count + 1);
                     return InstantiateProducer(
                         (TProducerEndpoint)endpoint,
                         GetBehaviors<IProducerBehavior>(),
@@ -156,7 +159,7 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 throw new InvalidOperationException(CannotCreateConsumerIfConnectedExceptionMessage);
 
-            _logger.LogInformation("Creating new consumer for endpoint {endpointName}.", endpoint.Name);
+            _logger.LogInformation(EventIds.BrokerCreatingConsumer, "Creating new consumer for endpoint {endpointName}.", endpoint.Name);
 
             var consumer = InstantiateConsumer(
                 (TConsumerEndpoint)endpoint,
@@ -178,12 +181,12 @@ namespace Silverback.Messaging.Broker
             if (_consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            _logger.LogDebug("Connecting to message broker ({broker})...", GetType().Name);
+            _logger.LogDebug(EventIds.BrokerConnecting, "Connecting to message broker ({broker})...", GetType().Name);
 
             Connect(_consumers);
             IsConnected = true;
 
-            _logger.LogInformation("Connected to message broker ({broker})!", GetType().Name);
+            _logger.LogInformation(EventIds.BrokerConnected, "Connected to message broker ({broker})!", GetType().Name);
         }
 
         /// <inheritdoc />
@@ -195,12 +198,12 @@ namespace Silverback.Messaging.Broker
             if (_consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            _logger.LogDebug("Disconnecting from message broker ({broker})...", GetType().Name);
+            _logger.LogDebug(EventIds.BrokerDisconnecting, "Disconnecting from message broker ({broker})...", GetType().Name);
 
             Disconnect(_consumers);
             IsConnected = false;
 
-            _logger.LogInformation("Disconnected from message broker ({broker})!", GetType().Name);
+            _logger.LogInformation(EventIds.BrokerDisconnected,  "Disconnected from message broker ({broker})!", GetType().Name);
         }
 
         /// <inheritdoc />

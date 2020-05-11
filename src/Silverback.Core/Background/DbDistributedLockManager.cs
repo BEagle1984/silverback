@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Database;
 using Silverback.Database.Model;
+using Silverback.Diagnostics;
 using Silverback.Util;
 
 namespace Silverback.Background
@@ -55,6 +56,7 @@ namespace Silverback.Background
                 return await NullLockManager.Acquire(settings, cancellationToken);
 
             _logger.LogInformation(
+                EventIds.DbDistributedLockManagerTryAcquireLock,
                 "Trying to acquire lock {lockName} ({lockUniqueId})...",
                 settings.ResourceName,
                 settings.UniqueId);
@@ -65,6 +67,7 @@ namespace Silverback.Background
                 if (await TryAcquireLock(settings))
                 {
                     _logger.LogInformation(
+                        EventIds.DbDistributedLockManagerAcquiredLock,
                         "Acquired lock {lockName} ({lockUniqueId}).",
                         settings.ResourceName,
                         settings.UniqueId);
@@ -101,6 +104,7 @@ namespace Silverback.Background
             catch (Exception ex)
             {
                 _logger.LogError(
+                    EventIds.DbDistributedLockManagerFailedToCheckLock,
                     ex,
                     "Failed to check lock {lockName} ({lockUniqueId}). See inner exception for details.",
                     settings.ResourceName,
@@ -127,6 +131,7 @@ namespace Silverback.Background
             catch (Exception ex)
             {
                 _logger.LogDebug(
+                    EventIds.DbDistributedLockManagerFailedToSendHeartbeat,
                     ex,
                     "Failed to send heartbeat for lock {lockName} ({lockUniqueId}). See inner exception for details.",
                     settings.ResourceName,
@@ -154,6 +159,7 @@ namespace Silverback.Background
                     await Release(settings.ResourceName, settings.UniqueId, scope.ServiceProvider);
 
                     _logger.LogInformation(
+                        EventIds.DbDistributedLockManagerReleasedLock,
                         "Released lock {lockName} ({lockUniqueId}).",
                         settings.ResourceName,
                         settings.UniqueId);
@@ -163,6 +169,7 @@ namespace Silverback.Background
                 catch (Exception ex)
                 {
                     _logger.LogWarning(
+                        EventIds.DbDistributedLockManagerFailedToReleaseLock,
                         ex,
                         "Failed to release lock '{lockName} ({lockUniqueId})'. See inner exception for details.",
                         settings.ResourceName,
@@ -264,6 +271,7 @@ namespace Silverback.Background
             catch (Exception ex)
             {
                 _logger.LogDebug(
+                    EventIds.DbDistributedLockManagerFailedToAquireLock,
                     ex,
                     "Failed to acquire lock {lockName} ({lockUniqueId}). See inner exception for details.",
                     settings.ResourceName,
