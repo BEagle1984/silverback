@@ -39,13 +39,14 @@ namespace Silverback.Messaging.Connectors.Repositories
             string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!;
             string consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();
 
-            var inboundMessage = new InboundLogEntry
+            var logEntry = new InboundLogEntry
             {
                 MessageId = messageId,
+                EndpointName = envelope.ActualEndpointName,
                 ConsumerGroupName = consumerGroupName
             };
 
-            return Add(inboundMessage);
+            return Add(logEntry);
         }
 
         /// <inheritdoc />
@@ -61,6 +62,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                 Items.Union(UncommittedItems).Any(
                     item =>
                         item.Entry.MessageId == messageId &&
+                        item.Entry.EndpointName == envelope.ActualEndpointName &&
                         item.Entry.ConsumerGroupName == consumerGroupName));
         }
 

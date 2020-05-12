@@ -33,6 +33,7 @@ toc: true
 * Some changes to error policies:
     * `Apply` method is now async
     * Changed the signature of the transfor function in the `MovePolicy`
+* Removed `IMessageIdProvider` and all related logic: **the `Id` or `MessageId` property will not be automatically initialized anymore and its value will not be used as identifier for the outbound message anymore (refer to the [Message Identifier]({{ site.baseurl }}/docs/advanced/message-id) page for further details on how to set a custom message id, if needed)
 
 ## [2.1.1-rc.12](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1-rc.12)
 

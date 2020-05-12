@@ -36,7 +36,6 @@ namespace Microsoft.Extensions.DependencyInjection
             silverbackBuilder.Services
                 .AddSingleton<IBrokerCollection, BrokerCollection>()
                 .AddSingleton<IErrorPolicyBuilder, ErrorPolicyBuilder>()
-                .AddSingleton<MessageIdProvider>()
                 .AddSingleton<MessageLogger>()
                 .AddSingletonBrokerBehavior<ActivityProducerBehavior>()
                 .AddSingletonBrokerBehavior<ActivityConsumerBehavior>();

@@ -10,18 +10,13 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 {
     public class MessageIdProviderTests
     {
-        private readonly MessageIdProvider _messageIdProvider = new MessageIdProvider(new[]
-        {
-            new DefaultPropertiesMessageIdProvider()
-        });
-
         [Fact]
         public void EnsureMessageIdIsInitialized_NoHeaderSet_HeaderInitialized()
         {
             var message = new object();
             var headers = new MessageHeaderCollection();
 
-            _messageIdProvider.EnsureMessageIdIsInitialized(message, headers);
+            MessageIdProvider.EnsureMessageIdIsInitialized(message, headers);
 
             headers.Count.Should().Be(1);
             headers.First().Key.Should().Be("x-message-id");
@@ -37,7 +32,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 { "x-message-id", "12345" }
             };
 
-            _messageIdProvider.EnsureMessageIdIsInitialized(message, headers);
+            MessageIdProvider.EnsureMessageIdIsInitialized(message, headers);
 
             headers.Should().BeEquivalentTo(new MessageHeader("x-message-id", "12345"));
         }
