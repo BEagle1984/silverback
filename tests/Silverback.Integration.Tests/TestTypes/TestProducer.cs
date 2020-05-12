@@ -22,8 +22,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 broker,
                 endpoint,
                 behaviors,
-                new NullLogger<TestProducer>(),
-                new MessageLogger())
+                new NullLogger<TestProducer>())
         {
             ProducedMessages = broker.ProducedMessages;
         }

@@ -35,9 +35,8 @@ namespace Silverback.Messaging.Broker
             RabbitProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors,
             IRabbitConnectionFactory connectionFactory,
-            ILogger<Producer> logger,
-            MessageLogger messageLogger)
-            : base(broker, endpoint, behaviors, logger, messageLogger)
+            ILogger<Producer> logger)
+            : base(broker, endpoint, behaviors, logger)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;

@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -47,8 +46,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector = new OffsetStoredInboundConnector(
                 serviceProvider.GetRequiredService<IBrokerCollection>(),
                 serviceProvider,
-                serviceProvider.GetRequiredService<ILogger<OffsetStoredInboundConnector>>(),
-                serviceProvider.GetRequiredService<MessageLogger>());
+                serviceProvider.GetRequiredService<ILogger<OffsetStoredInboundConnector>>());
             _scopedServiceProvider = serviceProvider.CreateScope().ServiceProvider;
         }
 

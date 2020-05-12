@@ -23,8 +23,6 @@ namespace Silverback.Messaging.ErrorHandling
 
         private readonly ILogger _logger;
 
-        private readonly MessageLogger _messageLogger;
-
         private Action<IOutboundEnvelope, Exception>? _transformationAction;
 
         /// <summary>
@@ -36,14 +34,12 @@ namespace Silverback.Messaging.ErrorHandling
         /// <param name="endpoint"> The endpoint to move the message to. </param>
         /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         public MoveMessageErrorPolicy(
             IBrokerCollection brokerCollection,
             IProducerEndpoint endpoint,
             IServiceProvider serviceProvider,
-            ILogger<MoveMessageErrorPolicy> logger,
-            MessageLogger messageLogger)
-            : base(serviceProvider, logger, messageLogger)
+            ILogger<MoveMessageErrorPolicy> logger)
+            : base(serviceProvider, logger)
         {
             Check.NotNull(brokerCollection, nameof(brokerCollection));
             Check.NotNull(endpoint, nameof(endpoint));
@@ -52,7 +48,6 @@ namespace Silverback.Messaging.ErrorHandling
             _producer = brokerCollection.GetProducer(endpoint);
             _endpoint = endpoint;
             _logger = logger;
-            _messageLogger = messageLogger;
         }
 
         /// <summary>
@@ -80,8 +75,7 @@ namespace Silverback.Messaging.ErrorHandling
         {
             Check.NotNull(envelopes, nameof(envelopes));
 
-            _messageLogger.LogInformation(
-                _logger,
+            _logger.LogInformation(
                 EventIds.MoveMessageErrorPolicyMoveMessages,
                 $"{envelopes.Count} message(s) will be  be moved to endpoint '{_endpoint.Name}'.",
                 envelopes);

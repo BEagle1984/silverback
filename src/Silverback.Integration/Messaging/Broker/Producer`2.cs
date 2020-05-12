@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
@@ -22,14 +21,12 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint"> The endpoint to produce to. </param>
         /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         protected Producer(
             TBroker broker,
             TEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors,
-            ILogger<Producer> logger,
-            MessageLogger messageLogger)
-            : base(broker, endpoint, behaviors, logger, messageLogger)
+            ILogger<Producer> logger)
+            : base(broker, endpoint, behaviors, logger)
         {
         }
 

@@ -20,7 +20,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         private readonly KafkaBroker _broker = new KafkaBroker(
             Enumerable.Empty<IBrokerBehavior>(),
             NullLoggerFactory.Instance,
-            new MessageLogger(),
             Substitute.For<IServiceProvider>());
 
         [Fact]

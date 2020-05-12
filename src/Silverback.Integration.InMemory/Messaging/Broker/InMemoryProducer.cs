@@ -16,9 +16,8 @@ namespace Silverback.Messaging.Broker
             InMemoryBroker broker,
             IProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors,
-            ILogger<Producer> logger,
-            MessageLogger messageLogger)
-            : base(broker, endpoint, behaviors, logger, messageLogger)
+            ILogger<Producer> logger)
+            : base(broker, endpoint, behaviors, logger)
         {
         }
 

@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.TestTypes
     public class TestErrorPolicy : ErrorPolicyBase
     {
         public TestErrorPolicy(IServiceProvider serviceProvider = null)
-            : base(serviceProvider, NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>(), new MessageLogger())
+            : base(serviceProvider, NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>())
         {
         }
 

@@ -20,8 +20,6 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly ILogger _logger;
 
-        private readonly MessageLogger _messageLogger;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExactlyOnceInboundConnector" /> class.
         /// </summary>
@@ -30,16 +28,13 @@ namespace Silverback.Messaging.Connectors
         /// </param>
         /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         protected ExactlyOnceInboundConnector(
             IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
-            ILogger<ExactlyOnceInboundConnector> logger,
-            MessageLogger messageLogger)
+            ILogger<ExactlyOnceInboundConnector> logger)
             : base(brokerCollection, serviceProvider, logger)
         {
             _logger = logger;
-            _messageLogger = messageLogger;
         }
 
         /// <inheritdoc />
@@ -75,8 +70,7 @@ namespace Silverback.Messaging.Connectors
                     if (await MustProcess(envelope, serviceProvider))
                         return true;
 
-                    _messageLogger.LogDebug(
-                        _logger,
+                    _logger.LogDebug(
                         EventIds.ExactlyOnceInboundConnectorMessageAlreadyProcessed,
                         "Message is being skipped since it was already processed.",
                         envelope);

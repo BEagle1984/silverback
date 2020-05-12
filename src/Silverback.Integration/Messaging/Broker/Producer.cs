@@ -18,8 +18,6 @@ namespace Silverback.Messaging.Broker
     {
         private readonly ILogger<Producer> _logger;
 
-        private readonly MessageLogger _messageLogger;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="Producer" /> class.
         /// </summary>
@@ -29,17 +27,14 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint"> The endpoint to produce to. </param>
         /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors,
-            ILogger<Producer> logger,
-            MessageLogger messageLogger)
+            ILogger<Producer> logger)
         {
             Behaviors = behaviors ?? Array.Empty<IProducerBehavior>();
             _logger = Check.NotNull(logger, nameof(logger));
-            _messageLogger = Check.NotNull(messageLogger, nameof(messageLogger));
 
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
@@ -131,7 +126,7 @@ namespace Silverback.Messaging.Broker
             else
             {
                 await finalAction(context);
-                _messageLogger.LogInformation(_logger, EventIds.ProducerMessageProduced,  "Message produced.", context.Envelope);
+                _logger.LogInformation(EventIds.ProducerMessageProduced,  "Message produced.", context.Envelope);
             }
         }
     }

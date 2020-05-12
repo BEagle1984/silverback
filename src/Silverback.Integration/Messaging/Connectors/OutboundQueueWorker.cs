@@ -24,8 +24,6 @@ namespace Silverback.Messaging.Connectors
 
         private readonly IBrokerCollection _brokerCollection;
 
-        private readonly MessageLogger _messageLogger;
-
         private readonly ILogger<OutboundQueueWorker> _logger;
 
         private readonly int _readPackageSize;
@@ -42,7 +40,6 @@ namespace Silverback.Messaging.Connectors
         ///     The collection containing the available brokers.
         /// </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         /// <param name="enforceMessageOrder">
         ///     Specifies whether the messages must be produced in the same order as they were added to the queue.
         ///     If set to <c> true </c> the message order will be ensured, retrying the same message until it can be
@@ -55,13 +52,11 @@ namespace Silverback.Messaging.Connectors
             IServiceScopeFactory serviceScopeFactory,
             IBrokerCollection brokerCollection,
             ILogger<OutboundQueueWorker> logger,
-            MessageLogger messageLogger,
             bool enforceMessageOrder,
             int readPackageSize)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _brokerCollection = brokerCollection;
-            _messageLogger = messageLogger;
             _logger = logger;
             _enforceMessageOrder = enforceMessageOrder;
             _readPackageSize = readPackageSize;
@@ -127,8 +122,7 @@ namespace Silverback.Messaging.Connectors
             }
             catch (Exception ex)
             {
-                _messageLogger.LogError(
-                    _logger,
+                _logger.LogError(
                     EventIds.OutboundQueueWorkerFailedToPublishMessage,
                     ex,
                     "Failed to publish queued message.",

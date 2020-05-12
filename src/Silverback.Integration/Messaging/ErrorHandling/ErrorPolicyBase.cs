@@ -21,8 +21,6 @@ namespace Silverback.Messaging.ErrorHandling
 
         private readonly ILogger<ErrorPolicyBase> _logger;
 
-        private readonly MessageLogger _messageLogger;
-
         private readonly List<Type> _excludedExceptions = new List<Type>();
 
         private readonly List<Type> _includedExceptions = new List<Type>();
@@ -34,15 +32,12 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         protected ErrorPolicyBase(
             IServiceProvider serviceProvider,
-            ILogger<ErrorPolicyBase> logger,
-            MessageLogger messageLogger)
+            ILogger<ErrorPolicyBase> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
-            _messageLogger = messageLogger;
         }
 
         internal Func<IReadOnlyCollection<IRawInboundEnvelope>, object>? MessageToPublishFactory { get; private set; }
@@ -185,7 +180,7 @@ namespace Silverback.Messaging.ErrorHandling
                                   $"attempts ({failedAttempts}) exceeds the configured maximum attempts " +
                                   $"({MaxFailedAttemptsSetting}).";
 
-                _messageLogger.LogTrace(_logger, EventIds.ErrorPolicyBaseSkipPolicyBecauseOfFailedAttempts, traceString, envelope);
+                _logger.LogTrace(EventIds.ErrorPolicyBaseSkipPolicyBecauseOfFailedAttempts, traceString, envelope);
 
                 return false;
             }
@@ -195,7 +190,7 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
                                   $"{exception.GetType().Name} is not in the list of handled exceptions.";
 
-                _messageLogger.LogTrace(_logger, EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsNotInlcuded, traceString, envelope);
+                _logger.LogTrace(EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsNotInlcuded, traceString, envelope);
 
                 return false;
             }
@@ -205,7 +200,7 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
                                   $"{exception.GetType().Name} is in the list of excluded exceptions.";
 
-                _messageLogger.LogTrace(_logger, EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsExcluded, traceString, envelope);
+                _logger.LogTrace(EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsExcluded, traceString, envelope);
 
                 return false;
             }
@@ -215,7 +210,7 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
                                   "evaluated and returned false.";
 
-                _messageLogger.LogTrace(_logger, EventIds.ErrorPolicyBaseSkipPolicyBecauseOfApplyRule, traceString, envelope);
+                _logger.LogTrace(EventIds.ErrorPolicyBaseSkipPolicyBecauseOfApplyRule, traceString, envelope);
 
                 return false;
             }
