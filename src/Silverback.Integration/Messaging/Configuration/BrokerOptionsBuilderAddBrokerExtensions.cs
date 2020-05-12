@@ -86,13 +86,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 brokerOptionsBuilder.SilverbackBuilder.Services
                     .AddSingleton(typeof(TransactionalListSharedItems<>))
                     .AddSingleton(typeof(TransactionalDictionarySharedItems<,>));
-
-#pragma warning disable 618
-
-                // Deprecated
-                brokerOptionsBuilder.AddMessageIdProvider<DefaultPropertiesMessageIdProvider>();
-
-#pragma warning restore 618
             }
 
             // Register the broker as IBroker and the type itself, both resolving to the same instance

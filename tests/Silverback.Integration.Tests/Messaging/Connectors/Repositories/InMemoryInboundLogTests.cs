@@ -5,8 +5,8 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Database.Model;
+using Silverback.Messaging;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Util;
@@ -72,6 +72,52 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
+        public async Task Exists_SameIdInDifferentTopic_FalseIsReturned()
+        {
+            var messageId = Guid.NewGuid();
+            var endpoint1 = new TestConsumerEndpoint("topic1")
+            {
+                GroupId = "same"
+            };
+            var endpoint2 = new TestConsumerEndpoint("topic2")
+            {
+                GroupId = "same"
+            };
+            var envelope1 = GetEnvelope(messageId, endpoint1);
+            var envelope2 = GetEnvelope(messageId, endpoint2);
+
+            await _log.Add(envelope1);
+            await _log.Commit();
+
+            var result = await _log.Exists(envelope2);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Exists_SameIdForDifferentConsumerGroup_FalseIsReturned()
+        {
+            var messageId = Guid.NewGuid();
+            var endpoint1 = new TestConsumerEndpoint("same")
+            {
+                GroupId = "group1"
+            };
+            var endpoint2 = new TestConsumerEndpoint("same")
+            {
+                GroupId = "group2"
+            };
+            var envelope1 = GetEnvelope(messageId, endpoint1);
+            var envelope2 = GetEnvelope(messageId, endpoint2);
+
+            await _log.Add(envelope1);
+            await _log.Commit();
+
+            var result = await _log.Exists(envelope2);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
         public async Task Exists_NotLoggedEnvelope_FalseIsReturned()
         {
             await _log.Add(GetEnvelope());
@@ -83,14 +129,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             result.Should().BeFalse();
         }
 
-        private IRawInboundEnvelope GetEnvelope(Guid? messageId = null) =>
-            new RawInboundEnvelope(
-                new byte[0],
-                new[]
-                {
-                    new MessageHeader("x-message-id", messageId ?? Guid.NewGuid()),
-                },
-                TestConsumerEndpoint.GetDefault(),
-                "test");
+        private static IRawInboundEnvelope GetEnvelope(Guid? messageId = null, IConsumerEndpoint endpoint = null)
+        {
+            endpoint ??= TestConsumerEndpoint.GetDefault();
+
+            var headers = new[]
+            {
+                new MessageHeader("x-message-id", messageId ?? Guid.NewGuid()),
+            };
+
+            return new RawInboundEnvelope(Array.Empty<byte>(), headers, endpoint, endpoint.Name);
+        }
     }
 }
