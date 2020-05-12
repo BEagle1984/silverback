@@ -17,8 +17,6 @@ namespace Silverback.Messaging.ErrorHandling
     {
         private readonly ILogger _logger;
 
-        private readonly MessageLogger _messageLogger;
-
         private LogLevel _logLevel = LogLevel.Error;
 
         /// <summary>
@@ -26,16 +24,11 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         public SkipMessageErrorPolicy(
             IServiceProvider serviceProvider,
-            ILogger<SkipMessageErrorPolicy> logger,
-            MessageLogger messageLogger)
-            : base(serviceProvider, logger, messageLogger)
-        {
+            ILogger<SkipMessageErrorPolicy> logger)
+            : base(serviceProvider, logger) =>
             _logger = logger;
-            _messageLogger = messageLogger;
-        }
 
         /// <summary>
         ///     Specifies the log level to be used when writing the "message skipped" log entry.
@@ -55,7 +48,7 @@ namespace Silverback.Messaging.ErrorHandling
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
-            _messageLogger.Log(_logger, EventIds.SkipMessagePolicyMessageSkipped, _logLevel, exception, "The message(s) will be skipped.", envelopes);
+            _logger.Log(EventIds.SkipMessagePolicyMessageSkipped, _logLevel, exception, "The message(s) will be skipped.", envelopes);
 
             return Task.FromResult(ErrorAction.Skip);
         }

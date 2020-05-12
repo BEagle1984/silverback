@@ -25,13 +25,11 @@ namespace Silverback.Messaging.Connectors
         /// </param>
         /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         public LoggedInboundConnector(
             IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
-            ILogger<LoggedInboundConnector> logger,
-            MessageLogger messageLogger)
-            : base(brokerCollection, serviceProvider, logger, messageLogger)
+            ILogger<LoggedInboundConnector> logger)
+            : base(brokerCollection, serviceProvider, logger)
         {
         }
 

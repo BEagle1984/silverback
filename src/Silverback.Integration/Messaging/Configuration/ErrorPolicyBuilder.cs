@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.ErrorHandling;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Configuration
 {
@@ -26,29 +25,25 @@ namespace Silverback.Messaging.Configuration
             new ErrorPolicyChain(
                 _serviceProvider,
                 _loggerFactory.CreateLogger<ErrorPolicyChain>(),
-                _serviceProvider.GetRequiredService<MessageLogger>(),
                 policies);
 
         public RetryErrorPolicy Retry(TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null) =>
             new RetryErrorPolicy(
                 _serviceProvider,
                 _loggerFactory.CreateLogger<RetryErrorPolicy>(),
-                _serviceProvider.GetRequiredService<MessageLogger>(),
                 initialDelay,
                 delayIncrement);
 
         public SkipMessageErrorPolicy Skip() =>
             new SkipMessageErrorPolicy(
                 _serviceProvider,
-                _loggerFactory.CreateLogger<SkipMessageErrorPolicy>(),
-                _serviceProvider.GetRequiredService<MessageLogger>());
+                _loggerFactory.CreateLogger<SkipMessageErrorPolicy>());
 
         public MoveMessageErrorPolicy Move(IProducerEndpoint endpoint) =>
             new MoveMessageErrorPolicy(
                 _serviceProvider.GetRequiredService<IBrokerCollection>(),
                 endpoint,
                 _serviceProvider,
-                _loggerFactory.CreateLogger<MoveMessageErrorPolicy>(),
-                _serviceProvider.GetRequiredService<MessageLogger>());
+                _loggerFactory.CreateLogger<MoveMessageErrorPolicy>());
     }
 }

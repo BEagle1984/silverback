@@ -35,10 +35,9 @@ namespace Silverback.Messaging.Broker
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior> behaviors,
-            MessageLogger messageLogger,
             IServiceProvider serviceProvider,
             ILogger<KafkaProducer> logger)
-            : base(broker, endpoint, behaviors, logger, messageLogger)
+            : base(broker, endpoint, behaviors, logger)
         {
             _logger = logger;
 

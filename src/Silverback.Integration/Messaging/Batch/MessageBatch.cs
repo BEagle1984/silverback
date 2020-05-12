@@ -35,8 +35,6 @@ namespace Silverback.Messaging.Batch
 
         private readonly ILogger _logger;
 
-        private readonly MessageLogger _messageLogger;
-
         private readonly List<IRawInboundEnvelope> _envelopes;
 
         private readonly Timer? _waitTimer;
@@ -73,7 +71,6 @@ namespace Silverback.Messaging.Batch
             }
 
             _logger = serviceProvider.GetRequiredService<ILogger<MessageBatch>>();
-            _messageLogger = serviceProvider.GetRequiredService<MessageLogger>();
         }
 
         public Guid CurrentBatchId { get; private set; }
@@ -112,7 +109,7 @@ namespace Silverback.Messaging.Batch
 
                 _envelopes.ForEach(
                     envelope =>
-                        _messageLogger.LogInformation(_logger, EventIds.MessageBatchMessageAdded, "Message added to batch.", envelope));
+                        _logger.LogInformation(EventIds.MessageBatchMessageAdded, "Message added to batch.", envelope));
 
                 if (_envelopes.Count == 1)
                 {

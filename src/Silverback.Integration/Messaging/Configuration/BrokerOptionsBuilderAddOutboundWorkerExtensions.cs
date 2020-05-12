@@ -8,7 +8,6 @@ using Silverback.Background;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
@@ -63,7 +62,6 @@ namespace Microsoft.Extensions.DependencyInjection
                         serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                         serviceProvider.GetRequiredService<IBrokerCollection>(),
                         serviceProvider.GetRequiredService<ILogger<OutboundQueueWorker>>(),
-                        serviceProvider.GetRequiredService<MessageLogger>(),
                         enforceMessageOrder,
                         readPackageSize))
                 .AddSingleton<IHostedService>(

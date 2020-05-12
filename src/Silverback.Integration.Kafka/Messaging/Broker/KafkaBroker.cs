@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
@@ -16,18 +15,13 @@ namespace Silverback.Messaging.Broker
     public class KafkaBroker : Broker<KafkaProducerEndpoint, KafkaConsumerEndpoint>
     {
         private readonly ILoggerFactory _loggerFactory;
-        private readonly MessageLogger _messageLogger;
 
         public KafkaBroker(
             IEnumerable<IBrokerBehavior> behaviors,
             ILoggerFactory loggerFactory,
-            MessageLogger messageLogger,
             IServiceProvider serviceProvider)
-            : base(behaviors, loggerFactory, serviceProvider)
-        {
+            : base(behaviors, loggerFactory, serviceProvider) =>
             _loggerFactory = loggerFactory;
-            _messageLogger = messageLogger;
-        }
 
         protected override IProducer InstantiateProducer(
             KafkaProducerEndpoint endpoint,
@@ -37,7 +31,6 @@ namespace Silverback.Messaging.Broker
                 this,
                 endpoint,
                 behaviors,
-                _messageLogger,
                 serviceProvider,
                 _loggerFactory.CreateLogger<KafkaProducer>());
 

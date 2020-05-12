@@ -46,8 +46,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector = new LoggedInboundConnector(
                 _serviceProvider.GetRequiredService<IBrokerCollection>(),
                 _serviceProvider,
-                _serviceProvider.GetRequiredService<ILogger<LoggedInboundConnector>>(),
-                _serviceProvider.GetRequiredService<MessageLogger>());
+                _serviceProvider.GetRequiredService<ILogger<LoggedInboundConnector>>());
         }
 
         [Fact]

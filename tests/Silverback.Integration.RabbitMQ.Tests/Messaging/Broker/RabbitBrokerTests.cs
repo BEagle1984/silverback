@@ -12,7 +12,6 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Messages;
 using Xunit;
 
 namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
@@ -25,7 +24,6 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
             Enumerable.Empty<IBrokerBehavior>(),
             Substitute.For<IRabbitConnectionFactory>(),
             NullLoggerFactory.Instance,
-            new MessageLogger(),
             Substitute.For<IServiceProvider>());
 
         [Fact]

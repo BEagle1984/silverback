@@ -24,14 +24,11 @@ namespace Silverback.Messaging.ErrorHandling
 
         private readonly ILogger _logger;
 
-        private readonly MessageLogger _messageLogger;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="RetryErrorPolicy" /> class.
         /// </summary>
         /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         /// <param name="initialDelay">
         ///     The optional delay to be applied to the first retry.
         /// </param>
@@ -41,15 +38,13 @@ namespace Silverback.Messaging.ErrorHandling
         public RetryErrorPolicy(
             IServiceProvider serviceProvider,
             ILogger<RetryErrorPolicy> logger,
-            MessageLogger messageLogger,
             TimeSpan? initialDelay = null,
             TimeSpan? delayIncrement = null)
-            : base(serviceProvider, logger, messageLogger)
+            : base(serviceProvider, logger)
         {
             _initialDelay = initialDelay ?? TimeSpan.Zero;
             _delayIncrement = delayIncrement ?? TimeSpan.Zero;
             _logger = logger;
-            _messageLogger = messageLogger;
         }
 
         /// <inheritdoc />
@@ -59,7 +54,7 @@ namespace Silverback.Messaging.ErrorHandling
         {
             await ApplyDelay(envelopes);
 
-            _messageLogger.LogInformation(_logger, EventIds.RetryErrorPolicyApplyPolicy, "The message(s) will be processed again.", envelopes);
+            _logger.LogInformation(EventIds.RetryErrorPolicyApplyPolicy, "The message(s) will be processed again.", envelopes);
 
             return ErrorAction.Retry;
         }
@@ -73,8 +68,7 @@ namespace Silverback.Messaging.ErrorHandling
             if (delay <= 0)
                 return;
 
-            _messageLogger.LogTrace(
-                _logger,
+            _logger.LogTrace(
                 EventIds.RetryErrorPolicyWaiting,
                 $"Waiting {delay} milliseconds before retrying to process the message(s).",
                 envelopes);

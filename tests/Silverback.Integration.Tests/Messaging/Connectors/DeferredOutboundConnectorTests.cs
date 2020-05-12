@@ -26,8 +26,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public DeferredOutboundConnectorTests()
         {
             _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
-            _connector = new DeferredOutboundConnector(_queue, new NullLogger<DeferredOutboundConnector>(),
-                new MessageLogger());
+            _connector = new DeferredOutboundConnector(_queue, new NullLogger<DeferredOutboundConnector>());
             _transactionManager = new DeferredOutboundConnectorTransactionManager(_queue);
         }
 

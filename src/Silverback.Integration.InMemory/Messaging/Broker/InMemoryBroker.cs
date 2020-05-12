@@ -6,26 +6,21 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
     /// <inheritdoc cref="Broker" />
     public class InMemoryBroker : Broker<IProducerEndpoint, IConsumerEndpoint>
     {
-        private readonly MessageLogger _messageLogger;
-
         private readonly ConcurrentDictionary<string, InMemoryTopic> _topics =
             new ConcurrentDictionary<string, InMemoryTopic>();
 
         public InMemoryBroker(
             IEnumerable<IBrokerBehavior> behaviors,
             ILoggerFactory loggerFactory,
-            MessageLogger messageLogger,
             IServiceProvider serviceProvider)
             : base(behaviors, loggerFactory, serviceProvider)
         {
-            _messageLogger = messageLogger;
         }
 
         internal InMemoryTopic GetTopic(string name) =>
@@ -39,8 +34,7 @@ namespace Silverback.Messaging.Broker
                 this,
                 endpoint,
                 behaviors,
-                LoggerFactory.CreateLogger<InMemoryProducer>(),
-                _messageLogger);
+                LoggerFactory.CreateLogger<InMemoryProducer>());
 
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
