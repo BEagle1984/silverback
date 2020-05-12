@@ -19,8 +19,6 @@ namespace Silverback.Messaging.Connectors
 
         private readonly ILogger _logger;
 
-        private readonly MessageLogger _messageLogger;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="DeferredOutboundConnector" /> class.
         /// </summary>
@@ -28,15 +26,12 @@ namespace Silverback.Messaging.Connectors
         ///     The <see cref="IOutboundQueueWriter" /> implementation to be used to enqueue the messages.
         /// </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         public DeferredOutboundConnector(
             IOutboundQueueWriter queueWriter,
-            ILogger<DeferredOutboundConnector> logger,
-            MessageLogger messageLogger)
+            ILogger<DeferredOutboundConnector> logger)
         {
             _queueWriter = queueWriter;
             _logger = logger;
-            _messageLogger = messageLogger;
         }
 
         /// <summary>
@@ -51,7 +46,10 @@ namespace Silverback.Messaging.Connectors
         /// </returns>
         public async Task RelayMessage(IOutboundEnvelope envelope)
         {
-            _messageLogger.LogDebug(_logger, EventIds.DeferredOutboundConnectorEnqueueMessage, "Enqueuing outbound message for deferred produce.", envelope);
+            _logger.LogDebug(
+                EventIds.DeferredOutboundConnectorEnqueueMessage,
+                "Enqueuing outbound message for deferred produce.",
+                envelope);
             await _queueWriter.Enqueue(envelope);
         }
     }

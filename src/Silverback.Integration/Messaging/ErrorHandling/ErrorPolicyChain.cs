@@ -19,8 +19,6 @@ namespace Silverback.Messaging.ErrorHandling
     {
         private readonly ILogger<ErrorPolicyChain> _logger;
 
-        private readonly MessageLogger _messageLogger;
-
         private readonly IReadOnlyCollection<ErrorPolicyBase> _policies;
 
         /// <summary>
@@ -28,14 +26,12 @@ namespace Silverback.Messaging.ErrorHandling
         /// </summary>
         /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         /// <param name="policies"> The policies to be chained. </param>
         public ErrorPolicyChain(
             IServiceProvider serviceProvider,
             ILogger<ErrorPolicyChain> logger,
-            MessageLogger messageLogger,
             params ErrorPolicyBase[] policies)
-            : this(policies.AsEnumerable(), serviceProvider, logger, messageLogger)
+            : this(policies.AsEnumerable(), serviceProvider, logger)
         {
         }
 
@@ -45,16 +41,13 @@ namespace Silverback.Messaging.ErrorHandling
         /// <param name="policies"> The policies to be chained. </param>
         /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
         /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         public ErrorPolicyChain(
             IEnumerable<ErrorPolicyBase> policies,
             IServiceProvider serviceProvider,
-            ILogger<ErrorPolicyChain> logger,
-            MessageLogger messageLogger)
-            : base(serviceProvider, logger, messageLogger)
+            ILogger<ErrorPolicyChain> logger)
+            : base(serviceProvider, logger)
         {
             _logger = logger;
-            _messageLogger = messageLogger;
 
             _policies = Check.NotNull(policies, nameof(policies)).ToList();
             Check.HasNoNulls(_policies, nameof(policies));
@@ -73,8 +66,7 @@ namespace Silverback.Messaging.ErrorHandling
                     return policy.HandleError(envelopes, exception);
             }
 
-            _messageLogger.LogDebug(
-                _logger,
+            _logger.LogDebug(
                 EventIds.ErrorPolicyChainStopConsumer,
                 "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.",
                 envelopes);

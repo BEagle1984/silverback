@@ -10,85 +10,85 @@ using Silverback.Diagnostics;
 namespace Silverback.Messaging.Messages
 {
     // TODO: Test
-    public class MessageLogger
+    public static class LoggerExtensions
     {
         #region Generic
 
-        public void LogTrace(ILogger logger, EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
+        public static void LogTrace(this ILogger logger, EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
             Log(logger, eventId, LogLevel.Trace, null, logMessage, new[] { envelope });
 
-        public void LogTrace(ILogger logger, EventId eventId, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
+        public static void LogTrace(this ILogger logger, EventId eventId, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, eventId, LogLevel.Trace, null, logMessage, envelopes);
 
-        public void LogDebug(ILogger logger, EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
+        public static void LogDebug(this ILogger logger, EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
             Log(logger, eventId, LogLevel.Debug, null, logMessage, new[] { envelope });
 
-        public void LogDebug(ILogger logger, EventId eventId, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
+        public static void LogDebug(this ILogger logger, EventId eventId, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, eventId, LogLevel.Debug, null, logMessage, envelopes);
 
-        public void LogInformation(ILogger logger, EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
+        public static void LogInformation(this ILogger logger, EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
             Log(logger, eventId, LogLevel.Information, null, logMessage, new[] { envelope });
 
-        public void LogInformation(
-            ILogger logger,
+        public static void LogInformation(
+            this ILogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, eventId, LogLevel.Information, null, logMessage, envelopes);
 
-        public void LogWarning(ILogger logger, EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
+        public static void LogWarning(this ILogger logger, EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
             Log(logger, eventId, LogLevel.Warning, null, logMessage, new[] { envelope });
 
-        public void LogWarning(ILogger logger, EventId eventId, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
+        public static void LogWarning(this ILogger logger, EventId eventId, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, eventId, LogLevel.Warning, null, logMessage, envelopes);
 
-        public void LogWarning(ILogger logger, EventId eventId, Exception exception, string logMessage, IRawBrokerEnvelope envelope) =>
+        public static void LogWarning(this ILogger logger, EventId eventId, Exception exception, string logMessage, IRawBrokerEnvelope envelope) =>
             Log(logger, eventId, LogLevel.Warning, exception, logMessage, new[] { envelope });
 
-        public void LogWarning(
-            ILogger logger,
+        public static void LogWarning(
+            this ILogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, eventId, LogLevel.Warning, exception, logMessage, envelopes);
 
-        public void LogError(ILogger logger, EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
+        public static void LogError(this ILogger logger, EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
             Log(logger, eventId, LogLevel.Error, null, logMessage, new[] { envelope });
 
-        public void LogError(ILogger logger, EventId eventId, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
+        public static void LogError(this ILogger logger, EventId eventId, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, eventId, LogLevel.Error, null, logMessage, envelopes);
 
-        public void LogError(ILogger logger, EventId eventId, Exception exception, string logMessage, IRawBrokerEnvelope envelope) =>
+        public static void LogError(this ILogger logger, EventId eventId, Exception exception, string logMessage, IRawBrokerEnvelope envelope) =>
             Log(logger, eventId, LogLevel.Error, exception, logMessage, new[] { envelope });
 
-        public void LogError(
-            ILogger logger,
+        public static void LogError(
+            this ILogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, eventId, LogLevel.Error, exception, logMessage, envelopes);
 
-        public void LogCritical(ILogger logger ,EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
+        public static void LogCritical(ILogger logger ,EventId eventId, string logMessage, IRawBrokerEnvelope envelope) =>
             Log(logger, eventId, LogLevel.Critical, null, logMessage, new[] { envelope });
 
-        public void LogCritical(ILogger logger,EventId eventId, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
+        public static void LogCritical(this ILogger logger,EventId eventId, string logMessage, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, eventId, LogLevel.Critical, null, logMessage, envelopes);
 
-        public void LogCritical(ILogger logger, EventId eventId, Exception exception, string logMessage, IRawBrokerEnvelope envelope) =>
+        public static void LogCritical(this ILogger logger, EventId eventId, Exception exception, string logMessage, IRawBrokerEnvelope envelope) =>
             Log(logger, eventId, LogLevel.Critical, exception, logMessage, new[] { envelope });
 
-        public void LogCritical(
-            ILogger logger,
+        public static void LogCritical(
+            this ILogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             Log(logger, eventId, LogLevel.Critical, exception, logMessage, envelopes);
 
-        public void Log(
-            ILogger logger,
+        public static void Log(
+            this ILogger logger,
             EventId eventId,
             LogLevel logLevel,
             Exception exception,
@@ -141,7 +141,7 @@ namespace Silverback.Messaging.Messages
 
         #region Specific
 
-        public void LogProcessing(ILogger logger, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
+        public static void LogProcessing(this ILogger logger, IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             LogInformation(
                 logger,
                 EventIds.ProcessingInboundMessage,
@@ -150,8 +150,8 @@ namespace Silverback.Messaging.Messages
                     : "Processing inbound message.",
                 envelopes);
 
-        public void LogProcessingError(
-            ILogger logger,
+        public static void LogProcessingError(
+            this ILogger logger,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
             Exception exception) =>
             LogWarning(

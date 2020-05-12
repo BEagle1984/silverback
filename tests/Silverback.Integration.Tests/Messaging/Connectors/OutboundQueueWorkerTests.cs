@@ -56,7 +56,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                 new BrokerCollection(new[] { _broker }),
                 new NullLogger<OutboundQueueWorker>(),
-                new MessageLogger(), true, 100); // TODO: Test order not enforced
+                true,
+                100); // TODO: Test order not enforced
 
             _sampleOutboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "Test" }, null, TestProducerEndpoint.GetDefault());

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -19,17 +18,13 @@ namespace Silverback.Messaging.ErrorHandling
     {
         private readonly ILogger<ErrorPolicyHelper> _logger;
 
-        private readonly MessageLogger _messageLogger;
-
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public ErrorPolicyHelper(
             ILogger<ErrorPolicyHelper> logger,
-            MessageLogger messageLogger,
             IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger;
-            _messageLogger = messageLogger;
             _serviceScopeFactory = serviceScopeFactory;
         }
 
@@ -101,7 +96,7 @@ namespace Silverback.Messaging.ErrorHandling
         {
             try
             {
-                _messageLogger.LogProcessing(_logger, context.Envelopes);
+                _logger.LogProcessing(context.Envelopes);
 
                 await messagesHandler(context, serviceProvider);
 
@@ -109,7 +104,7 @@ namespace Silverback.Messaging.ErrorHandling
             }
             catch (Exception ex)
             {
-                _messageLogger.LogProcessingError(_logger, context.Envelopes, ex);
+                _logger.LogProcessingError(context.Envelopes, ex);
 
                 if (errorPolicy == null)
                     throw;
