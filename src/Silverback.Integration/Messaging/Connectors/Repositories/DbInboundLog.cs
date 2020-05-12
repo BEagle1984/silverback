@@ -23,10 +23,8 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///     </para>
     /// </summary>
     // TODO: Test
-    public sealed class DbInboundLog : RepositoryBase<InboundLogEntry>, IInboundLog, IDisposable
+    public class DbInboundLog : RepositoryBase<InboundLogEntry>, IInboundLog
     {
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="DbInboundLog" /> class.
         /// </summary>
@@ -40,42 +38,30 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task Add(IRawInboundEnvelope envelope)
+        public Task Add(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            await _semaphore.WaitAsync();
+            string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!;
+            string consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();
 
-            try
+            var logEntry = new InboundLogEntry
             {
-                DbSet.Add(
-                    new InboundLogEntry
-                    {
-                        MessageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!,
-                        ConsumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName(),
-                        Consumed = DateTime.UtcNow
-                    });
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+                MessageId = messageId,
+                EndpointName = envelope.ActualEndpointName,
+                ConsumerGroupName = consumerGroupName
+            };
+
+            DbSet.Add(logEntry);
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
         public async Task Commit()
         {
-            await _semaphore.WaitAsync();
-
-            try
-            {
-                // Call SaveChanges, in case it isn't called by a subscriber
-                await DbContext.SaveChangesAsync();
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+            // Call SaveChanges, in case it isn't called by a subscriber
+            await DbContext.SaveChangesAsync();
         }
 
         /// <inheritdoc />
@@ -90,18 +76,17 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            var key = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true);
-            var consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();
-            return DbSet.AsQueryable().AnyAsync(m => m.MessageId == key && m.ConsumerGroupName == consumerGroupName);
+            string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!;
+            string consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();
+
+            return DbSet.AsQueryable().AnyAsync(
+                logEntry =>
+                    logEntry.MessageId == messageId &&
+                    logEntry.EndpointName == envelope.ActualEndpointName &&
+                    logEntry.ConsumerGroupName == consumerGroupName);
         }
 
         /// <inheritdoc />
         public Task<int> GetLength() => DbSet.AsQueryable().CountAsync();
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            _semaphore.Dispose();
-        }
     }
 }
