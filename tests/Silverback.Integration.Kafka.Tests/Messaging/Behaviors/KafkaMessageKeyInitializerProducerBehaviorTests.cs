@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().NotContain(
-                h => h.Key == "x-kafka-message-key");
+                h => h.Name == "x-kafka-message-key");
         }
 
         [Fact]

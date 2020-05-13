@@ -10,7 +10,6 @@ using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.LargeMessages;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 

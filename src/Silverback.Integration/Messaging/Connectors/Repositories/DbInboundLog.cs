@@ -1,9 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Database;
 using Silverback.Database.Model;
@@ -72,6 +70,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         }
 
         /// <inheritdoc />
+        [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<bool> Exists(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));

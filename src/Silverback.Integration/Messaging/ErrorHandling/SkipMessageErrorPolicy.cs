@@ -48,7 +48,7 @@ namespace Silverback.Messaging.ErrorHandling
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
-            _logger.Log(EventIds.SkipMessagePolicyMessageSkipped, _logLevel, exception, "The message(s) will be skipped.", envelopes);
+            _logger.Log(_logLevel, EventIds.SkipMessagePolicyMessageSkipped, exception, "The message(s) will be skipped.", envelopes);
 
             return Task.FromResult(ErrorAction.Skip);
         }

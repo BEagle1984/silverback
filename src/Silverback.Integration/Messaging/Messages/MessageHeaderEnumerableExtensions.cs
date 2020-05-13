@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Messages
         ///     A boolean value indicating whether the key was found in the existing headers.
         /// </returns>
         public static bool Contains(this IEnumerable<MessageHeader> headers, string key) =>
-            headers.Any(h => h.Key == key);
+            headers.Any(h => h.Name == key);
 
         /// <summary>
         ///     <para>
@@ -112,7 +112,7 @@ namespace Silverback.Messaging.Messages
             Check.NotEmpty(key, nameof(key));
             Check.NotNull(targetType, nameof(targetType));
 
-            var header = headers.FirstOrDefault(h => h.Key == key);
+            var header = headers.FirstOrDefault(h => h.Name == key);
 
             if (header == null)
             {

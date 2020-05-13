@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             MessageIdProvider.EnsureMessageIdIsInitialized(message, headers);
 
             headers.Count.Should().Be(1);
-            headers.First().Key.Should().Be("x-message-id");
+            headers.First().Name.Should().Be("x-message-id");
             headers.First().Value.Should().NotBeNullOrWhiteSpace();
         }
 

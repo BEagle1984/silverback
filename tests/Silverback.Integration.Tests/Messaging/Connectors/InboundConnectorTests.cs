@@ -22,10 +22,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
     public class InboundConnectorTests
     {
         private readonly TestSubscriber _testSubscriber;
+
         private readonly WrappedInboundMessageSubscriber _inboundSubscriber;
+
         private readonly SomeUnhandledMessageSubscriber _someUnhandledMessageSubscriber;
+
         private readonly IInboundConnector _connector;
+
         private readonly TestBroker _broker;
+
         private readonly IErrorPolicyBuilder _errorPolicyBuilder;
 
         public InboundConnectorTests()
@@ -43,15 +48,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 .AddSingletonSubscriber(_testSubscriber)
                 .AddSingletonSubscriber(_inboundSubscriber)
                 .AddSingletonSubscriber(_someUnhandledMessageSubscriber)
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddInMemoryChunkStore());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddInMemoryChunkStore());
 
-            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
-            {
-                ValidateScopes = true
-            });
-            _broker = (TestBroker) serviceProvider.GetService<IBroker>();
+            var serviceProvider = services.BuildServiceProvider(
+                new ServiceProviderOptions
+                {
+                    ValidateScopes = true
+                });
+            _broker = (TestBroker)serviceProvider.GetService<IBroker>();
             _connector = new InboundConnector(
                 serviceProvider.GetRequiredService<IBrokerCollection>(),
                 serviceProvider,
@@ -67,7 +74,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -85,7 +92,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new SomeUnhandledMessage { Content = "abc" });
             await consumer.TestHandleMessage(new SomeUnhandledMessage { Content = "def" });
             await consumer.TestHandleMessage(new SomeUnhandledMessage { Content = "ghi" });
@@ -99,7 +106,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -116,21 +123,23 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne(),
-                new[] { new MessageHeader { Key = "key", Value = "value1" } });
-            await consumer.TestHandleMessage(new TestEventOne(),
-                new[] { new MessageHeader { Key = "key", Value = "value2" } });
+            var consumer = (TestConsumer)_broker.Consumers.First();
+            await consumer.TestHandleMessage(
+                new TestEventOne(),
+                new[] { new MessageHeader("name", "value1") });
+            await consumer.TestHandleMessage(
+                new TestEventOne(),
+                new[] { new MessageHeader("name", "value2") });
 
             var envelopes = _inboundSubscriber.ReceivedEnvelopes.OfType<IInboundEnvelope>().ToList();
             var firstMessage = envelopes.First();
             firstMessage.Headers.Count.Should().Be(2);
-            firstMessage.Headers.Select(h => h.Key).Should().BeEquivalentTo("key", "x-message-type");
-            firstMessage.Headers.GetValue("key").Should().Be("value1");
+            firstMessage.Headers.Select(h => h.Name).Should().BeEquivalentTo("name", "x-message-type");
+            firstMessage.Headers.GetValue("name").Should().Be("value1");
             var secondMessage = envelopes.Skip(1).First();
             secondMessage.Headers.Count.Should().Be(2);
-            secondMessage.Headers.Select(h => h.Key).Should().BeEquivalentTo("key", "x-message-type");
-            secondMessage.Headers.GetValue("key").Should().Be("value2");
+            secondMessage.Headers.Select(h => h.Name).Should().BeEquivalentTo("name", "x-message-type");
+            secondMessage.Headers.GetValue("name").Should().Be("value2");
         }
 
         [Fact]
@@ -139,10 +148,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
-            await consumer.TestHandleMessage(new TestEventOne(),
-                new[] { new MessageHeader { Key = DefaultMessageHeaders.FailedAttempts, Value = "3" } });
+            await consumer.TestHandleMessage(
+                new TestEventOne(),
+                new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") });
 
             var inboundMessages = _inboundSubscriber.ReceivedEnvelopes.OfType<IInboundEnvelope>().ToList();
             inboundMessages.First().Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts).Should().Be(null);
@@ -152,17 +162,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_MessagesReceived()
         {
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
-            {
-                Batch = new BatchSettings
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                settings: new InboundConnectorSettings
                 {
-                    Size = 5
-                }
-            });
+                    Batch = new BatchSettings
+                    {
+                        Size = 5
+                    }
+                });
 
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -180,17 +192,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_BatchEventsPublished()
         {
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
-            {
-                Batch = new BatchSettings
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                settings: new InboundConnectorSettings
                 {
-                    Size = 5
-                }
-            });
+                    Batch = new BatchSettings
+                    {
+                        Size = 5
+                    }
+                });
 
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
 
             _testSubscriber.ReceivedMessages.Count(message => message is BatchStartedEvent)
@@ -212,17 +226,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInMultipleBatches_MessagesReceived()
         {
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
-            {
-                Batch = new BatchSettings
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                settings: new InboundConnectorSettings
                 {
-                    Size = 5
-                }
-            });
+                    Batch = new BatchSettings
+                    {
+                        Size = 5
+                    }
+                });
 
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -246,10 +262,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesToMultipleConsumers_MessagesReceived()
         {
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
-            {
-                Consumers = 5
-            });
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                settings: new InboundConnectorSettings
+                {
+                    Consumers = 5
+                });
 
             _broker.Connect();
 
@@ -268,14 +286,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesToMultipleConsumersInBatch_MessagesReceived()
         {
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
-            {
-                Batch = new BatchSettings
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                settings: new InboundConnectorSettings
                 {
-                    Size = 5
-                },
-                Consumers = 5
-            });
+                    Batch = new BatchSettings
+                    {
+                        Size = 5
+                    },
+                    Consumers = 5
+                });
 
             _broker.Connect();
 
@@ -318,35 +338,43 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var buffer = Convert.FromBase64String(
                 "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
-            await consumer.TestConsume(buffer.Take(40).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(40).Take(40).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(80).Take(40).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(120).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
+            var consumer = (TestConsumer)_broker.Consumers.First();
+            await consumer.TestConsume(
+                buffer.Take(40).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(40).Take(40).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(80).Take(40).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(120).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(1);
@@ -363,35 +391,43 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var buffer = Convert.FromBase64String(
                 "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
-            await consumer.TestConsume(buffer.Take(40).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(120).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(80).Take(40).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(40).Take(40).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
+            var consumer = (TestConsumer)_broker.Consumers.First();
+            await consumer.TestConsume(
+                buffer.Take(40).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(120).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(80).Take(40).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(40).Take(40).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(1);
@@ -408,49 +444,61 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var buffer = Convert.FromBase64String(
                 "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
-            await consumer.TestConsume(buffer.Take(40).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(120).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(80).Take(40).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(120).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(80).Take(40).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(40).Take(40).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
+            var consumer = (TestConsumer)_broker.Consumers.First();
+            await consumer.TestConsume(
+                buffer.Take(40).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(120).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(80).Take(40).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(120).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(80).Take(40).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(40).Take(40).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
 
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
                 .Should().Be(1);
@@ -468,7 +516,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -481,17 +529,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInBatch_Acknowledged()
         {
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
-            {
-                Batch = new BatchSettings
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                settings: new InboundConnectorSettings
                 {
-                    Size = 5
-                }
-            });
+                    Batch = new BatchSettings
+                    {
+                        Size = 5
+                    }
+                });
 
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -507,17 +557,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesInMultipleBatches_Acknowledged()
         {
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
-            {
-                Batch = new BatchSettings
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                settings: new InboundConnectorSettings
                 {
-                    Size = 5
-                }
-            });
+                    Batch = new BatchSettings
+                    {
+                        Size = 5
+                    }
+                });
 
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -538,10 +590,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesToMultipleConsumers_Acknowledged()
         {
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
-            {
-                Consumers = 5
-            });
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                settings: new InboundConnectorSettings
+                {
+                    Consumers = 5
+                });
 
             _broker.Connect();
 
@@ -562,14 +616,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task Bind_PushMessagesToMultipleConsumersInBatch_Acknowledged()
         {
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), settings: new InboundConnectorSettings
-            {
-                Batch = new BatchSettings
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                settings: new InboundConnectorSettings
                 {
-                    Size = 5
-                },
-                Consumers = 5
-            });
+                    Batch = new BatchSettings
+                    {
+                        Size = 5
+                    },
+                    Consumers = 5
+                });
 
             _broker.Connect();
 
@@ -609,7 +665,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault(), _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             _testSubscriber.FailCount.Should().Be(3);
@@ -621,13 +677,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithRetryErrorPolicyToHandleDeserializerErrors_RetriedAndReceived()
         {
             var testSerializer = new TestSerializer { MustFailCount = 3 };
-            _connector.Bind(new TestConsumerEndpoint("test")
-            {
-                Serializer = testSerializer
-            }, _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
+            _connector.Bind(
+                new TestConsumerEndpoint("test")
+                {
+                    Serializer = testSerializer
+                },
+                _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
             testSerializer.FailCount.Should().Be(3);
@@ -638,44 +696,54 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithRetryErrorPolicyToHandleDeserializerErrorsInChunkedMessage_RetriedAndReceived()
         {
             var testSerializer = new TestSerializer { MustFailCount = 3 };
-            _connector.Bind(new TestConsumerEndpoint("test")
-            {
-                Serializer = testSerializer
-            }, _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
+            _connector.Bind(
+                new TestConsumerEndpoint("test")
+                {
+                    Serializer = testSerializer
+                },
+                _errorPolicyBuilder.Retry().MaxFailedAttempts(3));
             _broker.Connect();
 
             var buffer = Convert.FromBase64String(
                 "eyJDb250ZW50IjoiQSBmdWxsIG1lc3NhZ2UhIiwiSWQiOiI0Mjc1ODMwMi1kOGU5LTQzZjktYjQ3ZS1kN2FjNDFmMmJiMDMifQ==");
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
-            await consumer.TestConsume(buffer.Take(20).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(20).Take(20).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(40).Take(20).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await consumer.TestConsume(buffer.Skip(60).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
+            var consumer = (TestConsumer)_broker.Consumers.First();
+            await consumer.TestConsume(
+                buffer.Take(20).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(20).Take(20).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(40).Take(20).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await consumer.TestConsume(
+                buffer.Skip(60).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "4"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
 
             testSerializer.FailCount.Should().Be(3);
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
@@ -687,15 +755,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithChainedErrorPolicy_RetriedAndMoved()
         {
             _testSubscriber.MustFailCount = 3;
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), _errorPolicyBuilder.Chain(
-                _errorPolicyBuilder.Retry().MaxFailedAttempts(1),
-                _errorPolicyBuilder.Move(new TestProducerEndpoint("bad"))));
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                _errorPolicyBuilder.Chain(
+                    _errorPolicyBuilder.Retry().MaxFailedAttempts(1),
+                    _errorPolicyBuilder.Move(new TestProducerEndpoint("bad"))));
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
-            var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("bad"));
+            var producer = (TestProducer)_broker.GetProducer(new TestProducerEndpoint("bad"));
 
             _testSubscriber.FailCount.Should().Be(2);
             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
@@ -707,17 +777,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithChainedErrorPolicy_OneAndOnlyOneFailedAttemptsHeaderIsAdded()
         {
             _testSubscriber.MustFailCount = 3;
-            _connector.Bind(TestConsumerEndpoint.GetDefault(), _errorPolicyBuilder.Chain(
-                _errorPolicyBuilder.Retry().MaxFailedAttempts(1),
-                _errorPolicyBuilder.Move(new TestProducerEndpoint("bad"))));
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
+                _errorPolicyBuilder.Chain(
+                    _errorPolicyBuilder.Retry().MaxFailedAttempts(1),
+                    _errorPolicyBuilder.Move(new TestProducerEndpoint("bad"))));
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
-            var producer = (TestProducer) _broker.GetProducer(new TestProducerEndpoint("bad"));
+            var producer = (TestProducer)_broker.GetProducer(new TestProducerEndpoint("bad"));
 
-            producer.ProducedMessages.Last().Headers.Count(h => h.Key == DefaultMessageHeaders.FailedAttempts).Should()
+            producer.ProducedMessages.Last().Headers.Count(h => h.Name == DefaultMessageHeaders.FailedAttempts).Should()
                 .Be(1);
         }
 
@@ -725,7 +797,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithRetryErrorPolicy_RetriedAndReceivedInBatch()
         {
             _testSubscriber.MustFailCount = 3;
-            _connector.Bind(TestConsumerEndpoint.GetDefault(),
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(3),
                 new InboundConnectorSettings
                 {
@@ -736,7 +809,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 });
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
@@ -748,7 +821,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithRetryErrorPolicy_BatchEventsCorrectlyPublished()
         {
             _testSubscriber.MustFailCount = 3;
-            _connector.Bind(TestConsumerEndpoint.GetDefault(),
+            _connector.Bind(
+                TestConsumerEndpoint.GetDefault(),
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(3),
                 new InboundConnectorSettings
                 {
@@ -759,7 +833,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 });
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 
@@ -773,7 +847,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public async Task Bind_WithRetryErrorPolicyToHandleDeserializerErrors_RetriedAndReceivedInBatch()
         {
             var testSerializer = new TestSerializer { MustFailCount = 3 };
-            _connector.Bind(new TestConsumerEndpoint("test")
+            _connector.Bind(
+                new TestConsumerEndpoint("test")
                 {
                     Serializer = testSerializer
                 },
@@ -787,7 +862,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 });
             _broker.Connect();
 
-            var consumer = (TestConsumer) _broker.Consumers.First();
+            var consumer = (TestConsumer)_broker.Consumers.First();
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
             await consumer.TestHandleMessage(new TestEventOne { Content = "Test" });
 

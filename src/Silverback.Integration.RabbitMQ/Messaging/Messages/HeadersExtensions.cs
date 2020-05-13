@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Messages
 
         public static IDictionary<string, object> ToRabbitHeaders(this IEnumerable<MessageHeader> headers) =>
             headers.ToDictionary(
-                header => header.Key,
+                header => header.Name,
                 header => (object) Encode(header.Value));
 
         public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(
