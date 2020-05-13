@@ -130,19 +130,19 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 
             await consumer.TestHandleMessage(
                 new TestEventOne(),
-                new[] { new MessageHeader { Key = "key", Value = "value1" } });
+                new[] { new MessageHeader("name", "value1") });
             await consumer.TestHandleMessage(
                 new TestEventOne(),
-                new[] { new MessageHeader { Key = "key", Value = "value2" } });
+                new[] { new MessageHeader("name", "value2") });
 
             var firstMessage = envelopes.First();
             firstMessage.Headers.Count.Should().Be(2);
-            firstMessage.Headers.Select(h => h.Key).Should().BeEquivalentTo("key", "x-message-type");
-            firstMessage.Headers.GetValue("key").Should().Be("value1");
+            firstMessage.Headers.Select(h => h.Name).Should().BeEquivalentTo("name", "x-message-type");
+            firstMessage.Headers.GetValue("name").Should().Be("value1");
             var secondMessage = envelopes.Skip(1).First();
             secondMessage.Headers.Count.Should().Be(2);
-            secondMessage.Headers.Select(h => h.Key).Should().BeEquivalentTo("key", "x-message-type");
-            secondMessage.Headers.GetValue("key").Should().Be("value2");
+            secondMessage.Headers.Select(h => h.Name).Should().BeEquivalentTo("name", "x-message-type");
+            secondMessage.Headers.GetValue("name").Should().Be("value2");
         }
 
         [Fact]
@@ -157,7 +157,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(
                 new TestEventOne(),
-                new[] { new MessageHeader { Key = DefaultMessageHeaders.FailedAttempts, Value = "3" } });
+                new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") });
 
             envelopes.First().Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts).Should().Be(null);
             envelopes.Skip(1).First().Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts).Should().Be(3);

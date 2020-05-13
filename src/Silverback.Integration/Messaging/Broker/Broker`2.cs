@@ -43,12 +43,11 @@ namespace Silverback.Messaging.Broker
         private ConcurrentDictionary<IEndpoint, IProducer>? _producers;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Broker{TProducerEndpoint, TConsumerEndpoint}" />
-        ///     class.
+        ///     Initializes a new instance of the <see cref="Broker{TProducerEndpoint, TConsumerEndpoint}" /> class.
         /// </summary>
         /// <param name="behaviors">
-        ///     The <see cref="IEnumerable{T}" /> containing the <see cref="IBrokerBehavior" /> to be passed to
-        ///     the producers and consumers.
+        ///     The <see cref="IEnumerable{T}" /> containing the <see cref="IBrokerBehavior" /> to be passed to the
+        ///     producers and consumers.
         /// </param>
         /// <param name="loggerFactory">
         ///     The <see cref="ILoggerFactory" /> to be used to create the loggers.
@@ -123,8 +122,7 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogInformation(
                         EventIds.BrokerCreateProducer,
-                        "Creating new producer for endpoint {endpointName}. " +
-                        "(Total producers: {ProducerCount})",
+                        "Creating new producer for endpoint {endpointName}. (Total producers: {ProducerCount})",
                         endpoint.Name,
                         _producers.Count + 1);
                     return InstantiateProducer(
@@ -159,7 +157,10 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 throw new InvalidOperationException(CannotCreateConsumerIfConnectedExceptionMessage);
 
-            _logger.LogInformation(EventIds.BrokerCreatingConsumer, "Creating new consumer for endpoint {endpointName}.", endpoint.Name);
+            _logger.LogInformation(
+                EventIds.BrokerCreatingConsumer,
+                "Creating new consumer for endpoint {endpointName}.",
+                endpoint.Name);
 
             var consumer = InstantiateConsumer(
                 (TConsumerEndpoint)endpoint,
@@ -198,12 +199,18 @@ namespace Silverback.Messaging.Broker
             if (_consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            _logger.LogDebug(EventIds.BrokerDisconnecting, "Disconnecting from message broker ({broker})...", GetType().Name);
+            _logger.LogDebug(
+                EventIds.BrokerDisconnecting,
+                "Disconnecting from message broker ({broker})...",
+                GetType().Name);
 
             Disconnect(_consumers);
             IsConnected = false;
 
-            _logger.LogInformation(EventIds.BrokerDisconnected,  "Disconnected from message broker ({broker})!", GetType().Name);
+            _logger.LogInformation(
+                EventIds.BrokerDisconnected,
+                "Disconnected from message broker ({broker})!",
+                GetType().Name);
         }
 
         /// <inheritdoc />
@@ -233,7 +240,9 @@ namespace Silverback.Messaging.Broker
         ///     Returns a new instance of <see cref="IConsumer" /> to subscribe to the specified endpoint.
         /// </summary>
         /// <param name="endpoint"> The endpoint. </param>
-        /// <param name="callback"> The delegate to be invoked when a message is received. </param>
+        /// <param name="callback">
+        ///     The delegate to be invoked when a message is received.
+        /// </param>
         /// <param name="behaviors"> The behaviors to be plugged-in. </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
@@ -265,8 +274,8 @@ namespace Silverback.Messaging.Broker
         ///     resources.
         /// </summary>
         /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c> Dispose </c> method and not
-        ///     from the finalizer.
+        ///     A value indicating whether the method has been called by the <c> Dispose </c> method and not from
+        ///     the finalizer.
         /// </param>
         protected virtual void Dispose(bool disposing)
         {

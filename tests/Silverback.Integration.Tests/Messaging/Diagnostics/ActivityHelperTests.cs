@@ -76,7 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.Start();
             activity.SetMessageHeaders(headers);
 
-            headers.Should().NotContain(h => h.Key == DefaultMessageHeaders.TraceState);
+            headers.Should().NotContain(h => h.Name == DefaultMessageHeaders.TraceState);
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.Start();
             activity.SetMessageHeaders(headers);
 
-            headers.Should().NotContain(h => h.Key == DefaultMessageHeaders.TraceBaggage);
+            headers.Should().NotContain(h => h.Name == DefaultMessageHeaders.TraceBaggage);
         }
 
         [Fact]

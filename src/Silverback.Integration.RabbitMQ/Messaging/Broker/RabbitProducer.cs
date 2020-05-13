@@ -91,7 +91,7 @@ namespace Silverback.Messaging.Broker
 
             var properties = _channel.CreateBasicProperties();
             properties.Persistent = true; // TODO: Make it configurable?
-            properties.Headers = envelope.Headers.ToDictionary(header => header.Key, header => (object)header.Value);
+            properties.Headers = envelope.Headers.ToDictionary(header => header.Name, header => (object)header.Value);
 
             switch (Endpoint)
             {
@@ -118,7 +118,7 @@ namespace Silverback.Messaging.Broker
         }
 
         private string GetRoutingKey(IEnumerable<MessageHeader> headers) =>
-            headers?.FirstOrDefault(header => header.Key == RabbitMessageHeaders.RoutingKey)?.Value ?? "";
+            headers?.FirstOrDefault(header => header.Name == RabbitMessageHeaders.RoutingKey)?.Value ?? "";
 
         private void Flush()
         {

@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         public void Ctor_FillsProperties_IfParametersAreValid()
         {
             var messageHeader = new MessageHeader("key", "value");
-            messageHeader.Key.Should().Be("key");
+            messageHeader.Name.Should().Be("key");
             messageHeader.Value.Should().Be("value");
         }
 
@@ -28,16 +28,16 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         public void Key_Throws_IfValueIsNull()
         {
             var messageHeader = new MessageHeader("key", "value");
-            Assert.Throws<ArgumentNullException>(() => messageHeader.Key = null);
+            Assert.Throws<ArgumentNullException>(() => messageHeader.Name = null);
         }
 
         [Fact]
         public void KeyValue_FillsProperties_IfParametersAreValid()
         {
             var messageHeader = new MessageHeader("key", "value");
-            messageHeader.Key = "key1";
+            messageHeader.Name = "key1";
             messageHeader.Value = "value1";
-            messageHeader.Key.Should().Be("key1");
+            messageHeader.Name.Should().Be("key1");
             messageHeader.Value.Should().Be("value1");
         }
     }

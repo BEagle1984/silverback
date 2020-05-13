@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Headers
             Check.NotNull(next, nameof(next));
 
             HeaderAttributeHelper.GetHeaders(context.Envelope.Message)
-                .ForEach(header => context.Envelope.Headers.AddOrReplace(header.Key, header.Value));
+                .ForEach(header => context.Envelope.Headers.AddOrReplace(header.Name, header.Value));
 
             await next(context);
         }

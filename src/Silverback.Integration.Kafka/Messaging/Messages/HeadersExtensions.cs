@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Messages
         public static Confluent.Kafka.Headers ToConfluentHeaders(this IEnumerable<MessageHeader> headers)
         {
             var kafkaHeaders = new Confluent.Kafka.Headers();
-            headers.ForEach(header => kafkaHeaders.Add(header.Key, Encode(header.Value)));
+            headers.ForEach(header => kafkaHeaders.Add(header.Name, Encode(header.Value)));
             return kafkaHeaders;
         }
 

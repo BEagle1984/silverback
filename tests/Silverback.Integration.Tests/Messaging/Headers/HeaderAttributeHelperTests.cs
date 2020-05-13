@@ -54,8 +54,8 @@ namespace Silverback.Tests.Integration.Messaging.Headers
 
             var result = HeaderAttributeHelper.GetHeaders(message);
 
-            result.Select(header => header.Key).Should().NotContain("x-string");
-            result.Select(header => header.Key).Should().NotContain("x-int");
+            result.Select(header => header.Name).Should().NotContain("x-string");
+            result.Select(header => header.Name).Should().NotContain("x-int");
         }
 
         [Fact]

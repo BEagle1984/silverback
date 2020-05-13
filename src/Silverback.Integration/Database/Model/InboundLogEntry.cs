@@ -3,7 +3,6 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using Silverback.Messaging;
 
 namespace Silverback.Database.Model
 {

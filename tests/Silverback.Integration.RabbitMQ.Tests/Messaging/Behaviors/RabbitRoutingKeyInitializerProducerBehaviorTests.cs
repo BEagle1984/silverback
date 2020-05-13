@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().NotContain(
-                h => h.Key == "x-rabbit-routing-key");
+                h => h.Name == "x-rabbit-routing-key");
         }
 
         [Fact]
