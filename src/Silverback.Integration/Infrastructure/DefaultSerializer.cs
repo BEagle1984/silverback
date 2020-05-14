@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Newtonsoft.Json;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Infrastructure
 {
@@ -16,8 +17,11 @@ namespace Silverback.Infrastructure
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        public static string Serialize<T>(T obj) => JsonConvert.SerializeObject(obj, typeof(T), SerializerSettings);
+        public static string Serialize<T>(T obj) =>
+            JsonConvert.SerializeObject(obj, typeof(T), SerializerSettings);
 
-        public static T Deserialize<T>(string json) => JsonConvert.DeserializeObject<T>(json, SerializerSettings);
+        public static T Deserialize<T>(string json) =>
+            JsonConvert.DeserializeObject<T>(json, SerializerSettings) ??
+            throw new MessageSerializerException("The deserialization returned null.");
     }
 }

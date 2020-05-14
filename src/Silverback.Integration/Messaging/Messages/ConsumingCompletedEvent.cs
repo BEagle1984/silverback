@@ -10,6 +10,12 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public class ConsumingCompletedEvent : ConsumingEvent
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ConsumingCompletedEvent" /> class.
+        /// </summary>
+        /// <param name="context">
+        ///     The context that is passed along the consumer behaviors pipeline.
+        /// </param>
         public ConsumingCompletedEvent(ConsumerPipelineContext context)
             : base(context)
         {

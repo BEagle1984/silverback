@@ -35,7 +35,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddTransientSubscriber(typeof(ITestSubscriber), typeof(TestSubscriber)));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -74,7 +74,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddTransientSubscriber<ITestSubscriber, TestSubscriber>());
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -113,7 +113,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddTransientSubscriber(typeof(ITestSubscriber), typeof(TestSubscriber), _ => new TestSubscriber()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -152,7 +152,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddTransientSubscriber<ITestSubscriber, TestSubscriber>(_ => new TestSubscriber()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -195,7 +195,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddScopedSubscriber(typeof(ITestSubscriber), typeof(TestSubscriber)));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -234,7 +234,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddScopedSubscriber<ITestSubscriber, TestSubscriber>());
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -273,7 +273,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddScopedSubscriber(typeof(ITestSubscriber), typeof(TestSubscriber), _ => new TestSubscriber()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -312,7 +312,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddScopedSubscriber<ITestSubscriber, TestSubscriber>(_ => new TestSubscriber()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -355,7 +355,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddSingletonSubscriber(typeof(ITestSubscriber), typeof(TestSubscriber)));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -394,7 +394,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddSingletonSubscriber<ITestSubscriber, TestSubscriber>());
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -433,7 +433,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddSingletonSubscriber(typeof(ITestSubscriber), typeof(TestSubscriber), _ => new TestSubscriber()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -472,7 +472,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddSingletonSubscriber<ITestSubscriber, TestSubscriber>(_ => new TestSubscriber()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -511,7 +511,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddSingletonSubscriber(typeof(ITestSubscriber), typeof(TestSubscriber), new TestSubscriber()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -550,7 +550,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddSingletonSubscriber<ITestSubscriber, TestSubscriber>(new TestSubscriber()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<ITestSubscriber>();
 
             using var scope = serviceProvider.CreateScope();
@@ -594,7 +594,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddTransientBehavior(typeof(ChangeTestEventOneContentBehavior)));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<TestEventOne>(m => messages.Add(m));
 
             using var scope = serviceProvider.CreateScope();
@@ -615,7 +615,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddTransientBehavior<ChangeTestEventOneContentBehavior>());
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<TestEventOne>(m => messages.Add(m));
 
             using var scope = serviceProvider.CreateScope();
@@ -636,7 +636,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddTransientBehavior(_ => new ChangeTestEventOneContentBehavior()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<TestEventOne>(m => messages.Add(m));
 
             using var scope = serviceProvider.CreateScope();
@@ -661,7 +661,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddScopedBehavior(typeof(ChangeTestEventOneContentBehavior)));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<TestEventOne>(m => messages.Add(m));
 
             using var scope = serviceProvider.CreateScope();
@@ -682,7 +682,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddScopedBehavior<ChangeTestEventOneContentBehavior>());
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<TestEventOne>(m => messages.Add(m));
 
             using var scope = serviceProvider.CreateScope();
@@ -703,7 +703,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddScopedBehavior(_ => new ChangeTestEventOneContentBehavior()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<TestEventOne>(m => messages.Add(m));
 
             using var scope = serviceProvider.CreateScope();
@@ -728,7 +728,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddSingletonBehavior(typeof(ChangeTestEventOneContentBehavior)));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<TestEventOne>(m => messages.Add(m));
 
             using var scope = serviceProvider.CreateScope();
@@ -749,7 +749,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddSingletonBehavior<ChangeTestEventOneContentBehavior>());
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<TestEventOne>(m => messages.Add(m));
 
             using var scope = serviceProvider.CreateScope();
@@ -770,7 +770,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddSingletonBehavior(_ => new ChangeTestEventOneContentBehavior()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<TestEventOne>(m => messages.Add(m));
 
             using var scope = serviceProvider.CreateScope();
@@ -791,7 +791,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .AddSingletonBehavior(new ChangeTestEventOneContentBehavior()));
 
-            serviceProvider.GetRequiredService<BusConfigurator>()
+            serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe<TestEventOne>(m => messages.Add(m));
 
             using var scope = serviceProvider.CreateScope();

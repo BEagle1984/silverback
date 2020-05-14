@@ -10,6 +10,15 @@ namespace Silverback.Messaging.Broker.Behaviors
     /// </summary>
     public class ProducerPipelineContext
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ProducerPipelineContext" /> class.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The envelope containing the message to be produced.
+        /// </param>
+        /// <param name="producer">
+        ///     The <see cref="IProducer" /> that triggered this pipeline.
+        /// </param>
         public ProducerPipelineContext(IOutboundEnvelope envelope, IProducer producer)
         {
             Envelope = envelope;
@@ -22,7 +31,7 @@ namespace Silverback.Messaging.Broker.Behaviors
         public IOutboundEnvelope Envelope { get; set; }
 
         /// <summary>
-        ///     Gets the instance of <see cref="IProducer" /> that triggered this pipeline.
+        ///     Gets the <see cref="IProducer" /> that triggered this pipeline.
         /// </summary>
         public IProducer Producer { get; }
     }

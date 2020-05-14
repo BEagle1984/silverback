@@ -17,6 +17,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
     public class ConsumerTests
     {
         private readonly TestBroker _broker;
+
         private readonly SilverbackEventsSubscriber _silverbackEventsSubscriber;
 
         public ConsumerTests()
@@ -26,9 +27,10 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             services
                 .AddNullLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddInMemoryChunkStore())
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddInMemoryChunkStore())
                 .AddSingletonSubscriber<SilverbackEventsSubscriber>();
 
             var serviceProvider = services.BuildServiceProvider();
@@ -41,12 +43,9 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         public async Task HandleMessage_SomeMessages_MessagesReceived()
         {
             var envelopes = new List<IRawInboundEnvelope>();
-            var consumer = (TestConsumer) _broker.GetConsumer(TestConsumerEndpoint.GetDefault());
-            consumer.Received += (_, args) =>
-            {
-                envelopes.AddRange(args.Envelopes);
-                return Task.CompletedTask;
-            };
+            var consumer = (TestConsumer)_broker.GetConsumer(
+                TestConsumerEndpoint.GetDefault(),
+                args => envelopes.AddRange(args.Envelopes));
             _broker.Connect();
 
             await consumer.TestHandleMessage(new TestEventOne());
@@ -61,8 +60,12 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public async Task HandleMessage_MessageCorrectlyProcessed_ConsumingCompletedEventPublished()
         {
-            var consumer = (TestConsumer) _broker.GetConsumer(TestConsumerEndpoint.GetDefault());
-            consumer.Received += (_, args) => Task.CompletedTask;
+            var consumer = (TestConsumer)_broker.GetConsumer(
+                TestConsumerEndpoint.GetDefault(),
+                args =>
+                {
+                    /* processing */
+                });
             _broker.Connect();
 
             await consumer.TestHandleMessage(new TestEventOne());
@@ -78,14 +81,13 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public async Task HandleMessage_SomeMessagesFailToBeProcessed_ConsumingCompletedAndAbortedEventsPublished()
         {
-            var consumer = (TestConsumer) _broker.GetConsumer(TestConsumerEndpoint.GetDefault());
-            consumer.Received += (_, args) =>
-            {
-                if (args.Envelopes.First() is IInboundEnvelope<TestEventOne>)
-                    throw new Exception();
-
-                return Task.CompletedTask;
-            };
+            var consumer = (TestConsumer)_broker.GetConsumer(
+                TestConsumerEndpoint.GetDefault(),
+                args =>
+                {
+                    if (args.Envelopes.First() is IInboundEnvelope<TestEventOne>)
+                        throw new InvalidOperationException();
+                });
             _broker.Connect();
 
             try
@@ -121,17 +123,16 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         public async Task HandleMessage_SomeMessages_HeadersReceivedWithInboundMessages()
         {
             var envelopes = new List<IRawInboundEnvelope>();
-            var consumer = (TestConsumer) _broker.GetConsumer(TestConsumerEndpoint.GetDefault());
-            consumer.Received += (_, args) =>
-            {
-                envelopes.AddRange(args.Envelopes);
-                return Task.CompletedTask;
-            };
+            var consumer = (TestConsumer)_broker.GetConsumer(
+                TestConsumerEndpoint.GetDefault(),
+                args => envelopes.AddRange(args.Envelopes));
             _broker.Connect();
 
-            await consumer.TestHandleMessage(new TestEventOne(),
+            await consumer.TestHandleMessage(
+                new TestEventOne(),
                 new[] { new MessageHeader { Key = "key", Value = "value1" } });
-            await consumer.TestHandleMessage(new TestEventOne(),
+            await consumer.TestHandleMessage(
+                new TestEventOne(),
                 new[] { new MessageHeader { Key = "key", Value = "value2" } });
 
             var firstMessage = envelopes.First();
@@ -148,16 +149,14 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         public async Task HandleMessage_SomeMessages_FailedAttemptsReceivedWithInboundMessages()
         {
             var envelopes = new List<IRawInboundEnvelope>();
-            var consumer = (TestConsumer) _broker.GetConsumer(TestConsumerEndpoint.GetDefault());
-            consumer.Received += (_, args) =>
-            {
-                envelopes.AddRange(args.Envelopes);
-                return Task.CompletedTask;
-            };
+            var consumer = (TestConsumer)_broker.GetConsumer(
+                TestConsumerEndpoint.GetDefault(),
+                args => envelopes.AddRange(args.Envelopes));
             _broker.Connect();
 
             await consumer.TestHandleMessage(new TestEventOne());
-            await consumer.TestHandleMessage(new TestEventOne(),
+            await consumer.TestHandleMessage(
+                new TestEventOne(),
                 new[] { new MessageHeader { Key = DefaultMessageHeaders.FailedAttempts, Value = "3" } });
 
             envelopes.First().Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts).Should().Be(null);

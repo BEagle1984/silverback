@@ -7,7 +7,7 @@ using System.Linq;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     The event fired when a new consumer group partition assignment has been received by a consumer.
+    ///     The event published when a new consumer group partition assignment has been received by a consumer.
     /// </summary>
     /// <remarks>
     ///     Corresponding to each of this events there will be a <see cref="KafkaPartitionsRevokedEvent" />.

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,16 +15,40 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
 {
+    /// <inheritdoc cref="IOutboundQueueWorker" />
     public class OutboundQueueWorker : IOutboundQueueWorker
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
+
         private readonly IBrokerCollection _brokerCollection;
+
         private readonly MessageLogger _messageLogger;
+
         private readonly ILogger<OutboundQueueWorker> _logger;
 
         private readonly int _readPackageSize;
+
         private readonly bool _enforceMessageOrder;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="OutboundQueueWorker" /> class.
+        /// </summary>
+        /// <param name="serviceScopeFactory">
+        ///     The <see cref="IServiceScopeFactory" /> used to resolve the scoped types.
+        /// </param>
+        /// <param name="brokerCollection">
+        ///     The collection containing the available brokers.
+        /// </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
+        /// <param name="enforceMessageOrder">
+        ///     Specifies whether the messages must be produced in the same order as they were added to the queue.
+        ///     If set to <c> true </c> the message order will be ensured, retrying the same message until it can be
+        ///     successfully produced.
+        /// </param>
+        /// <param name="readPackageSize">
+        ///     The number of messages to be loaded from the queue at once.
+        /// </param>
         public OutboundQueueWorker(
             IServiceScopeFactory serviceScopeFactory,
             IBrokerCollection brokerCollection,
@@ -40,12 +65,14 @@ namespace Silverback.Messaging.Connectors
             _readPackageSize = readPackageSize;
         }
 
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task ProcessQueue(CancellationToken stoppingToken)
         {
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                await ProcessQueue(scope.ServiceProvider.GetRequiredService<IOutboundQueueConsumer>(), stoppingToken);
+                await ProcessQueue(scope.ServiceProvider.GetRequiredService<IOutboundQueueReader>(), stoppingToken);
             }
             catch (Exception ex)
             {
@@ -53,7 +80,22 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        private async Task ProcessQueue(IOutboundQueueConsumer queue, CancellationToken stoppingToken)
+        /// <summary>
+        ///     Gets the producer for the specified endpoint and produces the specified message.
+        /// </summary>
+        /// <param name="content"> The serialized message content (body). </param>
+        /// <param name="headers"> The collection of message headers. </param>
+        /// <param name="endpoint"> The endpoint to produce to. </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task ProduceMessage(
+            byte[] content,
+            IReadOnlyCollection<MessageHeader> headers,
+            IProducerEndpoint endpoint)
+            => _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers);
+
+        private async Task ProcessQueue(IOutboundQueueReader queue, CancellationToken stoppingToken)
         {
             _logger.LogTrace($"Reading outbound messages from queue (limit: {_readPackageSize}).");
 
@@ -72,7 +114,7 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        private async Task ProcessMessage(QueuedMessage message, IOutboundQueueConsumer queue)
+        private async Task ProcessMessage(QueuedMessage message, IOutboundQueueReader queue)
         {
             try
             {
@@ -82,7 +124,10 @@ namespace Silverback.Messaging.Connectors
             }
             catch (Exception ex)
             {
-                _messageLogger.LogError(_logger, ex, "Failed to publish queued message.",
+                _messageLogger.LogError(
+                    _logger,
+                    ex,
+                    "Failed to publish queued message.",
                     new OutboundEnvelope(message.Content, message.Headers, message.Endpoint));
 
                 await queue.Retry(message);
@@ -92,11 +137,5 @@ namespace Silverback.Messaging.Connectors
                     throw;
             }
         }
-
-        protected virtual Task ProduceMessage(
-            byte[] content,
-            IReadOnlyCollection<MessageHeader> headers,
-            IProducerEndpoint endpoint)
-            => _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers);
     }
 }

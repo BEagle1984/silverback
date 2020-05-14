@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     The event fired when all the messages in a batch have been published.
+    ///     The event published when all the messages in a batch have been published.
     /// </summary>
     public class BatchCompleteEvent : BatchEvent
     {

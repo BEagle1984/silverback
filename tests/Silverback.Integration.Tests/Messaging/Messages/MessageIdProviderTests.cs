@@ -16,19 +16,6 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         });
 
         [Fact]
-        public void GetMessageId_IdHeaderSet_IdReturned()
-        {
-            var headers = new MessageHeaderCollection
-            {
-                { "x-message-id", "12345" }
-            };
-
-            var result = _messageIdProvider.GetMessageId(headers);
-
-            result.Should().Be("12345");
-        }
-
-        [Fact]
         public void EnsureMessageIdIsInitialized_NoHeaderSet_HeaderInitialized()
         {
             var message = new object();

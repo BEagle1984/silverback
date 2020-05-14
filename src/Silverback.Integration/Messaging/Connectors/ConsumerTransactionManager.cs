@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -10,12 +11,22 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
+    /// <summary>
+    ///     Manages the consumer transaction propagating the commit or rollback to all enlisted services.
+    /// </summary>
     public class ConsumerTransactionManager : ISubscriber
     {
         private readonly List<ITransactional> _transactionalServices = new List<ITransactional>();
 
+        /// <summary>
+        ///     Adds the specified service to the transaction participants to be called upon commit or rollback.
+        /// </summary>
+        /// <param name="transactionalService"> The service to be enlisted. </param>
         public void Enlist(ITransactional transactionalService)
         {
+            if (transactionalService == null)
+                throw new ArgumentNullException(nameof(transactionalService));
+
             if (_transactionalServices.Contains(transactionalService))
                 return;
 
@@ -28,12 +39,16 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        [Subscribe, SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public Task OnConsumingCompleted(ConsumingCompletedEvent completedEvent) =>
+        [Subscribe]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.Subscriber)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.Subscriber)]
+        private Task OnConsumingCompleted(ConsumingCompletedEvent completedEvent) =>
             _transactionalServices.ForEachAsync(transactional => transactional.Commit());
 
-        [Subscribe, SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public Task OnConsumingAborted(ConsumingAbortedEvent abortedEvent) =>
+        [Subscribe]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.Subscriber)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.Subscriber)]
+        private Task OnConsumingAborted(ConsumingAbortedEvent abortedEvent) =>
             _transactionalServices.ForEachAsync(transactional => transactional.Rollback());
     }
 }

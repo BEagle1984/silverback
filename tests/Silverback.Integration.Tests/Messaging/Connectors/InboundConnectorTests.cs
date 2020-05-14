@@ -26,7 +26,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         private readonly SomeUnhandledMessageSubscriber _someUnhandledMessageSubscriber;
         private readonly IInboundConnector _connector;
         private readonly TestBroker _broker;
-        private readonly ErrorPolicyBuilder _errorPolicyBuilder;
+        private readonly IErrorPolicyBuilder _errorPolicyBuilder;
 
         public InboundConnectorTests()
         {

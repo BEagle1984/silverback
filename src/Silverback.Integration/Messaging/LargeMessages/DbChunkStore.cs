@@ -14,7 +14,6 @@ namespace Silverback.Messaging.LargeMessages
     /// <summary>
     ///     Stores the message chunks into the database, waiting for the full message to be available.
     /// </summary>
-    /// <inheritdoc cref="IChunkStore" />
     public class DbChunkStore : RepositoryBase<TemporaryMessageChunk>, IChunkStore
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);

@@ -5,10 +5,19 @@ using System;
 
 namespace Silverback.Domain
 {
+    /// <summary>
+    ///     A recorded event that can be re-applied to rebuilt the entity status.
+    /// </summary>
     public interface IEntityEvent
     {
+        /// <summary>
+        ///     Gets or sets the point in time where the event occured.
+        /// </summary>
         DateTime Timestamp { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the sequence number that is used to replay the messages in the right order.
+        /// </summary>
         int Sequence { get; set; }
     }
 }

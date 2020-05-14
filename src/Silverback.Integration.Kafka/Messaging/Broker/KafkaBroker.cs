@@ -43,11 +43,13 @@ namespace Silverback.Messaging.Broker
 
         protected override IConsumer InstantiateConsumer(
             KafkaConsumerEndpoint endpoint,
+            MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior> behaviors,
             IServiceProvider serviceProvider) =>
             new KafkaConsumer(
                 this,
                 endpoint,
+                callback,
                 behaviors,
                 serviceProvider,
                 _loggerFactory.CreateLogger<KafkaConsumer>());

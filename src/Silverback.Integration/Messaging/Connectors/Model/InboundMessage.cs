@@ -7,22 +7,31 @@ using System.ComponentModel.DataAnnotations;
 namespace Silverback.Messaging.Connectors.Model
 {
     /// <summary>
-    ///     The entity to be stored in the inbound log table.
+    ///     The entity stored in the inbound log table.
     /// </summary>
     public class InboundMessage
     {
-        [Key, MaxLength(300)]
-        public string MessageId { get; set; }
+        /// <summary>
+        ///     Gets or sets the unique identifier of the inbound message.
+        /// </summary>
+        [Key]
+        [MaxLength(300)]
+        public string MessageId { get; set; } = null!;
 
         /// <summary>
-        ///     Note: the name was maintained for backward compatibility but it now contains the
-        ///     <see cref="IConsumerEndpoint" />'s unique consumer group name.
+        ///     Gets or sets the unique consumer group name of the consumer that received and processed the message.
         /// </summary>
-        [Key, MaxLength(300)]
-        public string EndpointName { get; set; }
+        /// <remarks>
+        ///     The column name is still <i> EndpointName </i> for backward compatibility but it now contains the
+        ///     unique consumer group name retrieved from the <see cref="IConsumerEndpoint" />.
+        /// </remarks>
+        [Key]
+        [MaxLength(300)]
+        public string ConsumerGroupName { get; set; } = null!;
 
-        public string Message { get; set; }
-
+        /// <summary>
+        ///     Gets or sets the datetime when the message was consumed.
+        /// </summary>
         public DateTime Consumed { get; set; }
     }
 }

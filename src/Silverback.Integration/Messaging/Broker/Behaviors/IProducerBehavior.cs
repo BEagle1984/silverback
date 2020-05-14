@@ -17,9 +17,10 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <param name="context">
         ///     The context that is passed along the behaviors pipeline.
         /// </param>
-        /// <param name="next">
-        ///     The next behavior in the pipeline.
-        /// </param>
+        /// <param name="next"> The next behavior in the pipeline. </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
         Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next);
     }
 }

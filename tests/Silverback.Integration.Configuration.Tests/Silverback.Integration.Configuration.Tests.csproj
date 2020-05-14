@@ -4,7 +4,7 @@
     <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
     <RootNamespace>Silverback.Tests.Integration.Configuration</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
-  </PropertyGroup>
+    </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Silverback.Integration.Configuration\Silverback.Integration.Configuration.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

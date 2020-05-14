@@ -10,30 +10,47 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
 {
+    /// <summary>
+    ///     Handles the returned <see cref="IObservable{T}" /> republishing all the messages.
+    /// </summary>
     // TODO: Test
     public class ObservableMessagesReturnValueHandler : IReturnValueHandler
     {
         private readonly IPublisher _publisher;
-        private readonly BusOptions _publisherOptions;
 
-        public ObservableMessagesReturnValueHandler(IPublisher publisher, BusOptions publisherOptions)
+        private readonly BusOptions _busOptions;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ObservableMessagesReturnValueHandler" /> class.
+        /// </summary>
+        /// <param name="publisher">
+        ///     The <see cref="IPublisher" /> to be used to publish the messages.
+        /// </param>
+        /// <param name="busOptions">
+        ///     The <see cref="BusOptions" /> that specify which message types have to be handled.
+        /// </param>
+        public ObservableMessagesReturnValueHandler(IPublisher publisher, BusOptions busOptions)
         {
             _publisher = publisher;
-            _publisherOptions = publisherOptions;
+            _busOptions = busOptions;
         }
 
+        /// <inheritdoc />
         public bool CanHandle(object returnValue) =>
             returnValue != null &&
             returnValue.GetType().GetInterfaces().Any(
                 i => i.IsGenericType &&
                      i.GetGenericTypeDefinition() == typeof(IObservable<>) &&
-                     _publisherOptions.MessageTypes.Any(messageType =>
-                         messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
+                     _busOptions.MessageTypes.Any(
+                         messageType =>
+                             messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 
+        /// <inheritdoc />
         public void Handle(object returnValue) =>
-            _publisher.Publish<object>(((IObservable<object>) returnValue).ToEnumerable());
+            _publisher.Publish<object>(((IObservable<object>)returnValue).ToEnumerable());
 
+        /// <inheritdoc />
         public Task HandleAsync(object returnValue) =>
-            _publisher.PublishAsync<object>(((IObservable<object>) returnValue).ToEnumerable());
+            _publisher.PublishAsync<object>(((IObservable<object>)returnValue).ToEnumerable());
     }
 }

@@ -38,7 +38,7 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
         [Fact]
         public void Publish_HandlersReturnValue_ResultsReturned()
         {
-            _serviceProvider.GetService<BusConfigurator>()
+            _serviceProvider.GetService<IBusConfigurator>()
                 .Subscribe<object>(_ => "response")
                 .Subscribe<object>(_ => "response2");
 
@@ -50,7 +50,7 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_HandlersReturnValue_ResultsReturned()
         {
-            _serviceProvider.GetService<BusConfigurator>()
+            _serviceProvider.GetService<IBusConfigurator>()
                 .Subscribe<object>(_ => "response")
                 .Subscribe<object>(_ => "response2");
 

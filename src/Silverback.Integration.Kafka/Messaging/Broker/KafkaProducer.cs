@@ -44,10 +44,10 @@ namespace Silverback.Messaging.Broker
             _kafkaEventsHandler = serviceProvider.GetRequiredService<KafkaEventsHandler>();
         }
 
-        protected override IOffset ProduceImpl(IRawOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsyncImpl(envelope));
+        protected override IOffset ProduceCore(IRawOutboundEnvelope envelope) =>
+            AsyncHelper.RunSynchronously(() => ProduceAsyncCore(envelope));
 
-        protected override async Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope)
+        protected override async Task<IOffset> ProduceAsyncCore(IRawOutboundEnvelope envelope)
         {
             try
             {
@@ -77,7 +77,8 @@ namespace Silverback.Messaging.Broker
                 if (Endpoint.Configuration.DisposeOnException)
                     DisposeInnerProducer();
 
-                throw new ProduceException("Error occurred producing the message. See inner exception for details.",
+                throw new ProduceException(
+                    "Error occurred producing the message. See inner exception for details.",
                     ex);
             }
         }

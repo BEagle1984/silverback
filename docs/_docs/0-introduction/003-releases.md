@@ -4,6 +4,28 @@ permalink: /docs/releases
 toc: true
 ---
 
+## [3.0.0-beta1](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta1)
+
+### What's new
+
+* Improved code quality (xml documentation, pipeline, analyzers, ...)
+* Decorated nullable reference types
+* Improved performance (show benchmarks)
+
+### Fixes
+
+### Breaking Changes
+
+* `BusConfigurator` replaced with `IBusConfigurator` interface
+* `ErrorPolicyBuilder` replaced with `IErrorPolicyBuilder` interface
+* The visibility of some types has been changed to internal to favor a cleaner and clearer API where the public types are well documented and their backward compatibility is valued
+* Removed `Silverback` prefix from exceptions name
+* Removed the `IRequest<TResponse>` interface (it was implemented by both `IQuery<TResult>` and `ICommand<TResult>`)
+* Changed _Impl_ methods suffix with _Core_, this affects some virtual members in the `Broker` and other base classes
+* `Received` event in the `Consumer` replaced by a callback delegate
+* Some changes to the database schema (`InboundMessage`)
+* `IQueueProduer` and `IQueueConsumer` renamed to `IQueueWriter` and `IQueueReader`
+
 ## [2.1.1](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1)
 
 ### What's new

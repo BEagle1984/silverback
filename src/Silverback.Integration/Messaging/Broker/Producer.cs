@@ -15,9 +15,20 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IProducer" />
     public abstract class Producer : IProducer
     {
-        private readonly MessageLogger _messageLogger;
         private readonly ILogger<Producer> _logger;
 
+        private readonly MessageLogger _messageLogger;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Producer" /> class.
+        /// </summary>
+        /// <param name="broker">
+        ///     The <see cref="IBroker" /> that instantiated this producer.
+        /// </param>
+        /// <param name="endpoint"> The endpoint to produce to. </param>
+        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
@@ -35,10 +46,8 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        public IReadOnlyCollection<IProducerBehavior> Behaviors { get; }
-
         /// <summary>
-        ///     Gets the <see cref="IBroker" /> instance that owns this instance.
+        ///     Gets the <see cref="IBroker" /> instance that owns this .
         /// </summary>
         public IBroker Broker { get; }
 
@@ -47,34 +56,63 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public IProducerEndpoint Endpoint { get; }
 
-        public void Produce(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
+        /// <inheritdoc />
+        public IReadOnlyCollection<IProducerBehavior> Behaviors { get; }
+
+        /// <inheritdoc />
+        public void Produce(object message, IReadOnlyCollection<MessageHeader>? headers = null) =>
             Produce(new OutboundEnvelope(message, headers, Endpoint));
 
-        public Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader> headers = null) =>
+        /// <inheritdoc />
+        public Task ProduceAsync(object message, IReadOnlyCollection<MessageHeader>? headers = null) =>
             ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
 
+        /// <inheritdoc />
         public void Produce(IOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(() =>
-                ExecutePipeline(
-                    Behaviors,
-                    new ProducerPipelineContext(envelope, this),
-                    finalContext =>
-                    {
-                        ((RawOutboundEnvelope) finalContext.Envelope).Offset =
-                            ProduceImpl(finalContext.Envelope);
+            AsyncHelper.RunSynchronously(
+                () =>
+                    ExecutePipeline(
+                        Behaviors,
+                        new ProducerPipelineContext(envelope, this),
+                        finalContext =>
+                        {
+                            ((RawOutboundEnvelope)finalContext.Envelope).Offset =
+                                ProduceCore(finalContext.Envelope);
 
-                        return Task.CompletedTask;
-                    }));
+                            return Task.CompletedTask;
+                        }));
 
+        /// <inheritdoc />
         public async Task ProduceAsync(IOutboundEnvelope envelope) =>
             await ExecutePipeline(
                 Behaviors,
                 new ProducerPipelineContext(envelope, this),
                 async finalContext =>
                 {
-                    ((RawOutboundEnvelope) finalContext.Envelope).Offset =
-                        await ProduceAsyncImpl(finalContext.Envelope);
+                    ((RawOutboundEnvelope)finalContext.Envelope).Offset =
+                        await ProduceAsyncCore(finalContext.Envelope);
                 });
+
+        /// <summary>
+        ///     Publishes the specified message and returns its offset.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The <see cref="RawBrokerEnvelope" /> containing body, headers, endpoint, etc.
+        /// </param>
+        /// <returns> The message offset. </returns>
+        protected abstract IOffset ProduceCore(IRawOutboundEnvelope envelope);
+
+        /// <summary>
+        ///     Publishes the specified message and returns its offset.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The <see cref="RawBrokerEnvelope" /> containing body, headers, endpoint, etc.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
+        ///     message offset.
+        /// </returns>
+        protected abstract Task<IOffset> ProduceAsyncCore(IRawOutboundEnvelope envelope);
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IProducerBehavior> behaviors,
@@ -84,8 +122,10 @@ namespace Silverback.Messaging.Broker
             if (behaviors != null && behaviors.Any())
             {
                 await behaviors.First()
-                    .Handle(context, nextContext =>
-                        ExecutePipeline(behaviors.Skip(1).ToList(), nextContext, finalAction));
+                    .Handle(
+                        context,
+                        nextContext =>
+                            ExecutePipeline(behaviors.Skip(1).ToList(), nextContext, finalAction));
             }
             else
             {
@@ -93,45 +133,5 @@ namespace Silverback.Messaging.Broker
                 _messageLogger.LogInformation(_logger, "Message produced.", context.Envelope);
             }
         }
-
-        /// <summary>
-        ///     Publishes the specified message and returns its offset.
-        /// </summary>
-        /// <param name="envelope">The <see cref="RawBrokerEnvelope" /> instance containing body, headers, endpoint, etc.</param>
-        /// <returns>The message offset.</returns>
-        protected abstract IOffset ProduceImpl(IRawOutboundEnvelope envelope);
-
-        /// <summary>
-        ///     Publishes the specified message and returns its offset.
-        /// </summary>
-        /// <param name="envelope">The <see cref="RawBrokerEnvelope" /> instance containing body, headers, endpoint, etc.</param>
-        /// <returns>The message offset.</returns>
-        protected abstract Task<IOffset> ProduceAsyncImpl(IRawOutboundEnvelope envelope);
-    }
-
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
-    public abstract class Producer<TBroker, TEndpoint> : Producer
-        where TBroker : IBroker
-        where TEndpoint : IProducerEndpoint
-    {
-        protected Producer(
-            TBroker broker,
-            TEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior> behaviors,
-            ILogger<Producer> logger,
-            MessageLogger messageLogger)
-            : base(broker, endpoint, behaviors, logger, messageLogger)
-        {
-        }
-
-        /// <summary>
-        ///     Gets the <typeparamref name="TBroker" /> instance that owns this instance.
-        /// </summary>
-        protected new TBroker Broker => (TBroker) base.Broker;
-
-        /// <summary>
-        ///     Gets the <typeparamref name="TEndpoint" /> this instance is connected to.
-        /// </summary>
-        protected new TEndpoint Endpoint => (TEndpoint) base.Endpoint;
     }
 }

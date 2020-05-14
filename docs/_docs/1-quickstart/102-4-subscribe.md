@@ -35,7 +35,7 @@ public class Startup
 {% endhighlight %}
 </figure>
 
-All subscribers must be registered with the service provider as shown in the second code snippet above and all public methods are automatically subscribed by default (see  the [explicit method subscription](#explicit-method-subscription) chapter, if more control over is desired).
+All subscribers must be registered with the service provider as shown in the second code snippet above and all public methods are automatically subscribed by default (see the [explicit method subscription](#explicit-method-subscription) chapter, if more control is desired).
 
 All `Add*Subscriber` methods are available also as extensions to the `IServiceCollection` and it isn't therefore mandatory to call them immediately after `AddSilverback`.
 {: .notice--note}
@@ -56,7 +56,7 @@ public class Startup
             .AddScopedSubscriber<SubscribingService>();
     }
     
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Subscribe<SubscribingService>();
@@ -78,7 +78,7 @@ public class Startup
             .AddScopedSubscriber<ICustomSubscriber, SubscribingService2>()
     }
     
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator.Subscribe<ICustomSubscriber>();
     }
@@ -129,7 +129,7 @@ It is also possible to completely disable the automatic subscription of the publ
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator.Subscribe<ISubscriber>(
             autoSubscribeAllPublicMethods: false);
@@ -147,7 +147,7 @@ It is also possible to subscribe an inline lambda or integrate an existing metho
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator.Subscribe(
             (IReadOnlyCollection<IMessage> message) =>
@@ -164,7 +164,7 @@ Multiple overloads of the `Subscribe` method exist and you can optionally provid
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator.Subscribe(
             (MyMessage message, MyService service) =>
@@ -181,7 +181,7 @@ public class Startup
 
 ## Supported methods and parameters
 
-The subscribed method can either be synchronous or asynchronous, but the asynchronous approach should be preferred if aiming at taking advantage of non-blocking I/O.
+The subscribed method can either be synchronous or asynchronous (returning a `Task`).
 
 The first parameter must be the message or the collection of messages.
 The following collection are supported:
@@ -208,7 +208,7 @@ The method can have other parameters that will be resolved using the service pro
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator.Subscribe(
             (BasketCheckoutMessage message, CheckoutService service) => 
@@ -247,7 +247,7 @@ Silverback recognizes per default only the messages implementing `IMessage` but 
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .HandleMessagesOfType<MyCustomType>();
@@ -290,7 +290,7 @@ It will of course still cause all subscribers to be instantiated, but it's done 
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator.ScanSubscribers();
     }

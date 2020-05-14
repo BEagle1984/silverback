@@ -14,13 +14,15 @@ namespace Silverback.Messaging.Subscribers
 {
     internal class SubscribedMethodInvoker
     {
-        private readonly ArgumentsResolver _argumentsResolver;
-        private readonly ReturnValueHandler _returnValueHandler;
+        private readonly ArgumentsResolverService _argumentsResolver;
+
+        private readonly ReturnValueHandlerService _returnValueHandler;
+
         private readonly IServiceProvider _serviceProvider;
 
         public SubscribedMethodInvoker(
-            ArgumentsResolver argumentsResolver,
-            ReturnValueHandler returnValueHandler,
+            ArgumentsResolverService argumentsResolver,
+            ReturnValueHandlerService returnValueHandler,
             IServiceProvider serviceProvider)
         {
             _argumentsResolver = argumentsResolver ?? throw new ArgumentNullException(nameof(argumentsResolver));
@@ -28,7 +30,7 @@ namespace Silverback.Messaging.Subscribers
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public async Task<IEnumerable<object>> Invoke(
+        public async Task<IEnumerable<object?>> Invoke(
             SubscribedMethod subscribedMethod,
             IReadOnlyCollection<object> messages,
             bool executeAsync)
@@ -47,7 +49,7 @@ namespace Silverback.Messaging.Subscribers
             var target = subscribedMethod.ResolveTargetType(_serviceProvider);
             var parameterValues = GetShiftedParameterValuesArray(subscribedMethod);
 
-            IReadOnlyCollection<object> returnValues;
+            IReadOnlyCollection<object?> returnValues;
 
             switch (messageArgumentResolver)
             {
@@ -70,7 +72,9 @@ namespace Silverback.Messaging.Subscribers
                     returnValues = new[] { await Invoke(target, subscribedMethod, parameterValues, executeAsync) };
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new SubscribedMethodInvocationException(
+                        $"The message argument resolver ({messageArgumentResolver}) must implement either " +
+                        "ISingleMessageArgumentResolver or IEnumerableMessageArgumentResolver.");
             }
 
             return await _returnValueHandler.HandleReturnValues(returnValues, executeAsync);
@@ -83,7 +87,6 @@ namespace Silverback.Messaging.Subscribers
             UnwrapEnvelopesIfNeeded(
                     ApplyFilters(subscribedMethod.Filters, messages),
                     targetMessageType)
-                .Where(message => message != null)
                 .OfType(targetMessageType)
                 .ToList();
 
@@ -92,44 +95,58 @@ namespace Silverback.Messaging.Subscribers
             Type targetMessageType) =>
             typeof(IEnvelope).IsAssignableFrom(targetMessageType)
                 ? messages
-                : messages.Select(message => message is IEnvelope envelope
-                    ? envelope.AutoUnwrap ? envelope.Message : null
-                    : message);
+                : GetUnwrappedMessages(messages);
+
+        private static IEnumerable<object> GetUnwrappedMessages(IEnumerable<object> messages)
+        {
+            foreach (var message in messages)
+            {
+                if (message is IEnvelope envelope)
+                {
+                    if (envelope.AutoUnwrap)
+                        yield return envelope.Message;
+                }
+                else
+                {
+                    yield return message;
+                }
+            }
+        }
 
         private static IEnumerable<object> ApplyFilters(
             IReadOnlyCollection<IMessageFilter> filters,
             IEnumerable<object> messages) =>
             messages.Where(message => filters.All(filter => filter.MustProcess(message)));
 
-        private object[] GetShiftedParameterValuesArray(SubscribedMethod methodInfo) =>
-            new object[1].Concat(
-                    _argumentsResolver.GetAdditionalParameterValues(methodInfo))
+        private object?[] GetShiftedParameterValuesArray(SubscribedMethod methodInfo) =>
+            new object[1].Concat(_argumentsResolver.GetAdditionalParameterValues(methodInfo))
                 .ToArray();
 
-        private Task<object> Invoke(object target, SubscribedMethod method, object[] parameters, bool executeAsync) =>
+        private Task<object?> Invoke(object target, SubscribedMethod method, object?[] parameters, bool executeAsync) =>
             executeAsync
                 ? InvokeAsync(target, method, parameters)
                 : Task.FromResult(InvokeSync(target, method, parameters));
 
-        private object InvokeSync(object target, SubscribedMethod method, object[] parameters)
+        private object? InvokeSync(object target, SubscribedMethod method, object?[] parameters)
         {
             if (!method.MethodInfo.ReturnsTask())
                 return method.MethodInfo.Invoke(target, parameters);
 
-            return AsyncHelper.RunSynchronously(() =>
-            {
-                var result = (Task) method.MethodInfo.Invoke(target, parameters);
-                return result.GetReturnValue();
-            });
+            return AsyncHelper.RunSynchronously(
+                () =>
+                {
+                    var result = (Task)method.MethodInfo.Invoke(target, parameters);
+                    return result.GetReturnValue();
+                });
         }
 
-        private Task<object> InvokeAsync(object target, SubscribedMethod method, object[] parameters)
+        private Task<object?> InvokeAsync(object target, SubscribedMethod method, object?[] parameters)
         {
             if (!method.MethodInfo.ReturnsTask())
-                return Task.Run(() => method.MethodInfo.Invoke(target, parameters));
+                return Task.Run(() => (object?)method.MethodInfo.Invoke(target, parameters));
 
             var result = method.MethodInfo.Invoke(target, parameters);
-            return ((Task) result).GetReturnValue();
+            return ((Task)result).GetReturnValue();
         }
     }
 }

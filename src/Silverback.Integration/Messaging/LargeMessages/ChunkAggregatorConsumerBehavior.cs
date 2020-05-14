@@ -66,7 +66,7 @@ namespace Silverback.Messaging.LargeMessages
             {
                 // In case of exception all offsets must be rollback back (if a rollback takes place, so only
                 // after all the error policies are applied -> since the actual offset rollback is driven by
-                // the ErrorPolicyHelper the pendingOffsets list is not cleared yet)
+                // the IErrorPolicyHelper the pendingOffsets list is not cleared yet)
                 if (pendingOffsets != null && pendingOffsets.Any())
                 {
                     var clonedPendingOffsets = pendingOffsets.ToList();
@@ -83,6 +83,7 @@ namespace Silverback.Messaging.LargeMessages
 
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.ChunkAggregator;
 
+        [Subscribe]
         public void OnRollback(ConsumingAbortedEvent message)
         {
             if (message.Context.CommitOffsets == null || !message.Context.CommitOffsets.Any())

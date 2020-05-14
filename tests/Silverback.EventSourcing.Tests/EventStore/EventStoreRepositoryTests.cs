@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Silverback.EventStore;
 using Silverback.Tests.EventSourcing.TestTypes;
 using Xunit;
 
@@ -195,7 +196,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             repo.Store(person);
             Action act = () => repo.Store(person2);
 
-            act.Should().Throw<SilverbackConcurrencyException>();
+            act.Should().Throw<EventStoreConcurrencyException>();
         }
 
         [Fact]
@@ -223,7 +224,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             await repo.StoreAsync(person);
             Func<Task> act = async () => await repo.StoreAsync(person2);
 
-            act.Should().Throw<SilverbackConcurrencyException>();
+            act.Should().Throw<EventStoreConcurrencyException>();
         }
 
         #endregion

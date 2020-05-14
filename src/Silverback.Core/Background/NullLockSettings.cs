@@ -4,11 +4,15 @@
 namespace Silverback.Background
 {
     /// <summary>
-    ///     Used to signal that no lock has to be issued / checked.
+    ///     Used to signal that no lock has to be acquired nor checked.
     /// </summary>
     public class NullLockSettings : DistributedLockSettings
     {
-        public NullLockSettings() : base("no-lock")
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="NullLockSettings" /> class.
+        /// </summary>
+        public NullLockSettings()
+            : base("no-lock")
         {
         }
     }

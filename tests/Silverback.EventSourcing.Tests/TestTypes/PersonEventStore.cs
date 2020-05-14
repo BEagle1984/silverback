@@ -11,6 +11,6 @@ namespace Silverback.Tests.EventSourcing.TestTypes
         [Key]
         public int Id { get; set; }
 
-        public string Ssn { get; set; }
+        public string? Ssn { get; set; }
     }
 }

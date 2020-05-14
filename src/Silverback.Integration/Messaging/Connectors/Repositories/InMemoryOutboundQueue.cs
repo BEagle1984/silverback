@@ -14,10 +14,10 @@ namespace Silverback.Messaging.Connectors.Repositories
     /// <summary>
     ///     An outbound queue persisted in memory. Note that writing in the queue is thread-safe but
     ///     reading is not.
-    ///     Implements both <see cref="IOutboundQueueProducer" /> and <see cref="IOutboundQueueConsumer" />.
+    ///     Implements both <see cref="IOutboundQueueWriter" /> and <see cref="IOutboundQueueReader" />.
     /// </summary>
     public class InMemoryOutboundQueue
-        : TransactionalList<QueuedMessage>, IOutboundQueueProducer, IOutboundQueueConsumer
+        : TransactionalList<QueuedMessage>, IOutboundQueueWriter, IOutboundQueueReader
     {
         public InMemoryOutboundQueue(TransactionalListSharedItems<QueuedMessage> sharedItems)
             : base(sharedItems)

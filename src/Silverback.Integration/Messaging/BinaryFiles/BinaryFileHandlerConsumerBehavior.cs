@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Messaging.BinaryFiles
 {
@@ -16,32 +17,43 @@ namespace Silverback.Messaging.BinaryFiles
     /// </summary>
     public class BinaryFileHandlerConsumerBehavior : IConsumerBehavior, ISorted
     {
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.BinaryFileHandler;
+
+        /// <inheritdoc />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
-            context.Envelopes = context.Envelopes.Select(Handle).ToList();
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
+            if (next == null)
+                throw new ArgumentNullException(nameof(next));
+
+            context.Envelopes = (await context.Envelopes.SelectAsync(Handle)).ToList();
 
             await next(context, serviceProvider);
         }
 
-        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.BinaryFileHandler;
-
-        private IRawInboundEnvelope Handle(IRawInboundEnvelope envelope)
+        private async Task<IRawInboundEnvelope> Handle(IRawInboundEnvelope envelope)
         {
             if (envelope.Endpoint.Serializer is BinaryFileMessageSerializer)
                 return envelope;
 
             var messageType = SerializationHelper.GetTypeFromHeaders<object>(envelope.Headers);
-            if (messageType == null || !typeof(IBinaryFileMessage).IsAssignableFrom(messageType)) 
+            if (messageType == null || !typeof(IBinaryFileMessage).IsAssignableFrom(messageType))
                 return envelope;
-            
-            var deserialized = (IBinaryFileMessage) BinaryFileMessageSerializer.Default.Deserialize(
+
+            var deserialized = await BinaryFileMessageSerializer.Default.DeserializeAsync(
                 envelope.RawMessage,
                 envelope.Headers,
                 MessageSerializationContext.Empty);
-                
+
+            if (deserialized == null)
+                throw new InvalidOperationException("The BinaryFileMessageSerializer returned null.");
+
             // Create typed message for easier specific subscription
             return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserialized);
         }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
@@ -8,6 +10,7 @@ namespace Silverback.Messaging.Messages
     ///     and enable features like automatic republishing. It is a good practice for all messages
     ///     to implement this interface but it's not mandatory.
     /// </summary>
+    [SuppressMessage("ReSharper", "CA1040", Justification = Justifications.MarkerInterface)]
     public interface IMessage
     {
     }

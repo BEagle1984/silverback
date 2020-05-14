@@ -7,7 +7,7 @@ using Silverback.Util;
 
 namespace Silverback.EventStore
 {
-    public class EventStoreEntity<TEventEntity> : MessagesSource, IEventStoreEntity<TEventEntity>
+    public class EventStoreEntity<TEventEntity> : MessagesSource<object>, IEventStoreEntity<TEventEntity>
         where TEventEntity : IEventEntity
     {
         public ICollection<TEventEntity> Events { get; } = new HashSet<TEventEntity>(); // TODO: HashSet?

@@ -30,7 +30,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
     {
         private readonly SqliteConnection _connection;
         private readonly ServiceProvider _serviceProvider;
-        private readonly BusConfigurator _configurator;
+        private readonly IBusConfigurator _configurator;
         private readonly SpyBrokerBehavior _spyBehavior;
 
         public DbChunkStoreTests()
@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 ValidateScopes = true
             });
 
-            _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
+            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
 
             using var scope = _serviceProvider.CreateScope();

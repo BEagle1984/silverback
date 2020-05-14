@@ -8,17 +8,32 @@ namespace Silverback.Messaging.Connectors
     /// <inheritdoc cref="IOutboundRoute" />
     public class OutboundRoute : IOutboundRoute
     {
-        public OutboundRoute(Type messageType, IOutboundRouter router, Type outboundConnectorType)
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="OutboundRoute" /> class.
+        /// </summary>
+        /// <param name="messageType">
+        ///     The type of the messages to be routed to the outbound endpoint(s).
+        /// </param>
+        /// <param name="router">
+        ///     The <see cref="IOutboundRouter" /> to be used to determine the destination endpoint.
+        /// </param>
+        /// <param name="outboundConnectorType">
+        ///     The type of the <see cref="IOutboundConnector" /> to be used when publishing these messages.
+        /// </param>
+        public OutboundRoute(Type messageType, IOutboundRouter router, Type? outboundConnectorType)
         {
             MessageType = messageType;
             Router = router;
             OutboundConnectorType = outboundConnectorType;
         }
 
+        /// <inheritdoc />
         public Type MessageType { get; }
 
+        /// <inheritdoc />
         public IOutboundRouter Router { get; }
 
-        public Type OutboundConnectorType { get; }
+        /// <inheritdoc />
+        public Type? OutboundConnectorType { get; }
     }
 }

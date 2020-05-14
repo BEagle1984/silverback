@@ -5,12 +5,21 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Domain
 {
+    /// <summary>
+    ///     Represent and event that generates inside the domain (model).
+    /// </summary>
     public interface IDomainEvent : IMessageWithSource, IEvent
     {
     }
 
+    /// <inheritdoc cref="IDomainEvent"/>
+    /// <typeparam name="TEntity">The type of the related domain entity.</typeparam>
     public interface IDomainEvent<out TEntity> : IDomainEvent
+        where TEntity : class
     {
-        new TEntity Source { get; }
+        /// <summary>
+        ///     Gets the reference to the domain entity that generated this event.
+        /// </summary>
+        new TEntity? Source { get; }
     }
 }

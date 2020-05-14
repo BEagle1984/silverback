@@ -26,7 +26,7 @@ public class Startup
                 .AddOutboundConnector());
     }
 
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         ConfigureNLog(serviceProvider);
 

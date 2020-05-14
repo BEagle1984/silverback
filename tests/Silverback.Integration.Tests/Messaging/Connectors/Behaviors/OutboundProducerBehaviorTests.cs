@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             _outboundQueue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
 
-            services.AddSingleton<IOutboundQueueProducer>(_outboundQueue);
+            services.AddSingleton<IOutboundQueueWriter>(_outboundQueue);
 
             services.AddSilverback()
                 .WithConnectionToMessageBroker(options => options

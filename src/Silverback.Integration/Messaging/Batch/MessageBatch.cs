@@ -19,34 +19,44 @@ using Timer = System.Timers.Timer;
 namespace Silverback.Messaging.Batch
 {
     // TODO: Test? (or implicitly tested with InboundConnector?)
-    public class MessageBatch
+    internal sealed class MessageBatch : IDisposable
     {
         private readonly BatchSettings _settings;
-        private readonly IErrorPolicy _errorPolicy;
+
+        private readonly IErrorPolicy? _errorPolicy;
+
         private readonly IConsumer _consumer;
-        private readonly ErrorPolicyHelper _errorPolicyHelper;
+
+        private readonly IErrorPolicyHelper _errorPolicyHelper;
 
         private readonly IServiceProvider _serviceProvider;
+
         private readonly ILogger _logger;
+
         private readonly MessageLogger _messageLogger;
 
         private readonly List<IRawInboundEnvelope> _envelopes;
-        private readonly Timer _waitTimer;
+
+        private readonly Timer? _waitTimer;
+
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
-        private ConsumerBehaviorHandler _messagesHandler;
-        private ConsumerBehaviorHandler _commitHandler;
-        private ConsumerBehaviorErrorHandler _rollbackHandler;
-        private Exception _processingException;
+        private ConsumerBehaviorHandler? _messagesHandler;
+
+        private ConsumerBehaviorHandler? _commitHandler;
+
+        private ConsumerBehaviorErrorHandler? _rollbackHandler;
+
+        private Exception? _processingException;
 
         public MessageBatch(
             BatchSettings settings,
-            IErrorPolicy errorPolicy,
+            IErrorPolicy? errorPolicy,
             IConsumer consumer,
             IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _errorPolicyHelper = serviceProvider.GetRequiredService<ErrorPolicyHelper>();
+            _errorPolicyHelper = serviceProvider.GetRequiredService<IErrorPolicyHelper>();
 
             _errorPolicy = errorPolicy;
             _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
@@ -85,9 +95,12 @@ namespace Silverback.Messaging.Batch
         {
             // TODO: Check this!
             if (_processingException != null)
-                throw new SilverbackException(
-                    "Cannot add to the batch because the processing of the previous batch failed. See inner exception for details.",
+            {
+                throw new BatchException(
+                    "Cannot add to the batch because the processing of the previous " +
+                    "batch failed. See inner exception for details.",
                     _processingException);
+            }
 
             await _semaphore.WaitAsync();
 
@@ -95,8 +108,9 @@ namespace Silverback.Messaging.Batch
             {
                 _envelopes.AddRange(envelopes);
 
-                _envelopes.ForEach(envelope =>
-                    _messageLogger.LogInformation(_logger, "Message added to batch.", envelope));
+                _envelopes.ForEach(
+                    envelope =>
+                        _messageLogger.LogInformation(_logger, "Message added to batch.", envelope));
 
                 if (_envelopes.Count == 1)
                 {
@@ -118,24 +132,30 @@ namespace Silverback.Messaging.Batch
             }
         }
 
+        public void Dispose()
+        {
+            _semaphore.Dispose();
+        }
+
         private void OnWaitTimerElapsed(object sender, ElapsedEventArgs e)
         {
             _waitTimer?.Stop();
 
-            Task.Run(async () =>
-            {
-                await _semaphore.WaitAsync();
+            Task.Run(
+                async () =>
+                {
+                    await _semaphore.WaitAsync();
 
-                try
-                {
-                    if (_envelopes.Any())
-                        await ProcessBatch();
-                }
-                finally
-                {
-                    _semaphore.Release();
-                }
-            });
+                    try
+                    {
+                        if (_envelopes.Any())
+                            await ProcessBatch();
+                    }
+                    finally
+                    {
+                        _semaphore.Release();
+                    }
+                });
         }
 
         private async Task ProcessBatch()
@@ -156,7 +176,7 @@ namespace Silverback.Messaging.Batch
             catch (Exception ex)
             {
                 _processingException = ex;
-                throw new SilverbackException("Failed to process batch. See inner exception for details.", ex);
+                throw new BatchException("Failed to process batch. See inner exception for details.", ex);
             }
         }
 
@@ -174,6 +194,9 @@ namespace Silverback.Messaging.Batch
             await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(
                 new BatchCompleteEvent(CurrentBatchId, context.Envelopes));
 
+            if (_messagesHandler == null)
+                throw new InvalidOperationException("No message handler has been provided.");
+
             await _messagesHandler(context, serviceProvider);
         }
 
@@ -181,6 +204,9 @@ namespace Silverback.Messaging.Batch
         {
             await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(
                 new BatchProcessedEvent(CurrentBatchId, context.Envelopes));
+
+            if (_commitHandler == null)
+                throw new InvalidOperationException("No commit handler has been provided.");
 
             await _commitHandler(context, serviceProvider);
         }
@@ -192,6 +218,9 @@ namespace Silverback.Messaging.Batch
         {
             await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(
                 new BatchAbortedEvent(CurrentBatchId, context.Envelopes, exception));
+
+            if (_rollbackHandler == null)
+                throw new InvalidOperationException("No rollback handler has been provided.");
 
             await _rollbackHandler(context, serviceProvider, exception);
         }

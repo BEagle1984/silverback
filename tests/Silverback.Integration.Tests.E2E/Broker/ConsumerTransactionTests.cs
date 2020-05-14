@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
     public class ConsumerTransactionTests
     {
         private readonly ServiceProvider _serviceProvider;
-        private readonly BusConfigurator _configurator;
+        private readonly IBusConfigurator _configurator;
 
         public ConsumerTransactionTests()
         {
@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 ValidateScopes = true
             });
 
-            _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
+            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
         }
 
         [Fact]

@@ -38,7 +38,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
         [SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable")]
         private readonly ServiceProvider _serviceProvider;
 
-        private readonly BusConfigurator _configurator;
+        private readonly IBusConfigurator _configurator;
         private readonly OutboundInboundSubscriber _subscriber;
 
         public OffsetStoredInboundConnectorTests()
@@ -66,7 +66,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                 ValidateScopes = true
             });
 
-            _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
+            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
 
             using var scope = _serviceProvider.CreateScope();

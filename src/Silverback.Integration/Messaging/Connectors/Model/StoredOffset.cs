@@ -6,14 +6,17 @@ using System.ComponentModel.DataAnnotations;
 namespace Silverback.Messaging.Connectors.Model
 {
     /// <summary>
-    ///     The entity to be stored in the offset storage table.
+    ///     The entity stored in the offset storage table.
     /// </summary>
     public class StoredOffset
     {
-        [Key, MaxLength(300)]
-        public string Key { get; set; }
+        /// <summary> Gets or sets the offset key. </summary>
+        [Key]
+        [MaxLength(300)]
+        public string Key { get; set; } = null!;
 
+        /// <summary> Gets or sets the serialized offset. </summary>
         [MaxLength(500)]
-        public string Offset { get; set; }
+        public string Offset { get; set; } = null!;
     }
 }

@@ -4,7 +4,7 @@
     <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
     <RootNamespace>Silverback.Tests.Core.Model</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
-  </PropertyGroup>
+    </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />

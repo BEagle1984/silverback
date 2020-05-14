@@ -3,6 +3,9 @@
 
 namespace Silverback.Messaging.Messages
 {
+    /// <summary>
+    ///     Wraps a message when it's being transferred over a message broker.
+    /// </summary>
     public interface IEnvelope
     {
         /// <summary>
@@ -11,7 +14,7 @@ namespace Silverback.Messaging.Messages
         object Message { get; }
 
         /// <summary>
-        ///     Gets a boolean value indicating whether this envelope can be automatically unwrapped and the
+        ///     Gets a value indicating whether this envelope can be automatically unwrapped and the
         ///     message contained message can be forwarded to the matching subscribers in its pure form.
         /// </summary>
         bool AutoUnwrap { get; }

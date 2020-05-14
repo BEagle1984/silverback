@@ -5,11 +5,12 @@ namespace Silverback.Tests.Core.EFCore22.TestTypes.Base.Domain
 {
     public interface IDomainEvent : IEvent
     {
-        object Source { get; set; }
+        object? Source { get; set; }
     }
 
     public interface IDomainEvent<out TEntity> : IDomainEvent
+        where TEntity : class
     {
-        new TEntity Source { get; }
+        new TEntity? Source { get; }
     }
 }

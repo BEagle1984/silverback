@@ -1,8 +1,10 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Broker;
 using Silverback.Tests.Integration.TestTypes;
 using Xunit;
 
@@ -10,6 +12,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 {
     public class BrokerTests
     {
+        private static readonly MessagesReceivedAsyncCallback VoidCallback = args => Task.CompletedTask;
+
         private readonly TestBroker _broker;
 
         public BrokerTests()
@@ -19,8 +23,9 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             services
                 .AddNullLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>());
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -56,7 +61,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public void GetConsumer_SomeEndpoint_ConsumerIsReturned()
         {
-            var consumer = _broker.GetConsumer(TestConsumerEndpoint.GetDefault());
+            var consumer = _broker.GetConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
 
             consumer.Should().NotBeNull();
         }
@@ -64,8 +69,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public void GetConsumer_SameEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(TestConsumerEndpoint.GetDefault());
-            var consumer2 = _broker.GetConsumer(new TestConsumerEndpoint("test2"));
+            var consumer = _broker.GetConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
+            var consumer2 = _broker.GetConsumer(new TestConsumerEndpoint("test2"), VoidCallback);
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -73,8 +78,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public void GetConsumer_DifferentEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(TestConsumerEndpoint.GetDefault());
-            var consumer2 = _broker.GetConsumer(new TestConsumerEndpoint("test2"));
+            var consumer = _broker.GetConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
+            var consumer2 = _broker.GetConsumer(new TestConsumerEndpoint("test2"), VoidCallback);
 
             consumer2.Should().NotBeSameAs(consumer);
         }
