@@ -32,8 +32,8 @@ namespace Silverback.Messaging.LargeMessages
 
         /// <inheritdoc />
         public bool HasNotPersistedChunks =>
-            Items.Any(item => !_pendingCleanups.Contains(item.Entry.MessageId)) ||
-            UncommittedItems.Any(item => !_pendingCleanups.Contains(item.Entry.MessageId));
+            Items.Any(item => !_pendingCleanups.Contains(item.Item.MessageId)) ||
+            UncommittedItems.Any(item => !_pendingCleanups.Contains(item.Item.MessageId));
 
         /// <inheritdoc />
         public async Task Store(string messageId, int chunkIndex, int chunksCount, byte[] content) =>
@@ -42,18 +42,18 @@ namespace Silverback.Messaging.LargeMessages
         /// <inheritdoc />
         public Task<int> CountChunks(string messageId) =>
             Task.FromResult(Items.Union(UncommittedItems)
-                .Where(item => item.Entry.MessageId == messageId)
-                .Select(item => item.Entry.ChunkIndex)
+                .Where(item => item.Item.MessageId == messageId)
+                .Select(item => item.Item.ChunkIndex)
                 .Distinct()
                 .Count());
 
         /// <inheritdoc />
         public Task<Dictionary<int, byte[]>> GetChunks(string messageId) =>
             Task.FromResult(Items.Union(UncommittedItems)
-                .Where(item => item.Entry.MessageId == messageId)
-                .GroupBy(item => item.Entry.ChunkIndex)
+                .Where(item => item.Item.MessageId == messageId)
+                .GroupBy(item => item.Item.ChunkIndex)
                 .Select(items => items.First())
-                .ToDictionary(item => item.Entry.ChunkIndex, item => item.Entry.Content));
+                .ToDictionary(item => item.Item.ChunkIndex, item => item.Item.Content));
 
         /// <inheritdoc />
         public Task Cleanup(string messageId)
@@ -81,12 +81,12 @@ namespace Silverback.Messaging.LargeMessages
             {
                 lock (UncommittedItems)
                 {
-                    UncommittedItems.RemoveAll(item => _pendingCleanups.Contains(item.Entry.MessageId));
+                    UncommittedItems.RemoveAll(item => _pendingCleanups.Contains(item.Item.MessageId));
                 }
 
                 lock (Items)
                 {
-                    Items.RemoveAll(item => _pendingCleanups.Contains(item.Entry.MessageId));
+                    Items.RemoveAll(item => _pendingCleanups.Contains(item.Item.MessageId));
                 }
 
                 _pendingCleanups.Clear();

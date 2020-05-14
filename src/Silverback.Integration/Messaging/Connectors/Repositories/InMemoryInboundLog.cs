@@ -61,9 +61,9 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.FromResult(
                 Items.Union(UncommittedItems).Any(
                     item =>
-                        item.Entry.MessageId == messageId &&
-                        item.Entry.EndpointName == envelope.ActualEndpointName &&
-                        item.Entry.ConsumerGroupName == consumerGroupName));
+                        item.Item.MessageId == messageId &&
+                        item.Item.EndpointName == envelope.ActualEndpointName &&
+                        item.Item.ConsumerGroupName == consumerGroupName));
         }
 
         /// <inheritdoc />

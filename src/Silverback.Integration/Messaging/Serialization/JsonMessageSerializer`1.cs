@@ -38,6 +38,7 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc />
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,

@@ -2,9 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using Silverback.Util;
 
 #pragma warning disable 618 //Obsolete

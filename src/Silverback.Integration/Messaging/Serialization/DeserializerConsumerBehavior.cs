@@ -15,19 +15,25 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public class DeserializerConsumerBehavior : IConsumerBehavior, ISorted
     {
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Deserializer;
+
+        /// <inheritdoc />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
+            Check.NotNull(next, nameof(next));
+
             context.Envelopes = (await context.Envelopes.SelectAsync(Deserialize)).ToList();
 
             await next(context, serviceProvider);
         }
 
-        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Deserializer;
-
-        public static async Task<IRawInboundEnvelope> Deserialize(IRawInboundEnvelope envelope)
+        private static async Task<IRawInboundEnvelope> Deserialize(IRawInboundEnvelope envelope)
         {
             if (envelope is IInboundEnvelope inboundEnvelope && inboundEnvelope.Message != null)
                 return envelope;

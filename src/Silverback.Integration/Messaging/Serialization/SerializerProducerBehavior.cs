@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Serialization
 {
@@ -11,8 +12,15 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public class SerializerProducerBehavior : IProducerBehavior, ISorted
     {
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Serializer;
+
+        /// <inheritdoc />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(next, nameof(next));
+
             context.Envelope.RawMessage ??=
                 await context.Envelope.Endpoint.Serializer.SerializeAsync(
                     context.Envelope.Message,
@@ -21,7 +29,5 @@ namespace Silverback.Messaging.Serialization
 
             await next(context);
         }
-
-        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Serializer;
     }
 }

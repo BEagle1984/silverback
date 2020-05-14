@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         /// <inheritdoc />
         public Task<IReadOnlyCollection<QueuedMessage>> Dequeue(int count) =>
-            Task.FromResult((IReadOnlyCollection<QueuedMessage>)Items.Take(count).Select(item => item.Entry).ToList());
+            Task.FromResult((IReadOnlyCollection<QueuedMessage>)Items.Take(count).Select(item => item.Item).ToList());
 
         /// <inheritdoc />
         public Task Retry(QueuedMessage queuedMessage)

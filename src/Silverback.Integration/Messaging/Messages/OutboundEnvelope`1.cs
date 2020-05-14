@@ -19,6 +19,6 @@ namespace Silverback.Messaging.Messages
         {
         }
 
-        public new TMessage Message => (TMessage)base.Message;
+        public new TMessage? Message => (TMessage?)base.Message;
     }
 }

@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <inheritdoc />
-        public new IConsumerEndpoint Endpoint => (IConsumerEndpoint) base.Endpoint;
+        public new IConsumerEndpoint Endpoint => (IConsumerEndpoint)base.Endpoint;
 
         /// <inheritdoc />
         public string ActualEndpointName { get; }

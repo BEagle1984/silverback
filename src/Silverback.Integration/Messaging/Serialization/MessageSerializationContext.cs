@@ -10,30 +10,27 @@ namespace Silverback.Messaging.Serialization
     public class MessageSerializationContext
     {
         /// <summary>
-        ///     Initializes a new instance of <see cref="MessageSerializationContext" /> with the provides
-        ///     endpoint configuration.
+        ///     Initializes a new instance of the <see cref="MessageSerializationContext" /> class from the provided
+        ///     <see cref="IEndpoint" />.
         /// </summary>
         /// <param name="endpoint"> The related endpoint configuration. </param>
         /// <param name="actualEndpointName"> The name of the actual related endpoint. </param>
-        public MessageSerializationContext(IEndpoint endpoint, string actualEndpointName = null)
+        public MessageSerializationContext(IEndpoint? endpoint, string? actualEndpointName = null)
         {
             Endpoint = endpoint;
             ActualEndpointName = actualEndpointName ?? endpoint?.Name;
         }
 
-        /// <summary>
-        ///     Gets the default instance of an empty context.
-        /// </summary>
+        /// <summary> Gets the default instance of an empty context. </summary>
         public static MessageSerializationContext Empty { get; } = new MessageSerializationContext(null);
 
         /// <summary> Gets the related endpoint configuration. </summary>
-        public IEndpoint Endpoint { get; }
+        public IEndpoint? Endpoint { get; }
 
         /// <summary>
-        ///     Gets the name of the actual related endpoint (in case the <code>Endpoint</code> configuration
-        ///     points to multiple endpoints, for example if consuming multiple topics with a single
-        ///     <code>KafkaConsumer</code>).
+        ///     Gets the name of the actual endpoint (in case the <c> Endpoint </c> configuration points to multiple
+        ///     endpoints, for example if consuming multiple topics with a single <c> KafkaConsumer </c>).
         /// </summary>
-        public string ActualEndpointName { get; }
+        public string? ActualEndpointName { get; }
     }
 }
