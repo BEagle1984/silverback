@@ -10,11 +10,11 @@ namespace Silverback.Messaging.Serialization
     public class MessageSerializationContext
     {
         /// <summary>
-        ///     Initializes a new instance of <see cref="MessageSerializationContext" /> with the provides endpoint
-        ///     infr
+        ///     Initializes a new instance of <see cref="MessageSerializationContext" /> with the provides
+        ///     endpoint configuration.
         /// </summary>
-        /// <param name="endpoint">The related endpoint configuration.</param>
-        /// <param name="actualEndpointName">The name of the actual related endpoint.</param>
+        /// <param name="endpoint"> The related endpoint configuration. </param>
+        /// <param name="actualEndpointName"> The name of the actual related endpoint. </param>
         public MessageSerializationContext(IEndpoint endpoint, string actualEndpointName = null)
         {
             Endpoint = endpoint;
@@ -22,8 +22,11 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <summary>
-        ///     Gets the related endpoint configuration.
+        ///     Gets the default instance of an empty context.
         /// </summary>
+        public static MessageSerializationContext Empty { get; } = new MessageSerializationContext(null);
+
+        /// <summary> Gets the related endpoint configuration. </summary>
         public IEndpoint Endpoint { get; }
 
         /// <summary>
@@ -32,10 +35,5 @@ namespace Silverback.Messaging.Serialization
         ///     <code>KafkaConsumer</code>).
         /// </summary>
         public string ActualEndpointName { get; }
-
-        /// <summary>
-        ///     Gets the default instance of an empty context.
-        /// </summary>
-        public static MessageSerializationContext Empty { get; } = new MessageSerializationContext(null);
     }
 }

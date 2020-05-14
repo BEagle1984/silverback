@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 // ReSharper disable once CheckNamespace
 namespace Silverback.Database
 {
-    public class EfCoreQueryableExtensions : IQueryableExtensions
+    internal class EfCoreQueryableExtensions : IQueryableExtensions
     {
         public Task<bool> AnyAsync<TSource>(
             IQueryable<TSource> source,
@@ -385,7 +385,10 @@ namespace Silverback.Database
             Func<TSource, TKey> keySelector,
             Func<TSource, TElement> elementSelector,
             CancellationToken cancellationToken = default) =>
-            EntityFrameworkQueryableExtensions.ToDictionaryAsync(source, keySelector, elementSelector,
+            EntityFrameworkQueryableExtensions.ToDictionaryAsync(
+                source,
+                keySelector,
+                elementSelector,
                 cancellationToken);
 
         public Task<Dictionary<TKey, TElement>> ToDictionaryAsync<TSource, TKey, TElement>(
@@ -394,7 +397,11 @@ namespace Silverback.Database
             Func<TSource, TElement> elementSelector,
             IEqualityComparer<TKey> comparer,
             CancellationToken cancellationToken = default) =>
-            EntityFrameworkQueryableExtensions.ToDictionaryAsync(source, keySelector, elementSelector, comparer,
+            EntityFrameworkQueryableExtensions.ToDictionaryAsync(
+                source,
+                keySelector,
+                elementSelector,
+                comparer,
                 cancellationToken);
 
         public Task ForEachAsync<T>(

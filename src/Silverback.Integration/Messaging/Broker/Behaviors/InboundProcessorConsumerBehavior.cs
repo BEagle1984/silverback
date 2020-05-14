@@ -13,42 +13,55 @@ using Silverback.Messaging.Publishing;
 namespace Silverback.Messaging.Broker.Behaviors
 {
     /// <summary>
-    ///     Handles the retry policies, batch consuming and scope management of the messages that are consumed
-    ///     via an inbound connector.
+    ///     Handles the retry policies, batch consuming and scope management of the messages that are
+    ///     consumed via an inbound connector.
     /// </summary>
     public class InboundProcessorConsumerBehavior : IConsumerBehavior, ISorted
     {
-        private readonly ErrorPolicyHelper _errorPolicyHelper;
+        private readonly IErrorPolicyHelper _errorPolicyHelper;
 
-        public InboundProcessorConsumerBehavior(ErrorPolicyHelper errorPolicyHelper)
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="InboundProcessorConsumerBehavior" /> class.
+        /// </summary>
+        /// <param name="errorPolicyHelper">
+        ///     The <see cref="IErrorPolicyHelper" /> to be used to apply the defined error policies.
+        /// </param>
+        public InboundProcessorConsumerBehavior(IErrorPolicyHelper errorPolicyHelper)
         {
             _errorPolicyHelper = errorPolicyHelper ?? throw new ArgumentNullException(nameof(errorPolicyHelper));
         }
 
-        public MessageBatch Batch { get; set; }
-        public IErrorPolicy ErrorPolicy { get; set; }
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.InboundProcessor;
 
+        internal MessageBatch? Batch { get; set; }
+
+        internal IErrorPolicy? ErrorPolicy { get; set; }
+
+        /// <inheritdoc />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next) =>
-            await new InboundProcessor(Batch, ErrorPolicy, _errorPolicyHelper, context, next)
+            await new InboundProcessor(Batch!, ErrorPolicy!, _errorPolicyHelper, context, next)
                 .ProcessEnvelopes();
-
-        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.InboundProcessor;
 
         private class InboundProcessor
         {
             private readonly MessageBatch _batch;
-            private readonly IErrorPolicy _errorPolicy;
-            private readonly ErrorPolicyHelper _errorPolicyHelper;
+
             private readonly ConsumerPipelineContext _context;
+
+            private readonly IErrorPolicy _errorPolicy;
+
+            private readonly IErrorPolicyHelper _errorPolicyHelper;
+
             private readonly ConsumerBehaviorHandler _next;
 
             public InboundProcessor(
                 MessageBatch batch,
                 IErrorPolicy errorPolicy,
-                ErrorPolicyHelper errorPolicyHelper,
+                IErrorPolicyHelper errorPolicyHelper,
                 ConsumerPipelineContext context,
                 ConsumerBehaviorHandler next)
             {

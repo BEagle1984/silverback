@@ -1,6 +1,8 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
@@ -11,6 +13,8 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets or sets the actual file binary content.
         /// </summary>
-        byte[] Content { get; set; }
+        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        byte[]? Content { get; set; }
     }
 }

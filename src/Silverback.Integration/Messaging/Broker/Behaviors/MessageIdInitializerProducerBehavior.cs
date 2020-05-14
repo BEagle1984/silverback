@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -13,18 +14,32 @@ namespace Silverback.Messaging.Broker.Behaviors
     {
         private readonly MessageIdProvider _messageIdProvider;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MessageIdInitializerProducerBehavior" /> class.
+        /// </summary>
+        /// <param name="messageIdProvider">
+        ///     The <see cref="MessageIdProvider" /> to be used to derive or generate a unique message id.
+        /// </param>
         public MessageIdInitializerProducerBehavior(MessageIdProvider messageIdProvider)
         {
             _messageIdProvider = messageIdProvider;
         }
 
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer;
+
+        /// <inheritdoc />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
+            if (next == null)
+                throw new ArgumentNullException(nameof(next));
+
             _messageIdProvider.EnsureMessageIdIsInitialized(context.Envelope.Message, context.Envelope.Headers);
 
             await next(context);
         }
-
-        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer;
     }
 }

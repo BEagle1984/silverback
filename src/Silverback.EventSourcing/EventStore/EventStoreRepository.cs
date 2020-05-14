@@ -71,12 +71,14 @@ namespace Silverback.EventStore
         {
             var newEvents = aggregateEntity.GetNewEvents().ToList();
 
-            eventStore.EntityVersion += newEvents.Count();
+            eventStore.EntityVersion += newEvents.Count;
 
             if (eventStore.EntityVersion != aggregateEntity.GetVersion())
-                throw new SilverbackConcurrencyException(
+            {
+                throw new EventStoreConcurrencyException(
                     $"Expected to save version {aggregateEntity.GetVersion()} but new version was {eventStore.EntityVersion}. " +
                     "Refresh the aggregate entity and reapply the new events.");
+            }
 
             newEvents.ForEach(@event => eventStore.Events.Add(
                 GetEventEntity(@event)));

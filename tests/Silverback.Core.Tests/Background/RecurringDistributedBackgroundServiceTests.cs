@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,19 +17,32 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Background
 {
-    public class RecurringDistributedBackgroundServiceTests
+    public class RecurringDistributedBackgroundServiceTests : IDisposable
     {
-        private readonly IServiceProvider _servicesProvider;
+        private readonly SqliteConnection _connection;
+
+        private readonly IServiceProvider _serviceProvider;
 
         public RecurringDistributedBackgroundServiceTests()
         {
+            _connection = new SqliteConnection("DataSource=:memory:");
+            _connection.Open();
+
             var services = new ServiceCollection();
 
-            services.AddDbContext<TestDbContext>(opt => opt
-                .UseInMemoryDatabase("TestDbContext"));
-            services.AddSilverback().UseDbContext<TestDbContext>();
+            services
+                .AddTransient<DbDistributedLockManager>()
+                .AddDbContext<TestDbContext>(
+                    options => options
+                        .UseSqlite(_connection))
+                .AddNullLogger()
+                .AddSilverback()
+                .UseDbContext<TestDbContext>();
 
-            _servicesProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider();
+
+            using var scope = _serviceProvider.CreateScope();
+            scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
         }
 
         [Fact]
@@ -36,28 +50,32 @@ namespace Silverback.Tests.Core.Background
         {
             bool executed = false;
 
-            var service = new TestRecurringDistributedBackgroundService(_ =>
-            {
-                executed = true;
-                return Task.CompletedTask;
-            }, new DbDistributedLockManager(_servicesProvider));
+            var service = new TestRecurringDistributedBackgroundService(
+                _ =>
+                {
+                    executed = true;
+                    return Task.CompletedTask;
+                },
+                _serviceProvider.GetRequiredService<DbDistributedLockManager>());
             await service.StartAsync(CancellationToken.None);
 
             AsyncTestingUtil.Wait(() => executed);
 
             executed.Should().BeTrue();
         }
-        
+
         [Fact]
         public async Task StartAsync_WithNullLockManager_TaskIsExecuted()
         {
             bool executed = false;
 
-            var service = new TestRecurringDistributedBackgroundService(_ =>
-            {
-                executed = true;
-                return Task.CompletedTask;
-            }, new NullLockManager());
+            var service = new TestRecurringDistributedBackgroundService(
+                _ =>
+                {
+                    executed = true;
+                    return Task.CompletedTask;
+                },
+                new NullLockManager());
             await service.StartAsync(CancellationToken.None);
 
             AsyncTestingUtil.Wait(() => executed);
@@ -71,20 +89,24 @@ namespace Silverback.Tests.Core.Background
             bool executed1 = false;
             bool executed2 = false;
 
-            var service1 = new TestRecurringDistributedBackgroundService(stoppingToken =>
-            {
-                executed1 = true;
-                return Task.CompletedTask;
-            }, new DbDistributedLockManager(_servicesProvider));
+            var service1 = new TestRecurringDistributedBackgroundService(
+                stoppingToken =>
+                {
+                    executed1 = true;
+                    return Task.CompletedTask;
+                },
+                _serviceProvider.GetRequiredService<DbDistributedLockManager>());
             await service1.StartAsync(CancellationToken.None);
 
             await AsyncTestingUtil.WaitAsync(() => executed1);
 
-            var service2 = new TestRecurringDistributedBackgroundService(_ =>
-            {
-                executed2 = true;
-                return Task.CompletedTask;
-            }, new DbDistributedLockManager(_servicesProvider));
+            var service2 = new TestRecurringDistributedBackgroundService(
+                _ =>
+                {
+                    executed2 = true;
+                    return Task.CompletedTask;
+                },
+                _serviceProvider.GetRequiredService<DbDistributedLockManager>());
             await service2.StartAsync(CancellationToken.None);
 
             await AsyncTestingUtil.WaitAsync(() => executed2, 100);
@@ -103,11 +125,13 @@ namespace Silverback.Tests.Core.Background
         {
             int executions = 0;
 
-            var service = new TestRecurringDistributedBackgroundService(_ =>
-            {
-                executions++;
-                return Task.CompletedTask;
-            }, new DbDistributedLockManager(_servicesProvider));
+            var service = new TestRecurringDistributedBackgroundService(
+                _ =>
+                {
+                    executions++;
+                    return Task.CompletedTask;
+                },
+                _serviceProvider.GetRequiredService<DbDistributedLockManager>());
             await service.StartAsync(CancellationToken.None);
 
             await AsyncTestingUtil.WaitAsync(() => executions > 1);
@@ -120,11 +144,13 @@ namespace Silverback.Tests.Core.Background
         {
             int executions = 0;
 
-            var service = new TestRecurringDistributedBackgroundService(_ =>
-            {
-                executions++;
-                return Task.CompletedTask;
-            }, new DbDistributedLockManager(_servicesProvider));
+            var service = new TestRecurringDistributedBackgroundService(
+                _ =>
+                {
+                    executions++;
+                    return Task.CompletedTask;
+                },
+                _serviceProvider.GetRequiredService<DbDistributedLockManager>());
             await service.StartAsync(CancellationToken.None);
 
             await Task.Delay(100);
@@ -161,6 +187,12 @@ namespace Silverback.Tests.Core.Background
 
             protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) =>
                 _task.Invoke(stoppingToken);
+        }
+
+        public void Dispose()
+        {
+            _connection?.Close();
+            _connection?.Dispose();
         }
     }
 }

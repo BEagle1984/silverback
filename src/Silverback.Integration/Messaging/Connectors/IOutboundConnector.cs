@@ -7,10 +7,15 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Connectors
 {
     /// <summary>
-    ///     Subscribes to the internal bus and forwards the integration messages to the message broker.
+    ///     Forwards the outbound messages to the message broker.
     /// </summary>
     public interface IOutboundConnector
     {
+        /// <summary>
+        ///     Forwards the message to the message broker endpoint.
+        /// </summary>
+        /// <param name="envelope">The envelope containing the message to be produced.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task RelayMessage(IOutboundEnvelope envelope);
     }
 }

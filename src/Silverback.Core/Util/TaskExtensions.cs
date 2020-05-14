@@ -5,9 +5,18 @@ using System.Threading.Tasks;
 
 namespace Silverback.Util
 {
-    public static class TaskExtensions
+    internal static class TaskExtensions
     {
-        public static async Task<object> GetReturnValue(this Task task)
+        /// <summary>
+        ///     Awaits the specified <see cref="Task" /> and returns a <see cref="Task{T}" /> that wrap either
+        ///     the task result or null.
+        /// </summary>
+        /// <param name="task"> The <see cref="Task" /> to be awaited. </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains either
+        ///     the result of the awaited task or <c> null </c>.
+        /// </returns>
+        public static async Task<object?> GetReturnValue(this Task task)
         {
             await task;
 

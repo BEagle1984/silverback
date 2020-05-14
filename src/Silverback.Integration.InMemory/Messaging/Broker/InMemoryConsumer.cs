@@ -17,16 +17,19 @@ namespace Silverback.Messaging.Broker
         public InMemoryConsumer(
             InMemoryBroker broker,
             IConsumerEndpoint endpoint,
+            MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior> behaviors,
             IServiceProvider serviceProvider,
             ILogger<InMemoryConsumer> logger)
-            : base(broker, endpoint, behaviors, serviceProvider, logger)
+            : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
         {
         }
 
         public event EventHandler<IReadOnlyCollection<IOffset>> CommitCalled;
+
         public event EventHandler<IReadOnlyCollection<IOffset>> RollbackCalled;
 
+        /// <inheritdoc />
         public override Task Commit(IReadOnlyCollection<IOffset> offsets)
         {
             CommitCalled?.Invoke(this, offsets);
@@ -34,6 +37,7 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public override Task Rollback(IReadOnlyCollection<IOffset> offsets)
         {
             RollbackCalled?.Invoke(this, offsets);
@@ -41,10 +45,12 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public override void Connect()
         {
         }
 
+        /// <inheritdoc />
         public override void Disconnect()
         {
         }

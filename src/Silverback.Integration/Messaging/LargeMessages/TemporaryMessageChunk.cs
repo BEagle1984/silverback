@@ -6,6 +6,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Silverback.Messaging.LargeMessages
 {
+    /// <summary>
+    ///     The entity stored in the temporary chunk storage table.
+    /// </summary>
     public class TemporaryMessageChunk
     {
         [Key, MaxLength(300)]

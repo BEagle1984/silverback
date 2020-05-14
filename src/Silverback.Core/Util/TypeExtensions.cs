@@ -7,7 +7,7 @@ namespace Silverback.Util
 {
     internal static class TypeExtensions
     {
-        public static object GetDefaultValue(this Type type) =>
+        public static object? GetDefaultValue(this Type type) =>
             type.IsValueType ? Activator.CreateInstance(type) : null;
     }
 }

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     The event fired when an exception occured during the processing of a batch.
+    ///     The event published when an exception occured during the processing of a batch.
     /// </summary>
     public class BatchAbortedEvent : BatchEvent
     {

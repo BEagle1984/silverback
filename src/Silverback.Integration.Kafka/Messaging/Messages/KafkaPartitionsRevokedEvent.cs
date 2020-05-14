@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     The event fired prior to a group partition assignment being revoked.
+    ///     The event published prior to a group partition assignment being revoked.
     /// </summary>
     /// <remarks>
     ///     Corresponding to each of this events there will be a <see cref="KafkaPartitionsAssignedEvent" />.

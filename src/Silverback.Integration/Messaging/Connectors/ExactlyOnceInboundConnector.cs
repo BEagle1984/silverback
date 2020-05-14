@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
@@ -17,8 +18,18 @@ namespace Silverback.Messaging.Connectors
     public abstract class ExactlyOnceInboundConnector : InboundConnector
     {
         private readonly ILogger _logger;
+
         private readonly MessageLogger _messageLogger;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ExactlyOnceInboundConnector" /> class.
+        /// </summary>
+        /// <param name="brokerCollection">
+        ///     The collection containing the available brokers.
+        /// </param>
+        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="messageLogger"> The <see cref="MessageLogger" />. </param>
         protected ExactlyOnceInboundConnector(
             IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
@@ -30,27 +41,44 @@ namespace Silverback.Messaging.Connectors
             _messageLogger = messageLogger;
         }
 
+        /// <inheritdoc />
         protected override async Task RelayMessages(
-            IEnumerable<IRawInboundEnvelope> envelopes,
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             IServiceProvider serviceProvider)
         {
-            envelopes = await EnsureExactlyOnce(envelopes, serviceProvider);
+            envelopes = (await EnsureExactlyOnce(envelopes, serviceProvider)).ToList();
 
             await base.RelayMessages(envelopes, serviceProvider);
         }
 
-        private async Task<IEnumerable<IRawInboundEnvelope>> EnsureExactlyOnce(
-            IEnumerable<IRawInboundEnvelope> envelopes,
-            IServiceProvider serviceProvider) =>
-            await envelopes.WhereAsync(async envelope =>
-            {
-                if (await MustProcess(envelope, serviceProvider))
-                    return true;
-
-                _messageLogger.LogDebug(_logger, "Message is being skipped since it was already processed.", envelope);
-                return false;
-            });
-
+        /// <summary>
+        ///     Checks whether the message contained in the specified envelope must be processed. It ensures
+        ///     that each message is processed exactly once.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The <see cref="IRawInboundEnvelope" /> containing the message to be processed.
+        /// </param>
+        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
+        /// <returns>
+        ///     A <see cref="Task{TResult}" /> representing the result of the asynchronous operation. The task
+        ///     result contains a value indicating whether the message must be processed.
+        /// </returns>
         protected abstract Task<bool> MustProcess(IRawInboundEnvelope envelope, IServiceProvider serviceProvider);
+
+        private async Task<IEnumerable<IRawInboundEnvelope>> EnsureExactlyOnce(
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            IServiceProvider serviceProvider) =>
+            await envelopes.WhereAsync(
+                async envelope =>
+                {
+                    if (await MustProcess(envelope, serviceProvider))
+                        return true;
+
+                    _messageLogger.LogDebug(
+                        _logger,
+                        "Message is being skipped since it was already processed.",
+                        envelope);
+                    return false;
+                });
     }
 }

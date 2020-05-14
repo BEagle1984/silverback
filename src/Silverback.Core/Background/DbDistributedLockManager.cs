@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,31 +13,52 @@ using Silverback.Database;
 
 namespace Silverback.Background
 {
+    /// <inheritdoc />
     public class DbDistributedLockManager : IDistributedLockManager
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger _logger;
         private static readonly IDistributedLockManager NullLockManager = new NullLockManager();
 
-        public DbDistributedLockManager(IServiceProvider serviceProvider)
+        private readonly ILogger<DbDistributedLockManager> _logger;
+
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="DbDistributedLockManager" /> class.
+        /// </summary>
+        /// <param name="serviceScopeFactory">
+        ///     The <see cref="IServiceScopeFactory" /> used to resolve the scoped types.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
+        public DbDistributedLockManager(
+            IServiceScopeFactory serviceScopeFactory,
+            ILogger<DbDistributedLockManager> logger)
         {
-            _serviceProvider = serviceProvider;
-            _logger = serviceProvider.GetRequiredService<ILogger<DbDistributedLockManager>>();
+            _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<DistributedLock> Acquire(
+        /// <inheritdoc />
+        public async Task<DistributedLock?> Acquire(
             DistributedLockSettings settings,
             CancellationToken cancellationToken = default)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
-            if (string.IsNullOrEmpty(settings.ResourceName)) 
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
+
+            if (string.IsNullOrEmpty(settings.ResourceName))
+            {
                 throw new InvalidOperationException(
                     "ResourceName cannot be null. Please provide a valid resource name in the settings.");
-            
+            }
+
             if (settings is NullLockSettings)
                 return await NullLockManager.Acquire(settings, cancellationToken);
 
-            _logger.LogInformation("Trying to acquire lock {lockName} ({lockUniqueId})...", settings.ResourceName,
+            _logger.LogInformation(
+                "Trying to acquire lock {lockName} ({lockUniqueId})...",
+                settings.ResourceName,
                 settings.UniqueId);
 
             var stopwatch = Stopwatch.StartNew();
@@ -44,7 +66,9 @@ namespace Silverback.Background
             {
                 if (await TryAcquireLock(settings))
                 {
-                    _logger.LogInformation("Acquired lock {lockName} ({lockUniqueId}).", settings.ResourceName,
+                    _logger.LogInformation(
+                        "Acquired lock {lockName} ({lockUniqueId}).",
+                        settings.ResourceName,
                         settings.UniqueId);
                     return new DistributedLock(settings, this);
                 }
@@ -58,86 +82,117 @@ namespace Silverback.Background
             throw new TimeoutException($"Timeout waiting to get the required lock '{settings.ResourceName}'.");
         }
 
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task<bool> CheckIsStillLocked(DistributedLockSettings settings)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
 
             if (settings is NullLockSettings)
                 return await NullLockManager.CheckIsStillLocked(settings);
 
             try
             {
-                using var scope = _serviceProvider.CreateScope();
-                return await CheckIsStillLocked(settings.ResourceName, settings.UniqueId, settings.HeartbeatTimeout,
+                using var scope = _serviceScopeFactory.CreateScope();
+                return await CheckIsStillLocked(
+                    settings.ResourceName,
+                    settings.UniqueId,
+                    settings.HeartbeatTimeout,
                     scope.ServiceProvider);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
+                _logger.LogError(
+                    ex,
                     "Failed to check lock {lockName} ({lockUniqueId}). See inner exception for details.",
-                    settings.ResourceName, settings.UniqueId);
-            }
+                    settings.ResourceName,
+                    settings.UniqueId);
 
-            return false;
+                return false;
+            }
         }
 
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task<bool> SendHeartbeat(DistributedLockSettings settings)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
 
             if (settings is NullLockSettings)
                 return await NullLockManager.SendHeartbeat(settings);
 
             try
             {
-                using var scope = _serviceProvider.CreateScope();
+                using var scope = _serviceScopeFactory.CreateScope();
                 return await SendHeartbeat(settings.ResourceName, settings.UniqueId, scope.ServiceProvider);
             }
             catch (Exception ex)
             {
-                _logger.LogDebug(ex,
+                _logger.LogDebug(
+                    ex,
                     "Failed to send heartbeat for lock {lockName} ({lockUniqueId}). See inner exception for details.",
-                    settings.ResourceName, settings.UniqueId);
+                    settings.ResourceName,
+                    settings.UniqueId);
 
                 return false;
             }
         }
 
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task Release(DistributedLockSettings settings)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
 
             if (settings is NullLockSettings)
                 await NullLockManager.Release(settings);
 
-            try
+            var tryCount = 1;
+            while (tryCount <= 3)
             {
-                using var scope = _serviceProvider.CreateScope();
-                await Release(settings.ResourceName, settings.UniqueId, scope.ServiceProvider);
+                try
+                {
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    await Release(settings.ResourceName, settings.UniqueId, scope.ServiceProvider);
 
-                _logger.LogInformation("Released lock {lockName} ({lockUniqueId}).", settings.ResourceName,
-                    settings.UniqueId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(
-                    ex, "Failed to release lock '{lockName} ({lockUniqueId})'. See inner exception for details.",
-                    settings.ResourceName, settings.UniqueId);
+                    _logger.LogInformation(
+                        "Released lock {lockName} ({lockUniqueId}).",
+                        settings.ResourceName,
+                        settings.UniqueId);
+
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(
+                        ex,
+                        "Failed to release lock '{lockName} ({lockUniqueId})'. See inner exception for details.",
+                        settings.ResourceName,
+                        settings.UniqueId);
+
+                    tryCount++;
+                }
             }
         }
 
+        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task<bool> TryAcquireLock(DistributedLockSettings settings)
         {
             try
             {
-                using var scope = _serviceProvider.CreateScope();
+                using var scope = _serviceScopeFactory.CreateScope();
                 return await AcquireLock(settings, scope.ServiceProvider);
             }
             catch (Exception ex)
             {
-                _logger.LogDebug(ex,
+                _logger.LogDebug(
+                    ex,
                     "Failed to acquire lock {lockName} ({lockUniqueId}). See inner exception for details.",
-                    settings.ResourceName, settings.UniqueId);
+                    settings.ResourceName,
+                    settings.UniqueId);
             }
 
             return false;

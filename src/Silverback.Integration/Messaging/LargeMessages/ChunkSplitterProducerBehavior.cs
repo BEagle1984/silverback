@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Util;
 
 namespace Silverback.Messaging.LargeMessages
 {
@@ -16,19 +15,34 @@ namespace Silverback.Messaging.LargeMessages
     /// </summary>
     public class ChunkSplitterProducerBehavior : IProducerBehavior, ISorted
     {
+        /// <inheritdoc />
+        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.ChunkSplitter;
+
+        /// <inheritdoc />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
+            if (next == null)
+                throw new ArgumentNullException(nameof(next));
+
             var chunks = ChunkIfNeeded(context.Envelope).ToList();
 
             if (chunks.Any())
             {
-                var firstChunkEnvelope = chunks.First();
-                await InvokeNext(context, next, firstChunkEnvelope);
-                await chunks.Skip(1).ForEachAsync(chunkEnvelope =>
+                string? firstOffsetValue = null;
+
+                for (int i = 0; i < chunks.Count; i++)
                 {
-                    chunkEnvelope.Headers.Add(DefaultMessageHeaders.FirstChunkOffset, firstChunkEnvelope.Offset?.Value);
-                    return InvokeNext(context, next, chunkEnvelope);
-                });
+                    if (i > 0 && firstOffsetValue != null)
+                        chunks[i].Headers.Add(DefaultMessageHeaders.FirstChunkOffset, firstOffsetValue);
+
+                    await next(new ProducerPipelineContext(chunks[i], context.Producer));
+
+                    if (i == 0)
+                        firstOffsetValue = chunks[0].Offset?.Value;
+                }
             }
             else
             {
@@ -39,14 +53,12 @@ namespace Silverback.Messaging.LargeMessages
         private IEnumerable<IOutboundEnvelope> ChunkIfNeeded(IOutboundEnvelope envelope)
         {
             var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
-            var settings = envelope.Endpoint?.Chunk;
+            var settings = envelope.Endpoint.Chunk;
 
             var chunkSize = settings?.Size ?? int.MaxValue;
 
             if (envelope.RawMessage == null || chunkSize >= envelope.RawMessage.Length)
-            {
                 yield break;
-            }
 
             if (string.IsNullOrEmpty(messageId))
             {
@@ -55,16 +67,17 @@ namespace Silverback.Messaging.LargeMessages
                     $"Please set the {DefaultMessageHeaders.MessageId} header.");
             }
 
-            var span = envelope.RawMessage.AsMemory();
-            var chunksCount = (int) Math.Ceiling(envelope.RawMessage.Length / (double) chunkSize);
+            var messageMemory = envelope.RawMessage.AsMemory();
+            var chunksCount = (int)Math.Ceiling(envelope.RawMessage.Length / (double)chunkSize);
             var offset = 0;
 
             for (var i = 0; i < chunksCount; i++)
             {
-                var slice = span.Slice(offset, Math.Min(chunkSize, envelope.RawMessage.Length - offset)).ToArray();
+                var memorySlice = messageMemory.Slice(offset, Math.Min(chunkSize, envelope.RawMessage.Length - offset));
+
                 var messageChunk = new OutboundEnvelope(envelope.Message, envelope.Headers, envelope.Endpoint)
                 {
-                    RawMessage = slice
+                    RawMessage = memorySlice.ToArray()
                 };
 
                 messageChunk.Headers.AddOrReplace(DefaultMessageHeaders.ChunkIndex, i);
@@ -75,13 +88,5 @@ namespace Silverback.Messaging.LargeMessages
                 offset += chunkSize;
             }
         }
-
-        private Task InvokeNext(
-            ProducerPipelineContext context,
-            ProducerBehaviorHandler next,
-            IOutboundEnvelope chunkEnvelope) =>
-            next(new ProducerPipelineContext(chunkEnvelope, context.Producer));
-
-        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.ChunkSplitter;
     }
 }

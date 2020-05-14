@@ -8,6 +8,10 @@ using System.Reflection;
 
 namespace Silverback.Util
 {
+    /// <summary>
+    ///     Adds some extension methods to the <see cref="IEnumerable{T}" /> that gets the target type as
+    ///     <see cref="Type" /> instead of generic type parameter.
+    /// </summary>
     // TODO: Test
     internal static class EnumerableTypeParameterExtensions
     {

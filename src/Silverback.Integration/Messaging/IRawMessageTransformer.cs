@@ -14,9 +14,14 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Transforms the specified message.
         /// </summary>
-        /// <param name="message">The message to be transformed.</param>
-        /// <param name="headers">The headers collections (can be modified by the transformer).</param>
-        /// <returns>The transformed message.</returns>
+        /// <param name="message"> The message to be transformed. </param>
+        /// <param name="headers">
+        ///     The headers collections (can be modified by the transformer).
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
+        ///     transformed message.
+        /// </returns>
         Task<byte[]> TransformAsync(byte[] message, MessageHeaderCollection headers);
     }
 }

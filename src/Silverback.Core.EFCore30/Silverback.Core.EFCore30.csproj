@@ -12,7 +12,7 @@ This package It contains the storage implementation to integrate Silverback with
     <RepositoryType>$(RepositoryType)</RepositoryType>
     <PackageLicenseExpression>$(License)</PackageLicenseExpression>
     <Copyright>$(Copyright)</Copyright>
-    <Version>3.0.1</Version>
+    <Version>3.0.$(DatabasePackagesRevision)$(DatabasePackagesVersionSuffix)</Version>
     <RootNamespace>$(RootNamespace)</RootNamespace>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
@@ -23,11 +23,11 @@ This package It contains the storage implementation to integrate Silverback with
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Core.EntityFrameworkCore.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Core.EFCore30.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Silverback.Core.EntityFrameworkCore.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.0\Silverback.Core.EFCore30.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

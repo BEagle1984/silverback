@@ -19,7 +19,7 @@ namespace Silverback.Messaging
         public string Name { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets an instance of <see cref="IMessageSerializer" /> to be used to serialize or deserialize
+        ///     Gets or sets the <see cref="IMessageSerializer" /> to be used to serialize or deserialize
         ///     the messages being produced or consumed.
         /// </summary>
         public IMessageSerializer Serializer { get; set; } = DefaultSerializer;
@@ -38,7 +38,7 @@ namespace Silverback.Messaging
         public EncryptionSettings Encryption { get; set; }
 
         /// <summary>
-        ///     Gets the default serializer instance (a <see cref="JsonMessageSerializer" /> with default settings).
+        ///     Gets the default serializer (a <see cref="JsonMessageSerializer" /> with default settings).
         /// </summary>
         public static IMessageSerializer DefaultSerializer { get; } = JsonMessageSerializer.Default;
 

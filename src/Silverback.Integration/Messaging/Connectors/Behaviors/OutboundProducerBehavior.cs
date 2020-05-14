@@ -14,29 +14,39 @@ namespace Silverback.Messaging.Connectors.Behaviors
 {
     /// <summary>
     ///     Produces the <see cref="IOutboundEnvelope{TMessage}" /> through the correct
-    ///     <see cref="IOutboundConnector" /> instance.
+    ///     <see cref="IOutboundConnector" />.
     /// </summary>
     public class OutboundProducerBehavior : IBehavior, ISorted
     {
         private readonly IReadOnlyCollection<IOutboundConnector> _outboundConnectors;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="OutboundProducerBehavior" /> class.
+        /// </summary>
+        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
         public OutboundProducerBehavior(IServiceProvider serviceProvider)
         {
             _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>().ToList();
         }
 
-        public async Task<IReadOnlyCollection<object>> Handle(
+        /// <inheritdoc />
+        public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundProducer;
+
+        /// <inheritdoc />
+        public async Task<IReadOnlyCollection<object?>> Handle(
             IReadOnlyCollection<object> messages,
             MessagesHandler next)
         {
+            if (next == null)
+                throw new ArgumentNullException(nameof(next));
+
             await messages.OfType<IOutboundEnvelopeInternal>()
-                .ForEachAsync(outboundMessage => _outboundConnectors
-                    .GetConnectorInstance(outboundMessage.OutboundConnectorType)
-                    .RelayMessage(outboundMessage));
+                .ForEachAsync(
+                    outboundMessage => _outboundConnectors
+                        .GetConnectorInstance(outboundMessage.OutboundConnectorType)
+                        .RelayMessage(outboundMessage));
 
             return await next(messages);
         }
-
-        public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundProducer;
     }
 }

@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class MoveMessageErrorPolicyTests
     {
-        private readonly ErrorPolicyBuilder _errorPolicyBuilder;
+        private readonly IErrorPolicyBuilder _errorPolicyBuilder;
         private readonly IBroker _broker;
 
         public MoveMessageErrorPolicyTests()

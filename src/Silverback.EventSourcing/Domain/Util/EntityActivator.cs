@@ -20,7 +20,7 @@ namespace Silverback.Domain.Util
             }
             catch (MissingMethodException ex)
             {
-                throw new SilverbackException(
+                throw new EventSourcingException(
                     $"The type {typeof(TEntity).Name} doesn't have a public constructor " +
                     "with a single parameter of type IEnumerable<IEntityEvent>.", ex);
             }

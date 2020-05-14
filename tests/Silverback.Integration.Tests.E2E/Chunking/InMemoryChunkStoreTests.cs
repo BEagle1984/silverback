@@ -26,9 +26,9 @@ namespace Silverback.Tests.Integration.E2E.Chunking
     [Trait("Category", "E2E")]
     public class InMemoryChunkStoreTests : IDisposable
     {
-        private readonly BusConfigurator _configurator;
         private readonly SqliteConnection _connection;
         private readonly ServiceProvider _serviceProvider;
+        private readonly IBusConfigurator _configurator;
         private readonly OutboundInboundSubscriber _subscriber;
 
         public InMemoryChunkStoreTests()
@@ -57,20 +57,14 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 ValidateScopes = true
             });
 
-            _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
+            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
-        }
-
-        public void Dispose()
-        {
-            _connection?.Close();
-            _connection?.Dispose();
         }
 
         [Fact]
         public void Chunking_ChunkedAndAggregatedCorrectly()
         {
-            // Tested in BrokerBehaviorsPipelineTests
+            // This case is tested in BrokerBehaviorsPipelineTests
         }
 
         [Fact]
@@ -377,6 +371,12 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 (await chunkStore.CountChunks("123")).Should().Be(0);
                 (await chunkStore.CountChunks("456")).Should().Be(2);
             }
+        }
+
+        public void Dispose()
+        {
+            _connection?.Close();
+            _connection?.Dispose();
         }
     }
 }

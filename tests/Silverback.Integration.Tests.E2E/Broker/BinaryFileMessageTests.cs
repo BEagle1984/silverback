@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
         };
 
         private readonly ServiceProvider _serviceProvider;
-        private readonly BusConfigurator _configurator;
+        private readonly IBusConfigurator _configurator;
         private readonly SpyBrokerBehavior _spyBehavior;
 
         public BinaryFileMessageTests()
@@ -52,7 +52,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 ValidateScopes = true
             });
 
-            _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
+            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
         }
 

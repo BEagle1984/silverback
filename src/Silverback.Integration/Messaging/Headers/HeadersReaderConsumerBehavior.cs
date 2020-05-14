@@ -21,7 +21,9 @@ namespace Silverback.Messaging.Headers
             ConsumerBehaviorHandler next)
         {
             context.Envelopes.OfType<InboundEnvelope>()
-                .ForEach(envelope => HeaderAttributeHelper.SetFromHeaders(envelope.Message, envelope.Headers));
+                .ForEach(envelope => HeaderAttributeHelper.SetFromHeaders(
+                    envelope.Message,
+                    envelope.Headers));
 
             await next(context, serviceProvider);
         }

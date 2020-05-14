@@ -33,7 +33,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         private TestOtherBroker GetTestOtherBroker() => GetServiceProvider().GetService<TestOtherBroker>();
         private IPublisher GetPublisher() => GetScopedServiceProvider().GetService<IPublisher>();
 
-        private BusConfigurator GetBusConfigurator() => GetServiceProvider().GetService<BusConfigurator>();
+        private IBusConfigurator GetBusConfigurator() => GetServiceProvider().GetService<IBusConfigurator>();
 
         public BusConfiguratorTests()
         {

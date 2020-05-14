@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Configuration.Inbound
             }
             catch (Exception ex)
             {
-                throw new SilverbackConfigurationException(
+                throw new ConfigurationException(
                     "Error in Inbound configuration section. See inner exception for details.", ex);
             }
         }

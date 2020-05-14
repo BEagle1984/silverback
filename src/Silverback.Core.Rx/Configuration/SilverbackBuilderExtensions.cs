@@ -10,27 +10,38 @@ using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
+    /// <summary>
+    ///     Adds the <c> AsObservable </c> method to the <see cref="ISilverbackBuilder"/>.
+    /// </summary>
     public static class SilverbackBuilderExtensions
     {
         /// <summary>
-        ///     Allows the subscribers to receive an <see cref="IObservable{T}" /> as parameter.
-        ///     It also registers the <see cref="IMessageObservable{TMessage}" /> that can be used to
-        ///     process the entire messages stream using Rx.NET.
+        ///     Allows the subscribers to receive an <see cref="IObservable{T}" /> as parameter. It also
+        ///     registers the <see cref="IMessageObservable{TMessage}" /> that can be used to process the
+        ///     entire messages stream using Rx.NET.
         /// </summary>
-        /// <param name="builder"></param>
-        /// <returns></returns>
-        public static ISilverbackBuilder AsObservable(this ISilverbackBuilder builder)
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AsObservable(this ISilverbackBuilder silverbackBuilder)
         {
-            builder.Services
+            if (silverbackBuilder == null)
+                throw new ArgumentNullException(nameof(silverbackBuilder));
+
+            silverbackBuilder.Services
                 .AddSingleton<IArgumentResolver, ObservableMessageArgumentResolver>()
                 .AddScoped<IReturnValueHandler, ObservableMessagesReturnValueHandler>()
                 .AddSingleton<MessageObservable, MessageObservable>()
                 .AddSingleton(typeof(IMessageObservable<>), typeof(MessageObservable<>));
 
-            builder
+            silverbackBuilder
                 .AddSingletonSubscriber<MessageObservable>();
 
-            return builder;
+            return silverbackBuilder;
         }
     }
 }

@@ -276,15 +276,15 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             }
         }
 
-        private (ArgumentsResolver, ReturnValueHandler) GetDefaultResolverAndHandler() =>
+        private (ArgumentsResolverService, ReturnValueHandlerService) GetDefaultResolverAndHandler() =>
         (
-            new ArgumentsResolver(new IArgumentResolver[]
+            new ArgumentsResolverService(new IArgumentResolver[]
             {
                 new SingleMessageArgumentResolver(),
                 new ReadOnlyCollectionMessageArgumentResolver(),
                 new EnumerableMessageArgumentResolver()
             }),
-            new ReturnValueHandler(new IReturnValueHandler[0])
+            new ReturnValueHandlerService(new IReturnValueHandler[0])
         );
     }
 }

@@ -1,10 +1,14 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
+    /// <summary>
+    ///     Wraps the serialized inbound or outbound message.
+    /// </summary>
     public interface IRawBrokerEnvelope
     {
         /// <summary>
@@ -25,6 +29,8 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets or sets the serialized message body.
         /// </summary>
-        byte[] RawMessage { get; set; }
+        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        byte[]? RawMessage { get; set; }
     }
 }

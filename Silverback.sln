@@ -29,10 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Kafk
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Kafka.Tests", "tests\Silverback.Integration.Kafka.Tests\Silverback.Integration.Kafka.Tests.csproj", "{4A247BE9-6655-4939-AC04-028AC0A3C9A7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Kafka.TestConsumer", "tests\Silverback.Integration.Kafka.TestConsumer\Silverback.Integration.Kafka.TestConsumer.csproj", "{2C1C2EA1-1C50-4198-B484-7E1B2F08929F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Kafka.TestProducer", "tests\Silverback.Integration.Kafka.TestProducer\Silverback.Integration.Kafka.TestProducer.csproj", "{BEEEAE81-0CE8-48E9-AE58-D76C8C6C58C4}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9818A770-01ED-4340-BD4A-CFDDA6C56168}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Integration.Kafka.ConfigClassGenerator", "tools\Silverback.Integration.Kafka.ConfigClassGenerator\Silverback.Integration.Kafka.ConfigClassGenerator.csproj", "{228CC403-4FBE-4E4F-9B74-891F30A404E0}"
@@ -67,6 +63,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 		nuget\Update.ps1 = nuget\Update.ps1
 		.gitignore = .gitignore
+		global.json = global.json
+		CodeAnalysis.Global.ruleset = CodeAnalysis.Global.ruleset
+		stylecop.json = stylecop.json
+		CodeAnalysis.Tests.ruleset = CodeAnalysis.Tests.ruleset
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.RabbitMQ", "src\Silverback.Integration.RabbitMQ\Silverback.Integration.RabbitMQ.csproj", "{0627B10F-67B1-4025-9CEA-31B9994CC2FA}"
@@ -78,6 +78,21 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tests.Common", "tests\Silverback.Tests.Common\Silverback.Tests.Common.csproj", "{5D0507A1-FD7B-46F7-99AC-4904E0DD47D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Tests.E2E", "tests\Silverback.Integration.Tests.E2E\Silverback.Integration.Tests.E2E.csproj", "{E9006DFF-E8EA-410E-8E85-67E2EBAF0109}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{40A3FAE3-7298-4A07-9BEC-32E2C10FDC83}"
+ProjectSection(SolutionItems) = preProject
+	src\Directory.Build.props = src\Directory.Build.props
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AF991E12-F761-4D3D-82DC-BA204813C54E}"
+ProjectSection(SolutionItems) = preProject
+	tests\Directory.Build.props = tests\Directory.Build.props
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{65B73763-9024-43A1-BFAF-045863CAEE1A}"
+ProjectSection(SolutionItems) = preProject
+	tools\Directory.Build.props = tools\Directory.Build.props
+EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -133,14 +148,6 @@ Global
 		{4A247BE9-6655-4939-AC04-028AC0A3C9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A247BE9-6655-4939-AC04-028AC0A3C9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A247BE9-6655-4939-AC04-028AC0A3C9A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C1C2EA1-1C50-4198-B484-7E1B2F08929F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C1C2EA1-1C50-4198-B484-7E1B2F08929F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C1C2EA1-1C50-4198-B484-7E1B2F08929F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C1C2EA1-1C50-4198-B484-7E1B2F08929F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BEEEAE81-0CE8-48E9-AE58-D76C8C6C58C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BEEEAE81-0CE8-48E9-AE58-D76C8C6C58C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BEEEAE81-0CE8-48E9-AE58-D76C8C6C58C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BEEEAE81-0CE8-48E9-AE58-D76C8C6C58C4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{228CC403-4FBE-4E4F-9B74-891F30A404E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{228CC403-4FBE-4E4F-9B74-891F30A404E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{228CC403-4FBE-4E4F-9B74-891F30A404E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -212,8 +219,6 @@ Global
 		{0C43DABF-757C-4476-B423-336608AC43BB} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{9A21AE72-B94E-433C-B98F-D0E442B814DE} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{4A247BE9-6655-4939-AC04-028AC0A3C9A7} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
-		{2C1C2EA1-1C50-4198-B484-7E1B2F08929F} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
-		{BEEEAE81-0CE8-48E9-AE58-D76C8C6C58C4} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{228CC403-4FBE-4E4F-9B74-891F30A404E0} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
 		{837AA9C2-1682-4B0C-8B4D-0CBE42281E48} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{AB4EC3F2-A116-439E-B715-78ED415A96CC} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
@@ -222,6 +227,9 @@ Global
 		{7A461DE8-622A-4946-80ED-06086A3884EF} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{5D0507A1-FD7B-46F7-99AC-4904E0DD47D9} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{E9006DFF-E8EA-410E-8E85-67E2EBAF0109} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
+		{40A3FAE3-7298-4A07-9BEC-32E2C10FDC83} = {C177137F-A084-4178-805F-890F0A175A56}
+		{AF991E12-F761-4D3D-82DC-BA204813C54E} = {C177137F-A084-4178-805F-890F0A175A56}
+		{65B73763-9024-43A1-BFAF-045863CAEE1A} = {C177137F-A084-4178-805F-890F0A175A56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}

@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
         <RootNamespace>Silverback.Tests.Integration.RabbitMQ</RootNamespace>
-    </PropertyGroup>
+        </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="5.10.3" />

@@ -28,7 +28,7 @@ In that case you can resort to the typed `JsonMessageSerializer<TMessage>`. This
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints
@@ -54,7 +54,7 @@ The `AvroSerializer` contained in the `Silverback.Integration.Kafka.SchemaRegist
 {% highlight csharp %}
 public class Startup
 {
-    public void Configure(BusConfigurator busConfigurator)
+    public void Configure(IBusConfigurator busConfigurator)
     {
         busConfigurator
             .Connect(endpoints => endpoints

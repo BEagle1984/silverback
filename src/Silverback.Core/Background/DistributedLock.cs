@@ -7,11 +7,25 @@ using System.Threading.Tasks;
 
 namespace Silverback.Background
 {
+    /// <summary>
+    ///     Represents a lock that has been acquired through an <see cref="IDistributedLockManager" />.
+    /// </summary>
     public class DistributedLock
     {
-        private readonly DistributedLockSettings _settings;
         private readonly IDistributedLockManager _lockManager;
 
+        private readonly DistributedLockSettings _settings;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="DistributedLock" /> class.
+        /// </summary>
+        /// <param name="settings">
+        ///     Specifies all settings of the lock to be acquired.
+        /// </param>
+        /// <param name="lockManager">
+        ///     The <see cref="IDistributedLockManager" /> that generated the lock and can be used to
+        ///     keep it alive and finally release it.
+        /// </param>
         public DistributedLock(DistributedLockSettings settings, IDistributedLockManager lockManager)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -22,12 +36,20 @@ namespace Silverback.Background
             Task.Run(SendHeartbeats);
         }
 
+        /// <summary>
+        ///     Gets the lock status.
+        /// </summary>
         public DistributedLockStatus Status { get; private set; }
 
         /// <summary>
         ///     Ensures that the lock is still valid, otherwise tries to re-acquire it.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
         public async Task Renew(CancellationToken cancellationToken = default)
         {
             if (Status == DistributedLockStatus.Released)
@@ -46,6 +68,12 @@ namespace Silverback.Background
             }
         }
 
+        /// <summary>
+        ///     Releases the lock.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
         public async Task Release()
         {
             Status = DistributedLockStatus.Released;

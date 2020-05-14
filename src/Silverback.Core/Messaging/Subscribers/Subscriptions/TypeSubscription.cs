@@ -9,10 +9,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Silverback.Messaging.Subscribers.Subscriptions
 {
-    public class TypeSubscription : ISubscription
+    /// <summary>
+    ///     Represents a subscription based on a type (e.g. <see cref="ISubscriber"/>).
+    /// </summary>
+    internal class TypeSubscription : ISubscription
     {
         private readonly bool _autoSubscribeAllPublicMethods;
-        private IEnumerable<SubscribedMethod> _subscribedMethods;
+
+        private IReadOnlyCollection<SubscribedMethod>? _subscribedMethods;
 
         public TypeSubscription(Type subscribedType, bool autoSubscribeAllPublicMethods = true)
         {
@@ -22,7 +26,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
 
         public Type SubscribedType { get; }
 
-        public IEnumerable<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
+        public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
             _subscribedMethods ??= serviceProvider
                 .GetServices(SubscribedType)
                 .SelectMany(GetSubscribedMethods)
@@ -46,7 +50,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 methodInfo,
                 subscribeAttribute?.Exclusive,
                 subscribeAttribute?.Parallel,
-                subscribeAttribute?.GetMaxDegreeOfParallelism());
+                subscribeAttribute?.MaxDegreeOfParallelism);
         }
 
         // Methods decorated with [Subscribe] can be declared in a base class.
@@ -55,8 +59,10 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
         // the ones inherited from the base classes (to avoid calling object.Equals and similar methods).
         private IEnumerable<MethodInfo> GetMethods(Type type) =>
             type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(m => m.GetCustomAttribute<SubscribeAttribute>(true) != null ||
-                            _autoSubscribeAllPublicMethods && m.IsPublic && !m.IsSpecialName &&
-                            m.DeclaringType == type && m.GetParameters().Any());
+                .Where(
+                    methodInfo =>
+                        methodInfo.GetCustomAttribute<SubscribeAttribute>(true) != null ||
+                        _autoSubscribeAllPublicMethods && methodInfo.IsPublic && !methodInfo.IsSpecialName &&
+                        methodInfo.DeclaringType == type && methodInfo.GetParameters().Any());
     }
 }

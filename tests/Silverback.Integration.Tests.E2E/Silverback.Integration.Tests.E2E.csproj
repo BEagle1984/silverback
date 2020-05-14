@@ -4,7 +4,7 @@
     <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
     <RootNamespace>Silverback.Tests.Integration.E2E</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
-  </PropertyGroup>
+    </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="2.7.0">

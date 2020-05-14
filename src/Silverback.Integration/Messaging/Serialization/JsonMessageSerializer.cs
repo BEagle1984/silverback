@@ -3,6 +3,8 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
@@ -10,18 +12,17 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Serialization
 {
     /// <summary>
-    ///     Serializes the messages in JSON format and relies on some added headers
-    ///     to determine the message type upon deserialization. This default serializer
-    ///     is ideal when the producer and the consumer are both using Silverback.
+    ///     Serializes the messages in JSON format and relies on some added headers to determine the
+    ///     message type upon deserialization. This default serializer is ideal when the producer and the
+    ///     consumer are both using Silverback.
     /// </summary>
-    /// <inheritdoc cref="IMessageSerializer" />
     public class JsonMessageSerializer : IMessageSerializer
     {
         /// <summary>
-        ///     Gets the default static instance of <see cref="JsonMessageSerializer"/>.
+        ///     Gets the default static instance of <see cref="JsonMessageSerializer" />.
         /// </summary>
         public static JsonMessageSerializer Default { get; } = new JsonMessageSerializer();
-        
+
         /// <summary>
         ///     Gets or sets the message encoding. The default is UTF8.
         /// </summary>
@@ -40,58 +41,71 @@ namespace Silverback.Messaging.Serialization
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        public virtual byte[] Serialize(
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public virtual byte[]? Serialize(
             object message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
+            if (messageHeaders == null)
+                throw new ArgumentNullException(nameof(messageHeaders));
 
-            switch (message)
-            {
-                case null:
-                    return null;
-                case byte[] bytes:
-                    return bytes;
-            }
+            if (message == null)
+                return null;
+
+            if (message is byte[] bytes)
+                return bytes;
 
             var type = message.GetType();
             var json = JsonConvert.SerializeObject(message, type, Settings);
 
             messageHeaders.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
-            return GetEncoding().GetBytes(json);
+            return GetSystemEncoding().GetBytes(json);
         }
 
-        public virtual object Deserialize(
+        /// <inheritdoc />
+        public virtual object? Deserialize(
             byte[] message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (messageHeaders == null) throw new ArgumentNullException(nameof(messageHeaders));
+            if (messageHeaders == null)
+                throw new ArgumentNullException(nameof(messageHeaders));
 
             if (message == null || message.Length == 0)
                 return null;
 
-            var json = GetEncoding().GetString(message);
+            var json = GetSystemEncoding().GetString(message);
             var type = SerializationHelper.GetTypeFromHeaders(messageHeaders);
 
-            return JsonConvert.DeserializeObject(json, type, Settings);
+            return JsonConvert.DeserializeObject(json, type, Settings) ??
+                   throw new MessageSerializerException("The deserialization returned null.");
         }
 
-        public virtual Task<byte[]> SerializeAsync(
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public virtual Task<byte[]?> SerializeAsync(
             object message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Task.FromResult(Serialize(message, messageHeaders, context));
 
-        public virtual Task<object> DeserializeAsync(
+        /// <inheritdoc />
+        public virtual Task<object?> DeserializeAsync(
             byte[] message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Task.FromResult(Deserialize(message, messageHeaders, context));
 
-        protected System.Text.Encoding GetEncoding() =>
+        /// <summary>
+        ///     Maps the <see cref="MessageEncoding" /> to the <see cref="System.Text.Encoding" />.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="System.Text.Encoding" /> that matches the current <see cref="MessageEncoding" />.
+        /// </returns>
+        protected Encoding GetSystemEncoding() =>
             Encoding switch
             {
                 MessageEncoding.Default => System.Text.Encoding.Default,
@@ -101,46 +115,5 @@ namespace Silverback.Messaging.Serialization
                 MessageEncoding.Unicode => System.Text.Encoding.Unicode,
                 _ => throw new InvalidOperationException("Unhandled encoding.")
             };
-    }
-
-    /// <summary>
-    ///     Serializes and deserializes the messages of type <typeparamref name="TMessage" /> in JSON format.
-    /// </summary>
-    /// <typeparam name="TMessage">The type of the messages to be serialized and/or deserialized.</typeparam>
-    /// <inheritdoc />
-    public class JsonMessageSerializer<TMessage> : JsonMessageSerializer
-    {
-        private readonly Type _type = typeof(TMessage);
-        
-        public override byte[] Serialize(
-            object message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
-        {
-            switch (message)
-            {
-                case null:
-                    return null;
-                case byte[] bytes:
-                    return bytes;
-            }
-
-            var json = JsonConvert.SerializeObject(message, _type, Settings);
-
-            return GetEncoding().GetBytes(json);
-        }
-
-        public override object Deserialize(
-            byte[] message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
-        {
-            if (message == null || message.Length == 0)
-                return null;
-
-            var json = GetEncoding().GetString(message);
-
-            return JsonConvert.DeserializeObject(json, _type, Settings);
-        }
     }
 }

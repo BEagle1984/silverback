@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\DependencyInjectionExtensions.cs" Link="TestTypes\Database\DependencyInjectionExtensions.cs" />
-    <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreDbContext.cs" Link="TestTypes\Database\EfCoreDbContext.cs" />
-    <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreDbSet.cs" Link="TestTypes\Database\EfCoreDbSet.cs" />
+    <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\SilverbackBuilderExtensions.cs" Link="TestTypes\Database\SilverbackBuilderExtensions.cs" />
+    <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreDbContext`1.cs" Link="TestTypes\Database\EfCoreDbContext`1.cs" />
+    <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreDbSet`1.cs" Link="TestTypes\Database\EfCoreDbSet`1.cs" />
     <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreQueryableExtensions.cs" Link="TestTypes\Database\EfCoreQueryableExtensions.cs" />
   </ItemGroup>
 
@@ -19,7 +19,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
     <PackageReference Include="NSubstitute" Version="4.2.1" />
@@ -28,8 +28,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -23,7 +23,7 @@ namespace Silverback.Domain.Util
 
             if (!methods.Any())
             {
-                throw new SilverbackException(
+                throw new EventSourcingException(
                     $"No method found to apply event of type {@event.GetType().Name} " +
                     $"in entity {entity.GetType().Name}.");
             }
@@ -55,7 +55,7 @@ namespace Silverback.Domain.Util
             }
             catch (ArgumentException ex)
             {
-                throw new SilverbackException(
+                throw new EventSourcingException(
                     $"The apply method for the event of type {@event.GetType().Name} " +
                     $"in entity {entity.GetType().Name} has an invalid signature.", ex);
             }

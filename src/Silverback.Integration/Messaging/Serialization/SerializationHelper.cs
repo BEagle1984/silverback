@@ -3,20 +3,21 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Serialization
 {
     internal static class SerializationHelper
     {
-        public static readonly ConcurrentDictionary<string, Type> TypesCache = new ConcurrentDictionary<string, Type>();
+        private static readonly ConcurrentDictionary<string, Type>
+            TypesCache = new ConcurrentDictionary<string, Type>();
 
-        
         public static Type GetTypeFromHeaders(MessageHeaderCollection messageHeaders)
         {
             var typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
             if (string.IsNullOrEmpty(typeName))
-                throw new SilverbackException("Missing type header.");
+                throw new MessageSerializerException("Missing type header.");
 
             return GetType(typeName);
         }
@@ -31,7 +32,7 @@ namespace Silverback.Messaging.Serialization
             IRawInboundEnvelope rawInboundEnvelope,
             object deserializedMessage)
         {
-            var typedInboundMessage = (InboundEnvelope) Activator.CreateInstance(
+            var typedInboundMessage = (InboundEnvelope)Activator.CreateInstance(
                 typeof(InboundEnvelope<>).MakeGenericType(deserializedMessage.GetType()),
                 rawInboundEnvelope);
 
@@ -40,24 +41,27 @@ namespace Silverback.Messaging.Serialization
             return typedInboundMessage;
         }
 
+        [SuppressMessage("ReSharper", "CA1031", Justification = "Can catch all, the operation is retried")]
         private static Type GetType(string typeName) =>
-            TypesCache.GetOrAdd(typeName, _ =>
-            {
-                Type type = null;
-
-                try
+            TypesCache.GetOrAdd(
+                typeName,
+                _ =>
                 {
-                    type = Type.GetType(typeName);
-                }
-                catch
-                {
-                    // Ignore
-                }
+                    Type? type = null;
 
-                type ??= Type.GetType(CleanAssemblyQualifiedName(typeName), true);
+                    try
+                    {
+                        type = Type.GetType(typeName);
+                    }
+                    catch
+                    {
+                        // Ignore
+                    }
 
-                return type;
-            });
+                    type ??= Type.GetType(CleanAssemblyQualifiedName(typeName), true);
+
+                    return type;
+                });
 
         private static string CleanAssemblyQualifiedName(string typeAssemblyQualifiedName)
         {

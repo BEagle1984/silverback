@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
     public class OutboundRoutingTests
     {
         private readonly ServiceProvider _serviceProvider;
-        private readonly BusConfigurator _configurator;
+        private readonly IBusConfigurator _configurator;
         private readonly SpyBrokerBehavior _spyBehavior;
 
         public OutboundRoutingTests()
@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 ValidateScopes = true
             });
 
-            _configurator = _serviceProvider.GetRequiredService<BusConfigurator>();
+            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
         }
 

@@ -9,30 +9,48 @@ using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
 {
+    /// <summary>
+    ///     Handles the returned <see cref="IReadOnlyCollection{T}" /> republishing all the messages.
+    /// </summary>
     // TODO: Test
     public class ReadOnlyCollectionMessagesReturnValueHandler : IReturnValueHandler
     {
-        private readonly IPublisher _publisher;
-        private readonly BusOptions _publisherOptions;
+        private readonly BusOptions _busOptions;
 
-        public ReadOnlyCollectionMessagesReturnValueHandler(IPublisher publisher, BusOptions publisherOptions)
+        private readonly IPublisher _publisher;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ReadOnlyCollectionMessagesReturnValueHandler" />
+        ///     class.
+        /// </summary>
+        /// <param name="publisher">
+        ///     The <see cref="IPublisher" /> to be used to publish the messages.
+        /// </param>
+        /// <param name="busOptions">
+        ///     The <see cref="BusOptions" /> that specify which message types have to be handled.
+        /// </param>
+        public ReadOnlyCollectionMessagesReturnValueHandler(IPublisher publisher, BusOptions busOptions)
         {
             _publisher = publisher;
-            _publisherOptions = publisherOptions;
+            _busOptions = busOptions;
         }
 
+        /// <inheritdoc />
         public bool CanHandle(object returnValue) =>
             returnValue != null &&
             returnValue.GetType().GetInterfaces().Any(
                 i => i.IsGenericType &&
                      i.GetGenericTypeDefinition() == typeof(IReadOnlyCollection<>) &&
-                     _publisherOptions.MessageTypes.Any(messageType =>
-                         messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
+                     _busOptions.MessageTypes.Any(
+                         messageType =>
+                             messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 
+        /// <inheritdoc />
         public void Handle(object returnValue) =>
-            _publisher.Publish<object>((IReadOnlyCollection<object>) returnValue);
+            _publisher.Publish<object>((IReadOnlyCollection<object>)returnValue);
 
+        /// <inheritdoc />
         public Task HandleAsync(object returnValue) =>
-            _publisher.PublishAsync<object>((IReadOnlyCollection<object>) returnValue);
+            _publisher.PublishAsync<object>((IReadOnlyCollection<object>)returnValue);
     }
 }

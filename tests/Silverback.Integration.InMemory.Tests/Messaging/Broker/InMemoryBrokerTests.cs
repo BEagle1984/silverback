@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
@@ -20,6 +22,8 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 {
     public class InMemoryBrokerTests
     {
+        private static readonly MessagesReceivedAsyncCallback VoidCallback = args => Task.CompletedTask;
+
         private readonly IServiceProvider _serviceProvider;
 
         public InMemoryBrokerTests()
@@ -28,8 +32,9 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 
             services.AddNullLogger();
 
-            services.AddSilverback().WithConnectionToMessageBroker(options => options
-                .AddInMemoryBroker());
+            services.AddSilverback().WithConnectionToMessageBroker(
+                options => options
+                    .AddInMemoryBroker());
 
             _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
         }
@@ -50,13 +55,14 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
         {
             var endpoint = new KafkaConsumerEndpoint("test");
 
-            var consumer = _serviceProvider.GetRequiredService<IBroker>().GetConsumer(endpoint);
+            var consumer = _serviceProvider.GetRequiredService<IBroker>().GetConsumer(endpoint, VoidCallback);
 
             consumer.Should().NotBeNull();
             consumer.Should().BeOfType<InMemoryConsumer>();
         }
 
         [Fact]
+        [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public void InMemoryBroker_ProduceMessage_MessageConsumed()
         {
             var endpointName = "test";
@@ -64,15 +70,20 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
-            var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
-#pragma warning disable 1998
-            consumer.Received += async (_, args) =>
-                args.Envelopes.ForEach(envelope =>
-                    receivedMessages.Add(envelope.Endpoint.Serializer.Deserialize(
-                        envelope.RawMessage,
-                        new MessageHeaderCollection(envelope.Headers),
-                        MessageSerializationContext.Empty)));
-#pragma warning restore 1998
+            broker.GetConsumer(
+                new KafkaConsumerEndpoint(endpointName),
+                args =>
+                    args.Envelopes.ForEach(
+                        envelope =>
+                        {
+                            var deserialized = envelope.Endpoint.Serializer.Deserialize(
+                                envelope.RawMessage,
+                                new MessageHeaderCollection(envelope.Headers),
+                                MessageSerializationContext.Empty);
+
+                            if (deserialized != null)
+                                receivedMessages.Add(deserialized);
+                        }));
 
             producer.Produce(new TestMessage { Content = "hello!" });
             producer.Produce(new TestMessage { Content = "hello 2!" });
@@ -89,15 +100,20 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
-            var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
-#pragma warning disable 1998
-            consumer.Received += async (_, args) =>
-                args.Envelopes.ForEach(envelope =>
-                    receivedMessages.Add(envelope.Endpoint.Serializer.Deserialize(
-                        envelope.RawMessage,
-                        new MessageHeaderCollection(envelope.Headers),
-                        MessageSerializationContext.Empty)));
-#pragma warning restore 1998
+            var consumer = broker.GetConsumer(
+                new KafkaConsumerEndpoint(endpointName),
+                args =>
+                    args.Envelopes.ForEach(
+                        envelope =>
+                        {
+                            var deserialized = envelope.Endpoint.Serializer.Deserialize(
+                                envelope.RawMessage,
+                                new MessageHeaderCollection(envelope.Headers),
+                                MessageSerializationContext.Empty);
+
+                            if (deserialized != null)
+                                receivedMessages.Add(deserialized);
+                        }));
 
             producer.Produce(new TestMessage { Content = "hello!" });
 
@@ -113,11 +129,10 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
-            var consumer = broker.GetConsumer(new KafkaConsumerEndpoint(endpointName));
-#pragma warning disable 1998
-            consumer.Received += async (_, args) =>
-                args.Envelopes.ForEach(envelope => receivedHeaders.Add(envelope.Headers));
-#pragma warning restore 1998
+            var consumer = broker.GetConsumer(
+                new KafkaConsumerEndpoint(endpointName),
+                args =>
+                    args.Envelopes.ForEach(envelope => receivedHeaders.Add(envelope.Headers)));
 
             producer.Produce(
                 new TestMessage { Content = "hello!" },
@@ -133,11 +148,12 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             var endpointName = "test";
             var receivedEnvelopes = new List<object>();
 
-            _serviceProvider.GetRequiredService<BusConfigurator>()
+            _serviceProvider.GetRequiredService<IBusConfigurator>()
                 .Subscribe((IInboundEnvelope<TestMessage> envelope) => receivedEnvelopes.Add(envelope))
-                .Connect(endpoints => endpoints
-                    .AddInbound(new KafkaConsumerEndpoint(endpointName))
-                    .AddOutbound<TestMessage>(new KafkaProducerEndpoint(endpointName)));
+                .Connect(
+                    endpoints => endpoints
+                        .AddInbound(new KafkaConsumerEndpoint(endpointName))
+                        .AddOutbound<TestMessage>(new KafkaProducerEndpoint(endpointName)));
 
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -154,7 +170,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
         [Fact]
         public void InMemoryBroker_ConnectAndDispose_NoExceptionIsThrown()
         {
-            var broker = (IDisposable) _serviceProvider.GetRequiredService<BusConfigurator>().Connect().First();
+            var broker = (IDisposable)_serviceProvider.GetRequiredService<IBusConfigurator>().Connect().First();
 
             broker.Dispose();
         }

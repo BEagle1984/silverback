@@ -14,7 +14,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.ErrorHandling
 {
-    public class ErrorPolicyHelper
+    internal class ErrorPolicyHelper : IErrorPolicyHelper
     {
         private readonly ILogger<ErrorPolicyHelper> _logger;
         private readonly MessageLogger _messageLogger;
@@ -32,7 +32,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         public async Task TryProcessAsync(
             ConsumerPipelineContext context,
-            IErrorPolicy errorPolicy,
+            IErrorPolicy? errorPolicy,
             ConsumerBehaviorHandler messagesHandler,
             ConsumerBehaviorHandler commitHandler,
             ConsumerBehaviorErrorHandler rollbackHandler)
@@ -92,7 +92,7 @@ namespace Silverback.Messaging.ErrorHandling
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler messagesHandler,
             ConsumerBehaviorErrorHandler rollbackHandler,
-            IErrorPolicy errorPolicy,
+            IErrorPolicy? errorPolicy,
             int attempt)
         {
             try
@@ -123,7 +123,7 @@ namespace Silverback.Messaging.ErrorHandling
                 var offsets = context.CommitOffsets;
                 
                 // Rollback database transactions only (ignore offsets)
-                context.CommitOffsets = null;
+                context.CommitOffsets = new List<IOffset>();
                 await rollbackHandler(context, serviceProvider, ex);
 
                 if (action == ErrorAction.Skip)

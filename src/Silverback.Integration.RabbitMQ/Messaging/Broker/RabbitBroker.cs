@@ -46,11 +46,13 @@ namespace Silverback.Messaging.Broker
 
         protected override IConsumer InstantiateConsumer(
             RabbitConsumerEndpoint endpoint,
+            MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior> behaviors,
             IServiceProvider serviceProvider) =>
             new RabbitConsumer(
                 this,
                 endpoint,
+                callback,
                 behaviors,
                 _connectionFactory,
                 serviceProvider,

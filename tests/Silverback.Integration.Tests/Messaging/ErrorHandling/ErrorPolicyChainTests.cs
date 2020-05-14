@@ -15,7 +15,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class ErrorPolicyChainTests
     {
-        private readonly ErrorPolicyBuilder _errorPolicyBuilder;
+        private readonly IErrorPolicyBuilder _errorPolicyBuilder;
 
         // TODO: Test with multiple messages (batch)
 

@@ -10,12 +10,12 @@ namespace Silverback.Messaging.Encryption
     public interface IMessageTransformerFactory
     {
         /// <summary>
-        ///     Gets an instance of <see cref="IMessageEncryptor" /> compatible with the specified settings.
+        ///     Gets an <see cref="IMessageEncryptor" /> compatible with the specified settings.
         /// </summary>
         IMessageEncryptor GetEncryptor(EncryptionSettings settings);
 
         /// <summary>
-        ///     Gets an instance of <see cref="IMessageDecryptor" /> compatible with the specified settings.
+        ///     Gets an <see cref="IMessageDecryptor" /> compatible with the specified settings.
         /// </summary>
         IMessageDecryptor GetDecryptor(EncryptionSettings settings);
     }
