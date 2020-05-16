@@ -20,7 +20,14 @@ namespace Silverback.EventStore
         public static string Serialize(IEntityEvent @event) =>
             JsonConvert.SerializeObject(@event, typeof(IEntityEvent), SerializerSettings);
 
-        public static IEntityEvent Deserialize(string json) =>
-            JsonConvert.DeserializeObject<IEntityEvent>(json, SerializerSettings);
+        public static IEntityEvent Deserialize(string json)
+        {
+            var deserialized = JsonConvert.DeserializeObject<IEntityEvent>(json, SerializerSettings);
+
+            if (deserialized == null)
+                throw new EventStoreSerializationException("The deserialized event is null.");
+
+            return deserialized;
+        }
     }
 }

@@ -24,11 +24,11 @@ public class Startup
 
 ## Creating the Event Store
 
-Creating an event store is very straightforward and requires basically just 3 components: an aggregate entity model, the event store model and a repository.
+Creating an event store is very straightforward and requires basically just 3 components: a domain entity model, the event store model and a repository.
 
-### Aggregate Entity model
+### Domain Entity model
 
-The aggregate entity have to extend `EventSourcingDomainEntity` (or a custom class implementing `IEventSourcingDomainEntity`).
+The domain entity have to extend `EventSourcingDomainEntity` (or a custom class implementing `IEventSourcingDomainEntity`).
 The two generic type parameters refer to the type of the key (entity unique identifier) and the base type for the domain events (can be omited if you don't need domain events).
 
 ```csharp
@@ -38,7 +38,7 @@ public class Person : EventSourcingDomainEntity<int, PersonDomainEvent>
     {
     }
 
-    public Person(IEnumerable<IEntityEvent> events) : base(events)
+    public Person(IReadOnlyCollection<IEntityEvent> events) : base(events)
     {
     }
 
@@ -140,7 +140,7 @@ public class PersonEvent : EventEntity
 }
 ```
 
-The event store record can be extended with extra fields (see `SocialSecurityNumber` in the example above).
+The event store record can be extended with extra fields (see `SocialSecurityNumber` in the example above) and those will be automatically set with the value of the matching propertyi in the domain entity (unless the mapping method is overridden in the repository implementing a custom logic).
 {: .notice--note}
 
 It is advised to add some indexes and a concurrency token, to ensure proper performance and consistency.
@@ -161,15 +161,13 @@ public class MyDbContext : DbContext
 
 ### EventStore repository
 
-The repository is the component that is storing the aggregate entity in form of single events, being able to rebuild it afterwards.
+The repository is the component that is storing the domain entity in form of single events, being able to rebuild it afterwards.
 
 The repository must inherit from `DbContextEventStoreRepository` and the 4 generic type parameters refer respectively to:
-* the aggregate entity
+* the domain entity
 * its unique key
 * the event store entity
 * its related event entity
-
-The only thing left to implement is the mapping between the aggregate entity and the event store entity.
 
 ```csharp
 public class PersonEventStoreRepository
@@ -179,20 +177,12 @@ public class PersonEventStoreRepository
         : base(dbContext)
     {
     }
-
-    protected override PersonEventStore GetNewEventStoreEntity(
-        Person aggregateEntity) =>
-        new PersonEventStore
-        {
-            Id = aggregateEntity.Id,
-            SocialSecurityNumber = aggregateEntity.SocialSecurityNumber
-        };
 }
 ```
 
 ## Storing and retrieving entities
 
-Using the `EventStoreRepository` to store and retrieve aggregate entities is fairly simple. Have a look at the following code snippet to get an idea.
+Using the `EventStoreRepository` to store and retrieve domain entities is fairly simple. Have a look at the following code snippet to get an idea.
 
 ```csharp
 public class PersonService
@@ -207,7 +197,7 @@ public class PersonService
         person.ChangeName("Sergio");
         person.ChangeAge(35);
 
-        person = await repo.StoreAsync(person);
+        person = await _repository.StoreAsync(person);
         await _dbContext.SaveChangesAsync();
 
         return person;
@@ -217,11 +207,11 @@ public class PersonService
         int personId,
         string newPhoneNumber)
     {
-        var person = repo.Get(p => p.Id == personId);
+        var person = _repository.Get(p => p.Id == personId);
 
         person.ChangePhoneNumber(newPhoneNumber);
 
-        person = await repo.StoreAsync(person);
+        person = await _repository.StoreAsync(person);
         await _dbContext.SaveChangesAsync();
 
         return person;

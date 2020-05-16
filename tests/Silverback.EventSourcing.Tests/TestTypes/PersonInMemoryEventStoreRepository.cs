@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Silverback.Tests.EventSourcing.TestTypes
 {
-    public class
-        PersonInMemoryEventStoreRepository : InMemoryEventStoreRepository<Person, PersonEventStore, PersonEvent>
+    public class PersonInMemoryEventStoreRepository
+        : InMemoryEventStoreRepository<Person, PersonEventStore, PersonEvent>
     {
         public PersonInMemoryEventStoreRepository()
         {
@@ -25,28 +25,20 @@ namespace Silverback.Tests.EventSourcing.TestTypes
             EventStores.AddRange(eventStoreEntities);
         }
 
-        public Person GetById(int id) => GetAggregateEntity(EventStores.FirstOrDefault(x => x.Id == id));
+        public Person GetById(int id) => GetDomainEntity(EventStores.FirstOrDefault(x => x.Id == id));
 
-        public Person GetBySsn(string ssn) => GetAggregateEntity(EventStores.FirstOrDefault(x => x.Ssn == ssn));
+        public Person GetBySsn(string ssn) => GetDomainEntity(EventStores.FirstOrDefault(x => x.Ssn == ssn));
 
         public Person GetSnapshotById(int id, DateTime snapshot) =>
-            GetAggregateEntity(EventStores.FirstOrDefault(x => x.Id == id), snapshot);
+            GetDomainEntity(EventStores.FirstOrDefault(x => x.Id == id), snapshot);
 
-        protected override PersonEventStore GetEventStoreEntity(Person aggregateEntity, bool addIfNotFound)
-        {
-            var store = EventStores.FirstOrDefault(s => s.Id == aggregateEntity.Id);
+        protected override void AddEventStoreEntity(PersonEventStore eventStoreEntity) =>
+            EventStores.Add(eventStoreEntity);
 
-            if (store == null && addIfNotFound)
-            {
-                store = new PersonEventStore { Id = aggregateEntity.Id, Ssn = aggregateEntity.Ssn };
-                EventStores.Add(store);
-            }
+        protected override PersonEventStore? GetEventStoreEntity(Person domainEntity) =>
+            EventStores.FirstOrDefault(s => s.Id == domainEntity.Id);
 
-            return store;
-        }
-
-        protected override Task<PersonEventStore>
-            GetEventStoreEntityAsync(Person aggregateEntity, bool addIfNotFound) =>
-            Task.FromResult(GetEventStoreEntity(aggregateEntity, addIfNotFound));
+        protected override Task<PersonEventStore?> GetEventStoreEntityAsync(Person domainEntity) =>
+            Task.FromResult(GetEventStoreEntity(domainEntity));
     }
 }

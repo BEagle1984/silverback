@@ -12,12 +12,5 @@ namespace Silverback.Tests.EventSourcing.TestTypes
             : base(dbContext)
         {
         }
-
-        protected override PersonEventStore GetNewEventStoreEntity(Person aggregateEntity) =>
-            new PersonEventStore
-            {
-                Id = aggregateEntity.Id,
-                Ssn = aggregateEntity.Ssn
-            };
     }
 }

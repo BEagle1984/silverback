@@ -16,9 +16,11 @@ namespace Silverback.Domain.Util
         {
             var methods = entity.GetType()
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(m => m.Name.ToLowerInvariant().StartsWith(ApplyMethodPrefix) &&
-                            m.GetParameters().Any() &&
-                            m.GetParameters().First().ParameterType.IsInstanceOfType(@event))
+                .Where(
+                    m =>
+                        m.Name.StartsWith(ApplyMethodPrefix, StringComparison.InvariantCultureIgnoreCase) &&
+                        m.GetParameters().Any() &&
+                        m.GetParameters().First().ParameterType.IsInstanceOfType(@event))
                 .ToList();
 
             if (!methods.Any())
@@ -57,7 +59,8 @@ namespace Silverback.Domain.Util
             {
                 throw new EventSourcingException(
                     $"The apply method for the event of type {@event.GetType().Name} " +
-                    $"in entity {entity.GetType().Name} has an invalid signature.", ex);
+                    $"in entity {entity.GetType().Name} has an invalid signature.",
+                    ex);
             }
         }
     }

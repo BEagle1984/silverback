@@ -3,16 +3,19 @@
 
 using System;
 using System.Collections.Generic;
+using Silverback.Util;
 
 namespace Silverback.Domain.Util
 {
     internal static class EntityActivator
     {
-        public static TEntity CreateInstance<TEntity>(IEnumerable<IEntityEvent> events, object eventStoreEntity)
+        public static TEntity CreateInstance<TEntity>(IReadOnlyCollection<IEntityEvent> events, object eventStoreEntity)
         {
+            Check.NotEmpty(events, nameof(events));
+
             try
             {
-                var entity = (TEntity) Activator.CreateInstance(typeof(TEntity), events);
+                var entity = (TEntity)Activator.CreateInstance(typeof(TEntity), events);
 
                 PropertiesMapper.Map(eventStoreEntity, entity);
 
@@ -22,7 +25,8 @@ namespace Silverback.Domain.Util
             {
                 throw new EventSourcingException(
                     $"The type {typeof(TEntity).Name} doesn't have a public constructor " +
-                    "with a single parameter of type IEnumerable<IEntityEvent>.", ex);
+                    "with a single parameter of type IEnumerable<IEntityEvent>.",
+                    ex);
             }
         }
     }

@@ -186,7 +186,7 @@ namespace Silverback.Tests.EventSourcing.Domain
 
             person.Name.Should().Be("6");
 
-            var person2 = new Person(person.Events);
+            var person2 = new Person(person.Events.ToList());
 
             person2.Name.Should().Be("6");
         }

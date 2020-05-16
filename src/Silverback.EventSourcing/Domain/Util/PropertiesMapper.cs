@@ -21,7 +21,7 @@ namespace Silverback.Domain.Util
                 if (TryMapProperty(source, destination, sourceProperty, destProperties, sourceProperty.Name))
                     continue;
 
-                if (sourceProperty.Name.StartsWith(destTypeName))
+                if (sourceProperty.Name.StartsWith(destTypeName, StringComparison.InvariantCulture))
                 {
                     if (TryMapProperty(
                         source,
@@ -34,7 +34,7 @@ namespace Silverback.Domain.Util
                     }
                 }
 
-                if (sourceProperty.Name.StartsWith("Entity"))
+                if (sourceProperty.Name.StartsWith("Entity", StringComparison.InvariantCulture))
                 {
                     TryMapProperty(
                         source,
@@ -71,7 +71,8 @@ namespace Silverback.Domain.Util
                 throw new EventSourcingException(
                     $"Couldn't map property {sourcePropertyInfo.DeclaringType.Name}.{sourcePropertyInfo.Name} " +
                     $"to  {destPropertyInfo.DeclaringType.Name}.{destPropertyInfo.Name}." +
-                    "See inner exception for details.", ex);
+                    "See inner exception for details.",
+                    ex);
             }
         }
     }

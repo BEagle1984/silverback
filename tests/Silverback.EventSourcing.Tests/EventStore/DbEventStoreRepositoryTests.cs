@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -79,7 +80,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var person = repo.Get(p => p.Id == 12);
+            var person = repo.Find(p => p.Id == 12);
 
             person.ChangeName("Sergio");
             person.ChangeAge(35);
@@ -106,7 +107,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var person = await repo.GetAsync(p => p.Id == 12);
+            var person = await repo.FindAsync(p => p.Id == 12);
 
             person.ChangeName("Sergio");
             person.ChangeAge(35);
@@ -165,7 +166,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var person = repo.Get(p => p.Id == 12);
+            var person = repo.Find(p => p.Id == 12);
 
             person.ChangeName("Sergio");
             person.ChangeAge(35);
@@ -190,7 +191,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var person = repo.Get(p => p.Id == 12);
+            var person = repo.Find(p => p.Id == 12);
 
             person.ChangeName("Sergio");
             person.ChangeAge(35);
@@ -215,8 +216,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var person = repo.Get(p => p.Id == 12);
-            var person2 = repo.Get(p => p.Id == 12);
+            var person = repo.Find(p => p.Id == 12);
+            var person2 = repo.Find(p => p.Id == 12);
 
             person.ChangeName("Sergio");
             person.ChangeAge(35);
@@ -244,8 +245,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var person = repo.Get(p => p.Id == 12);
-            var person2 = repo.Get(p => p.Id == 12);
+            var person = repo.Find(p => p.Id == 12);
+            var person2 = repo.Find(p => p.Id == 12);
 
             person.ChangeName("Sergio");
             person.ChangeAge(35);
@@ -263,7 +264,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
         #region Get
 
         [Fact]
-        public void Get_ExistingId_EntityRecreated()
+        public void Find_ExistingId_EntityRecreated()
         {
             var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
             eventStore.Events.Add(new PersonEvent
@@ -277,13 +278,13 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var entity = repo.Get(p => p.Id == 12);
+            var entity = repo.Find(p => p.Id == 12);
 
             entity.Should().NotBe(null);
         }
 
         [Fact]
-        public void Get_ExistingId_EventsApplied()
+        public void Find_ExistingId_EventsApplied()
         {
             var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
             eventStore.Events.Add(new PersonEvent
@@ -305,14 +306,14 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var entity = repo.Get(p => p.Id == 12);
+            var entity = repo.Find(p => p.Id == 12);
 
             entity.Name.Should().Be("Silverback");
             entity.Age.Should().Be(35);
         }
 
         [Fact]
-        public void Get_ExistingId_EventsAppliedInRightOrder()
+        public void Find_ExistingId_EventsAppliedInRightOrder()
         {
             var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
             eventStore.Events.Add(new PersonEvent
@@ -336,23 +337,23 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var entity = repo.Get(p => p.Id == 12);
+            var entity = repo.Find(p => p.Id == 12);
 
             entity.Name.Should().Be("Silverback");
         }
 
         [Fact]
-        public void Get_NonExistingId_NullReturned()
+        public void Find_NonExistingId_NullReturned()
         {
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var entity = repo.Get(p => p.Id == 12);
+            var entity = repo.Find(p => p.Id == 12);
 
             entity.Should().BeNull();
         }
 
         [Fact]
-        public async Task GetAsync_ExistingId_EntityRecreated()
+        public async Task FindAsync_ExistingId_EntityRecreated()
         {
             var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
             eventStore.Events.Add(new PersonEvent
@@ -366,13 +367,13 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var entity = await repo.GetAsync(p => p.Id == 12);
+            var entity = await repo.FindAsync(p => p.Id == 12);
 
             entity.Should().NotBe(null);
         }
 
         [Fact]
-        public async Task GetAsync_ExistingId_EventsApplied()
+        public async Task FindAsync_ExistingId_EventsApplied()
         {
             var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
             eventStore.Events.Add(new PersonEvent
@@ -394,14 +395,14 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var entity = await repo.GetAsync(p => p.Id == 12);
+            var entity = await repo.FindAsync(p => p.Id == 12);
 
             entity.Name.Should().Be("Silverback");
             entity.Age.Should().Be(35);
         }
 
         [Fact]
-        public async Task GetAsync_ExistingId_EventsAppliedInRightOrder()
+        public async Task FindAsync_ExistingId_EventsAppliedInRightOrder()
         {
             var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
             eventStore.Events.Add(new PersonEvent
@@ -425,17 +426,17 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var entity = await repo.GetAsync(p => p.Id == 12);
+            var entity = await repo.FindAsync(p => p.Id == 12);
 
             entity.Name.Should().Be("Silverback");
         }
 
         [Fact]
-        public async Task GetAsync_NonExistingId_NullReturned()
+        public async Task FindAsync_NonExistingId_NullReturned()
         {
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var entity = await repo.GetAsync(p => p.Id == 12);
+            var entity = await repo.FindAsync(p => p.Id == 12);
 
             entity.Should().BeNull();
         }
@@ -557,7 +558,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var entity = repo.Get(p => p.Id == 12);
+            var entity = repo.Find(p => p.Id == 12);
             entity.Should().NotBeNull();
 
             repo.Remove(entity);
@@ -582,7 +583,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
-            var entity = await repo.GetAsync(p => p.Id == 12);
+            var entity = await repo.FindAsync(p => p.Id == 12);
             entity.Should().NotBeNull();
 
             await repo.RemoveAsync(entity);
@@ -593,27 +594,27 @@ namespace Silverback.Tests.EventSourcing.EventStore
         }
 
         [Fact]
-        public void Remove_NonExistingEntity_ReturnsNull()
+        public void Remove_NonExistingEntity_ExceptionThrown()
         {
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
             var entity = new Person(123);
 
-            var result = repo.Remove(entity);
+            Action act = () => repo.Remove(entity);
 
-            result.Should().BeNull();
+            act.Should().Throw<EventStoreNotFoundException>();
         }
 
         [Fact]
-        public async Task RemoveAsync_NonExistingEntity_ReturnsNull()
+        public void RemoveAsync_NonExistingEntity_ExceptionThrown()
         {
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
 
             var entity = new Person(123);
 
-            var result = await repo.RemoveAsync(entity);
+            Func<Task> act = () => repo.RemoveAsync(entity);
 
-            result.Should().BeNull();
+            act.Should().Throw<EventStoreNotFoundException>();
         }
 
         #endregion

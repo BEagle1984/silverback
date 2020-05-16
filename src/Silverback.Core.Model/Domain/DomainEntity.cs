@@ -18,8 +18,7 @@ namespace Silverback.Domain
     public abstract class DomainEntity : MessagesSource<IDomainEvent>
     {
         /// <summary>
-        ///     Gets the <see cref="IDomainEvent{TEntity}"/> events that have been added but not
-        ///     yet published.
+        ///     Gets the domain events that have been added but not yet published.
         /// </summary>
         [NotMapped]
         public IEnumerable<IDomainEvent> DomainEvents =>

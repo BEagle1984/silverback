@@ -7,41 +7,40 @@ using System.Runtime.Serialization;
 namespace Silverback.EventStore
 {
     /// <summary>
-    ///     The exception that is thrown when the event store detects that the record being saved has been
-    ///     modified since it was read.
+    ///     The base class for the exceptions related to the event store.
     /// </summary>
-    public class EventStoreConcurrencyException : EventStoreException
+    public abstract class EventStoreException : SilverbackException
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="EventStoreConcurrencyException" /> class.
+        ///     Initializes a new instance of the <see cref="EventStoreException" /> class.
         /// </summary>
-        public EventStoreConcurrencyException()
+        protected EventStoreException()
         {
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="EventStoreConcurrencyException" /> class with the
+        ///     Initializes a new instance of the <see cref="EventStoreException" /> class with the
         ///     specified message.
         /// </summary>
         /// <param name="message"> The exception message. </param>
-        public EventStoreConcurrencyException(string message)
+        protected EventStoreException(string message)
             : base(message)
         {
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="EventStoreConcurrencyException" /> class with the
+        ///     Initializes a new instance of the <see cref="EventStoreException" /> class with the
         ///     specified message and inner exception.
         /// </summary>
         /// <param name="message"> The exception message. </param>
         /// <param name="innerException"> The inner exception. </param>
-        public EventStoreConcurrencyException(string message, Exception innerException)
+        protected EventStoreException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="EventStoreConcurrencyException" /> class with the
+        ///     Initializes a new instance of the <see cref="EventStoreException" /> class with the
         ///     serialized data.
         /// </summary>
         /// <param name="info">
@@ -52,7 +51,7 @@ namespace Silverback.EventStore
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public EventStoreConcurrencyException(SerializationInfo info, StreamingContext context)
+        protected EventStoreException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

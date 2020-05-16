@@ -6,12 +6,12 @@ using System;
 namespace Silverback.Domain
 {
     /// <summary>
-    ///     A recorded event that can be re-applied to rebuilt the entity status.
+    ///     A recorded event that can be re-applied to rebuild the entity status.
     /// </summary>
     public interface IEntityEvent
     {
         /// <summary>
-        ///     Gets or sets the point in time where the event occured.
+        ///     Gets or sets the datetime when the event occured.
         /// </summary>
         DateTime Timestamp { get; set; }
 

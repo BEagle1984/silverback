@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
 using Silverback.Domain;
 using Silverback.Domain.Util;
@@ -40,21 +41,23 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
         }
 
         [Fact]
-        public void CreateInstance_WithoutEvents_EntityCreated()
+        public void CreateInstance_WithoutEvents_ExceptionThrown()
         {
-            var events = new IEntityEvent[0];
+            var events = Array.Empty<IEntityEvent>();
             var eventStoreEntity = new { };
 
-            var entity = EntityActivator.CreateInstance<Person>(events, eventStoreEntity);
+            Action act = () => EntityActivator.CreateInstance<Person>(events, eventStoreEntity);
 
-            entity.Should().NotBeNull();
-            entity.Should().BeOfType<Person>();
+            act.Should().Throw<ArgumentException>();
         }
 
         [Fact]
         public void CreateInstance_WithEventStoreEntity_PropertiesValuesCopiedToNewEntity()
         {
-            var events = new IEntityEvent[0];
+            var events = new IEntityEvent[]
+            {
+                new Person.AgeChangedEvent { NewAge = 13 }
+            };
             var eventStoreEntity = new { PersonId = 1234, Ssn = "123-123 CA", EntityName = "Silverback" };
 
             var entity = EntityActivator.CreateInstance<Person>(events, eventStoreEntity);

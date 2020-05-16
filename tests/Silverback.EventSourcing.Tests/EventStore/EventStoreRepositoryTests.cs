@@ -305,16 +305,6 @@ namespace Silverback.Tests.EventSourcing.EventStore
         }
 
         [Fact]
-        public void GetAggregateEntity_NonExistingId_NullReturned()
-        {
-            var repo = new PersonInMemoryEventStoreRepository();
-
-            var entity = repo.GetById(11);
-
-            entity.Should().BeNull();
-        }
-
-        [Fact]
         public void GetAggregateEntity_ExistingIdWithPastSnapshot_OnlyRelevantEventsApplied()
         {
             var eventStore = new PersonEventStore { Id = 12 };
@@ -410,27 +400,27 @@ namespace Silverback.Tests.EventSourcing.EventStore
         }
 
         [Fact]
-        public void Remove_NonExistingEntity_ReturnsNull()
+        public void Remove_NonExistingEntity_ExceptionThrown()
         {
             var repo = new PersonInMemoryEventStoreRepository();
 
             var entity = new Person(123);
 
-            var result = repo.Remove(entity);
+            Action act = () => repo.Remove(entity);
 
-            result.Should().BeNull();
+            act.Should().Throw<EventStoreNotFoundException>();
         }
 
         [Fact]
-        public async Task RemoveAsync_NonExistingEntity_ReturnsNull()
+        public void RemoveAsync_NonExistingEntity_ExceptionThrown()
         {
             var repo = new PersonInMemoryEventStoreRepository();
 
             var entity = new Person(123);
 
-            var result = await repo.RemoveAsync(entity);
+            Func<Task> act = () => repo.RemoveAsync(entity);
 
-            result.Should().BeNull();
+            act.Should().Throw<EventStoreNotFoundException>();
         }
 
         #endregion

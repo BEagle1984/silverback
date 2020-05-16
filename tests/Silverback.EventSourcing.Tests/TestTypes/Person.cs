@@ -39,7 +39,7 @@ namespace Silverback.Tests.EventSourcing.TestTypes
             Id = id;
         }
 
-        public Person(IEnumerable<IEntityEvent> events)
+        public Person(IReadOnlyCollection<IEntityEvent> events)
             : base(events)
         {
         }
