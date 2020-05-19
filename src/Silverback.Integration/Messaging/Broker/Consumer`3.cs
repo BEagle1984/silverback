@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Broker
             TBroker broker,
             TEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
             ILogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)

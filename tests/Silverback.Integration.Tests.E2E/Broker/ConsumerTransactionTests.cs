@@ -62,7 +62,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .First();
 
             ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
-                (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
+                (_, args) => committedOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -100,7 +100,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .First();
 
             ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
-                (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
+                (_, args) => committedOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -140,8 +140,8 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .First();
 
             var consumer = (InMemoryConsumer) broker.Consumers.First();
-            consumer.CommitCalled += (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
-            consumer.RollbackCalled += (_, offsetsCollection) => rolledBackOffsets.AddRange(offsetsCollection);
+            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
+            consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -216,8 +216,8 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .First();
 
             var consumer = (InMemoryConsumer) broker.Consumers.First();
-            consumer.CommitCalled += (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
-            consumer.RollbackCalled += (_, offsetsCollection) => rolledBackOffsets.AddRange(offsetsCollection);
+            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
+            consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -291,7 +291,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .First();
 
             var consumer = (InMemoryConsumer) broker.Consumers.First();
-            consumer.RollbackCalled += (_, offsetsCollection) => rolledBackOffsets.AddRange(offsetsCollection);
+            consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -336,7 +336,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .First();
 
             var consumer = (InMemoryConsumer) broker.Consumers.First();
-            consumer.RollbackCalled += (_, offsetsCollection) => rolledBackOffsets.AddRange(offsetsCollection);
+            consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();

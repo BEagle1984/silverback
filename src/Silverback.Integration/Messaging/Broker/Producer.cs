@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Broker
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior> behaviors,
+            IReadOnlyCollection<IProducerBehavior>? behaviors,
             ILogger<Producer> logger)
         {
             Behaviors = behaviors ?? Array.Empty<IProducerBehavior>();

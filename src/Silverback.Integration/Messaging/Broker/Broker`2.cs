@@ -233,7 +233,7 @@ namespace Silverback.Messaging.Broker
         /// <returns> The instantiated <see cref="IProducer" />. </returns>
         protected abstract IProducer InstantiateProducer(
             TProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior> behaviors,
+            IReadOnlyCollection<IProducerBehavior>? behaviors,
             IServiceProvider serviceProvider);
 
         /// <summary>
@@ -252,7 +252,7 @@ namespace Silverback.Messaging.Broker
         protected abstract IConsumer InstantiateConsumer(
             TConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider);
 
         /// <summary>

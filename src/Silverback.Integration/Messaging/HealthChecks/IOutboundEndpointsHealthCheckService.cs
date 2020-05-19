@@ -18,6 +18,6 @@ namespace Silverback.Messaging.HealthChecks
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains an
         ///     <see cref="EndpointCheckResult" /> for each endpoint.
         /// </returns>
-        Task<IEnumerable<EndpointCheckResult>> PingAllEndpoints();
+        Task<IReadOnlyCollection<EndpointCheckResult>> PingAllEndpoints();
     }
 }

@@ -81,7 +81,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
 
             ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
-                (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
+                (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
@@ -131,7 +131,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
 
             ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
-                (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
+                (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
@@ -321,7 +321,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
 
             ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
-                (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
+                (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 

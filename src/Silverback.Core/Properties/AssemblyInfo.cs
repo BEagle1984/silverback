@@ -19,6 +19,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Silverback.Integration.Tests.E2E")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Configuration")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Configuration.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Integration.HealthChecks")]
 [assembly: InternalsVisibleTo("Silverback.Integration.InMemory")]
 [assembly: InternalsVisibleTo("Silverback.Integration.InMemory.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka")]

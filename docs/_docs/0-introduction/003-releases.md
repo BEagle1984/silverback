@@ -34,6 +34,8 @@ toc: true
     * `Apply` method is now async
     * Changed the signature of the transfor function in the `MovePolicy`
 * Removed `IMessageIdProvider` and all related logic: **the `Id` or `MessageId` property will not be automatically initialized anymore and its value will not be used as identifier for the outbound message anymore (refer to the [Message Identifier]({{ site.baseurl }}/docs/advanced/message-id) page for further details on how to set a custom message id, if needed)
+* `WithConnectionTo<>`, `WithConnectionToKafka`, `WithConnectionToRabbitMQ` and `WithInMemoryBroker` have been removed, please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit`/`AddInMemoryBroker` methods (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
+* Some minor breaking changes to the `InMemoryBroker`
 
 ## [2.1.1](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1)
 

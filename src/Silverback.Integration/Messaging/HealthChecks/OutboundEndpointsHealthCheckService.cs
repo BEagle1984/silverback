@@ -41,32 +41,34 @@ namespace Silverback.Messaging.HealthChecks
 
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "CA1031", Justification = "Exception is returned")]
-        public async Task<IEnumerable<EndpointCheckResult>> PingAllEndpoints()
+        public async Task<IReadOnlyCollection<EndpointCheckResult>> PingAllEndpoints()
         {
             if (!_brokerCollection.All(broker => broker.IsConnected))
-                return Enumerable.Empty<EndpointCheckResult>();
+                return Array.Empty<EndpointCheckResult>();
 
-            var tasks = _outboundRoutingConfiguration.Routes
-                .SelectMany(
-                    route => route.Router.Endpoints
-                        .Select(
-                            async endpoint =>
-                            {
-                                try
-                                {
-                                    await _brokerCollection.GetProducer(endpoint).ProduceAsync(PingMessage.New());
-                                    return new EndpointCheckResult(endpoint.Name, true);
-                                }
-                                catch (Exception ex)
-                                {
-                                    return new EndpointCheckResult(
-                                        endpoint.Name,
-                                        false,
-                                        $"[{ex.GetType().FullName}] {ex.Message}");
-                                }
-                            }));
+            var tasks =
+                _outboundRoutingConfiguration.Routes.SelectMany(
+                    route =>
+                        route.Router.Endpoints.Select(PingEndpoint));
 
             return await Task.WhenAll(tasks);
+        }
+
+        [SuppressMessage("ReSharper", "CA1031", Justification = "Exception reported in the result.")]
+        private async Task<EndpointCheckResult> PingEndpoint(IProducerEndpoint endpoint)
+        {
+            try
+            {
+                await _brokerCollection.GetProducer(endpoint).ProduceAsync(PingMessage.New());
+                return new EndpointCheckResult(endpoint.Name, true);
+            }
+            catch (Exception ex)
+            {
+                return new EndpointCheckResult(
+                    endpoint.Name,
+                    false,
+                    $"[{ex.GetType().FullName}] {ex.Message}");
+            }
         }
     }
 }

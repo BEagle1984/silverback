@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Broker
             IBroker broker,
             IConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback receivedCallback,
-            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
             ILogger<Consumer> logger)
         {
@@ -113,7 +113,7 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         protected virtual async Task HandleMessage(
-            byte[] message,
+            byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
             string sourceEndpointName,
             IOffset offset) =>

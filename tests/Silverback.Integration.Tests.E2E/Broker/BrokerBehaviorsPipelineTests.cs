@@ -110,7 +110,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .First();
 
             ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
-                (_, offsetsCollection) => committedOffsets.AddRange(offsetsCollection);
+                (_, args) => committedOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
