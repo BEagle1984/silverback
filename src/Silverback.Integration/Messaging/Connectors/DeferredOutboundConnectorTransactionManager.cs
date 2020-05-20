@@ -33,11 +33,11 @@ namespace Silverback.Messaging.Connectors
         }
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.Subscriber)]
+        [SuppressMessage("", "UnusedParameter.Global", Justification = Justifications.Subscriber)]
         internal async Task OnTransactionCompleted(TransactionCompletedEvent message) => await _queueWriter.Commit();
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.Subscriber)]
+        [SuppressMessage("", "UnusedParameter.Global", Justification = Justifications.Subscriber)]
         internal async Task OnTransactionAborted(TransactionAbortedEvent message) => await _queueWriter.Rollback();
     }
 }

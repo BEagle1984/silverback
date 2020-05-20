@@ -40,7 +40,7 @@ namespace Silverback.Messaging.HealthChecks
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "CA1031", Justification = "Exception is returned")]
+        [SuppressMessage("", "CA1031", Justification = "Exception is returned")]
         public async Task<IReadOnlyCollection<EndpointCheckResult>> PingAllEndpoints()
         {
             if (!_brokerCollection.All(broker => broker.IsConnected))
@@ -54,7 +54,7 @@ namespace Silverback.Messaging.HealthChecks
             return await Task.WhenAll(tasks);
         }
 
-        [SuppressMessage("ReSharper", "CA1031", Justification = "Exception reported in the result.")]
+        [SuppressMessage("", "CA1031", Justification = "Exception reported in the result.")]
         private async Task<EndpointCheckResult> PingEndpoint(IProducerEndpoint endpoint)
         {
             try

@@ -29,8 +29,8 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets or sets the serialized message body.
         /// </summary>
-        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         byte[]? RawMessage { get; set; }
     }
 }

@@ -16,7 +16,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("", "InconsistentNaming")]
     public class ErrorPolicyBaseTests
     {
         [Theory, MemberData(nameof(ApplyTo_TestData))]

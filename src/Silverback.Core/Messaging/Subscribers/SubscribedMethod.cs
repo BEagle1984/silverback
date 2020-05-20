@@ -10,7 +10,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Subscribers
 {
     /// <summary>
-    ///     Represent a subscribed method that can process certain messages.
+    ///     A subscribed method that can process certain messages.
     /// </summary>
     public class SubscribedMethod
     {

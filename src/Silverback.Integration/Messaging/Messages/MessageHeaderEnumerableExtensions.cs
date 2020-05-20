@@ -101,7 +101,7 @@ namespace Silverback.Messaging.Messages
         /// <returns>
         ///     The header value converted to the target type, or <c> null </c> if not found.
         /// </returns>
-        [SuppressMessage("ReSharper", "CA1031", Justification = "Rethrown if desired")]
+        [SuppressMessage("", "CA1031", Justification = "Rethrown if desired")]
         public static object? GetValue(
             this IEnumerable<MessageHeader> headers,
             string key,

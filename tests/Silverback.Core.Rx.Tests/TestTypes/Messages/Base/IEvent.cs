@@ -6,7 +6,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Core.Rx.TestTypes.Messages.Base
 {
-    [SuppressMessage("ReSharper", "CA1040", Justification = Justifications.MarkerInterface)]
+    [SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
     public interface IEvent : IMessage
     {
     }

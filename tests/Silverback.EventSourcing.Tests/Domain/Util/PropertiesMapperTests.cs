@@ -48,7 +48,7 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             act.Should().NotThrow();
         }
 
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+        [SuppressMessage("", "UnusedAutoPropertyAccessor.Local")]
         private class Book
         {
             public int Id { get; private set; }

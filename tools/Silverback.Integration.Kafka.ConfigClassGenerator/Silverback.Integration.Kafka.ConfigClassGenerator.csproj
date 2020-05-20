@@ -2,14 +2,27 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Silverback.Integration.Kafka.ConfigClassGenerator</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.4.2" />
-    <PackageReference Include="Confluent.SchemaRegistry.Serdes" Version="1.3.0" />
+    <PackageReference Include="Confluent.Kafka" Version="1.4.2">
+      <!-- Workaround for xml documentation not being copied to output folder -->
+      <CopyToOutputDirectory>lib/netcoreapp2.1/*.xml</CopyToOutputDirectory>
+    </PackageReference>
     <PackageReference Include="System.CodeDom" Version="4.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Workaround for xml documentation not being copied to output folder -->
+  <Target Name="CopyXMLFromPackagesForBuild" AfterTargets="Build">
+    <ItemGroup>
+      <PackageReferenceFiles Condition="%(PackageReference.CopyToOutputDirectory) != ''" Include="$(NugetPackageRoot)$([MSBuild]::Escape('%(PackageReference.Identity)').ToLower())/%(PackageReference.Version)/%(PackageReference.CopyToOutputDirectory)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PackageReferenceFiles)" DestinationFolder="$(OutDir)" />
+  </Target>
 </Project>

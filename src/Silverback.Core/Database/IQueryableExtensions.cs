@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Silverback.Database
 {
-    [SuppressMessage("ReSharper", "SA1600", Justification = "Internal and about to be deprecated")]
+    [SuppressMessage("", "SA1600", Justification = "Internal and about to be deprecated")]
     internal interface IQueryableExtensions
     {
         Task<bool> AnyAsync<TSource>(IQueryable<TSource> source, CancellationToken cancellationToken);

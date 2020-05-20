@@ -4,8 +4,11 @@
 using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 
+#pragma warning disable 1591 // Will maybe document later
+
 namespace Silverback.Messaging.Messages.Statistics
 {
+    [SuppressMessage("ReSharper", "SA1600", Justification = "Will maybe document later")]
     public class WindowStatistics
     {
         [JsonProperty("min")]
@@ -39,7 +42,8 @@ namespace Silverback.Messaging.Messages.Statistics
         public long P99 { get; set; }
 
         [JsonProperty("p99_99")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Named after the JSON field")]
+        [SuppressMessage("", "CA1707", Justification = "Named after the JSON field")]
         public long P99_99 { get; set; }
 
         [JsonProperty("outofrange")]

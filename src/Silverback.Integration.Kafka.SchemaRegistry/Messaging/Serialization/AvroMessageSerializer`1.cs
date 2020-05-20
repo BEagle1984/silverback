@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry;
@@ -18,17 +19,14 @@ namespace Silverback.Messaging.Serialization
     public class AvroMessageSerializer<TMessage> : IKafkaMessageSerializer
         where TMessage : class
     {
-        /// <summary>
-        ///     Gets or sets the schema registry configuration.
-        /// </summary>
+        /// <summary> Gets or sets the schema registry configuration. </summary>
         public SchemaRegistryConfig SchemaRegistryConfig { get; set; } = new SchemaRegistryConfig();
 
-        /// <summary>
-        ///     Gets or sets the Avro serializer configuration.
-        /// </summary>
+        /// <summary> Gets or sets the Avro serializer configuration. </summary>
         public AvroSerializerConfig AvroSerializerConfig { get; set; } = new AvroSerializerConfig();
 
         /// <inheritdoc />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Serialize(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -36,6 +34,7 @@ namespace Silverback.Messaging.Serialization
             AsyncHelper.RunSynchronously(() => SerializeAsync(message, messageHeaders, context));
 
         /// <inheritdoc />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
@@ -43,6 +42,7 @@ namespace Silverback.Messaging.Serialization
             AsyncHelper.RunSynchronously(() => DeserializeAsync(message, messageHeaders, context));
 
         /// <inheritdoc />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task<byte[]?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -50,6 +50,7 @@ namespace Silverback.Messaging.Serialization
             await SerializeAsync<TMessage>(message, MessageComponentType.Value, context);
 
         /// <inheritdoc />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task<(object?, Type)> DeserializeAsync(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
@@ -62,6 +63,7 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[] SerializeKey(
             string key,
             MessageHeaderCollection messageHeaders,
@@ -69,12 +71,14 @@ namespace Silverback.Messaging.Serialization
         {
             Check.NotEmpty(key, nameof(key));
 
-            return AsyncHelper.RunSynchronously(
-                () =>
-                    SerializeAsync<string>(key, MessageComponentType.Key, context));
+            byte[]? serializedKey = AsyncHelper.RunSynchronously(
+                () => SerializeAsync<string>(key, MessageComponentType.Key, context));
+
+            return serializedKey ?? Array.Empty<byte>();
         }
 
         /// <inheritdoc />
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public string DeserializeKey(
             byte[] key,
             MessageHeaderCollection messageHeaders,
@@ -83,22 +87,25 @@ namespace Silverback.Messaging.Serialization
             Check.NotNull(key, nameof(key));
 
             return AsyncHelper.RunSynchronously(
-                () =>
-                    DeserializeAsync<string>(key, MessageComponentType.Key, context))!;
+                () => DeserializeAsync<string>(key, MessageComponentType.Key, context))!;
         }
 
-        private async Task<byte[]> SerializeAsync<TValue>(
-            object message,
+        private static SerializationContext GetConfluentSerializationContext(
+            MessageComponentType componentType,
+            MessageSerializationContext context) =>
+            new SerializationContext(componentType, context.ActualEndpointName);
+
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        private async Task<byte[]?> SerializeAsync<TValue>(
+            object? message,
             MessageComponentType componentType,
             MessageSerializationContext context)
         {
-            switch (message)
-            {
-                case null:
-                    return Array.Empty<byte>();
-                case byte[] bytes:
-                    return bytes;
-            }
+            if (message == null)
+                return null;
+
+            if (message is byte[] bytes)
+                return bytes;
 
             return await new AvroSerializer<TValue>(
                     SchemaRegistryClientFactory.GetClient(SchemaRegistryConfig),
@@ -108,6 +115,7 @@ namespace Silverback.Messaging.Serialization
                     GetConfluentSerializationContext(componentType, context));
         }
 
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private async Task<TValue?> DeserializeAsync<TValue>(
             byte[]? message,
             MessageComponentType componentType,
@@ -128,10 +136,5 @@ namespace Silverback.Messaging.Serialization
                 false,
                 confluentSerializationContext);
         }
-
-        private SerializationContext GetConfluentSerializationContext(
-            MessageComponentType componentType,
-            MessageSerializationContext context) =>
-            new SerializationContext(componentType, context.ActualEndpointName);
     }
 }

@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Encryption
         protected SymmetricEncryptionSettings Settings { get; }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task<byte[]?> TransformAsync(byte[]? message, MessageHeaderCollection headers)
         {
             if (message == null || message.Length == 0)

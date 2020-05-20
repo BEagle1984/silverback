@@ -31,19 +31,33 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public int Offset { get; }
 
-#pragma warning disable 1591 // Don't require documentation for operators
+        /// <summary> Less than operator. </summary>
+        /// <param name="left"> Left-hand operand. </param>
+        /// <param name="right"> Right-hand operand. </param>
         public static bool operator <(InMemoryOffset left, InMemoryOffset right) =>
             Comparer<InMemoryOffset>.Default.Compare(left, right) < 0;
 
+        /// <summary> Greater than operator. </summary>
+        /// <param name="left"> Left-hand operand. </param>
+        /// <param name="right"> Right-hand operand. </param>
         public static bool operator >(InMemoryOffset left, InMemoryOffset right) =>
             Comparer<InMemoryOffset>.Default.Compare(left, right) > 0;
 
+        /// <summary> Less than or equal operator. </summary>
+        /// <param name="left"> Left-hand operand. </param>
+        /// <param name="right"> Right-hand operand. </param>
         public static bool operator <=(InMemoryOffset left, InMemoryOffset right) =>
             Comparer<InMemoryOffset>.Default.Compare(left, right) <= 0;
 
+        /// <summary> Greater than or equal operator. </summary>
+        /// <param name="left"> Left-hand operand. </param>
+        /// <param name="right"> Right-hand operand. </param>
         public static bool operator >=(InMemoryOffset left, InMemoryOffset right) =>
             Comparer<InMemoryOffset>.Default.Compare(left, right) >= 0;
 
+        /// <summary> Equality operator. </summary>
+        /// <param name="left"> Left-hand operand. </param>
+        /// <param name="right"> Right-hand operand. </param>
         public static bool operator ==(InMemoryOffset left, InMemoryOffset right)
         {
             if (ReferenceEquals(left, null))
@@ -52,9 +66,10 @@ namespace Silverback.Messaging.Broker
             return left.Equals(right);
         }
 
+        /// <summary> Inequality operator. </summary>
+        /// <param name="left"> Left-hand operand. </param>
+        /// <param name="right"> Right-hand operand. </param>
         public static bool operator !=(InMemoryOffset left, InMemoryOffset right) => !(left == right);
-
-#pragma warning restore 1591
 
         /// <inheritdoc />
         public string ToLogString() => Offset.ToString(CultureInfo.InvariantCulture);

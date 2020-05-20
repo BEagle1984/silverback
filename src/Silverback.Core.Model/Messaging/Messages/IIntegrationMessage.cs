@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Messages
     ///     Represents a message that is sent over the message broker. It is further specialized as
     ///     <see cref="IIntegrationEvent"/> and <see cref="IIntegrationCommand"/>.
     /// </summary>
-    [SuppressMessage("ReSharper", "CA1040", Justification = Justifications.MarkerInterface)]
+    [SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
     public interface IIntegrationMessage : IMessage
     {
     }

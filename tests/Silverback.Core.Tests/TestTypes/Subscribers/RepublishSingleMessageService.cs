@@ -9,8 +9,8 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+    [SuppressMessage("", "UnusedMember.Local")]
+    [SuppressMessage("", "UnusedParameter.Local")]
     public class RepublishMessagesTestService : ISubscriber
     {
         [Subscribe]

@@ -2,10 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
+
+#pragma warning disable 1591 // Will maybe document later
 
 namespace Silverback.Messaging.Messages.Statistics
 {
+    [SuppressMessage("ReSharper", "SA1600", Justification = "Will maybe document later")]
     public class BrokerStatistics
     {
         [JsonProperty("name")]
@@ -96,9 +100,11 @@ namespace Silverback.Messaging.Messages.Statistics
         public WindowStatistics Throttle { get; set; } = new WindowStatistics();
 
         [JsonProperty("req")]
+        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public Dictionary<string, long> Requests { get; set; } = new Dictionary<string, long>();
 
         [JsonProperty("toppars")]
+        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public Dictionary<string, TopicPartitions> TopicPartitions { get; set; } =
             new Dictionary<string, TopicPartitions>();
     }

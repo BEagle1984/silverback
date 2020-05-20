@@ -15,7 +15,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public int FailCount { get; private set; }
 
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Serialize(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.TestTypes
             throw new NotImplementedException();
         }
 
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
@@ -41,14 +41,14 @@ namespace Silverback.Tests.Integration.TestTypes
             return deserialized;
         }
 
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual Task<byte[]?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Task.FromResult(Serialize(message, messageHeaders, context));
 
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual Task<(object?, Type)> DeserializeAsync(
             byte[]? message,
             MessageHeaderCollection messageHeaders,

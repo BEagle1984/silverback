@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Messages
     /// <summary>
     ///     Represents a message that notifies an event.
     /// </summary>
-    [SuppressMessage("ReSharper", "CA1040", Justification = Justifications.MarkerInterface)]
+    [SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
     public interface IEvent : IMessage
     {
     }

@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     [Obsolete("PartitioningKeyMemberAttribute is deprecated, use KafkaKeyMemberAttribute instead.")]
-    public class PartitioningKeyMemberAttribute : Attribute
+    public sealed class PartitioningKeyMemberAttribute : Attribute
     {
     }
 }

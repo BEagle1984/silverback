@@ -19,8 +19,8 @@ namespace Silverback.Database.Model
         public int Id { get; set; }
 
         /// <summary> Gets or sets the message content (body). </summary>
-        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Content { get; set; } = null!;
 
         /// <summary>

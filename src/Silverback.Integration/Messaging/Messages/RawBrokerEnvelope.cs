@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Messages
 {
     internal abstract class RawBrokerEnvelope : IRawBrokerEnvelope
     {
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         protected RawBrokerEnvelope(
             byte[]? rawMessage,
             IEnumerable<MessageHeader> headers,
@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Messages
             Offset = offset;
         }
 
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? RawMessage { get; set; }
 
         public MessageHeaderCollection Headers { get; set; }

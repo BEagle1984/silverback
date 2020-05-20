@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -18,12 +19,17 @@ namespace Silverback.Messaging.Serialization
     {
         private readonly IMessageSerializer _serializer;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultKafkaMessageSerializer"/> class.
+        /// </summary>
+        /// <param name="serializer">The <see cref="IMessageSerializer"/> to be used.</param>
         public DefaultKafkaMessageSerializer(IMessageSerializer serializer)
         {
             _serializer = serializer;
         }
 
         /// <inheritdoc />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Serialize(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -31,6 +37,7 @@ namespace Silverback.Messaging.Serialization
             _serializer.Serialize(message, messageHeaders, context);
 
         /// <inheritdoc />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
@@ -38,6 +45,7 @@ namespace Silverback.Messaging.Serialization
             _serializer.Deserialize(message, messageHeaders, context);
 
         /// <inheritdoc />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<byte[]?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -45,6 +53,7 @@ namespace Silverback.Messaging.Serialization
             _serializer.SerializeAsync(message, messageHeaders, context);
 
         /// <inheritdoc />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<(object?, Type)> DeserializeAsync(
             byte[]? message,
             MessageHeaderCollection messageHeaders,

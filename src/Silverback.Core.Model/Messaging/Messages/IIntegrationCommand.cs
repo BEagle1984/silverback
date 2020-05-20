@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Messages
     /// <summary>
     ///     Represents a message that is sent over the message broker to trigger an action.
     /// </summary>
-    [SuppressMessage("ReSharper", "CA1040", Justification = Justifications.MarkerInterface)]
+    [SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
     public interface IIntegrationCommand : ICommand, IIntegrationMessage
     {
     }

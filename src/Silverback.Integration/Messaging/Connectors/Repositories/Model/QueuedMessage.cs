@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         /// <param name="content"> The message raw binary content (body). </param>
         /// <param name="headers"> The message headers. </param>
         /// <param name="endpoint"> The target endpoint. </param>
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public QueuedMessage(byte[]? content, IEnumerable<MessageHeader>? headers, IProducerEndpoint endpoint)
         {
             Content = content;
@@ -28,8 +28,8 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         }
 
         /// <summary> Gets the message raw binary content (body). </summary>
-        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Content { get; }
 
         /// <summary> Gets the message headers. </summary>

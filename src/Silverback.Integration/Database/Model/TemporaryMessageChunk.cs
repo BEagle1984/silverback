@@ -29,7 +29,7 @@ namespace Silverback.Database.Model
         public int ChunksCount { get; set; }
 
         /// <summary> Gets or sets the chunk binary content. </summary>
-        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
         public byte[] Content { get; set; } = null!;
 
         /// <summary>

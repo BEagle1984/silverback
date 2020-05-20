@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Configuration
             return Equals((RabbitEndpointConfig) obj);
         }
 
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
+        [SuppressMessage("", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             unchecked

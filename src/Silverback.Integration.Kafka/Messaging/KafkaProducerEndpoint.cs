@@ -8,8 +8,11 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging
 {
+    /// <summary> Represents a topic to produce to. </summary>
     public sealed class KafkaProducerEndpoint : ProducerEndpoint, IEquatable<KafkaProducerEndpoint>
     {
+        /// <summary> Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class. </summary>
+        /// <param name="name"> The name of the topic. </param>
         public KafkaProducerEndpoint(string name)
             : base(name)
         {
@@ -21,6 +24,7 @@ namespace Silverback.Messaging
         /// </summary>
         public KafkaProducerConfig Configuration { get; set; } = new KafkaProducerConfig();
 
+        /// <inheritdoc />
         public override void Validate()
         {
             base.Validate();
@@ -31,23 +35,31 @@ namespace Silverback.Messaging
             Configuration.Validate();
         }
 
-        #region Equality
-
+        /// <inheritdoc />
         public bool Equals(KafkaProducerEndpoint other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
             return base.Equals(other) && Equals(Configuration, other.Configuration);
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((KafkaProducerEndpoint) obj);
-        }
+            if (ReferenceEquals(null, obj))
+                return false;
 
-        #endregion
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((KafkaProducerEndpoint)obj);
+        }
     }
 }

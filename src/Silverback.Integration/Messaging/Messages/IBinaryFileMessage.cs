@@ -13,8 +13,8 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets or sets the binary content.
         /// </summary>
-        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         byte[]? Content { get; set; }
     }
 }

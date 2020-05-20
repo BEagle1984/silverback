@@ -13,13 +13,17 @@ namespace Silverback.Messaging.Messages
     /// </summary>
     public class KafkaErrorEvent : IKafkaEvent
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KafkaErrorEvent"/> class.
+        /// </summary>
+        /// <param name="error">The error information.</param>
         public KafkaErrorEvent(Error error)
         {
             Error = error;
         }
 
         /// <summary>
-        ///     Gets an <see cref="Confluent.Kafka.Error" /> representing the error that occured when
+        ///     Gets an <see cref="Confluent.Kafka.Error" /> containing the information about the error that occured when
         ///     interacting with the Kafka broker or the librdkafka library.
         /// </summary>
         public Error Error { get; }

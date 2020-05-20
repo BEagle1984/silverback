@@ -6,7 +6,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Core.EFCore30.TestTypes.Base
 {
-    [SuppressMessage("ReSharper", "UnusedTypeParameter")]
+    [SuppressMessage("", "UnusedTypeParameter")]
     public interface IRequest<out TResponse> : IMessage
     {
     }

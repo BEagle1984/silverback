@@ -20,7 +20,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("", "InconsistentNaming")]
     public class OutboundRouterBehaviorTests
     {
         private readonly OutboundRouterBehavior _behavior;

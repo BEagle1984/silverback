@@ -13,7 +13,7 @@ namespace Silverback.Tests.Integration.TestTypes
         public List<IInboundEnvelope<object>> ReceivedEnvelopes { get; } = new List<IInboundEnvelope<object>>();
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        [SuppressMessage("", "UnusedMember.Local")]
         void OnMessageReceived(IInboundEnvelope<object> envelope) => ReceivedEnvelopes.Add(envelope);
     }
 }

@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Broker.Behaviors
     ///     Contains the sort index constants of the default <see cref="IBrokerBehavior" /> added by
     ///     Silverback.Integration.
     /// </summary>
-    [SuppressMessage("ReSharper", "CA1034", Justification = Justifications.AllowedForConstants)]
+    [SuppressMessage("", "CA1034", Justification = Justifications.AllowedForConstants)]
     public static class BrokerBehaviorsSortIndexes
     {
         /// <summary>

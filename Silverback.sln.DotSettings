@@ -168,6 +168,16 @@
                 &lt;Readonly /&gt;
             &lt;/Entry.SortBy&gt;
         &lt;/Entry&gt;
+        &lt;Entry DisplayName="Operators"&gt;
+            &lt;Entry.Match&gt;
+                &lt;Kind Is="Operator" /&gt;
+            &lt;/Entry.Match&gt;
+            &lt;Entry.SortBy&gt;
+                &lt;Access Order="Public Internal ProtectedInternal Protected Private" /&gt;
+                &lt;Static /&gt;
+                &lt;Readonly /&gt;
+            &lt;/Entry.SortBy&gt;
+        &lt;/Entry&gt;
         &lt;Entry DisplayName="Methods"&gt;
             &lt;Entry.Match&gt;
                 &lt;Kind Is="Method" /&gt;

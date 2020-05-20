@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Represent a modifiable collection of message headers.
+    ///     A modifiable collection of message headers.
     /// </summary>
     public class MessageHeaderCollection : List<MessageHeader>
     {

@@ -23,7 +23,7 @@ namespace Silverback.Messaging
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
         ///     transformed message.
         /// </returns>
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         Task<byte[]?> TransformAsync(byte[]? message, MessageHeaderCollection headers);
     }
 }

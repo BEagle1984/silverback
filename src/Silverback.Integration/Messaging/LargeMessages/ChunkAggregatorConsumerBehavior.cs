@@ -35,7 +35,7 @@ namespace Silverback.Messaging.LargeMessages
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.ChunkAggregator;
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
@@ -96,7 +96,7 @@ namespace Silverback.Messaging.LargeMessages
         }
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.Subscriber)]
+        [SuppressMessage("", "UnusedMember.Local", Justification = Justifications.Subscriber)]
         private void OnRollback(ConsumingAbortedEvent message)
         {
             if (message.Context.CommitOffsets == null || !message.Context.CommitOffsets.Any())

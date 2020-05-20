@@ -38,7 +38,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+        [SuppressMessage("", "PossibleNullReferenceException")]
         public async Task OnMessageReceived_SingleMessage_Relayed()
         {
             var envelope = new OutboundEnvelope<TestEventOne>(new TestEventOne { Content = "Test" }, null,

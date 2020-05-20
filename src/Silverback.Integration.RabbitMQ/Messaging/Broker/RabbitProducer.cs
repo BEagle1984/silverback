@@ -58,7 +58,7 @@ namespace Silverback.Messaging.Broker
             return queuedMessage.TaskCompletionSource.Task;
         }
 
-        [SuppressMessage("ReSharper", "CA1031", Justification = "Exception is returned")]
+        [SuppressMessage("", "CA1031", Justification = "Exception is returned")]
         private void ProcessQueue(CancellationToken cancellationToken)
         {
             try

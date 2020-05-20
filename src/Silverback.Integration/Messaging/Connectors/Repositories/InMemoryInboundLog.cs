@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task Add(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<bool> Exists(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));

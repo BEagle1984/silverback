@@ -35,7 +35,7 @@ namespace Silverback.Tests.Core.Util
             );
         }
 
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+        [SuppressMessage("", "UnusedAutoPropertyAccessor.Local")]
         private class Item
         {
             public Item(string id) => Id = id;

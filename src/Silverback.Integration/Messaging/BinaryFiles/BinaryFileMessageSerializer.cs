@@ -22,7 +22,7 @@ namespace Silverback.Messaging.BinaryFiles
         public static BinaryFileMessageSerializer Default { get; } = new BinaryFileMessageSerializer();
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual byte[]? Serialize(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -52,7 +52,7 @@ namespace Silverback.Messaging.BinaryFiles
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
@@ -69,7 +69,7 @@ namespace Silverback.Messaging.BinaryFiles
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<byte[]?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -77,7 +77,7 @@ namespace Silverback.Messaging.BinaryFiles
             Task.FromResult(Serialize(message, messageHeaders, context));
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<(object?, Type)> DeserializeAsync(
             byte[]? message,
             MessageHeaderCollection messageHeaders,

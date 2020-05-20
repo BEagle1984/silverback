@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Broker.Behaviors
         ///     manually controlled.
         /// </summary>
         [SuppressMessage(
-            "ReSharper",
+            "",
             "CA2227",
             Justification = "Has to be writable to handle commits and rollbacks correctly (see usages)")]
         public List<IOffset>? CommitOffsets { get; set; }

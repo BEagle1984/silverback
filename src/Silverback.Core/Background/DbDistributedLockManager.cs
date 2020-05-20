@@ -84,7 +84,7 @@ namespace Silverback.Background
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task<bool> CheckIsStillLocked(DistributedLockSettings settings)
         {
             Check.NotNull(settings, nameof(settings));
@@ -115,7 +115,7 @@ namespace Silverback.Background
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task<bool> SendHeartbeat(DistributedLockSettings settings)
         {
             Check.NotNull(settings, nameof(settings));
@@ -142,7 +142,7 @@ namespace Silverback.Background
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task Release(DistributedLockSettings settings)
         {
             Check.NotNull(settings, nameof(settings));
@@ -260,7 +260,7 @@ namespace Silverback.Background
         private static DateTime GetHeartbeatThreshold(TimeSpan heartbeatTimeout) =>
             DateTime.UtcNow.Subtract(heartbeatTimeout);
 
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task<bool> TryAcquireLock(DistributedLockSettings settings)
         {
             try

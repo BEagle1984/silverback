@@ -15,13 +15,13 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
     public class ReadOnlyCollectionMessageArgumentResolver : IEnumerableMessageArgumentResolver
     {
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "CA1062", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1062", Justification = Justifications.CalledBySilverback)]
         public bool CanResolve(Type parameterType) =>
             parameterType.IsGenericType &&
             parameterType.GetGenericTypeDefinition() == typeof(IReadOnlyCollection<>);
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "CA1062", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1062", Justification = Justifications.CalledBySilverback)]
         public Type GetMessageType(Type parameterType) =>
             parameterType.GetGenericArguments()[0];
 

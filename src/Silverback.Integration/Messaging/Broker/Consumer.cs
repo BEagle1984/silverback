@@ -135,7 +135,7 @@ namespace Silverback.Messaging.Broker
         ///     A value indicating whether the method has been called by the <c> Dispose </c> method and not
         ///     from the finalizer.
         /// </param>
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing)

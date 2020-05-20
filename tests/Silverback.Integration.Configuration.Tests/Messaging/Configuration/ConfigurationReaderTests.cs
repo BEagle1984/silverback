@@ -247,7 +247,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
         }
 
         [Fact]
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+        [SuppressMessage("", "PossibleNullReferenceException")]
         public void Read_CompleteInbound_ErrorPolicyConstructorParameterSet()
         {
             var reader =

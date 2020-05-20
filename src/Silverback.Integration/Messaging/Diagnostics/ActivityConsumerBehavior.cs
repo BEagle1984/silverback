@@ -45,7 +45,7 @@ namespace Silverback.Messaging.Diagnostics
             }
         }
 
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private static void TryInitActivity(ConsumerPipelineContext context, Activity activity, ILogger? logger)
         {
             try

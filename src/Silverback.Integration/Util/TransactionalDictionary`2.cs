@@ -13,7 +13,7 @@ namespace Silverback.Util
     /// </summary>
     /// <typeparam name="TKey"> The type of the keys in the dictionary. </typeparam>
     /// <typeparam name="TValue"> The type of the values in the dictionary. </typeparam>
-    [SuppressMessage("ReSharper", "CA1711", Justification = "Dictionary suffix is appropriate.")]
+    [SuppressMessage("", "CA1711", Justification = "Dictionary suffix is appropriate.")]
     public abstract class TransactionalDictionary<TKey, TValue>
     {
         /// <summary>

@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Serialization
             return typedInboundMessage;
         }
 
-        [SuppressMessage("ReSharper", "CA1031", Justification = "Can catch all, the operation is retried")]
+        [SuppressMessage("", "CA1031", Justification = "Can catch all, the operation is retried")]
         private static Type GetType(string typeName) =>
             TypesCache.GetOrAdd(
                 typeName,

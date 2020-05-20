@@ -8,6 +8,9 @@ namespace Silverback
         public const string MarkerInterface =
             "Intentionally a marker interface";
 
+        public const string BaseInterface =
+            "Implemented by other interfaces to group them";
+
         public const string NullableTypesSpacingFalsePositive =
             "[]?, []!, ()? and ()! are recognized as wrongly spaced (bug in the analyzer, " +
             "fixed with StyleCop.Analyzers 1.2.0)";

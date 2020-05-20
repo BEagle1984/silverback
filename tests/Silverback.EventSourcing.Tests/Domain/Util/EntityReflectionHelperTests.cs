@@ -64,8 +64,8 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             action.Should().Throw<SilverbackException>();
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+        [SuppressMessage("", "UnusedMember.Local")]
+        [SuppressMessage("", "UnusedParameter.Local")]
         private class TestEntity : EventSourcingDomainEntity<TestEntity.TestEntityEvent>
         {
             public abstract class TestEntityEvent : EntityEvent

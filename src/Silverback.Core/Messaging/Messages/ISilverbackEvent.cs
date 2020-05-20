@@ -6,9 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Represent an event that is triggered internally by Silverback.
+    ///     An event that is triggered internally by Silverback.
     /// </summary>
-    [SuppressMessage("ReSharper", "CA1040", Justification = Justifications.MarkerInterface)]
+    [SuppressMessage("", "CA1040", Justification = Justifications.BaseInterface)]
     public interface ISilverbackEvent : IMessage
     {
     }

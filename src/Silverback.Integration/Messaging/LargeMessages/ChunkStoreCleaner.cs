@@ -40,7 +40,7 @@ namespace Silverback.Messaging.LargeMessages
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task Cleanup()
         {
             try

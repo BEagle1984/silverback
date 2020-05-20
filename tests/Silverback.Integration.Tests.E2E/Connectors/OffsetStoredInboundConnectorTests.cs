@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
         
         private readonly SqliteConnection _connection;
 
-        [SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable")]
+        [SuppressMessage("", "PrivateFieldCanBeConvertedToLocalVariable")]
         private readonly ServiceProvider _serviceProvider;
 
         private readonly IBusConfigurator _configurator;

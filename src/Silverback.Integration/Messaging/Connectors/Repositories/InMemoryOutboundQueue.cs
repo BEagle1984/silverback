@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///     An outbound queue persisted in memory. Note that writing in the queue is thread-safe but reading is
     ///     not. Implements both <see cref="IOutboundQueueWriter" /> and <see cref="IOutboundQueueReader" />.
     /// </summary>
-    [SuppressMessage("ReSharper", "CA1711", Justification = "Queue is just the right suffix in this case.")]
+    [SuppressMessage("", "CA1711", Justification = "Queue is just the right suffix in this case.")]
     public class InMemoryOutboundQueue
         : TransactionalList<QueuedMessage>, IOutboundQueueWriter, IOutboundQueueReader
     {

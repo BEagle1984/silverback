@@ -23,8 +23,8 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing
 {
-    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-    [SuppressMessage("ReSharper", "CoVariantArrayConversion")]
+    [SuppressMessage("", "PossibleMultipleEnumeration")]
+    [SuppressMessage("", "CoVariantArrayConversion")]
     public class PublisherTests
     {
         private readonly TestSubscriber _syncSubscriber;
@@ -277,7 +277,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             service2.ReceivedMessagesCount.Should().Be(expectedEventTwo * 2);
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("", "InconsistentNaming")]
         public static IEnumerable<object[]> Publish_SubscribedMessage_ReceivedRepublishedMessages_TestData =>
             new List<object[]>
             {

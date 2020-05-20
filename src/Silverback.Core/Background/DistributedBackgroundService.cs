@@ -71,8 +71,8 @@ namespace Silverback.Background
         /// </summary>
         protected DistributedLock? Lock { get; private set; }
 
-        /// <inheritdoc />
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        /// <inheritdoc cref="BackgroundService.ExecuteAsync" />
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation(EventIds.DistributedBackgroundServiceStartingBackgroundService, "Starting background service {BackgroundService}...", GetType().FullName);

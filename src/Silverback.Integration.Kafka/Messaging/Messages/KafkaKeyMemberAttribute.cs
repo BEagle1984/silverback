@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Messages
     ///     be used by Kafka (for partitioning, compacting, etc.).
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class KafkaKeyMemberAttribute : Attribute
+    public sealed class KafkaKeyMemberAttribute : Attribute
     {
     }
 }

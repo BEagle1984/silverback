@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Messages
         {
         }
 
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public RawOutboundEnvelope(
             byte[]? rawMessage,
             IEnumerable<MessageHeader> headers,

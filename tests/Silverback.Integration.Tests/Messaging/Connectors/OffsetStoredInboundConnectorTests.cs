@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
-    [SuppressMessage("ReSharper", "EmptyGeneralCatchClause")]
+    [SuppressMessage("", "EmptyGeneralCatchClause")]
     public class OffsetStoredInboundConnectorTests
     {
         private readonly TestSubscriber _testSubscriber;

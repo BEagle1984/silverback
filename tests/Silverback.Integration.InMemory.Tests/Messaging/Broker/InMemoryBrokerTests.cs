@@ -62,7 +62,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
         }
 
         [Fact]
-        [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public void InMemoryBroker_ProduceMessage_MessageConsumed()
         {
             var endpointName = "test";

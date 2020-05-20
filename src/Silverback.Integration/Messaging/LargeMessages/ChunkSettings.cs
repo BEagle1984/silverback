@@ -48,7 +48,7 @@ namespace Silverback.Messaging.LargeMessages
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
+        [SuppressMessage("", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode() => Size;
     }
 }

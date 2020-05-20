@@ -63,7 +63,7 @@ namespace Silverback.Messaging.Connectors
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task ProcessQueue(CancellationToken stoppingToken)
         {
             try
@@ -86,7 +86,7 @@ namespace Silverback.Messaging.Connectors
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         protected virtual Task ProduceMessage(
             byte[]? content,
             IReadOnlyCollection<MessageHeader>? headers,

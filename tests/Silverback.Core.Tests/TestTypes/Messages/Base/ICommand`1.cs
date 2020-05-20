@@ -5,8 +5,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Silverback.Tests.Core.TestTypes.Messages.Base
 {
-    [SuppressMessage("ReSharper", "CA1040", Justification = Justifications.MarkerInterface)]
-    [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used by the Publisher")]
+    [SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
+    [SuppressMessage("", "UnusedTypeParameter", Justification = "Used by the Publisher")]
     public interface ICommand<out TResult> : ICommand
     {
     }

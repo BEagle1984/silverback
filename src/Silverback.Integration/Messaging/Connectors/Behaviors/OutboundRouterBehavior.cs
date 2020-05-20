@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
             return await next(messages);
         }
 
-        [SuppressMessage("ReSharper", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private async Task<IReadOnlyCollection<object>> WrapAndRepublishRoutedMessages(IEnumerable<object> messages)
         {
             var envelopesToRepublish = messages

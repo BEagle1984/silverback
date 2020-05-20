@@ -32,7 +32,7 @@ namespace Silverback.Messaging.LargeMessages.Model
         public int ChunkIndex { get; }
 
         /// <summary> Gets the chunk binary content. </summary>
-        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
         public byte[] Content { get; }
     }
 }

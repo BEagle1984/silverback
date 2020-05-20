@@ -131,8 +131,8 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local")]
-        [SuppressMessage("ReSharper", "ExpressionIsAlwaysNull")]
+        [SuppressMessage("", "CollectionNeverUpdated.Local")]
+        [SuppressMessage("", "ExpressionIsAlwaysNull")]
         public void Equals_NullDictionaryVsEmptyDictionary_TrueIsReturned()
         {
             var dictionaryX = new Dictionary<string, string>();

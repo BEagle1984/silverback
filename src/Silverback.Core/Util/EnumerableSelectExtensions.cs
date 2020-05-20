@@ -28,7 +28,7 @@ namespace Silverback.Util
         }
 
         // http://blog.briandrupieski.com/throttling-asynchronous-methods-in-csharp
-        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Task is awaited")]
+        [SuppressMessage("", "AccessToDisposedClosure", Justification = "Task is awaited")]
         public static async Task<IEnumerable<TResult>> ParallelSelectAsync<T, TResult>(
             this IEnumerable<T> source,
             Func<T, Task<TResult>> selector,

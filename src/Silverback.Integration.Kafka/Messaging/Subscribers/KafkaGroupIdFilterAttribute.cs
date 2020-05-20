@@ -6,18 +6,29 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers
 {
-    public class KafkaGroupIdFilterAttribute : MessageFilterAttribute
+    /// <summary>
+    ///     Can be placed on a subscribed method to filter the messages to be processed according to the group
+    ///     id that consumed them. This is used when having multiple consumer groups for the same topic running
+    ///     in the same process.
+    /// </summary>
+    public sealed class KafkaGroupIdFilterAttribute : MessageFilterAttribute
     {
-        private readonly string[] _groupIdList;
-
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaGroupIdFilterAttribute" /> class.
+        /// </summary>
+        /// <param name="groupId"> The list of group id whose messages have to be processed. </param>
         public KafkaGroupIdFilterAttribute(params string[] groupId)
         {
-            _groupIdList = groupId;
+            GroupId = groupId;
         }
 
+        /// <summary> Gets the list of group id whose messages have to be processed. </summary>
+        public string[] GroupId { get; }
+
+        /// <inheritdoc />
         public override bool MustProcess(object message) =>
             message is IInboundEnvelope inboundEnvelope &&
             inboundEnvelope.Endpoint is KafkaConsumerEndpoint endpoint &&
-            _groupIdList.Any(groupId => groupId == endpoint.Configuration.GroupId);
+            GroupId.Any(groupId => groupId == endpoint.Configuration.GroupId);
     }
 }

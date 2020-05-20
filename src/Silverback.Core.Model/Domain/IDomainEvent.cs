@@ -6,7 +6,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Domain
 {
     /// <summary>
-    ///     Represent and event that generates inside the domain (model).
+    ///     An event that generates inside the domain (model).
     /// </summary>
     public interface IDomainEvent : IMessageWithSource, IEvent
     {

@@ -23,7 +23,7 @@ namespace Silverback.Tests.Integration.TestTypes
         public TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        [SuppressMessage("", "UnusedMember.Local")]
         async Task OnMessageReceived(IMessage message)
         {
             if (Delay > TimeSpan.Zero)

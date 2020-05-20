@@ -104,7 +104,7 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        [SuppressMessage("ReSharper", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task TryHandleMessage(object sender, BasicDeliverEventArgs deliverEventArgs)
         {
             RabbitOffset? offset = null;

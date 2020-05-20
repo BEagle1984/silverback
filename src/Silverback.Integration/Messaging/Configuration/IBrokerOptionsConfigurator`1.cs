@@ -9,13 +9,11 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
     ///     The implementations of this class will be located via assembly scanning and invoked when a broker of
-    ///     the matching type <typeparamref name="TBroker" /> is added.
+    ///     the matching type <typeparamref name="TBroker" /> is added to the <see cref="IServiceCollection"/>..
     /// </summary>
-    /// <typeparam name="TBroker">
-    ///     The type of the <see cref="IBroker" /> implementation being configured.
-    /// </typeparam>
+    /// <typeparam name="TBroker"> The type of the <see cref="IBroker" /> implementation being configured. </typeparam>
     [SuppressMessage(
-        "ReSharper",
+        "",
         "UnusedTypeParameter",
         Justification = "Used to find the configurator for the borker type being added")]
     public interface IBrokerOptionsConfigurator<TBroker>

@@ -40,8 +40,8 @@ namespace Silverback.Database.Model
         ///     Gets or sets the concurrency token.
         /// </summary>
         [Timestamp]
-        [SuppressMessage("ReSharper", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Timestamp { get; set; }
     }
 }

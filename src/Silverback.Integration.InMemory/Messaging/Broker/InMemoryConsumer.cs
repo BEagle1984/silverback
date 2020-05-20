@@ -80,7 +80,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="offset"> The message offset. </param>
         /// <returns> A <see cref="Task" /> representing the asynchronous operation. </returns>
         // TODO: Should pass the actual endpoint name via header (Endpoint.Name may contain a list of topics)
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task Receive(byte[]? message, IEnumerable<MessageHeader> headers, IOffset offset) =>
             HandleMessage(message, headers.ToList(), Endpoint.Name, offset);
     }

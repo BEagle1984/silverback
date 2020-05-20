@@ -21,7 +21,7 @@ namespace Silverback.Messaging.LargeMessages
             transactionManager.Enlist(_store);
         }
 
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task<byte[]?> AggregateIfComplete(IRawInboundEnvelope envelope)
         {
             var (messageId, chunkIndex, chunksCount) = ExtractHeadersValues(envelope);

@@ -7,7 +7,7 @@ using Silverback.EventStore;
 
 namespace Silverback.Tests.EventSourcing.TestTypes
 {
-    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+    [SuppressMessage("", "UnusedAutoPropertyAccessor.Local")]
     public class PersonEvent : EventEntity
     {
         [Key]

@@ -60,7 +60,7 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
+        [SuppressMessage("", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode()
         {
             return Name != null ? Name.GetHashCode(StringComparison.InvariantCulture) : 0;

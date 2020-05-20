@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Headers
 {
-    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+    [SuppressMessage("", "PossibleMultipleEnumeration")]
     public class HeaderAttributeHelperTests
     {
         [Fact]

@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Diagnostics
 
         private const char ItemKeyValueSeparator = '=';
 
-        [SuppressMessage("ReSharper", "CA1822", Justification = "Uniform to Deserialize")]
+        [SuppressMessage("", "CA1822", Justification = "Uniform to Deserialize")]
         public static string Serialize(IEnumerable<KeyValuePair<string, string>> baggage) =>
             string.Join(
                 BaggageItemSeparator.ToString(CultureInfo.InvariantCulture),

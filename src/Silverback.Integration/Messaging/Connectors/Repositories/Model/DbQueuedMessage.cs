@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         /// <param name="content"> The message raw binary content (body). </param>
         /// <param name="headers"> The message headers. </param>
         /// <param name="endpoint"> The target endpoint. </param>
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public DbQueuedMessage(int id, byte[]? content, IEnumerable<MessageHeader> headers, IProducerEndpoint endpoint)
             : base(content, headers, endpoint)
         {

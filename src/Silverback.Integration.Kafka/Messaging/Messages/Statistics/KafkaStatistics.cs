@@ -2,15 +2,19 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
+
+#pragma warning disable 1591 // Will maybe document later
 
 namespace Silverback.Messaging.Messages.Statistics
 {
     /// <summary>
-    ///     A Kafka statistics event.
-    ///     See <see href="https://github.com/edenhill/librdkafka/blob/master/STATISTICS.md" /> for
-    ///     information about the structure.
+    ///     A Kafka statistics event. See
+    ///     <see href="https://github.com/edenhill/librdkafka/blob/master/STATISTICS.md" /> for information
+    ///     about the structure.
     /// </summary>
+    [SuppressMessage("ReSharper", "SA1600", Justification = "Will maybe document later")]
     public class KafkaStatistics
     {
         [JsonProperty("name")]
@@ -50,9 +54,11 @@ namespace Silverback.Messaging.Messages.Statistics
         public long MetadataCacheCnt { get; set; }
 
         [JsonProperty("brokers")]
+        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public Dictionary<string, BrokerStatistics> Brokers { get; set; } = new Dictionary<string, BrokerStatistics>();
 
         [JsonProperty("topics")]
+        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public Dictionary<string, TopicStatistics> Topics { get; set; } = new Dictionary<string, TopicStatistics>();
 
         [JsonProperty("cgrp")]

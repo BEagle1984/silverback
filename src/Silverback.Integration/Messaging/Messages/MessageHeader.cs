@@ -6,7 +6,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
-    /// <summary> Represent an header added to the message being sent over a message broker. </summary>
+    /// <summary> An header added to the message being sent over a message broker. </summary>
     public class MessageHeader
     {
         private string _name = null!; // Always being set in constructor

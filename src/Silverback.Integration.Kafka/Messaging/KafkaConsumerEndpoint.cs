@@ -2,31 +2,31 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Silverback.Messaging.Configuration;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
 namespace Silverback.Messaging
 {
+    /// <summary> Represents a topic to consume from. </summary>
     public sealed class KafkaConsumerEndpoint : ConsumerEndpoint, IEquatable<KafkaConsumerEndpoint>
     {
+        /// <summary> Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class. </summary>
+        /// <param name="names"> The names of the topics. </param>
         public KafkaConsumerEndpoint(params string[] names)
-            : base("")
+            : base(string.Empty)
         {
             Names = names;
 
             if (names == null)
                 return;
 
-            Name = names.Length > 1
-                ? "[" + string.Join(",", names) + "]"
-                : names[0];
+            Name = names.Length > 1 ? "[" + string.Join(",", names) + "]" : names[0];
         }
 
-        /// <summary>
-        ///     Gets the names of the topics.
-        /// </summary>
-        public string[] Names { get; }
+        /// <summary> Gets the names of the topics. </summary>
+        public IReadOnlyCollection<string> Names { get; }
 
         /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
@@ -34,6 +34,7 @@ namespace Silverback.Messaging
         /// </summary>
         public KafkaConsumerConfig Configuration { get; set; } = new KafkaConsumerConfig();
 
+        /// <inheritdoc />
         public override void Validate()
         {
             base.Validate();
@@ -44,28 +45,37 @@ namespace Silverback.Messaging
             Configuration.Validate();
         }
 
+        /// <inheritdoc />
         public override string GetUniqueConsumerGroupName() =>
             !string.IsNullOrEmpty(Configuration.GroupId)
                 ? Configuration.GroupId
                 : Name;
 
-        #region Equality
-
+        /// <inheritdoc />
         public bool Equals(KafkaConsumerEndpoint other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
             return base.Equals(other) && Equals(Configuration, other.Configuration);
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((KafkaConsumerEndpoint) obj);
-        }
+            if (ReferenceEquals(null, obj))
+                return false;
 
-        #endregion
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((KafkaConsumerEndpoint)obj);
+        }
     }
 }

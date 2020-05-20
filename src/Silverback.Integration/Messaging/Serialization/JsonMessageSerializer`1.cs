@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Serialization
         private readonly Type _type = typeof(TMessage);
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override byte[]? Serialize(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,

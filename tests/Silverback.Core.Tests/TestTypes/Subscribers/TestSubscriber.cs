@@ -7,8 +7,8 @@ using Silverback.Tests.Core.TestTypes.Messages;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+    [SuppressMessage("", "UnusedMember.Local")]
+    [SuppressMessage("", "UnusedParameter.Local")]
     public class TestSubscriber : ITestSubscriber, ISubscriber
     {
         public int ReceivedMessagesCount { get; private set; }

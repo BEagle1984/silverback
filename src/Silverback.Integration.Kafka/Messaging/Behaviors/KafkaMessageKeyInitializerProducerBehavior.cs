@@ -4,20 +4,27 @@
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Behaviors
 {
     /// <summary>
     ///     Sets the message key header with the value from the properties decorated with the
-    ///     <see cref="KafkaKeyMemberAttribute"/>.
-    ///     The header will be used by the <see cref="Messaging.Broker.KafkaProducer"/> to set
-    ///     the actual message key.
+    ///     <see cref="KafkaKeyMemberAttribute" />. The header will be used by the
+    ///     <see cref="Messaging.Broker.KafkaProducer" /> to set the actual message key.
     /// </summary>
     public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior, ISorted
     {
+        /// <inheritdoc />
+        public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
+
+        /// <inheritdoc />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            var key = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(next, nameof(next));
+
+            string? key = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
 
             if (key != null)
             {
@@ -26,14 +33,12 @@ namespace Silverback.Messaging.Behaviors
             else
             {
                 var messageId = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
-                
+
                 if (messageId != null)
                     context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, messageId);
             }
 
             await next(context);
         }
-
-        public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
     }
 }

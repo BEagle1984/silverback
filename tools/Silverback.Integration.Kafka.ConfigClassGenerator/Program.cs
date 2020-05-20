@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using Confluent.Kafka;
@@ -10,10 +11,16 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
 {
     internal static class Program
     {
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private static void Main()
         {
+            var assembly = Assembly.GetAssembly(typeof(ClientConfig));
+
+            if (assembly == null)
+                throw new InvalidOperationException("Couldn't load ClientConfig assembly.");
+
             var xmlDocumentationPath = Path.Combine(
-                Path.GetDirectoryName(Assembly.GetAssembly(typeof(ClientConfig)).Location),
+                Path.GetDirectoryName(assembly.Location)!,
                 "Confluent.Kafka.xml");
 
             Console.Write(

@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Serialization
         /// <param name="messageHeaders"> The message headers collection. </param>
         /// <param name="context"> The context information. </param>
         /// <returns> The serialization result. </returns>
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         byte[]? Serialize(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Serialization
         ///     The deserialized message (or <c> null </c> when the input is null or empty) and the type of the
         ///     message.
         /// </returns>
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
@@ -52,7 +52,7 @@ namespace Silverback.Messaging.Serialization
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
         ///     serialization result.
         /// </returns>
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         Task<byte[]?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Serialization
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
         ///     deserialized message (or <c> null </c> when the input is null or empty) and the type of the message.
         /// </returns>
-        [SuppressMessage("ReSharper", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         Task<(object?, Type)> DeserializeAsync(
             byte[]? message,
             MessageHeaderCollection messageHeaders,

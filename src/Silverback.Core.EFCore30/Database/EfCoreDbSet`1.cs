@@ -49,7 +49,7 @@ namespace Silverback.Database
         public IQueryable<TEntity> AsQueryable() => _dbSet;
 
         /// <inheritdoc />
-        [SuppressMessage("ReSharper", "CA1024", Justification = "It must stay a method for backward compatibility")]
+        [SuppressMessage("", "CA1024", Justification = "It must stay a method for backward compatibility")]
         public IEnumerable<TEntity> GetLocalCache() => _dbSet.Local;
     }
 }

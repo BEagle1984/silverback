@@ -3,9 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
@@ -15,14 +17,17 @@ namespace Silverback.Messaging.Broker
 {
     internal class KafkaInnerConsumerWrapper : IDisposable
     {
-        private readonly KafkaEventsHandler _kafkaEventsHandler;
-        private readonly ILogger _logger;
-        private CancellationTokenSource _cancellationTokenSource;
-
         private readonly TimeSpan _recoveryDelay = TimeSpan.FromSeconds(5);
 
-        private Confluent.Kafka.IConsumer<byte[], byte[]> _innerConsumer;
-        private List<object> _deserializers;
+        private readonly KafkaEventsHandler _kafkaEventsHandler;
+
+        private readonly ILogger _logger;
+
+        private CancellationTokenSource? _cancellationTokenSource;
+
+        private IConsumer<byte[], byte[]>? _innerConsumer;
+
+        private List<object>? _deserializers;
 
         public KafkaInnerConsumerWrapper(
             KafkaConsumerEndpoint endpoint,
@@ -34,38 +39,56 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
-        public event KafkaMessageReceivedHandler Received;
+        public event KafkaMessageReceivedHandler? Received;
 
         public KafkaConsumerEndpoint Endpoint { get; }
+
         public bool IsConsuming { get; private set; }
+
         public bool HasConsumedAtLeastOnce { get; private set; }
 
-        public void Commit(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets) =>
-            _innerConsumer.Commit(offsets);
+        public void Commit(IEnumerable<TopicPartitionOffset> offsets)
+        {
+            if (_innerConsumer == null)
+                throw new InvalidOperationException("The underlying consumer is not initialized.");
 
-        public void StoreOffset(IEnumerable<Confluent.Kafka.TopicPartitionOffset> offsets) =>
+            _innerConsumer.Commit(offsets);
+        }
+
+        public void StoreOffset(IEnumerable<TopicPartitionOffset> offsets)
+        {
+            if (_innerConsumer == null)
+                throw new InvalidOperationException("The underlying consumer is not initialized.");
+
             offsets.ForEach(_innerConsumer.StoreOffset);
+        }
 
         public void CommitAll()
         {
-            if (!HasConsumedAtLeastOnce) return;
+            if (!HasConsumedAtLeastOnce)
+                return;
 
             try
             {
+                if (_innerConsumer == null)
+                    throw new InvalidOperationException("The underlying consumer is not initialized.");
+
                 var offsets = _innerConsumer.Commit();
-                _kafkaEventsHandler.CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(
-                    offsets.Select(offset =>
-                            new Confluent.Kafka.TopicPartitionOffsetError(
-                                offset,
-                                new Confluent.Kafka.Error(Confluent.Kafka.ErrorCode.NoError)))
-                        .ToList()));
+                _kafkaEventsHandler.CreateScopeAndPublishEvent(
+                    new KafkaOffsetsCommittedEvent(
+                        offsets.Select(
+                                offset =>
+                                    new TopicPartitionOffsetError(
+                                        offset,
+                                        new Error(ErrorCode.NoError)))
+                            .ToList()));
             }
-            catch (Confluent.Kafka.TopicPartitionOffsetException ex)
+            catch (TopicPartitionOffsetException ex)
             {
                 _kafkaEventsHandler.CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(ex.Results, ex.Error));
                 throw;
             }
-            catch (Confluent.Kafka.KafkaException ex)
+            catch (KafkaException ex)
             {
                 _kafkaEventsHandler.CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(null, ex.Error));
             }
@@ -88,19 +111,30 @@ namespace Silverback.Messaging.Broker
             if (!IsConsuming)
                 return;
 
-            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource?.Cancel();
 
             // Wait until stopped for real before returning to avoid
             // exceptions when the process exits prematurely
-            while (IsConsuming) Thread.Sleep(100);
+            while (IsConsuming)
+            {
+                Thread.Sleep(100);
+            }
 
-            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource?.Dispose();
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            StopConsuming();
+            DisposeInnerConsumer();
+            _cancellationTokenSource?.Dispose();
         }
 
         private void InitInnerConsumer()
         {
             var consumerBuilder =
-                new Confluent.Kafka.ConsumerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig);
+                new ConsumerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig);
 
             _kafkaEventsHandler.SetConsumerEventsHandlers(this, consumerBuilder);
 
@@ -108,11 +142,25 @@ namespace Silverback.Messaging.Broker
             Subscribe();
         }
 
-        private void Subscribe() => _innerConsumer.Subscribe(Endpoint.Names);
+        private void Subscribe()
+        {
+            if (_innerConsumer == null)
+                throw new InvalidOperationException("The underlying consumer is not initialized.");
 
+            _innerConsumer.Subscribe(Endpoint.Names);
+        }
+
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task Consume()
         {
             IsConsuming = true;
+
+            if (_cancellationTokenSource == null)
+            {
+                throw new InvalidOperationException(
+                    "The cancellation token is null, probably because the underlying " +
+                    "consumer is not initialized.");
+            }
 
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
@@ -122,16 +170,21 @@ namespace Silverback.Messaging.Broker
                 }
                 catch (OperationCanceledException)
                 {
-                    _logger.LogTrace(EventIds.KafkaInnerConsumerWrapperConsumingCanceled, "Consuming canceled.");
+                    _logger.LogTrace(
+                        EventIds.KafkaInnerConsumerWrapperConsumingCanceled,
+                        "Consuming canceled.");
                 }
-                catch (Confluent.Kafka.KafkaException ex)
+                catch (KafkaException ex)
                 {
                     if (!AutoRecoveryIfEnabled(ex))
                         break;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogCritical(EventIds.KafkaInnerConsumerWrapperFatalError, ex, "Fatal error occurred consuming a message. The consumer will be stopped.");
+                    _logger.LogCritical(
+                        EventIds.KafkaInnerConsumerWrapperFatalError,
+                        ex,
+                        "Fatal error occurred consuming a message. The consumer will be stopped.");
                     break;
                 }
             }
@@ -141,6 +194,16 @@ namespace Silverback.Messaging.Broker
 
         private async Task ReceiveMessage()
         {
+            if (_innerConsumer == null)
+                throw new InvalidOperationException("The underlying consumer is not initialized.");
+
+            if (_cancellationTokenSource == null)
+            {
+                throw new InvalidOperationException(
+                    "The cancellation token is null, probably because the underlying " +
+                    "consumer is not initialized.");
+            }
+
             var result = _innerConsumer.Consume(_cancellationTokenSource.Token);
 
             if (result == null)
@@ -151,7 +214,9 @@ namespace Silverback.Messaging.Broker
                 _logger.LogInformation(
                     EventIds.KafkaInnerConsumerWrapperEndOfPartition,
                     "Partition EOF reached: {topic} {partition} @{offset}.",
-                    result.Topic, result.Partition, result.Offset);
+                    result.Topic,
+                    result.Partition,
+                    result.Offset);
                 return;
             }
 
@@ -159,13 +224,15 @@ namespace Silverback.Messaging.Broker
             _logger.LogDebug(
                 EventIds.KafkaInnerConsumerWrapperConsumingMessage,
                 "Consuming message: {topic} {partition} @{offset}.",
-                result.Topic, result.Partition, result.Offset);
+                result.Topic,
+                result.Partition,
+                result.Offset);
 
             if (Received != null)
                 await Received.Invoke(result.Message, result.TopicPartitionOffset);
         }
 
-        private bool AutoRecoveryIfEnabled(Confluent.Kafka.KafkaException ex)
+        private bool AutoRecoveryIfEnabled(KafkaException ex)
         {
             if (Endpoint.Configuration.EnableAutoRecovery)
             {
@@ -179,18 +246,21 @@ namespace Silverback.Messaging.Broker
             }
             else
             {
+                const string errorMessage = "Fatal error occurred consuming a message. The consumer will be stopped. " +
+                                            "Enable auto recovery to allow Silverback to automatically try to reconnect " +
+                                            "(EnableAutoRecovery=true in the endpoint configuration). (topic(s): {topics})";
+
                 _logger.LogCritical(
                     EventIds.KafkaInnerConsumerWrapperNoReconnectFatalError,
                     ex,
-                    "Fatal error occurred consuming a message. The consumer will be stopped. " +
-                    "Enable auto recovery to allow Silverback to automatically try to reconnect " +
-                    "(EnableAutoRecovery=true in the endpoint configuration). (topic(s): {topics})",
+                    errorMessage,
                     (object)Endpoint.Names);
             }
 
             return Endpoint.Configuration.EnableAutoRecovery;
         }
 
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private void ResetInnerConsumer()
         {
             while (true)
@@ -207,8 +277,8 @@ namespace Silverback.Messaging.Broker
                     _logger.LogCritical(
                         EventIds.KafkaInnerConsumerWrapperFaildToRecoverFromConsumerException,
                         ex,
-                        "Failed to recover from consumer exception. " +
-                        "Will retry in {SecondsUntilRetry} seconds.", _recoveryDelay.TotalSeconds);
+                        "Failed to recover from consumer exception. Will retry in {SecondsUntilRetry} seconds.",
+                        _recoveryDelay.TotalSeconds);
 
                     Thread.Sleep(_recoveryDelay);
                 }
@@ -222,13 +292,6 @@ namespace Silverback.Messaging.Broker
             _innerConsumer = null;
             _deserializers?.OfType<IDisposable>().ForEach(obj => obj.Dispose());
             _deserializers = null;
-        }
-
-        public void Dispose()
-        {
-            StopConsuming();
-            DisposeInnerConsumer();
-            _cancellationTokenSource?.Dispose();
         }
     }
 }

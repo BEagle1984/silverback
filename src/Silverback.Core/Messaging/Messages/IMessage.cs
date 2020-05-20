@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Messages
     ///     and enable features like automatic republishing. It is a good practice for all messages
     ///     to implement this interface but it's not mandatory.
     /// </summary>
-    [SuppressMessage("ReSharper", "CA1040", Justification = Justifications.MarkerInterface)]
+    [SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
     public interface IMessage
     {
     }

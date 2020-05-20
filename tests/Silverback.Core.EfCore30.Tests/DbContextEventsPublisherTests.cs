@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore30
 {
-    [SuppressMessage("ReSharper", "EmptyGeneralCatchClause")]
+    [SuppressMessage("", "EmptyGeneralCatchClause")]
     public class DbContextEventsPublisherTests : IDisposable
     {
         private readonly TestDbContext _dbContext;
