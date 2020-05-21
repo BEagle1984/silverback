@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Messages
             IEnumerable<MessageHeader> headers,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
-            IOffset offset = null)
+            IOffset? offset = null)
             : base(rawMessage, headers, endpoint, offset)
         {
             ActualEndpointName = actualEndpointName;

@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Messages
     ///     can be used by RabbitMQ to route the messages to the proper queue.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class RabbitRoutingKeyAttribute : Attribute
+    public sealed class RabbitRoutingKeyAttribute : Attribute
     {
     }
 }

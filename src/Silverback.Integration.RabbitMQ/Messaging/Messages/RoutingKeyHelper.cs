@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Messages
 {
     internal static class RoutingKeyHelper
     {
-        public static string GetRoutingKey(object message)
+        public static string? GetRoutingKey(object message)
         {
             if (message is PingMessage)
                 return "ping";
@@ -27,9 +27,11 @@ namespace Silverback.Messaging.Messages
                 return null;
 
             if (keys.Count > 1)
+            {
                 throw new InvalidOperationException(
                     "Multiple properties are decorated with RabbitRoutingKeyAttribute " +
                     $"in type {messageType.Name}.");
+            }
 
             return keys.First();
         }

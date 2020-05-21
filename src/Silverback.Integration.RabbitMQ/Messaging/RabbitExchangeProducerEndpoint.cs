@@ -8,19 +8,23 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging
 {
+    /// <summary> Represents an exchange to produce to. </summary>
     public sealed class RabbitExchangeProducerEndpoint
         : RabbitProducerEndpoint, IEquatable<RabbitExchangeProducerEndpoint>
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RabbitExchangeProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="name"> The name of the exchange. </param>
         public RabbitExchangeProducerEndpoint(string name)
             : base(name)
         {
         }
 
-        /// <summary>
-        ///     Gets or sets the exchange configuration.
-        /// </summary>
+        /// <summary> Gets or sets the exchange configuration. </summary>
         public RabbitExchangeConfig Exchange { get; set; } = new RabbitExchangeConfig();
 
+        /// <inheritdoc />
         public override void Validate()
         {
             base.Validate();
@@ -31,23 +35,31 @@ namespace Silverback.Messaging
             Exchange.Validate();
         }
 
-        #region Equality
-
+        /// <inheritdoc />
         public bool Equals(RabbitExchangeProducerEndpoint other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
             return base.Equals(other) && Equals(Exchange, other.Exchange);
         }
 
-        public override bool Equals(object obj)
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((RabbitExchangeProducerEndpoint) obj);
-        }
+            if (obj is null)
+                return false;
 
-        #endregion
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((RabbitExchangeProducerEndpoint)obj);
+        }
     }
 }

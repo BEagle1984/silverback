@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Messages
             byte[]? rawMessage,
             IEnumerable<MessageHeader> headers,
             IEndpoint endpoint,
-            IOffset offset)
+            IOffset? offset)
         {
             RawMessage = rawMessage;
             Headers = new MessageHeaderCollection(headers);
@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Messages
 
         public MessageHeaderCollection Headers { get; set; }
 
-        public IOffset Offset { get; internal set; }
+        public IOffset? Offset { get; internal set; }
 
         public IEndpoint Endpoint { get; }
     }

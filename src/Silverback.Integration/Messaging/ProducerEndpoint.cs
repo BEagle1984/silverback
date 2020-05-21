@@ -34,14 +34,17 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
                 return false;
+
             if (ReferenceEquals(this, obj))
                 return true;
+
             if (obj.GetType() != GetType())
                 return false;
+
             return Equals((ProducerEndpoint)obj);
         }
 
@@ -55,6 +58,15 @@ namespace Silverback.Messaging
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
-        protected bool Equals(ProducerEndpoint other) => base.Equals(other) && Equals(Chunk, other.Chunk);
+        protected bool Equals(ProducerEndpoint other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return base.Equals(other) && Equals(Chunk, other.Chunk);
+        }
     }
 }

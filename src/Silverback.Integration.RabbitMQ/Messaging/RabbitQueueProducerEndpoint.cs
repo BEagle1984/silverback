@@ -8,18 +8,22 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging
 {
+    /// <summary> Represents a queue to produce to. </summary>
     public sealed class RabbitQueueProducerEndpoint : RabbitProducerEndpoint, IEquatable<RabbitQueueProducerEndpoint>
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RabbitQueueProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="name"> The name of the queue. </param>
         public RabbitQueueProducerEndpoint(string name)
             : base(name)
         {
         }
 
-        /// <summary>
-        ///     Gets or sets the queue configuration.
-        /// </summary>
+        /// <summary> Gets or sets the queue configuration. </summary>
         public RabbitQueueConfig Queue { get; set; } = new RabbitQueueConfig();
 
+        /// <inheritdoc />
         public override void Validate()
         {
             base.Validate();
@@ -30,23 +34,31 @@ namespace Silverback.Messaging
             Queue.Validate();
         }
 
-        #region Equality
-
+        /// <inheritdoc />
         public bool Equals(RabbitQueueProducerEndpoint other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
             return base.Equals(other) && Equals(Queue, other.Queue);
         }
 
-        public override bool Equals(object obj)
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((RabbitQueueProducerEndpoint) obj);
-        }
+            if (obj is null)
+                return false;
 
-        #endregion
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((RabbitQueueProducerEndpoint)obj);
+        }
     }
 }

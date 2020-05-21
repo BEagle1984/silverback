@@ -110,7 +110,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj))
                 return true;

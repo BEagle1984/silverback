@@ -112,11 +112,12 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         protected virtual async Task HandleMessage(
             byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
             string sourceEndpointName,
-            IOffset offset) =>
+            IOffset? offset) =>
             await ExecutePipeline(
                 Behaviors,
                 new ConsumerPipelineContext(

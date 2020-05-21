@@ -64,12 +64,12 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        protected override IOffset ProduceCore(IRawOutboundEnvelope envelope) =>
+        protected override IOffset? ProduceCore(IRawOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceAsyncCore(envelope));
 
         /// <inheritdoc />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        protected override async Task<IOffset> ProduceAsyncCore(IRawOutboundEnvelope envelope)
+        protected override async Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 

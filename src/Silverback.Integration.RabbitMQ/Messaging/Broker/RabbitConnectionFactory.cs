@@ -9,13 +9,17 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    public class RabbitConnectionFactory : IRabbitConnectionFactory
+    /// <inheritdoc />
+    public sealed class RabbitConnectionFactory : IRabbitConnectionFactory
     {
-        private ConcurrentDictionary<RabbitConnectionConfig, IConnection> _connections =
+        private readonly ConcurrentDictionary<RabbitConnectionConfig, IConnection> _connections =
             new ConcurrentDictionary<RabbitConnectionConfig, IConnection>();
 
+        /// <inheritdoc />
         public IModel GetChannel(RabbitProducerEndpoint endpoint)
         {
+            Check.NotNull(endpoint, nameof(endpoint));
+
             var channel = GetConnection(endpoint.Connection).CreateModel();
 
             if (endpoint.ConfirmationTimeout.HasValue)
@@ -40,14 +44,17 @@ namespace Silverback.Messaging.Broker
                         exchangeEndpoint.Exchange.Arguments);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(endpoint), "Unexpected endpoint type.");
             }
 
             return channel;
         }
 
+        /// <inheritdoc />
         public (IModel channel, string queueName) GetChannel(RabbitConsumerEndpoint endpoint)
         {
+            Check.NotNull(endpoint, nameof(endpoint));
+
             var channel = GetConnection(endpoint.Connection).CreateModel();
             string queueName;
 
@@ -79,30 +86,27 @@ namespace Silverback.Messaging.Broker
                         .QueueName;
 
                     channel.QueueBind(
-                        queueName ?? "",
+                        queueName ?? string.Empty,
                         exchangeEndpoint.Name,
-                        exchangeEndpoint.RoutingKey ?? "");
+                        exchangeEndpoint.RoutingKey ?? string.Empty);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(endpoint), "Unexpected endpoint type.");
             }
 
             channel.BasicQos(endpoint.PrefetchSize, endpoint.PrefetchCount, false);
 
-            return (channel, queueName);
+            return (channel, queueName!);
         }
 
-        public IConnection GetConnection(RabbitConnectionConfig connectionConfig)
+        /// <inheritdoc />
+        public void Dispose()
         {
-            Check.NotNull(connectionConfig, nameof(connectionConfig));
-
-            if (_connections == null)
-                throw new ObjectDisposedException(null);
-
-            return _connections.GetOrAdd(connectionConfig, _ => CreateConnection(connectionConfig));
+            _connections.ForEach(c => c.Value?.Dispose());
+            _connections.Clear();
         }
 
-        private IConnection CreateConnection(RabbitConnectionConfig connectionConfig)
+        private static IConnection CreateConnection(RabbitConnectionConfig connectionConfig)
         {
             var factory = new ConnectionFactory
             {
@@ -114,10 +118,14 @@ namespace Silverback.Messaging.Broker
             return factory.CreateConnection();
         }
 
-        public void Dispose()
+        private IConnection GetConnection(RabbitConnectionConfig connectionConfig)
         {
-            _connections?.ForEach(c => c.Value?.Dispose());
-            _connections = null;
+            Check.NotNull(connectionConfig, nameof(connectionConfig));
+
+            if (_connections == null)
+                throw new ObjectDisposedException(null);
+
+            return _connections.GetOrAdd(connectionConfig, _ => CreateConnection(connectionConfig));
         }
     }
 }

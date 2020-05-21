@@ -516,12 +516,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector.Bind(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            var consumer = (TestConsumer)_broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne());
-            await consumer.TestHandleMessage(new TestEventTwo());
-            await consumer.TestHandleMessage(new TestEventOne());
-            await consumer.TestHandleMessage(new TestEventTwo());
-            await consumer.TestHandleMessage(new TestEventTwo());
+            var consumer = (TestConsumer)_broker.Consumers[0];
+            await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
 
             consumer.AcknowledgeCount.Should().Be(5);
         }
@@ -542,14 +542,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.Connect();
 
             var consumer = (TestConsumer)_broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne());
-            await consumer.TestHandleMessage(new TestEventTwo());
-            await consumer.TestHandleMessage(new TestEventOne());
-            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
 
             consumer.AcknowledgeCount.Should().Be(0);
 
-            await consumer.TestHandleMessage(new TestEventTwo());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
 
             consumer.AcknowledgeCount.Should().Be(5);
         }
@@ -569,20 +569,21 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             _broker.Connect();
 
-            var consumer = (TestConsumer)_broker.Consumers.First();
-            await consumer.TestHandleMessage(new TestEventOne());
-            await consumer.TestHandleMessage(new TestEventTwo());
-            await consumer.TestHandleMessage(new TestEventOne());
-            await consumer.TestHandleMessage(new TestEventTwo());
-            await consumer.TestHandleMessage(new TestEventTwo());
-            await consumer.TestHandleMessage(new TestEventTwo());
-            await consumer.TestHandleMessage(new TestEventTwo());
+            var consumer = (TestConsumer)_broker.Consumers[0];
+
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
 
             consumer.AcknowledgeCount.Should().Be(5);
 
-            await consumer.TestHandleMessage(new TestEventOne());
-            await consumer.TestHandleMessage(new TestEventTwo());
-            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventTwo(), offset: new TestOffset());
+            await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
 
             consumer.AcknowledgeCount.Should().Be(10);
         }
@@ -603,7 +604,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             {
                 foreach (var consumer in _broker.Consumers.OfType<TestConsumer>())
                 {
-                    await consumer.TestHandleMessage(new TestEventOne());
+                    await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
                 }
             }
 
@@ -633,7 +634,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             {
                 foreach (var consumer in _broker.Consumers.OfType<TestConsumer>())
                 {
-                    await consumer.TestHandleMessage(new TestEventOne());
+                    await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
                 }
             }
 
@@ -641,14 +642,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             foreach (var consumer in _broker.Consumers.OfType<TestConsumer>().Take(3))
             {
-                await consumer.TestHandleMessage(new TestEventOne());
+                await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
             }
 
             _broker.Consumers.OfType<TestConsumer>().Sum(c => c.AcknowledgeCount).Should().Be(15);
 
             foreach (var consumer in _broker.Consumers.OfType<TestConsumer>().Skip(3))
             {
-                await consumer.TestHandleMessage(new TestEventOne());
+                await consumer.TestHandleMessage(new TestEventOne(), offset: new TestOffset());
             }
 
             _broker.Consumers.OfType<TestConsumer>().Sum(c => c.AcknowledgeCount).Should().Be(25);

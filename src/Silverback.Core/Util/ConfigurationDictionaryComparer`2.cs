@@ -40,8 +40,8 @@ namespace Silverback.Util
         : IEqualityComparer<IEnumerable<KeyValuePair<TKey, TValue>>>
     {
         public bool Equals(
-            IEnumerable<KeyValuePair<TKey, TValue>> dictionaryX,
-            IEnumerable<KeyValuePair<TKey, TValue>> dictionaryY)
+            IEnumerable<KeyValuePair<TKey, TValue>>? dictionaryX,
+            IEnumerable<KeyValuePair<TKey, TValue>>? dictionaryY)
         {
             dictionaryX = (dictionaryX ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
             dictionaryY = (dictionaryY ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();

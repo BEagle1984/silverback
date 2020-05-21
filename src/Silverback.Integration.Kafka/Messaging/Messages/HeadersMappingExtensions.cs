@@ -29,15 +29,10 @@ namespace Silverback.Messaging.Messages
                 .ToList();
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private static byte[]? Encode(string? value) =>
-            value != null
-                ? Encoding.GetBytes(value)
+        private static byte[]? Encode(string? value) => value != null ? Encoding.GetBytes(value)
                 : null;
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private static string? Decode(byte[]? value) =>
-            value != null
-                ? Encoding.GetString(value)
-                : null;
+        private static string? Decode(byte[]? value) => value != null ? Encoding.GetString(value) : null;
     }
 }

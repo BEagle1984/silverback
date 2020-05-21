@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        protected override IOffset ProduceCore(IRawOutboundEnvelope envelope)
+        protected override IOffset? ProduceCore(IRawOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        protected override Task<IOffset> ProduceAsyncCore(IRawOutboundEnvelope envelope)
+        protected override Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 

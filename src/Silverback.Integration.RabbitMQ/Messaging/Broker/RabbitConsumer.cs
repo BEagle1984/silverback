@@ -24,13 +24,13 @@ namespace Silverback.Messaging.Broker
 
         private readonly object _pendingOffsetLock = new object();
 
-        private IModel _channel;
+        private IModel? _channel;
 
-        private string _queueName;
+        private string? _queueName;
 
-        private AsyncEventingBasicConsumer _consumer;
+        private AsyncEventingBasicConsumer? _consumer;
 
-        private string _consumerTag;
+        private string? _consumerTag;
 
         private bool _disconnecting;
 
@@ -38,11 +38,30 @@ namespace Silverback.Messaging.Broker
 
         private RabbitOffset? _pendingOffset;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RabbitConsumer"/> class.
+        /// </summary>
+        /// <param name="broker">
+        ///     The <see cref="IBroker" /> that is instantiating the consumer.
+        /// </param>
+        /// <param name="endpoint">
+        ///     The endpoint to be consumed.
+        /// </param>
+        /// <param name="callback"> The delegate to be invoked when a message is received. </param>
+        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
+        /// <param name="connectionFactory">
+        ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
+        ///     endpoint.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+        /// </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
         public RabbitConsumer(
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
             ILogger<RabbitConsumer> logger)
@@ -51,7 +70,6 @@ namespace Silverback.Messaging.Broker
             _connectionFactory = connectionFactory;
             _logger = logger;
         }
-
 
         /// <inheritdoc />
         public override void Connect()
@@ -80,7 +98,7 @@ namespace Silverback.Messaging.Broker
 
             CommitPendingOffset();
 
-            _channel.BasicCancel(_consumerTag);
+            _channel?.BasicCancel(_consumerTag);
             _channel?.Dispose();
             _channel = null;
             _queueName = null;
@@ -174,6 +192,9 @@ namespace Silverback.Messaging.Broker
         {
             try
             {
+                if (_channel == null)
+                    throw new InvalidOperationException("The consumer is not connected.");
+
                 _channel.BasicAck(deliveryTag, true);
 
                 _logger.LogDebug(
@@ -197,6 +218,9 @@ namespace Silverback.Messaging.Broker
         {
             try
             {
+                if (_channel == null)
+                    throw new InvalidOperationException("The consumer is not connected.");
+
                 _channel.BasicNack(deliveryTag, true, true);
 
                 _logger.LogDebug(

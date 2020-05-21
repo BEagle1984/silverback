@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     /// <typeparam name="TBroker"> The type of the <see cref="IBroker" /> implementation being configured. </typeparam>
     [SuppressMessage(
-        "",
+        "ReSharper",
         "UnusedTypeParameter",
         Justification = "Used to find the configurator for the borker type being added")]
     public interface IBrokerOptionsConfigurator<TBroker>

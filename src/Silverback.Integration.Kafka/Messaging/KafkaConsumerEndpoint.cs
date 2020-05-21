@@ -54,7 +54,7 @@ namespace Silverback.Messaging
         /// <inheritdoc />
         public bool Equals(KafkaConsumerEndpoint other)
         {
-            if (ReferenceEquals(null, other))
+            if (other is null)
                 return false;
 
             if (ReferenceEquals(this, other))
@@ -64,9 +64,9 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
                 return false;
 
             if (ReferenceEquals(this, obj))

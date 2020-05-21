@@ -36,7 +36,7 @@ namespace Silverback.Messaging.LargeMessages
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null)
                 return false;
@@ -48,7 +48,7 @@ namespace Silverback.Messaging.LargeMessages
         }
 
         /// <inheritdoc />
-        [SuppressMessage("", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode() => Size;
     }
 }

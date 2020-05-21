@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.TestTypes
             if (serializer == null)
                 serializer = new JsonMessageSerializer();
 
-            var buffer = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
+            var buffer = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
             await TestHandleMessage(buffer, headers, offset);
         }
@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override Task Commit(IReadOnlyCollection<TestOffset> offsets)
         {
-            AcknowledgeCount += offsets.Count();
+            AcknowledgeCount += offsets.Count;
             return Task.CompletedTask;
         }
 

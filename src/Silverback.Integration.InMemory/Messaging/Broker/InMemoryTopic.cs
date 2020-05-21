@@ -23,11 +23,11 @@ namespace Silverback.Messaging.Broker
         public int NextOffset { get; private set; }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public IOffset Publish(byte[]? message, IEnumerable<MessageHeader> headers) =>
+        public IOffset? Publish(byte[]? message, IEnumerable<MessageHeader> headers) =>
             AsyncHelper.RunSynchronously(() => PublishAsync(message, headers));
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task<IOffset> PublishAsync(byte[]? message, IEnumerable<MessageHeader> headers)
+        public async Task<IOffset?> PublishAsync(byte[]? message, IEnumerable<MessageHeader> headers)
         {
             var offset = new InMemoryOffset(Name, NextOffset);
             await _consumers.ForEachAsync(c => c.Receive(message, headers, offset));

@@ -33,7 +33,7 @@ namespace Silverback.Messaging.HealthChecks
         public static TimeSpan MaxMessageAge { get; set; } = TimeSpan.FromSeconds(30);
 
         /// <summary>
-        /// Gets or sets the maximum amount of messages in the queue (default is null, meaning unrestricted).
+        /// Gets or sets the maximum amount of messages in the queue (default is <c> null </c>, meaning unrestricted).
         /// </summary>
         public static int? MaxQueueLength { get; set; }
 

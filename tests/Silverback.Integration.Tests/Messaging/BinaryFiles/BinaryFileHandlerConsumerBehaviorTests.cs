@@ -4,7 +4,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -28,7 +30,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             IRawInboundEnvelope result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { envelope }, null),
+                new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
                 null,
                 (context, _) =>
                 {
@@ -52,7 +54,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             IRawInboundEnvelope result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { envelope }, null),
+                new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
                 null,
                 (context, _) =>
                 {
@@ -79,7 +81,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             IRawInboundEnvelope result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { envelope }, null),
+                new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
                 null,
                 (context, _) =>
                 {

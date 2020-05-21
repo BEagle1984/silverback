@@ -14,15 +14,15 @@ namespace Silverback.Messaging.Serialization
         Default,
 
         /// <summary> Corresponds to <see cref="System.Text.Encoding.ASCII" />. </summary>
-        [SuppressMessage("", "InconsistentNaming", Justification = "Named after System.Text.Encoding")]
+        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Named after System.Text.Encoding")]
         ASCII,
 
         /// <summary> Corresponds to <see cref="System.Text.Encoding.UTF8" />. </summary>
-        [SuppressMessage("", "InconsistentNaming", Justification = "Named after System.Text.Encoding")]
+        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Named after System.Text.Encoding")]
         UTF8,
 
         /// <summary> Corresponds to <see cref="System.Text.Encoding.UTF32" />. </summary>
-        [SuppressMessage("", "InconsistentNaming", Justification = "Named after System.Text.Encoding")]
+        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Named after System.Text.Encoding")]
         UTF32,
 
         /// <summary> Corresponds to <see cref="System.Text.Encoding.Unicode" />. </summary>

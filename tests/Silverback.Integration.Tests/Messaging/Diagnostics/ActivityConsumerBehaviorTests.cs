@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
@@ -35,7 +36,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             var entered = false;
             await new ActivityConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { rawEnvelope }, null),
+                new ConsumerPipelineContext(new[] { rawEnvelope }, Substitute.For<IConsumer>()),
                 Substitute.For<IServiceProvider>(),
                 (_, __) =>
                 {
@@ -65,7 +66,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             var entered = false;
             new ActivityConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { rawEnvelope }, null),
+                new ConsumerPipelineContext(new[] { rawEnvelope }, Substitute.For<IConsumer>()),
                 Substitute.For<IServiceProvider>(),
                 (_, __) =>
                 {

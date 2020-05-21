@@ -12,9 +12,7 @@ namespace Silverback.Messaging
     /// <inheritdoc cref="IEndpoint" />
     public abstract class Endpoint : IEndpoint
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Endpoint" /> class.
-        /// </summary>
+        /// <summary> Initializes a new instance of the <see cref="Endpoint" /> class. </summary>
         /// <param name="name"> The endpoint name. </param>
         protected Endpoint(string name)
         {
@@ -48,19 +46,22 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
                 return false;
+
             if (ReferenceEquals(this, obj))
                 return true;
+
             if (obj.GetType() != GetType())
                 return false;
+
             return Equals((Endpoint)obj);
         }
 
         /// <inheritdoc />
-        [SuppressMessage("", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode()
         {
             return Name != null ? Name.GetHashCode(StringComparison.InvariantCulture) : 0;
@@ -70,16 +71,19 @@ namespace Silverback.Messaging
         ///     Determines whether the specified <see cref="Endpoint" /> is equal to the current
         ///     <see cref="Endpoint" />.
         /// </summary>
-        /// <param name="other">
-        ///     The object to compare with the current object.
-        /// </param>
+        /// <param name="other"> The object to compare with the current object. </param>
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
         protected bool Equals(Endpoint other)
         {
-            return Name == other?.Name &&
-                   ComparisonHelper.JsonEquals(Serializer, other.Serializer);
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return Name == other.Name && ComparisonHelper.JsonEquals(Serializer, other.Serializer);
         }
     }
 }

@@ -96,7 +96,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="RawBrokerEnvelope" /> containing body, headers, endpoint, etc.
         /// </param>
         /// <returns> The message offset. </returns>
-        protected abstract IOffset ProduceCore(IRawOutboundEnvelope envelope);
+        protected abstract IOffset? ProduceCore(IRawOutboundEnvelope envelope);
 
         /// <summary>
         ///     Publishes the specified message and returns its offset.
@@ -108,7 +108,7 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
         ///     message offset.
         /// </returns>
-        protected abstract Task<IOffset> ProduceAsyncCore(IRawOutboundEnvelope envelope);
+        protected abstract Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope);
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IProducerBehavior> behaviors,

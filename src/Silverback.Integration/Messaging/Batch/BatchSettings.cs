@@ -8,8 +8,8 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging.Batch
 {
     /// <summary>
-    ///     The batch consuming settings. To enable batch consuming just set the <c> Size </c> property to
-    ///     a value greater than 1.
+    ///     The batch consuming settings. To enable batch consuming just set the <c> Size </c> property to a
+    ///     value greater than 1.
     /// </summary>
     public class BatchSettings : IEquatable<BatchSettings>, IValidatableEndpointSettings
     {
@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Batch
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null)
                 return false;
@@ -55,7 +55,7 @@ namespace Silverback.Messaging.Batch
 
         /// <inheritdoc />
         [SuppressMessage(
-            "",
+            "ReSharper",
             "BaseObjectGetHashCodeCallInGetHashCode",
             Justification = Justifications.MutableProperties)]
         public override int GetHashCode() => base.GetHashCode();

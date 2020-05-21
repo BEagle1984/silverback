@@ -7,32 +7,43 @@ using System;
 
 namespace Silverback.Messaging
 {
+    /// <summary> Represents a queue to consume from. </summary>
     public sealed class RabbitQueueConsumerEndpoint : RabbitConsumerEndpoint, IEquatable<RabbitQueueConsumerEndpoint>
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RabbitQueueConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="name"> The name of the queue. </param>
         public RabbitQueueConsumerEndpoint(string name)
             : base(name)
         {
         }
 
+        /// <inheritdoc />
         public override string GetUniqueConsumerGroupName() => Name;
 
-        #region Equality
-
+        /// <inheritdoc />
         public bool Equals(RabbitQueueConsumerEndpoint other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
             return base.Equals(other) && Equals(Queue, other.Queue);
         }
 
-        public override bool Equals(object obj)
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((RabbitQueueConsumerEndpoint) obj);
-        }
+            if (obj is null)
+                return false;
 
-        #endregion
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((RabbitQueueConsumerEndpoint)obj);
+        }
     }
 }

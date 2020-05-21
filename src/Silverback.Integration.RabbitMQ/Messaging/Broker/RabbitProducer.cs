@@ -30,10 +30,19 @@ namespace Silverback.Messaging.Broker
 
         private IModel? _channel;
 
+        /// <summary> Initializes a new instance of the <see cref="RabbitProducer" /> class. </summary>
+        /// <param name="broker"> The <see cref="IBroker" /> that instantiated this producer. </param>
+        /// <param name="endpoint"> The endpoint to produce to. </param>
+        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
+        /// <param name="connectionFactory">
+        ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
+        ///     endpoint.
+        /// </param>
+        /// <param name="logger"> The <see cref="ILogger" />. </param>
         public RabbitProducer(
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior> behaviors,
+            IReadOnlyCollection<IProducerBehavior>? behaviors,
             IRabbitConnectionFactory connectionFactory,
             ILogger<Producer> logger)
             : base(broker, endpoint, behaviors, logger)
@@ -45,11 +54,22 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        protected override IOffset ProduceCore(IRawOutboundEnvelope envelope) =>
+        public void Dispose()
+        {
+            Flush();
+
+            _cancellationTokenSource.Cancel();
+
+            _channel?.Dispose();
+            _channel = null;
+        }
+
+        /// <inheritdoc />
+        protected override IOffset? ProduceCore(IRawOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceAsyncCore(envelope));
 
         /// <inheritdoc />
-        protected override Task<IOffset> ProduceAsyncCore(IRawOutboundEnvelope envelope)
+        protected override Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope)
         {
             var queuedMessage = new QueuedMessage(envelope);
 
@@ -57,6 +77,9 @@ namespace Silverback.Messaging.Broker
 
             return queuedMessage.TaskCompletionSource.Task;
         }
+
+        private static string GetRoutingKey(IEnumerable<MessageHeader> headers) =>
+            headers?.FirstOrDefault(header => header.Name == RabbitMessageHeaders.RoutingKey)?.Value ?? string.Empty;
 
         [SuppressMessage("", "CA1031", Justification = "Exception is returned")]
         private void ProcessQueue(CancellationToken cancellationToken)
@@ -75,13 +98,19 @@ namespace Silverback.Messaging.Broker
                     }
                     catch (Exception ex)
                     {
-                        queuedMessage.TaskCompletionSource.SetException(new ProduceException("Error occurred producing the message. See inner exception for details.", ex));
+                        queuedMessage.TaskCompletionSource.SetException(
+                            new ProduceException(
+                                "Error occurred producing the message. See inner exception for details.",
+                                ex));
                     }
                 }
             }
             catch (OperationCanceledException ex)
             {
-                _logger.LogTrace(EventIds.RabbitProducerQueueProcessingCancelled, ex, "Producer queue processing was cancelled.");
+                _logger.LogTrace(
+                    EventIds.RabbitProducerQueueProcessingCancelled,
+                    ex,
+                    "Producer queue processing was cancelled.");
             }
         }
 
@@ -91,7 +120,7 @@ namespace Silverback.Messaging.Broker
 
             var properties = _channel.CreateBasicProperties();
             properties.Persistent = true; // TODO: Make it configurable?
-            properties.Headers = envelope.Headers.ToDictionary(header => header.Name, header => (object)header.Value);
+            properties.Headers = envelope.Headers.ToDictionary(header => header.Name, header => (object?)header.Value);
 
             switch (Endpoint)
             {
@@ -117,26 +146,14 @@ namespace Silverback.Messaging.Broker
                 _channel.WaitForConfirmsOrDie(Endpoint.ConfirmationTimeout.Value);
         }
 
-        private string GetRoutingKey(IEnumerable<MessageHeader> headers) =>
-            headers?.FirstOrDefault(header => header.Name == RabbitMessageHeaders.RoutingKey)?.Value ?? "";
-
         private void Flush()
         {
             _queue.CompleteAdding();
 
             while (!_queue.IsCompleted)
+            {
                 Task.Delay(100).Wait();
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            Flush();
-
-            _cancellationTokenSource.Cancel();
-
-            _channel?.Dispose();
-            _channel = null;
+            }
         }
 
         private class QueuedMessage
@@ -144,12 +161,12 @@ namespace Silverback.Messaging.Broker
             public QueuedMessage(IRawOutboundEnvelope envelope)
             {
                 Envelope = envelope;
-                TaskCompletionSource = new TaskCompletionSource<IOffset>();
+                TaskCompletionSource = new TaskCompletionSource<IOffset?>();
             }
 
             public IRawOutboundEnvelope Envelope { get; }
 
-            public TaskCompletionSource<IOffset> TaskCompletionSource { get; }
+            public TaskCompletionSource<IOffset?> TaskCompletionSource { get; }
         }
     }
 }

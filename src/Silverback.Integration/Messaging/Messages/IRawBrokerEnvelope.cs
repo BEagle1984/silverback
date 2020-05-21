@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets the message offset (or similar construct if using a message broker other than Kafka).
         /// </summary>
-        IOffset Offset { get; }
+        IOffset? Offset { get; }
 
         /// <summary>
         ///     Gets the source or destination endpoint.

@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Configuration
         public bool IsAutoCommitEnabled => EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled;
 
         /// <summary>
-        ///     Defines the number of message processed before committing the offset to the server. The most
+        ///     Defines the number of message to be processed before committing the offset to the server. The most
         ///     reliable level is 1 but it reduces throughput.
         /// </summary>
         public int CommitOffsetEach { get; set; } = -1;
@@ -75,7 +75,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null)
                 return false;
