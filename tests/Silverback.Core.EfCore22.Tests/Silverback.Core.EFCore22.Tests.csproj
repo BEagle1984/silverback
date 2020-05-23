@@ -26,6 +26,28 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Silverback.Core.EFCore22\Silverback.Core.EFCore22.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Core.Model\Silverback.Core.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Silverback.Core.EfCore30.Tests\TestTypes\Model\Person.cs">
+      <Link>TestTypes\Model\Person.cs</Link>
+    </Compile>
+    <Compile Include="..\Silverback.Core.EfCore30.Tests\TestTypes\Model\TestAggregateRoot.cs">
+      <Link>TestTypes\Model\TestAggregateRoot.cs</Link>
+    </Compile>
+    <Compile Include="..\Silverback.Core.EfCore30.Tests\TestTypes\Model\TestDomainEventOne.cs">
+      <Link>TestTypes\Model\TestDomainEventOne.cs</Link>
+    </Compile>
+    <Compile Include="..\Silverback.Core.EfCore30.Tests\TestTypes\Model\TestDomainEventTwo.cs">
+      <Link>TestTypes\Model\TestDomainEventTwo.cs</Link>
+    </Compile>
+    <Compile Include="..\Silverback.Core.EfCore30.Tests\TestTypes\TestDbContext.cs">
+      <Link>TestTypes\TestDbContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Silverback.Core.EfCore30.Tests\TestTypes\TestDbContextInitializer.cs">
+      <Link>TestTypes\TestDbContextInitializer.cs</Link>
+    </Compile>
   </ItemGroup>
 
 </Project>

@@ -26,12 +26,14 @@ namespace Silverback.Messaging.LargeMessages
         }
 
         /// <inheritdoc />
-        public bool Equals(ChunkSettings other)
+        public bool Equals(ChunkSettings? other)
         {
             if (other is null)
                 return false;
+
             if (ReferenceEquals(this, other))
                 return true;
+
             return Size == other.Size;
         }
 
@@ -40,10 +42,13 @@ namespace Silverback.Messaging.LargeMessages
         {
             if (obj is null)
                 return false;
+
             if (ReferenceEquals(this, obj))
                 return true;
+
             if (obj.GetType() != GetType())
                 return false;
+
             return Equals((ChunkSettings)obj);
         }
 

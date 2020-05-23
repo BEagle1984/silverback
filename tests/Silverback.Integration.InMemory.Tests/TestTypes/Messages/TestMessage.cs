@@ -9,6 +9,7 @@ namespace Silverback.Tests.Integration.InMemory.TestTypes.Messages
     public class TestMessage : IMessage
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public string Content { get; set; }
+
+        public string? Content { get; set; }
     }
 }

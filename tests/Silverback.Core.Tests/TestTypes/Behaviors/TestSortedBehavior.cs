@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Silverback.Messaging.Publishing;
 
@@ -19,9 +20,9 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
 
         public int SortIndex { get; }
 
-        public Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
+        public Task<IReadOnlyCollection<object?>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
         {
-            _calls.Add(SortIndex.ToString());
+            _calls.Add(SortIndex.ToString(CultureInfo.InvariantCulture));
 
             return next(messages);
         }

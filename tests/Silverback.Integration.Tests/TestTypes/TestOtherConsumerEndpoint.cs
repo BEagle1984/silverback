@@ -19,23 +19,29 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public override string GetUniqueConsumerGroupName() => Name;
 
-        #region IEquatable
-
-        public bool Equals(TestOtherConsumerEndpoint other)
+        public bool Equals(TestOtherConsumerEndpoint? other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
             return base.Equals(other);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((TestOtherConsumerEndpoint) obj);
-        }
+            if (ReferenceEquals(null, obj))
+                return false;
 
-        #endregion
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((TestOtherConsumerEndpoint)obj);
+        }
     }
 }

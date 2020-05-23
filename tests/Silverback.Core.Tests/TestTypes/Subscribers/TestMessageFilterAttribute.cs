@@ -7,7 +7,7 @@ using Silverback.Tests.Core.TestTypes.Messages;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    public class TestMessageFilterAttribute : MessageFilterAttribute
+    public sealed class TestMessageFilterAttribute : MessageFilterAttribute
     {
         public override bool MustProcess(object message) =>
             message is ITestMessage testMessage && testMessage.Message == "yes" ||

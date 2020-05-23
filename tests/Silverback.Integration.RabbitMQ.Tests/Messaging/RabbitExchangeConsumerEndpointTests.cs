@@ -87,10 +87,12 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
                 }
             };
 
-            var json = JsonConvert.SerializeObject(endpoint1,
+            var json = JsonConvert.SerializeObject(
+                endpoint1,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
-            var endpoint2 = JsonConvert.DeserializeObject<RabbitExchangeConsumerEndpoint>(json,
+            var endpoint2 = JsonConvert.DeserializeObject<RabbitExchangeConsumerEndpoint>(
+                json,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             endpoint1.Equals(endpoint2).Should().BeTrue();
@@ -235,10 +237,12 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
                 }
             };
 
-            var json = JsonConvert.SerializeObject(endpoint1,
+            var json = JsonConvert.SerializeObject(
+                endpoint1,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
-            var endpoint2 = JsonConvert.DeserializeObject<RabbitExchangeConsumerEndpoint>(json,
+            var endpoint2 = JsonConvert.DeserializeObject<RabbitExchangeConsumerEndpoint>(
+                json,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             endpoint2.Should().BeEquivalentTo(endpoint1);

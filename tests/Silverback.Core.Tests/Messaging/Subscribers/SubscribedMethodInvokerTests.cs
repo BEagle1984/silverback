@@ -27,7 +27,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var calls = 0;
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<TestEventOne>) Method1, new SubscriptionOptions());
+            var subscribedMethod = new DelegateSubscription((Action<TestEventOne>)Method1, new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -48,7 +48,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var calls = 0;
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<IEvent>) Method1, new SubscriptionOptions());
+            var subscribedMethod = new DelegateSubscription((Action<IEvent>)Method1, new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -70,7 +70,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod =
-                new DelegateSubscription((Action<TestCommandOne>) Method1, new SubscriptionOptions());
+                new DelegateSubscription((Action<TestCommandOne>)Method1, new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -92,7 +92,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod =
-                new DelegateSubscription((Action<IEnumerable<TestEventOne>>) Method1, new SubscriptionOptions());
+                new DelegateSubscription((Action<IEnumerable<TestEventOne>>)Method1, new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -114,7 +114,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod =
-                new DelegateSubscription((Action<IEnumerable<IEvent>>) Method1, new SubscriptionOptions());
+                new DelegateSubscription((Action<IEnumerable<IEvent>>)Method1, new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -135,7 +135,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var calls = 0;
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<IEnumerable<TestCommandOne>>) Method1,
+            var subscribedMethod = new DelegateSubscription(
+                (Action<IEnumerable<TestCommandOne>>)Method1,
                 new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
@@ -158,7 +159,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod =
-                new DelegateSubscription((Action<IReadOnlyCollection<TestEventOne>>) Method1,
+                new DelegateSubscription(
+                    (Action<IReadOnlyCollection<TestEventOne>>)Method1,
                     new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
@@ -181,7 +183,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
             var subscribedMethod =
-                new DelegateSubscription((Action<IReadOnlyCollection<IEvent>>) Method1, new SubscriptionOptions());
+                new DelegateSubscription((Action<IReadOnlyCollection<IEvent>>)Method1, new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -202,7 +204,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var calls = 0;
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<IReadOnlyCollection<TestCommandOne>>) Method1,
+            var subscribedMethod = new DelegateSubscription(
+                (Action<IReadOnlyCollection<TestCommandOne>>)Method1,
                 new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
@@ -224,7 +227,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var calls = 0;
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<IEvent>) Method1, new SubscriptionOptions());
+            var subscribedMethod = new DelegateSubscription((Action<IEvent>)Method1, new SubscriptionOptions());
 
             var envelopes = new object[]
             {
@@ -243,7 +246,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
 
             void Method1(IEvent @event)
             {
-                if (@event != null) calls++;
+                if (@event != null)
+                    calls++;
             }
         }
 
@@ -253,7 +257,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var calls = 0;
 
             var (resolver, handler) = GetDefaultResolverAndHandler();
-            var subscribedMethod = new DelegateSubscription((Action<TestEnvelope>) Method1, new SubscriptionOptions());
+            var subscribedMethod = new DelegateSubscription((Action<TestEnvelope>)Method1, new SubscriptionOptions());
 
             var envelopes = new object[]
             {
@@ -272,19 +276,24 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
 
             void Method1(TestEnvelope envelope)
             {
-                if (envelope != null) calls++;
+                if (envelope != null)
+                    calls++;
             }
         }
 
-        private (ArgumentsResolverService, ReturnValueHandlerService) GetDefaultResolverAndHandler() =>
-        (
-            new ArgumentsResolverService(new IArgumentResolver[]
-            {
-                new SingleMessageArgumentResolver(),
-                new ReadOnlyCollectionMessageArgumentResolver(),
-                new EnumerableMessageArgumentResolver()
-            }),
-            new ReturnValueHandlerService(new IReturnValueHandler[0])
-        );
+        private static (ArgumentsResolverService, ReturnValueHandlerService) GetDefaultResolverAndHandler()
+        {
+            var argumentsResolverService = new ArgumentsResolverService(
+                new IArgumentResolver[]
+                {
+                    new SingleMessageArgumentResolver(),
+                    new ReadOnlyCollectionMessageArgumentResolver(),
+                    new EnumerableMessageArgumentResolver()
+                });
+
+            var returnValueHandlerService = new ReturnValueHandlerService(Array.Empty<IReturnValueHandler>());
+
+            return (argumentsResolverService, returnValueHandlerService);
+        }
     }
 }

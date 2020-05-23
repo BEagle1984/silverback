@@ -7,6 +7,7 @@ using FluentAssertions;
 using Silverback.Domain;
 using Silverback.Domain.Util;
 using Silverback.Tests.EventSourcing.TestTypes;
+using Silverback.Tests.EventSourcing.TestTypes.EntityEvents;
 using Xunit;
 
 namespace Silverback.Tests.EventSourcing.Domain.Util
@@ -18,7 +19,7 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
         {
             var entity = new Person();
 
-            EventsApplier.Apply(new Person.NameChangedEvent { NewName = "Silverback" }, entity);
+            EventsApplier.Apply(new NameChangedEvent { NewName = "Silverback" }, entity);
 
             entity.Name.Should().Be("Silverback");
         }
@@ -53,7 +54,6 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             entity.Calls.Should().Be(2);
         }
 
-
         [Fact]
         public void Apply_NoMatchingMethod_ExceptionThrown()
         {
@@ -64,10 +64,22 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             action.Should().Throw<SilverbackException>();
         }
 
-        [SuppressMessage("", "UnusedMember.Local")]
-        [SuppressMessage("", "UnusedParameter.Local")]
         private class TestEntity : EventSourcingDomainEntity<TestEntity.TestEntityEvent>
         {
+            public int Calls { get; private set; }
+
+            [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+            [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+            public void Apply(TestEntityEvent1 event1) => Calls++;
+
+            [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+            [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+            protected void Apply(TestEntityEvent2 event2) => Calls++;
+
+            [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+            [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+            private void Apply2(TestEntityEvent2 event2, bool isReplaying) => Calls++;
+
             public abstract class TestEntityEvent : EntityEvent
             {
             }
@@ -83,13 +95,6 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             public class TestEntityEvent3 : TestEntityEvent
             {
             }
-
-            public int Calls { get; private set; }
-
-            public void Apply(TestEntityEvent1 event1) => Calls++;
-
-            protected void Apply(TestEntityEvent2 event2) => Calls++;
-            private void Apply2(TestEntityEvent2 event2, bool isReplaying) => Calls++;
         }
     }
 }

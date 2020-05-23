@@ -96,7 +96,7 @@ namespace Silverback.Messaging.LargeMessages
         }
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.Subscriber)]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         private void OnRollback(ConsumingAbortedEvent message)
         {
             if (message.Context.CommitOffsets == null || !message.Context.CommitOffsets.Any())

@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <inheritdoc />
-        public bool Equals(KafkaProducerConfig other)
+        public bool Equals(KafkaProducerConfig? other)
         {
             if (other is null)
                 return false;

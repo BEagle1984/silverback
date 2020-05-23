@@ -21,24 +21,26 @@ namespace Silverback.Messaging.Broker
         IProducer GetProducer(IProducerEndpoint endpoint);
 
         /// <summary>
-        ///     Returns an <see cref="IConsumer" /> to be used to consume from the specified endpoint.
+        ///     Adds an <see cref="IConsumer" /> that will consume from the specified endpoint as soon as the
+        ///     broker is connected. The received messages will be forwarded to the specified callback delegate.
         /// </summary>
         /// <param name="endpoint"> The source endpoint. </param>
         /// <param name="callback"> The delegate to be invoked when a message is received. </param>
         /// <returns>
         ///     The <see cref="IConsumer" /> for the specified endpoint.
         /// </returns>
-        IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback);
+        IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback);
 
         /// <summary>
-        ///     Returns an <see cref="IConsumer" /> to be used to consume from the specified endpoint.
+        ///     Adds an <see cref="IConsumer" /> that will consume from the specified endpoint as soon as the
+        ///     broker is connected. The received messages will be forwarded to the specified callback delegate.
         /// </summary>
         /// <param name="endpoint"> The source endpoint. </param>
         /// <param name="callback"> The delegate to be invoked when a message is received. </param>
         /// <returns>
         ///     The <see cref="IConsumer" /> for the specified endpoint.
         /// </returns>
-        IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback);
+        IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback);
 
         /// <summary>
         ///     Connect to all message brokers to start consuming.

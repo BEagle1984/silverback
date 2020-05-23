@@ -58,11 +58,11 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        public IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback)
+        public IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback)
         {
             Check.NotNull(callback, nameof(callback));
 
-            return GetConsumer(
+            return AddConsumer(
                 endpoint,
                 args =>
                 {
@@ -72,7 +72,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        public IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback)
+        public IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback)
         {
             Check.NotNull(endpoint, nameof(endpoint));
 
@@ -82,7 +82,7 @@ namespace Silverback.Messaging.Broker
                     broker => broker.ConsumerEndpointType,
                     endpointType,
                     _consumerEndpointTypeMap)
-                .GetConsumer(endpoint, callback);
+                .AddConsumer(endpoint, callback);
         }
 
         /// <inheritdoc />

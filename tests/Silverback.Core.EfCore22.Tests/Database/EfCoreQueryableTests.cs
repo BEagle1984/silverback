@@ -7,13 +7,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Database;
-using Silverback.Tests.Core.EFCore22.TestTypes;
-using Silverback.Tests.Core.EFCore22.TestTypes.Model;
+using Silverback.Tests.Core.EFCore30.TestTypes;
+using Silverback.Tests.Core.EFCore30.TestTypes.Model;
 using Xunit;
 
 namespace Silverback.Tests.Core.EFCore22.Database
 {
-    public sealed class EfCoreQueryableTests : IDisposable
+    public sealed class EfCoreQueryableTests : IAsyncDisposable
     {
         private readonly TestDbContextInitializer _dbInitializer;
         private readonly TestDbContext _dbContext;
@@ -236,10 +236,12 @@ namespace Silverback.Tests.Core.EFCore22.Database
             result.First().Value.Should().Be(15);
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             _dbContext?.Dispose();
-            _dbInitializer?.Dispose();
+
+            if (_dbInitializer != null)
+                await _dbInitializer.DisposeAsync();
         }
     }
 }

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
@@ -17,8 +16,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore30
 {
-    [SuppressMessage("", "EmptyGeneralCatchClause")]
-    public class DbContextEventsPublisherTests : IDisposable
+    public sealed class DbContextEventsPublisherTests : IAsyncDisposable
     {
         private readonly TestDbContext _dbContext;
         private readonly IPublisher _publisher;
@@ -134,7 +132,7 @@ namespace Silverback.Tests.Core.EFCore30
                 .Do(x =>
                 {
                     if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
-                        throw new Exception();
+                        throw new InvalidOperationException();
                 });
 
             entity.Entity.AddEvent<TestDomainEventOne>();
@@ -145,16 +143,20 @@ namespace Silverback.Tests.Core.EFCore30
             }
             catch (Exception)
             {
+                // ignored
             }
 
             await _publisher.Received(1).PublishAsync(Arg.Any<TransactionStartedEvent>());
             await _publisher.Received(1).PublishAsync(Arg.Any<TransactionAbortedEvent>());
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            _dbContext?.Dispose();
-            _connection?.Dispose();
+            if (_connection == null)
+                return;
+
+            _connection.Close();
+            await _connection.DisposeAsync();
         }
     }
 }

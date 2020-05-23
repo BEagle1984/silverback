@@ -217,9 +217,9 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         }
 
         [Fact]
-        public void GetConsumer_ExchangeEndpoint_ConsumerIsReturned()
+        public void AddConsumer_ExchangeEndpoint_ConsumerIsReturned()
         {
-            var consumer = _broker.GetConsumer(
+            var consumer = _broker.AddConsumer(
                 new RabbitExchangeConsumerEndpoint("test-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
@@ -230,23 +230,23 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         }
 
         [Fact]
-        public void GetConsumer_QueueEndpoint_ConsumerIsReturned()
+        public void AddConsumer_QueueEndpoint_ConsumerIsReturned()
         {
-            var consumer = _broker.GetConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
 
             consumer.Should().NotBeNull();
         }
 
         [Fact]
-        public void GetConsumer_SameExchangeEndpoint_DifferentInstanceIsReturned()
+        public void AddConsumer_SameExchangeEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(
+            var consumer = _broker.AddConsumer(
                 new RabbitExchangeConsumerEndpoint("test-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
                 },
                 VoidCallback);
-            var consumer2 = _broker.GetConsumer(
+            var consumer2 = _broker.AddConsumer(
                 new RabbitExchangeConsumerEndpoint("test-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
@@ -257,24 +257,24 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         }
 
         [Fact]
-        public void GetConsumer_SameQueueEndpoint_DifferentInstanceIsReturned()
+        public void AddConsumer_SameQueueEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
-            var consumer2 = _broker.GetConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer2 = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
 
             consumer2.Should().NotBeSameAs(consumer);
         }
 
         [Fact]
-        public void GetConsumer_DifferentExchangeEndpoint_DifferentInstanceIsReturned()
+        public void AddConsumer_DifferentExchangeEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(
+            var consumer = _broker.AddConsumer(
                 new RabbitExchangeConsumerEndpoint("test-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
                 },
                 VoidCallback);
-            var consumer2 = _broker.GetConsumer(
+            var consumer2 = _broker.AddConsumer(
                 new RabbitExchangeConsumerEndpoint("other-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
@@ -285,24 +285,24 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         }
 
         [Fact]
-        public void GetConsumer_DifferentQueueEndpoint_DifferentInstanceIsReturned()
+        public void AddConsumer_DifferentQueueEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
-            var consumer2 = _broker.GetConsumer(new RabbitQueueConsumerEndpoint("other-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer2 = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("other-endpoint"), VoidCallback);
 
             consumer2.Should().NotBeSameAs(consumer);
         }
 
         [Fact]
-        public void GetConsumer_DifferentEndpointType_DifferentInstanceIsReturned()
+        public void AddConsumer_DifferentEndpointType_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(
+            var consumer = _broker.AddConsumer(
                 new RabbitExchangeConsumerEndpoint("test-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
                 },
                 VoidCallback);
-            var consumer2 = _broker.GetConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer2 = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
 
             consumer2.Should().NotBeSameAs(consumer);
         }

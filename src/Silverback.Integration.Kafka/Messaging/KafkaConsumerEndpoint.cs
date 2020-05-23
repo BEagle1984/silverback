@@ -52,7 +52,7 @@ namespace Silverback.Messaging
                 : Name;
 
         /// <inheritdoc />
-        public bool Equals(KafkaConsumerEndpoint other)
+        public bool Equals(KafkaConsumerEndpoint? other)
         {
             if (other is null)
                 return false;

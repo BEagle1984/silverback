@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Tests.Core.EFCore30.TestTypes.Base
+namespace Silverback.Tests.EventSourcing.TestTypes.DomainEvents
 {
-    public interface IQuery<out TResult> : IRequest<TResult>
+    public abstract class PersonDomainEvent
     {
     }
 }

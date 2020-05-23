@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         public async Task HandleMessage_SomeMessages_MessagesReceived()
         {
             var envelopes = new List<IRawInboundEnvelope>();
-            var consumer = (TestConsumer)_broker.GetConsumer(
+            var consumer = (TestConsumer)_broker.AddConsumer(
                 TestConsumerEndpoint.GetDefault(),
                 args => envelopes.AddRange(args.Envelopes));
             _broker.Connect();
@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public async Task HandleMessage_MessageCorrectlyProcessed_ConsumingCompletedEventPublished()
         {
-            var consumer = (TestConsumer)_broker.GetConsumer(
+            var consumer = (TestConsumer)_broker.AddConsumer(
                 TestConsumerEndpoint.GetDefault(),
                 args =>
                 {
@@ -81,7 +81,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Fact]
         public async Task HandleMessage_SomeMessagesFailToBeProcessed_ConsumingCompletedAndAbortedEventsPublished()
         {
-            var consumer = (TestConsumer)_broker.GetConsumer(
+            var consumer = (TestConsumer)_broker.AddConsumer(
                 TestConsumerEndpoint.GetDefault(),
                 args =>
                 {
@@ -123,7 +123,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         public async Task HandleMessage_SomeMessages_HeadersReceivedWithInboundMessages()
         {
             var envelopes = new List<IRawInboundEnvelope>();
-            var consumer = (TestConsumer)_broker.GetConsumer(
+            var consumer = (TestConsumer)_broker.AddConsumer(
                 TestConsumerEndpoint.GetDefault(),
                 args => envelopes.AddRange(args.Envelopes));
             _broker.Connect();
@@ -149,7 +149,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         public async Task HandleMessage_SomeMessages_FailedAttemptsReceivedWithInboundMessages()
         {
             var envelopes = new List<IRawInboundEnvelope>();
-            var consumer = (TestConsumer)_broker.GetConsumer(
+            var consumer = (TestConsumer)_broker.AddConsumer(
                 TestConsumerEndpoint.GetDefault(),
                 args => envelopes.AddRange(args.Envelopes));
             _broker.Connect();

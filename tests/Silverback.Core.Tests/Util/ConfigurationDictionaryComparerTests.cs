@@ -92,20 +92,20 @@ namespace Silverback.Tests.Core.Util
         [Fact]
         public void Equals_NullVsNonNull_FalseIsReturned()
         {
-            var dictionaryX = new Dictionary<string, string>
+            var dictionaryX = new Dictionary<string, string?>
             {
                 { "one", "uno" },
                 { "two", "due" },
                 { "three", "tre" }
             };
-            var dictionaryY = new Dictionary<string, string>
+            var dictionaryY = new Dictionary<string, string?>
             {
                 { "one", "uno" },
                 { "two", "due" },
                 { "three", null }
             };
 
-            var result = new ConfigurationDictionaryComparer<string, string>().Equals(dictionaryX, dictionaryY);
+            var result = new ConfigurationDictionaryComparer<string, string?>().Equals(dictionaryX, dictionaryY);
 
             result.Should().BeFalse();
         }
@@ -113,30 +113,30 @@ namespace Silverback.Tests.Core.Util
         [Fact]
         public void Equals_NullVsMissingKey_FalseIsReturned()
         {
-            var dictionaryX = new Dictionary<string, string>
+            var dictionaryX = new Dictionary<string, string?>
             {
                 { "one", "uno" },
                 { "two", "due" },
                 { "three", null }
             };
-            var dictionaryY = new Dictionary<string, string>
+            var dictionaryY = new Dictionary<string, string?>
             {
                 { "one", "uno" },
                 { "two", "due" }
             };
 
-            var result = new ConfigurationDictionaryComparer<string, string>().Equals(dictionaryX, dictionaryY);
+            var result = new ConfigurationDictionaryComparer<string, string?>().Equals(dictionaryX, dictionaryY);
 
             result.Should().BeFalse();
         }
 
         [Fact]
-        [SuppressMessage("", "CollectionNeverUpdated.Local")]
-        [SuppressMessage("", "ExpressionIsAlwaysNull")]
+        [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local", Justification = "Test")]
+        [SuppressMessage("ReSharper", "ExpressionIsAlwaysNull", Justification = "Test")]
         public void Equals_NullDictionaryVsEmptyDictionary_TrueIsReturned()
         {
-            var dictionaryX = new Dictionary<string, string>();
-            var dictionaryY = (Dictionary<string, string>) null;
+            Dictionary<string, string>? dictionaryX = new Dictionary<string, string>();
+            Dictionary<string, string>? dictionaryY = null;
 
             var result = new ConfigurationDictionaryComparer<string, string>().Equals(dictionaryX, dictionaryY);
 

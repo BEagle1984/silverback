@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Batch
         public TimeSpan MaxWaitTime { get; set; } = TimeSpan.MaxValue;
 
         /// <inheritdoc />
-        public bool Equals(BatchSettings other)
+        public bool Equals(BatchSettings? other)
         {
             if (other is null)
                 return false;

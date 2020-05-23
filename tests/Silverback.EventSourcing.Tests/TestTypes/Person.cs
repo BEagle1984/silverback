@@ -5,31 +5,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Domain;
+using Silverback.Tests.EventSourcing.TestTypes.DomainEvents;
+using Silverback.Tests.EventSourcing.TestTypes.EntityEvents;
 
 namespace Silverback.Tests.EventSourcing.TestTypes
 {
-    [SuppressMessage("", "UnusedAutoPropertyAccessor.Local")]
-    public class Person : EventSourcingDomainEntity<int, Person.PersonDomainEvent>
+    public class Person : EventSourcingDomainEntity<int, PersonDomainEvent>
     {
-        public class NameChangedEvent : EntityEvent
-        {
-            public string NewName { get; set; }
-        }
-
-        public class AgeChangedEvent : EntityEvent
-        {
-            public int NewAge { get; set; }
-        }
-
-        public class PhoneNumberChangedEvent : EntityEvent
-        {
-            public string NewPhoneNumber { get; set; }
-        }
-
-        public abstract class PersonDomainEvent
-        {
-        }
-
         public Person()
         {
         }
@@ -76,7 +58,7 @@ namespace Silverback.Tests.EventSourcing.TestTypes
         public IEnumerable<IEntityEvent> MergeEvents(IEnumerable<IEntityEvent> events) =>
             events.Select(AddAndApplyEvent).ToList();
 
-        [SuppressMessage("", "UnusedMember.Local")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         private void Apply(NameChangedEvent @event, bool isReplaying)
         {
             // Skip if a newer event exists (just to show how it can be done)
@@ -86,10 +68,10 @@ namespace Silverback.Tests.EventSourcing.TestTypes
             Name = @event.NewName;
         }
 
-        [SuppressMessage("", "UnusedMember.Local")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         private void Apply(AgeChangedEvent @event) => Age = @event.NewAge;
 
-        [SuppressMessage("", "UnusedMember.Local")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         private void Apply(PhoneNumberChangedEvent @event, bool isReplaying)
         {
             PhoneNumber = @event.NewPhoneNumber;

@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Messages
         public InboundEnvelope(
             byte[] rawMessage,
             IEnumerable<MessageHeader> headers,
-            IOffset offset,
+            IOffset? offset,
             IConsumerEndpoint endpoint,
             string actualEndpointName)
             : base(rawMessage, headers, endpoint, actualEndpointName, offset)

@@ -9,14 +9,16 @@ using Silverback.Tests.Core.TestTypes.Messages;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    [SuppressMessage("", "UnusedMember.Local")]
-    [SuppressMessage("", "UnusedParameter.Local")]
     public class TestExceptionSubscriber : ISubscriber
     {
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [Subscribe]
-        void OnMessageReceived(TestEventOne message) => throw new Exception("Test");
+        private void OnMessageReceived(TestEventOne message) => throw new InvalidOperationException("Test");
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [Subscribe]
-        Task OnMessageReceivedAsync(TestEventTwo message) => throw new Exception("Test");
+        private Task OnMessageReceivedAsync(TestEventTwo message) => throw new InvalidOperationException("Test");
     }
 }

@@ -60,15 +60,16 @@ namespace Silverback.EventStore
         ///     having applied the stored events.
         /// </summary>
         /// <param name="predicate"> The predicate applied to get the desired event store. </param>
+        /// <param name="snapshot"> The optional snapshot datetime. When not <c>null</c> only the events registered until the specified datetime are applied, returning the entity in its state back in that moment.</param>
         /// <returns> The domain entity or <c>null</c> if not found. </returns>
-        public TDomainEntity? Find(Expression<Func<TEventStoreEntity, bool>> predicate)
+        public TDomainEntity? Find(Expression<Func<TEventStoreEntity, bool>> predicate, DateTime? snapshot = null)
         {
             var eventStoreEntity = EventStores.FirstOrDefault(predicate);
 
             if (eventStoreEntity == null)
                 return null;
 
-            return GetDomainEntity(eventStoreEntity);
+            return GetDomainEntity(eventStoreEntity, snapshot);
         }
 
         /// <summary>
@@ -76,44 +77,20 @@ namespace Silverback.EventStore
         ///     having applied the stored events.
         /// </summary>
         /// <param name="predicate"> The predicate applied to get the desired event store. </param>
+        /// <param name="snapshot"> The optional snapshot datetime. When not <c>null</c> only the events registered until the specified datetime are applied, returning the entity in its state back in that moment.</param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the domain
         ///     entity or <c>null</c> if not found.
         /// </returns>
-        public async Task<TDomainEntity?> FindAsync(Expression<Func<TEventStoreEntity, bool>> predicate)
+        public async Task<TDomainEntity?> FindAsync(Expression<Func<TEventStoreEntity, bool>> predicate, DateTime? snapshot = null)
         {
             var eventStoreEntity = await EventStores.FirstOrDefaultAsync(predicate);
 
             if (eventStoreEntity == null)
                 return null;
 
-            return GetDomainEntity(eventStoreEntity);
+            return GetDomainEntity(eventStoreEntity, snapshot);
         }
-
-        /// <summary>
-        ///     Gets the aggregate entity folding the events from the specified event store. Only the events until
-        ///     the specified date and time are applied, giving a snapshot of a past state of the entity.
-        /// </summary>
-        /// <param name="predicate"> The predicate applied to get the desired event store. </param>
-        /// <param name="snapshot"> The snapshot date and time. </param>
-        /// <returns> The domain entity. </returns>
-        public TDomainEntity GetSnapshot(Expression<Func<TEventStoreEntity, bool>> predicate, DateTime snapshot) =>
-            GetDomainEntity(EventStores.FirstOrDefault(predicate), snapshot);
-
-        /// <summary>
-        ///     Gets the aggregate entity folding the events from the specified event store. Only the events until
-        ///     the specified date and time are applied, giving a snapshot of a past state of the entity.
-        /// </summary>
-        /// <param name="predicate"> The predicate applied to get the desired event store. </param>
-        /// <param name="snapshot"> The snapshot date and time. </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the domain
-        ///     entity.
-        /// </returns>
-        public async Task<TDomainEntity> GetSnapshotAsync(
-            Expression<Func<TEventStoreEntity, bool>> predicate,
-            DateTime snapshot) =>
-            GetDomainEntity(await EventStores.FirstOrDefaultAsync(predicate), snapshot);
 
         /// <inheritdoc />
         protected override TEventStoreEntity? GetEventStoreEntity(TDomainEntity domainEntity)

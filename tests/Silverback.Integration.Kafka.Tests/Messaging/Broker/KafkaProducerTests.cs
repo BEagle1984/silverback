@@ -10,12 +10,11 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Messages;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 {
-    public class KafkaProducerTests
+    public sealed class KafkaProducerTests : IDisposable
     {
         private readonly KafkaBroker _broker = new KafkaBroker(
             Enumerable.Empty<IBrokerBehavior>(),
@@ -53,5 +52,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 
             endpoint.Should().BeEquivalentTo(endpointCopy);
         }
+
+        public void Dispose() => _broker?.Dispose();
     }
 }

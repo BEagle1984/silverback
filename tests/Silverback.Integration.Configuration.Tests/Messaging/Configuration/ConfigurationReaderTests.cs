@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -30,8 +29,6 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
     {
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly IEndpointsConfigurationBuilder _builder;
-
         public ConfigurationReaderTests()
         {
             var services = new ServiceCollection();
@@ -45,11 +42,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                 {
                     ValidateScopes = true
                 });
-
-            _builder = Substitute.For<IEndpointsConfigurationBuilder>();
         }
-
-        #region Read - Inbound
 
         [Fact]
         public void Read_SimplestInbound_EndpointAdded()
@@ -304,10 +297,6 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
             reader.Inbound.Skip(1).First().ConnectorType.Should().Be(typeof(LoggedInboundConnector));
         }
 
-        #endregion
-
-        #region Read - Outbound
-
         [Fact]
         public void Read_SimplestOutbound_EndpointAdded()
         {
@@ -449,10 +438,6 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
             endpoint.Chunk.Size.Should().Be(100000);
         }
 
-        #endregion
-
-        #region Read and Apply
-
         // TODO: Need to rewrite them with a different approach since AddInbound and similar are now extension methods
 
         // [Fact]
@@ -510,7 +495,5 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
         //         Arg.Any<IProducerEndpoint[]>(),
         //         typeof(DeferredOutboundConnector));
         // }
-
-        #endregion
     }
 }

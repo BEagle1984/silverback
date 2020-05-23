@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Configuration
         public SslProtocols Version { get; set; }
 
         /// <inheritdoc />
-        public bool Equals(RabbitSslOption other)
+        public bool Equals(RabbitSslOption? other)
         {
             if (other is null)
                 return false;

@@ -26,11 +26,14 @@ using Xunit;
 namespace Silverback.Tests.Integration.E2E.Chunking
 {
     [Trait("Category", "E2E")]
-    public class DbChunkStoreTests : IDisposable
+    public class DbChunkStoreTests : IAsyncDisposable
     {
         private readonly SqliteConnection _connection;
+
         private readonly ServiceProvider _serviceProvider;
+
         private readonly IBusConfigurator _configurator;
+
         private readonly SpyBrokerBehavior _spyBehavior;
 
         public DbChunkStoreTests()
@@ -42,21 +45,24 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             services
                 .AddNullLogger()
-                .AddDbContext<TestDbContext>(options => options
-                    .UseSqlite(_connection))
+                .AddDbContext<TestDbContext>(
+                    options => options
+                        .UseSqlite(_connection))
                 .AddSilverback()
                 .UseModel()
-                .WithConnectionToMessageBroker(options => options
-                    .AddInMemoryBroker()
-                    .AddDbChunkStore(retention: TimeSpan.FromMilliseconds(250)))
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddInMemoryBroker()
+                        .AddDbChunkStore(TimeSpan.FromMilliseconds(250)))
                 .UseDbContext<TestDbContext>()
                 .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
 
-            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
-            {
-                ValidateScopes = true
-            });
+            _serviceProvider = services.BuildServiceProvider(
+                new ServiceProviderOptions
+                {
+                    ValidateScopes = true
+                });
 
             _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
@@ -77,17 +83,17 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            _configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(
-                    new KafkaProducerEndpoint("test-e2e")
-                    {
-                        Chunk = new ChunkSettings
+            _configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("test-e2e")
                         {
-                            Size = 10
-                        }
-                    })
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e")));
+                            Chunk = new ChunkSettings
+                            {
+                                Size = 10
+                            }
+                        })
+                    .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -113,40 +119,46 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            var broker = _configurator.Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e"))).First();
+            var broker = _configurator.Connect(
+                endpoints => endpoints
+                    .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
 
-            ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
+            ((InMemoryConsumer)broker.Consumers.First()).CommitCalled +=
                 (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
-            await producer.ProduceAsync(rawMessage.Take(10).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
+            await producer.ProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
             committedOffsets.Count.Should().Be(1);
 
-            await producer.ProduceAsync(rawMessage.Skip(10).Take(10).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
+            await producer.ProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
             committedOffsets.Count.Should().Be(2);
 
-            await producer.ProduceAsync(rawMessage.Skip(20).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
+            await producer.ProduceAsync(
+                rawMessage.Skip(20).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
             committedOffsets.Count.Should().Be(3);
         }
 
@@ -161,29 +173,33 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            var broker = _configurator.Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e"))).First();
+            var broker = _configurator.Connect(
+                endpoints => endpoints
+                    .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
 
-            ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
+            ((InMemoryConsumer)broker.Consumers.First()).CommitCalled +=
                 (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
-            await producer.ProduceAsync(rawMessage.Take(10).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await producer.ProduceAsync(rawMessage.Skip(10).Take(10).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
+            await producer.ProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await producer.ProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
 
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -193,20 +209,24 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             await Task.Delay(250);
 
-            await producer.ProduceAsync(rawMessage.Take(10).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "456"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
-            await producer.ProduceAsync(rawMessage.Skip(10).Take(10).ToArray(), new[]
-            {
-                new MessageHeader(DefaultMessageHeaders.MessageId, "456"),
-                new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-            });
+            await producer.ProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "456"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
+            await producer.ProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "456"),
+                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
+                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                });
 
             await _serviceProvider.GetRequiredService<ChunkStoreCleaner>().Cleanup();
             using (var scope = _serviceProvider.CreateScope())
@@ -217,10 +237,13 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             }
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            _connection?.Close();
-            _connection?.Dispose();
+            if (_connection == null)
+                return;
+
+            _connection.Close();
+            await _connection.DisposeAsync();
         }
     }
 }

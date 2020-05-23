@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Background
 {
-    public class DistributedBackgroundServiceTests : IDisposable
+    public sealed class DistributedBackgroundServiceTests : IAsyncDisposable
     {
         private readonly SqliteConnection _connection;
 
@@ -83,7 +83,8 @@ namespace Silverback.Tests.Core.Background
             executed.Should().BeTrue();
         }
 
-        [Fact, Trait("CI", "false")]
+        [Fact]
+        [Trait("CI", "false")]
         public async Task StartAsync_WithDbLockManager_OnlyOneTaskIsExecutedSimultaneously()
         {
             bool executed1 = false;
@@ -124,7 +125,16 @@ namespace Silverback.Tests.Core.Background
             executed2.Should().BeTrue();
         }
 
-        public class TestDistributedBackgroundService : DistributedBackgroundService
+        public async ValueTask DisposeAsync()
+        {
+            if (_connection == null)
+                return;
+
+            _connection.Close();
+            await _connection.DisposeAsync();
+        }
+
+        private class TestDistributedBackgroundService : DistributedBackgroundService
         {
             private readonly Func<CancellationToken, Task> _task;
 
@@ -146,12 +156,6 @@ namespace Silverback.Tests.Core.Background
             }
 
             protected override Task ExecuteLockedAsync(CancellationToken stoppingToken) => _task.Invoke(stoppingToken);
-        }
-
-        public void Dispose()
-        {
-            _connection?.Close();
-            _connection?.Dispose();
         }
     }
 }

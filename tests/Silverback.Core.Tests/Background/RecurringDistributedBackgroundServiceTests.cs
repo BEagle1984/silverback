@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Background
 {
-    public class RecurringDistributedBackgroundServiceTests : IDisposable
+    public sealed class RecurringDistributedBackgroundServiceTests : IAsyncDisposable
     {
         private readonly SqliteConnection _connection;
 
@@ -163,7 +163,16 @@ namespace Silverback.Tests.Core.Background
             executions.Should().Be(executionsBeforeStop);
         }
 
-        public class TestRecurringDistributedBackgroundService : RecurringDistributedBackgroundService
+        public async ValueTask DisposeAsync()
+        {
+            if (_connection == null)
+                return;
+
+            _connection.Close();
+            await _connection.DisposeAsync();
+        }
+
+        private class TestRecurringDistributedBackgroundService : RecurringDistributedBackgroundService
         {
             private readonly Func<CancellationToken, Task> _task;
 
@@ -187,12 +196,6 @@ namespace Silverback.Tests.Core.Background
 
             protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) =>
                 _task.Invoke(stoppingToken);
-        }
-
-        public void Dispose()
-        {
-            _connection?.Close();
-            _connection?.Dispose();
         }
     }
 }

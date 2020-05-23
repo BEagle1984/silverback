@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using Silverback.Messaging;
@@ -25,7 +26,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
             bool expectedResult)
         {
             var inboundEnvelope = new InboundEnvelope(
-                new byte[0],
+                Array.Empty<byte>(),
                 new List<MessageHeader>(),
                 null,
                 new KafkaConsumerEndpoint("my-topic")
@@ -54,11 +55,11 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
         public void MustProcess_InboundEnvelopeWithNonKafkaEndpoint_FalseIsReturned()
         {
             var inboundEnvelope = new InboundEnvelope(
-                new byte[0],
+                Array.Empty<byte>(),
                 new List<MessageHeader>(),
                 null,
                 new SomeConsumerEndpoint(),
-                "");
+                string.Empty);
 
             var result = new KafkaGroupIdFilterAttribute().MustProcess(inboundEnvelope);
 
@@ -67,13 +68,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
 
         private class SomeConsumerEndpoint : IConsumerEndpoint
         {
+            public string Name { get; } = string.Empty;
+
+            public IMessageSerializer Serializer { get; } = new JsonMessageSerializer();
+
+            public EncryptionSettings? Encryption { get; } = null;
+
             public void Validate()
             {
             }
-
-            public string Name { get; } = "";
-            public IMessageSerializer Serializer { get; } = new JsonMessageSerializer();
-            public EncryptionSettings? Encryption { get; } = null;
 
             public string GetUniqueConsumerGroupName() => Name;
         }

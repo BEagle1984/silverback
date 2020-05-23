@@ -12,6 +12,6 @@ namespace Silverback.Tests.EventSourcing.TestTypes
         {
         }
 
-        public DbSet<PersonEventStore> Persons { get; set; }
+        public DbSet<PersonEventStore> Persons { get; set; } = null!;
     }
 }

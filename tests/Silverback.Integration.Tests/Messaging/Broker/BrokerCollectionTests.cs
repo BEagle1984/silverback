@@ -54,7 +54,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         [Theory]
         [InlineData(0, "TestConsumer")]
         [InlineData(1, "TestOtherConsumer")]
-        public void GetConsumer_WithMultipleBrokers_RightConsumerInstanceIsReturned(
+        public void AddConsumer_WithMultipleBrokers_RightConsumerInstanceIsReturned(
             int endpointIndex,
             string expectedConsumerType)
         {
@@ -66,7 +66,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
                 });
             var endpoint = _consumerEndpoints[endpointIndex];
 
-            var consumer = brokerCollection.GetConsumer(endpoint, VoidCallback);
+            var consumer = brokerCollection.AddConsumer(endpoint, VoidCallback);
 
             consumer.Should().NotBeNull();
             consumer.GetType().Name.Should().BeEquivalentTo(expectedConsumerType);

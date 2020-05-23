@@ -21,7 +21,7 @@ using Xunit;
 namespace Silverback.Tests.Integration.E2E.Connectors
 {
     [Trait("Category", "E2E")]
-    public class DeferredOutboundConnectorTests : IDisposable
+    public class DeferredOutboundConnectorTests : IAsyncDisposable
     {
         private readonly SqliteConnection _connection;
         private readonly ServiceProvider _serviceProvider;
@@ -91,10 +91,13 @@ namespace Silverback.Tests.Integration.E2E.Connectors
             _subscriber.InboundEnvelopes.Count.Should().Be(3);
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            _connection?.Close();
-            _connection?.Dispose();
+            if (_connection == null)
+                return;
+
+            _connection.Close();
+            await _connection.DisposeAsync();
         }
     }
 }

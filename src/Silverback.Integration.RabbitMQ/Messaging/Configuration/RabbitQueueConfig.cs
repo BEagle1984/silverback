@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Configuration
         public bool IsExclusive { get; set; } = false;
 
         /// <inheritdoc />
-        public bool Equals(RabbitQueueConfig other)
+        public bool Equals(RabbitQueueConfig? other)
         {
             if (other is null)
                 return false;

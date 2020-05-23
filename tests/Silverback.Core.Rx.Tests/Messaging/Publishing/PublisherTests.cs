@@ -17,29 +17,13 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 {
     public class PublisherTests
     {
-        private IPublisher GetPublisher(Action<IBusConfigurator> configAction, params ISubscriber[] subscribers)
-        {
-            var services = new ServiceCollection();
-            services.AddSilverback().AsObservable();
-
-            services.AddNullLogger();
-
-            foreach (var sub in subscribers)
-                services.AddScoped(_ => sub);
-
-            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-
-            configAction?.Invoke(serviceProvider.GetRequiredService<IBusConfigurator>());
-
-            return serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IPublisher>();
-        }
-
         [Fact]
         public void Publish_SomeMessages_ReceivedAsObservable()
         {
             int count = 0;
-            var publisher = GetPublisher(config => config
-                .Subscribe((IObservable<object> _) => count++));
+            var publisher = GetPublisher(
+                config => config
+                    .Subscribe((IObservable<object> _) => count++));
 
             publisher.Publish(new TestCommandOne());
             publisher.Publish(new TestCommandTwo());
@@ -51,8 +35,9 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         public async Task PublishAsync_SomeMessages_ReceivedAsObservable()
         {
             int count = 0;
-            var publisher = GetPublisher(config => config
-                .Subscribe((IObservable<object> _) => count++));
+            var publisher = GetPublisher(
+                config => config
+                    .Subscribe((IObservable<object> _) => count++));
 
             await publisher.PublishAsync(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandTwo());
@@ -65,12 +50,14 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             int batchesCount = 0;
             int messagesCount = 0;
-            var publisher = GetPublisher(config => config
-                .Subscribe((IObservable<ICommand> observable) =>
-                {
-                    batchesCount++;
-                    observable.Subscribe(_ => messagesCount++);
-                }));
+            var publisher = GetPublisher(
+                config => config
+                    .Subscribe(
+                        (IObservable<ICommand> observable) =>
+                        {
+                            batchesCount++;
+                            observable.Subscribe(_ => messagesCount++);
+                        }));
 
             publisher.Publish(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
             publisher.Publish(new ICommand[] { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
@@ -84,17 +71,25 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             int batchesCount = 0;
             int messagesCount = 0;
-            var publisher = GetPublisher(config => config
-                .Subscribe((IObservable<ICommand> observable) =>
-                {
-                    batchesCount++;
-                    observable.Subscribe(_ => messagesCount++);
-                }));
+            var publisher = GetPublisher(
+                config => config
+                    .Subscribe(
+                        (IObservable<ICommand> observable) =>
+                        {
+                            batchesCount++;
+                            observable.Subscribe(_ => messagesCount++);
+                        }));
 
-            await publisher.PublishAsync(new ICommand[]
-                { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
-            await publisher.PublishAsync(new ICommand[]
-                { new TestCommandOne(), new TestCommandTwo(), new TestCommandOne() });
+            await publisher.PublishAsync(
+                new ICommand[]
+                {
+                    new TestCommandOne(), new TestCommandTwo(), new TestCommandOne()
+                });
+            await publisher.PublishAsync(
+                new ICommand[]
+                {
+                    new TestCommandOne(), new TestCommandTwo(), new TestCommandOne()
+                });
 
             batchesCount.Should().Be(2);
             messagesCount.Should().Be(6);
@@ -104,15 +99,36 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         public void Publish_NewMessagesObservableReturned_MessagesRepublished()
         {
             int count = 0;
-            var publisher = GetPublisher(config =>
-                config
-                    .Subscribe((TestCommandOne msg) =>
-                        new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
-                    .Subscribe((TestCommandTwo _) => count++));
+            var publisher = GetPublisher(
+                config =>
+                    config
+                        .Subscribe(
+                            (TestCommandOne msg) =>
+                                new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
+                        .Subscribe((TestCommandTwo _) => count++));
 
             publisher.Publish(new TestCommandOne());
 
             count.Should().Be(2);
+        }
+
+        private static IPublisher GetPublisher(Action<IBusConfigurator> configAction, params ISubscriber[] subscribers)
+        {
+            var services = new ServiceCollection();
+            services.AddSilverback().AsObservable();
+
+            services.AddNullLogger();
+
+            foreach (var sub in subscribers)
+            {
+                services.AddScoped(_ => sub);
+            }
+
+            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+
+            configAction?.Invoke(serviceProvider.GetRequiredService<IBusConfigurator>());
+
+            return serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IPublisher>();
         }
     }
 }

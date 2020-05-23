@@ -51,11 +51,11 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
         }
 
         [Fact]
-        public void GetConsumer_ReturnsNewInMemoryConsumer()
+        public void AddConsumer_ReturnsNewInMemoryConsumer()
         {
             var endpoint = new KafkaConsumerEndpoint("test");
 
-            var consumer = _serviceProvider.GetRequiredService<IBroker>().GetConsumer(endpoint, VoidCallback);
+            var consumer = _serviceProvider.GetRequiredService<IBroker>().AddConsumer(endpoint, VoidCallback);
 
             consumer.Should().NotBeNull();
             consumer.Should().BeOfType<InMemoryConsumer>();
@@ -70,7 +70,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
-            broker.GetConsumer(
+            broker.AddConsumer(
                 new KafkaConsumerEndpoint(endpointName),
                 args =>
                     args.Envelopes.ForEach(
@@ -100,7 +100,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
-            var consumer = broker.GetConsumer(
+            broker.AddConsumer(
                 new KafkaConsumerEndpoint(endpointName),
                 args =>
                     args.Envelopes.ForEach(
@@ -129,7 +129,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 
             var broker = _serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
-            var consumer = broker.GetConsumer(
+            broker.AddConsumer(
                 new KafkaConsumerEndpoint(endpointName),
                 args =>
                     args.Envelopes.ForEach(envelope => receivedHeaders.Add(envelope.Headers)));

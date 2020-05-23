@@ -7,6 +7,6 @@ namespace Silverback.Tests.Core.Model.TestTypes.Domain
 {
     public class TestDomainEventTwo : DomainEvent<TestAggregateRoot>
     {
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 }

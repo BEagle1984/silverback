@@ -88,7 +88,7 @@ namespace Silverback.Messaging.Connectors
 
             settings.Validate();
 
-            var consumer = _brokerCollection.GetConsumer(
+            var consumer = _brokerCollection.AddConsumer(
                 endpoint,
                 args => RelayMessages(args.Envelopes, args.ServiceProvider));
 

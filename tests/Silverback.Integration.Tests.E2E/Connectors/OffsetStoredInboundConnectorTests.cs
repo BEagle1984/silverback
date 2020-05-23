@@ -25,7 +25,7 @@ using Xunit;
 namespace Silverback.Tests.Integration.E2E.Connectors
 {
     [Trait("Category", "E2E")]
-    public class OffsetStoredInboundConnectorTests : IDisposable
+    public class OffsetStoredInboundConnectorTests : IAsyncDisposable
     {
         private static readonly byte[] AesEncryptionKey =
         {
@@ -193,10 +193,13 @@ namespace Silverback.Tests.Integration.E2E.Connectors
 
         }
         
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            _connection?.Close();
-            _connection?.Dispose();
+            if (_connection == null)
+                return;
+
+            _connection.Close();
+            await _connection.DisposeAsync();
         }
     }
 }

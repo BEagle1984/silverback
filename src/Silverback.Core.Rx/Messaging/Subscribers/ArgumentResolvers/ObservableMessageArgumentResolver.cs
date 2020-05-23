@@ -16,15 +16,21 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
     public class ObservableMessageArgumentResolver : IEnumerableMessageArgumentResolver
     {
         /// <inheritdoc />
-        [SuppressMessage("", "CA1062", Justification = Justifications.CalledBySilverback)]
-        public bool CanResolve(Type parameterType) =>
-            parameterType.IsGenericType &&
-            parameterType.GetGenericTypeDefinition() == typeof(IObservable<>);
+        public bool CanResolve(Type parameterType)
+        {
+            Check.NotNull(parameterType, nameof(parameterType));
+
+            return parameterType.IsGenericType &&
+                   parameterType.GetGenericTypeDefinition() == typeof(IObservable<>);
+        }
 
         /// <inheritdoc />
-        [SuppressMessage("", "CA1062", Justification = Justifications.CalledBySilverback)]
-        public Type GetMessageType(Type parameterType) =>
-            parameterType.GetGenericArguments()[0];
+        public Type GetMessageType(Type parameterType)
+        {
+            Check.NotNull(parameterType, nameof(parameterType));
+
+            return parameterType.GetGenericArguments()[0];
+        }
 
         /// <inheritdoc />
         public object GetValue(IReadOnlyCollection<object> messages, Type targetMessageType) =>

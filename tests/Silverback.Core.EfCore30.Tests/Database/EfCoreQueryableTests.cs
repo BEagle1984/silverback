@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore30.Database
 {
-    public class EfCoreQueryableTests : IDisposable
+    public sealed class EfCoreQueryableTests : IAsyncDisposable
     {
         private readonly TestDbContextInitializer _dbInitializer;
         private readonly TestDbContext _dbContext;
@@ -97,7 +97,6 @@ namespace Silverback.Tests.Core.EFCore30.Database
             result.Should().NotBeNull();
             result.Age.Should().Be(20);
         }
-
 
         [Fact]
         public async Task FirstOrDefaultAsync_NotMatchingPredicate_NullIsReturned()
@@ -237,10 +236,12 @@ namespace Silverback.Tests.Core.EFCore30.Database
             result.First().Value.Should().Be(15);
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             _dbContext?.Dispose();
-            _dbInitializer?.Dispose();
+
+            if (_dbInitializer != null)
+                await _dbInitializer.DisposeAsync();
         }
-    }
+   }
 }

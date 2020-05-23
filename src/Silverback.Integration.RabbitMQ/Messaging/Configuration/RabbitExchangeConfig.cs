@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <inheritdoc />
-        public bool Equals(RabbitExchangeConfig other)
+        public bool Equals(RabbitExchangeConfig? other)
         {
             if (other is null)
                 return false;

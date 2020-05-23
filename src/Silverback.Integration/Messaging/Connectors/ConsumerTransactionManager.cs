@@ -38,14 +38,14 @@ namespace Silverback.Messaging.Connectors
         }
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.Subscriber)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.Subscriber)]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         private Task OnConsumingCompleted(ConsumingCompletedEvent completedEvent) =>
             _transactionalServices.ForEachAsync(transactional => transactional.Commit());
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.Subscriber)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.Subscriber)]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         private Task OnConsumingAborted(ConsumingAbortedEvent abortedEvent) =>
             _transactionalServices.ForEachAsync(transactional => transactional.Rollback());
     }

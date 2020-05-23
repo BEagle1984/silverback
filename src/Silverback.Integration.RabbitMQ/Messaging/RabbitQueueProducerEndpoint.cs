@@ -35,7 +35,7 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc />
-        public bool Equals(RabbitQueueProducerEndpoint other)
+        public bool Equals(RabbitQueueProducerEndpoint? other)
         {
             if (other is null)
                 return false;

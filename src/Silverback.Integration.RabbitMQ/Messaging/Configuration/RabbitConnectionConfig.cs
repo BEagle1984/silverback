@@ -102,7 +102,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <inheritdoc />
-        public bool Equals(RabbitConnectionConfig other)
+        public bool Equals(RabbitConnectionConfig? other)
         {
             if (other is null)
                 return false;

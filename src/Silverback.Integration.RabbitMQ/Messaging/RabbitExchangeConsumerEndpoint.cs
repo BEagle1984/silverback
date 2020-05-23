@@ -49,7 +49,7 @@ namespace Silverback.Messaging
         public override string GetUniqueConsumerGroupName() => !string.IsNullOrEmpty(QueueName) ? QueueName : Name;
 
         /// <inheritdoc />
-        public bool Equals(RabbitExchangeConsumerEndpoint other)
+        public bool Equals(RabbitExchangeConsumerEndpoint? other)
         {
             if (other is null)
                 return false;

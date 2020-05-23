@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Database;
-using Silverback.Tests.Core.EFCore22.TestTypes;
-using Silverback.Tests.Core.EFCore22.TestTypes.Model;
+using Silverback.Tests.Core.EFCore30.TestTypes;
+using Silverback.Tests.Core.EFCore30.TestTypes.Model;
 using Xunit;
 
 namespace Silverback.Tests.Core.EFCore22.Database
 {
-    public sealed class EfCoreDbSetTests : IDisposable
+    public sealed class EfCoreDbSetTests : IAsyncDisposable
     {
         private readonly TestDbContextInitializer _dbInitializer;
         private readonly TestDbContext _dbContext;
@@ -98,16 +98,18 @@ namespace Silverback.Tests.Core.EFCore22.Database
             _dbContext.Persons.Add(new Person { Name = "Sergio" });
             _dbContext.Persons.Add(new Person { Name = "Mandy" });
 
-            var local = _efCoreDbContext.GetDbSet<Person>().GetLocalCache();
+            var local = _efCoreDbContext.GetDbSet<Person>().GetLocalCache().ToList();
 
             local.Should().NotBeNull();
-            local.Count().Should().Be(2);
+            local.Count.Should().Be(2);
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             _dbContext?.Dispose();
-            _dbInitializer?.Dispose();
+
+            if (_dbInitializer != null)
+                await _dbInitializer.DisposeAsync();
         }
     }
 }

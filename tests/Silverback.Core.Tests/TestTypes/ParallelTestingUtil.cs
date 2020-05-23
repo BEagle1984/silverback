@@ -10,6 +10,7 @@ namespace Silverback.Tests.Core.TestTypes
     public class ParallelTestingUtil
     {
         private int _lastStep;
+
         public ConcurrentBag<int> Steps { get; } = new ConcurrentBag<int>();
 
         public void DoWork()

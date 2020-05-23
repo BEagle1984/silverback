@@ -58,21 +58,5 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
 
             key.Should().Be("One=1,Two=2");
         }
-
-        [Fact]
-        public void GetMessageKey_LegacyKeyMemberAttribute_PropertyValueIsReturned()
-        {
-            var message = new LegacyKeyMemberAttributeMessage
-            {
-                Id = Guid.NewGuid(),
-                One = "11",
-                Two = "22",
-                Three = "33"
-            };
-
-            var key = KafkaKeyHelper.GetMessageKey(message);
-
-            key.Should().Be("11");
-        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using FluentAssertions;
 using Silverback.Util;
 using Xunit;
@@ -31,21 +31,20 @@ namespace Silverback.Tests.Core.Util
                 new Item("unsorted3"),
                 new Item("unsorted2"),
                 new SortedItem(50),
-                new SortedItem(100)
-            );
+                new SortedItem(100));
         }
 
-        [SuppressMessage("", "UnusedAutoPropertyAccessor.Local")]
         private class Item
         {
             public Item(string id) => Id = id;
+
             public string Id { get; }
         }
 
         private class SortedItem : Item, ISorted
         {
             public SortedItem(int sortIndex)
-                : base(sortIndex.ToString()) => SortIndex = sortIndex;
+                : base(sortIndex.ToString(CultureInfo.InvariantCulture)) => SortIndex = sortIndex;
 
             public int SortIndex { get; }
         }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Confluent.Kafka;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Silverback.Messaging;
@@ -20,7 +21,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    Acks = Acks.Leader
                 }
             };
 
@@ -34,7 +35,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    Acks = Acks.Leader
                 }
             };
 
@@ -42,7 +43,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    Acks = Acks.Leader
                 }
             };
 
@@ -56,14 +57,16 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    Acks = Acks.Leader
                 }
             };
 
-            var json = JsonConvert.SerializeObject(endpoint1,
+            var json = JsonConvert.SerializeObject(
+                endpoint1,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
-            var endpoint2 = JsonConvert.DeserializeObject<KafkaProducerEndpoint>(json,
+            var endpoint2 = JsonConvert.DeserializeObject<KafkaProducerEndpoint>(
+                json,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             endpoint1.Equals(endpoint2).Should().BeTrue();
@@ -76,7 +79,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    Acks = Acks.Leader
                 }
             };
 
@@ -84,7 +87,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    Acks = Acks.Leader
                 }
             };
 
@@ -98,7 +101,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    Acks = Acks.Leader
                 }
             };
 
@@ -106,7 +109,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = Confluent.Kafka.Acks.All
+                    Acks = Acks.All
                 }
             };
 
@@ -176,7 +179,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Configuration = new KafkaProducerConfig
                 {
-                    Acks = Confluent.Kafka.Acks.Leader
+                    Acks = Acks.Leader
                 },
                 Serializer = new JsonMessageSerializer
                 {
@@ -191,10 +194,12 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
                 }
             };
 
-            var json = JsonConvert.SerializeObject(endpoint1,
+            var json = JsonConvert.SerializeObject(
+                endpoint1,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
-            var endpoint2 = JsonConvert.DeserializeObject<KafkaProducerEndpoint>(json,
+            var endpoint2 = JsonConvert.DeserializeObject<KafkaProducerEndpoint>(
+                json,
                 new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
 
             endpoint2.Should().BeEquivalentTo(endpoint1);

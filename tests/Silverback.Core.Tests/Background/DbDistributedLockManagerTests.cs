@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Background
 {
-    public sealed class DbDistributedLockManagerTests : IDisposable
+    public sealed class DbDistributedLockManagerTests : IAsyncDisposable
     {
         private readonly SqliteConnection _connection;
 
@@ -221,10 +221,13 @@ namespace Silverback.Tests.Core.Background
             dbContext.Locks.Count().Should().Be(0);
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            _connection?.Close();
-            _connection?.Dispose();
+            if (_connection == null)
+                return;
+
+            _connection.Close();
+            await _connection.DisposeAsync();
         }
 
         private TestDbContext GetDbContext() =>

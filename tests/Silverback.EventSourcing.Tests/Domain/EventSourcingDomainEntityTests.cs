@@ -6,6 +6,7 @@ using System.Linq;
 using FluentAssertions;
 using Silverback.Domain;
 using Silverback.Tests.EventSourcing.TestTypes;
+using Silverback.Tests.EventSourcing.TestTypes.EntityEvents;
 using Xunit;
 
 namespace Silverback.Tests.EventSourcing.Domain
@@ -15,11 +16,12 @@ namespace Silverback.Tests.EventSourcing.Domain
         [Fact]
         public void Constructor_PassingSomeEvents_EventsApplied()
         {
-            var person = new Person(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent { NewName = "Sergio" },
-                new Person.AgeChangedEvent { NewAge = 35 }
-            });
+            var person = new Person(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent { NewName = "Sergio" },
+                    new AgeChangedEvent { NewAge = 35 }
+                });
 
             person.Name.Should().Be("Sergio");
             person.Age.Should().Be(35);
@@ -28,11 +30,12 @@ namespace Silverback.Tests.EventSourcing.Domain
         [Fact]
         public void Constructor_PassingSomeEvents_EventsAppliedAccordingToTimestamp()
         {
-            var person = new Person(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent { NewName = "Sergio", Timestamp = new DateTime(2001, 01, 02) },
-                new Person.NameChangedEvent { NewName = "Silverback", Timestamp = new DateTime(2001, 01, 01) }
-            });
+            var person = new Person(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent { NewName = "Sergio", Timestamp = new DateTime(2001, 01, 02) },
+                    new NameChangedEvent { NewName = "Silverback", Timestamp = new DateTime(2001, 01, 01) }
+                });
 
             person.Name.Should().Be("Sergio");
         }
@@ -40,27 +43,29 @@ namespace Silverback.Tests.EventSourcing.Domain
         [Fact]
         public void Constructor_PassingSomeEvents_EventsAppliedAccordingToTimestampAndSequence()
         {
-            var person = new Person(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent
-                    { NewName = "Sergio", Timestamp = new DateTime(2001, 01, 02), Sequence = 2 },
-                new Person.NameChangedEvent { NewName = "Mario", Timestamp = new DateTime(2001, 01, 02), Sequence = 1 },
-                new Person.NameChangedEvent
-                    { NewName = "Silverback", Timestamp = new DateTime(2001, 01, 01), Sequence = 2 }
-            });
+            var person = new Person(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent
+                        { NewName = "Sergio", Timestamp = new DateTime(2001, 01, 02), Sequence = 2 },
+                    new NameChangedEvent
+                        { NewName = "Mario", Timestamp = new DateTime(2001, 01, 02), Sequence = 1 },
+                    new NameChangedEvent
+                        { NewName = "Silverback", Timestamp = new DateTime(2001, 01, 01), Sequence = 2 }
+                });
 
             person.Name.Should().Be("Sergio");
         }
 
-
         [Fact]
         public void GetNewEvents_WithNewAndOldEvents_OnlyNewEventsReturned()
         {
-            var person = new Person(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent { NewName = "Sergio" },
-                new Person.AgeChangedEvent { NewAge = 35 }
-            });
+            var person = new Person(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent { NewName = "Sergio" },
+                    new AgeChangedEvent { NewAge = 35 }
+                });
 
             person.ChangePhoneNumber("123456");
 
@@ -70,10 +75,11 @@ namespace Silverback.Tests.EventSourcing.Domain
         [Fact]
         public void Constructor_PassingAnEvent_IsReplayingCorrectlySetToTrue()
         {
-            var person = new Person(new IEntityEvent[]
-            {
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "123456" }
-            });
+            var person = new Person(
+                new IEntityEvent[]
+                {
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "123456" }
+                });
 
             person.PhoneNumber.Should().Be("123456*");
         }
@@ -120,12 +126,13 @@ namespace Silverback.Tests.EventSourcing.Domain
             var now = DateTime.UtcNow;
             var person = new Person();
 
-            person.MergeEvents(new IEntityEvent[]
-            {
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "1", Timestamp = DateTime.Now.AddDays(-3) },
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "2", Timestamp = DateTime.Now.AddDays(-2) },
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "3", Timestamp = DateTime.Now.AddDays(-1) }
-            });
+            person.MergeEvents(
+                new IEntityEvent[]
+                {
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "1", Timestamp = DateTime.Now.AddDays(-3) },
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "2", Timestamp = DateTime.Now.AddDays(-2) },
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "3", Timestamp = DateTime.Now.AddDays(-1) }
+                });
 
             person.GetNewEvents().Count().Should().Be(3);
             person.GetNewEvents().Select(e => e.Timestamp).ToList().ForEach(t => t.Should().BeBefore(now));
@@ -136,12 +143,13 @@ namespace Silverback.Tests.EventSourcing.Domain
         {
             var person = new Person();
 
-            person.MergeEvents(new IEntityEvent[]
-            {
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "1", Sequence = 100 },
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "2", Sequence = 101 },
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "3", Sequence = 102 }
-            });
+            person.MergeEvents(
+                new IEntityEvent[]
+                {
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "1", Sequence = 100 },
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "2", Sequence = 101 },
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "3", Sequence = 102 }
+                });
 
             person.GetNewEvents().Select(e => e.Sequence).Should().BeEquivalentTo(100, 101, 102);
         }
@@ -149,19 +157,21 @@ namespace Silverback.Tests.EventSourcing.Domain
         [Fact]
         public void AddAndApplyEvent_MergingEventsFromThePast_CorrectSequenceIsRecognizable()
         {
-            var person = new Person(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent { NewName = "1", Timestamp = DateTime.Today.AddDays(-10) },
-                new Person.NameChangedEvent { NewName = "2", Timestamp = DateTime.Today.AddDays(-8) },
-                new Person.NameChangedEvent { NewName = "3", Timestamp = DateTime.Today.AddDays(-5) }
-            });
+            var person = new Person(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent { NewName = "1", Timestamp = DateTime.Today.AddDays(-10) },
+                    new NameChangedEvent { NewName = "2", Timestamp = DateTime.Today.AddDays(-8) },
+                    new NameChangedEvent { NewName = "3", Timestamp = DateTime.Today.AddDays(-5) }
+                });
 
-            person.MergeEvents(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent { NewName = "4", Timestamp = DateTime.Today.AddDays(-9) },
-                new Person.NameChangedEvent { NewName = "5", Timestamp = DateTime.Today.AddDays(-7) },
-                new Person.NameChangedEvent { NewName = "6", Timestamp = DateTime.Today.AddDays(-6) }
-            });
+            person.MergeEvents(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent { NewName = "4", Timestamp = DateTime.Today.AddDays(-9) },
+                    new NameChangedEvent { NewName = "5", Timestamp = DateTime.Today.AddDays(-7) },
+                    new NameChangedEvent { NewName = "6", Timestamp = DateTime.Today.AddDays(-6) }
+                });
 
             person.Name.Should().Be("3");
         }
@@ -169,20 +179,22 @@ namespace Silverback.Tests.EventSourcing.Domain
         [Fact]
         public void AddAndApplyEvent_MergingEventsFromThePast_ConcurrencyResolvedConsistently()
         {
-            var person = new Person(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent { NewName = "1", Timestamp = DateTime.Today.AddDays(-10) },
-                new Person.NameChangedEvent { NewName = "2", Timestamp = DateTime.Today.AddDays(-5) },
-                new Person.NameChangedEvent { NewName = "3", Timestamp = DateTime.Today.AddDays(-5) },
-                new Person.NameChangedEvent { NewName = "4", Timestamp = DateTime.Today.AddDays(-9) },
-            });
+            var person = new Person(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent { NewName = "1", Timestamp = DateTime.Today.AddDays(-10) },
+                    new NameChangedEvent { NewName = "2", Timestamp = DateTime.Today.AddDays(-5) },
+                    new NameChangedEvent { NewName = "3", Timestamp = DateTime.Today.AddDays(-5) },
+                    new NameChangedEvent { NewName = "4", Timestamp = DateTime.Today.AddDays(-9) },
+                });
 
-            person.MergeEvents(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent { NewName = "5", Timestamp = DateTime.Today.AddDays(-5) },
-                new Person.NameChangedEvent { NewName = "6", Timestamp = DateTime.Today.AddDays(-5) },
-                new Person.NameChangedEvent { NewName = "7", Timestamp = DateTime.Today.AddDays(-7) }
-            });
+            person.MergeEvents(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent { NewName = "5", Timestamp = DateTime.Today.AddDays(-5) },
+                    new NameChangedEvent { NewName = "6", Timestamp = DateTime.Today.AddDays(-5) },
+                    new NameChangedEvent { NewName = "7", Timestamp = DateTime.Today.AddDays(-7) }
+                });
 
             person.Name.Should().Be("6");
 
@@ -194,11 +206,12 @@ namespace Silverback.Tests.EventSourcing.Domain
         [Fact]
         public void AddAndApplyEvent_SomeEventsAppendedToOldEvents_EventsSequenceIsSet()
         {
-            var person = new Person(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent { NewName = "Sergio" },
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "123456" }
-            });
+            var person = new Person(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent { NewName = "Sergio" },
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "123456" }
+                });
 
             person.ChangePhoneNumber("3");
             person.ChangePhoneNumber("4");
@@ -222,11 +235,12 @@ namespace Silverback.Tests.EventSourcing.Domain
         [Fact]
         public void GetNewEvents_SomeNewEventsApplied_OnlyNewEventsReturned()
         {
-            var person = new Person(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent { NewName = "Sergio" },
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "123456" }
-            });
+            var person = new Person(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent { NewName = "Sergio" },
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "123456" }
+                });
 
             person.ChangePhoneNumber("1");
             person.ChangePhoneNumber("2");
@@ -238,18 +252,20 @@ namespace Silverback.Tests.EventSourcing.Domain
         [Fact]
         public void GetNewEvents_SomeNewEventsFromThePastApplied_NewEventsReturned()
         {
-            var person = new Person(new IEntityEvent[]
-            {
-                new Person.NameChangedEvent { NewName = "Sergio" },
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "123456" }
-            });
+            var person = new Person(
+                new IEntityEvent[]
+                {
+                    new NameChangedEvent { NewName = "Sergio" },
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "123456" }
+                });
 
-            person.MergeEvents(new IEntityEvent[]
-            {
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "1", Timestamp = DateTime.Now.AddDays(-3) },
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "2", Timestamp = DateTime.Now.AddDays(-2) },
-                new Person.PhoneNumberChangedEvent { NewPhoneNumber = "3", Timestamp = DateTime.Now.AddDays(-1) }
-            });
+            person.MergeEvents(
+                new IEntityEvent[]
+                {
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "1", Timestamp = DateTime.Now.AddDays(-3) },
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "2", Timestamp = DateTime.Now.AddDays(-2) },
+                    new PhoneNumberChangedEvent { NewPhoneNumber = "3", Timestamp = DateTime.Now.AddDays(-1) }
+                });
 
             person.GetNewEvents().Should().HaveCount(3);
         }

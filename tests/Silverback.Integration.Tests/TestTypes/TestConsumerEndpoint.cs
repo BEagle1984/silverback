@@ -15,29 +15,35 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        public static TestConsumerEndpoint GetDefault() => new TestConsumerEndpoint("test");
-
         public string GroupId { get; set; } = "default-group";
+
+        public static TestConsumerEndpoint GetDefault() => new TestConsumerEndpoint("test");
 
         public override string GetUniqueConsumerGroupName() => $"{Name}|{GroupId}";
 
-        #region IEquatable
-
-        public bool Equals(TestConsumerEndpoint other)
+        public bool Equals(TestConsumerEndpoint? other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
             return base.Equals(other);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((TestConsumerEndpoint) obj);
-        }
+            if (ReferenceEquals(null, obj))
+                return false;
 
-        #endregion
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((TestConsumerEndpoint)obj);
+        }
     }
 }

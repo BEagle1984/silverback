@@ -4,8 +4,10 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Behaviors;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
@@ -30,7 +32,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 new KafkaProducerEndpoint("test-endpoint"));
 
             new KafkaMessageKeyInitializerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, null),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().NotContain(
@@ -52,7 +54,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 new KafkaProducerEndpoint("test-endpoint"));
 
             new KafkaMessageKeyInitializerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, null),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "1"));
@@ -73,7 +75,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 new KafkaProducerEndpoint("test-endpoint"));
 
             new KafkaMessageKeyInitializerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, null),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "One=1,Two=2"));

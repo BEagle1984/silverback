@@ -6,6 +6,7 @@ using FluentAssertions;
 using Silverback.Domain;
 using Silverback.Domain.Util;
 using Silverback.Tests.EventSourcing.TestTypes;
+using Silverback.Tests.EventSourcing.TestTypes.EntityEvents;
 using Xunit;
 
 namespace Silverback.Tests.EventSourcing.Domain.Util
@@ -15,7 +16,7 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
         [Fact]
         public void CreateInstance_WithSomeEvents_EntityCreated()
         {
-            var events = new IEntityEvent[] { new Person.NameChangedEvent(), new Person.AgeChangedEvent() };
+            var events = new IEntityEvent[] { new NameChangedEvent(), new AgeChangedEvent() };
             var eventStoreEntity = new { };
 
             var entity = EntityActivator.CreateInstance<Person>(events, eventStoreEntity);
@@ -29,8 +30,8 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
         {
             var events = new IEntityEvent[]
             {
-                new Person.NameChangedEvent { NewName = "Silverback" },
-                new Person.AgeChangedEvent { NewAge = 13 }
+                new NameChangedEvent { NewName = "Silverback" },
+                new AgeChangedEvent { NewAge = 13 }
             };
             var eventStoreEntity = new { };
 
@@ -56,7 +57,7 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
         {
             var events = new IEntityEvent[]
             {
-                new Person.AgeChangedEvent { NewAge = 13 }
+                new AgeChangedEvent { NewAge = 13 }
             };
             var eventStoreEntity = new { PersonId = 1234, Ssn = "123-123 CA", EntityName = "Silverback" };
 

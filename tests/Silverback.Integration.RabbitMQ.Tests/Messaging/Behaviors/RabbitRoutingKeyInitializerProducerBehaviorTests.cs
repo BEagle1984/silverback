@@ -4,8 +4,10 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Behaviors;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.RabbitMQ.TestTypes.Messages;
@@ -30,7 +32,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 new RabbitExchangeProducerEndpoint("test-endpoint"));
 
             new RabbitRoutingKeyInitializerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, null),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().NotContain(
@@ -52,7 +54,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 new RabbitExchangeProducerEndpoint("test-endpoint"));
 
             new RabbitRoutingKeyInitializerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, null),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-rabbit-routing-key", "1"));
@@ -74,7 +76,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
 
             Func<Task> act = () =>
                 new RabbitRoutingKeyInitializerProducerBehavior().Handle(
-                    new ProducerPipelineContext(envelope, null),
+                    new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                     _ => Task.CompletedTask);
 
             act.Should().Throw<InvalidOperationException>();

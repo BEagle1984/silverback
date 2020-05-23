@@ -62,7 +62,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <inheritdoc />
-        public bool Equals(KafkaConsumerConfig other)
+        public bool Equals(KafkaConsumerConfig? other)
         {
             if (other is null)
                 return false;

@@ -36,7 +36,7 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc />
-        public bool Equals(KafkaProducerEndpoint other)
+        public bool Equals(KafkaProducerEndpoint? other)
         {
             if (other is null)
                 return false;

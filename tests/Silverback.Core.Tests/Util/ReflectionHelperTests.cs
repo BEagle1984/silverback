@@ -15,7 +15,9 @@ namespace Silverback.Tests.Core.Util
         public void IsAsync_ReturnsTrue_IfAsyncWithTask()
         {
             var methodInfo = GetType().GetMethod(nameof(AsyncWithTask), BindingFlags.Static | BindingFlags.NonPublic);
-            methodInfo.ReturnsTask().Should().BeTrue();
+
+            methodInfo.Should().NotBeNull();
+            methodInfo!.ReturnsTask().Should().BeTrue();
         }
 
         [Fact]
@@ -23,7 +25,9 @@ namespace Silverback.Tests.Core.Util
         {
             var methodInfo =
                 GetType().GetMethod(nameof(AsyncWithoutTask), BindingFlags.Static | BindingFlags.NonPublic);
-            methodInfo.ReturnsTask().Should().BeFalse();
+
+            methodInfo.Should().NotBeNull();
+            methodInfo!.ReturnsTask().Should().BeFalse();
         }
 
         [Fact]
@@ -31,7 +35,9 @@ namespace Silverback.Tests.Core.Util
         {
             var methodInfo =
                 GetType().GetMethod(nameof(NotAsyncWithVoid), BindingFlags.Static | BindingFlags.NonPublic);
-            methodInfo.ReturnsTask().Should().BeFalse();
+
+            methodInfo.Should().NotBeNull();
+            methodInfo!.ReturnsTask().Should().BeFalse();
         }
 
         [Fact]
@@ -39,20 +45,21 @@ namespace Silverback.Tests.Core.Util
         {
             var methodInfo =
                 GetType().GetMethod(nameof(NotAsyncWithTask), BindingFlags.Static | BindingFlags.NonPublic);
-            methodInfo.ReturnsTask().Should().BeTrue();
+
+            methodInfo.Should().NotBeNull();
+            methodInfo!.ReturnsTask().Should().BeTrue();
         }
 
-
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+
         private static async Task AsyncWithTask()
         {
         }
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         private static async void AsyncWithoutTask()
         {
         }
+
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
         private static void NotAsyncWithVoid()

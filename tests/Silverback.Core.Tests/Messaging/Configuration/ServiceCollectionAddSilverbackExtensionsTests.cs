@@ -10,23 +10,14 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Configuration
 {
-    public class DependencyInjectionExtensionsTests
+    public class ServiceCollectionAddSilverbackExtensionsTests
     {
-        private IServiceProvider GetServiceProvider(Action<IServiceCollection> configAction)
-        {
-            var services = new ServiceCollection()
-                .AddNullLogger();
-
-            configAction(services);
-
-            return services.BuildServiceProvider();
-        }
-
         [Fact]
         public void AddSilverback_PublisherIsRegisteredAndWorking()
         {
-            var servicesProvider = GetServiceProvider(services => services
-                .AddSilverback());
+            var servicesProvider = GetServiceProvider(
+                services => services
+                    .AddSilverback());
 
             var publisher = servicesProvider.GetRequiredService<IPublisher>();
 
@@ -35,6 +26,16 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             Action act = () => publisher.Publish(new TestEventOne());
 
             act.Should().NotThrow();
+        }
+
+        private static IServiceProvider GetServiceProvider(Action<IServiceCollection> configAction)
+        {
+            var services = new ServiceCollection()
+                .AddNullLogger();
+
+            configAction(services);
+
+            return services.BuildServiceProvider();
         }
     }
 }

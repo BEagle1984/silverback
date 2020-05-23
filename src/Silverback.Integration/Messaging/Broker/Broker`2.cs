@@ -133,11 +133,11 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        public virtual IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback)
+        public virtual IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback)
         {
             Check.NotNull(callback, nameof(callback));
 
-            return GetConsumer(
+            return AddConsumer(
                 endpoint,
                 args =>
                 {
@@ -147,7 +147,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        public virtual IConsumer GetConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback)
+        public virtual IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback)
         {
             Check.NotNull(endpoint, nameof(endpoint));
 

@@ -8,6 +8,7 @@ using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.EFCore30.TestTypes.Model;
 
+// ReSharper disable once CheckNamespace
 namespace Silverback.Tests.Core.EFCore30.TestTypes
 {
     public class TestDbContext : DbContext
@@ -25,9 +26,9 @@ namespace Silverback.Tests.Core.EFCore30.TestTypes
             _eventsPublisher = new DbContextEventsPublisher(publisher, this);
         }
 
-        public DbSet<TestAggregateRoot> TestAggregates { get; set; }
+        public DbSet<TestAggregateRoot> TestAggregates { get; set; } = null!;
 
-        public DbSet<Person> Persons { get; set; }
+        public DbSet<Person> Persons { get; set; } = null!;
 
         public override int SaveChanges()
             => SaveChanges(true);

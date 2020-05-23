@@ -15,9 +15,6 @@ namespace Silverback
             "[]?, []!, ()? and ()! are recognized as wrongly spaced (bug in the analyzer, " +
             "fixed with StyleCop.Analyzers 1.2.0)";
 
-        public const string CalledBySilverback =
-            "The method is called by Silverback internals and don't need to check for null";
-
         public const string ExceptionLogged =
             "The exception is logged, it is not swallowed";
 
@@ -31,8 +28,8 @@ namespace Silverback
         public const string AllowedForConstants =
             "Nested types are allowed in constant classes: they are used to create a structure";
 
-        public const string Subscriber =
-            "Subscriber method called by the IPublisher";
+        public const string CalledBySilverback =
+            "The method is called by Silverback (e.g. subscriber methods called by the publisher)";
 
         public const string Settings =
             "Setting classes expose a setter for their properties but it's safe to assume that their value will not be " +

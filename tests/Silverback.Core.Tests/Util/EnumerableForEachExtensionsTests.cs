@@ -14,7 +14,7 @@ namespace Silverback.Tests.Core.Util
         [Fact]
         public void ForEachTest()
         {
-            var array = (IEnumerable<int>) new[] { 1, 2, 3, 4, 5 };
+            var array = (IEnumerable<int>)new[] { 1, 2, 3, 4, 5 };
 
             var total = 0;
             array.ForEach(i => total += i);
@@ -25,14 +25,15 @@ namespace Silverback.Tests.Core.Util
         [Fact]
         public async Task ForEachAsyncTest()
         {
-            var array = (IEnumerable<int>) new[] { 1, 2, 3, 4, 5 };
+            var array = (IEnumerable<int>)new[] { 1, 2, 3, 4, 5 };
 
             var total = 0;
-            await array.ForEachAsync(async i =>
-            {
-                await Task.Delay(1);
-                total += i;
-            });
+            await array.ForEachAsync(
+                async i =>
+                {
+                    await Task.Delay(1);
+                    total += i;
+                });
 
             total.Should().Be(15);
         }

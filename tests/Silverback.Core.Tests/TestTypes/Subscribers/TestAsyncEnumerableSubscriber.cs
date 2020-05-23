@@ -12,6 +12,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
     public class TestAsyncEnumerableSubscriber : ISubscriber
     {
         public int ReceivedMessagesCount { get; private set; }
+
         public int ReceivedBatchesCount { get; private set; }
 
         [Subscribe]

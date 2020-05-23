@@ -24,9 +24,7 @@ namespace Silverback.Messaging.Messages
                 message.GetType()
                     .GetProperties()
                     .Where(
-                        propertyInfo =>
-                            propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true) ||
-                            propertyInfo.IsDefined(typeof(PartitioningKeyMemberAttribute), true))
+                        propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))
                     .Select(
                         propertyInfo => new
                         {

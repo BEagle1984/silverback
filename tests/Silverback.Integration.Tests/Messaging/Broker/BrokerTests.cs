@@ -59,27 +59,27 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         }
 
         [Fact]
-        public void GetConsumer_SomeEndpoint_ConsumerIsReturned()
+        public void AddConsumer_SomeEndpoint_ConsumerIsReturned()
         {
-            var consumer = _broker.GetConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
+            var consumer = _broker.AddConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
 
             consumer.Should().NotBeNull();
         }
 
         [Fact]
-        public void GetConsumer_SameEndpoint_DifferentInstanceIsReturned()
+        public void AddConsumer_SameEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
-            var consumer2 = _broker.GetConsumer(new TestConsumerEndpoint("test2"), VoidCallback);
+            var consumer = _broker.AddConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
+            var consumer2 = _broker.AddConsumer(new TestConsumerEndpoint("test2"), VoidCallback);
 
             consumer2.Should().NotBeSameAs(consumer);
         }
 
         [Fact]
-        public void GetConsumer_DifferentEndpoint_DifferentInstanceIsReturned()
+        public void AddConsumer_DifferentEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.GetConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
-            var consumer2 = _broker.GetConsumer(new TestConsumerEndpoint("test2"), VoidCallback);
+            var consumer = _broker.AddConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
+            var consumer2 = _broker.AddConsumer(new TestConsumerEndpoint("test2"), VoidCallback);
 
             consumer2.Should().NotBeSameAs(consumer);
         }

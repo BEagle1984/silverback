@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.EFCore22.TestTypes;
-using Silverback.Tests.Core.EFCore22.TestTypes.Model;
+using Silverback.Tests.Core.EFCore30.TestTypes;
+using Silverback.Tests.Core.EFCore30.TestTypes.Model;
 using Xunit;
 
 namespace Silverback.Tests.Core.EFCore22
 {
-    public sealed class DbContextEventsPublisherTests : IDisposable
+    public sealed class DbContextEventsPublisherTests : IAsyncDisposable
     {
         private readonly TestDbContext _dbContext;
 
@@ -52,7 +52,7 @@ namespace Silverback.Tests.Core.EFCore22
 
             _dbContext.SaveChanges();
 
-            _publisher.Received(1).Publish(Arg.Any<IReadOnlyCollection<object>>());
+            _publisher.Received(1).Publish(Arg.Any<IEnumerable<object>>());
         }
 
         [Fact]
@@ -155,10 +155,13 @@ namespace Silverback.Tests.Core.EFCore22
             await _publisher.Received(1).PublishAsync(Arg.Any<TransactionAbortedEvent>());
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            _dbContext?.Dispose();
-            _connection?.Dispose();
+            if (_connection == null)
+                return;
+
+            _connection.Close();
+            await _connection.DisposeAsync();
         }
     }
 }

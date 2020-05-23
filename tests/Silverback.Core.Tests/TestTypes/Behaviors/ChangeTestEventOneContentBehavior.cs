@@ -12,7 +12,7 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
 {
     public class ChangeTestEventOneContentBehavior : IBehavior
     {
-        public Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
+        public Task<IReadOnlyCollection<object?>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
         {
             messages.OfType<TestEventOne>().ForEach(m => m.Message = "behavior");
 

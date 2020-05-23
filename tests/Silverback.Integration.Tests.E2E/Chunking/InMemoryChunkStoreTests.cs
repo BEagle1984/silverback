@@ -24,7 +24,7 @@ using Xunit;
 namespace Silverback.Tests.Integration.E2E.Chunking
 {
     [Trait("Category", "E2E")]
-    public class InMemoryChunkStoreTests : IDisposable
+    public class InMemoryChunkStoreTests : IAsyncDisposable
     {
         private readonly SqliteConnection _connection;
         private readonly ServiceProvider _serviceProvider;
@@ -373,10 +373,13 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             }
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            _connection?.Close();
-            _connection?.Dispose();
+            if (_connection == null)
+                return;
+
+            _connection.Close();
+            await _connection.DisposeAsync();
         }
     }
 }
