@@ -10,7 +10,7 @@ It includes an in-memory message bus that can be easily connected to a message b
 
 Its main features are:
 * Simple yet powerful message bus
-* Abstracted and configurative integration with a message broker
+* Abstracted integration with a message broker
 * Apache Kafka and RabbitMQ integration
 * DDD, Domain Events and Transactional Messaging
 * Outbox table pattern implementation
@@ -30,7 +30,6 @@ Package | Latest Version | Downloads
 [Silverback.Integration.Kafka][Nuget-Integration.Kafka] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.Kafka.svg?label=)][Nuget-Integration.Kafka] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Integration.Kafka.svg?label=)][Nuget-Integration.Kafka]
 [Silverback.Integration.Kafka.SchemaRegistry][Nuget-Integration.Kafka.SchemaRegistry] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.Kafka.SchemaRegistry.svg?label=)][Nuget-Integration.Kafka.SchemaRegistry] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Integration.Kafka.SchemaRegistry.svg?label=)][Nuget-Integration.Kafka.SchemaRegistry]
 [Silverback.Integration.RabbitMQ][Nuget-Integration.RabbitMQ] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.RabbitMQ.svg?label=)][Nuget-Integration.RabbitMQ] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Integration.RabbitMQ.svg?label=)][Nuget-Integration.RabbitMQ]
-[Silverback.Integration.Configuration][Nuget-Integration.Configuration] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.Configuration.svg?label=)][Nuget-Integration.Configuration] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Integration.Configuration.svg?label=)][Nuget-Integration.Configuration]
 [Silverback.Integration.HealthChecks][Nuget-Integration.HealthChecks] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.HealthChecks.svg?label=)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks/) | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Integration.HealthChecks.svg?label=)][Nuget-Integration.HealthChecks]
 
 ## Usage
@@ -53,5 +52,4 @@ This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle
 [Nuget-Integration.Kafka]: https://www.nuget.org/packages/Silverback.Integration.Kafka/
 [Nuget-Integration.Kafka.SchemaRegistry]: https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/
 [Nuget-Integration.RabbitMQ]: https://www.nuget.org/packages/Silverback.Integration.RabbitMQ/
-[Nuget-Integration.Configuration]: https://www.nuget.org/packages/Silverback.Integration.Configuration/
 [Nuget-Integration.HealthChecks]: https://www.nuget.org/packages/Silverback.Integration.HealthChecks/

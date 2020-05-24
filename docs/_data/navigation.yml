@@ -65,8 +65,6 @@ docs:
         url: /docs/configuration/inbound
       - title: Mixed Configurations
         url: /docs/configuration/mixed
-      - title: External Configuration
-        url: /docs/configuration/external
   - title: Advanced
     children:
       - title: Serialization

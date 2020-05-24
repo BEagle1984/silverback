@@ -38,6 +38,7 @@ toc: true
 * `WithConnectionTo<>`, `WithConnectionToKafka`, `WithConnectionToRabbitMQ` and `WithInMemoryBroker` have been removed, please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit`/`AddInMemoryBroker` methods (see [Connecting to a Message Broker]({{ site.baseurl }}/docs/quickstart/message-broker))
 * Some minor breaking changes to the `InMemoryBroker`
 * Removed `PartitioningKeyMemberAttribute`, use `KafkaKeyMemberAttribute` instead
+* `Silverback.Integration.Configuration` has been discontinued
 
 ## [2.1.1](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1)
 
