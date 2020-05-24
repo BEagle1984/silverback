@@ -134,6 +134,7 @@ namespace Silverback.Messaging.Batch
         public void Dispose()
         {
             _semaphore.Dispose();
+            _waitTimer?.Dispose();
         }
 
         private void OnWaitTimerElapsed(object sender, ElapsedEventArgs e)

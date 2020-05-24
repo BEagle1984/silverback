@@ -15,14 +15,16 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
 
         public int ReceivedEnvelopesCount { get; private set; }
 
+        [TestMessageFilter]
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
-        [TestMessageFilter]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public void OnMessageReceived(ITestMessage message) => ReceivedMessagesCount++;
 
+        [TestMessageFilter]
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
-        [TestMessageFilter]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public Task OnEnvelopeReceived(IEnvelope message)
         {
             ReceivedEnvelopesCount++;

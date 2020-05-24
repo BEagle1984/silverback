@@ -9,9 +9,9 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
 {
     public class TestBehavior : IBehavior
     {
-        private readonly List<string> _calls;
+        private readonly List<string>? _calls;
 
-        public TestBehavior(List<string> calls = null)
+        public TestBehavior(List<string>? calls = null)
         {
             _calls = calls;
         }

@@ -13,10 +13,9 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void EnsureMessageIdIsInitialized_NoHeaderSet_HeaderInitialized()
         {
-            var message = new object();
             var headers = new MessageHeaderCollection();
 
-            MessageIdProvider.EnsureMessageIdIsInitialized(message, headers);
+            MessageIdProvider.EnsureMessageIdIsInitialized(headers);
 
             headers.Count.Should().Be(1);
             headers.First().Name.Should().Be("x-message-id");
@@ -26,13 +25,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void EnsureMessageIdIsInitialized_IdHeaderAlreadySet_HeaderPreserved()
         {
-            var message = new object();
             var headers = new MessageHeaderCollection
             {
                 { "x-message-id", "12345" }
             };
 
-            MessageIdProvider.EnsureMessageIdIsInitialized(message, headers);
+            MessageIdProvider.EnsureMessageIdIsInitialized(headers);
 
             headers.Should().BeEquivalentTo(new MessageHeader("x-message-id", "12345"));
         }

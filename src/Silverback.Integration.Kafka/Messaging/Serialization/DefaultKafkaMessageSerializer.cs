@@ -10,19 +10,17 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Serialization
 {
     /// <summary>
-    ///     The default implementation of a <see cref="IKafkaMessageSerializer" /> simply uses
-    ///     the provided <see cref="IMessageSerializer" /> for the value and treats the key as a
-    ///     UTF-8 encoded string.
+    ///     The default implementation of a <see cref="IKafkaMessageSerializer" /> simply uses the provided
+    ///     <see cref="IMessageSerializer" /> for the value and treats the key as a UTF-8 encoded string.
     /// </summary>
-    /// <inheritdoc cref="IKafkaMessageSerializer" />
     public class DefaultKafkaMessageSerializer : IKafkaMessageSerializer
     {
         private readonly IMessageSerializer _serializer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultKafkaMessageSerializer"/> class.
+        ///     Initializes a new instance of the <see cref="DefaultKafkaMessageSerializer" /> class.
         /// </summary>
-        /// <param name="serializer">The <see cref="IMessageSerializer"/> to be used.</param>
+        /// <param name="serializer"> The <see cref="IMessageSerializer" /> to be used. </param>
         public DefaultKafkaMessageSerializer(IMessageSerializer serializer)
         {
             _serializer = serializer;

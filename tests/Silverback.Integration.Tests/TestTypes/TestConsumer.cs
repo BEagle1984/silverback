@@ -32,19 +32,23 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public Task TestHandleMessage(
             object message,
-            IEnumerable<MessageHeader> headers = null,
-            IOffset offset = null,
-            IMessageSerializer serializer = null) =>
+            IEnumerable<MessageHeader>? headers = null,
+            IOffset? offset = null,
+            IMessageSerializer? serializer = null) =>
             TestHandleMessage(message, new MessageHeaderCollection(headers), offset, serializer);
 
-        public Task TestConsume(byte[] rawMessage, IEnumerable<MessageHeader> headers = null, IOffset offset = null) =>
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public Task TestConsume(
+            byte[]? rawMessage,
+            IEnumerable<MessageHeader>? headers = null,
+            IOffset? offset = null) =>
             TestHandleMessage(rawMessage, new MessageHeaderCollection(headers), offset);
 
         public async Task TestHandleMessage(
             object message,
             MessageHeaderCollection headers,
-            IOffset offset = null,
-            IMessageSerializer serializer = null)
+            IOffset? offset = null,
+            IMessageSerializer? serializer = null)
         {
             if (serializer == null)
                 serializer = new JsonMessageSerializer();
@@ -55,7 +59,7 @@ namespace Silverback.Tests.Integration.TestTypes
         }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task TestHandleMessage(byte[]? rawMessage, MessageHeaderCollection headers, IOffset offset = null)
+        public async Task TestHandleMessage(byte[]? rawMessage, MessageHeaderCollection headers, IOffset? offset = null)
         {
             if (!Broker.IsConnected)
                 throw new InvalidOperationException("The broker is not connected.");

@@ -32,7 +32,7 @@ namespace Silverback.Messaging.HealthChecks
             this IHealthChecksBuilder builder,
             string name = "OutboundEndpoints",
             HealthStatus? failureStatus = default,
-            IEnumerable<string> tags = default)
+            IEnumerable<string>? tags = default)
         {
             Check.NotNull(builder, nameof(builder));
 
@@ -70,7 +70,7 @@ namespace Silverback.Messaging.HealthChecks
             this IHealthChecksBuilder builder,
             string name = "OutboundQueue",
             HealthStatus? failureStatus = default,
-            IEnumerable<string> tags = default)
+            IEnumerable<string>? tags = default)
         {
             Check.NotNull(builder, nameof(builder));
 

@@ -11,14 +11,18 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
     public class RepublishMessagesTestService : ISubscriber
     {
+        [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-        [Subscribe]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
         private TestCommandOne OnCommandReceived(TestEventOne message) => new TestCommandOne();
 
+        [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-        [Subscribe]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
         private IEnumerable<ICommand> OnCommandReceived(TestEventTwo message) =>
             new ICommand[] { new TestCommandOne(), new TestCommandTwo() };
     }

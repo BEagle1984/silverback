@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     internal class RawOutboundEnvelope : RawBrokerEnvelope, IRawOutboundEnvelope
     {
         public RawOutboundEnvelope(
-            IEnumerable<MessageHeader> headers,
+            IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint,
             IOffset? offset = null)
             : this(null, headers, endpoint, offset)
@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Messages
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public RawOutboundEnvelope(
             byte[]? rawMessage,
-            IEnumerable<MessageHeader> headers,
+            IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint,
             IOffset? offset = null)
             : base(rawMessage, headers, endpoint, offset)

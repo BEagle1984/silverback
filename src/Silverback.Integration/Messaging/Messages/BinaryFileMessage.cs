@@ -21,7 +21,8 @@ namespace Silverback.Messaging.Messages
         /// </summary>
         /// <param name="content"> The binary content. </param>
         /// <param name="contentType"> The optional MIME type. </param>
-        public BinaryFileMessage(byte[] content, string contentType = "application/octet-stream")
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public BinaryFileMessage(byte[]? content, string contentType = "application/octet-stream")
         {
             Content = content;
             ContentType = contentType;

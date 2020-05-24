@@ -157,6 +157,8 @@ namespace Silverback.Tests.Core.EFCore30
 
             _connection.Close();
             await _connection.DisposeAsync();
+
+            await _dbContext.DisposeAsync();
         }
     }
 }

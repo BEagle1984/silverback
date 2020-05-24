@@ -207,6 +207,8 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             _connection.Close();
             await _connection.DisposeAsync();
+
+            await _serviceProvider.DisposeAsync();
         }
     }
 }

@@ -93,7 +93,7 @@
         <Rule Id="CA1502" Action="Warning" />
         <Rule Id="CA1504" Action="Warning" />
         <Rule Id="CA1505" Action="Warning" />
-        <Rule Id="CA1506" Action="Warning" /> <!-- AvoidExcessiveClassCoupling -->
+        <Rule Id="CA1506" Action="None" /> <!-- AvoidExcessiveClassCoupling -->
         <Rule Id="CA1600" Action="Warning" />
         <Rule Id="CA1601" Action="Warning" />
         <Rule Id="CA1700" Action="Warning" />
@@ -703,7 +703,7 @@
         <Rule Id="CA1501" Action="Warning" />
         <Rule Id="CA1502" Action="Warning" />
         <Rule Id="CA1505" Action="Warning" />
-        <Rule Id="CA1506" Action="Warning" /> <!-- AvoidExcessiveClassCoupling -->
+        <Rule Id="CA1506" Action="None" /> <!-- AvoidExcessiveClassCoupling -->
         <Rule Id="CA1509" Action="Warning" />
         <Rule Id="CA1707" Action="None" /> <!-- IdentifiersShouldNotContainUnderscores -->
         <Rule Id="CA1708" Action="Warning" />

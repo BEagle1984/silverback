@@ -4,13 +4,11 @@
 using System;
 using Silverback.Util;
 
-#pragma warning disable 618 //Obsolete
-
 namespace Silverback.Messaging.Messages
 {
     internal static class MessageIdProvider
     {
-        public static void EnsureMessageIdIsInitialized(object? message, MessageHeaderCollection headers)
+        public static void EnsureMessageIdIsInitialized(MessageHeaderCollection headers)
         {
             Check.NotNull(headers, nameof(headers));
 

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -215,6 +216,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
         private IBusConfigurator GetBusConfigurator() => GetServiceProvider().GetService<IBusConfigurator>();
 
+        [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
         private class TestConfiguratorOne : IEndpointsConfigurator
         {
             public void Configure(IEndpointsConfigurationBuilder builder)
@@ -223,6 +225,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             }
         }
 
+        [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
         private class TestConfiguratorTwo : IEndpointsConfigurator
         {
             public void Configure(IEndpointsConfigurationBuilder builder)

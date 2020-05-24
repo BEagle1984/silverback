@@ -13,9 +13,10 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
 
         public int ReceivedCallsCount { get; private set; }
 
+        [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
-        [Subscribe]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public void OnTestMessageReceived(ITestMessage message)
         {
             ReceivedMessagesCount++;
@@ -24,6 +25,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
 
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public void OnTestMessageReceived3(ITestMessage message)
         {
             ReceivedCallsCount++;
@@ -32,14 +34,16 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public void TryToBreakIt(int param)
         {
             // This is here to try and break the reflection based subscribers discovery logic -> DON'T REMOVE
         }
 
+        [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-        [Subscribe]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         private void OnTestMessageReceived2(ITestMessage message)
         {
             ReceivedCallsCount++;
@@ -47,6 +51,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         private void OnTestMessageReceived4(ITestMessage message)
         {
             ReceivedCallsCount++;

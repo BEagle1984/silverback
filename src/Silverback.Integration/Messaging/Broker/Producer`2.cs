@@ -7,7 +7,7 @@ using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
+    /// <inheritdoc cref="Producer" />
     public abstract class Producer<TBroker, TEndpoint> : Producer
         where TBroker : IBroker
         where TEndpoint : IProducerEndpoint

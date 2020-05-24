@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -24,7 +25,7 @@ namespace Silverback.Messaging.Broker
     ///     The type of the <see cref="IConsumerEndpoint" /> that is being handled by this broker
     ///     implementation.
     /// </typeparam>
-    /// <inheritdoc cref="IBroker" />
+    [SuppressMessage("", "CA1724", Justification = "Preserve backward compatibility since no big deal")]
     public abstract class Broker<TProducerEndpoint, TConsumerEndpoint> : IBroker, IDisposable
         where TProducerEndpoint : IProducerEndpoint
         where TConsumerEndpoint : IConsumerEndpoint

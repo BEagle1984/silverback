@@ -34,10 +34,12 @@ namespace Silverback.Messaging.Connectors
 
         [Subscribe]
         [SuppressMessage("", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         internal async Task OnTransactionCompleted(TransactionCompletedEvent message) => await _queueWriter.Commit();
 
         [Subscribe]
         [SuppressMessage("", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         internal async Task OnTransactionAborted(TransactionAbortedEvent message) => await _queueWriter.Rollback();
     }
 }

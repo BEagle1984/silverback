@@ -59,6 +59,9 @@ namespace Silverback.Messaging.Broker
             Flush();
 
             _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
+
+            _queue.Dispose();
 
             _channel?.Dispose();
             _channel = null;

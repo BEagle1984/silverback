@@ -18,6 +18,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class ErrorPolicyBaseTests
     {
+        private readonly IServiceProvider _fakeServiceProvider = Substitute.For<IServiceProvider>();
+
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
         [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
 
@@ -97,7 +99,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [MemberData(nameof(ApplyTo_TestData))]
         public void ApplyTo_Exception_CanHandleReturnsExpectedResult(Exception exception, bool mustApply)
         {
-            var policy = new TestErrorPolicy()
+            var policy = new TestErrorPolicy(_fakeServiceProvider)
                 .ApplyTo<ArgumentException>()
                 .ApplyTo<InvalidCastException>();
 
@@ -117,7 +119,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [MemberData(nameof(Exclude_TestData))]
         public void Exclude_Exception_CanHandleReturnsExpectedResult(Exception exception, bool mustApply)
         {
-            var policy = (TestErrorPolicy)new TestErrorPolicy()
+            var policy = (TestErrorPolicy)new TestErrorPolicy(_fakeServiceProvider)
                 .Exclude<ArgumentException>()
                 .Exclude<InvalidCastException>();
 
@@ -137,7 +139,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [MemberData(nameof(ApplyToAndExclude_TestData))]
         public void ApplyToAndExclude_Exception_CanHandleReturnsExpectedResult(Exception exception, bool mustApply)
         {
-            var policy = (TestErrorPolicy)new TestErrorPolicy()
+            var policy = (TestErrorPolicy)new TestErrorPolicy(_fakeServiceProvider)
                 .ApplyTo<ArgumentException>()
                 .Exclude<ArgumentOutOfRangeException>()
                 .ApplyTo<FormatException>();
@@ -161,7 +163,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             Exception exception,
             bool mustApply)
         {
-            var policy = (TestErrorPolicy)new TestErrorPolicy()
+            var policy = (TestErrorPolicy)new TestErrorPolicy(_fakeServiceProvider)
                 .ApplyWhen(
                     (msg, ex) =>
                         msg.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts) <= 5 && ex.Message != "no");

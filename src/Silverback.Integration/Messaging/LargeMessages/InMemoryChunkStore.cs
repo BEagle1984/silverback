@@ -14,7 +14,6 @@ namespace Silverback.Messaging.LargeMessages
     /// <summary>
     ///     Temporary stores the message chunks in memory, waiting for the full message to be available.
     /// </summary>
-    /// <inheritdoc cref="IChunkStore" />
     public class InMemoryChunkStore : TransactionalList<InMemoryTemporaryMessageChunk>, IChunkStore
     {
         private readonly List<string> _pendingCleanups = new List<string>();

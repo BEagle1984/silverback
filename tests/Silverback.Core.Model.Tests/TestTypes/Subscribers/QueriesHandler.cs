@@ -15,12 +15,16 @@ namespace Silverback.Tests.Core.Model.TestTypes.Subscribers
     {
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "CA1822", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public Task<IEnumerable<int>> Handle(ListQuery query) => Task.FromResult(Enumerable.Range(1, query.Count));
 
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "CA1822", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public Task TryToBreak(ListQuery query) => Task.FromResult(Array.Empty<object>());
     }
 }

@@ -70,14 +70,17 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
 
             [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
             [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+            [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
             public void Apply(TestEntityEvent1 event1) => Calls++;
 
             [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
             [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+            [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
             protected void Apply(TestEntityEvent2 event2) => Calls++;
 
             [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
             [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+            [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
             private void Apply2(TestEntityEvent2 event2, bool isReplaying) => Calls++;
 
             public abstract class TestEntityEvent : EntityEvent

@@ -13,7 +13,6 @@ namespace Silverback.Messaging.BinaryFiles
     ///     Handles the <see cref="IBinaryFileMessage" />. It's not really a serializer, since the raw
     ///     binary content is transmitted as-is.
     /// </summary>
-    /// <inheritdoc cref="BinaryFileMessageSerializer" />
     /// <typeparam name="TModel">
     ///     The type of the <see cref="IBinaryFileMessage" /> implementation.
     /// </typeparam>

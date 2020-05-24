@@ -29,7 +29,7 @@ namespace Silverback.Messaging.HealthChecks
             _service = service;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
         public async Task<HealthCheckResult> CheckHealthAsync(
             HealthCheckContext context,
             CancellationToken cancellationToken = default)

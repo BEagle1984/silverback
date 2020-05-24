@@ -11,14 +11,16 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
     {
         public ParallelTestingUtil Parallel { get; } = new ParallelTestingUtil();
 
+        [Subscribe(Parallel = false)]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-        [Subscribe(Parallel = false)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         private void OnMessageReceived(object message) => Parallel.DoWork();
 
+        [Subscribe(Parallel = false)]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-        [Subscribe(Parallel = false)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         private Task OnMessageReceivedAsync(object message) => Parallel.DoWorkAsync();
     }
 }

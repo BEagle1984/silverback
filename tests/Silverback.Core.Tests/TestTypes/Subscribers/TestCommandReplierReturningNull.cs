@@ -12,9 +12,10 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
     {
         public int ReceivedMessagesCount { get; private set; }
 
+        [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
-        [Subscribe]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public string? OnRequestReceived(ICommand<string> message)
         {
             ReceivedMessagesCount++;
@@ -22,9 +23,10 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
             return null;
         }
 
+        [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
-        [Subscribe]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public async Task<string?> OnRequestReceived2(ICommand<string> message)
         {
             await Task.Delay(1);

@@ -206,6 +206,8 @@ namespace Silverback.Tests.Integration.E2E.Connectors
 
             _connection.Close();
             await _connection.DisposeAsync();
+
+            await _serviceProvider.DisposeAsync();
         }
     }
 }

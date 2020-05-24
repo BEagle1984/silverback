@@ -11,7 +11,6 @@ namespace Silverback.Messaging.Broker
     /// <summary>
     ///     An <see cref="IBroker" /> implementation for Apache Kafka.
     /// </summary>
-    /// <inheritdoc cref="Broker" />
     public class KafkaBroker : Broker<KafkaProducerEndpoint, KafkaConsumerEndpoint>
     {
         private readonly ILoggerFactory _loggerFactory;

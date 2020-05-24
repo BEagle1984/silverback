@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Messages
         ///     The per-partition offsets and success or error information and the overall operation success or
         ///     error information.
         /// </param>
-        public KafkaOffsetsCommittedEvent(CommittedOffsets committedOffsets)
+        public KafkaOffsetsCommittedEvent(CommittedOffsets? committedOffsets)
             : this(committedOffsets?.Offsets.ToList(), committedOffsets?.Error)
         {
         }
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Messages
         /// <param name="error"> The overall operation success or error information. </param>
         public KafkaOffsetsCommittedEvent(
             IReadOnlyCollection<TopicPartitionOffsetError>? offsets,
-            Error error = null)
+            Error? error = null)
         {
             Offsets = offsets ?? Array.Empty<TopicPartitionOffsetError>();
             Error = error ?? new Error(ErrorCode.NoError);

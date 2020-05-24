@@ -9,7 +9,6 @@ using Silverback.Messaging.Broker.Behaviors;
 namespace Silverback.Messaging.Broker
 {
     /// <summary> An <see cref="IBroker" /> implementation for RabbitMQ. </summary>
-    /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}" />
     public class RabbitBroker : Broker<RabbitProducerEndpoint, RabbitConsumerEndpoint>
     {
         private readonly IRabbitConnectionFactory _connectionFactory;

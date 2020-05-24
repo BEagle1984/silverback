@@ -10,7 +10,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <inheritdoc cref="Broker" />
+    /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}" />
     public class InMemoryBroker : Broker<IProducerEndpoint, IConsumerEndpoint>
     {
         private readonly ConcurrentDictionary<string, InMemoryTopic> _topics =

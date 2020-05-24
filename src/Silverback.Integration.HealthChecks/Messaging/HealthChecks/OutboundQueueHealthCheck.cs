@@ -37,7 +37,7 @@ namespace Silverback.Messaging.HealthChecks
         /// </summary>
         public static int? MaxQueueLength { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
         public async Task<HealthCheckResult> CheckHealthAsync(
             HealthCheckContext context,
             CancellationToken cancellationToken = default)

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
@@ -18,6 +19,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
     public class ErrorPolicyChainTests
     {
         private readonly IErrorPolicyBuilder _errorPolicyBuilder;
+
+        private readonly IServiceProvider _fakeServiceProvider = Substitute.For<IServiceProvider>();
 
         public ErrorPolicyChainTests()
         {
@@ -49,7 +52,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     failedAttempts.ToString(CultureInfo.InvariantCulture))
             };
 
-            var testPolicy = new TestErrorPolicy();
+            var testPolicy = new TestErrorPolicy(_fakeServiceProvider);
 
             var chain = _errorPolicyBuilder.Chain(
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(3),
@@ -126,9 +129,9 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var policies = new[]
             {
-                new TestErrorPolicy().MaxFailedAttempts(2),
-                new TestErrorPolicy().MaxFailedAttempts(2),
-                new TestErrorPolicy().MaxFailedAttempts(2)
+                new TestErrorPolicy(_fakeServiceProvider).MaxFailedAttempts(2),
+                new TestErrorPolicy(_fakeServiceProvider).MaxFailedAttempts(2),
+                new TestErrorPolicy(_fakeServiceProvider).MaxFailedAttempts(2)
             };
 
             var chain = _errorPolicyBuilder.Chain(policies);

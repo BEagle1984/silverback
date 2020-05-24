@@ -15,7 +15,9 @@ namespace Silverback.Messaging.Serialization
     /// <summary>
     ///     Connects to the specified schema registry and serializes the messages in Apache Avro format.
     /// </summary>
-    /// <inheritdoc cref="IKafkaMessageSerializer" />
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be serialized and/or deserialized.
+    /// </typeparam>
     public class AvroMessageSerializer<TMessage> : IKafkaMessageSerializer
         where TMessage : class
     {

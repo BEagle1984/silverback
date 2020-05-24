@@ -129,7 +129,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             result.Should().BeFalse();
         }
 
-        private static IRawInboundEnvelope GetEnvelope(Guid? messageId = null, IConsumerEndpoint endpoint = null)
+        private static IRawInboundEnvelope GetEnvelope(Guid? messageId = null, IConsumerEndpoint? endpoint = null)
         {
             endpoint ??= TestConsumerEndpoint.GetDefault();
 

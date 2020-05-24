@@ -9,6 +9,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
@@ -104,11 +105,6 @@ namespace Silverback.Tests.Integration.E2E.Broker
             await publisher.PublishAsync(message);
 
             scopes.Should().Be(3);
-        }
-
-        private class ScopeIdentifier
-        {
-            public Guid ScopeId { get; } = Guid.NewGuid();
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Broker.Behaviors
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            MessageIdProvider.EnsureMessageIdIsInitialized(context.Envelope.Message, context.Envelope.Headers);
+            MessageIdProvider.EnsureMessageIdIsInitialized(context.Envelope.Headers);
 
             await next(context);
         }

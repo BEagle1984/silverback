@@ -641,6 +641,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             _connection.Close();
             await _connection.DisposeAsync();
+
+            await _dbContext.DisposeAsync();
         }
     }
 }
