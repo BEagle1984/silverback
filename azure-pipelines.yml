@@ -23,7 +23,7 @@ steps:
       version: '3.1.x'
   # Build and test
   - script: |
-      dotnet build Silverback.sln --configuration $(buildConfiguration)
+      dotnet build Silverback.sln --configuration $(buildConfiguration) -warnaserror
     displayName: 'Build (dotnet build $(buildConfiguration))'
   - script: |
       dotnet test Silverback.sln \

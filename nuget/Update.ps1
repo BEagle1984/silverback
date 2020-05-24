@@ -41,7 +41,7 @@ function Pack-All()
         Remove-ProjectReferences $projectFilePath
         
         Write-Host "Building..."
-        dotnet build -c $global:buildConfiguration $projectFilePath --no-incremental --nologo -v q /warnaserror
+        dotnet build -c $global:buildConfiguration $projectFilePath --no-incremental --nologo -v q -warnaserror
         Write-Host ""
         Write-Host "Packing..."
         dotnet pack -c $global:buildConfiguration $projectFilePath -o . --no-build --nologo -v q
