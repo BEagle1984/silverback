@@ -7,14 +7,8 @@ namespace Silverback.Tests.Integration.E2E.TestTypes.Messages
 {
     public class TestPrioritizedCommand : IIntegrationCommand
     {
-        public enum PriorityEnum
-        {
-            Low,
-            Normal,
-            High
-        };
+        public Priority Priority { get; set; }
 
-        public PriorityEnum Priority { get; set; }
-        public string Content { get; set; }
+        public string? Content { get; set; }
     }
 }

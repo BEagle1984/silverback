@@ -3,7 +3,9 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -23,16 +25,17 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             };
             var envelope = new OutboundEnvelope(message, null, TestProducerEndpoint.GetDefault());
 
-            IOutboundEnvelope result = null;
+            IOutboundEnvelope? result = null;
             await new BinaryFileHandlerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, null),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 context =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
                 });
 
-            result.RawMessage.Should().BeEquivalentTo(message.Content);
+            result.Should().NotBeNull();
+            result!.RawMessage.Should().BeEquivalentTo(message.Content);
         }
 
         [Fact]
@@ -44,16 +47,17 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             };
             var envelope = new OutboundEnvelope(message, null, TestProducerEndpoint.GetDefault());
 
-            IOutboundEnvelope result = null;
+            IOutboundEnvelope? result = null;
             await new BinaryFileHandlerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, null),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 context =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
                 });
 
-            result.RawMessage.Should().BeEquivalentTo(message.Content);
+            result.Should().NotBeNull();
+            result!.RawMessage.Should().BeEquivalentTo(message.Content);
         }
 
         [Fact]
@@ -67,19 +71,19 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             endpoint.Serializer = new BinaryFileMessageSerializer();
             var envelope = new OutboundEnvelope(message, null, endpoint);
 
-            IOutboundEnvelope result = null;
+            IOutboundEnvelope? result = null;
             await new BinaryFileHandlerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, null),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 context =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
                 });
 
-            result.Should().BeSameAs(envelope);
+            result.Should().NotBeNull();
+            result!.Should().BeSameAs(envelope);
         }
 
-        
         [Fact]
         public async Task Handle_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
         {
@@ -89,18 +93,19 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             };
             var envelope = new OutboundEnvelope(message, null, TestProducerEndpoint.GetDefault());
 
-            IOutboundEnvelope result = null;
+            IOutboundEnvelope? result = null;
             await new BinaryFileHandlerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, null),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 context =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
                 });
 
-            result.Should().BeSameAs(envelope);
+            result.Should().NotBeNull();
+            result!.Should().BeSameAs(envelope);
         }
-        
+
         private class InheritedBinaryFileMessage : BinaryFileMessage
         {
         }

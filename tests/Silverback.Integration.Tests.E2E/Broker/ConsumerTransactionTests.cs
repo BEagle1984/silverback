@@ -24,6 +24,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
     public class ConsumerTransactionTests
     {
         private readonly ServiceProvider _serviceProvider;
+
         private readonly IBusConfigurator _configurator;
 
         public ConsumerTransactionTests()
@@ -34,14 +35,16 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .AddNullLogger()
                 .AddSilverback()
                 .UseModel()
-                .WithConnectionToMessageBroker(options => options
-                    .AddInMemoryBroker()
-                    .AddInMemoryChunkStore());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddInMemoryBroker()
+                        .AddInMemoryChunkStore());
 
-            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
-            {
-                ValidateScopes = true
-            });
+            _serviceProvider = services.BuildServiceProvider(
+                new ServiceProviderOptions
+                {
+                    ValidateScopes = true
+                });
 
             _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
         }
@@ -54,14 +57,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var message = new TestEventOne { Content = "Hello E2E!" };
 
             var broker = _configurator
-                .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e")))
+                .Connect(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                        .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
                 .First();
 
-            ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
+            ((InMemoryConsumer)broker.Consumers[0]).CommitCalled +=
                 (_, args) => committedOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();
@@ -85,21 +87,21 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var message = new TestEventOne { Content = "Hello E2E!" };
 
             var broker = _configurator
-                .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e"),
-                        settings: new InboundConnectorSettings
-                        {
-                            Batch = new BatchSettings
+                .Connect(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                        .AddInbound(
+                            new KafkaConsumerEndpoint("test-e2e"),
+                            settings: new InboundConnectorSettings
                             {
-                                Size = 3
-                            }
-                        }))
+                                Batch = new BatchSettings
+                                {
+                                    Size = 3
+                                }
+                            }))
                 .First();
 
-            ((InMemoryConsumer) broker.Consumers.First()).CommitCalled +=
+            ((InMemoryConsumer)broker.Consumers[0]).CommitCalled +=
                 (_, args) => committedOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();
@@ -125,21 +127,22 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var tryCount = 0;
 
             var broker = _configurator
-                .Subscribe((IIntegrationEvent _, IServiceProvider serviceProvider) =>
-                {
-                    tryCount++;
-                    if (tryCount != 3)
-                        throw new ApplicationException("Retry!");
-                })
-                .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e"),
-                        errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)))
+                .Subscribe(
+                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    {
+                        tryCount++;
+                        if (tryCount != 3)
+                            throw new InvalidOperationException("Retry!");
+                    })
+                .Connect(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                        .AddInbound(
+                            new KafkaConsumerEndpoint("test-e2e"),
+                            errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)))
                 .First();
 
-            var consumer = (InMemoryConsumer) broker.Consumers.First();
+            var consumer = (InMemoryConsumer)broker.Consumers[0];
             consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
             consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
 
@@ -162,21 +165,22 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             _configurator
                 .Subscribe((ISilverbackEvent silverbackEvent) => { silverbackEvents.Add(silverbackEvent); })
-                .Subscribe((IIntegrationEvent _, IServiceProvider serviceProvider) =>
-                {
-                    silverbackEvents.OfType<ConsumingCompletedEvent>().Should().BeEmpty();
-                    silverbackEvents.OfType<ConsumingAbortedEvent>().Count().Should().Be(tryCount);
+                .Subscribe(
+                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    {
+                        silverbackEvents.OfType<ConsumingCompletedEvent>().Should().BeEmpty();
+                        silverbackEvents.OfType<ConsumingAbortedEvent>().Count().Should().Be(tryCount);
 
-                    tryCount++;
-                    if (tryCount != 3)
-                        throw new ApplicationException("Retry!");
-                })
-                .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e"),
-                        errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)));
+                        tryCount++;
+                        if (tryCount != 3)
+                            throw new InvalidOperationException("Retry!");
+                    })
+                .Connect(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                        .AddInbound(
+                            new KafkaConsumerEndpoint("test-e2e"),
+                            errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -198,24 +202,26 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var tryCount = 0;
 
             var broker = _configurator
-                .Subscribe((IIntegrationEvent _, IServiceProvider serviceProvider) =>
-                {
-                    tryCount++;
-                    if (tryCount != 3)
-                        throw new ApplicationException("Retry!");
-                })
-                .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e")
-                        {
-                            Chunk = new ChunkSettings { Size = 10 }
-                        })
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e"),
-                        errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)))
+                .Subscribe(
+                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    {
+                        tryCount++;
+                        if (tryCount != 3)
+                            throw new InvalidOperationException("Retry!");
+                    })
+                .Connect(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(
+                            new KafkaProducerEndpoint("test-e2e")
+                            {
+                                Chunk = new ChunkSettings { Size = 10 }
+                            })
+                        .AddInbound(
+                            new KafkaConsumerEndpoint("test-e2e"),
+                            errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)))
                 .First();
 
-            var consumer = (InMemoryConsumer) broker.Consumers.First();
+            var consumer = (InMemoryConsumer)broker.Consumers[0];
             consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
             consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
 
@@ -238,24 +244,26 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             _configurator
                 .Subscribe((ISilverbackEvent silverbackEvent) => { silverbackEvents.Add(silverbackEvent); })
-                .Subscribe((IIntegrationEvent _, IServiceProvider serviceProvider) =>
-                {
-                    silverbackEvents.OfType<ConsumingCompletedEvent>().Count().Should().BeLessThan(3);
-                    silverbackEvents.OfType<ConsumingAbortedEvent>().Count().Should().Be(tryCount);
+                .Subscribe(
+                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    {
+                        silverbackEvents.OfType<ConsumingCompletedEvent>().Count().Should().BeLessThan(3);
+                        silverbackEvents.OfType<ConsumingAbortedEvent>().Count().Should().Be(tryCount);
 
-                    tryCount++;
-                    if (tryCount != 3)
-                        throw new ApplicationException("Retry!");
-                })
-                .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e")
-                        {
-                            Chunk = new ChunkSettings { Size = 10 }
-                        })
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e"),
-                        errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)));
+                        tryCount++;
+                        if (tryCount != 3)
+                            throw new InvalidOperationException("Retry!");
+                    })
+                .Connect(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(
+                            new KafkaProducerEndpoint("test-e2e")
+                            {
+                                Chunk = new ChunkSettings { Size = 10 }
+                            })
+                        .AddInbound(
+                            new KafkaConsumerEndpoint("test-e2e"),
+                            errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -276,21 +284,22 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var tryCount = 0;
 
             var broker = _configurator
-                .Subscribe((IIntegrationEvent _, IServiceProvider serviceProvider) =>
-                {
-                    tryCount++;
+                .Subscribe(
+                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    {
+                        tryCount++;
 
-                    throw new ApplicationException("Retry!");
-                })
-                .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e"),
-                        errorPolicy => errorPolicy.Retry().MaxFailedAttempts(2)))
+                        throw new InvalidOperationException("Retry!");
+                    })
+                .Connect(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                        .AddInbound(
+                            new KafkaConsumerEndpoint("test-e2e"),
+                            errorPolicy => errorPolicy.Retry().MaxFailedAttempts(2)))
                 .First();
 
-            var consumer = (InMemoryConsumer) broker.Consumers.First();
+            var consumer = (InMemoryConsumer)broker.Consumers[0];
             consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();
@@ -318,24 +327,26 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var tryCount = 0;
 
             var broker = _configurator
-                .Subscribe((IIntegrationEvent _, IServiceProvider serviceProvider) =>
-                {
-                    tryCount++;
+                .Subscribe(
+                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    {
+                        tryCount++;
 
-                    throw new ApplicationException("Retry!");
-                })
-                .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e")
-                        {
-                            Chunk = new ChunkSettings { Size = 10 }
-                        })
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e"),
-                        errorPolicy => errorPolicy.Retry().MaxFailedAttempts(2)))
+                        throw new InvalidOperationException("Retry!");
+                    })
+                .Connect(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(
+                            new KafkaProducerEndpoint("test-e2e")
+                            {
+                                Chunk = new ChunkSettings { Size = 10 }
+                            })
+                        .AddInbound(
+                            new KafkaConsumerEndpoint("test-e2e"),
+                            errorPolicy => errorPolicy.Retry().MaxFailedAttempts(2)))
                 .First();
 
-            var consumer = (InMemoryConsumer) broker.Consumers.First();
+            var consumer = (InMemoryConsumer)broker.Consumers[0];
             consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
 
             using var scope = _serviceProvider.CreateScope();

@@ -20,7 +20,7 @@ using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
-using Silverback.Tests.Integration.Configuration.Types;
+using Silverback.Tests.Integration.Configuration.TestTypes;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
@@ -214,6 +214,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
         }
 
         [Fact]
+        [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
         public void Read_CompleteInbound_ErrorPolicyMaxFailedAttemptsSet()
         {
             var reader =
@@ -240,7 +241,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
         }
 
         [Fact]
-        [SuppressMessage("", "PossibleNullReferenceException")]
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public void Read_CompleteInbound_ErrorPolicyConstructorParameterSet()
         {
             var reader =
@@ -248,11 +249,12 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
                     .Read(ConfigFileHelper.GetConfigSection("inbound.complete"));
 
             var policy = (RetryErrorPolicy)reader.Inbound.First().ErrorPolicies.First();
-            ((TimeSpan)policy.GetType().GetField("_delayIncrement", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(policy)).Should().Be(TimeSpan.FromMinutes(5));
+            ((TimeSpan)policy.GetType().GetField("_delayIncrement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(policy)!).Should().Be(TimeSpan.FromMinutes(5));
         }
 
         [Fact]
+        [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
         public void Read_CompleteInbound_ErrorPolicyApplyToSet()
         {
             var reader =
@@ -272,6 +274,7 @@ namespace Silverback.Tests.Integration.Configuration.Messaging.Configuration
         }
 
         [Fact]
+        [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
         public void Read_CompleteInbound_ErrorPolicyExcludeSet()
         {
             var reader =

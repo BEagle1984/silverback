@@ -9,8 +9,11 @@ namespace Silverback.Tests.Integration.RabbitMQ.TestTypes.Messages
     public class NoRoutingKeyMessage : IMessage
     {
         public Guid Id { get; set; }
-        public string One { get; set; }
-        public string Two { get; set; }
-        public string Three { get; set; }
+
+        public string? One { get; set; }
+
+        public string? Two { get; set; }
+
+        public string? Three { get; set; }
     }
 }

@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Core.TestTypes.Messages;
 
@@ -21,7 +20,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         public void OnTestMessagesReceived(IReadOnlyCollection<ITestMessage> messages)
         {
             ReceivedBatchesCount++;
-            ReceivedMessagesCount += messages.Count();
+            ReceivedMessagesCount += messages.Count;
         }
     }
 }

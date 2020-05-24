@@ -173,7 +173,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
 
             receivedMessages.Should().Be(2);
 
-            void Method1(IReadOnlyCollection<TestEventOne> events) => receivedMessages += events.Count();
+            void Method1(IReadOnlyCollection<TestEventOne> events) => receivedMessages += events.Count;
         }
 
         [Fact]
@@ -195,7 +195,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
 
             receivedMessages.Should().Be(3);
 
-            void Method1(IReadOnlyCollection<IEvent> events) => receivedMessages += events.Count();
+            void Method1(IReadOnlyCollection<IEvent> events) => receivedMessages += events.Count;
         }
 
         [Fact]

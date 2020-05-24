@@ -5,6 +5,6 @@ namespace Silverback.Tests.Integration.TestTypes.Domain
 {
     public class TestEventTwo : IIntegrationEvent
     {
-        public string Content { get; set; }
+        public string? Content { get; set; }
     }
 }

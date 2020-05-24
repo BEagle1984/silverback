@@ -33,30 +33,32 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             broker.GetProducer(new TestProducerEndpoint("endpoint2")).Returns(producer2);
             broker.GetProducer(new TestProducerEndpoint("endpoint3")).Returns(producer3);
             var configuration = Substitute.For<IOutboundRoutingConfiguration>();
-            configuration.Routes.Returns(new List<IOutboundRoute>
-            {
-                new OutboundRoute(
-                    typeof(TestEventOne),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
-                    typeof(OutboundConnector)),
-                new OutboundRoute(
-                    typeof(TestEventTwo),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
-                    typeof(OutboundConnector)),
-                new OutboundRoute(
-                    typeof(TestEventThree),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
-                    typeof(OutboundConnector))
-            });
+            configuration.Routes.Returns(
+                new List<IOutboundRoute>
+                {
+                    new OutboundRoute(
+                        typeof(TestEventOne),
+                        new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
+                        typeof(OutboundConnector)),
+                    new OutboundRoute(
+                        typeof(TestEventTwo),
+                        new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
+                        typeof(OutboundConnector)),
+                    new OutboundRoute(
+                        typeof(TestEventThree),
+                        new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
+                        typeof(OutboundConnector))
+                });
 
-            var service = new OutboundEndpointsHealthCheckService(configuration,
+            var service = new OutboundEndpointsHealthCheckService(
+                configuration,
                 new BrokerCollection(new[] { broker }));
 
             await service.PingAllEndpoints();
 
-            await producer1.ReceivedWithAnyArgs(1).ProduceAsync((PingMessage) null);
-            await producer2.ReceivedWithAnyArgs(1).ProduceAsync((PingMessage) null);
-            await producer3.ReceivedWithAnyArgs(1).ProduceAsync((PingMessage) null);
+            await producer1.ReceivedWithAnyArgs(1).ProduceAsync((PingMessage?)null);
+            await producer2.ReceivedWithAnyArgs(1).ProduceAsync((PingMessage?)null);
+            await producer3.ReceivedWithAnyArgs(1).ProduceAsync((PingMessage?)null);
         }
 
         [Fact]
@@ -73,23 +75,25 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             broker.GetProducer(new TestProducerEndpoint("endpoint2")).Returns(producer2);
             broker.GetProducer(new TestProducerEndpoint("endpoint3")).Returns(producer3);
             var configuration = Substitute.For<IOutboundRoutingConfiguration>();
-            configuration.Routes.Returns(new List<IOutboundRoute>
-            {
-                new OutboundRoute(
-                    typeof(TestEventOne),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
-                    typeof(OutboundConnector)),
-                new OutboundRoute(
-                    typeof(TestEventTwo),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
-                    typeof(OutboundConnector)),
-                new OutboundRoute(
-                    typeof(TestEventThree),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
-                    typeof(OutboundConnector))
-            });
+            configuration.Routes.Returns(
+                new List<IOutboundRoute>
+                {
+                    new OutboundRoute(
+                        typeof(TestEventOne),
+                        new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
+                        typeof(OutboundConnector)),
+                    new OutboundRoute(
+                        typeof(TestEventTwo),
+                        new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
+                        typeof(OutboundConnector)),
+                    new OutboundRoute(
+                        typeof(TestEventThree),
+                        new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
+                        typeof(OutboundConnector))
+                });
 
-            var service = new OutboundEndpointsHealthCheckService(configuration,
+            var service = new OutboundEndpointsHealthCheckService(
+                configuration,
                 new BrokerCollection(new[] { broker }));
 
             var results = await service.PingAllEndpoints();
@@ -106,29 +110,31 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
             var producer1 = Substitute.For<IProducer>();
             var producer2 = Substitute.For<IProducer>();
-            producer2.ProduceAsync((PingMessage) null).ThrowsForAnyArgs<ProduceException>();
+            producer2.ProduceAsync((PingMessage?)null).ThrowsForAnyArgs<ProduceException>();
             var producer3 = Substitute.For<IProducer>();
             broker.GetProducer(new TestProducerEndpoint("endpoint1")).Returns(producer1);
             broker.GetProducer(new TestProducerEndpoint("endpoint2")).Returns(producer2);
             broker.GetProducer(new TestProducerEndpoint("endpoint3")).Returns(producer3);
             var configuration = Substitute.For<IOutboundRoutingConfiguration>();
-            configuration.Routes.Returns(new List<IOutboundRoute>
-            {
-                new OutboundRoute(
-                    typeof(TestEventOne),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
-                    typeof(OutboundConnector)),
-                new OutboundRoute(
-                    typeof(TestEventTwo),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
-                    typeof(OutboundConnector)),
-                new OutboundRoute(
-                    typeof(TestEventThree),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
-                    typeof(OutboundConnector))
-            });
+            configuration.Routes.Returns(
+                new List<IOutboundRoute>
+                {
+                    new OutboundRoute(
+                        typeof(TestEventOne),
+                        new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
+                        typeof(OutboundConnector)),
+                    new OutboundRoute(
+                        typeof(TestEventTwo),
+                        new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
+                        typeof(OutboundConnector)),
+                    new OutboundRoute(
+                        typeof(TestEventThree),
+                        new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
+                        typeof(OutboundConnector))
+                });
 
-            var service = new OutboundEndpointsHealthCheckService(configuration,
+            var service = new OutboundEndpointsHealthCheckService(
+                configuration,
                 new BrokerCollection(new[] { broker }));
 
             var results = (await service.PingAllEndpoints()).ToList();

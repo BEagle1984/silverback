@@ -3,7 +3,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Silverback.Database.Model;
-using Silverback.Messaging.LargeMessages;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes.Database
 {

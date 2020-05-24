@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Diagnostics;
 using Xunit;
 

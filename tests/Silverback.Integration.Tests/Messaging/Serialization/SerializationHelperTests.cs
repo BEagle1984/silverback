@@ -42,7 +42,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var type = SerializationHelper.GetTypeFromHeaders<object>(headers);
 
-            type.Should().Be(typeof(TestEventOne));            
+            type.Should().Be(typeof(TestEventOne));
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             act.Should().Throw<TypeLoadException>();
         }
-        
+
         [Fact]
         public void GetTypeFromHeader_IncompleteTypeName_TypeReturned()
         {
@@ -76,7 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             type.Should().Be(typeof(TestEventOne));
         }
-        
+
         [Fact]
         public void GetTypeFromHeader_NoHeader_DefaultTypeReturned()
         {

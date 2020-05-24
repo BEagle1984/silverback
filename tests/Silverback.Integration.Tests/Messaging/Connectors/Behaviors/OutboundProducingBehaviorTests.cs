@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -21,7 +22,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
     public class OutboundProducingBehaviorTests
     {
         private readonly OutboundProducerBehavior _behavior;
+
         private readonly InMemoryOutboundQueue _outboundQueue;
+
         private readonly TestBroker _broker;
 
         public OutboundProducingBehaviorTests()
@@ -33,17 +36,18 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             services.AddSingleton<IOutboundQueueWriter>(_outboundQueue);
 
             services.AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddOutboundConnector()
-                    .AddDeferredOutboundConnector());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddOutboundConnector()
+                        .AddDeferredOutboundConnector());
 
             services.AddNullLogger();
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _behavior = (OutboundProducerBehavior) serviceProvider.GetServices<IBehavior>()
-                .First(s => s is OutboundProducerBehavior);
+            _behavior = (OutboundProducerBehavior)serviceProvider.GetServices<IBehavior>()
+                .First(behavior => behavior is OutboundProducerBehavior);
             _broker = serviceProvider.GetRequiredService<TestBroker>();
         }
 
@@ -52,15 +56,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
-                new MessageHeader[0],
+                Array.Empty<MessageHeader>(),
                 TestProducerEndpoint.GetDefault(),
                 typeof(OutboundConnector));
 
-            await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult);
+            await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(10);
-            queued.Count().Should().Be(0);
+            queued.Count.Should().Be(0);
             _broker.ProducedMessages.Count.Should().Be(3);
         }
 
@@ -69,11 +73,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
-                new MessageHeader[0],
+                Array.Empty<MessageHeader>(),
                 TestProducerEndpoint.GetDefault(),
                 typeof(DeferredOutboundConnector));
 
-            await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult);
+            await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
             await _outboundQueue.Commit();
 
             var queued = await _outboundQueue.Dequeue(10);

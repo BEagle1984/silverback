@@ -13,7 +13,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public void OnMessageReceived(object message)
         {
-            ReceivedEvents.Add((ISilverbackEvent) message);
+            ReceivedEvents.Add((ISilverbackEvent)message);
         }
     }
 }

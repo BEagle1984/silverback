@@ -14,10 +14,14 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
     public class SpyBrokerBehavior : IProducerBehavior, IConsumerBehavior, ISorted
     {
         private readonly List<IOutboundEnvelope> _outboundEnvelopes = new List<IOutboundEnvelope>();
+
         private readonly List<IInboundEnvelope> _inboundEnvelopes = new List<IInboundEnvelope>();
 
         public IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes => _outboundEnvelopes.ToList();
+
         public IReadOnlyList<IInboundEnvelope> InboundEnvelopes => _inboundEnvelopes.ToList();
+
+        public int SortIndex { get; } = int.MaxValue;
 
         public Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
@@ -31,11 +35,9 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
-            context.Envelopes.ForEach(envelope => _inboundEnvelopes.Add((IInboundEnvelope) envelope));
+            context.Envelopes.ForEach(envelope => _inboundEnvelopes.Add((IInboundEnvelope)envelope));
 
             return next(context, serviceProvider);
         }
-
-        public int SortIndex { get; } = int.MaxValue;
     }
 }

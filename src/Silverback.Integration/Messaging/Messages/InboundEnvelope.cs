@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
@@ -19,9 +20,10 @@ namespace Silverback.Messaging.Messages
         {
         }
 
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public InboundEnvelope(
-            byte[] rawMessage,
-            IEnumerable<MessageHeader> headers,
+            byte[]? rawMessage,
+            IEnumerable<MessageHeader>? headers,
             IOffset? offset,
             IConsumerEndpoint endpoint,
             string actualEndpointName)

@@ -13,10 +13,13 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
     {
         private static readonly IProducerEndpoint HighPriorityEndpoint =
             new KafkaProducerEndpoint("test-e2e-high");
+
         private static readonly IProducerEndpoint NormalPriorityEndpoint =
             new KafkaProducerEndpoint("test-e2e-normal");
+
         private static readonly IProducerEndpoint LowPriorityEndpoint =
             new KafkaProducerEndpoint("test-e2e-low");
+
         private static readonly IProducerEndpoint AllMessagesEndpoint =
             new KafkaProducerEndpoint("test-e2e-all");
 
@@ -36,13 +39,13 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
             MessageHeaderCollection headers)
         {
             yield return AllMessagesEndpoint;
-            
+
             switch (message.Priority)
             {
-                case TestPrioritizedCommand.PriorityEnum.Low:
+                case Priority.Low:
                     yield return LowPriorityEndpoint;
                     break;
-                case TestPrioritizedCommand.PriorityEnum.High:
+                case Priority.High:
                     yield return HighPriorityEndpoint;
                     break;
                 default:

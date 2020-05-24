@@ -44,34 +44,19 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             var chunks = new InboundEnvelope[3];
             chunks[0] = new InboundEnvelope(
                 originalSerializedMessage.AsMemory().Slice(0, 300).ToArray(),
-                new[]
-                {
-                    new MessageHeader(DefaultMessageHeaders.MessageId, originalMessage.MessageId.ToString()),
-                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
-                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                },
+                HeadersHelper.GetChunkHeaders(originalMessage.MessageId.ToString(), 0, 3),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
             chunks[1] = new InboundEnvelope(
                 originalSerializedMessage.AsMemory().Slice(300, 300).ToArray(),
-                new[]
-                {
-                    new MessageHeader(DefaultMessageHeaders.MessageId, originalMessage.MessageId.ToString()),
-                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                },
+                HeadersHelper.GetChunkHeaders(originalMessage.MessageId.ToString(), 1, 3),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
             chunks[2] = new InboundEnvelope(
                 originalSerializedMessage.AsMemory().Slice(600).ToArray(),
-                new[]
-                {
-                    new MessageHeader(DefaultMessageHeaders.MessageId, originalMessage.MessageId.ToString()),
-                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
-                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                },
+                HeadersHelper.GetChunkHeaders(originalMessage.MessageId.ToString(), 2, 3),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
@@ -91,6 +76,6 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             deserializedResult?.Content.Should().BeEquivalentTo(originalMessage.Content);
         }
 
-        private byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte)255).ToArray();
+        private static byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte)255).ToArray();
     }
 }

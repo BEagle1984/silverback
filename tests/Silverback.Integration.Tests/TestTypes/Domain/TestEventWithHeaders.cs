@@ -5,21 +5,15 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.TestTypes.Domain
 {
-    public interface ITestEventWithHeaders
-    {
-        [Header("x-inherited")]
-        string InheritedHeader { get; set; }
-    }
-
     public class TestEventWithHeaders : IIntegrationEvent, ITestEventWithHeaders
     {
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         [Header("x-string")]
-        public string StringHeader { get; set; }
+        public string? StringHeader { get; set; }
 
         [Header("x-string-default", PublishDefaultValue = true)]
-        public string StringHeaderWithDefault { get; set; }
+        public string? StringHeaderWithDefault { get; set; }
 
         [Header("x-readonly-string")]
         public string ReadOnlyStringHeader { get; } = "readonly";
@@ -33,6 +27,6 @@ namespace Silverback.Tests.Integration.TestTypes.Domain
         [Header("x-readonly-int")]
         public int ReadOnlyIntHeader { get; } = 42;
 
-        public string InheritedHeader { get; set; }
+        public string? InheritedHeader { get; set; }
     }
 }

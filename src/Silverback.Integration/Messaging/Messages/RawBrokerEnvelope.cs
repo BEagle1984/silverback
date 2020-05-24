@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Messages
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         protected RawBrokerEnvelope(
             byte[]? rawMessage,
-            IEnumerable<MessageHeader> headers,
+            IEnumerable<MessageHeader>? headers,
             IEndpoint endpoint,
             IOffset? offset)
         {

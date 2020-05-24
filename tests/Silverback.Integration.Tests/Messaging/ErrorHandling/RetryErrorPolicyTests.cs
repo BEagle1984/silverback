@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -23,8 +24,9 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             services.AddNullLogger();
 
-            services.AddSilverback().WithConnectionToMessageBroker(options => options
-                .AddBroker<TestBroker>());
+            services.AddSilverback().WithConnectionToMessageBroker(
+                options => options
+                    .AddBroker<TestBroker>());
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
@@ -45,14 +47,27 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var policy = _errorPolicyBuilder.Retry().MaxFailedAttempts(3);
 
-            var canHandle = policy.CanHandle(new[]
+            var rawMessage = new byte[1];
+            var headers = new[]
             {
-                new InboundEnvelope(
-                    new byte[1],
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault(),
-                    TestConsumerEndpoint.GetDefault().Name),
-            }, new Exception("test"));
+                new MessageHeader(
+                    DefaultMessageHeaders.FailedAttempts,
+                    failedAttempts.ToString(CultureInfo.InvariantCulture))
+            };
+
+            var inboundEnvelope = new InboundEnvelope(
+                rawMessage,
+                headers,
+                null,
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
+
+            var canHandle = policy.CanHandle(
+                new[]
+                {
+                    inboundEnvelope,
+                },
+                new InvalidOperationException("test"));
 
             canHandle.Should().Be(expectedResult);
         }

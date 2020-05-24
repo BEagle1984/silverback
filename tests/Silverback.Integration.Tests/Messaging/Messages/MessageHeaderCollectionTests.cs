@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 { "three", "3" }
             };
 
-            Func<string> act = () => collection["four"];
+            Func<string?> act = () => collection["four"];
 
             act.Should().Throw<ArgumentOutOfRangeException>();
         }
@@ -108,7 +108,6 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             };
 
             collection.AddOrReplace("one", "1(2)");
-
 
             collection.Should().BeEquivalentTo(
                 new MessageHeader("one", "1(2)"),

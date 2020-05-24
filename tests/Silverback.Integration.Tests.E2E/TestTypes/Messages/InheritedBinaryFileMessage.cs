@@ -8,6 +8,6 @@ namespace Silverback.Tests.Integration.E2E.TestTypes.Messages
     public class InheritedBinaryFileMessage : BinaryFileMessage
     {
         [Header("x-custom-header")]
-        public string CustomHeader { get; set; }
+        public string? CustomHeader { get; set; }
     }
 }

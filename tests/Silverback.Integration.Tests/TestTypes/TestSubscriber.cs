@@ -12,19 +12,19 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestSubscriber : ISubscriber
     {
+        public List<IMessage> ReceivedMessages { get; } = new List<IMessage>();
+
         public int MustFailCount { get; set; }
 
-        public Func<IMessage, bool> FailCondition { get; set; }
+        public Func<IMessage, bool>? FailCondition { get; set; }
 
         public int FailCount { get; private set; }
-
-        public List<IMessage> ReceivedMessages { get; } = new List<IMessage>();
 
         public TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         [Subscribe]
-        [SuppressMessage("", "UnusedMember.Local")]
-        async Task OnMessageReceived(IMessage message)
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        private async Task OnMessageReceived(IMessage message)
         {
             if (Delay > TimeSpan.Zero)
                 await Task.Delay(Delay);
@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 MustFailCount > FailCount || (FailCondition?.Invoke(message) ?? false))
             {
                 FailCount++;
-                throw new Exception("Test failure");
+                throw new InvalidOperationException("Test failure");
             }
         }
     }

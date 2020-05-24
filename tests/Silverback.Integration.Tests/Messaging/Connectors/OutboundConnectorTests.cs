@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -19,6 +18,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
     public class OutboundConnectorTests
     {
         private readonly OutboundConnector _connector;
+
         private readonly TestBroker _broker;
 
         public OutboundConnectorTests()
@@ -28,8 +28,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             services
                 .AddNullLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>());
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -38,10 +39,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         }
 
         [Fact]
-        [SuppressMessage("", "PossibleNullReferenceException")]
         public async Task OnMessageReceived_SingleMessage_Relayed()
         {
-            var envelope = new OutboundEnvelope<TestEventOne>(new TestEventOne { Content = "Test" }, null,
+            var envelope = new OutboundEnvelope<TestEventOne>(
+                new TestEventOne { Content = "Test" },
+                null,
                 TestProducerEndpoint.GetDefault());
 
             await _connector.RelayMessage(envelope);
@@ -59,13 +61,15 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task OnMessageReceived_SingleMessage_HeadersSent()
         {
+            var message = new TestEventOne { Content = "Test" };
+            var headers = new[]
+            {
+                new MessageHeader("header1", "value1"),
+                new MessageHeader("header2", "value2")
+            };
             var envelope = new OutboundEnvelope<TestEventOne>(
-                new TestEventOne { Content = "Test" },
-                new[]
-                {
-                    new MessageHeader("header1", "value1"),
-                    new MessageHeader("header2", "value2")
-                },
+                message,
+                headers,
                 TestProducerEndpoint.GetDefault());
 
             await _connector.RelayMessage(envelope);

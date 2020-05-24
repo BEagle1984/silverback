@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.TestTypes
             TestBroker broker,
             TestConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
             ILogger<TestConsumer> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
@@ -54,7 +54,8 @@ namespace Silverback.Tests.Integration.TestTypes
             await TestHandleMessage(buffer, headers, offset);
         }
 
-        public async Task TestHandleMessage(byte[] rawMessage, MessageHeaderCollection headers, IOffset offset = null)
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public async Task TestHandleMessage(byte[]? rawMessage, MessageHeaderCollection headers, IOffset offset = null)
         {
             if (!Broker.IsConnected)
                 throw new InvalidOperationException("The broker is not connected.");
@@ -64,6 +65,10 @@ namespace Silverback.Tests.Integration.TestTypes
 
             await HandleMessage(rawMessage, headers, "test-topic", offset);
         }
+
+        public override void Connect() => IsConnected = true;
+
+        public override void Disconnect() => IsConnected = true;
 
         protected override Task Commit(IReadOnlyCollection<TestOffset> offsets)
         {
@@ -76,9 +81,5 @@ namespace Silverback.Tests.Integration.TestTypes
             // Nothing to do
             return Task.CompletedTask;
         }
-
-        public override void Connect() => IsConnected = true;
-
-        public override void Disconnect() => IsConnected = true;
     }
 }

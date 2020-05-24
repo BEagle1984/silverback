@@ -103,9 +103,14 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             _spyBehavior.OutboundEnvelopes.Count.Should().Be(3);
             _spyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
                 .BeEquivalentTo(rawMessage);
-            _spyBehavior.OutboundEnvelopes.ForEach(envelope => envelope.RawMessage.Length.Should().BeLessOrEqualTo(10));
+            _spyBehavior.OutboundEnvelopes.ForEach(
+                envelope =>
+                {
+                    envelope.RawMessage.Should().NotBeNull();
+                    envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
+                });
             _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            _spyBehavior.InboundEnvelopes.First().Message.Should().BeEquivalentTo(message);
+            _spyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
 
         [Fact]
@@ -123,42 +128,24 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 endpoints => endpoints
                     .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
 
-            ((InMemoryConsumer)broker.Consumers.First()).CommitCalled +=
+            ((InMemoryConsumer)broker.Consumers[0]).CommitCalled +=
                 (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                new[]
-                {
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
-                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-                });
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
             committedOffsets.Count.Should().Be(1);
 
             await producer.ProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                new[]
-                {
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-                });
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 1, 3));
             committedOffsets.Count.Should().Be(2);
 
             await producer.ProduceAsync(
                 rawMessage.Skip(20).ToArray(),
-                new[]
-                {
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"),
-                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-                });
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 2, 3));
             committedOffsets.Count.Should().Be(3);
         }
 
@@ -177,29 +164,17 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 endpoints => endpoints
                     .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
 
-            ((InMemoryConsumer)broker.Consumers.First()).CommitCalled +=
+            ((InMemoryConsumer)broker.Consumers[0]).CommitCalled +=
                 (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                new[]
-                {
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
-                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-                });
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
             await producer.ProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                new[]
-                {
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "123"),
-                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-                });
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 1, 3));
 
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -211,22 +186,10 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                new[]
-                {
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "456"),
-                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"),
-                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-                });
+                HeadersHelper.GetChunkHeaders<TestEventOne>("456", 0, 3));
             await producer.ProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                new[]
-                {
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "456"),
-                    new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"),
-                    new MessageHeader(DefaultMessageHeaders.ChunksCount, "3"),
-                    new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-                });
+                HeadersHelper.GetChunkHeaders<TestEventOne>("456", 1, 3));
 
             await _serviceProvider.GetRequiredService<ChunkStoreCleaner>().Cleanup();
             using (var scope = _serviceProvider.CreateScope())

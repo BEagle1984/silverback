@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
@@ -17,7 +16,7 @@ namespace Silverback.Tests.Integration.TestTypes
             TestOtherBroker broker,
             TestOtherConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
             ILogger<TestOtherConsumer> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
@@ -28,9 +27,13 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public int AcknowledgeCount { get; set; }
 
+        public override void Connect() => IsConnected = true;
+
+        public override void Disconnect() => IsConnected = true;
+
         protected override Task Commit(IReadOnlyCollection<TestOffset> offsets)
         {
-            AcknowledgeCount += offsets.Count();
+            AcknowledgeCount += offsets.Count;
             return Task.CompletedTask;
         }
 
@@ -39,9 +42,5 @@ namespace Silverback.Tests.Integration.TestTypes
             // Nothing to do
             return Task.CompletedTask;
         }
-
-        public override void Connect() => IsConnected = true;
-
-        public override void Disconnect() => IsConnected = true;
     }
 }

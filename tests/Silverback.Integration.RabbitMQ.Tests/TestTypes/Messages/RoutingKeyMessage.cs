@@ -11,10 +11,10 @@ namespace Silverback.Tests.Integration.RabbitMQ.TestTypes.Messages
         public Guid Id { get; set; }
 
         [RabbitRoutingKey]
-        public string One { get; set; }
+        public string? One { get; set; }
 
-        public string Two { get; set; }
+        public string? Two { get; set; }
 
-        public string Three { get; set; }
+        public string? Three { get; set; }
     }
 }

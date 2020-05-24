@@ -5,11 +5,11 @@ using BenchmarkDotNet.Running;
 
 namespace Silverback.Tests.Performance
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run(typeof(Program).Assembly);
+            BenchmarkRunner.Run(typeof(Program).Assembly);
         }
     }
 }

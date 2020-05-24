@@ -1,11 +1,13 @@
-﻿using System;
+﻿// Copyright (c) 2020 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
-using LoggerExtensions = Silverback.Messaging.Messages.LoggerExtensions;
-using NullLogger = Microsoft.Extensions.Logging.Abstractions.NullLogger;
 
 namespace Silverback.Tests.Performance
 {
@@ -37,8 +39,7 @@ namespace Silverback.Tests.Performance
         [Benchmark]
         public void Log()
         {
-            LoggerExtensions.Log(
-                NullLogger.Instance,
+            NullLogger.Instance.Log(
                 LogLevel.Error,
                 new EventId(1, "Something"),
                 null,

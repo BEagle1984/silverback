@@ -5,6 +5,6 @@ namespace Silverback.Tests.Integration.TestTypes.Domain
 {
     public class TestInternalEventOne : IEvent
     {
-        public string InternalMessage { get; set; }
+        public string? InternalMessage { get; set; }
     }
 }

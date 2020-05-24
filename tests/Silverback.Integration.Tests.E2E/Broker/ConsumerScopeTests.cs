@@ -89,7 +89,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     scopes++;
 
                     if (scopes != 3)
-                        throw new ApplicationException("Retry!");
+                        throw new InvalidOperationException("Retry!");
                 })
                 .Connect(endpoints => endpoints
                     .AddOutbound<IIntegrationEvent>(

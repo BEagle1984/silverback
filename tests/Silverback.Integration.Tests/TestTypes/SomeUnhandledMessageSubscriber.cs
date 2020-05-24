@@ -12,7 +12,7 @@ namespace Silverback.Tests.Integration.TestTypes
         public List<SomeUnhandledMessage> ReceivedMessages { get; } = new List<SomeUnhandledMessage>();
 
         [Subscribe]
-        [SuppressMessage("", "UnusedMember.Local")]
-        void OnMessageReceived(SomeUnhandledMessage message) => ReceivedMessages.Add(message);
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        private void OnMessageReceived(SomeUnhandledMessage message) => ReceivedMessages.Add(message);
     }
 }

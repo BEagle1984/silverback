@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -20,18 +21,20 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         public async Task Handle_BinaryFileMessage_BinaryFileMessageReturned()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+            var headers = new[]
+            {
+                new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName),
+            };
             var envelope = new RawInboundEnvelope(
                 rawContent,
-                new[]
-                {
-                    new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName),
-                },
-                TestConsumerEndpoint.GetDefault(), "test");
+                headers,
+                TestConsumerEndpoint.GetDefault(),
+                "test");
 
-            IRawInboundEnvelope result = null;
+            IRawInboundEnvelope? result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
                 new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
-                null,
+                Substitute.For<IServiceProvider>(),
                 (context, _) =>
                 {
                     result = context.Envelopes.First();
@@ -39,7 +42,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 });
 
             result.Should().BeAssignableTo<IInboundEnvelope<BinaryFileMessage>>();
-            var binaryFileMessage = result.As<IInboundEnvelope<BinaryFileMessage>>().Message;
+            var binaryFileMessage = result.As<IInboundEnvelope<BinaryFileMessage>>().Message!;
             binaryFileMessage.Content.Should().BeEquivalentTo(rawContent);
         }
 
@@ -50,12 +53,13 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var envelope = new RawInboundEnvelope(
                 rawContent,
                 null,
-                TestConsumerEndpoint.GetDefault(), "test");
+                TestConsumerEndpoint.GetDefault(),
+                "test");
 
-            IRawInboundEnvelope result = null;
+            IRawInboundEnvelope? result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
                 new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
-                null,
+                Substitute.For<IServiceProvider>(),
                 (context, _) =>
                 {
                     result = context.Envelopes.First();
@@ -64,25 +68,27 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             result.Should().BeSameAs(envelope);
         }
-        
+
         [Fact]
         public async Task Handle_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+            var headers = new[]
+            {
+                new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName),
+            };
             var endpoint = TestConsumerEndpoint.GetDefault();
             endpoint.Serializer = new BinaryFileMessageSerializer();
             var envelope = new RawInboundEnvelope(
                 rawContent,
-                new[]
-                {
-                    new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName),
-                },
-                endpoint, "test");
+                headers,
+                endpoint,
+                "test");
 
-            IRawInboundEnvelope result = null;
+            IRawInboundEnvelope? result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
                 new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
-                null,
+                Substitute.For<IServiceProvider>(),
                 (context, _) =>
                 {
                     result = context.Envelopes.First();

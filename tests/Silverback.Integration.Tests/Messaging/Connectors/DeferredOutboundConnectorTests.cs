@@ -20,7 +20,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
     public class DeferredOutboundConnectorTests
     {
         private readonly InMemoryOutboundQueue _queue;
+
         private readonly DeferredOutboundConnector _connector;
+
         private readonly DeferredOutboundConnectorTransactionManager _transactionManager;
 
         public DeferredOutboundConnectorTests()
@@ -33,16 +35,20 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task OnMessageReceived_SingleMessage_Queued()
         {
+            var message = new TestEventOne { Content = "Test" };
+            var headers = new[]
+            {
+                new MessageHeader("header1", "value1"),
+                new MessageHeader("header2", "value2")
+            };
             var envelope = new OutboundEnvelope<TestEventOne>(
-                new TestEventOne { Content = "Test" },
-                new[]
-                {
-                    new MessageHeader("header1", "value1"),
-                    new MessageHeader("header2", "value2")
-                },
+                message,
+                headers,
                 TestProducerEndpoint.GetDefault());
             envelope.RawMessage =
-                new JsonMessageSerializer().Serialize(envelope.Message, envelope.Headers,
+                new JsonMessageSerializer().Serialize(
+                    envelope.Message,
+                    envelope.Headers,
                     MessageSerializationContext.Empty);
 
             await _connector.RelayMessage(envelope);
@@ -51,10 +57,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             (await _queue.GetLength()).Should().Be(1);
             var queued = (await _queue.Dequeue(1)).First();
             queued.Endpoint.Should().Be(envelope.Endpoint);
-            queued.Headers.Count().Should().Be(3);
+            queued.Headers.Should().NotBeNull();
+            queued.Headers!.Count.Should().Be(3);
             queued.Content.Should()
                 .BeEquivalentTo(
-                    new JsonMessageSerializer().Serialize(envelope.Message, envelope.Headers,
+                    new JsonMessageSerializer().Serialize(
+                        envelope.Message,
+                        envelope.Headers,
                         MessageSerializationContext.Empty));
         }
 

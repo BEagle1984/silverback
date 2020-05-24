@@ -122,7 +122,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 });
 
             result.Should().NotBeNull();
-            result.Value.Should().Be("3");
+            result!.Value.Should().Be("3");
         }
 
         [Fact]
@@ -163,6 +163,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             await store.Commit();
 
             store = new InMemoryOffsetStore(sharedList);
+
             var result = await store.GetLatestValue(
                 "key1",
                 new TestConsumerEndpoint("endpoint1")
@@ -171,7 +172,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 });
 
             result.Should().NotBeNull();
-            result.Value.Should().Be("2");
+            result!.Value.Should().Be("2");
         }
 
         [Fact]
@@ -199,8 +200,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 {
                     GroupId = "group1"
                 });
+
             result.Should().NotBeNull();
-            result.Value.Should().Be("1");
+            result!.Value.Should().Be("1");
         }
     }
 }

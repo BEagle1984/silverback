@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -24,10 +25,11 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
                 0x6a, 0x50, 0x4a, 0xd7, 0x4f, 0x2c, 0x74, 0x1d, 0x0e, 0x63, 0x08, 0x4f, 0x31, 0xbe, 0x2c
             };
 
-            var decryptor = new SymmetricMessageDecryptor(new SymmetricEncryptionSettings
-            {
-                Key = GenerateKey(256)
-            });
+            var decryptor = new SymmetricMessageDecryptor(
+                new SymmetricEncryptionSettings
+                {
+                    Key = GenerateKey(256)
+                });
 
             var result = await decryptor.TransformAsync(cypherMessage, new MessageHeaderCollection());
 
@@ -44,15 +46,16 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
                 0xde, 0x65, 0x32, 0xbe, 0x8c, 0xd0, 0xa6, 0x93, 0x75, 0x71, 0x81, 0xaa, 0x6d, 0xb5, 0x56
             };
 
-            var decryptor = new SymmetricMessageDecryptor(new SymmetricEncryptionSettings
-            {
-                AlgorithmName = "Rijndael",
-                BlockSize = 128,
-                FeedbackSize = 64,
-                Key = GenerateKey(128),
-                CipherMode = CipherMode.ECB,
-                PaddingMode = PaddingMode.ISO10126
-            });
+            var decryptor = new SymmetricMessageDecryptor(
+                new SymmetricEncryptionSettings
+                {
+                    AlgorithmName = "Rijndael",
+                    BlockSize = 128,
+                    FeedbackSize = 64,
+                    Key = GenerateKey(128),
+                    CipherMode = CipherMode.ECB,
+                    PaddingMode = PaddingMode.ISO10126
+                });
 
             var result = await decryptor.TransformAsync(cypherMessage, new MessageHeaderCollection());
 
@@ -68,11 +71,12 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
                 0x56, 0xd6, 0xcf, 0x6a, 0x76, 0xf1, 0xe6, 0x78, 0xb6, 0x34, 0x25, 0x81, 0x6f, 0x92, 0x48, 0xe2
             };
 
-            var decryptor = new SymmetricMessageDecryptor(new SymmetricEncryptionSettings
-            {
-                Key = GenerateKey(256),
-                InitializationVector = GenerateKey(128)
-            });
+            var decryptor = new SymmetricMessageDecryptor(
+                new SymmetricEncryptionSettings
+                {
+                    Key = GenerateKey(256),
+                    InitializationVector = GenerateKey(128)
+                });
 
             var result = await decryptor.TransformAsync(cypherMessage, new MessageHeaderCollection());
 
@@ -89,10 +93,11 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
                 0x18, 0x01, 0x2f, 0xcb, 0x97, 0x2f, 0xeb, 0x4e, 0x4a, 0x6d, 0x8b, 0xad, 0x69, 0xf6, 0x84
             };
 
-            var decryptor = new SymmetricMessageDecryptor(new SymmetricEncryptionSettings
-            {
-                Key = GenerateKey(256)
-            });
+            var decryptor = new SymmetricMessageDecryptor(
+                new SymmetricEncryptionSettings
+                {
+                    Key = GenerateKey(256)
+                });
 
             var result = await decryptor.TransformAsync(cypherMessage, new MessageHeaderCollection());
 
@@ -103,10 +108,11 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
         [Fact]
         public async Task Transform_Null_NullIsReturned()
         {
-            var decryptor = new SymmetricMessageDecryptor(new SymmetricEncryptionSettings
-            {
-                Key = GenerateKey(256)
-            });
+            var decryptor = new SymmetricMessageDecryptor(
+                new SymmetricEncryptionSettings
+                {
+                    Key = GenerateKey(256)
+                });
 
             var result = await decryptor.TransformAsync(null, new MessageHeaderCollection());
 
@@ -116,17 +122,18 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
         [Fact]
         public async Task Transform_EmptyArray_EmptyArrayIsReturned()
         {
-            var decryptor = new SymmetricMessageDecryptor(new SymmetricEncryptionSettings
-            {
-                Key = GenerateKey(256)
-            });
+            var decryptor = new SymmetricMessageDecryptor(
+                new SymmetricEncryptionSettings
+                {
+                    Key = GenerateKey(256)
+                });
 
-            var result = await decryptor.TransformAsync(new byte[0], new MessageHeaderCollection());
+            var result = await decryptor.TransformAsync(Array.Empty<byte>(), new MessageHeaderCollection());
 
             result.Should().BeEmpty();
         }
 
-        private byte[] GenerateKey(int size, int seed = 1) =>
-            Enumerable.Range(seed, seed + size / 8 - 1).Select(n => (byte) n).ToArray();
+        private static byte[] GenerateKey(int size, int seed = 1) =>
+            Enumerable.Range(seed, (seed + (size / 8)) - 1).Select(n => (byte)n).ToArray();
     }
 }

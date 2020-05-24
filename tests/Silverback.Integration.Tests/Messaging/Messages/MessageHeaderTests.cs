@@ -21,14 +21,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void Ctor_Throws_IfKeyIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new MessageHeader(null, "value"));
+            Assert.Throws<ArgumentNullException>(() => new MessageHeader(null!, "value"));
         }
 
         [Fact]
         public void Key_Throws_IfValueIsNull()
         {
             var messageHeader = new MessageHeader("key", "value");
-            Assert.Throws<ArgumentNullException>(() => messageHeader.Name = null);
+            Assert.Throws<ArgumentNullException>(() => messageHeader.Name = null!);
         }
 
         [Fact]

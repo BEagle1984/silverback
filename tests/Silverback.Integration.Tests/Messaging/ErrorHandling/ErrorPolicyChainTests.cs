@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,14 +19,13 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
     {
         private readonly IErrorPolicyBuilder _errorPolicyBuilder;
 
-        // TODO: Test with multiple messages (batch)
-
         public ErrorPolicyChainTests()
         {
             var services = new ServiceCollection();
 
-            services.AddSilverback().WithConnectionToMessageBroker(options => options
-                .AddBroker<TestBroker>());
+            services.AddSilverback().WithConnectionToMessageBroker(
+                options => options
+                    .AddBroker<TestBroker>());
 
             services.AddNullLogger();
 
@@ -41,20 +41,31 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(4)]
         public void HandleError_RetryWithMaxFailedAttempts_AppliedAccordingToMaxFailedAttempts(int failedAttempts)
         {
+            var rawMessage = new byte[1];
+            var headers = new[]
+            {
+                new MessageHeader(
+                    DefaultMessageHeaders.FailedAttempts,
+                    failedAttempts.ToString(CultureInfo.InvariantCulture))
+            };
+
             var testPolicy = new TestErrorPolicy();
 
             var chain = _errorPolicyBuilder.Chain(
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(3),
                 testPolicy);
 
-            chain.HandleError(new[]
-            {
-                new InboundEnvelope(
-                    new byte[1],
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault(),
-                    TestConsumerEndpoint.GetDefault().Name)
-            }, new Exception("test"));
+            chain.HandleError(
+                new[]
+                {
+                    new InboundEnvelope(
+                        rawMessage,
+                        headers,
+                        null,
+                        TestConsumerEndpoint.GetDefault(),
+                        TestConsumerEndpoint.GetDefault().Name)
+                },
+                new InvalidOperationException("test"));
 
             testPolicy.Applied.Should().Be(failedAttempts > 3);
         }
@@ -64,20 +75,33 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(2, ErrorAction.Retry)]
         [InlineData(3, ErrorAction.Skip)]
         [InlineData(4, ErrorAction.Skip)]
-        public async Task HandleError_RetryTwiceThenSkip_CorrectPolicyApplied(int failedAttempts, ErrorAction expectedAction)
+        public async Task HandleError_RetryTwiceThenSkip_CorrectPolicyApplied(
+            int failedAttempts,
+            ErrorAction expectedAction)
         {
+            var rawMessage = new byte[1];
+            var headers = new[]
+            {
+                new MessageHeader(
+                    DefaultMessageHeaders.FailedAttempts,
+                    failedAttempts.ToString(CultureInfo.InvariantCulture))
+            };
+
             var chain = _errorPolicyBuilder.Chain(
                 _errorPolicyBuilder.Retry().MaxFailedAttempts(2),
                 _errorPolicyBuilder.Skip());
 
-            var action = await chain.HandleError(new[]
-            {
-                new InboundEnvelope(
-                    new byte[1],
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault(),
-                    TestConsumerEndpoint.GetDefault().Name)
-            }, new Exception("test"));
+            var action = await chain.HandleError(
+                new[]
+                {
+                    new InboundEnvelope(
+                        rawMessage,
+                        headers,
+                        null,
+                        TestConsumerEndpoint.GetDefault(),
+                        TestConsumerEndpoint.GetDefault().Name)
+                },
+                new InvalidOperationException("test"));
 
             action.Should().Be(expectedAction);
         }
@@ -92,6 +116,14 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             int failedAttempts,
             int expectedAppliedPolicy)
         {
+            var rawMessage = new byte[1];
+            var headers = new[]
+            {
+                new MessageHeader(
+                    DefaultMessageHeaders.FailedAttempts,
+                    failedAttempts.ToString(CultureInfo.InvariantCulture))
+            };
+
             var policies = new[]
             {
                 new TestErrorPolicy().MaxFailedAttempts(2),
@@ -101,19 +133,24 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var chain = _errorPolicyBuilder.Chain(policies);
 
-            chain.HandleError(new[]
-            {
-                new InboundEnvelope(
-                    new byte[1],
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString()) },
-                    null, TestConsumerEndpoint.GetDefault(),
-                    TestConsumerEndpoint.GetDefault().Name)
-            }, new Exception("test"));
+            chain.HandleError(
+                new[]
+                {
+                    new InboundEnvelope(
+                        rawMessage,
+                        headers,
+                        null,
+                        TestConsumerEndpoint.GetDefault(),
+                        TestConsumerEndpoint.GetDefault().Name)
+                },
+                new InvalidOperationException("test"));
 
             for (var i = 0; i < policies.Length; i++)
             {
                 policies[i].As<TestErrorPolicy>().Applied.Should().Be(i == expectedAppliedPolicy);
             }
         }
+
+        // TODO: Test with multiple messages (batch)
     }
 }

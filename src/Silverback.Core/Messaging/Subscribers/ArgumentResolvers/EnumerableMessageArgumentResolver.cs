@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
@@ -18,7 +17,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         public bool CanResolve(Type parameterType)
         {
             Check.NotNull(parameterType, nameof(parameterType));
-            
+
             return parameterType.IsGenericType &&
                    parameterType.GetGenericTypeDefinition() == typeof(IEnumerable<>);
         }
@@ -27,7 +26,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         public Type GetMessageType(Type parameterType)
         {
             Check.NotNull(parameterType, nameof(parameterType));
-            
+
             return parameterType.GetGenericArguments()[0];
         }
 

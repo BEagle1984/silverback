@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using FluentAssertions;
 using Silverback.Messaging.Headers;
@@ -11,7 +10,6 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Headers
 {
-    [SuppressMessage("", "PossibleMultipleEnumeration")]
     public class HeaderAttributeHelperTests
     {
         [Fact]
@@ -41,7 +39,7 @@ namespace Silverback.Tests.Integration.Messaging.Headers
         {
             var message = new TestEventWithHeaders();
 
-            var result = HeaderAttributeHelper.GetHeaders(message);
+            var result = HeaderAttributeHelper.GetHeaders(message).ToList();
 
             result.Should().ContainEquivalentOf(new MessageHeader("x-string-default", null));
             result.Should().ContainEquivalentOf(new MessageHeader("x-int-default", 0));
@@ -52,7 +50,7 @@ namespace Silverback.Tests.Integration.Messaging.Headers
         {
             var message = new TestEventWithHeaders();
 
-            var result = HeaderAttributeHelper.GetHeaders(message);
+            var result = HeaderAttributeHelper.GetHeaders(message).ToList();
 
             result.Select(header => header.Name).Should().NotContain("x-string");
             result.Select(header => header.Name).Should().NotContain("x-int");

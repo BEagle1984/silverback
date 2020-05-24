@@ -70,7 +70,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serialized = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
-            Encoding.UTF8.GetString(serialized).Should().NotContain("TestEventOne");
+            Encoding.UTF8.GetString(serialized!).Should().NotContain("TestEventOne");
 
             var (deserialized, _) = serializer
                 .Deserialize(serialized, headers, MessageSerializationContext.Empty);
@@ -91,7 +91,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var serialized = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            Encoding.UTF8.GetString(serialized).Should().NotContain("TestEventOne");
+            Encoding.UTF8.GetString(serialized!).Should().NotContain("TestEventOne");
 
             var (deserialized, _) = await serializer
                 .DeserializeAsync(serialized, headers, MessageSerializationContext.Empty);
@@ -595,7 +595,10 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             var serializer = new JsonMessageSerializer();
 
             var (deserializedObject, _) = await serializer
-                .DeserializeAsync(Array.Empty<byte>(), _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+                .DeserializeAsync(
+                    Array.Empty<byte>(),
+                    _testEventOneMessageTypeHeaders,
+                    MessageSerializationContext.Empty);
 
             deserializedObject.Should().BeNull();
         }
@@ -606,11 +609,14 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             var serializer = new JsonMessageSerializer();
 
             var (_, type) = await serializer
-                .DeserializeAsync(Array.Empty<byte>(), _testEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
+                .DeserializeAsync(
+                    Array.Empty<byte>(),
+                    _testEventOneMessageTypeHeaders,
+                    MessageSerializationContext.Empty);
 
             type.Should().Be(typeof(TestEventOne));
         }
-        
+
         [Fact]
         public void Deserialize_EmptyArrayMessageWithHardcodedType_NullObjectReturned()
         {

@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 {
                     envelope
                 },
-                new Exception("test"));
+                new InvalidOperationException("test"));
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
 
             producer.ProducedMessages.Count.Should().Be(1);
@@ -89,7 +89,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     { "key2", "value2" }
                 }
             };
-            policy.HandleError(new[] { envelope }, new Exception("test"));
+            policy.HandleError(new[] { envelope }, new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
 
@@ -122,7 +122,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 }
             };
 
-            policy.HandleError(new[] { envelope }, new Exception("test"));
+            policy.HandleError(new[] { envelope }, new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
             var producedMessage = producer.ProducedMessages.Last();
@@ -149,7 +149,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     { "key2", "value2" }
                 }
             };
-            policy.HandleError(new[] { envelope }, new Exception("test"));
+            policy.HandleError(new[] { envelope }, new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
 
@@ -162,14 +162,16 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var policy = _errorPolicyBuilder.Move(TestProducerEndpoint.GetDefault())
                 .Transform((envelope, ex) => { envelope.Message = new TestEventTwo(); });
 
+            byte[] rawMessage = Encoding.UTF8.GetBytes("hey oh!");
+            var headers = new[]
+            {
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(string).AssemblyQualifiedName)
+            };
             var rawInboundEnvelopes = new[]
             {
                 new InboundEnvelope(
-                    Encoding.UTF8.GetBytes("hey oh!"),
-                    new[]
-                    {
-                        new MessageHeader(DefaultMessageHeaders.MessageType, typeof(string).AssemblyQualifiedName)
-                    },
+                    rawMessage,
+                    headers,
                     null,
                     TestConsumerEndpoint.GetDefault(),
                     TestConsumerEndpoint.GetDefault().Name),
@@ -202,7 +204,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
             envelope.Headers.Add("key", "value");
-            policy.HandleError(new[] { envelope }, new Exception("test"));
+            policy.HandleError(new[] { envelope }, new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
             var newHeaders = producer.ProducedMessages[0].Headers;
@@ -228,7 +230,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     { "key2", "value2" }
                 }
             };
-            policy.HandleError(new[] { message }, new Exception("test"));
+            policy.HandleError(new[] { message }, new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
 

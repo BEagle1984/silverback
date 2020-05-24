@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Messages
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public RawInboundEnvelope(
             byte[]? rawMessage,
-            IEnumerable<MessageHeader> headers,
+            IEnumerable<MessageHeader>? headers,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
             IOffset? offset = null)

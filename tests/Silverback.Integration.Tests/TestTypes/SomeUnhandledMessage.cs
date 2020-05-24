@@ -5,6 +5,6 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class SomeUnhandledMessage
     {
-        public string Content { get; set; }
+        public string? Content { get; set; }
     }
 }

@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
-using Silverback.Tests.Integration.TestTypes;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Configuration

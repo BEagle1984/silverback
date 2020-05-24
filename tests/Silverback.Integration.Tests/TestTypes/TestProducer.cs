@@ -12,12 +12,10 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestProducer : Producer<TestBroker, TestProducerEndpoint>
     {
-        public List<ProducedMessage> ProducedMessages { get; }
-
         public TestProducer(
             TestBroker broker,
             TestProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior> behaviors)
+            IReadOnlyCollection<IProducerBehavior>? behaviors)
             : base(
                 broker,
                 endpoint,
@@ -27,16 +25,18 @@ namespace Silverback.Tests.Integration.TestTypes
             ProducedMessages = broker.ProducedMessages;
         }
 
-        protected override IOffset ProduceCore(IRawOutboundEnvelope envelope)
+        public List<ProducedMessage> ProducedMessages { get; }
+
+        protected override IOffset? ProduceCore(IRawOutboundEnvelope envelope)
         {
             ProducedMessages.Add(new ProducedMessage(envelope.RawMessage, envelope.Headers, Endpoint));
             return null;
         }
 
-        protected override Task<IOffset> ProduceAsyncCore(IRawOutboundEnvelope envelope)
+        protected override Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope)
         {
             Produce(envelope.RawMessage, envelope.Headers);
-            return Task.FromResult<IOffset>(null);
+            return Task.FromResult<IOffset?>(null);
         }
     }
 }

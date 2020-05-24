@@ -584,7 +584,6 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             type.Should().Be(typeof(InheritedBinaryFileMessage));
         }
 
-
         [Fact]
         public void Deserialize_EmptyMessageWithHardcodedType_CustomBinaryFileReturned()
         {

@@ -20,20 +20,10 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
     public class BusConfiguratorTests
     {
         private readonly IServiceCollection _services;
-        private IServiceProvider _serviceProvider;
-        private IServiceScope _serviceScope;
 
-        private IServiceProvider GetServiceProvider() => _serviceProvider ??=
-            _services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+        private IServiceProvider? _serviceProvider;
 
-        private IServiceProvider GetScopedServiceProvider() =>
-            (_serviceScope ??= GetServiceProvider().CreateScope()).ServiceProvider;
-
-        private TestBroker GetTestBroker() => GetServiceProvider().GetService<TestBroker>();
-        private TestOtherBroker GetTestOtherBroker() => GetServiceProvider().GetService<TestOtherBroker>();
-        private IPublisher GetPublisher() => GetScopedServiceProvider().GetService<IPublisher>();
-
-        private IBusConfigurator GetBusConfigurator() => GetServiceProvider().GetService<IBusConfigurator>();
+        private IServiceScope? _serviceScope;
 
         public BusConfiguratorTests()
         {
@@ -52,8 +42,9 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             var serviceProvider = new ServiceCollection()
                 .AddNullLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>())
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>())
                 .Services.BuildServiceProvider();
 
             serviceProvider.GetService<IBroker>().Should().NotBeNull();
@@ -66,8 +57,9 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             var serviceProvider = new ServiceCollection()
                 .AddNullLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>())
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>())
                 .Services.BuildServiceProvider();
 
             var registeredBehaviors = serviceProvider.GetServices<IBrokerBehavior>().ToList();
@@ -79,22 +71,26 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public void AddOutbound_MultipleEndpoints_MessagesCorrectlyRouted()
         {
-            _services.AddSilverback().WithConnectionToMessageBroker(options => options
-                .AddBroker<TestBroker>()
-                .AddOutboundConnector());
+            _services.AddSilverback().WithConnectionToMessageBroker(
+                options => options
+                    .AddBroker<TestBroker>()
+                    .AddOutboundConnector());
 
-            GetBusConfigurator().Connect(endpoints =>
-                endpoints
-                    .AddOutbound<TestEventOne>(new TestProducerEndpoint("test1"))
-                    .AddOutbound<IIntegrationEvent>(new TestProducerEndpoint("test2")));
+            GetBusConfigurator().Connect(
+                endpoints =>
+                    endpoints
+                        .AddOutbound<TestEventOne>(new TestProducerEndpoint("test1"))
+                        .AddOutbound<IIntegrationEvent>(new TestProducerEndpoint("test2")));
 
             // -> to both endpoints
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventOne());
+
             // -> to test2
             GetPublisher().Publish(new TestEventTwo());
             GetPublisher().Publish(new TestEventTwo());
             GetPublisher().Publish(new TestEventTwo());
+
             // -> to nowhere
             GetPublisher().Publish(new TestInternalEventOne());
 
@@ -106,15 +102,17 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public void AddOutbound_WithMultipleBrokers_MessagesCorrectlyRouted()
         {
-            _services.AddSilverback().WithConnectionToMessageBroker(options => options
-                .AddBroker<TestBroker>()
-                .AddBroker<TestOtherBroker>()
-                .AddOutboundConnector());
+            _services.AddSilverback().WithConnectionToMessageBroker(
+                options => options
+                    .AddBroker<TestBroker>()
+                    .AddBroker<TestOtherBroker>()
+                    .AddOutboundConnector());
 
-            GetBusConfigurator().Connect(endpoints =>
-                endpoints
-                    .AddOutbound<TestEventOne>(new TestProducerEndpoint("test1"))
-                    .AddOutbound<TestEventTwo>(new TestOtherProducerEndpoint("test2")));
+            GetBusConfigurator().Connect(
+                endpoints =>
+                    endpoints
+                        .AddOutbound<TestEventOne>(new TestProducerEndpoint("test1"))
+                        .AddOutbound<TestEventTwo>(new TestOtherProducerEndpoint("test2")));
 
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventOne());
@@ -130,14 +128,16 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public void AddInbound_MultipleEndpoints_ConsumersCorrectlyConnected()
         {
-            _services.AddSilverback().WithConnectionToMessageBroker(options => options
-                .AddBroker<TestBroker>()
-                .AddOutboundConnector());
+            _services.AddSilverback().WithConnectionToMessageBroker(
+                options => options
+                    .AddBroker<TestBroker>()
+                    .AddOutboundConnector());
 
-            GetBusConfigurator().Connect(endpoints =>
-                endpoints
-                    .AddInbound(new TestConsumerEndpoint("test1"))
-                    .AddInbound(new TestConsumerEndpoint("test2")));
+            GetBusConfigurator().Connect(
+                endpoints =>
+                    endpoints
+                        .AddInbound(new TestConsumerEndpoint("test1"))
+                        .AddInbound(new TestConsumerEndpoint("test2")));
 
             GetTestBroker().Consumers.Count.Should().Be(2);
         }
@@ -145,15 +145,17 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public void AddInbound_WithMultipleBrokers_ConsumersCorrectlyConnected()
         {
-            _services.AddSilverback().WithConnectionToMessageBroker(options => options
-                .AddBroker<TestBroker>()
-                .AddBroker<TestOtherBroker>()
-                .AddOutboundConnector());
+            _services.AddSilverback().WithConnectionToMessageBroker(
+                options => options
+                    .AddBroker<TestBroker>()
+                    .AddBroker<TestOtherBroker>()
+                    .AddOutboundConnector());
 
-            GetBusConfigurator().Connect(endpoints =>
-                endpoints
-                    .AddInbound(new TestConsumerEndpoint("test1"))
-                    .AddInbound(new TestOtherConsumerEndpoint("test2")));
+            GetBusConfigurator().Connect(
+                endpoints =>
+                    endpoints
+                        .AddInbound(new TestConsumerEndpoint("test1"))
+                        .AddInbound(new TestOtherConsumerEndpoint("test2")));
 
             GetTestBroker().Consumers.Count.Should().Be(1);
             GetTestOtherBroker().Consumers.Count.Should().Be(1);
@@ -164,9 +166,10 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .RegisterConfigurator<TestConfiguratorOne>());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .RegisterConfigurator<TestConfiguratorOne>());
 
             _services.AddEndpointsConfigurator<TestConfiguratorTwo>();
 
@@ -187,15 +190,30 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddBroker<TestOtherBroker>());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddBroker<TestOtherBroker>());
 
             GetBusConfigurator().Connect();
 
             GetTestBroker().IsConnected.Should().BeTrue();
             GetTestOtherBroker().IsConnected.Should().BeTrue();
         }
+
+        private IServiceProvider GetServiceProvider() => _serviceProvider ??=
+            _services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+
+        private IServiceProvider GetScopedServiceProvider() =>
+            (_serviceScope ??= GetServiceProvider().CreateScope()).ServiceProvider;
+
+        private TestBroker GetTestBroker() => GetServiceProvider().GetService<TestBroker>();
+
+        private TestOtherBroker GetTestOtherBroker() => GetServiceProvider().GetService<TestOtherBroker>();
+
+        private IPublisher GetPublisher() => GetScopedServiceProvider().GetService<IPublisher>();
+
+        private IBusConfigurator GetBusConfigurator() => GetServiceProvider().GetService<IBusConfigurator>();
 
         private class TestConfiguratorOne : IEndpointsConfigurator
         {

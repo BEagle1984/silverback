@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -34,7 +35,9 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
             var headers = new MessageHeaderCollection();
             var serializedMessage = _serializer.Serialize(message, headers, MessageSerializationContext.Empty);
             var envelope =
-                new OutboundEnvelope(message, headers,
+                new OutboundEnvelope(
+                    message,
+                    headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings
@@ -72,9 +75,14 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 { "x-message-id", "1234" }
             };
 
-            var serializedMessage = _serializer.Serialize(message, headers, MessageSerializationContext.Empty);
+            var serializedMessage = await _serializer.SerializeAsync(
+                message,
+                headers,
+                MessageSerializationContext.Empty);
             var envelope =
-                new OutboundEnvelope(message, headers,
+                new OutboundEnvelope(
+                    message,
+                    headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings
@@ -92,12 +100,17 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 context =>
                 {
                     chunks.Add(context.Envelope);
-                    ((RawOutboundEnvelope) context.Envelope).Offset = new TestOffset("k", chunks.Count.ToString());
+                    ((RawOutboundEnvelope)context.Envelope).Offset = new TestOffset(
+                        "k",
+                        chunks.Count.ToString(CultureInfo.InvariantCulture));
                     return Task.CompletedTask;
                 });
 
             chunks.Should().HaveCount(4);
-            chunks.Should().Match(c => c.All(m => m.RawMessage.Length < 1000));
+            chunks.Should().Match(
+                outboundEnvelopes => outboundEnvelopes.All(
+                    outboundEnvelope =>
+                        outboundEnvelope.RawMessage != null && outboundEnvelope.RawMessage.Length < 1000));
         }
 
         [Fact]
@@ -115,7 +128,9 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
 
             var serializedMessage = _serializer.Serialize(message, headers, MessageSerializationContext.Empty);
             var envelope =
-                new OutboundEnvelope(message, headers,
+                new OutboundEnvelope(
+                    message,
+                    headers,
                     new TestProducerEndpoint("test")
                     {
                         Chunk = new ChunkSettings
@@ -133,15 +148,18 @@ namespace Silverback.Tests.Integration.Messaging.LargeMessages
                 context =>
                 {
                     chunks.Add(context.Envelope);
-                    ((RawOutboundEnvelope) context.Envelope).Offset = new TestOffset("k", chunks.Count.ToString());
+                    ((RawOutboundEnvelope)context.Envelope).Offset = new TestOffset(
+                        "k",
+                        chunks.Count.ToString(CultureInfo.InvariantCulture));
                     return Task.CompletedTask;
                 });
 
             chunks.Count.Should().BeGreaterThan(2);
-            chunks.Skip(1).ForEach(chunk =>
-                chunk.Headers.Should().ContainEquivalentOf(new MessageHeader("x-first-chunk-offset", "1")));
+            chunks.Skip(1).ForEach(
+                chunk =>
+                    chunk.Headers.Should().ContainEquivalentOf(new MessageHeader("x-first-chunk-offset", "1")));
         }
-        
-        private byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte) 255).ToArray();
+
+        private static byte[] GetByteArray(int size) => Enumerable.Range(0, size).Select(_ => (byte)255).ToArray();
     }
 }

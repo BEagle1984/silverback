@@ -20,23 +20,12 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
     public class BrokerOptionsBuilderTests
     {
         private readonly IServiceCollection _services;
+
         private readonly TestSubscriber _testSubscriber;
-        private IServiceProvider _serviceProvider;
-        private IServiceScope _serviceScope;
 
-        private IServiceProvider GetServiceProvider() => _serviceProvider ??=
-            _services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+        private IServiceProvider? _serviceProvider;
 
-        private IServiceProvider GetScopedServiceProvider() =>
-            (_serviceScope ??= GetServiceProvider().CreateScope()).ServiceProvider;
-
-        private TestBroker GetBroker() => (TestBroker) GetServiceProvider().GetService<IBroker>();
-        private IPublisher GetPublisher() => GetScopedServiceProvider().GetService<IPublisher>();
-
-        private IBusConfigurator GetBusConfigurator() => GetServiceProvider().GetService<IBusConfigurator>();
-
-        private InMemoryOutboundQueue GetOutboundQueue() =>
-            (InMemoryOutboundQueue) GetScopedServiceProvider().GetService<IOutboundQueueWriter>();
+        private IServiceScope? _serviceScope;
 
         public BrokerOptionsBuilderTests()
         {
@@ -54,12 +43,14 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void AddOutboundConnector_PublishMessages_MessagesProduced()
         {
             _services.AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddOutboundConnector())
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddOutboundConnector())
                 .AddSingletonSubscriber(_testSubscriber);
-            GetBusConfigurator().Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationMessage>(TestProducerEndpoint.GetDefault()));
+            GetBusConfigurator().Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationMessage>(TestProducerEndpoint.GetDefault()));
 
             GetPublisher().Publish(new TestEventOne());
             GetPublisher().Publish(new TestEventTwo());
@@ -75,20 +66,22 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services
                 .AddScoped<IOutboundQueueWriter, InMemoryOutboundQueue>()
-                .AddSilverback().WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddDeferredOutboundConnector())
+                .AddSilverback().WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddDeferredOutboundConnector())
                 .AddSingletonSubscriber(_testSubscriber);
 
-            GetBusConfigurator().Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationMessage>(TestProducerEndpoint.GetDefault()));
+            GetBusConfigurator().Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationMessage>(TestProducerEndpoint.GetDefault()));
 
-            GetPublisher().Publish(new TestEventOne());
-            GetPublisher().Publish(new TestEventTwo());
-            GetPublisher().Publish(new TestEventOne());
-            GetPublisher().Publish(new TestEventTwo());
-            GetPublisher().Publish(new TestEventTwo());
-            GetPublisher().Publish(new TransactionCompletedEvent());
+            await GetPublisher().PublishAsync(new TestEventOne());
+            await GetPublisher().PublishAsync(new TestEventTwo());
+            await GetPublisher().PublishAsync(new TestEventOne());
+            await GetPublisher().PublishAsync(new TestEventTwo());
+            await GetPublisher().PublishAsync(new TestEventTwo());
+            await GetPublisher().PublishAsync(new TransactionCompletedEvent());
 
             (await GetOutboundQueue().GetLength()).Should().Be(5);
         }
@@ -98,21 +91,23 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services
                 .AddScoped<IOutboundQueueWriter, InMemoryOutboundQueue>()
-                .AddSilverback().WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddDeferredOutboundConnector())
+                .AddSilverback().WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddDeferredOutboundConnector())
                 .AddSingletonSubscriber(_testSubscriber);
 
-            GetBusConfigurator().Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationMessage>(TestProducerEndpoint.GetDefault()));
+            GetBusConfigurator().Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationMessage>(TestProducerEndpoint.GetDefault()));
 
-            GetPublisher().Publish(new TestEventOne());
-            GetPublisher().Publish(new TestEventTwo());
-            GetPublisher().Publish(new TransactionCompletedEvent());
-            GetPublisher().Publish(new TestEventOne());
-            GetPublisher().Publish(new TestEventTwo());
-            GetPublisher().Publish(new TestEventTwo());
-            GetPublisher().Publish(new TransactionAbortedEvent());
+            await GetPublisher().PublishAsync(new TestEventOne());
+            await GetPublisher().PublishAsync(new TestEventTwo());
+            await GetPublisher().PublishAsync(new TransactionCompletedEvent());
+            await GetPublisher().PublishAsync(new TestEventOne());
+            await GetPublisher().PublishAsync(new TestEventTwo());
+            await GetPublisher().PublishAsync(new TestEventTwo());
+            await GetPublisher().PublishAsync(new TransactionAbortedEvent());
 
             (await GetOutboundQueue().GetLength()).Should().Be(2);
         }
@@ -120,15 +115,17 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public async Task AddInboundConnector_PushMessages_MessagesReceived()
         {
-            _services.AddSilverback().WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddInboundConnector())
+            _services.AddSilverback().WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddInboundConnector())
                 .AddSingletonSubscriber(_testSubscriber);
 
-            GetBusConfigurator().Connect(endpoints => endpoints
-                .AddInbound(TestConsumerEndpoint.GetDefault()));
+            GetBusConfigurator().Connect(
+                endpoints => endpoints
+                    .AddInbound(TestConsumerEndpoint.GetDefault()));
 
-            var consumer = (TestConsumer) GetBroker().Consumers.First();
+            var consumer = (TestConsumer)GetBroker().Consumers[0];
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -143,16 +140,18 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         [Fact]
         public async Task AddInboundConnector_CalledMultipleTimes_EachMessageReceivedOnce()
         {
-            _services.AddSilverback().WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddInboundConnector()
-                    .AddInboundConnector())
+            _services.AddSilverback().WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddInboundConnector()
+                        .AddInboundConnector())
                 .AddSingletonSubscriber(_testSubscriber);
 
-            GetBusConfigurator().Connect(endpoints => endpoints
-                .AddInbound(TestConsumerEndpoint.GetDefault()));
+            GetBusConfigurator().Connect(
+                endpoints => endpoints
+                    .AddInbound(TestConsumerEndpoint.GetDefault()));
 
-            var consumer = (TestConsumer) GetBroker().Consumers[0];
+            var consumer = (TestConsumer)GetBroker().Consumers[0];
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventTwo());
             await consumer.TestHandleMessage(new TestEventOne());
@@ -169,43 +168,34 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services
                 .AddScoped<IInboundLog, InMemoryInboundLog>()
-                .AddSilverback().WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddLoggedInboundConnector())
+                .AddSilverback().WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddLoggedInboundConnector())
                 .AddSingletonSubscriber(_testSubscriber);
 
-            GetBusConfigurator().Connect(endpoints =>
-                endpoints
-                    .AddInbound(TestConsumerEndpoint.GetDefault()));
+            GetBusConfigurator().Connect(
+                endpoints =>
+                    endpoints
+                        .AddInbound(TestConsumerEndpoint.GetDefault()));
 
-            var consumer = (TestConsumer) GetBroker().Consumers[0];
+            var consumer = (TestConsumer)GetBroker().Consumers[0];
             var duplicatedId = Guid.NewGuid();
             await consumer.TestHandleMessage(
                 new TestEventOne(),
-                new[]
-                {
-                    new MessageHeader("x-message-id", Guid.NewGuid().ToString())
-                });
-            await consumer.TestHandleMessage(new TestEventOne(),
-                new[]
-                {
-                    new MessageHeader("x-message-id", duplicatedId.ToString())
-                });
-            await consumer.TestHandleMessage(new TestEventOne(),
-                new[]
-                {
-                    new MessageHeader("x-message-id", Guid.NewGuid().ToString())
-                });
-            await consumer.TestHandleMessage(new TestEventOne(),
-                new[]
-                {
-                    new MessageHeader("x-message-id", Guid.NewGuid().ToString())
-                });
-            await consumer.TestHandleMessage(new TestEventOne(),
-                new[]
-                {
-                    new MessageHeader("x-message-id", duplicatedId.ToString())
-                });
+                GetMessageIdHeader(Guid.NewGuid()));
+            await consumer.TestHandleMessage(
+                new TestEventOne(),
+                GetMessageIdHeader(duplicatedId));
+            await consumer.TestHandleMessage(
+                new TestEventOne(),
+                GetMessageIdHeader(Guid.NewGuid()));
+            await consumer.TestHandleMessage(
+                new TestEventOne(),
+                GetMessageIdHeader(Guid.NewGuid()));
+            await consumer.TestHandleMessage(
+                new TestEventOne(),
+                GetMessageIdHeader(duplicatedId));
 
             _testSubscriber.ReceivedMessages
                 .Count(message => !(message is ISilverbackEvent))
@@ -217,16 +207,18 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             _services
                 .AddScoped<IOffsetStore, InMemoryOffsetStore>()
-                .AddSilverback().WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddOffsetStoredInboundConnector())
+                .AddSilverback().WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddOffsetStoredInboundConnector())
                 .AddSingletonSubscriber(_testSubscriber);
 
-            GetBusConfigurator().Connect(endpoints =>
-                endpoints
-                    .AddInbound(TestConsumerEndpoint.GetDefault()));
+            GetBusConfigurator().Connect(
+                endpoints =>
+                    endpoints
+                        .AddInbound(TestConsumerEndpoint.GetDefault()));
 
-            var consumer = (TestConsumer) GetBroker().Consumers.First();
+            var consumer = (TestConsumer)GetBroker().Consumers[0];
             await consumer.TestHandleMessage(
                 new TestEventOne(),
                 offset: new TestOffset("test-1", "1"));
@@ -250,5 +242,26 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                 .Count(message => !(message is ISilverbackEvent))
                 .Should().Be(5);
         }
+
+        private static MessageHeader[] GetMessageIdHeader(Guid id) =>
+            new[]
+            {
+                new MessageHeader("x-message-id", id.ToString())
+            };
+
+        private IServiceProvider GetServiceProvider() => _serviceProvider ??=
+            _services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+
+        private IServiceProvider GetScopedServiceProvider() =>
+            (_serviceScope ??= GetServiceProvider().CreateScope()).ServiceProvider;
+
+        private TestBroker GetBroker() => (TestBroker)GetServiceProvider().GetService<IBroker>();
+
+        private IPublisher GetPublisher() => GetScopedServiceProvider().GetService<IPublisher>();
+
+        private IBusConfigurator GetBusConfigurator() => GetServiceProvider().GetService<IBusConfigurator>();
+
+        private InMemoryOutboundQueue GetOutboundQueue() =>
+            (InMemoryOutboundQueue)GetScopedServiceProvider().GetService<IOutboundQueueWriter>();
     }
 }

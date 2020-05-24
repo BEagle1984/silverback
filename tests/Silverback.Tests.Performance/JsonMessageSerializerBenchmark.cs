@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2020 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.Globalization;
 using BenchmarkDotNet.Attributes;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -20,19 +24,28 @@ namespace Silverback.Tests.Performance
         {
             Monday = new Forecast
             {
-                Date = DateTime.Parse("2020-01-06"),
+                Date = DateTime.Parse("2020-01-06", CultureInfo.InvariantCulture),
                 TemperatureCelsius = 10,
                 Summary = "Cool",
                 WindSpeed = 8
             },
             Tuesday = new Forecast
             {
-                Date = DateTime.Parse("2020-01-07"),
+                Date = DateTime.Parse("2020-01-07", CultureInfo.InvariantCulture),
                 TemperatureCelsius = 11,
                 Summary = "Rainy",
                 WindSpeed = 10
             }
         };
+
+        private interface IForecast
+        {
+            public DateTimeOffset Date { get; set; }
+
+            public int TemperatureCelsius { get; set; }
+
+            public string? Summary { get; set; }
+        }
 
         [Benchmark]
         public void Serialize()
@@ -43,31 +56,22 @@ namespace Silverback.Tests.Performance
             }
         }
 
-        public interface IForecast
+        private class Forecast : IForecast
         {
             public DateTimeOffset Date { get; set; }
 
             public int TemperatureCelsius { get; set; }
 
-            public string Summary { get; set; }
-        }
-
-        public class Forecast : IForecast
-        {
-            public DateTimeOffset Date { get; set; }
-
-            public int TemperatureCelsius { get; set; }
-
-            public string Summary { get; set; }
+            public string? Summary { get; set; }
 
             public int WindSpeed { get; set; }
         }
 
-        public class Forecasts
+        private class Forecasts
         {
-            public IForecast Monday { get; set; }
+            public IForecast? Monday { get; set; }
 
-            public object Tuesday { get; set; }
+            public object? Tuesday { get; set; }
         }
     }
 }

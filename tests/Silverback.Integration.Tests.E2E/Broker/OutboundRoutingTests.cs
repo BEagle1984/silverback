@@ -19,7 +19,9 @@ namespace Silverback.Tests.Integration.E2E.Broker
     public class OutboundRoutingTests
     {
         private readonly ServiceProvider _serviceProvider;
+
         private readonly IBusConfigurator _configurator;
+
         private readonly SpyBrokerBehavior _spyBehavior;
 
         public OutboundRoutingTests()
@@ -30,16 +32,18 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .AddNullLogger()
                 .AddSilverback()
                 .UseModel()
-                .WithConnectionToMessageBroker(options => options
-                    .AddInMemoryBroker()
-                    .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                    .AddSingletonOutboundRouter<TestPrioritizedOutboundRouter>())
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddInMemoryBroker()
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonOutboundRouter<TestPrioritizedOutboundRouter>())
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
 
-            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
-            {
-                ValidateScopes = true
-            });
+            _serviceProvider = services.BuildServiceProvider(
+                new ServiceProviderOptions
+                {
+                    ValidateScopes = true
+                });
 
             _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
             _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
@@ -48,14 +52,11 @@ namespace Silverback.Tests.Integration.E2E.Broker
         [Fact]
         public async Task StaticSingleEndpoint_RoutedCorrectly()
         {
-            _configurator.Connect(endpoints => endpoints
-                .AddOutbound<TestEventOne>(
-                    new KafkaProducerEndpoint("test-e2e-one"))
-                .AddOutbound<TestEventTwo>(
-                    new KafkaProducerEndpoint("test-e2e-two"))
-                .AddOutbound<TestEventThree>(
-                    new KafkaProducerEndpoint("test-e2e-three"))
-            );
+            _configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<TestEventOne>(new KafkaProducerEndpoint("test-e2e-one"))
+                    .AddOutbound<TestEventTwo>(new KafkaProducerEndpoint("test-e2e-two"))
+                    .AddOutbound<TestEventThree>(new KafkaProducerEndpoint("test-e2e-three")));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -73,11 +74,12 @@ namespace Silverback.Tests.Integration.E2E.Broker
         [Fact]
         public async Task StaticBroadcast_RoutedCorrectly()
         {
-            _configurator.Connect(endpoints => endpoints
-                .AddOutbound<TestEventOne>(
-                    new KafkaProducerEndpoint("test-e2e-one"),
-                    new KafkaProducerEndpoint("test-e2e-two"),
-                    new KafkaProducerEndpoint("test-e2e-three")));
+            _configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<TestEventOne>(
+                        new KafkaProducerEndpoint("test-e2e-one"),
+                        new KafkaProducerEndpoint("test-e2e-two"),
+                        new KafkaProducerEndpoint("test-e2e-three")));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -95,18 +97,22 @@ namespace Silverback.Tests.Integration.E2E.Broker
         [Fact]
         public async Task DynamicCustomRouting_RoutedCorrectly()
         {
-            _configurator.Connect(endpoints => endpoints
-                .AddOutbound<TestPrioritizedCommand, TestPrioritizedOutboundRouter>());
+            _configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<TestPrioritizedCommand, TestPrioritizedOutboundRouter>());
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<ICommandPublisher>();
 
-            await publisher.ExecuteAsync(new TestPrioritizedCommand
-                { Priority = TestPrioritizedCommand.PriorityEnum.Low });
-            await publisher.ExecuteAsync(new TestPrioritizedCommand
-                { Priority = TestPrioritizedCommand.PriorityEnum.Low });
-            await publisher.ExecuteAsync(new TestPrioritizedCommand
-                { Priority = TestPrioritizedCommand.PriorityEnum.High });
+            await publisher.ExecuteAsync(
+                new TestPrioritizedCommand
+                    { Priority = Priority.Low });
+            await publisher.ExecuteAsync(
+                new TestPrioritizedCommand
+                    { Priority = Priority.Low });
+            await publisher.ExecuteAsync(
+                new TestPrioritizedCommand
+                    { Priority = Priority.High });
 
             _spyBehavior.OutboundEnvelopes.Count.Should().Be(6);
             _spyBehavior.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-all")

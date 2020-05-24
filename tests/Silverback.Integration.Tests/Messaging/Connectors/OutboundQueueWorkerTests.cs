@@ -22,7 +22,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
     public class OutboundQueueWorkerTests
     {
         private readonly InMemoryOutboundQueue _queue;
+
         private readonly TestBroker _broker;
+
         private readonly OutboundQueueWorker _worker;
 
         private readonly OutboundEnvelope _sampleOutboundEnvelope;
@@ -40,16 +42,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             services
                 .AddNullLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>()
-                    .AddDeferredOutboundConnector());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddDeferredOutboundConnector());
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
             serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>()
                 .Add<IIntegrationMessage>(new StaticOutboundRouter(TestProducerEndpoint.GetDefault()));
 
-            _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
+            _broker = (TestBroker)serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
 
             _worker = new OutboundQueueWorker(
@@ -60,21 +63,29 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 100); // TODO: Test order not enforced
 
             _sampleOutboundEnvelope = new OutboundEnvelope<TestEventOne>(
-                new TestEventOne { Content = "Test" }, null, TestProducerEndpoint.GetDefault());
+                new TestEventOne { Content = "Test" },
+                null,
+                TestProducerEndpoint.GetDefault());
             _sampleOutboundEnvelope.RawMessage =
-                new JsonMessageSerializer().Serialize(_sampleOutboundEnvelope.Message, _sampleOutboundEnvelope.Headers,
+                new JsonMessageSerializer().Serialize(
+                    _sampleOutboundEnvelope.Message,
+                    _sampleOutboundEnvelope.Headers,
                     MessageSerializationContext.Empty);
         }
 
         [Fact]
         public async Task ProcessQueue_SomeMessages_Produced()
         {
-            await _queue.Enqueue(new OutboundEnvelope<TestEventOne>(
-                new TestEventOne { Content = "Test" }, null,
-                new TestProducerEndpoint("topic1")));
-            await _queue.Enqueue(new OutboundEnvelope<TestEventOne>(
-                new TestEventOne { Content = "Test" }, null,
-                new TestProducerEndpoint("topic2")));
+            await _queue.Enqueue(
+                new OutboundEnvelope<TestEventOne>(
+                    new TestEventOne { Content = "Test" },
+                    null,
+                    new TestProducerEndpoint("topic1")));
+            await _queue.Enqueue(
+                new OutboundEnvelope<TestEventOne>(
+                    new TestEventOne { Content = "Test" },
+                    null,
+                    new TestProducerEndpoint("topic2")));
             await _queue.Commit();
 
             await _worker.ProcessQueue(CancellationToken.None);
