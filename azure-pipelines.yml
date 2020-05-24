@@ -12,15 +12,15 @@ variables:
 steps:
   # Install .net core sdk
   - task: UseDotNet@2
-    displayName: 'Install sdk 2.2.x'
     inputs:
       packageType: 'sdk'
       version: '2.2.x'
+    displayName: 'Install sdk 2.2.x'
   - task: UseDotNet@2
-    displayName: 'Install sdk 3.1.x'
     inputs:
       packageType: 'sdk'
       version: '3.1.x'
+    displayName: 'Install sdk 3.1.x'
   # Build, test and analyze
   - task: SonarCloudPrepare@1
     inputs:
@@ -30,7 +30,11 @@ steps:
       projectKey: 'silverback'
       projectName: 'silverback'
       projectVersion: '3.0.0'
-    displayName: 'Prepare analysis on SonarCloud'
+      extraProperties: |
+        sonar.exclusions=**/obj/**,**/*.dll
+        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+        sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+    displayName: 'Prepare code analysis on SonarCloud'
   - script: |
       dotnet build Silverback.sln --configuration $(buildConfiguration) -warnaserror
     displayName: 'Build (dotnet build $(buildConfiguration))'
@@ -40,23 +44,25 @@ steps:
         --collect "Code coverage" \
         --filter CI!=false \
         -p:CollectCoverage=true \
-        -p:CoverletOutputFormat=cobertura \
+        -p:CoverletOutputFormat=\"opencover,cobertura\" \
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.Common]*"
-    displayName: 'Test: (dotnet test)'
-  - task: SonarCloudAnalyze@1 
-    displayName: 'Run Code Analysis on SonarCloud' 
-  - task: SonarCloudPublish@1 
-    displayName: 'Publish Quality Gate Result on SonarCloud'
+    displayName: 'Test (dotnet test)'
+  - task: SonarCloudAnalyze@1
+    condition: succeededOrFailed()
+    displayName: 'Run code analysis on SonarCloud' 
+  - task: SonarCloudPublish@1
+    condition: succeededOrFailed()
+    displayName: 'Publish quality gate result on SonarCloud'
   # Publish results
   - task: PublishTestResults@2
-    displayName: 'Publish test results'
     condition: succeededOrFailed()
     inputs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
+    displayName: 'Publish test results'
   - task: PublishCodeCoverageResults@1
-    displayName: 'Publish code coverage results'
     condition: succeededOrFailed()
     inputs:
       summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml
       codecoverageTool: cobertura
+    displayName: 'Publish code coverage results'
