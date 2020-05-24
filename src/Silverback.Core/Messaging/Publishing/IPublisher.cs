@@ -27,18 +27,6 @@ namespace Silverback.Messaging.Publishing
 
         /// <summary>
         ///     Publishes the specified message to the internal bus. The message will be forwarded to its
-        ///     subscribers and the <see cref="Task" /> will not complete until all subscribers have processed
-        ///     it (unless using Silverback.Integration to produce and consume the message through a message
-        ///     broker).
-        /// </summary>
-        /// <param name="message"> The message to be published. </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task PublishAsync(object message);
-
-        /// <summary>
-        ///     Publishes the specified message to the internal bus. The message will be forwarded to its
         ///     subscribers and the method will not complete until all subscribers have processed it (unless
         ///     using Silverback.Integration to produce and consume the message through a message broker).
         /// </summary>
@@ -51,6 +39,42 @@ namespace Silverback.Messaging.Publishing
         ///     return a value.
         /// </returns>
         IReadOnlyCollection<TResult> Publish<TResult>(object message);
+
+        /// <summary>
+        ///     Publishes the specified messages to the internal bus. The messages will be forwarded to their
+        ///     subscribers and the method will not complete until all subscribers have processed all messages
+        ///     (unless using Silverback.Integration to produce and consume the messages through a message
+        ///     broker).
+        /// </summary>
+        /// <param name="messages"> The messages to be published. </param>
+        void Publish(IEnumerable<object> messages);
+
+        /// <summary>
+        ///     Publishes the specified messages to the internal bus. The messages will be forwarded to their
+        ///     subscribers and the method will not complete until all subscribers have processed all messages
+        ///     (unless using Silverback.Integration to produce and consume the messages through a message
+        ///     broker).
+        /// </summary>
+        /// <param name="messages"> The messages to be published. </param>
+        /// <typeparam name="TResult">
+        ///     The type of the result that is expected to be returned by the subscribers.
+        /// </typeparam>
+        /// <returns>
+        ///     A collection of <typeparamref name="TResult" />.
+        /// </returns>
+        IReadOnlyCollection<TResult> Publish<TResult>(IEnumerable<object> messages);
+
+        /// <summary>
+        ///     Publishes the specified message to the internal bus. The message will be forwarded to its
+        ///     subscribers and the <see cref="Task" /> will not complete until all subscribers have processed
+        ///     it (unless using Silverback.Integration to produce and consume the message through a message
+        ///     broker).
+        /// </summary>
+        /// <param name="message"> The message to be published. </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task PublishAsync(object message);
 
         /// <summary>
         ///     Publishes the specified message to the internal bus. The message will be forwarded to its
@@ -71,15 +95,6 @@ namespace Silverback.Messaging.Publishing
 
         /// <summary>
         ///     Publishes the specified messages to the internal bus. The messages will be forwarded to their
-        ///     subscribers and the method will not complete until all subscribers have processed all messages
-        ///     (unless using Silverback.Integration to produce and consume the messages through a message
-        ///     broker).
-        /// </summary>
-        /// <param name="messages"> The messages to be published. </param>
-        void Publish(IEnumerable<object> messages);
-
-        /// <summary>
-        ///     Publishes the specified messages to the internal bus. The messages will be forwarded to their
         ///     subscribers and the <see cref="Task" /> will not complete until all subscribers have processed
         ///     all messages (unless using Silverback.Integration to produce and consume the messages through a
         ///     message broker).
@@ -89,21 +104,6 @@ namespace Silverback.Messaging.Publishing
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         Task PublishAsync(IEnumerable<object> messages);
-
-        /// <summary>
-        ///     Publishes the specified messages to the internal bus. The messages will be forwarded to their
-        ///     subscribers and the method will not complete until all subscribers have processed all messages
-        ///     (unless using Silverback.Integration to produce and consume the messages through a message
-        ///     broker).
-        /// </summary>
-        /// <param name="messages"> The messages to be published. </param>
-        /// <typeparam name="TResult">
-        ///     The type of the result that is expected to be returned by the subscribers.
-        /// </typeparam>
-        /// <returns>
-        ///     A collection of <typeparamref name="TResult" />.
-        /// </returns>
-        IReadOnlyCollection<TResult> Publish<TResult>(IEnumerable<object> messages);
 
         /// <summary>
         ///     Publishes the specified messages to the internal bus. The messages will be forwarded to their

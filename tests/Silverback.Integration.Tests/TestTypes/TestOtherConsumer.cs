@@ -31,13 +31,13 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public override void Disconnect() => IsConnected = true;
 
-        protected override Task Commit(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task CommitCore(IReadOnlyCollection<TestOffset> offsets)
         {
             AcknowledgeCount += offsets.Count;
             return Task.CompletedTask;
         }
 
-        protected override Task Rollback(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task RollbackCore(IReadOnlyCollection<TestOffset> offsets)
         {
             // Nothing to do
             return Task.CompletedTask;

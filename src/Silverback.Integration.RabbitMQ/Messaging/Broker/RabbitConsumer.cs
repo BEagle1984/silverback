@@ -109,14 +109,14 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        protected override Task Commit(IReadOnlyCollection<RabbitOffset> offsets)
+        protected override Task CommitCore(IReadOnlyCollection<RabbitOffset> offsets)
         {
             CommitOrStoreOffset(offsets.OrderBy(offset => offset.DeliveryTag).Last());
             return Task.CompletedTask;
         }
 
         /// <inheritdoc />
-        protected override Task Rollback(IReadOnlyCollection<RabbitOffset> offsets)
+        protected override Task RollbackCore(IReadOnlyCollection<RabbitOffset> offsets)
         {
             BasicNack(offsets.Max(offset => offset.DeliveryTag));
             return Task.CompletedTask;

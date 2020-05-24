@@ -118,6 +118,6 @@ namespace Silverback.EventStore
         protected override void AddEventStoreEntity(TEventStoreEntity eventStoreEntity) => _dbSet.Add(eventStoreEntity);
 
         /// <inheritdoc />
-        protected override void Remove(TEventStoreEntity eventStore) => _dbSet.Remove(eventStore);
+        protected override void RemoveCore(TEventStoreEntity eventStore) => _dbSet.Remove(eventStore);
     }
 }

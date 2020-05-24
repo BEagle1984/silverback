@@ -9,6 +9,7 @@ namespace Silverback
     /// <summary>
     ///     The base class for all the custom exceptions thrown by Silverback.
     /// </summary>
+    [Serializable]
     public abstract class SilverbackException : Exception
     {
         /// <summary>

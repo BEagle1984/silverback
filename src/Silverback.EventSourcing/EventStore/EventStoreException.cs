@@ -9,6 +9,7 @@ namespace Silverback.EventStore
     /// <summary>
     ///     The base class for the exceptions related to the event store.
     /// </summary>
+    [Serializable]
     public abstract class EventStoreException : SilverbackException
     {
         /// <summary>

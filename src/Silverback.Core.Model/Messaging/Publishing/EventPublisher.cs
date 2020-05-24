@@ -27,10 +27,10 @@ namespace Silverback.Messaging.Publishing
         public void Publish(IEvent eventMessage) => _publisher.Publish(eventMessage);
 
         /// <inheritdoc />
-        public Task PublishAsync(IEvent eventMessage) => _publisher.PublishAsync(eventMessage);
+        public void Publish(IEnumerable<IEvent> eventMessages) => _publisher.Publish(eventMessages);
 
         /// <inheritdoc />
-        public void Publish(IEnumerable<IEvent> eventMessages) => _publisher.Publish(eventMessages);
+        public Task PublishAsync(IEvent eventMessage) => _publisher.PublishAsync(eventMessage);
 
         /// <inheritdoc />
         public Task PublishAsync(IEnumerable<IEvent> eventMessages) => _publisher.PublishAsync(eventMessages);

@@ -51,14 +51,6 @@ namespace Silverback.Messaging.Publishing
         }
 
         /// <inheritdoc />
-        public Task PublishAsync(object message)
-        {
-            Check.NotNull(message, nameof(message));
-
-            return PublishAsync(new[] { message });
-        }
-
-        /// <inheritdoc />
         public IReadOnlyCollection<TResult> Publish<TResult>(object message)
         {
             Check.NotNull(message, nameof(message));
@@ -67,18 +59,26 @@ namespace Silverback.Messaging.Publishing
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
-            await PublishAsync<TResult>(new[] { message });
-
-        /// <inheritdoc />
         public void Publish(IEnumerable<object> messages) => Publish(messages, false).Wait();
-
-        /// <inheritdoc />
-        public Task PublishAsync(IEnumerable<object> messages) => Publish(messages, true);
 
         /// <inheritdoc />
         public IReadOnlyCollection<TResult> Publish<TResult>(IEnumerable<object> messages) =>
             CastResults<TResult>(Publish(messages, false).Result).ToList();
+
+        /// <inheritdoc />
+        public Task PublishAsync(object message)
+        {
+            Check.NotNull(message, nameof(message));
+
+            return PublishAsync(new[] { message });
+        }
+
+        /// <inheritdoc />
+        public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
+            await PublishAsync<TResult>(new[] { message });
+
+        /// <inheritdoc />
+        public Task PublishAsync(IEnumerable<object> messages) => Publish(messages, true);
 
         /// <inheritdoc />
         public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) =>

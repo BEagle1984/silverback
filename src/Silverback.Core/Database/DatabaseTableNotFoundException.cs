@@ -10,6 +10,7 @@ namespace Silverback.Database
     ///     The exception that is thrown when a required database table cannot be found via the configured
     ///     data layer (e.g. Entity Framework Core).
     /// </summary>
+    [Serializable]
     public class DatabaseTableNotFoundException : SilverbackException
     {
         /// <summary>
@@ -53,7 +54,7 @@ namespace Silverback.Database
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public DatabaseTableNotFoundException(SerializationInfo info, StreamingContext context)
+        protected DatabaseTableNotFoundException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

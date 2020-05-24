@@ -7,31 +7,20 @@ using System.Linq;
 namespace Silverback.Util
 {
     /// <summary>
+    ///     <para> This comparer is meant to be used for configuration dictionaries only. </para>
     ///     <para>
-    ///         This comparer is meant to be used for configuration dictionaries only.
-    ///     </para>
-    ///     <para>
-    ///         Nome of the applied rules:
-    ///         <list type="bullet">
+    ///         Nome of the applied rules: <list type="bullet">
     ///             <item>
+    ///                 <description> a null dictionary is equal to an empty dictionary </description>
+    ///             </item> <item>
     ///                 <description>
-    ///                     a null dictionary is equal to an empty dictionary
+    ///                     entries with null values (or <c> default(TValue) </c>) and equivalent to completely
+    ///                     missing entries
     ///                 </description>
-    ///             </item>
-    ///             <item>
-    ///                 <description>
-    ///                     entries with null values (or <c>default(TValue)</c>) and equivalent to completely missing entries
-    ///                 </description>
-    ///             </item>
-    ///             <item>
-    ///                 <description>
-    ///                     the default comparer is used for values
-    ///                 </description>
-    ///             </item>
-    ///             <item>
-    ///                 <description>
-    ///                     multiple entries with the same key are not allowed
-    ///                 </description>
+    ///             </item> <item>
+    ///                 <description> the default comparer is used for values </description>
+    ///             </item> <item>
+    ///                 <description> multiple entries with the same key are not allowed </description>
     ///             </item>
     ///         </list>
     ///     </para>
@@ -39,29 +28,26 @@ namespace Silverback.Util
     internal class ConfigurationDictionaryComparer<TKey, TValue>
         : IEqualityComparer<IEnumerable<KeyValuePair<TKey, TValue>>>
     {
-        public bool Equals(
-            IEnumerable<KeyValuePair<TKey, TValue>>? dictionaryX,
-            IEnumerable<KeyValuePair<TKey, TValue>>? dictionaryY)
+        public bool Equals(IEnumerable<KeyValuePair<TKey, TValue>>? x, IEnumerable<KeyValuePair<TKey, TValue>>? y)
         {
-            dictionaryX = (dictionaryX ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
-            dictionaryY = (dictionaryY ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
+            x = (x ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
+            y = (y ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
 
-            if (dictionaryX.Count() != dictionaryY.Count())
+            if (x.Count() != y.Count())
                 return false;
 
-            var allKeys = dictionaryX.Select(pair => pair.Key)
-                .Union(
-                    dictionaryY.Select(pair => pair.Key))
+            var allKeys = x.Select(pair => pair.Key)
+                .Union(y.Select(pair => pair.Key))
                 .Distinct()
                 .ToList();
 
-            if (allKeys.Count != dictionaryX.Count())
+            if (allKeys.Count != x.Count())
                 return false;
 
             foreach (var key in allKeys)
             {
-                var valueX = dictionaryX.FirstOrDefault(pair => Equals(pair.Key, key));
-                var valueY = dictionaryY.FirstOrDefault(pair => Equals(pair.Key, key));
+                var valueX = x.FirstOrDefault(pair => Equals(pair.Key, key));
+                var valueY = y.FirstOrDefault(pair => Equals(pair.Key, key));
 
                 if (!Equals(valueX, valueY))
                     return false;
@@ -70,7 +56,6 @@ namespace Silverback.Util
             return true;
         }
 
-        public int GetHashCode(IEnumerable<KeyValuePair<TKey, TValue>> dictionary) =>
-            dictionary.Count();
+        public int GetHashCode(IEnumerable<KeyValuePair<TKey, TValue>> obj) => obj.Count();
     }
 }

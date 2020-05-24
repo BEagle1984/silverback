@@ -14,6 +14,6 @@ namespace Silverback.Tests.EventSourcing.TestTypes
     {
         public List<TEventStoreEntity> EventStores { get; } = new List<TEventStoreEntity>();
 
-        protected override void Remove(TEventStoreEntity eventStore) => EventStores.Remove(eventStore);
+        protected override void RemoveCore(TEventStoreEntity eventStore) => EventStores.Remove(eventStore);
     }
 }

@@ -8,8 +8,10 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
-    /// <summary> The base class for the <see cref="RabbitExchangeConfig"/> and <see cref="RabbitQueueConfig"/>. </summary>
-    public abstract class RabbitEndpointConfig : IEquatable<RabbitEndpointConfig>, IValidatableEndpointSettings
+    /// <summary>
+    ///     The base class for the <see cref="RabbitExchangeConfig" /> and <see cref="RabbitQueueConfig" />.
+    /// </summary>
+    public abstract class RabbitEndpointConfig : IValidatableEndpointSettings
     {
         private static readonly ConfigurationDictionaryComparer<string, object> ArgumentsComparer =
             new ConfigurationDictionaryComparer<string, object>();
@@ -38,20 +40,6 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <inheritdoc />
-        public bool Equals(RabbitEndpointConfig? other)
-        {
-            if (other is null)
-                return false;
-
-            if (ReferenceEquals(this, other))
-                return true;
-
-            return IsDurable == other.IsDurable &&
-                   IsAutoDeleteEnabled == other.IsAutoDeleteEnabled &&
-                   ArgumentsComparer.Equals(Arguments, other.Arguments);
-        }
-
-        /// <inheritdoc />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -69,5 +57,26 @@ namespace Silverback.Messaging.Configuration
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode() => HashCode.Combine(IsDurable, IsAutoDeleteEnabled, Arguments);
+
+        /// <summary>
+        ///     Determines whether the specified <see cref="RabbitEndpointConfig" /> is equal to the current
+        ///     <see cref="RabbitEndpointConfig" />.
+        /// </summary>
+        /// <param name="other"> The object to compare with the current object. </param>
+        /// <returns>
+        ///     Returns a value indicating whether the other object is equal to the current object.
+        /// </returns>
+        protected bool Equals(RabbitEndpointConfig? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return IsDurable == other.IsDurable &&
+                   IsAutoDeleteEnabled == other.IsAutoDeleteEnabled &&
+                   ArgumentsComparer.Equals(Arguments, other.Arguments);
+        }
     }
 }

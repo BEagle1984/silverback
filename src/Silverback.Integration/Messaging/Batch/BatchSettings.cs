@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Batch
     ///     The batch consuming settings. To enable batch consuming just set the <c> Size </c> property to a
     ///     value greater than 1.
     /// </summary>
-    public class BatchSettings : IEquatable<BatchSettings>, IValidatableEndpointSettings
+    public sealed class BatchSettings : IEquatable<BatchSettings>, IValidatableEndpointSettings
     {
         /// <summary>
         ///     Gets or sets the number of messages to be processed in batch. Setting this property to a value

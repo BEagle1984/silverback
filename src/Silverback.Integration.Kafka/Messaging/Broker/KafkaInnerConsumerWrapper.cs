@@ -15,7 +15,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    internal class KafkaInnerConsumerWrapper : IDisposable
+    internal sealed class KafkaInnerConsumerWrapper : IDisposable
     {
         private readonly TimeSpan _recoveryDelay = TimeSpan.FromSeconds(5);
 

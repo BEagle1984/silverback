@@ -11,6 +11,7 @@ namespace Silverback.EventStore
     ///     serialized or deserialized. This exception is thrown only when a Silverback specific error occurs,
     ///     other exceptions related to reflection or the underlying serializer are not wrapped.
     /// </summary>
+    [Serializable]
     public class EventStoreSerializationException : EventStoreException
     {
         /// <summary>
@@ -53,7 +54,7 @@ namespace Silverback.EventStore
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public EventStoreSerializationException(SerializationInfo info, StreamingContext context)
+        protected EventStoreSerializationException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

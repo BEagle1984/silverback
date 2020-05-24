@@ -10,6 +10,7 @@ namespace Silverback.Domain
     ///     The exception that is thrown when the stored events cannot be applied back to the domain
     ///     entity.
     /// </summary>
+    [Serializable]
     public class EventSourcingException : SilverbackException
     {
         /// <summary>
@@ -52,7 +53,7 @@ namespace Silverback.Domain
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public EventSourcingException(SerializationInfo info, StreamingContext context)
+        protected EventSourcingException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

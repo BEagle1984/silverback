@@ -9,6 +9,7 @@ namespace Silverback.Messaging.Batch
     /// <summary>
     ///     The exception that is thrown when something goes wrong with the batch handling.
     /// </summary>
+    [Serializable]
     public class BatchException : SilverbackException
     {
         /// <summary>
@@ -51,7 +52,7 @@ namespace Silverback.Messaging.Batch
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public BatchException(SerializationInfo info, StreamingContext context)
+        protected BatchException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

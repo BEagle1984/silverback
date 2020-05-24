@@ -21,17 +21,15 @@ namespace Silverback.Domain.Util
                 if (TryMapProperty(source, destination, sourceProperty, destProperties, sourceProperty.Name))
                     continue;
 
-                if (sourceProperty.Name.StartsWith(destTypeName, StringComparison.InvariantCulture))
-                {
-                    if (TryMapProperty(
+                if (sourceProperty.Name.StartsWith(destTypeName, StringComparison.InvariantCulture) &&
+                    TryMapProperty(
                         source,
                         destination,
                         sourceProperty,
                         destProperties,
                         sourceProperty.Name.Substring(destTypeName.Length)))
-                    {
-                        continue;
-                    }
+                {
+                    continue;
                 }
 
                 if (sourceProperty.Name.StartsWith("Entity", StringComparison.InvariantCulture))

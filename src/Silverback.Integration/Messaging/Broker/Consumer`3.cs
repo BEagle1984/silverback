@@ -53,11 +53,11 @@ namespace Silverback.Messaging.Broker
         protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
 
         /// <inheritdoc />
-        public override Task Commit(IReadOnlyCollection<IOffset> offsets) => Commit(offsets.Cast<TOffset>().ToList());
+        public override Task Commit(IReadOnlyCollection<IOffset> offsets) => CommitCore(offsets.Cast<TOffset>().ToList());
 
         /// <inheritdoc />
         public override Task Rollback(IReadOnlyCollection<IOffset> offsets) =>
-            Rollback(offsets.Cast<TOffset>().ToList());
+            RollbackCore(offsets.Cast<TOffset>().ToList());
 
         /// <summary>
         ///     <param>
@@ -72,7 +72,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task Commit(IReadOnlyCollection<TOffset> offsets);
+        protected abstract Task CommitCore(IReadOnlyCollection<TOffset> offsets);
 
         /// <summary>
         ///     <param>
@@ -87,6 +87,6 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task Rollback(IReadOnlyCollection<TOffset> offsets);
+        protected abstract Task RollbackCore(IReadOnlyCollection<TOffset> offsets);
     }
 }

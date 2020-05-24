@@ -11,6 +11,7 @@ namespace Silverback.Messaging.Subscribers
     ///     The exception that is thrown when a subscribed method cannot be invoked. This usually happens
     ///     because no value can be resolved for one or more arguments.
     /// </summary>
+    [Serializable]
     public class SubscribedMethodInvocationException : SilverbackException
     {
         /// <summary>
@@ -67,7 +68,7 @@ namespace Silverback.Messaging.Subscribers
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public SubscribedMethodInvocationException(SerializationInfo info, StreamingContext context)
+        protected SubscribedMethodInvocationException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

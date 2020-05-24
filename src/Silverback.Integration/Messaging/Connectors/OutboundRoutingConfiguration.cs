@@ -15,7 +15,9 @@ namespace Silverback.Messaging.Connectors
 
         public bool PublishOutboundMessagesToInternalBus { get; set; }
 
-        public IOutboundRoutingConfiguration Add<TMessage>(IOutboundRouter router, Type? outboundConnectorType) =>
+        public IOutboundRoutingConfiguration Add<TMessage>(
+            IOutboundRouter router,
+            Type? outboundConnectorType = null) =>
             Add(typeof(TMessage), router, outboundConnectorType);
 
         public IOutboundRoutingConfiguration Add(

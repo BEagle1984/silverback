@@ -11,7 +11,7 @@ namespace Silverback.Messaging.LargeMessages
     ///     The chunking settings. To enable chunking just set the <c> Size </c> property to the desired
     ///     (maximum) chunk size.
     /// </summary>
-    public class ChunkSettings : IEquatable<ChunkSettings>, IValidatableEndpointSettings
+    public sealed class ChunkSettings : IEquatable<ChunkSettings>, IValidatableEndpointSettings
     {
         /// <summary>
         ///     Gets or sets the size in bytes of each chunk.

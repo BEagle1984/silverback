@@ -59,7 +59,7 @@ namespace Silverback.EventStore
         {
             var eventStoreEntity = GetEventStoreEntity(domainEntity, false);
 
-            Remove(eventStoreEntity);
+            RemoveCore(eventStoreEntity);
 
             return eventStoreEntity;
         }
@@ -74,7 +74,7 @@ namespace Silverback.EventStore
         {
             var eventStoreEntity = await GetEventStoreEntityAsync(domainEntity, false);
 
-            Remove(eventStoreEntity);
+            RemoveCore(eventStoreEntity);
 
             return eventStoreEntity;
         }
@@ -199,7 +199,7 @@ namespace Silverback.EventStore
 
         /// <summary> Removes the event store entity and all related events from the store. </summary>
         /// <param name="eventStore"> The entity to be removed. </param>
-        protected abstract void Remove(TEventStoreEntity eventStore);
+        protected abstract void RemoveCore(TEventStoreEntity eventStore);
 
         private TEventStoreEntity EnsureEventStoreEntityIsNotNull(
             TEventStoreEntity? eventStore,

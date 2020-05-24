@@ -98,7 +98,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        protected override Task Commit(IReadOnlyCollection<KafkaOffset> offsets)
+        protected override Task CommitCore(IReadOnlyCollection<KafkaOffset> offsets)
         {
             if (_innerConsumer == null)
                 throw new InvalidOperationException("The consumer is not connected.");
@@ -124,7 +124,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        protected override Task Rollback(IReadOnlyCollection<KafkaOffset> offsets)
+        protected override Task RollbackCore(IReadOnlyCollection<KafkaOffset> offsets)
         {
             // Nothing to do here. With Kafka the uncommitted messages will be implicitly re-consumed.
             return Task.CompletedTask;

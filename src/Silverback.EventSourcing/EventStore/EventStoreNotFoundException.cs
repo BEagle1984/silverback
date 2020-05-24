@@ -9,6 +9,7 @@ namespace Silverback.EventStore
     /// <summary>
     ///     The exception that is thrown when the event store entity cannot be found.
     /// </summary>
+    [Serializable]
     public class EventStoreNotFoundException : EventStoreException
     {
         /// <summary>
@@ -51,7 +52,7 @@ namespace Silverback.EventStore
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public EventStoreNotFoundException(SerializationInfo info, StreamingContext context)
+        protected EventStoreNotFoundException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

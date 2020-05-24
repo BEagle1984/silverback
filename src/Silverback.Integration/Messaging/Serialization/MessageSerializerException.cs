@@ -12,6 +12,7 @@ namespace Silverback.Messaging.Serialization
     ///     specific error occurs, other exceptions related to reflection or the underlying serializer are
     ///     not wrapped.
     /// </summary>
+    [Serializable]
     public class MessageSerializerException : SilverbackException
     {
         /// <summary>
@@ -54,7 +55,7 @@ namespace Silverback.Messaging.Serialization
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public MessageSerializerException(SerializationInfo info, StreamingContext context)
+        protected MessageSerializerException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

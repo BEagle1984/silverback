@@ -9,6 +9,7 @@ namespace Silverback.Messaging
     /// <summary>
     ///     The exception that is thrown when the endpoint configuration is not valid.
     /// </summary>
+    [Serializable]
     public class EndpointConfigurationException : SilverbackException
     {
         /// <summary>
@@ -51,7 +52,7 @@ namespace Silverback.Messaging
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public EndpointConfigurationException(SerializationInfo info, StreamingContext context)
+        protected EndpointConfigurationException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Silverback.Util
 {
-    internal class ComparisonHelper
+    internal static class ComparisonHelper
     {
         /// <summary>
         ///     Determines whether the specified object instances are considered equal comparing their JSON

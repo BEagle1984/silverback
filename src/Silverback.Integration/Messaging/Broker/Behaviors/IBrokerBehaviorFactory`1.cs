@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Broker.Behaviors
     ///     <see cref="IProducer" /> or <see cref="IConsumer" /> that gets instantiated.
     /// </summary>
     /// <typeparam name="TBehavior">The type of the <see cref="IBrokerBehavior"/> being created.</typeparam>
-    public interface IBrokerBehaviorFactory<TBehavior> : IBrokerBehavior
+    public interface IBrokerBehaviorFactory<out TBehavior> : IBrokerBehavior
         where TBehavior : IBrokerBehavior
     {
         /// <summary>

@@ -10,6 +10,7 @@ namespace Silverback.EventStore
     ///     The exception that is thrown when the event store detects that the record being saved has been
     ///     modified since it was read.
     /// </summary>
+    [Serializable]
     public class EventStoreConcurrencyException : EventStoreException
     {
         /// <summary>
@@ -52,7 +53,7 @@ namespace Silverback.EventStore
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public EventStoreConcurrencyException(SerializationInfo info, StreamingContext context)
+        protected EventStoreConcurrencyException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

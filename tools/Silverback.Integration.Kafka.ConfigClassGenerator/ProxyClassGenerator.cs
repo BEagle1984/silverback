@@ -26,11 +26,11 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
 
         private readonly bool _generateNamespace;
 
+        private readonly string? _proxiedTypeName;
+
         private StringBuilder? _builder;
 
         private XmlDocument? _xmlDoc;
-
-        private string? _proxiedTypeName;
 
         public ProxyClassGenerator(
             Type proxiedType,
@@ -85,7 +85,7 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
             if (_baseClassName == null)
             {
                 _builder!.AppendLine($"    public abstract class {_generatedClassName} : IValidatableEndpointSettings");
-                _builder!.AppendLine($"    {{");
+                _builder!.AppendLine("    {");
                 _builder!.AppendLine(
                     "        internal static readonly " +
                     "ConfigurationDictionaryComparer<string, string> ConfluentConfigComparer = " +
@@ -95,7 +95,7 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
             else
             {
                 _builder!.AppendLine($"    public abstract class {_generatedClassName} : {_baseClassName}");
-                _builder!.AppendLine($"    {{");
+                _builder!.AppendLine("    {");
             }
         }
 
@@ -115,25 +115,25 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
                     _builder!.AppendLine($"        /// {summary}");
 
                 _builder!.AppendLine($"        public {propertyType} {property.Name}");
-                _builder!.AppendLine($"        {{");
+                _builder!.AppendLine("        {");
 
                 if (property.GetGetMethod() != null)
                     _builder!.AppendLine($"            get => {confluentConfigPropertyName}.{property.Name};");
 
                 if (property.Name == "DeliveryReportFields")
                 {
-                    _builder!.AppendLine($"            set");
-                    _builder!.AppendLine($"            {{");
-                    _builder!.AppendLine($"                if (value != null)");
+                    _builder!.AppendLine("            set");
+                    _builder!.AppendLine("            {");
+                    _builder!.AppendLine("                if (value != null)");
                     _builder!.AppendLine($"                    {confluentConfigPropertyName}.{property.Name} = value;");
-                    _builder!.AppendLine($"            }}");
+                    _builder!.AppendLine("            }");
                 }
                 else if (property.GetSetMethod() != null)
                 {
                     _builder!.AppendLine($"            set => {confluentConfigPropertyName}.{property.Name} = value;");
                 }
 
-                _builder!.AppendLine($"        }}");
+                _builder!.AppendLine("        }");
                 _builder!.AppendLine();
             }
         }

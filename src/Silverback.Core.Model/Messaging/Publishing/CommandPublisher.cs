@@ -31,21 +31,9 @@ namespace Silverback.Messaging.Publishing
         }
 
         /// <inheritdoc />
-        public Task ExecuteAsync(ICommand commandMessage)
-        {
-            return _publisher.PublishAsync(commandMessage);
-        }
-
-        /// <inheritdoc />
         public void Execute(IEnumerable<ICommand> commandMessages)
         {
             _publisher.Publish(commandMessages);
-        }
-
-        /// <inheritdoc />
-        public Task ExecuteAsync(IEnumerable<ICommand> commandMessages)
-        {
-            return _publisher.PublishAsync(commandMessages);
         }
 
         /// <inheritdoc />
@@ -55,15 +43,27 @@ namespace Silverback.Messaging.Publishing
         }
 
         /// <inheritdoc />
-        public async Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage)
-        {
-            return (await _publisher.PublishAsync<TResult>(commandMessage)).SingleOrDefault();
-        }
-
-        /// <inheritdoc />
         public IReadOnlyCollection<TResult> Execute<TResult>(IEnumerable<ICommand<TResult>> commandMessages)
         {
             return _publisher.Publish<TResult>(commandMessages);
+        }
+
+        /// <inheritdoc />
+        public Task ExecuteAsync(ICommand commandMessage)
+        {
+            return _publisher.PublishAsync(commandMessage);
+        }
+
+        /// <inheritdoc />
+        public Task ExecuteAsync(IEnumerable<ICommand> commandMessages)
+        {
+            return _publisher.PublishAsync(commandMessages);
+        }
+
+        /// <inheritdoc />
+        public async Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage)
+        {
+            return (await _publisher.PublishAsync<TResult>(commandMessage)).SingleOrDefault();
         }
 
         /// <inheritdoc />

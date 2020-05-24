@@ -10,6 +10,7 @@ namespace Silverback.Messaging.Broker
     ///     The exception that is thrown by the <see cref="IProducer" /> when the message cannot be
     ///     produced or the message broker didn't acknowledge it.
     /// </summary>
+    [Serializable]
     public class ProduceException : SilverbackException
     {
         /// <summary>
@@ -53,7 +54,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="StreamingContext" /> that contains contextual information about the source or
         ///     destination.
         /// </param>
-        public ProduceException(SerializationInfo info, StreamingContext context)
+        protected ProduceException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
