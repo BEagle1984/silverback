@@ -21,7 +21,16 @@ steps:
     inputs:
       packageType: 'sdk'
       version: '3.1.x'
-  # Build and test
+  # Build, test and analyze
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: 'Silverback SonarCloud'
+      organization: 'silverback'
+      scannerMode: 'MSBuild'
+      projectKey: 'silverback'
+      projectName: 'silverback'
+      projectVersion: '3.0.0'
+    displayName: 'Prepare analysis on SonarCloud'
   - script: |
       dotnet build Silverback.sln --configuration $(buildConfiguration) -warnaserror
     displayName: 'Build (dotnet build $(buildConfiguration))'
@@ -34,6 +43,10 @@ steps:
         -p:CoverletOutputFormat=cobertura \
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.Common]*"
     displayName: 'Test: (dotnet test)'
+  - task: SonarCloudAnalyze@1 
+    displayName: 'Run Code Analysis on SonarCloud' 
+  - task: SonarCloudPublish@1 
+    displayName: 'Publish Quality Gate Result on SonarCloud'
   # Publish results
   - task: PublishTestResults@2
     displayName: 'Publish test results'
