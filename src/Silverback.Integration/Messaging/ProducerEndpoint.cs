@@ -10,9 +10,7 @@ namespace Silverback.Messaging
     /// <inheritdoc cref="IProducerEndpoint" />
     public abstract class ProducerEndpoint : Endpoint, IProducerEndpoint
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ProducerEndpoint" /> class.
-        /// </summary>
+        /// <summary> Initializes a new instance of the <see cref="ProducerEndpoint" /> class. </summary>
         /// <param name="name"> The endpoint name. </param>
         protected ProducerEndpoint(string name)
             : base(name)
@@ -37,13 +35,11 @@ namespace Silverback.Messaging
         ///     Determines whether the specified <see cref="ProducerEndpoint" /> is equal to the current
         ///     <see cref="ProducerEndpoint" />.
         /// </summary>
-        /// <param name="other">
-        ///     The object to compare with the current object.
-        /// </param>
+        /// <param name="other"> The object to compare with the current object. </param>
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
-        protected bool Equals(ProducerEndpoint? other)
+        protected bool BaseEquals(ProducerEndpoint? other)
         {
             if (other is null)
                 return false;
@@ -51,7 +47,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            return base.Equals(other) && Equals(Chunk, other.Chunk);
+            return base.BaseEquals(other) && Equals(Chunk, other.Chunk);
         }
     }
 }

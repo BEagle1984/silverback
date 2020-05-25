@@ -58,7 +58,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            return base.Equals(other) &&
+            return BaseEquals(other) &&
                    Equals(Exchange, other.Exchange) &&
                    string.Equals(QueueName, other.QueueName, StringComparison.Ordinal) &&
                    string.Equals(RoutingKey, other.RoutingKey, StringComparison.Ordinal);

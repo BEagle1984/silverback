@@ -45,7 +45,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            return base.Equals(other) && Equals(Exchange, other.Exchange);
+            return BaseEquals(other) && Equals(Exchange, other.Exchange);
         }
 
         /// <inheritdoc />

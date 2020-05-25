@@ -43,7 +43,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            return base.Equals(other) && Equals(Configuration, other.Configuration);
+            return BaseEquals(other) && Equals(Configuration, other.Configuration);
         }
 
         /// <inheritdoc />

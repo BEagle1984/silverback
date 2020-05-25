@@ -46,7 +46,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
-        protected bool Equals(RabbitEndpointConfig? other)
+        protected bool BaseEquals(RabbitEndpointConfig? other)
         {
             if (other is null)
                 return false;

@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Configuration
             if (ReferenceEquals(this, other))
                 return true;
 
-            return base.Equals(other) && IsExclusive == other.IsExclusive;
+            return BaseEquals(other) && IsExclusive == other.IsExclusive;
         }
 
         /// <inheritdoc />

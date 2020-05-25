@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.TestTypes
             if (ReferenceEquals(this, other))
                 return true;
 
-            return base.Equals(other);
+            return BaseEquals(other);
         }
 
         public override bool Equals(object? obj)

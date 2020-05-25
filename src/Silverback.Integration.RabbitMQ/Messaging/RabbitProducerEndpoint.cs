@@ -47,7 +47,7 @@ namespace Silverback.Messaging
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
-        protected bool Equals(RabbitProducerEndpoint other)
+        protected bool BaseEquals(RabbitProducerEndpoint other)
         {
             if (other is null)
                 return false;
@@ -55,7 +55,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            return base.Equals(other) && Equals(Connection, other.Connection);
+            return base.BaseEquals(other) && Equals(Connection, other.Connection);
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -53,7 +51,7 @@ namespace Silverback.Messaging
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
-        protected bool Equals(Endpoint? other)
+        protected bool BaseEquals(Endpoint? other)
         {
             if (other is null)
                 return false;
