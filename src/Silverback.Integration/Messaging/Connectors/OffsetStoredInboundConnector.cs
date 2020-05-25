@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Connectors
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            if (envelope.Offset == null || !(envelope.Offset is IComparableOffset comparableOffset))
+            if (!(envelope.Offset is IComparableOffset comparableOffset))
             {
                 throw new InvalidOperationException(
                     "The message broker implementation doesn't seem to support comparable offsets. " +

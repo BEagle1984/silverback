@@ -59,15 +59,6 @@ namespace Silverback.Util
             return await Task.WhenAll(tasks);
         }
 
-        public static async Task<IEnumerable<TResult>> SelectAsync<T, TResult>(
-            this IEnumerable<T> source,
-            Func<T, Task<TResult>> selector)
-        {
-            var results = new List<TResult>();
-            await source.ForEachAsync(async s => results.Add(await selector(s)));
-            return results;
-        }
-
         public static IEnumerable<TResult> Select<T, TResult>(
             this IEnumerable<T> source,
             Func<T, TResult> selector,
@@ -77,6 +68,15 @@ namespace Silverback.Util
             return parallel
                 ? source.ParallelSelect(selector, maxDegreeOfParallelism)
                 : source.Select(selector);
+        }
+
+        public static async Task<IEnumerable<TResult>> SelectAsync<T, TResult>(
+            this IEnumerable<T> source,
+            Func<T, Task<TResult>> selector)
+        {
+            var results = new List<TResult>();
+            await source.ForEachAsync(async s => results.Add(await selector(s)));
+            return results;
         }
 
         public static Task<IEnumerable<TResult>> SelectAsync<T, TResult>(
