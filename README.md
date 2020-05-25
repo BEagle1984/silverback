@@ -1,8 +1,4 @@
-# Silverback
-[![Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/BEagle1984.silverback?branchName=develop)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=develop) 
-[![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/2/develop)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=develop)
-[![GitHub issues by-label](https://img.shields.io/github/issues/beagle1984/silverback/bug?label=bugs)](https://github.com/BEagle1984/silverback/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/BEagle1984/silverback/blob/master/LICENSE)
+# <img src="https://github.com/BEagle1984/silverback/raw/develop/graphics/Exports/1x/Logo-Full.png" width="400" alt="Silverback"> 
 
 A simple but feature-rich framework to build reactive/event-driven applications or microservices.
 
@@ -15,6 +11,31 @@ Its main features are:
 * DDD, Domain Events and Transactional Messaging
 * Outbox table pattern implementation
 * Built-in error handling policies for consumers
+
+Discover more in the [project's website][docs-site].
+
+## Project Status
+
+### Build
+
+[![Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/BEagle1984.silverback?branchName=develop)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=develop) 
+[![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/2/develop)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=develop)
+
+### Quality
+
+[![Sonar Cloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=alert_status)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
+[![Sonar Cloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=coverage)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
+[![Sonar Cloud Reliability Rate](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=reliability_rating)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
+[![Sonar Cloud Security Rate](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=security_rating)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
+[![Sonar Cloud Maintainability Rate](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=sqale_rating)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
+[![Sonar Cloud Duplicated Code](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
+
+### Activity
+
+[![GitHub bugs](https://img.shields.io/github/issues/beagle1984/silverback/bug?label=bugs)](https://github.com/BEagle1984/silverback/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
+[![GitHub issues](https://img.shields.io/github/issues/beagle1984/silverback)](https://github.com/BEagle1984/silverback/issues?q=is%3Aopen+is)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/beagle1984/silverback)](https://github.com/BEagle1984/silverback/pulls)
+![GitHub last commit](https://img.shields.io/github/last-commit/beagle1984/silverback)
 
 ## Installation
 
@@ -34,7 +55,7 @@ Package | Latest Version | Downloads
 
 ## Usage
 
-Have a look at the [project's website](https://beagle1984.github.io/silverback/) for usage details, snippets and examples.
+Have a look at the [project's website][docs-site] for usage details, snippets and examples.
 
 ## Contributing
 
@@ -44,6 +65,7 @@ You are encouraged to contribute to Silverback! Please check out the [how to con
 
 This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE) file for details)
 
+[docs-site]: https://beagle1984.github.io/silverback/
 [Nuget-Core]: https://www.nuget.org/packages/Silverback.Core/
 [Nuget-Core.Model]: https://www.nuget.org/packages/Silverback.Core.Model/
 [Nuget-Core.EntityFrameworkCore]: https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore/
