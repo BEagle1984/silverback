@@ -206,7 +206,7 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static IBusConfigurator Subscribe<TMessage>(
             this IBusConfigurator busConfigurator,
-            Func<IReadOnlyCollection<TMessage>, Task> handler,
+            Func<IEnumerable<TMessage>, Task> handler,
             SubscriptionOptions? options = null)
         {
             Check.NotNull(busConfigurator, nameof(busConfigurator));
@@ -235,7 +235,7 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static IBusConfigurator Subscribe<TMessage>(
             this IBusConfigurator busConfigurator,
-            Func<IReadOnlyCollection<TMessage>, object> handler,
+            Func<IEnumerable<TMessage>, object> handler,
             SubscriptionOptions? options = null)
         {
             Check.NotNull(busConfigurator, nameof(busConfigurator));
@@ -264,7 +264,7 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static IBusConfigurator Subscribe<TMessage>(
             this IBusConfigurator busConfigurator,
-            Func<IReadOnlyCollection<TMessage>, Task<object>> handler,
+            Func<IEnumerable<TMessage>, Task<object>> handler,
             SubscriptionOptions? options = null)
         {
             Check.NotNull(busConfigurator, nameof(busConfigurator));

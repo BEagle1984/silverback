@@ -9,7 +9,6 @@ namespace Silverback.Messaging.Configuration
     /// <summary>
     ///     Adds the <c> HandleMessageOfType </c> methods to the <see cref="IBusConfigurator" />.
     /// </summary>
-    // TODO: Test?
     public static class BusConfiguratorHandleMessageOfTypeExtensions
     {
         /// <summary>
