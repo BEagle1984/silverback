@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Configuration;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
@@ -60,5 +61,9 @@ namespace Silverback.Messaging
 
             return Equals((RabbitQueueProducerEndpoint)obj);
         }
+
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
+        public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
     }
 }

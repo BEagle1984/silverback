@@ -54,11 +54,7 @@ namespace Silverback.Messaging.Batch
         }
 
         /// <inheritdoc />
-        [SuppressMessage(
-            "ReSharper",
-            "BaseObjectGetHashCodeCallInGetHashCode",
-            Justification = Justifications.MutableProperties)]
-        public override int GetHashCode() => base.GetHashCode();
+        public override int GetHashCode() => 0;
 
         /// <inheritdoc />
         public void Validate()

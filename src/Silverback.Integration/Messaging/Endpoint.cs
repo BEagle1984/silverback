@@ -45,10 +45,6 @@ namespace Silverback.Messaging
             Encryption?.Validate();
         }
 
-        /// <inheritdoc />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set (not abused)")]
-        public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
-
         /// <summary>
         ///     Determines whether the specified <see cref="Endpoint" /> is equal to the current
         ///     <see cref="Endpoint" />.

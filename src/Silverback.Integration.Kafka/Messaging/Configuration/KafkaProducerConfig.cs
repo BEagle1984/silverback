@@ -84,5 +84,8 @@ namespace Silverback.Messaging.Configuration
 
             return Equals((KafkaProducerConfig)obj);
         }
+
+        /// <inheritdoc />
+        public override int GetHashCode() => 0;
     }
 }
