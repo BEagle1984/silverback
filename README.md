@@ -48,8 +48,8 @@ Discover more in the [project's website][docs-site].
 
 Silverback is split into multiple nuget packages available on nuget.org.
 
-| | |
-:--- | :---:
+| Package | Stats |
+:--- | :---
 [Silverback.Core][Nuget-Core] | [![NuGet](https://buildstats.info/nuget/Silverback.Core?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Core)
 [Silverback.Core.Model][Nuget-Core.Model] | [![NuGet](https://buildstats.info/nuget/Silverback.Core.Model?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Core.Model)
 [Silverback.Core.EntityFrameworkCore][Nuget-Core.EntityFrameworkCore] | [![NuGet](https://buildstats.info/nuget/Silverback.Core.EntityFrameworkCore?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore)
