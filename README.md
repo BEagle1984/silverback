@@ -48,17 +48,18 @@ Discover more in the [project's website][docs-site].
 
 Silverback is split into multiple nuget packages available on nuget.org.
 
-Package | Latest Version | Downloads
-:--- | :---: | :---:
-[Silverback.Core][Nuget-Core] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Core.svg?label=)][Nuget-Core] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Core.svg?label=)][Nuget-Core]
-[Silverback.Core.Model][Nuget-Core.Model] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Core.Model.svg?label=)][Nuget-Core.Model] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Core.Model.svg?label=)][Nuget-Core.Model]
-[Silverback.Core.EntityFrameworkCore][Nuget-Core.EntityFrameworkCore] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Core.EntityFrameworkCore.svg?label=)][Nuget-Core.EntityFrameworkCore] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Core.EntityFrameworkCore.svg?label=)][Nuget-Core.EntityFrameworkCore]
-[Silverback.Core.Rx][Nuget-Core.Rx] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Core.Rx.svg?label=)][Nuget-Core.Rx] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Core.Rx.svg?label=)][Nuget-Core.Rx]
-[Silverback.Integration][Nuget-Integration] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.svg?label=)][Nuget-Integration] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Integration.svg?label=)][Nuget-Integration]
-[Silverback.Integration.Kafka][Nuget-Integration.Kafka] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.Kafka.svg?label=)][Nuget-Integration.Kafka] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Integration.Kafka.svg?label=)][Nuget-Integration.Kafka]
-[Silverback.Integration.Kafka.SchemaRegistry][Nuget-Integration.Kafka.SchemaRegistry] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.Kafka.SchemaRegistry.svg?label=)][Nuget-Integration.Kafka.SchemaRegistry] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Integration.Kafka.SchemaRegistry.svg?label=)][Nuget-Integration.Kafka.SchemaRegistry]
-[Silverback.Integration.RabbitMQ][Nuget-Integration.RabbitMQ] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.RabbitMQ.svg?label=)][Nuget-Integration.RabbitMQ] | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Integration.RabbitMQ.svg?label=)][Nuget-Integration.RabbitMQ]
-[Silverback.Integration.HealthChecks][Nuget-Integration.HealthChecks] | [![NuGet](http://img.shields.io/nuget/vpre/Silverback.Integration.HealthChecks.svg?label=)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks/) | [![NuGet](https://img.shields.io/nuget/dt/Silverback.Integration.HealthChecks.svg?label=)][Nuget-Integration.HealthChecks]
+| | |
+:--- | :---:
+[Silverback.Core][Nuget-Core] | [![NuGet](https://buildstats.info/nuget/Silverback.Core?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Core)
+[Silverback.Core.Model][Nuget-Core.Model] | [![NuGet](https://buildstats.info/nuget/Silverback.Core.Model?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Core.Model)
+[Silverback.Core.EntityFrameworkCore][Nuget-Core.EntityFrameworkCore] | [![NuGet](https://buildstats.info/nuget/Silverback.Core.EntityFrameworkCore?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore)
+[Silverback.Core.Rx][Nuget-Core.Rx] | [![NuGet](https://buildstats.info/nuget/Silverback.Core.Rx?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Core.Rx)
+[Silverback.Integration][Nuget-Integration] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration)
+[Silverback.Integration.Kafka][Nuget-Integration.Kafka] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka)
+[Silverback.Integration.Kafka.SchemaRegistry][Nuget-Integration.Kafka.SchemaRegistry] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka.SchemaRegistry?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry)
+[Silverback.Integration.RabbitMQ][Nuget-Integration.RabbitMQ] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.RabbitMQ?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ)
+[Silverback.Integration.InMemory][Nuget-Integration.InMemory] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.InMemory?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.InMemory)
+[Silverback.Integration.HealthChecks][Nuget-Integration.HealthChecks] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.HealthChecks?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks)
 
 ## Usage
 
@@ -81,4 +82,5 @@ This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle
 [Nuget-Integration.Kafka]: https://www.nuget.org/packages/Silverback.Integration.Kafka/
 [Nuget-Integration.Kafka.SchemaRegistry]: https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/
 [Nuget-Integration.RabbitMQ]: https://www.nuget.org/packages/Silverback.Integration.RabbitMQ/
+[Nuget-Integration.InMemory]: https://www.nuget.org/packages/Silverback.Integration.InMemory/
 [Nuget-Integration.HealthChecks]: https://www.nuget.org/packages/Silverback.Integration.HealthChecks/
