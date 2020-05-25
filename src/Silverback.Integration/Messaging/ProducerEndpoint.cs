@@ -43,7 +43,7 @@ namespace Silverback.Messaging
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
-        protected bool Equals(ProducerEndpoint other)
+        protected bool Equals(ProducerEndpoint? other)
         {
             if (other is null)
                 return false;

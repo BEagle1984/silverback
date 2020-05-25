@@ -45,6 +45,10 @@ namespace Silverback.Messaging
             Encryption?.Validate();
         }
 
+        /// <inheritdoc />
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set (not abused)")]
+        public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
+
         /// <summary>
         ///     Determines whether the specified <see cref="Endpoint" /> is equal to the current
         ///     <see cref="Endpoint" />.
@@ -53,7 +57,7 @@ namespace Silverback.Messaging
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
-        protected bool Equals(Endpoint other)
+        protected bool Equals(Endpoint? other)
         {
             if (other is null)
                 return false;
