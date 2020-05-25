@@ -84,7 +84,7 @@ namespace Silverback.Messaging.Broker
         ///     A value less than zero if this is less than object, zero if this is equal to object, or a value
         ///     greater than zero if this is greater than object.
         /// </returns>
-        public int CompareTo(InMemoryOffset other)
+        public int CompareTo(InMemoryOffset? other)
         {
             if (ReferenceEquals(this, other))
                 return 0;
@@ -96,7 +96,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc />
-        public int CompareTo(IOffset other)
+        public int CompareTo(IOffset? other)
         {
             if (ReferenceEquals(this, other))
                 return 0;

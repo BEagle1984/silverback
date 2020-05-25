@@ -45,28 +45,6 @@ namespace Silverback.Messaging
             Encryption?.Validate();
         }
 
-        /// <inheritdoc />
-        public override bool Equals(object? obj)
-        {
-            if (obj is null)
-                return false;
-
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            if (obj.GetType() != GetType())
-                return false;
-
-            return Equals((Endpoint)obj);
-        }
-
-        /// <inheritdoc />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
-        public override int GetHashCode()
-        {
-            return Name != null ? Name.GetHashCode(StringComparison.InvariantCulture) : 0;
-        }
-
         /// <summary>
         ///     Determines whether the specified <see cref="Endpoint" /> is equal to the current
         ///     <see cref="Endpoint" />.

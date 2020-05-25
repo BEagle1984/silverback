@@ -54,21 +54,6 @@ namespace Silverback.Messaging
                 throw new EndpointConfigurationException("AcknowledgeEach cannot be less than 1");
         }
 
-        /// <inheritdoc />
-        public override bool Equals(object? obj)
-        {
-            if (obj is null)
-                return false;
-
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            if (obj.GetType() != GetType())
-                return false;
-
-            return Equals((RabbitConsumerEndpoint)obj);
-        }
-
         /// <summary>
         ///     Determines whether the specified <see cref="RabbitConsumerEndpoint" /> is equal to the current
         ///     <see cref="RabbitConsumerEndpoint" />.

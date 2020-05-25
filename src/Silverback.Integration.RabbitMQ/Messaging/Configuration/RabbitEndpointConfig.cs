@@ -39,25 +39,6 @@ namespace Silverback.Messaging.Configuration
         {
         }
 
-        /// <inheritdoc />
-        public override bool Equals(object? obj)
-        {
-            if (obj is null)
-                return false;
-
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            if (obj.GetType() != GetType())
-                return false;
-
-            return Equals((RabbitEndpointConfig)obj);
-        }
-
-        /// <inheritdoc />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
-        public override int GetHashCode() => HashCode.Combine(IsDurable, IsAutoDeleteEnabled, Arguments);
-
         /// <summary>
         ///     Determines whether the specified <see cref="RabbitEndpointConfig" /> is equal to the current
         ///     <see cref="RabbitEndpointConfig" />.

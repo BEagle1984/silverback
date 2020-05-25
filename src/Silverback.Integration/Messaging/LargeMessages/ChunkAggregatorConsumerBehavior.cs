@@ -57,55 +57,57 @@ namespace Silverback.Messaging.LargeMessages
 
             try
             {
-                if (context.Envelopes.Any())
-                    await next(context, serviceProvider);
-
-                if (chunkStore != null && chunkStore.HasNotPersistedChunks)
-                {
-                    if (context.CommitOffsets != null)
-                        pendingOffsets!.AddRange(context.CommitOffsets);
-
-                    context.CommitOffsets = null;
-                }
-                else if (pendingOffsets != null && pendingOffsets.Any())
-                {
-                    if (context.CommitOffsets != null)
-                        pendingOffsets.AddRange(context.CommitOffsets);
-
-                    context.CommitOffsets = pendingOffsets.ToList(); // Intentional clone
-                    pendingOffsets.Clear();
-                }
+                await TryHandle(context, serviceProvider, next, chunkStore, pendingOffsets);
             }
             catch (Exception)
             {
-                // In case of exception all offsets must be rollback back (if a rollback takes place, so only
-                // after all the error policies are applied -> since the actual offset rollback is driven by
-                // the IErrorPolicyHelper the pendingOffsets list is not cleared yet)
-                if (pendingOffsets != null && pendingOffsets.Any())
-                {
-                    var clonedPendingOffsets = pendingOffsets.ToList();
-
-                    if (context.CommitOffsets != null)
-                        clonedPendingOffsets.AddRange(context.CommitOffsets);
-
-                    context.CommitOffsets = clonedPendingOffsets;
-                }
+                HandleOffsetRollback(context, pendingOffsets);
 
                 throw;
             }
         }
 
-        [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-        private void OnRollback(ConsumingAbortedEvent message)
+        private static async Task TryHandle(
+            ConsumerPipelineContext context,
+            IServiceProvider serviceProvider,
+            ConsumerBehaviorHandler next,
+            IChunkStore? chunkStore,
+            List<IOffset>? pendingOffsets)
         {
-            if (message.Context.CommitOffsets == null || !message.Context.CommitOffsets.Any())
-                return;
+            if (context.Envelopes.Any())
+                await next(context, serviceProvider);
 
-            // Remove pending offsets when rolled back for real, just in case the consumer will be restarted
-            // (not yet possible!)
-            if (_pendingOffsetsByConsumer.TryGetValue(message.Context.Consumer, out var pendingOffsets))
-                pendingOffsets.RemoveAll(offset => message.Context.CommitOffsets.Contains(offset));
+            if (chunkStore != null && chunkStore.HasNotPersistedChunks)
+            {
+                if (context.CommitOffsets != null)
+                    pendingOffsets!.AddRange(context.CommitOffsets);
+
+                context.CommitOffsets = null;
+            }
+            else if (pendingOffsets != null && pendingOffsets.Any())
+            {
+                if (context.CommitOffsets != null)
+                    pendingOffsets.AddRange(context.CommitOffsets);
+
+                context.CommitOffsets = pendingOffsets.ToList(); // Intentional clone
+                pendingOffsets.Clear();
+            }
+        }
+
+        private static void HandleOffsetRollback(ConsumerPipelineContext context, List<IOffset>? pendingOffsets)
+        {
+            // In case of exception all offsets must be rollback back (if a rollback takes place, so only
+            // after all the error policies are applied -> since the actual offset rollback is driven by
+            // the IErrorPolicyHelper the pendingOffsets list is not cleared yet)
+            if (pendingOffsets != null && pendingOffsets.Any())
+            {
+                var clonedPendingOffsets = pendingOffsets.ToList();
+
+                if (context.CommitOffsets != null)
+                    clonedPendingOffsets.AddRange(context.CommitOffsets);
+
+                context.CommitOffsets = clonedPendingOffsets;
+            }
         }
 
         private static async Task<IRawInboundEnvelope?> AggregateIfNeeded(
@@ -139,6 +141,19 @@ namespace Silverback.Messaging.LargeMessages
             completeMessageEnvelope.Headers.Add(DefaultMessageHeaders.ChunksAggregated, true);
 
             return completeMessageEnvelope;
+        }
+
+        [Subscribe]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        private void OnRollback(ConsumingAbortedEvent message)
+        {
+            if (message.Context.CommitOffsets == null || !message.Context.CommitOffsets.Any())
+                return;
+
+            // Remove pending offsets when rolled back for real, just in case the consumer will be restarted
+            // (not yet possible!)
+            if (_pendingOffsetsByConsumer.TryGetValue(message.Context.Consumer, out var pendingOffsets))
+                pendingOffsets.RemoveAll(offset => message.Context.CommitOffsets.Contains(offset));
         }
     }
 }

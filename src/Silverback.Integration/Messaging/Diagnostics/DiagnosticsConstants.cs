@@ -5,7 +5,7 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Diagnostics
 {
-    internal class DiagnosticsConstants
+    internal static class DiagnosticsConstants
     {
         public static readonly string ActivityNameMessageConsuming = typeof(Consumer).FullName + "-ConsumeMessage";
         public static readonly string ActivityNameMessageProducing = typeof(Producer).FullName + "-ProduceMessage";

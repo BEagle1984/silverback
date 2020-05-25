@@ -108,40 +108,40 @@ namespace Silverback.EntityFrameworkCore
             return ExecuteSaveTransaction(saveChangesAsync, true);
         }
 
-        private async Task<int> ExecuteSaveTransaction(Func<Task<int>> saveChanges, bool async)
+        private async Task<int> ExecuteSaveTransaction(Func<Task<int>> saveChanges, bool executeAsync)
         {
-            await PublishEvent<TransactionStartedEvent>(async);
+            await PublishEvent<TransactionStartedEvent>(executeAsync);
 
             var saved = false;
             try
             {
-                await PublishDomainEvents(async);
+                await PublishDomainEvents(executeAsync);
 
                 int result = await saveChanges();
 
                 saved = true;
 
-                await PublishEvent<TransactionCompletedEvent>(async);
+                await PublishEvent<TransactionCompletedEvent>(executeAsync);
 
                 return result;
             }
             catch (Exception)
             {
                 if (!saved)
-                    await PublishEvent<TransactionAbortedEvent>(async);
+                    await PublishEvent<TransactionAbortedEvent>(executeAsync);
 
                 throw;
             }
         }
 
-        private async Task PublishDomainEvents(bool async)
+        private async Task PublishDomainEvents(bool executeAsync)
         {
             var events = GetDomainEvents();
 
             // Keep publishing events fired inside the event handlers
             while (events.Any())
             {
-                if (async)
+                if (executeAsync)
                     await _publisher.PublishAsync(events);
                 else
                     _publisher.Publish(events);
@@ -162,10 +162,10 @@ namespace Silverback.EntityFrameworkCore
                     return selected ?? Enumerable.Empty<object>();
                 }).ToList();
 
-        private async Task PublishEvent<TEvent>(bool async)
+        private async Task PublishEvent<TEvent>(bool executeAsync)
             where TEvent : new()
         {
-            if (async)
+            if (executeAsync)
                 await _publisher.PublishAsync(new TEvent());
             else
                 _publisher.Publish(new TEvent());

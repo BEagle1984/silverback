@@ -59,6 +59,6 @@ namespace Silverback.Messaging.Configuration
 
         /// <inheritdoc />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
-        public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), ExchangeType);
+        public override int GetHashCode() => HashCode.Combine(IsDurable, IsAutoDeleteEnabled, Arguments, ExchangeType);
     }
 }

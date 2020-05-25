@@ -48,10 +48,14 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public static bool operator !=(TestOffset left, TestOffset right) => !(left == right);
 
-        public int CompareTo(IOffset other)
+        public int CompareTo(IOffset? other)
         {
+            if (other == null)
+                return 0;
+
             long thisValue = long.Parse(Value, CultureInfo.InvariantCulture);
             long otherValue = long.Parse(other.Value, CultureInfo.InvariantCulture);
+
             return thisValue.CompareTo(otherValue);
         }
 
