@@ -1,4 +1,4 @@
-# <img src="https://github.com/BEagle1984/silverback/raw/develop/graphics/Exports/1x/Logo-Full.png" width="400" alt="Silverback"> 
+# <img src="https://github.com/BEagle1984/silverback/raw/master/graphics/Exports/1x/Logo-Full.png" width="400" alt="Silverback"> 
 
 A simple but feature-rich framework to build reactive/event-driven applications or microservices.
 
@@ -18,17 +18,17 @@ Discover more in the [project's website][docs-site].
 
 ### Build
 
-[![Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/BEagle1984.silverback?branchName=develop)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=develop) 
-[![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/2/develop)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=develop)
+[![Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/BEagle1984.silverback?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=master) 
+[![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/2/master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=master)
 
 ### Quality
 
-[![Sonar Cloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=alert_status)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
-[![Sonar Cloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=coverage)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
-[![Sonar Cloud Reliability Rate](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=reliability_rating)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
-[![Sonar Cloud Security Rate](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=security_rating)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
-[![Sonar Cloud Maintainability Rate](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=sqale_rating)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
-[![Sonar Cloud Duplicated Code](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=silverback&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?branch=develop&id=silverback)
+[![Sonar Cloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?branch=master&project=silverback&metric=alert_status)](https://sonarcloud.io/dashboard?branch=master&id=silverback)
+[![Sonar Cloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?branch=master&project=silverback&metric=coverage)](https://sonarcloud.io/dashboard?branch=master&id=silverback)
+[![Sonar Cloud Reliability Rate](https://sonarcloud.io/api/project_badges/measure?branch=master&project=silverback&metric=reliability_rating)](https://sonarcloud.io/dashboard?branch=master&id=silverback)
+[![Sonar Cloud Security Rate](https://sonarcloud.io/api/project_badges/measure?branch=master&project=silverback&metric=security_rating)](https://sonarcloud.io/dashboard?branch=master&id=silverback)
+[![Sonar Cloud Maintainability Rate](https://sonarcloud.io/api/project_badges/measure?branch=master&project=silverback&metric=sqale_rating)](https://sonarcloud.io/dashboard?branch=master&id=silverback)
+[![Sonar Cloud Duplicated Code](https://sonarcloud.io/api/project_badges/measure?branch=master&project=silverback&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?branch=master&id=silverback)
 
 ### Activity
 
