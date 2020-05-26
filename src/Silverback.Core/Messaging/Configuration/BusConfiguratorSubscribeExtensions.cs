@@ -244,7 +244,7 @@ namespace Silverback.Messaging.Configuration
             busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return busConfigurator;
         }
-
+        
         /// <summary>
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>

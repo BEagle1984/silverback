@@ -239,12 +239,12 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             int received = 0;
 
-            static Task<TestEventTwo> ReceiveOne(IEnumerable<TestEventOne> messages) =>
-                Task.FromResult(new TestEventTwo());
+            static Task<object> ReceiveOne(IEnumerable<TestEventOne> messages) =>
+                Task.FromResult<object>(new TestEventTwo());
 
             void ReceiveTwo(TestEventTwo message) => received++;
 
-            _busConfigurator.Subscribe((Func<IEnumerable<TestEventOne>, object>)ReceiveOne);
+            _busConfigurator.Subscribe((Func<IEnumerable<TestEventOne>, Task<object>>)ReceiveOne);
             _busConfigurator.Subscribe((Action<TestEventTwo>)ReceiveTwo);
 
             _publisher.Publish(new[] { new TestEventOne(), new TestEventOne() });
@@ -265,6 +265,24 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             }
 
             _busConfigurator.Subscribe((Action<TestEventOne, IServiceProvider>)Receive);
+
+            _publisher.Publish(new TestEventOne());
+
+            received.Should().BeGreaterThan(0);
+        }
+
+        [Fact]
+        public void Subscribe_ActionOfEnumerableWithServiceProvider_MessagesAndServiceProviderInstanceReceived()
+        {
+            int received = 0;
+
+            void Receive(IEnumerable<TestEventOne> messages, IServiceProvider provider)
+            {
+                received += messages.Count();
+                provider.Should().NotBeNull();
+            }
+
+            _busConfigurator.Subscribe((Action<IEnumerable<TestEventOne>, IServiceProvider>)Receive);
 
             _publisher.Publish(new TestEventOne());
 
@@ -322,6 +340,65 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             }
 
             _busConfigurator.Subscribe((Func<TestEventOne, IServiceProvider, Task<TestEventTwo>>)Receive);
+
+            _publisher.Publish(new TestEventOne());
+
+            received.Should().BeGreaterThan(0);
+        }
+
+        [Fact]
+        public void
+            Subscribe_FuncOfEnumerableWithServiceProviderReturningTask_MessagesAndServiceProviderInstanceReceived()
+        {
+            int received = 0;
+
+            Task Receive(IEnumerable<TestEventOne> messages, IServiceProvider provider)
+            {
+                received += messages.Count();
+                provider.Should().NotBeNull();
+                return Task.CompletedTask;
+            }
+
+            _busConfigurator.Subscribe((Func<IEnumerable<TestEventOne>, IServiceProvider, Task>)Receive);
+
+            _publisher.Publish(new TestEventOne());
+
+            received.Should().BeGreaterThan(0);
+        }
+
+        [Fact]
+        public void Subscribe_FuncOfEnumerableWithServiceProviderReturningMessage_ServiceProviderInstanceReceived()
+        {
+            int received = 0;
+
+            TestEventTwo Receive(IEnumerable<TestEventOne> messages, IServiceProvider provider)
+            {
+                received += messages.Count();
+                provider.Should().NotBeNull();
+                return new TestEventTwo();
+            }
+
+            _busConfigurator.Subscribe((Func<IEnumerable<TestEventOne>, IServiceProvider, TestEventTwo>)Receive);
+
+            _publisher.Publish(new TestEventOne());
+
+            received.Should().BeGreaterThan(0);
+        }
+
+        [Fact]
+        public void
+            Subscribe_FuncOfEnumerableWithServiceProviderReturningTaskWithMessage_ServiceProviderInstanceReceived()
+        {
+            int received = 0;
+
+            Task<TestEventTwo> Receive(IEnumerable<TestEventOne> messages, IServiceProvider provider)
+            {
+                received += messages.Count();
+                provider.Should().NotBeNull();
+                return Task.FromResult(new TestEventTwo());
+            }
+
+            _busConfigurator.Subscribe((Func<IEnumerable<TestEventOne>, IServiceProvider, Task<TestEventTwo>>)Receive);
 
             _publisher.Publish(new TestEventOne());
 
