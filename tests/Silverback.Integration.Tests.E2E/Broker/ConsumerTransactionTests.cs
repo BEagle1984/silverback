@@ -128,7 +128,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             var broker = _configurator
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         tryCount++;
                         if (tryCount != 3)
@@ -166,7 +166,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             _configurator
                 .Subscribe((ISilverbackEvent silverbackEvent) => { silverbackEvents.Add(silverbackEvent); })
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         silverbackEvents.OfType<ConsumingCompletedEvent>().Should().BeEmpty();
                         silverbackEvents.OfType<ConsumingAbortedEvent>().Count().Should().Be(tryCount);
@@ -203,7 +203,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             var broker = _configurator
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         tryCount++;
                         if (tryCount != 3)
@@ -245,7 +245,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             _configurator
                 .Subscribe((ISilverbackEvent silverbackEvent) => { silverbackEvents.Add(silverbackEvent); })
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         silverbackEvents.OfType<ConsumingCompletedEvent>().Count().Should().BeLessThan(3);
                         silverbackEvents.OfType<ConsumingAbortedEvent>().Count().Should().Be(tryCount);
@@ -285,7 +285,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             var broker = _configurator
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         tryCount++;
 
@@ -328,7 +328,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             var broker = _configurator
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         tryCount++;
 

@@ -75,7 +75,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             _configurator
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         tryCount++;
                         if (tryCount != 3)
@@ -114,7 +114,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             var broker = _configurator
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         tryCount++;
                         if (tryCount != 3)
@@ -155,7 +155,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             var broker = _configurator
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         throw new InvalidOperationException("Retry!");
                     })
@@ -196,7 +196,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             var broker = _configurator
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         throw new InvalidOperationException("Retry!");
                     })
@@ -240,7 +240,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             _configurator
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         tryCount++;
                         if (tryCount != 3)
@@ -297,7 +297,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             _configurator
                 .Subscribe(
-                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    (IIntegrationEvent _) =>
                     {
                         tryCount++;
                         if (tryCount != 3)

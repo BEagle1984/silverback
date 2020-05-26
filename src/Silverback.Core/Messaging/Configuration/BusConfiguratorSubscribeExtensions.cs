@@ -322,6 +322,35 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static IBusConfigurator Subscribe<TMessage>(
             this IBusConfigurator busConfigurator,
+            Func<TMessage, IServiceProvider, Task> handler,
+            SubscriptionOptions? options = null)
+        {
+            Check.NotNull(busConfigurator, nameof(busConfigurator));
+            Check.NotNull(handler, nameof(handler));
+
+            busConfigurator.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
+            return busConfigurator;
+        }
+
+        /// <summary>
+        ///     Subscribes the specified handler method to the messages being published into the bus.
+        /// </summary>
+        /// <param name="busConfigurator">
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
+        ///     be configured.
+        /// </param>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be handled.
+        /// </typeparam>
+        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="options">
+        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IBusConfigurator" /> so that additional calls can be chained.
+        /// </returns>
+        public static IBusConfigurator Subscribe<TMessage>(
+            this IBusConfigurator busConfigurator,
             Func<TMessage, IServiceProvider, object> handler,
             SubscriptionOptions? options = null)
         {
@@ -380,7 +409,7 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static IBusConfigurator Subscribe<TMessage>(
             this IBusConfigurator busConfigurator,
-            Func<IReadOnlyCollection<TMessage>, IServiceProvider, object> handler,
+            Func<IEnumerable<TMessage>, IServiceProvider, object> handler,
             SubscriptionOptions? options = null)
         {
             Check.NotNull(busConfigurator, nameof(busConfigurator));

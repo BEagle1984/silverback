@@ -31,8 +31,6 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             _publisher = scopedServiceProvider.GetRequiredService<IPublisher>();
         }
 
-        private delegate void ReceiveTestEventOneDelegate(TestEventOne message);
-
         [Fact]
         public void HandleMessageOfType_Type_MessagesRepublished()
         {
