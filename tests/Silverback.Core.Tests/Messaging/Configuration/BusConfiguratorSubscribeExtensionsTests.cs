@@ -9,7 +9,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Subscribers.Subscriptions;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Subscribers;
 using Xunit;
@@ -186,7 +185,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             int received = 0;
 
-            void Receive(IReadOnlyCollection<TestEventOne> messages) => received += messages.Count();
+            void Receive(IReadOnlyCollection<TestEventOne> messages) => received += messages.Count;
 
             _busConfigurator.Subscribe((Action<IReadOnlyCollection<TestEventOne>>)Receive);
 

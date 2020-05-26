@@ -52,8 +52,8 @@ namespace Silverback.Messaging.LargeMessages
 
             context.Envelopes =
                 (await context.Envelopes.SelectAsync(envelope => AggregateIfNeeded(envelope, serviceProvider)))
-                .Where(envelope => envelope != null)
-                .ToList()!;
+                .WhereNotNull()
+                .ToList();
 
             try
             {

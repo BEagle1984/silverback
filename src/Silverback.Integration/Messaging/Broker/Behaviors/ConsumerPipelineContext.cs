@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Broker.Behaviors
             Envelopes = Check.NotNull(envelopes, nameof(envelopes));
             Consumer = Check.NotNull(consumer, nameof(consumer));
             CommitOffsets = commitOffsets?.ToList() ??
-                            envelopes.Select(envelope => envelope.Offset).Where(offset => offset != null).ToList()!;
+                            envelopes.Select(envelope => envelope.Offset).WhereNotNull().ToList();
         }
 
         /// <summary> Gets the <see cref="IConsumer" /> that triggered this pipeline. </summary>
