@@ -11,15 +11,21 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     Adds the <c> AddOutbound </c> method to the <see cref="IEndpointsConfigurationBuilder" />.
+    ///     Adds the <c>
+    ///         AddOutbound
+    ///     </c> method to the <see cref="IEndpointsConfigurationBuilder" />.
     /// </summary>
     public static class EndpointsConfigurationBuilderAddInboundExtensions
     {
-        /// <summary> Adds and inbound endpoint. </summary>
+        /// <summary>
+        ///     Adds and inbound endpoint.
+        /// </summary>
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoint"> The endpoint (topic). </param>
+        /// <param name="endpoint">
+        ///     The endpoint (topic).
+        /// </param>
         /// <param name="errorPolicyFactory">
         ///     An optional function returning the error policy to be applied in case of exceptions while consuming
         ///     the messages from this topic.
@@ -43,11 +49,15 @@ namespace Silverback.Messaging.Configuration
             return endpointsConfigurationBuilder;
         }
 
-        /// <summary> Adds and inbound endpoint. </summary>
+        /// <summary>
+        ///     Adds and inbound endpoint.
+        /// </summary>
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoint"> The endpoint (topic). </param>
+        /// <param name="endpoint">
+        ///     The endpoint (topic).
+        /// </param>
         /// <param name="errorPolicyFactory">
         ///     An optional function returning the error policy to be applied in case of exceptions while consuming
         ///     the messages from this topic.
@@ -75,11 +85,15 @@ namespace Silverback.Messaging.Configuration
             return endpointsConfigurationBuilder;
         }
 
-        /// <summary> Adds and inbound endpoint. </summary>
+        /// <summary>
+        ///     Adds and inbound endpoint.
+        /// </summary>
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoint"> The endpoint (topic). </param>
+        /// <param name="endpoint">
+        ///     The endpoint (topic).
+        /// </param>
         /// <param name="inboundConnectorType">
         ///     The type of the <see cref="IInboundConnector" /> to be used. If not specified, the default one will
         ///     be used.

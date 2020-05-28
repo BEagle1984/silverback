@@ -8,14 +8,18 @@ using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <summary> An <see cref="IBroker" /> implementation for RabbitMQ. </summary>
+    /// <summary>
+    ///     An <see cref="IBroker" /> implementation for RabbitMQ.
+    /// </summary>
     public class RabbitBroker : Broker<RabbitProducerEndpoint, RabbitConsumerEndpoint>
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
 
         private readonly ILoggerFactory _loggerFactory;
 
-        /// <summary> Initializes a new instance of the <see cref="RabbitBroker" /> class. </summary>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RabbitBroker" /> class.
+        /// </summary>
         /// <param name="behaviors">
         ///     The <see cref="IEnumerable{T}" /> containing the <see cref="IBrokerBehavior" /> to be passed to the
         ///     producers and consumers.
@@ -24,7 +28,9 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
         ///     endpoints.
         /// </param>
-        /// <param name="loggerFactory"> The <see cref="ILoggerFactory" /> to be used to create the loggers. </param>
+        /// <param name="loggerFactory">
+        ///     The <see cref="ILoggerFactory" /> to be used to create the loggers.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>

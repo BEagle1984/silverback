@@ -12,8 +12,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.BinaryFiles
 {
     /// <summary>
-    ///     Switches to the <see cref="BinaryFileMessageSerializer"/> if the message being consumed is a
-    ///     binary message (according to the x-message-type header).
+    ///     Switches to the <see cref="BinaryFileMessageSerializer" /> if the message being consumed is a binary
+    ///     message (according to the x-message-type header).
     /// </summary>
     public class BinaryFileHandlerConsumerBehavior : IConsumerBehavior, ISorted
     {

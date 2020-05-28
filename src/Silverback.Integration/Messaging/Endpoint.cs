@@ -10,8 +10,12 @@ namespace Silverback.Messaging
     /// <inheritdoc cref="IEndpoint" />
     public abstract class Endpoint : IEndpoint
     {
-        /// <summary> Initializes a new instance of the <see cref="Endpoint" /> class. </summary>
-        /// <param name="name"> The endpoint name. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Endpoint" /> class.
+        /// </summary>
+        /// <param name="name">
+        ///     The endpoint name.
+        /// </param>
         protected Endpoint(string name)
         {
             Name = name;
@@ -47,7 +51,9 @@ namespace Silverback.Messaging
         ///     Determines whether the specified <see cref="Endpoint" /> is equal to the current
         ///     <see cref="Endpoint" />.
         /// </summary>
-        /// <param name="other"> The object to compare with the current object. </param>
+        /// <param name="other">
+        ///     The object to compare with the current object.
+        /// </param>
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>

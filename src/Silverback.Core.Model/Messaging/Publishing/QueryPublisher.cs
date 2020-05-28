@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Publishing
         private readonly IPublisher _publisher;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="QueryPublisher"/> class.
+        ///     Initializes a new instance of the <see cref="QueryPublisher" /> class.
         /// </summary>
         /// <param name="publisher">
         ///     The <see cref="IPublisher" /> to be wrapped.

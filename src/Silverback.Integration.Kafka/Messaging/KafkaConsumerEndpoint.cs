@@ -10,11 +10,17 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging
 {
-    /// <summary> Represents a topic to consume from. </summary>
+    /// <summary>
+    ///     Represents a topic to consume from.
+    /// </summary>
     public sealed class KafkaConsumerEndpoint : ConsumerEndpoint, IEquatable<KafkaConsumerEndpoint>
     {
-        /// <summary> Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class. </summary>
-        /// <param name="names"> The names of the topics. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="names">
+        ///     The names of the topics.
+        /// </param>
         public KafkaConsumerEndpoint(params string[] names)
             : base(string.Empty)
         {
@@ -26,7 +32,9 @@ namespace Silverback.Messaging
             Name = names.Length > 1 ? "[" + string.Join(",", names) + "]" : names[0];
         }
 
-        /// <summary> Gets the names of the topics. </summary>
+        /// <summary>
+        ///     Gets the names of the topics.
+        /// </summary>
         public IReadOnlyCollection<string> Names { get; }
 
         /// <summary>

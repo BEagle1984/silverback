@@ -42,7 +42,9 @@ namespace Silverback.Messaging.Configuration
         ///     Determines whether the specified <see cref="RabbitEndpointConfig" /> is equal to the current
         ///     <see cref="RabbitEndpointConfig" />.
         /// </summary>
-        /// <param name="other"> The object to compare with the current object. </param>
+        /// <param name="other">
+        ///     The object to compare with the current object.
+        /// </param>
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>

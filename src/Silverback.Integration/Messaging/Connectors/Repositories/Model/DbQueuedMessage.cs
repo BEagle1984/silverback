@@ -16,10 +16,18 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         /// <summary>
         ///     Initializes a new instance of the <see cref="DbQueuedMessage" /> class.
         /// </summary>
-        /// <param name="id"> The primary key of the database record. </param>
-        /// <param name="content"> The message raw binary content (body). </param>
-        /// <param name="headers"> The message headers. </param>
-        /// <param name="endpoint"> The target endpoint. </param>
+        /// <param name="id">
+        ///     The primary key of the database record.
+        /// </param>
+        /// <param name="content">
+        ///     The message raw binary content (body).
+        /// </param>
+        /// <param name="headers">
+        ///     The message headers.
+        /// </param>
+        /// <param name="endpoint">
+        ///     The target endpoint.
+        /// </param>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public DbQueuedMessage(int id, byte[]? content, IEnumerable<MessageHeader> headers, IProducerEndpoint endpoint)
             : base(content, headers, endpoint)

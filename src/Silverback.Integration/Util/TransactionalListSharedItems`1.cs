@@ -9,10 +9,14 @@ namespace Silverback.Util
     ///     Registered as Singleton holds the actual items list shared between the scoped instances of the
     ///     <see cref="TransactionalList{T}" />.
     /// </summary>
-    /// <typeparam name="T"> The type of the item in the list. </typeparam>
+    /// <typeparam name="T">
+    ///     The type of the item in the list.
+    /// </typeparam>
     public sealed class TransactionalListSharedItems<T>
     {
-        /// <summary> Gets the underlying <see cref="List{T}" /> containing the persisted items. </summary>
+        /// <summary>
+        ///     Gets the underlying <see cref="List{T}" /> containing the persisted items.
+        /// </summary>
         public List<TransactionalListItem<T>> Items { get; } = new List<TransactionalListItem<T>>();
     }
 }

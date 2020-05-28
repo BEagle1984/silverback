@@ -13,13 +13,19 @@ namespace Silverback.Messaging.Messages
     {
         /// <summary>
         ///     A unique identifier that may be useful for tracing. It may not be present if the produced message
-        ///     isn't implementing <c>IIntegrationMessage</c> and no <c>Id</c> or <c>MessageId</c> property of a
-        ///     supported type is defined.
+        ///     isn't implementing <c>
+        ///         IIntegrationMessage
+        ///     </c> and no <c>
+        ///         Id
+        ///     </c> or <c>
+        ///         MessageId
+        ///     </c> property of a supported type is defined.
         /// </summary>
         public const string MessageId = "x-message-id";
 
         /// <summary>
-        ///     The assembly qualified name of the message type. Used by the default <see cref="JsonMessageSerializer" />.
+        ///     The assembly qualified name of the message type. Used by the default
+        ///     <see cref="JsonMessageSerializer" />.
         /// </summary>
         public const string MessageType = "x-message-type";
 
@@ -46,25 +52,30 @@ namespace Silverback.Messaging.Messages
         public const string ChunksCount = "x-chunks-count";
 
         /// <summary>
-        ///     The <see cref="IOffset"/> value of the first chunk of the same message.
+        ///     The <see cref="IOffset" /> value of the first chunk of the same message.
         /// </summary>
         public const string FirstChunkOffset = "x-first-chunk-offset";
 
         /// <summary>
-        ///     The unique id assigned to the messages batch, used mostly for tracing, when batch processing is enabled.
+        ///     The unique id assigned to the messages batch, used mostly for tracing, when batch processing is
+        ///     enabled.
         /// </summary>
         public const string BatchId = "x-batch-id";
 
         /// <summary>
-        ///     The total number of messages in the batch, used mostly for tracing, when batch processing is enabled.
+        ///     The total number of messages in the batch, used mostly for tracing, when batch processing is
+        ///     enabled.
         /// </summary>
         public const string BatchSize = "x-batch-size";
 
         /// <summary>
-        ///     The current <c>Activity.Id</c>, used by the <see cref="IConsumer" /> implementation to set the
-        ///     <c>Activity.ParentId</c> and enabling distributed tracing across the message broker.
-        ///     Note that an <c>Activity</c> is automatically started by the default <see cref="IProducer" />
-        ///     implementation.
+        ///     The current <c>
+        ///         Activity.Id
+        ///     </c>, used by the <see cref="IConsumer" /> implementation to set the <c>
+        ///         Activity.ParentId
+        ///     </c> and enabling distributed tracing across the message broker. Note that an <c>
+        ///         Activity
+        ///     </c> is automatically started by the default <see cref="IProducer" /> implementation.
         /// </summary>
         /// <remarks>
         ///     The header is implemented according to https://www.w3.org/TR/trace-context-1/#traceparent-header.
@@ -72,7 +83,9 @@ namespace Silverback.Messaging.Messages
         public const string TraceId = "traceparent";
 
         /// <summary>
-        ///     The <c>Activity.TraceStateString</c>.
+        ///     The <c>
+        ///         Activity.TraceStateString
+        ///     </c>.
         /// </summary>
         /// <remarks>
         ///     The header is implemented according to https://www.w3.org/TR/trace-context-1/#traceparent-header.
@@ -80,7 +93,9 @@ namespace Silverback.Messaging.Messages
         public const string TraceState = "tracestate";
 
         /// <summary>
-        ///     The string representation of the <c>Activity.Baggage</c> dictionary.
+        ///     The string representation of the <c>
+        ///         Activity.Baggage
+        ///     </c> dictionary.
         /// </summary>
         /// <remarks>
         ///     This is not part of the w3c standard.

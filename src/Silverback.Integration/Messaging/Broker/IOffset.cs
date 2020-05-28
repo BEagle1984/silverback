@@ -7,15 +7,14 @@ namespace Silverback.Messaging.Broker
 {
     /// <summary>
     ///     <para>
-    ///         Contains the information about the position in the messages stream being produced or
-    ///         consumed.
+    ///         Contains the information about the position in the messages stream being produced or consumed.
     ///     </para>
     ///     <para>
     ///         It can represent a Kafka offset or other similar constructs.
     ///     </para>
     ///     <para>
-    ///         The <see cref="IComparableOffset" /> interface should be implemented whenever possible to
-    ///         allow the exactly-one delivery using the <see cref="OffsetStoredInboundConnector" />.
+    ///         The <see cref="IComparableOffset" /> interface should be implemented whenever possible to allow
+    ///         the exactly-one delivery using the <see cref="OffsetStoredInboundConnector" />.
     ///     </para>
     /// </summary>
     public interface IOffset
@@ -25,15 +24,17 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         string Key { get; }
 
-        /// <summary> Gets the offset value. </summary>
+        /// <summary>
+        ///     Gets the offset value.
+        /// </summary>
         string Value { get; }
 
         /// <summary>
         ///     Returns a string representation of the offset suitable for logging purpose.
         /// </summary>
         /// <returns>
-        ///     For an optimal readability of the logs this string should include the topic/queue subset such
-        ///     as the partition in Kafka, but not the topic/queue name.
+        ///     For an optimal readability of the logs this string should include the topic/queue subset such as the
+        ///     partition in Kafka, but not the topic/queue name.
         /// </returns>
         string ToLogString();
     }

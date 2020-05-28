@@ -4,7 +4,7 @@
 namespace Silverback.Messaging.ErrorHandling
 {
     /// <summary>
-    ///    Specifies the action the consumer is supposed to perform as a result of the processing exception.
+    ///     Specifies the action the consumer is supposed to perform as a result of the processing exception.
     /// </summary>
     public enum ErrorAction
     {

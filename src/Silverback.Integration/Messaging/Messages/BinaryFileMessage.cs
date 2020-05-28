@@ -19,8 +19,12 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Initializes a new instance of the <see cref="BinaryFileMessage" /> class with the specified content.
         /// </summary>
-        /// <param name="content"> The binary content. </param>
-        /// <param name="contentType"> The optional MIME type. </param>
+        /// <param name="content">
+        ///     The binary content.
+        /// </param>
+        /// <param name="contentType">
+        ///     The optional MIME type.
+        /// </param>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public BinaryFileMessage(byte[]? content, string contentType = "application/octet-stream")
         {
@@ -28,7 +32,9 @@ namespace Silverback.Messaging.Messages
             ContentType = contentType;
         }
 
-        /// <summary> Gets or sets the MIME type of the file. </summary>
+        /// <summary>
+        ///     Gets or sets the MIME type of the file.
+        /// </summary>
         [Header(DefaultMessageHeaders.ContentType)]
         public string ContentType { get; set; }
 

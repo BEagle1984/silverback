@@ -22,6 +22,7 @@ namespace Silverback.Tests.Core.Rx.Messaging
     public class TypedMessageObservableTests
     {
         private readonly IPublisher _publisher;
+
         private readonly MessageObservable<IEvent> _messageObservable;
 
         public TypedMessageObservableTests()

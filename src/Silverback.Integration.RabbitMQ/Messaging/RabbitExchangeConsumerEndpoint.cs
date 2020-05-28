@@ -9,20 +9,26 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging
 {
-    /// <summary> Represents an exchange to consume from. </summary>
+    /// <summary>
+    ///     Represents an exchange to consume from.
+    /// </summary>
     public sealed class RabbitExchangeConsumerEndpoint
         : RabbitConsumerEndpoint, IEquatable<RabbitExchangeConsumerEndpoint>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitExchangeConsumerEndpoint" /> class.
         /// </summary>
-        /// <param name="name"> The name of the exchange. </param>
+        /// <param name="name">
+        ///     The name of the exchange.
+        /// </param>
         public RabbitExchangeConsumerEndpoint(string name)
             : base(name)
         {
         }
 
-        /// <summary> Gets or sets the exchange configuration. </summary>
+        /// <summary>
+        ///     Gets or sets the exchange configuration.
+        /// </summary>
         public RabbitExchangeConfig Exchange { get; set; } = new RabbitExchangeConfig();
 
         /// <summary>

@@ -4,16 +4,22 @@
 namespace Silverback.Messaging.HealthChecks
 {
     /// <summary>
-    ///     Encapsulates the result of a check performed against an <see cref="IEndpoint"/>.
+    ///     Encapsulates the result of a check performed against an <see cref="IEndpoint" />.
     /// </summary>
     public class EndpointCheckResult
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="EndpointCheckResult"/> class.
+        ///     Initializes a new instance of the <see cref="EndpointCheckResult" /> class.
         /// </summary>
-        /// <param name="endpointName">The name of the checked endpoint.</param>
-        /// <param name="isSuccessful">A value indicating whether the check was successful.</param>
-        /// <param name="errorMessage">The error message, if not successful.</param>
+        /// <param name="endpointName">
+        ///     The name of the checked endpoint.
+        /// </param>
+        /// <param name="isSuccessful">
+        ///     A value indicating whether the check was successful.
+        /// </param>
+        /// <param name="errorMessage">
+        ///     The error message, if not successful.
+        /// </param>
         public EndpointCheckResult(string endpointName, bool isSuccessful, string? errorMessage = null)
         {
             EndpointName = endpointName;

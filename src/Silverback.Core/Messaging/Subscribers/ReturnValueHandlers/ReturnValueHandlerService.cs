@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
 {
     /// <summary>
-    ///     Calls the registered <see cref="IReturnValueHandler"/>'s.
+    ///     Calls the registered <see cref="IReturnValueHandler" />'s.
     /// </summary>
     // TODO: Test
     internal class ReturnValueHandlerService

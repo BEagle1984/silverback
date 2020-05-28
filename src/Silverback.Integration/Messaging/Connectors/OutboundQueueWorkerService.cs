@@ -20,13 +20,21 @@ namespace Silverback.Messaging.Connectors
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboundQueueWorkerService" /> class.
         /// </summary>
-        /// <param name="interval"> The interval between each execution. </param>
+        /// <param name="interval">
+        ///     The interval between each execution.
+        /// </param>
         /// <param name="outboundQueueWorker">
         ///     The <see cref="IOutboundQueueWorker" /> implementation.
         /// </param>
-        /// <param name="distributedLockSettings"> Customizes the lock mechanism settings. </param>
-        /// <param name="distributedLockManager"> The <see cref="IDistributedLockManager" />. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="distributedLockSettings">
+        ///     Customizes the lock mechanism settings.
+        /// </param>
+        /// <param name="distributedLockManager">
+        ///     The <see cref="IDistributedLockManager" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public OutboundQueueWorkerService(
             TimeSpan interval,
             IOutboundQueueWorker outboundQueueWorker,

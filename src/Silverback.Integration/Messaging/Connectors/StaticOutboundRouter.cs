@@ -17,7 +17,9 @@ namespace Silverback.Messaging.Connectors
         /// <summary>
         ///     Initializes a new instance of the <see cref="StaticOutboundRouter" /> class.
         /// </summary>
-        /// <param name="endpoints"> The endpoints to route the messages to. </param>
+        /// <param name="endpoints">
+        ///     The endpoints to route the messages to.
+        /// </param>
         public StaticOutboundRouter(IEnumerable<IProducerEndpoint> endpoints)
         {
             _endpoints = endpoints.ToList();
@@ -26,7 +28,9 @@ namespace Silverback.Messaging.Connectors
         /// <summary>
         ///     Initializes a new instance of the <see cref="StaticOutboundRouter" /> class.
         /// </summary>
-        /// <param name="endpoints"> The endpoints to route the messages to. </param>
+        /// <param name="endpoints">
+        ///     The endpoints to route the messages to.
+        /// </param>
         public StaticOutboundRouter(params IProducerEndpoint[] endpoints)
             : this(endpoints.AsEnumerable())
         {

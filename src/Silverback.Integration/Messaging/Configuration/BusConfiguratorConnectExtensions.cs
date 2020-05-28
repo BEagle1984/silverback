@@ -9,7 +9,9 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     Adds the <c> Connect </c> method to the <see cref="IBusConfigurator" />.
+    ///     Adds the <c>
+    ///         Connect
+    ///     </c> method to the <see cref="IBusConfigurator" />.
     /// </summary>
     public static class BusConfiguratorConnectExtensions
     {

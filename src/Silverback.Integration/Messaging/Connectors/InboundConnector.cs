@@ -35,8 +35,12 @@ namespace Silverback.Messaging.Connectors
         /// <param name="brokerCollection">
         ///     The collection containing the available brokers.
         /// </param>
-        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public InboundConnector(
             IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
@@ -68,7 +72,9 @@ namespace Silverback.Messaging.Connectors
         /// <summary>
         ///     Creates and initializes the <see cref="IConsumer" /> to be used to consume the specified endpoint.
         /// </summary>
-        /// <param name="endpoint"> The endpoint to be consumed. </param>
+        /// <param name="endpoint">
+        ///     The endpoint to be consumed.
+        /// </param>
         /// <param name="errorPolicy">
         ///     The optional error policy to be applied when an exception is thrown during the processing of a
         ///     message.
@@ -84,7 +90,10 @@ namespace Silverback.Messaging.Connectors
             Check.NotNull(endpoint, nameof(endpoint));
             Check.NotNull(settings, nameof(settings));
 
-            _logger.LogTrace(EventIds.InboundConnectorConnectingToInboundEndpoint, "Connecting to inbound endpoint '{endpointName}'...", endpoint.Name);
+            _logger.LogTrace(
+                EventIds.InboundConnectorConnectingToInboundEndpoint,
+                "Connecting to inbound endpoint '{endpointName}'...",
+                endpoint.Name);
 
             settings.Validate();
 

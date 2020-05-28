@@ -31,7 +31,9 @@ namespace Silverback.Messaging.Configuration
 
         /// <summary>
         ///     Specifies whether the consumer has to be automatically restarted if a <see cref="KafkaException" />
-        ///     is thrown while polling/consuming (default is <c> true </c>).
+        ///     is thrown while polling/consuming (default is <c>
+        ///         true
+        ///     </c>).
         /// </summary>
         public bool EnableAutoRecovery { get; set; } = true;
 

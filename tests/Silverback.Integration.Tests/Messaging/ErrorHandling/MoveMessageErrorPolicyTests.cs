@@ -191,11 +191,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         public void Transform_InboundMessage_HeadersProperlyModified()
         {
             var policy = _errorPolicyBuilder.Move(TestProducerEndpoint.GetDefault())
-                .Transform(
-                    (outboundEnvelope, ex) =>
-                    {
-                        outboundEnvelope.Headers.Add("error", ex.GetType().Name);
-                    });
+                .Transform((outboundEnvelope, ex) => { outboundEnvelope.Headers.Add("error", ex.GetType().Name); });
 
             var envelope = new InboundEnvelope(
                 Encoding.UTF8.GetBytes("hey oh!"),

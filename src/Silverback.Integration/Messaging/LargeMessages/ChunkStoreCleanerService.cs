@@ -21,13 +21,21 @@ namespace Silverback.Messaging.LargeMessages
         /// <summary>
         ///     Initializes a new instance of the <see cref="ChunkStoreCleanerService" /> class.
         /// </summary>
-        /// <param name="interval"> The interval between each execution. </param>
+        /// <param name="interval">
+        ///     The interval between each execution.
+        /// </param>
         /// <param name="storeCleaner">
         ///     The <see cref="IChunkStoreCleaner" /> implementation.
         /// </param>
-        /// <param name="distributedLockSettings"> Customizes the lock mechanism settings. </param>
-        /// <param name="distributedLockManager"> The <see cref="IDistributedLockManager" />. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="distributedLockSettings">
+        ///     Customizes the lock mechanism settings.
+        /// </param>
+        /// <param name="distributedLockManager">
+        ///     The <see cref="IDistributedLockManager" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public ChunkStoreCleanerService(
             TimeSpan interval,
             IChunkStoreCleaner storeCleaner,

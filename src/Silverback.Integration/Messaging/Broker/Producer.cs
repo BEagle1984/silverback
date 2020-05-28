@@ -24,9 +24,15 @@ namespace Silverback.Messaging.Broker
         /// <param name="broker">
         ///     The <see cref="IBroker" /> that instantiated this producer.
         /// </param>
-        /// <param name="endpoint"> The endpoint to produce to. </param>
-        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="endpoint">
+        ///     The endpoint to produce to.
+        /// </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be added to the pipeline.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
@@ -95,7 +101,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="envelope">
         ///     The <see cref="RawBrokerEnvelope" /> containing body, headers, endpoint, etc.
         /// </param>
-        /// <returns> The message offset. </returns>
+        /// <returns>
+        ///     The message offset.
+        /// </returns>
         protected abstract IOffset? ProduceCore(IRawOutboundEnvelope envelope);
 
         /// <summary>
@@ -105,8 +113,8 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="RawBrokerEnvelope" /> containing body, headers, endpoint, etc.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
-        ///     message offset.
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the message
+        ///     offset.
         /// </returns>
         protected abstract Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope);
 

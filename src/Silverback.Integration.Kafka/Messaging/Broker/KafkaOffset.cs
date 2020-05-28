@@ -12,10 +12,18 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IComparableOffset" />
     public sealed class KafkaOffset : IComparableOffset
     {
-        /// <summary> Initializes a new instance of the <see cref="KafkaOffset" /> class. </summary>
-        /// <param name="topic"> The name of the topic. </param>
-        /// <param name="partition"> The partition number. </param>
-        /// <param name="offset"> The offset in the partition. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaOffset" /> class.
+        /// </summary>
+        /// <param name="topic">
+        ///     The name of the topic.
+        /// </param>
+        /// <param name="partition">
+        ///     The partition number.
+        /// </param>
+        /// <param name="offset">
+        ///     The offset in the partition.
+        /// </param>
         [JsonConstructor]
         public KafkaOffset(string topic, int partition, long offset)
         {
@@ -27,8 +35,12 @@ namespace Silverback.Messaging.Broker
             Value = $"{offset}";
         }
 
-        /// <summary> Initializes a new instance of the <see cref="KafkaOffset" /> class. </summary>
-        /// <param name="topicPartitionOffset"> The <see cref="Confluent.Kafka.TopicPartitionOffset" />. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaOffset" /> class.
+        /// </summary>
+        /// <param name="topicPartitionOffset">
+        ///     The <see cref="Confluent.Kafka.TopicPartitionOffset" />.
+        /// </param>
         public KafkaOffset(TopicPartitionOffset topicPartitionOffset)
             : this(
                 Check.NotNull(topicPartitionOffset, nameof(topicPartitionOffset)).Topic,
@@ -37,13 +49,19 @@ namespace Silverback.Messaging.Broker
         {
         }
 
-        /// <summary> Gets the name of the topic. </summary>
+        /// <summary>
+        ///     Gets the name of the topic.
+        /// </summary>
         public string Topic { get; }
 
-        /// <summary> Gets the partition number. </summary>
+        /// <summary>
+        ///     Gets the partition number.
+        /// </summary>
         public int Partition { get; }
 
-        /// <summary> Gets the offset in the partition. </summary>
+        /// <summary>
+        ///     Gets the offset in the partition.
+        /// </summary>
         public long Offset { get; }
 
         /// <inheritdoc />
@@ -52,33 +70,63 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc />
         public string Value { get; }
 
-        /// <summary> Less than operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Less than operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator <(KafkaOffset left, KafkaOffset right) =>
             Comparer<KafkaOffset>.Default.Compare(left, right) < 0;
 
-        /// <summary> Greater than operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Greater than operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator >(KafkaOffset left, KafkaOffset right) =>
             Comparer<KafkaOffset>.Default.Compare(left, right) > 0;
 
-        /// <summary> Less than or equal operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Less than or equal operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator <=(KafkaOffset left, KafkaOffset right) =>
             Comparer<KafkaOffset>.Default.Compare(left, right) <= 0;
 
-        /// <summary> Greater than or equal operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Greater than or equal operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator >=(KafkaOffset left, KafkaOffset right) =>
             Comparer<KafkaOffset>.Default.Compare(left, right) >= 0;
 
-        /// <summary> Equality operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Equality operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator ==(KafkaOffset left, KafkaOffset right)
         {
             if (ReferenceEquals(left, null))
@@ -87,9 +135,15 @@ namespace Silverback.Messaging.Broker
             return left.Equals(right);
         }
 
-        /// <summary> Inequality operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Inequality operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator !=(KafkaOffset left, KafkaOffset right) => !(left == right);
 
         /// <inheritdoc />
@@ -100,7 +154,9 @@ namespace Silverback.Messaging.Broker
         ///     indicates whether the current instance precedes, follows, or occurs in the same position in the sort
         ///     order as the other object.
         /// </summary>
-        /// <param name="other"> An object to compare with the current instance. </param>
+        /// <param name="other">
+        ///     An object to compare with the current instance.
+        /// </param>
         /// <returns>
         ///     A value less than zero if this is less than object, zero if this is equal to object, or a value
         ///     greater than zero if this is greater than object.

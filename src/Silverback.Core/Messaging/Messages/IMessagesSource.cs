@@ -10,20 +10,22 @@ namespace Silverback.Messaging.Messages
     ///     interface.
     /// </summary>
     /// <remarks>
-    ///     Used to implement the domain entities and automatically publish their events when the entity
-    ///     is saved to the underlying database.
+    ///     Used to implement the domain entities and automatically publish their events when the entity is
+    ///     saved to the underlying database.
     /// </remarks>
     public interface IMessagesSource
     {
         /// <summary>
         ///     Gets the messages to be published.
         /// </summary>
-        /// <returns>The message objects.</returns>
+        /// <returns>
+        ///     The message objects.
+        /// </returns>
         IEnumerable<object>? GetMessages();
 
         /// <summary>
-        ///     Called after the messages have been successfully published (and processed) to clear
-        ///     the messages collection.
+        ///     Called after the messages have been successfully published (and processed) to clear the messages
+        ///     collection.
         /// </summary>
         void ClearMessages();
     }

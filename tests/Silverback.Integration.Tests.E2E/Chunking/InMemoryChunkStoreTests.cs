@@ -97,12 +97,12 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("123",  0, 3));
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
             committedOffsets.Should().BeEmpty();
 
             await producer.ProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("123",  1, 3));
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 1, 3));
             committedOffsets.Should().BeEmpty();
 
             await producer.ProduceAsync(
@@ -140,13 +140,13 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             await producer.ProduceAsync(
                 rawMessage1.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("123",  0, 3));
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
             committedOffsets.Should().BeEmpty();
             _subscriber.InboundEnvelopes.Should().BeEmpty();
 
             await producer.ProduceAsync(
                 rawMessage1.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("123",  1, 3));
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 1, 3));
             committedOffsets.Should().BeEmpty();
             _subscriber.InboundEnvelopes.Should().BeEmpty();
 
@@ -208,10 +208,10 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             await producer.ProduceAsync(
                 rawMessage1.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("123",  0, 3));
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
             await producer.ProduceAsync(
                 rawMessage1.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("123",  1, 3));
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 1, 3));
             await producer.ProduceAsync(
                 rawMessage2.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("456", 0, 3));
@@ -231,10 +231,10 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             await producer.ProduceAsync(
                 rawMessage1.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("123",  0, 3));
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
             await producer.ProduceAsync(
                 rawMessage1.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("123",  1, 3));
+                HeadersHelper.GetChunkHeaders<TestEventOne>("123", 1, 3));
             await producer.ProduceAsync(
                 rawMessage2.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("456", 0, 3));

@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Broker
         private readonly ILoggerFactory _loggerFactory;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KafkaBroker"/> class.
+        ///     Initializes a new instance of the <see cref="KafkaBroker" /> class.
         /// </summary>
         /// <param name="behaviors">
         ///     The <see cref="IEnumerable{T}" /> containing the <see cref="IBrokerBehavior" /> to be passed to the
@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Broker
                 serviceProvider,
                 _loggerFactory.CreateLogger<KafkaProducer>());
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         protected override IConsumer InstantiateConsumer(
             KafkaConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,

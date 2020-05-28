@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Publishing
         private readonly IPublisher _publisher;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EventPublisher"/> class.
+        ///     Initializes a new instance of the <see cref="EventPublisher" /> class.
         /// </summary>
         /// <param name="publisher">
         ///     The <see cref="IPublisher" /> to be wrapped.

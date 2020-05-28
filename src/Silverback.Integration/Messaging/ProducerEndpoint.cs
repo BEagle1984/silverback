@@ -10,8 +10,12 @@ namespace Silverback.Messaging
     /// <inheritdoc cref="IProducerEndpoint" />
     public abstract class ProducerEndpoint : Endpoint, IProducerEndpoint
     {
-        /// <summary> Initializes a new instance of the <see cref="ProducerEndpoint" /> class. </summary>
-        /// <param name="name"> The endpoint name. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="name">
+        ///     The endpoint name.
+        /// </param>
         protected ProducerEndpoint(string name)
             : base(name)
         {
@@ -35,7 +39,9 @@ namespace Silverback.Messaging
         ///     Determines whether the specified <see cref="ProducerEndpoint" /> is equal to the current
         ///     <see cref="ProducerEndpoint" />.
         /// </summary>
-        /// <param name="other"> The object to compare with the current object. </param>
+        /// <param name="other">
+        ///     The object to compare with the current object.
+        /// </param>
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>

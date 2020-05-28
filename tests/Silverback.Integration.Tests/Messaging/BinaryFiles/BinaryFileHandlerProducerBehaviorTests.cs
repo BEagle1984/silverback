@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         [Fact]
         public async Task Handle_InheritedBinaryFileMessage_RawContentProduced()
         {
-            var message = new InheritedBinaryFileMessage()
+            var message = new InheritedBinaryFileMessage
             {
                 Content = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 }
             };

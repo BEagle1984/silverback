@@ -13,9 +13,11 @@ namespace Silverback.Messaging.Encryption
     public sealed class SymmetricMessageEncryptor : SymmetricCryptoMessageTransformer, IMessageEncryptor
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SymmetricMessageEncryptor"/> class.
+        ///     Initializes a new instance of the <see cref="SymmetricMessageEncryptor" /> class.
         /// </summary>
-        /// <param name="settings">The encryption settings.</param>
+        /// <param name="settings">
+        ///     The encryption settings.
+        /// </param>
         public SymmetricMessageEncryptor(SymmetricEncryptionSettings settings)
             : base(settings)
         {

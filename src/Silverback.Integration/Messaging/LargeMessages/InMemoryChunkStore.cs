@@ -19,7 +19,7 @@ namespace Silverback.Messaging.LargeMessages
         private readonly List<string> _pendingCleanups = new List<string>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InMemoryChunkStore"/> class.
+        ///     Initializes a new instance of the <see cref="InMemoryChunkStore" /> class.
         /// </summary>
         /// <param name="sharedItems">
         ///     The chunks shared between the instances of this repository.
@@ -40,19 +40,21 @@ namespace Silverback.Messaging.LargeMessages
 
         /// <inheritdoc />
         public Task<int> CountChunks(string messageId) =>
-            Task.FromResult(Items.Union(UncommittedItems)
-                .Where(item => item.Item.MessageId == messageId)
-                .Select(item => item.Item.ChunkIndex)
-                .Distinct()
-                .Count());
+            Task.FromResult(
+                Items.Union(UncommittedItems)
+                    .Where(item => item.Item.MessageId == messageId)
+                    .Select(item => item.Item.ChunkIndex)
+                    .Distinct()
+                    .Count());
 
         /// <inheritdoc />
         public Task<Dictionary<int, byte[]>> GetChunks(string messageId) =>
-            Task.FromResult(Items.Union(UncommittedItems)
-                .Where(item => item.Item.MessageId == messageId)
-                .GroupBy(item => item.Item.ChunkIndex)
-                .Select(items => items.First())
-                .ToDictionary(item => item.Item.ChunkIndex, item => item.Item.Content));
+            Task.FromResult(
+                Items.Union(UncommittedItems)
+                    .Where(item => item.Item.MessageId == messageId)
+                    .GroupBy(item => item.Item.ChunkIndex)
+                    .Select(items => items.First())
+                    .ToDictionary(item => item.Item.ChunkIndex, item => item.Item.Content));
 
         /// <inheritdoc />
         public Task Cleanup(string messageId)

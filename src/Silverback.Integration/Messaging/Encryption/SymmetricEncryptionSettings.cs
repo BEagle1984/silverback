@@ -7,13 +7,14 @@ using System.Security.Cryptography;
 namespace Silverback.Messaging.Encryption
 {
     /// <summary>
-    ///     The symmetric encryption settings used to encrypt or decrypt the messages being sent through the message broker.
+    ///     The symmetric encryption settings used to encrypt or decrypt the messages being sent through the
+    ///     message broker.
     /// </summary>
     public class SymmetricEncryptionSettings : EncryptionSettings
     {
         /// <summary>
-        ///     Gets or sets the name of the specific implementation of the <see cref="SymmetricAlgorithm" /> class to use to
-        ///     encrypt or decrypt the messages.
+        ///     Gets or sets the name of the specific implementation of the <see cref="SymmetricAlgorithm" /> class
+        ///     to use to encrypt or decrypt the messages.
         /// </summary>
         public string AlgorithmName { get; set; } = "AES";
 
@@ -22,18 +23,22 @@ namespace Silverback.Messaging.Encryption
         ///         Gets or sets the block size, in bits, of the cryptographic operation.
         ///     </para>
         ///     <para>
-        ///         If <c>null</c>, the default value for the specified algorithm will be used.
+        ///         If <c>
+        ///             null
+        ///         </c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
         public int? BlockSize { get; set; }
 
         /// <summary>
         ///     <para>
-        ///         Gets or sets the feedback size, in bits, of the cryptographic operation for the Cipher Feedback (CFB)
-        ///         and Output Feedback (OFB) cipher modes.
+        ///         Gets or sets the feedback size, in bits, of the cryptographic operation for the Cipher Feedback
+        ///         (CFB) and Output Feedback (OFB) cipher modes.
         ///     </para>
         ///     <para>
-        ///         If <c>null</c>, the default value for the specified algorithm will be used.
+        ///         If <c>
+        ///             null
+        ///         </c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
         public int? FeedbackSize { get; set; }
@@ -43,9 +48,13 @@ namespace Silverback.Messaging.Encryption
         ///         Gets or sets the optional initialization vector (IV) for the symmetric algorithm.
         ///     </para>
         ///     <para>
-        ///         <b>Important:</b> If <c>null</c> no fixed IV is provided and the producer will automatically
-        ///         generate a random one for each message that will also be prepended to the actual encrypted message
-        ///         to be available to the consumer.
+        ///         <b>
+        ///             Important:
+        ///         </b> If <c>
+        ///             null
+        ///         </c> no fixed IV is provided and the producer will automatically generate a random one for each
+        ///         message that will also be prepended to the actual encrypted message to be available to the
+        ///         consumer.
         ///     </para>
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
@@ -64,7 +73,9 @@ namespace Silverback.Messaging.Encryption
         ///         Gets or sets the mode for operation of the symmetric algorithm.
         ///     </para>
         ///     <para>
-        ///         If <c>null</c>, the default value for the specified algorithm will be used.
+        ///         If <c>
+        ///             null
+        ///         </c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
         public CipherMode? CipherMode { get; set; }
@@ -74,7 +85,9 @@ namespace Silverback.Messaging.Encryption
         ///         Gets or sets the padding mode used in the symmetric algorithm.
         ///     </para>
         ///     <para>
-        ///         If <c>null</c>, the default value for the specified algorithm will be used.
+        ///         If <c>
+        ///             null
+        ///         </c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
         public PaddingMode? PaddingMode { get; set; }

@@ -9,7 +9,9 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c> AddSingletonBrokerBehavior </c> method to the <see cref="IBrokerOptionsBuilder" />.
+    ///     Adds the <c>
+    ///         AddSingletonBrokerBehavior
+    ///     </c> method to the <see cref="IBrokerOptionsBuilder" />.
     /// </summary>
     public static class BrokerOptionsBuilderAddBrokerBehaviorExtensions
     {
@@ -42,7 +44,9 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds a singleton behavior of the type specified in <typeparamref name="TBehavior" /> to the
         ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TBehavior"> The type of the behavior to add. </typeparam>
+        /// <typeparam name="TBehavior">
+        ///     The type of the behavior to add.
+        /// </typeparam>
         /// <param name="brokerOptionsBuilder">
         ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
         ///     add the services to.
@@ -69,7 +73,9 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
         ///     add the services to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -92,7 +98,9 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
         ///     add the services to.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>

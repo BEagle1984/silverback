@@ -28,7 +28,9 @@ namespace Silverback.Messaging.LargeMessages
         /// <param name="serviceScopeFactory">
         ///     The <see cref="IServiceScopeFactory" /> used to resolve the scoped types.
         /// </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public ChunkStoreCleaner(
             TimeSpan retention,
             IServiceScopeFactory serviceScopeFactory,

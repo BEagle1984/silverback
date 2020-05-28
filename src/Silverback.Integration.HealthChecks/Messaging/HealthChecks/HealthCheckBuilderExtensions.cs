@@ -10,21 +10,34 @@ using Silverback.Util;
 namespace Silverback.Messaging.HealthChecks
 {
     /// <summary>
-    ///     Adds methods such as <c> AddOutboundEndpointsCheck </c> and <c> AddOutboundQueueCheck </c> to the
-    ///     <see cref="IHealthChecksBuilder" />.
+    ///     Adds methods such as <c>
+    ///         AddOutboundEndpointsCheck
+    ///     </c> and <c>
+    ///         AddOutboundQueueCheck
+    ///     </c> to the <see cref="IHealthChecksBuilder" />.
     /// </summary>
     public static class HealthCheckBuilderExtensions
     {
-        /// <summary> Adds an health check that sends a ping message to all the outbound endpoints. </summary>
-        /// <param name="builder"> The <see cref="IHealthChecksBuilder" />. </param>
+        /// <summary>
+        ///     Adds an health check that sends a ping message to all the outbound endpoints.
+        /// </summary>
+        /// <param name="builder">
+        ///     The <see cref="IHealthChecksBuilder" />.
+        /// </param>
         /// <param name="name">
-        ///     The health check name. If <c> null </c> the name 'OutboundEndpoints' will be used for the name.
+        ///     The health check name. If <c>
+        ///         null
+        ///     </c> the name 'OutboundEndpoints' will be used for the name.
         /// </param>
         /// <param name="failureStatus">
         ///     The <see cref="HealthStatus" /> that should be reported when the health check fails. Optional. If
-        ///     <c> null </c> then the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
+        ///     <c>
+        ///         null
+        ///     </c> then the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
         /// </param>
-        /// <param name="tags"> A list of tags that can be used to filter sets of health checks. Optional. </param>
+        /// <param name="tags">
+        ///     A list of tags that can be used to filter sets of health checks. Optional.
+        /// </param>
         /// <returns>
         ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -54,15 +67,23 @@ namespace Silverback.Messaging.HealthChecks
         ///     Adds an health check that monitors the outbound queue (outbox table), verifying that the messages
         ///     are being processed.
         /// </summary>
-        /// <param name="builder"> The <see cref="IHealthChecksBuilder" />. </param>
+        /// <param name="builder">
+        ///     The <see cref="IHealthChecksBuilder" />.
+        /// </param>
         /// <param name="name">
-        ///     The health check name. If <c> null </c> the name 'OutboundQueue' will be used for the name.
+        ///     The health check name. If <c>
+        ///         null
+        ///     </c> the name 'OutboundQueue' will be used for the name.
         /// </param>
         /// <param name="failureStatus">
         ///     The <see cref="HealthStatus" /> that should be reported when the health check fails. Optional. If
-        ///     <c> null </c> then the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
+        ///     <c>
+        ///         null
+        ///     </c> then the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
         /// </param>
-        /// <param name="tags"> A list of tags that can be used to filter sets of health checks. Optional. </param>
+        /// <param name="tags">
+        ///     A list of tags that can be used to filter sets of health checks. Optional.
+        /// </param>
         /// <returns>
         ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
         /// </returns>

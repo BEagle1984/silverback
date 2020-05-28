@@ -11,7 +11,9 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public interface IOutboundQueueWorker
     {
-        /// <summary> Processes the outbound queue. </summary>
+        /// <summary>
+        ///     Processes the outbound queue.
+        /// </summary>
         /// <param name="stoppingToken">
         ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
         /// </param>

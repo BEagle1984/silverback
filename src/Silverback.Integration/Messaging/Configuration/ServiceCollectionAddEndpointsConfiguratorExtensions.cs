@@ -8,7 +8,9 @@ using Silverback.Messaging.Configuration;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    /// Adds the <c>AddEndpointsConfigurator</c> method to the <see cref="IServiceCollection"/>.
+    ///     Adds the <c>
+    ///         AddEndpointsConfigurator
+    ///     </c> method to the <see cref="IServiceCollection" />.
     /// </summary>
     public static class ServiceCollectionAddEndpointsConfiguratorExtensions
     {
@@ -16,14 +18,14 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds an <see cref="IEndpointsConfigurator" /> to be used to setup the broker endpoints.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <typeparam name="TConfigurator">
         ///     The type of the <see cref="IEndpointsConfigurator" /> to add.
         /// </typeparam>
         /// <returns>
-        ///     The <see cref="IServiceCollection"/> so that additional calls can be chained.
+        ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
         public static IServiceCollection AddEndpointsConfigurator<TConfigurator>(this IServiceCollection services)
             where TConfigurator : class, IEndpointsConfigurator =>
@@ -33,14 +35,14 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds an <see cref="IEndpointsConfigurator" /> to be used to setup the broker endpoints.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="configuratorType">
         ///     The type of the <see cref="IEndpointsConfigurator" /> to add.
         /// </param>
         /// <returns>
-        ///     The <see cref="IServiceCollection"/> so that additional calls can be chained.
+        ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
         public static IServiceCollection AddEndpointsConfigurator(
             this IServiceCollection services,
@@ -51,14 +53,14 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds an <see cref="IEndpointsConfigurator" /> to be used to setup the broker endpoints.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="implementationFactory">
         ///     The factory that creates the <see cref="IEndpointsConfigurator" /> to add.
         /// </param>
         /// <returns>
-        ///     The <see cref="IServiceCollection"/> so that additional calls can be chained.
+        ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
         public static IServiceCollection AddEndpointsConfigurator(
             this IServiceCollection services,

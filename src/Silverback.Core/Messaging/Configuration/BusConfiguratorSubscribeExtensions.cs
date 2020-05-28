@@ -12,7 +12,9 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     Adds the <c> Subscribe </c> methods to the <see cref="IBusConfigurator" />.
+    ///     Adds the <c>
+    ///         Subscribe
+    ///     </c> methods to the <see cref="IBusConfigurator" />.
     /// </summary>
     public static class BusConfiguratorSubscribeExtensions
     {
@@ -20,10 +22,11 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -49,10 +52,11 @@ namespace Silverback.Messaging.Configuration
         ///     The type of the messages to be handled.
         /// </typeparam>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -75,13 +79,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -104,13 +109,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -133,13 +139,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -162,13 +169,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -191,13 +199,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -220,13 +229,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -249,13 +259,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -278,13 +289,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -307,13 +319,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -336,13 +349,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -365,13 +379,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -394,13 +409,14 @@ namespace Silverback.Messaging.Configuration
         ///     Subscribes the specified handler method to the messages being published into the bus.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be handled.
         /// </typeparam>
-        /// <param name="handler"> The message handler delegate. </param>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
         /// <param name="options">
         ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
         /// </param>
@@ -420,20 +436,17 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        ///     Configures the type <typeparamref name="TSubscriber" /> to be used
-        ///     to resolve the subscribers.
+        ///     Configures the type <typeparamref name="TSubscriber" /> to be used to resolve the subscribers.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <typeparam name="TSubscriber">
         ///     The type to be used to resolve the subscribers.
         /// </typeparam>
         /// <param name="autoSubscribeAllPublicMethods">
-        ///     A boolean value indicating whether all public methods in
-        ///     the resolved types have to be automatically subscribed, without relying on the
-        ///     <see cref="SubscribeAttribute" />.
+        ///     A boolean value indicating whether all public methods in the resolved types have to be automatically
+        ///     subscribed, without relying on the <see cref="SubscribeAttribute" />.
         /// </param>
         /// <returns>
         ///     The <see cref="IBusConfigurator" /> so that additional calls can be chained.
@@ -444,20 +457,17 @@ namespace Silverback.Messaging.Configuration
             busConfigurator.Subscribe(typeof(TSubscriber), autoSubscribeAllPublicMethods);
 
         /// <summary>
-        ///     Configures the type <paramref name="subscriberType" /> to be used
-        ///     to resolve the subscribers.
+        ///     Configures the type <paramref name="subscriberType" /> to be used to resolve the subscribers.
         /// </summary>
         /// <param name="busConfigurator">
-        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to
-        ///     be configured.
+        ///     The <see cref="IBusConfigurator" /> that references the <see cref="BusOptions" /> to be configured.
         /// </param>
         /// <param name="subscriberType">
         ///     The type to be used to resolve the subscribers.
         /// </param>
         /// <param name="autoSubscribeAllPublicMethods">
-        ///     A boolean value indicating whether all public methods in
-        ///     the resolved types have to be automatically subscribed, without relying on the
-        ///     <see cref="SubscribeAttribute" />.
+        ///     A boolean value indicating whether all public methods in the resolved types have to be automatically
+        ///     subscribed, without relying on the <see cref="SubscribeAttribute" />.
         /// </param>
         /// <returns>
         ///     The <see cref="IBusConfigurator" /> so that additional calls can be chained.

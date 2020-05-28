@@ -13,12 +13,13 @@ using Xunit;
 namespace Silverback.Tests.Integration.Messaging.Publishing
 {
     /// <summary>
-    ///     The purpose of this class is to ensure that the publisher is still working when
-    ///     the broker subscribers are added.
+    ///     The purpose of this class is to ensure that the publisher is still working when the broker
+    ///     subscribers are added.
     /// </summary>
     public class PublisherTests
     {
         private readonly IServiceProvider _serviceProvider;
+
         private readonly IServiceProvider _scopedServiceProvider;
 
         public PublisherTests()
@@ -28,8 +29,9 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
             services
                 .AddNullLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<TestBroker>());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>());
 
             _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
             _scopedServiceProvider = _serviceProvider.CreateScope().ServiceProvider;

@@ -16,10 +16,18 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Serializes the specified message object into a byte array.
         /// </summary>
-        /// <param name="message"> The message object to be serialized. </param>
-        /// <param name="messageHeaders"> The message headers collection. </param>
-        /// <param name="context"> The context information. </param>
-        /// <returns> The serialization result. </returns>
+        /// <param name="message">
+        ///     The message object to be serialized.
+        /// </param>
+        /// <param name="messageHeaders">
+        ///     The message headers collection.
+        /// </param>
+        /// <param name="context">
+        ///     The context information.
+        /// </param>
+        /// <returns>
+        ///     The serialization result.
+        /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         byte[]? Serialize(
             object? message,
@@ -29,12 +37,19 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Deserializes the byte array back into a message object.
         /// </summary>
-        /// <param name="message"> The byte array to be deserialized. </param>
-        /// <param name="messageHeaders"> The message headers collection. </param>
-        /// <param name="context"> The context information. </param>
+        /// <param name="message">
+        ///     The byte array to be deserialized.
+        /// </param>
+        /// <param name="messageHeaders">
+        ///     The message headers collection.
+        /// </param>
+        /// <param name="context">
+        ///     The context information.
+        /// </param>
         /// <returns>
-        ///     The deserialized message (or <c> null </c> when the input is null or empty) and the type of the
-        ///     message.
+        ///     The deserialized message (or <c>
+        ///         null
+        ///     </c> when the input is null or empty) and the type of the message.
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         (object?, Type) Deserialize(
@@ -45,9 +60,15 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Serializes the specified message object into a byte array.
         /// </summary>
-        /// <param name="message"> The message object to be serialized. </param>
-        /// <param name="messageHeaders"> The message headers collection. </param>
-        /// <param name="context"> The context information. </param>
+        /// <param name="message">
+        ///     The message object to be serialized.
+        /// </param>
+        /// <param name="messageHeaders">
+        ///     The message headers collection.
+        /// </param>
+        /// <param name="context">
+        ///     The context information.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
         ///     serialization result.
@@ -61,12 +82,20 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Deserializes the byte array back into a message object.
         /// </summary>
-        /// <param name="message"> The byte array to be deserialized. </param>
-        /// <param name="messageHeaders"> The message headers collection. </param>
-        /// <param name="context"> The context information. </param>
+        /// <param name="message">
+        ///     The byte array to be deserialized.
+        /// </param>
+        /// <param name="messageHeaders">
+        ///     The message headers collection.
+        /// </param>
+        /// <param name="context">
+        ///     The context information.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
-        ///     deserialized message (or <c> null </c> when the input is null or empty) and the type of the message.
+        ///     deserialized message (or <c>
+        ///         null
+        ///     </c> when the input is null or empty) and the type of the message.
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         Task<(object?, Type)> DeserializeAsync(

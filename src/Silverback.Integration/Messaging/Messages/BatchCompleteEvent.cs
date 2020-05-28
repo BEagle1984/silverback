@@ -15,7 +15,9 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Initializes a new instance of the <see cref="BatchCompleteEvent" /> class.
         /// </summary>
-        /// <param name="batchId"> The unique identifier of the batch. </param>
+        /// <param name="batchId">
+        ///     The unique identifier of the batch.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of envelopes that belong to the batch.
         /// </param>

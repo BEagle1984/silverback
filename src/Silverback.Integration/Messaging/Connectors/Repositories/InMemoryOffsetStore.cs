@@ -13,7 +13,9 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///         Used by the <see cref="OffsetStoredInboundConnector" /> to keep track of the last processed
     ///         offsets and guarantee that each message is processed only once.
     ///     </para>
-    ///     <para> The log is simply persisted in memory. </para>
+    ///     <para>
+    ///         The log is simply persisted in memory.
+    ///     </para>
     /// </summary>
     public class InMemoryOffsetStore : TransactionalDictionary<string, IComparableOffset>, IOffsetStore
     {

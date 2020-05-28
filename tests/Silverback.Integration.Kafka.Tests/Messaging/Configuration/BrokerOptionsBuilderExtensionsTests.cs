@@ -18,11 +18,13 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
             var servicesSpecific = new ServiceCollection();
 
             new SilverbackBuilder(servicesGeneric)
-                .WithConnectionToMessageBroker(options =>
-                    options.AddBroker<KafkaBroker>());
+                .WithConnectionToMessageBroker(
+                    options =>
+                        options.AddBroker<KafkaBroker>());
             new SilverbackBuilder(servicesSpecific)
-                .WithConnectionToMessageBroker(options =>
-                    options.AddKafka());
+                .WithConnectionToMessageBroker(
+                    options =>
+                        options.AddKafka());
 
             servicesGeneric.Count.Should().Be(servicesSpecific.Count);
         }

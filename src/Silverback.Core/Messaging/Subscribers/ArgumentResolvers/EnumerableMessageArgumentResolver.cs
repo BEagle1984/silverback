@@ -8,8 +8,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
     /// <summary>
-    ///     Resolves the parameters declared as <see cref="IEnumerable{T}" /> where <c> T </c> is
-    ///     compatible with the type of the message being published.
+    ///     Resolves the parameters declared as <see cref="IEnumerable{T}" /> where <c>T</c> is compatible with
+    ///     the type of the message being published.
     /// </summary>
     public class EnumerableMessageArgumentResolver : IEnumerableMessageArgumentResolver
     {

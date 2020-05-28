@@ -12,8 +12,10 @@ namespace Silverback.Domain
     {
     }
 
-    /// <inheritdoc cref="IDomainEvent"/>
-    /// <typeparam name="TEntity">The type of the related domain entity.</typeparam>
+    /// <inheritdoc cref="IDomainEvent" />
+    /// <typeparam name="TEntity">
+    ///     The type of the related domain entity.
+    /// </typeparam>
     public interface IDomainEvent<out TEntity> : IDomainEvent
         where TEntity : class
     {

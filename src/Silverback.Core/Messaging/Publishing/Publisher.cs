@@ -84,6 +84,24 @@ namespace Silverback.Messaging.Publishing
         public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) =>
             CastResults<TResult>(await Publish(messages, true)).ToList();
 
+        private static Task<IReadOnlyCollection<object?>> ExecutePipeline(
+            IReadOnlyCollection<IBehavior> behaviors,
+            IReadOnlyCollection<object> messages,
+            Func<IReadOnlyCollection<object>, Task<IReadOnlyCollection<object?>>> finalAction)
+        {
+            if (behaviors != null && behaviors.Any())
+            {
+                return behaviors.First().Handle(
+                    messages,
+                    nextMessages => ExecutePipeline(
+                        behaviors.Skip(1).ToList(),
+                        nextMessages,
+                        finalAction));
+            }
+
+            return finalAction(messages);
+        }
+
         private IEnumerable<TResult> CastResults<TResult>(IReadOnlyCollection<object?> results)
         {
             foreach (var result in results)
@@ -123,24 +141,6 @@ namespace Silverback.Messaging.Publishing
                     (await InvokeExclusiveMethods(finalMessages, executeAsync))
                     .Union(await InvokeNonExclusiveMethods(finalMessages, executeAsync))
                     .ToList());
-        }
-
-        private static Task<IReadOnlyCollection<object?>> ExecutePipeline(
-            IReadOnlyCollection<IBehavior> behaviors,
-            IReadOnlyCollection<object> messages,
-            Func<IReadOnlyCollection<object>, Task<IReadOnlyCollection<object?>>> finalAction)
-        {
-            if (behaviors != null && behaviors.Any())
-            {
-                return behaviors.First().Handle(
-                    messages,
-                    nextMessages => ExecutePipeline(
-                        behaviors.Skip(1).ToList(),
-                        nextMessages,
-                        finalAction));
-            }
-
-            return finalAction(messages);
         }
 
         private async Task<IReadOnlyCollection<object?>> InvokeExclusiveMethods(

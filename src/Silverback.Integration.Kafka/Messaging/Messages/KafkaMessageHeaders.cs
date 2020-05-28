@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Messages
     {
         /// <summary>
         ///     The header that will be filled with the Kafka key (if specified for the message being consumed or
-        ///     defined via <see cref="KafkaKeyMemberAttribute"/> for the message being produced).
+        ///     defined via <see cref="KafkaKeyMemberAttribute" /> for the message being produced).
         /// </summary>
         public const string KafkaMessageKey = "x-kafka-message-key";
     }

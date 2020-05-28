@@ -14,29 +14,39 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Returns an <see cref="IProducer" /> to be used to produce to the specified endpoint.
         /// </summary>
-        /// <param name="endpoint"> The target endpoint. </param>
+        /// <param name="endpoint">
+        ///     The target endpoint.
+        /// </param>
         /// <returns>
         ///     The <see cref="IProducer" /> for the specified endpoint.
         /// </returns>
         IProducer GetProducer(IProducerEndpoint endpoint);
 
         /// <summary>
-        ///     Adds an <see cref="IConsumer" /> that will consume from the specified endpoint as soon as the
-        ///     broker is connected. The received messages will be forwarded to the specified callback delegate.
+        ///     Adds an <see cref="IConsumer" /> that will consume from the specified endpoint as soon as the broker
+        ///     is connected. The received messages will be forwarded to the specified callback delegate.
         /// </summary>
-        /// <param name="endpoint"> The source endpoint. </param>
-        /// <param name="callback"> The delegate to be invoked when a message is received. </param>
+        /// <param name="endpoint">
+        ///     The source endpoint.
+        /// </param>
+        /// <param name="callback">
+        ///     The delegate to be invoked when a message is received.
+        /// </param>
         /// <returns>
         ///     The <see cref="IConsumer" /> for the specified endpoint.
         /// </returns>
         IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback);
 
         /// <summary>
-        ///     Adds an <see cref="IConsumer" /> that will consume from the specified endpoint as soon as the
-        ///     broker is connected. The received messages will be forwarded to the specified callback delegate.
+        ///     Adds an <see cref="IConsumer" /> that will consume from the specified endpoint as soon as the broker
+        ///     is connected. The received messages will be forwarded to the specified callback delegate.
         /// </summary>
-        /// <param name="endpoint"> The source endpoint. </param>
-        /// <param name="callback"> The delegate to be invoked when a message is received. </param>
+        /// <param name="endpoint">
+        ///     The source endpoint.
+        /// </param>
+        /// <param name="callback">
+        ///     The delegate to be invoked when a message is received.
+        /// </param>
         /// <returns>
         ///     The <see cref="IConsumer" /> for the specified endpoint.
         /// </returns>

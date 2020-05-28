@@ -10,8 +10,13 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c> AddTransientSubscriber </c>, <c> AddScopedSubscriber </c> and
-    ///     <c> AddSingletonSubscriber </c> methods to the <see cref="ISilverbackBuilder" />.
+    ///     Adds the <c>
+    ///         AddTransientSubscriber
+    ///     </c>, <c>
+    ///         AddScopedSubscriber
+    ///     </c> and <c>
+    ///         AddSingletonSubscriber
+    ///     </c> methods to the <see cref="ISilverbackBuilder" />.
     /// </summary>
     public static class SilverbackBuilderAddSubscriberExtensions
     {
@@ -20,8 +25,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -48,8 +53,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register and the implementation to use.
@@ -72,13 +77,15 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -97,10 +104,12 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -114,13 +123,12 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     <see cref="IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -128,7 +136,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -145,18 +155,19 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     <see cref="IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -172,19 +183,22 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     <see cref="IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -200,16 +214,19 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     <see cref="IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -229,8 +246,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -257,8 +274,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register and the implementation to use.
@@ -283,10 +300,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -305,10 +324,12 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
         ///     <see cref="IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -323,13 +344,12 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     <see cref="IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -337,7 +357,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -357,18 +379,19 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     <see cref="IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -384,19 +407,22 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     <see cref="IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -412,16 +438,19 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     <see cref="IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -441,8 +470,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -469,8 +498,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register and the implementation to use.
@@ -489,16 +518,18 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to
-        ///     this <see cref="ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to this
+        ///     <see cref="ISilverbackBuilder" />.
         /// </summary>
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -514,13 +545,15 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to
-        ///     this <see cref="ISilverbackBuilder" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to this
+        ///     <see cref="ISilverbackBuilder" />.
         /// </summary>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -540,8 +573,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -549,7 +582,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -571,13 +606,15 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -600,12 +637,16 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -625,12 +666,16 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     factory specified in <paramref name="implementationFactory" /> to the
         ///     <see cref="IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -651,8 +696,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -660,7 +705,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -682,13 +729,15 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -704,8 +753,8 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with
-        ///     an instance specified in <paramref name="implementationInstance" /> to the
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">
@@ -715,10 +764,12 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The type of the subscriber to register.
         /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
@@ -734,18 +785,20 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with
-        ///     an instance specified in <paramref name="implementationInstance" /> to the
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
         ///     <see cref="IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">
         ///     The type of the subscriber to register.
         /// </typeparam>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the subscriber to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>

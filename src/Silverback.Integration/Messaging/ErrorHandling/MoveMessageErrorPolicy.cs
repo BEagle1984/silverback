@@ -31,9 +31,15 @@ namespace Silverback.Messaging.ErrorHandling
         /// <param name="brokerCollection">
         ///     The collection containing the available brokers.
         /// </param>
-        /// <param name="endpoint"> The endpoint to move the message to. </param>
-        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="endpoint">
+        ///     The endpoint to move the message to.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public MoveMessageErrorPolicy(
             IBrokerCollection brokerCollection,
             IProducerEndpoint endpoint,
@@ -51,18 +57,17 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         /// <summary>
-        ///     Defines an <see cref="Action{T}"/> to be called to modify (or completely rewrite) the message being
+        ///     Defines an <see cref="Action{T}" /> to be called to modify (or completely rewrite) the message being
         ///     moved.
         /// </summary>
         /// <param name="transformationAction">
-        ///     The <see cref="Action{T}"/> to be called to modify the message. This function can be used to modify or
-        ///     replace the message body and its headers.
+        ///     The <see cref="Action{T}" /> to be called to modify the message. This function can be used to modify
+        ///     or replace the message body and its headers.
         /// </param>
         /// <returns>
         ///     The <see cref="MoveMessageErrorPolicy" /> so that additional calls can be chained.
         /// </returns>
-        public MoveMessageErrorPolicy Transform(
-            Action<IOutboundEnvelope, Exception> transformationAction)
+        public MoveMessageErrorPolicy Transform(Action<IOutboundEnvelope, Exception> transformationAction)
         {
             _transformationAction = transformationAction;
             return this;

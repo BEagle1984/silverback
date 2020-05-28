@@ -25,7 +25,9 @@ namespace Silverback.EventStore
         ///     Initializes a new instance of the <see cref="EventStoreSerializationException" /> class with the
         ///     specified message.
         /// </summary>
-        /// <param name="message"> The exception message. </param>
+        /// <param name="message">
+        ///     The exception message.
+        /// </param>
         public EventStoreSerializationException(string message)
             : base(message)
         {
@@ -35,8 +37,12 @@ namespace Silverback.EventStore
         ///     Initializes a new instance of the <see cref="EventStoreSerializationException" /> class with the
         ///     specified message and inner exception.
         /// </summary>
-        /// <param name="message"> The exception message. </param>
-        /// <param name="innerException"> The inner exception. </param>
+        /// <param name="message">
+        ///     The exception message.
+        /// </param>
+        /// <param name="innerException">
+        ///     The inner exception.
+        /// </param>
         public EventStoreSerializationException(string message, Exception innerException)
             : base(message, innerException)
         {

@@ -18,10 +18,15 @@ namespace Silverback.Messaging.Messages
     public static class LoggerExtensions
     {
         /// <summary>
-        ///     Writes the standard <i> "Processing inbound message" </i> or
-        ///     <i> "Processing the batch of # inbound messages" </i> log message.
+        ///     Writes the standard <i>
+        ///         "Processing inbound message"
+        ///     </i> or <i>
+        ///         "Processing the batch of # inbound messages"
+        ///     </i> log message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the messages being processed.
         /// </param>
@@ -37,14 +42,21 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <summary>
-        ///     Writes the standard <i> "Error occurred processing the inbound message" </i> or
-        ///     <i> "Error occurred processing the batch of # inbound messages" </i> log message.
+        ///     Writes the standard <i>
+        ///         "Error occurred processing the inbound message"
+        ///     </i> or <i>
+        ///         "Error occurred processing the batch of # inbound messages"
+        ///     </i> log message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the messages being processed.
         /// </param>
-        /// <param name="exception"> The exception to log. </param>
+        /// <param name="exception">
+        ///     The exception to log.
+        /// </param>
         public static void LogProcessingError(
             this ILogger logger,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
@@ -62,9 +74,15 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a trace log message, enriching it with the information related to the provided message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
@@ -78,9 +96,15 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a trace log message, enriching it with the information related to the provided message(s).
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
@@ -95,9 +119,15 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a debug log message, enriching it with the information related to the provided message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
@@ -111,9 +141,15 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a debug log message, enriching it with the information related to the provided message(s).
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
@@ -129,9 +165,15 @@ namespace Silverback.Messaging.Messages
         ///     Writes an information log message, enriching it with the information related to the provided
         ///     message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
@@ -146,9 +188,15 @@ namespace Silverback.Messaging.Messages
         ///     Writes an information log message, enriching it with the information related to the provided
         ///     message(s).
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
@@ -163,9 +211,15 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a warning log message, enriching it with the information related to the provided message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
@@ -179,9 +233,15 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a warning log message, enriching it with the information related to the provided message(s).
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
@@ -196,10 +256,18 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a warning log message, enriching it with the information related to the provided message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="exception"> The exception to log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="exception">
+        ///     The exception to log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
@@ -214,10 +282,18 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a warning log message, enriching it with the information related to the provided message(s).
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="exception"> The exception to log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="exception">
+        ///     The exception to log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
@@ -233,9 +309,15 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes an error log message, enriching it with the information related to the provided message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
@@ -249,9 +331,15 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes an error log message, enriching it with the information related to the provided message(s).
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
@@ -266,10 +354,18 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes an error log message, enriching it with the information related to the provided message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="exception"> The exception to log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="exception">
+        ///     The exception to log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
@@ -284,10 +380,18 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes an error log message, enriching it with the information related to the provided message(s).
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="exception"> The exception to log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="exception">
+        ///     The exception to log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
@@ -303,9 +407,15 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a critical log message, enriching it with the information related to the provided message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
@@ -319,9 +429,15 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a critical log message, enriching it with the information related to the provided message(s).
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
@@ -336,10 +452,18 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a critical log message, enriching it with the information related to the provided message.
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="exception"> The exception to log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="exception">
+        ///     The exception to log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
@@ -354,10 +478,18 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Writes a critical log message, enriching it with the information related to the provided message(s).
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="exception"> The exception to log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="exception">
+        ///     The exception to log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
@@ -374,11 +506,21 @@ namespace Silverback.Messaging.Messages
         ///     Writes a log message at the specified log level, enriching it with the information related to the
         ///     provided message(s).
         /// </summary>
-        /// <param name="logger"> The <see cref="ILogger" /> to write to. </param>
-        /// <param name="logLevel"> Entry will be written on this level. </param>
-        /// <param name="eventId"> The event id associated with the log. </param>
-        /// <param name="exception"> The exception to log. </param>
-        /// <param name="logMessage"> The log message. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" /> to write to.
+        /// </param>
+        /// <param name="logLevel">
+        ///     Entry will be written on this level.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="exception">
+        ///     The exception to log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.

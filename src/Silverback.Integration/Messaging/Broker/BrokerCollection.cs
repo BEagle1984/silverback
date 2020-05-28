@@ -23,7 +23,9 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Initializes a new instance of the <see cref="BrokerCollection" /> class.
         /// </summary>
-        /// <param name="brokers"> The brokers to be added to the collection. </param>
+        /// <param name="brokers">
+        ///     The brokers to be added to the collection.
+        /// </param>
         public BrokerCollection(IEnumerable<IBroker> brokers)
         {
             _brokers = brokers.ToList();

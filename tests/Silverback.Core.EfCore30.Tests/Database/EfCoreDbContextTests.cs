@@ -14,7 +14,9 @@ namespace Silverback.Tests.Core.EFCore30.Database
     public sealed class EfCoreDbContextTests : IAsyncDisposable
     {
         private readonly TestDbContextInitializer _dbInitializer;
+
         private readonly TestDbContext _dbContext;
+
         private readonly EfCoreDbContext<TestDbContext> _efCoreDbContext;
 
         public EfCoreDbContextTests()

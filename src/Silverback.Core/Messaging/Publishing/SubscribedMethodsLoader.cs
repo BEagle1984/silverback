@@ -13,6 +13,7 @@ namespace Silverback.Messaging.Publishing
     internal class SubscribedMethodsLoader
     {
         private readonly BusOptions _options;
+
         private readonly IServiceProvider _serviceProvider;
 
         public SubscribedMethodsLoader(BusOptions options, IServiceProvider serviceProvider)

@@ -13,8 +13,8 @@ using Silverback.Util;
 namespace Silverback.Background
 {
     /// <summary>
-    ///     Extends the <see cref="Microsoft.Extensions.Hosting.BackgroundService" /> adding a distributed
-    ///     lock mechanism to prevent concurrent executions.
+    ///     Extends the <see cref="Microsoft.Extensions.Hosting.BackgroundService" /> adding a distributed lock
+    ///     mechanism to prevent concurrent executions.
     /// </summary>
     public abstract class DistributedBackgroundService : BackgroundService
     {
@@ -25,8 +25,8 @@ namespace Silverback.Background
         private readonly ILogger<DistributedBackgroundService> _logger;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="DistributedBackgroundService" /> class using the default
-        ///     settings for the lock mechanism.
+        ///     Initializes a new instance of the <see cref="DistributedBackgroundService" /> class using the
+        ///     default settings for the lock mechanism.
         /// </summary>
         /// <param name="distributedLockManager">
         ///     The <see cref="IDistributedLockManager" />.
@@ -75,7 +75,10 @@ namespace Silverback.Background
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation(EventIds.DistributedBackgroundServiceStartingBackgroundService, "Starting background service {BackgroundService}...", GetType().FullName);
+            _logger.LogInformation(
+                EventIds.DistributedBackgroundServiceStartingBackgroundService,
+                "Starting background service {BackgroundService}...",
+                GetType().FullName);
 
             // Run another task to avoid deadlocks
             return Task.Run(
@@ -101,7 +104,11 @@ namespace Silverback.Background
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(EventIds.DistributedBackgroundServiceUnhandledException, ex, "Background service '{BackgroundService}' failed.", GetType().FullName);
+                        _logger.LogError(
+                            EventIds.DistributedBackgroundServiceUnhandledException,
+                            ex,
+                            "Background service '{BackgroundService}' failed.",
+                            GetType().FullName);
                     }
                     finally
                     {
@@ -113,9 +120,9 @@ namespace Silverback.Background
         }
 
         /// <summary>
-        ///     This method is called when the <see cref="IHostedService" /> starts and the lock is acquired.
-        ///     The implementation should return a task that represents
-        ///     the lifetime of the long running operation(s) being performed.
+        ///     This method is called when the <see cref="IHostedService" /> starts and the lock is acquired. The
+        ///     implementation should return a task that represents the lifetime of the long running operation(s)
+        ///     being performed.
         /// </summary>
         /// <param name="stoppingToken">
         ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.

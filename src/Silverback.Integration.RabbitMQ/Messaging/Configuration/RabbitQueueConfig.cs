@@ -6,7 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Silverback.Messaging.Configuration
 {
-    /// <summary> The RabbitMQ queue configuration. </summary>
+    /// <summary>
+    ///     The RabbitMQ queue configuration.
+    /// </summary>
     public sealed class RabbitQueueConfig : RabbitEndpointConfig, IEquatable<RabbitQueueConfig>
     {
         /// <summary>

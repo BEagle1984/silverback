@@ -35,8 +35,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 _ => Task.CompletedTask);
 
-            envelope.Headers.Should().NotContain(
-                h => h.Name == "x-rabbit-routing-key");
+            envelope.Headers.Should().NotContain(h => h.Name == "x-rabbit-routing-key");
         }
 
         [Fact]

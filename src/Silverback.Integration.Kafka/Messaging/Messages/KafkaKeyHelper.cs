@@ -23,8 +23,7 @@ namespace Silverback.Messaging.Messages
             var keysDictionary =
                 message.GetType()
                     .GetProperties()
-                    .Where(
-                        propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))
+                    .Where(propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))
                     .Select(
                         propertyInfo => new
                         {

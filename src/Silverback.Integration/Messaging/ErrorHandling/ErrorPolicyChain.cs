@@ -24,9 +24,15 @@ namespace Silverback.Messaging.ErrorHandling
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorPolicyChain" /> class.
         /// </summary>
-        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
-        /// <param name="policies"> The policies to be chained. </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
+        /// <param name="policies">
+        ///     The policies to be chained.
+        /// </param>
         public ErrorPolicyChain(
             IServiceProvider serviceProvider,
             ILogger<ErrorPolicyChain> logger,
@@ -38,9 +44,15 @@ namespace Silverback.Messaging.ErrorHandling
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorPolicyChain" /> class.
         /// </summary>
-        /// <param name="policies"> The policies to be chained. </param>
-        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="policies">
+        ///     The policies to be chained.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public ErrorPolicyChain(
             IEnumerable<ErrorPolicyBase> policies,
             IServiceProvider serviceProvider,

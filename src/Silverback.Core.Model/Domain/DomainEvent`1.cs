@@ -5,7 +5,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Domain
 {
-    /// <inheritdoc cref="IDomainEvent{TEntity}"/>
+    /// <inheritdoc cref="IDomainEvent{TEntity}" />
     public abstract class DomainEvent<TEntity> : IDomainEvent<TEntity>
         where TEntity : class
     {

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace Silverback.Background
 {
     /// <summary>
-    ///     Implements a lock mechanism that relies on a shared persisted storage (such as a database)
-    ///     to synchronize different processes.
+    ///     Implements a lock mechanism that relies on a shared persisted storage (such as a database) to
+    ///     synchronize different processes.
     /// </summary>
     public interface IDistributedLockManager
     {
@@ -22,8 +22,10 @@ namespace Silverback.Background
         ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
-        ///     acquired <see cref="DistributedLock" /> (or <c>null</c> if no lock was actually acquired).
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the acquired
+        ///     <see cref="DistributedLock" /> (or <c>
+        ///         null
+        ///     </c> if no lock was actually acquired).
         /// </returns>
         Task<DistributedLock?> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default);
 
@@ -34,8 +36,8 @@ namespace Silverback.Background
         ///     Specifies the lock to be checked.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a
-        ///     boolean value indicating whether the lock is taken.
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a boolean
+        ///     value indicating whether the lock is taken.
         /// </returns>
         Task<bool> CheckIsStillLocked(DistributedLockSettings settings);
 
@@ -46,8 +48,8 @@ namespace Silverback.Background
         ///     Specifies the lock to be refreshed.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a
-        ///     boolean value indicating whether the lock could be refreshed.
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a boolean
+        ///     value indicating whether the lock could be refreshed.
         /// </returns>
         Task<bool> SendHeartbeat(DistributedLockSettings settings);
 

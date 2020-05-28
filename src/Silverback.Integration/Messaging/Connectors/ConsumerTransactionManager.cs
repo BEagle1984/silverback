@@ -20,7 +20,9 @@ namespace Silverback.Messaging.Connectors
         /// <summary>
         ///     Adds the specified service to the transaction participants to be called upon commit or rollback.
         /// </summary>
-        /// <param name="transactionalService"> The service to be enlisted. </param>
+        /// <param name="transactionalService">
+        ///     The service to be enlisted.
+        /// </param>
         public void Enlist(ITransactional transactionalService)
         {
             Check.NotNull(transactionalService, nameof(transactionalService));

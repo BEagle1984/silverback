@@ -13,8 +13,8 @@ namespace Silverback.Messaging.Broker
     public interface IConsumer
     {
         /// <summary>
-        ///     Gets the collection of <see cref="IConsumerBehavior" /> configured for this
-        ///     <see cref="IConsumer" />.
+        ///     Gets the collection of <see cref="IConsumerBehavior" /> configured for this <see cref="IConsumer" />
+        ///     .
         /// </summary>
         IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
 
@@ -23,11 +23,13 @@ namespace Silverback.Messaging.Broker
         ///         Confirms that the message at the specified offset has been successfully processed.
         ///     </param>
         ///     <param>
-        ///         The acknowledgement will be sent to the message broker and the message will never be
-        ///         processed again (by the same logical consumer / consumer group).
+        ///         The acknowledgement will be sent to the message broker and the message will never be processed
+        ///         again (by the same logical consumer / consumer group).
         ///     </param>
         /// </summary>
-        /// <param name="offset"> The offset to be committed. </param>
+        /// <param name="offset">
+        ///     The offset to be committed.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -38,11 +40,13 @@ namespace Silverback.Messaging.Broker
         ///         Confirms that the messages at the specified offsets have been successfully processed.
         ///     </param>
         ///     <param>
-        ///         The acknowledgement will be sent to the message broker and the message will never be
-        ///         processed again (by the same logical consumer / consumer group).
+        ///         The acknowledgement will be sent to the message broker and the message will never be processed
+        ///         again (by the same logical consumer / consumer group).
         ///     </param>
         /// </summary>
-        /// <param name="offsets"> The offsets to be committed. </param>
+        /// <param name="offsets">
+        ///     The offsets to be committed.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -53,11 +57,13 @@ namespace Silverback.Messaging.Broker
         ///         Notifies that an error occured while processing the message at the specified offset.
         ///     </param>
         ///     <param>
-        ///         If necessary the information will be sent to the message broker to ensure that the message
-        ///         will be re-processed.
+        ///         If necessary the information will be sent to the message broker to ensure that the message will
+        ///         be re-processed.
         ///     </param>
         /// </summary>
-        /// <param name="offset"> The offset to be rolled back. </param>
+        /// <param name="offset">
+        ///     The offset to be rolled back.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -68,20 +74,26 @@ namespace Silverback.Messaging.Broker
         ///         Notifies that an error occured while processing the messages at the specified offsets.
         ///     </param>
         ///     <param>
-        ///         If necessary the information will be sent to the message broker to ensure that the message
-        ///         will be re-processed.
+        ///         If necessary the information will be sent to the message broker to ensure that the message will
+        ///         be re-processed.
         ///     </param>
         /// </summary>
-        /// <param name="offsets"> The offsets to be rolled back. </param>
+        /// <param name="offsets">
+        ///     The offsets to be rolled back.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         Task Rollback(IReadOnlyCollection<IOffset> offsets);
 
-        /// <summary> Connects and starts consuming. </summary>
+        /// <summary>
+        ///     Connects and starts consuming.
+        /// </summary>
         void Connect();
 
-        /// <summary> Disconnects and stops consuming. </summary>
+        /// <summary>
+        ///     Disconnects and stops consuming.
+        /// </summary>
         void Disconnect();
     }
 }

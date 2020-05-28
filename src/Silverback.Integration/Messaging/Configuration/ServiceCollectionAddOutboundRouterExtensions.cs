@@ -9,7 +9,9 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c> AddSingletonOutboundRouter </c> method to the <see cref="IServiceCollection" />.
+    ///     Adds the <c>
+    ///         AddSingletonOutboundRouter
+    ///     </c> method to the <see cref="IServiceCollection" />.
     /// </summary>
     public static class ServiceCollectionAddOutboundRouterExtensions
     {
@@ -40,7 +42,9 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds a singleton outbound router of the type specified in <typeparamref name="TRouter" /> to the
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TRouter"> The type of the outbound router to add. </typeparam>
+        /// <typeparam name="TRouter">
+        ///     The type of the outbound router to add.
+        /// </typeparam>
         /// <param name="services">
         ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
         ///     to.
@@ -61,7 +65,9 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
         ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -85,7 +91,9 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
         ///     to.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>

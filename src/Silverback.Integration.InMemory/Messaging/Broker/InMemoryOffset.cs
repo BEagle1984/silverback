@@ -10,9 +10,15 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IOffset" />
     public class InMemoryOffset : IComparableOffset
     {
-        /// <summary> Initializes a new instance of the <see cref="InMemoryOffset" /> class. </summary>
-        /// <param name="key"> The unique key of the queue, topic or partition this offset belongs to. </param>
-        /// <param name="offset"> The offset value. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="InMemoryOffset" /> class.
+        /// </summary>
+        /// <param name="key">
+        ///     The unique key of the queue, topic or partition this offset belongs to.
+        /// </param>
+        /// <param name="offset">
+        ///     The offset value.
+        /// </param>
         public InMemoryOffset(string key, int offset)
         {
             Key = key;
@@ -31,33 +37,63 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public int Offset { get; }
 
-        /// <summary> Less than operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Less than operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator <(InMemoryOffset left, InMemoryOffset right) =>
             Comparer<InMemoryOffset>.Default.Compare(left, right) < 0;
 
-        /// <summary> Greater than operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Greater than operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator >(InMemoryOffset left, InMemoryOffset right) =>
             Comparer<InMemoryOffset>.Default.Compare(left, right) > 0;
 
-        /// <summary> Less than or equal operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Less than or equal operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator <=(InMemoryOffset left, InMemoryOffset right) =>
             Comparer<InMemoryOffset>.Default.Compare(left, right) <= 0;
 
-        /// <summary> Greater than or equal operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Greater than or equal operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator >=(InMemoryOffset left, InMemoryOffset right) =>
             Comparer<InMemoryOffset>.Default.Compare(left, right) >= 0;
 
-        /// <summary> Equality operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Equality operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator ==(InMemoryOffset left, InMemoryOffset right)
         {
             if (ReferenceEquals(left, null))
@@ -66,9 +102,15 @@ namespace Silverback.Messaging.Broker
             return left.Equals(right);
         }
 
-        /// <summary> Inequality operator. </summary>
-        /// <param name="left"> Left-hand operand. </param>
-        /// <param name="right"> Right-hand operand. </param>
+        /// <summary>
+        ///     Inequality operator.
+        /// </summary>
+        /// <param name="left">
+        ///     Left-hand operand.
+        /// </param>
+        /// <param name="right">
+        ///     Right-hand operand.
+        /// </param>
         public static bool operator !=(InMemoryOffset left, InMemoryOffset right) => !(left == right);
 
         /// <inheritdoc />
@@ -79,7 +121,9 @@ namespace Silverback.Messaging.Broker
         ///     indicates whether the current instance precedes, follows, or occurs in the same position in the sort
         ///     order as the other object.
         /// </summary>
-        /// <param name="other"> An object to compare with the current instance. </param>
+        /// <param name="other">
+        ///     An object to compare with the current instance.
+        /// </param>
         /// <returns>
         ///     A value less than zero if this is less than object, zero if this is equal to object, or a value
         ///     greater than zero if this is greater than object.

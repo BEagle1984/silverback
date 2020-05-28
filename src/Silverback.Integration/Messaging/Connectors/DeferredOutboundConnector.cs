@@ -25,7 +25,9 @@ namespace Silverback.Messaging.Connectors
         /// <param name="queueWriter">
         ///     The <see cref="IOutboundQueueWriter" /> implementation to be used to enqueue the messages.
         /// </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public DeferredOutboundConnector(
             IOutboundQueueWriter queueWriter,
             ILogger<DeferredOutboundConnector> logger)

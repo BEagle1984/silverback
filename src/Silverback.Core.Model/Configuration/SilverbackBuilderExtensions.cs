@@ -9,14 +9,16 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c> UseModel </c> method to the <see cref="ISilverbackBuilder" />.
+    ///     Adds the <c>
+    ///         UseModel
+    ///     </c> method to the <see cref="ISilverbackBuilder" />.
     /// </summary>
     public static class SilverbackBuilderExtensions
     {
         /// <summary>
-        ///     Registers the default messages model from Silverback.Core.Model package and the specific
-        ///     publishers (<see cref="IEventPublisher" />, <see cref="ICommandPublisher" /> and
-        ///     <see cref="IQueryPublisher" />).
+        ///     Registers the default messages model from Silverback.Core.Model package and the specific publishers
+        ///     (<see cref="IEventPublisher" />, <see cref="ICommandPublisher" /> and <see cref="IQueryPublisher" />
+        ///     ).
         /// </summary>
         /// <param name="builder">
         ///     The <see cref="ISilverbackBuilder" /> to add the model types to.

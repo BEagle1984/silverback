@@ -10,7 +10,9 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Contains the <c> UseDbContext </c> extension for the <see cref="ISilverbackBuilder" />.
+    ///     Contains the <c>
+    ///         UseDbContext
+    ///     </c> extension for the <see cref="ISilverbackBuilder" />.
     /// </summary>
     public static class SilverbackBuilderExtensions
     {

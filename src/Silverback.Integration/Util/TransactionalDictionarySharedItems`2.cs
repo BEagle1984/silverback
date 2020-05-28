@@ -9,8 +9,12 @@ namespace Silverback.Util
     ///     Registered as Singleton holds the actual items list shared between the scoped instances of the
     ///     <see cref="TransactionalDictionary{TKey,TValue}" />.
     /// </summary>
-    /// <typeparam name="TKey"> The type of the keys in the dictionary. </typeparam>
-    /// <typeparam name="TValue"> The type of the values in the dictionary. </typeparam>
+    /// <typeparam name="TKey">
+    ///     The type of the keys in the dictionary.
+    /// </typeparam>
+    /// <typeparam name="TValue">
+    ///     The type of the values in the dictionary.
+    /// </typeparam>
     public sealed class TransactionalDictionarySharedItems<TKey, TValue>
     {
         /// <summary>

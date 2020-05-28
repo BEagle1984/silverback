@@ -30,8 +30,12 @@ namespace Silverback.Messaging.ErrorHandling
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorPolicyBase" /> class.
         /// </summary>
-        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         protected ErrorPolicyBase(
             IServiceProvider serviceProvider,
             ILogger<ErrorPolicyBase> logger)
@@ -46,9 +50,15 @@ namespace Silverback.Messaging.ErrorHandling
 
         /// <summary>
         ///     Restricts the application of this policy to the specified exception type only. It is possible to
-        ///     combine multiple calls to <c> ApplyTo </c> and <c> Exclude </c>.
+        ///     combine multiple calls to <c>
+        ///         ApplyTo
+        ///     </c> and <c>
+        ///         Exclude
+        ///     </c>.
         /// </summary>
-        /// <typeparam name="T"> The type of the exception to be handled. </typeparam>
+        /// <typeparam name="T">
+        ///     The type of the exception to be handled.
+        /// </typeparam>
         /// <returns>
         ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
         /// </returns>
@@ -61,9 +71,15 @@ namespace Silverback.Messaging.ErrorHandling
 
         /// <summary>
         ///     Restricts the application of this policy to the specified exception type only. It is possible to
-        ///     combine multiple calls to <c> ApplyTo </c> and <c> Exclude </c>.
+        ///     combine multiple calls to <c>
+        ///         ApplyTo
+        ///     </c> and <c>
+        ///         Exclude
+        ///     </c>.
         /// </summary>
-        /// <param name="exceptionType"> The type of the exception to be handled. </param>
+        /// <param name="exceptionType">
+        ///     The type of the exception to be handled.
+        /// </param>
         /// <returns>
         ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
         /// </returns>
@@ -75,9 +91,15 @@ namespace Silverback.Messaging.ErrorHandling
 
         /// <summary>
         ///     Restricts the application of this policy to all exceptions but the specified type. It is possible to
-        ///     combine multiple calls to <c> ApplyTo </c> and <c> Exclude </c>.
+        ///     combine multiple calls to <c>
+        ///         ApplyTo
+        ///     </c> and <c>
+        ///         Exclude
+        ///     </c>.
         /// </summary>
-        /// <typeparam name="T"> The type of the exception to be ignored. </typeparam>
+        /// <typeparam name="T">
+        ///     The type of the exception to be ignored.
+        /// </typeparam>
         /// <returns>
         ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
         /// </returns>
@@ -90,9 +112,15 @@ namespace Silverback.Messaging.ErrorHandling
 
         /// <summary>
         ///     Restricts the application of this policy to all exceptions but the specified type. It is possible to
-        ///     combine multiple calls to <c> ApplyTo </c> and <c> Exclude </c>.
+        ///     combine multiple calls to <c>
+        ///         ApplyTo
+        ///     </c> and <c>
+        ///         Exclude
+        ///     </c>.
         /// </summary>
-        /// <param name="exceptionType"> The type of the exception to be ignored. </param>
+        /// <param name="exceptionType">
+        ///     The type of the exception to be ignored.
+        /// </param>
         /// <returns>
         ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
         /// </returns>
@@ -106,7 +134,9 @@ namespace Silverback.Messaging.ErrorHandling
         ///     Specifies a predicate to be used to determine whether the policy has to be applied according to the
         ///     current message and exception.
         /// </summary>
-        /// <param name="applyRule"> The predicate. </param>
+        /// <param name="applyRule">
+        ///     The predicate.
+        /// </param>
         /// <returns>
         ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
         /// </returns>
@@ -122,7 +152,9 @@ namespace Silverback.Messaging.ErrorHandling
         ///     iterations. If multiple policies are chained in an <see cref="ErrorPolicyChain" /> then the next
         ///     policy will be triggered after the allotted amount of retries.
         /// </summary>
-        /// <param name="maxFailedAttempts"> The number of retries. </param>
+        /// <param name="maxFailedAttempts">
+        ///     The number of retries.
+        /// </param>
         /// <returns>
         ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
         /// </returns>
@@ -156,7 +188,9 @@ namespace Silverback.Messaging.ErrorHandling
         ///     Returns a boolean value indicating whether the policy can handle the specified envelope and the
         ///     specified exception.
         /// </summary>
-        /// <param name="envelope"> The envelope that failed to be processed. </param>
+        /// <param name="envelope">
+        ///     The envelope that failed to be processed.
+        /// </param>
         /// <param name="exception">
         ///     The exception that was thrown during the processing.
         /// </param>
@@ -190,7 +224,10 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
                                   $"{exception.GetType().Name} is not in the list of handled exceptions.";
 
-                _logger.LogTrace(EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsNotInlcuded, traceString, envelope);
+                _logger.LogTrace(
+                    EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsNotInlcuded,
+                    traceString,
+                    envelope);
 
                 return false;
             }
@@ -236,9 +273,12 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         /// <summary>
-        ///     Executes the current policy and returns the <see cref="ErrorAction"/> to be performed by the consumer.
+        ///     Executes the current policy and returns the <see cref="ErrorAction" /> to be performed by the
+        ///     consumer.
         /// </summary>
-        /// <param name="envelopes"> The envelopes that failed to be processed. </param>
+        /// <param name="envelopes">
+        ///     The envelopes that failed to be processed.
+        /// </param>
         /// <param name="exception">
         ///     The exception that was thrown during the processing.
         /// </param>

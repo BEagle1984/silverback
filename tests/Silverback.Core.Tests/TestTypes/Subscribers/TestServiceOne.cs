@@ -24,11 +24,12 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public async Task TestOneAsync(TestCommandOne command) =>
-            await Task.Run(async () =>
-            {
-                await Task.Delay(10);
-                return ReceivedMessagesCount++;
-            });
+            await Task.Run(
+                async () =>
+                {
+                    await Task.Delay(10);
+                    return ReceivedMessagesCount++;
+                });
 
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
@@ -41,10 +42,11 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public async Task OnRollback(TransactionAbortedEvent message) =>
-            await Task.Run(async () =>
-            {
-                await Task.Delay(10);
-                return ReceivedMessagesCount++;
-            });
+            await Task.Run(
+                async () =>
+                {
+                    await Task.Delay(10);
+                    return ReceivedMessagesCount++;
+                });
     }
 }

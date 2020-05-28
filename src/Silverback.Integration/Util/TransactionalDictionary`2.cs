@@ -11,8 +11,12 @@ namespace Silverback.Util
     ///     Wraps the changes being made to the underlying <see cref="Dictionary{TKey,TValue}" /> into a
     ///     transaction.
     /// </summary>
-    /// <typeparam name="TKey"> The type of the keys in the dictionary. </typeparam>
-    /// <typeparam name="TValue"> The type of the values in the dictionary. </typeparam>
+    /// <typeparam name="TKey">
+    ///     The type of the keys in the dictionary.
+    /// </typeparam>
+    /// <typeparam name="TValue">
+    ///     The type of the values in the dictionary.
+    /// </typeparam>
     [SuppressMessage("", "CA1711", Justification = "Dictionary suffix is appropriate.")]
     public abstract class TransactionalDictionary<TKey, TValue>
     {
@@ -42,12 +46,18 @@ namespace Silverback.Util
 
         /// <summary>
         ///     Gets the <see cref="Dictionary{TKey,TValue}" /> containing the pending items that will be persisted
-        ///     when <c> Commit </c> is called.
+        ///     when <c>
+        ///         Commit
+        ///     </c> is called.
         /// </summary>
         protected Dictionary<TKey, TValue> UncommittedItems { get; }
 
-        /// <summary> Called to commit the pending changes. </summary>
-        /// <returns> A <see cref="Task" /> representing the asynchronous operation. </returns>
+        /// <summary>
+        ///     Called to commit the pending changes.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
         public virtual Task Commit()
         {
             lock (UncommittedItems)
@@ -63,8 +73,12 @@ namespace Silverback.Util
             return Task.CompletedTask;
         }
 
-        /// <summary> Called to rollback the pending changes. </summary>
-        /// <returns> A <see cref="Task" /> representing the asynchronous operation. </returns>
+        /// <summary>
+        ///     Called to rollback the pending changes.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
         public virtual Task Rollback()
         {
             lock (UncommittedItems)
@@ -75,10 +89,18 @@ namespace Silverback.Util
             return Task.CompletedTask;
         }
 
-        /// <summary> Adds or replaces an item in the dictionary. </summary>
-        /// <param name="key"> The item key. </param>
-        /// <param name="value"> The item value. </param>
-        /// <returns> A <see cref="Task" /> representing the asynchronous operation. </returns>
+        /// <summary>
+        ///     Adds or replaces an item in the dictionary.
+        /// </summary>
+        /// <param name="key">
+        ///     The item key.
+        /// </param>
+        /// <param name="value">
+        ///     The item value.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
         protected Task AddOrReplace(TKey key, TValue value)
         {
             lock (UncommittedItems)
@@ -89,9 +111,15 @@ namespace Silverback.Util
             return Task.CompletedTask;
         }
 
-        /// <summary> Removes the item with the specified key. </summary>
-        /// <param name="key"> The item key. </param>
-        /// <returns> A <see cref="Task" /> representing the asynchronous operation. </returns>
+        /// <summary>
+        ///     Removes the item with the specified key.
+        /// </summary>
+        /// <param name="key">
+        ///     The item key.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
         protected Task Remove(TKey key)
         {
             lock (Items)

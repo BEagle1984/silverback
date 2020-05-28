@@ -39,11 +39,15 @@ namespace Silverback.Messaging.Connectors
         /// <param name="brokerCollection">
         ///     The collection containing the available brokers.
         /// </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         /// <param name="enforceMessageOrder">
         ///     Specifies whether the messages must be produced in the same order as they were added to the queue.
-        ///     If set to <c> true </c> the message order will be ensured, retrying the same message until it can be
-        ///     successfully produced.
+        ///     If set to <c>
+        ///         true
+        ///     </c> the message order will be ensured, retrying the same message until it can be successfully
+        ///     produced.
         /// </param>
         /// <param name="readPackageSize">
         ///     The number of messages to be loaded from the queue at once.
@@ -73,16 +77,25 @@ namespace Silverback.Messaging.Connectors
             }
             catch (Exception ex)
             {
-                _logger.LogError(EventIds.OutboundQueueWorkerErrorWhileProcessingQueue, ex, "Error occurred processing the outbound queue. See inner exception for details.");
+                _logger.LogError(
+                    EventIds.OutboundQueueWorkerErrorWhileProcessingQueue,
+                    ex,
+                    "Error occurred processing the outbound queue. See inner exception for details.");
             }
         }
 
         /// <summary>
         ///     Gets the producer for the specified endpoint and produces the specified message.
         /// </summary>
-        /// <param name="content"> The serialized message content (body). </param>
-        /// <param name="headers"> The collection of message headers. </param>
-        /// <param name="endpoint"> The endpoint to produce to. </param>
+        /// <param name="content">
+        ///     The serialized message content (body).
+        /// </param>
+        /// <param name="headers">
+        ///     The collection of message headers.
+        /// </param>
+        /// <param name="endpoint">
+        ///     The endpoint to produce to.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -95,7 +108,10 @@ namespace Silverback.Messaging.Connectors
 
         private async Task ProcessQueue(IOutboundQueueReader queue, CancellationToken stoppingToken)
         {
-            _logger.LogTrace(EventIds.OutboundQueueWorkerReadingOutboundMessages, "Reading outbound messages from queue (limit: {readPackageSize}).", _readPackageSize);
+            _logger.LogTrace(
+                EventIds.OutboundQueueWorkerReadingOutboundMessages,
+                "Reading outbound messages from queue (limit: {readPackageSize}).",
+                _readPackageSize);
 
             var messages = (await queue.Dequeue(_readPackageSize)).ToList();
 
@@ -104,7 +120,11 @@ namespace Silverback.Messaging.Connectors
 
             for (var i = 0; i < messages.Count; i++)
             {
-                _logger.LogDebug(EventIds.OutboundQueueWorkerProcessingMessage, "Processing message {currentMessageIndex} of {totalMessages}.", i + 1, messages.Count);
+                _logger.LogDebug(
+                    EventIds.OutboundQueueWorkerProcessingMessage,
+                    "Processing message {currentMessageIndex} of {totalMessages}.",
+                    i + 1,
+                    messages.Count);
                 await ProcessMessage(messages[i], queue);
 
                 if (stoppingToken.IsCancellationRequested)

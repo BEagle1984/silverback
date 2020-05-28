@@ -54,7 +54,10 @@ namespace Silverback.Messaging.Diagnostics
             }
             catch (Exception ex)
             {
-                logger?.LogWarning(EventIds.ActivityConsumerBehaviorFailedToInitializeFromHeaders, ex, "Failed to initialize the current activity from the message headers.");
+                logger?.LogWarning(
+                    EventIds.ActivityConsumerBehaviorFailedToInitializeFromHeaders,
+                    ex,
+                    "Failed to initialize the current activity from the message headers.");
             }
 
             activity.Start();

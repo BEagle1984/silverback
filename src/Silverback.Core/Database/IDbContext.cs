@@ -6,15 +6,18 @@ using System.Threading.Tasks;
 namespace Silverback.Database
 {
     /// <summary>
-    ///     Abstracts the <c> DbContext </c> functionality to allow for multiple and decoupled
-    ///     implementations.
+    ///     Abstracts the <c>
+    ///         DbContext
+    ///     </c> functionality to allow for multiple and decoupled implementations.
     /// </summary>
     public interface IDbContext
     {
         /// <summary>
         ///     Returns an <see cref="IDbSet{TEntity}" /> for the specified entity type.
         /// </summary>
-        /// <typeparam name="TEntity"> The type of the entity. </typeparam>
+        /// <typeparam name="TEntity">
+        ///     The type of the entity.
+        /// </typeparam>
         /// <returns>
         ///     An <see cref="IDbSet{TEntity}" />.
         /// </returns>

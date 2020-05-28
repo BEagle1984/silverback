@@ -9,8 +9,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Serialization
 {
     /// <summary>
-    ///     Serializes and deserializes the messages of type <typeparamref name="TMessage" /> in JSON
-    ///     format.
+    ///     Serializes and deserializes the messages of type <typeparamref name="TMessage" /> in JSON format.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the messages to be serialized and/or deserialized.

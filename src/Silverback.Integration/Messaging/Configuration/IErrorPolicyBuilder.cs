@@ -15,7 +15,9 @@ namespace Silverback.Messaging.Configuration
         ///     Creates a chain of multiple policies to be applied one after the other to handle the processing
         ///     error.
         /// </summary>
-        /// <param name="policies"> The policies to be sequentially applied. </param>
+        /// <param name="policies">
+        ///     The policies to be sequentially applied.
+        /// </param>
         /// <returns>
         ///     The created <see cref="ErrorPolicyChain" /> initialized with the specified policies.
         /// </returns>
@@ -24,11 +26,15 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Creates a retry policy to simply try again the message processing in case of processing errors.
         /// </summary>
-        /// <param name="initialDelay"> The optional delay between each retry. </param>
+        /// <param name="initialDelay">
+        ///     The optional delay between each retry.
+        /// </param>
         /// <param name="delayIncrement">
         ///     The optional increment to be added to the initial delay at each retry.
         /// </param>
-        /// <returns> The created <see cref="RetryErrorPolicy" />. </returns>
+        /// <returns>
+        ///     The created <see cref="RetryErrorPolicy" />.
+        /// </returns>
         RetryErrorPolicy Retry(TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null);
 
         /// <summary>
@@ -42,7 +48,9 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Creates a move policy to forward the message to another endpoint in case of processing errors.
         /// </summary>
-        /// <param name="endpoint"> The endpoint to move the message to. </param>
+        /// <param name="endpoint">
+        ///     The endpoint to move the message to.
+        /// </param>
         /// <returns>
         ///     The created <see cref="MoveMessageErrorPolicy" />.
         /// </returns>

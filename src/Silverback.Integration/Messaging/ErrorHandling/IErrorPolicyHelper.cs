@@ -20,19 +20,19 @@ namespace Silverback.Messaging.ErrorHandling
         ///     The context that is passed along the behaviors pipeline.
         /// </param>
         /// <param name="errorPolicy">
-        ///     The error policy to be applied. If no policy is provided the consumer will be stopped whenever
-        ///     an exception is thrown by the message handler delegete.
+        ///     The error policy to be applied. If no policy is provided the consumer will be stopped whenever an
+        ///     exception is thrown by the message handler delegete.
         /// </param>
         /// <param name="messagesHandler">
         ///     The delegate to be invoked to process the message.
         /// </param>
         /// <param name="commitHandler">
-        ///     The delegate to be invoked to commit the message processing (against the database and the
-        ///     message broker).
+        ///     The delegate to be invoked to commit the message processing (against the database and the message
+        ///     broker).
         /// </param>
         /// <param name="rollbackHandler">
-        ///     The delegate to be invoked to rollback the pending operations (against the database and the
-        ///     message broker) in case of exception.
+        ///     The delegate to be invoked to rollback the pending operations (against the database and the message
+        ///     broker) in case of exception.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.

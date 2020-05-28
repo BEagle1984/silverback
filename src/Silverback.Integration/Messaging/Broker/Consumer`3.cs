@@ -25,12 +25,18 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="callback"> The delegate to be invoked when a message is received. </param>
-        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
+        /// <param name="callback">
+        ///     The delegate to be invoked when a message is received.
+        /// </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be added to the pipeline.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         protected Consumer(
             TBroker broker,
             TEndpoint endpoint,
@@ -53,7 +59,8 @@ namespace Silverback.Messaging.Broker
         protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
 
         /// <inheritdoc />
-        public override Task Commit(IReadOnlyCollection<IOffset> offsets) => CommitCore(offsets.Cast<TOffset>().ToList());
+        public override Task Commit(IReadOnlyCollection<IOffset> offsets) =>
+            CommitCore(offsets.Cast<TOffset>().ToList());
 
         /// <inheritdoc />
         public override Task Rollback(IReadOnlyCollection<IOffset> offsets) =>
@@ -64,11 +71,13 @@ namespace Silverback.Messaging.Broker
         ///         Confirms that the messages at the specified offsets have been successfully processed.
         ///     </param>
         ///     <param>
-        ///         The acknowledgement will be sent to the message broker and the message will never be
-        ///         processed again (by the same logical consumer / consumer group).
+        ///         The acknowledgement will be sent to the message broker and the message will never be processed
+        ///         again (by the same logical consumer / consumer group).
         ///     </param>
         /// </summary>
-        /// <param name="offsets"> The offsets to be committed. </param>
+        /// <param name="offsets">
+        ///     The offsets to be committed.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -79,11 +88,13 @@ namespace Silverback.Messaging.Broker
         ///         Notifies that an error occured while processing the messages at the specified offsets.
         ///     </param>
         ///     <param>
-        ///         If necessary the information will be sent to the message broker to ensure that the message
-        ///         will be re-processed.
+        ///         If necessary the information will be sent to the message broker to ensure that the message will
+        ///         be re-processed.
         ///     </param>
         /// </summary>
-        /// <param name="offsets"> The offsets to be rolled back. </param>
+        /// <param name="offsets">
+        ///     The offsets to be rolled back.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>

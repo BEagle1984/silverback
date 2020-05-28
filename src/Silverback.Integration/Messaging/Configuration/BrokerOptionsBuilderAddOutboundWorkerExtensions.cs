@@ -14,26 +14,28 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c> AddOutboundWorker </c> and related methods to the
-    ///     <see cref="IBrokerOptionsBuilder" />.
+    ///     Adds the <c>
+    ///         AddOutboundWorker
+    ///     </c> and related methods to the <see cref="IBrokerOptionsBuilder" />.
     /// </summary>
     public static class BrokerOptionsBuilderAddOutboundWorkerExtensions
     {
         /// <summary>
-        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured
-        ///     broker.
+        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <param name="brokerOptionsBuilder">
-        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" />
-        ///     to add the services to.
+        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
         /// </param>
         /// <param name="interval">
         ///     The interval between each run (default is 500ms).
         /// </param>
         /// <param name="enforceMessageOrder">
         ///     Specifies whether the messages must be produced in the same order as they were added to the queue.
-        ///     If set to <c> true </c> the message order will be ensured, retrying the same message until it
-        ///     can be successfully produced.
+        ///     If set to <c>
+        ///         true
+        ///     </c> the message order will be ensured, retrying the same message until it can be successfully
+        ///     produced.
         /// </param>
         /// <param name="readPackageSize">
         ///     The number of messages to be loaded from the queue at once.
@@ -76,22 +78,23 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured
-        ///     broker.
+        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <typeparam name="TQueueReader">
         ///     The type of the <see cref="IOutboundQueueReader" /> to be used.
         /// </typeparam>
         /// <param name="brokerOptionsBuilder">
-        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" />
-        ///     to add the services to.
+        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
         /// </param>
         /// <param name="interval">
         ///     The interval between each run (default is 500ms).
         /// </param>
         /// <param name="enforceMessageOrder">
-        ///     If set to <c> true </c> the message order will be ensured, retrying the same message until it
-        ///     can be successfully produced.
+        ///     If set to <c>
+        ///         true
+        ///     </c> the message order will be ensured, retrying the same message until it can be successfully
+        ///     produced.
         /// </param>
         /// <param name="readPackageSize">
         ///     The number of messages to be loaded from the queue at once.
@@ -125,19 +128,20 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured
-        ///     broker.
+        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <param name="brokerOptionsBuilder">
-        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" />
-        ///     to add the services to.
+        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
         /// </param>
         /// <param name="interval">
         ///     The interval between each run (default is 500ms).
         /// </param>
         /// <param name="enforceMessageOrder">
-        ///     If set to <c> true </c> the message order will be ensured, retrying the same message until it
-        ///     can be successfully produced.
+        ///     If set to <c>
+        ///         true
+        ///     </c> the message order will be ensured, retrying the same message until it can be successfully
+        ///     produced.
         /// </param>
         /// <param name="readPackageSize">
         ///     The number of messages to be loaded from the queue at once.
@@ -167,19 +171,22 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured
-        ///     broker.
+        ///     Adds an <see cref="OutboundQueueWorker" /> to publish the queued messages to the configured broker.
         /// </summary>
         /// <param name="brokerOptionsBuilder">
-        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" />
-        ///     to add the services to.
+        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
         /// </param>
-        /// <param name="distributedLockSettings"> The settings for the locking mechanism. </param>
+        /// <param name="distributedLockSettings">
+        ///     The settings for the locking mechanism.
+        /// </param>
         /// <param name="interval">
         ///     The interval between each run (default is 500ms).
         /// </param>
         /// <param name="enforceMessageOrder">
-        ///     if set to <c> true </c> the message order will be preserved (no message will be skipped).
+        ///     if set to <c>
+        ///         true
+        ///     </c> the message order will be preserved (no message will be skipped).
         /// </param>
         /// <param name="readPackageSize">
         ///     The number of messages to be loaded from the queue at once.

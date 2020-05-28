@@ -35,8 +35,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
                 _ => Task.CompletedTask);
 
-            envelope.Headers.Should().NotContain(
-                h => h.Name == "x-kafka-message-key");
+            envelope.Headers.Should().NotContain(h => h.Name == "x-kafka-message-key");
         }
 
         [Fact]

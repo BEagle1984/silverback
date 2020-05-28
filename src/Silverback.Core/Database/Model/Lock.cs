@@ -9,7 +9,7 @@ using Silverback.Background;
 namespace Silverback.Database.Model
 {
     /// <summary>
-    ///     The entity written in the locks table by the <see cref="DbDistributedLockManager"/>.
+    ///     The entity written in the locks table by the <see cref="DbDistributedLockManager" />.
     /// </summary>
     public class Lock
     {

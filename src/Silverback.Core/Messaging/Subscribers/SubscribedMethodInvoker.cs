@@ -118,11 +118,11 @@ namespace Silverback.Messaging.Subscribers
             IEnumerable<object> messages) =>
             messages.Where(message => filters.All(filter => filter.MustProcess(message)));
 
-        private object?[] GetShiftedParameterValuesArray(SubscribedMethod methodInfo) =>
-            new object[1].Concat(_argumentsResolver.GetAdditionalParameterValues(methodInfo))
-                .ToArray();
-
-        private static Task<object?> Invoke(object target, SubscribedMethod method, object?[] parameters, bool executeAsync) =>
+        private static Task<object?> Invoke(
+            object target,
+            SubscribedMethod method,
+            object?[] parameters,
+            bool executeAsync) =>
             executeAsync
                 ? InvokeAsync(target, method, parameters)
                 : Task.FromResult(InvokeSync(target, method, parameters));
@@ -148,5 +148,9 @@ namespace Silverback.Messaging.Subscribers
             var result = method.MethodInfo.Invoke(target, parameters);
             return ((Task)result).GetReturnValue();
         }
+
+        private object?[] GetShiftedParameterValuesArray(SubscribedMethod methodInfo) =>
+            new object[1].Concat(_argumentsResolver.GetAdditionalParameterValues(methodInfo))
+                .ToArray();
     }
 }

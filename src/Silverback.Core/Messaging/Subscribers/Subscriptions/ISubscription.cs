@@ -12,12 +12,15 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
     /// </summary>
     public interface ISubscription
     {
-        /// <summary> Gets the <see cref="SubscribedMethod" /> collection. </summary>
+        /// <summary>
+        ///     Gets the <see cref="SubscribedMethod" /> collection.
+        /// </summary>
         /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" /> to be used to resolve the required
-        ///     services.
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
-        /// <returns> A collection of <see cref="SubscribedMethod" />. </returns>
+        /// <returns>
+        ///     A collection of <see cref="SubscribedMethod" />.
+        /// </returns>
         IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider);
     }
 }

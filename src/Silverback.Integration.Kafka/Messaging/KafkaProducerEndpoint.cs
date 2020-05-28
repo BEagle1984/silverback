@@ -7,11 +7,17 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging
 {
-    /// <summary> Represents a topic to produce to. </summary>
+    /// <summary>
+    ///     Represents a topic to produce to.
+    /// </summary>
     public sealed class KafkaProducerEndpoint : ProducerEndpoint, IEquatable<KafkaProducerEndpoint>
     {
-        /// <summary> Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class. </summary>
-        /// <param name="name"> The name of the topic. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="name">
+        ///     The name of the topic.
+        /// </param>
         public KafkaProducerEndpoint(string name)
             : base(name)
         {

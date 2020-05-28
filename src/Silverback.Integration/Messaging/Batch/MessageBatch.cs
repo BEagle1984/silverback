@@ -73,9 +73,9 @@ namespace Silverback.Messaging.Batch
             _logger = serviceProvider.GetRequiredService<ILogger<MessageBatch>>();
         }
 
-        public Guid CurrentBatchId { get; private set; }
-
         public int CurrentSize => _envelopes.Count;
+
+        public Guid CurrentBatchId { get; private set; }
 
         public void BindOnce(
             ConsumerBehaviorHandler messagesHandler,

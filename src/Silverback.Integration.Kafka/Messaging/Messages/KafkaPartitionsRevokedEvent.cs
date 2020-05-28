@@ -6,7 +6,9 @@ using Confluent.Kafka;
 
 namespace Silverback.Messaging.Messages
 {
-    /// <summary> The event published prior to a group partition assignment being revoked. </summary>
+    /// <summary>
+    ///     The event published prior to a group partition assignment being revoked.
+    /// </summary>
     /// <remarks>
     ///     Corresponding to each of this events there will be a <see cref="KafkaPartitionsAssignedEvent" />.
     /// </remarks>
@@ -19,7 +21,9 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="Confluent.Kafka.TopicPartitionOffset" /> representing the set of
         ///     partitions the consumer is currently assigned to.
         /// </param>
-        /// <param name="memberId"> The (dynamic) group member id of this consumer (as set by the broker). </param>
+        /// <param name="memberId">
+        ///     The (dynamic) group member id of this consumer (as set by the broker).
+        /// </param>
         public KafkaPartitionsRevokedEvent(
             IReadOnlyCollection<TopicPartitionOffset> partitions,
             string memberId)
@@ -35,7 +39,9 @@ namespace Silverback.Messaging.Messages
         /// </summary>
         public IReadOnlyCollection<TopicPartitionOffset> Partitions { get; }
 
-        /// <summary> Gets the (dynamic) group member id of this consumer (as set by the broker). </summary>
+        /// <summary>
+        ///     Gets the (dynamic) group member id of this consumer (as set by the broker).
+        /// </summary>
         public string MemberId { get; }
     }
 }

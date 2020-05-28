@@ -17,7 +17,9 @@ namespace Silverback.Messaging.HealthChecks
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboundQueueHealthCheckService" /> class.
         /// </summary>
-        /// <param name="queueReader"> The <see cref="IOutboundQueueReader" />. </param>
+        /// <param name="queueReader">
+        ///     The <see cref="IOutboundQueueReader" />.
+        /// </param>
         public OutboundQueueHealthCheckService(IOutboundQueueReader queueReader)
         {
             _queueReader = queueReader;

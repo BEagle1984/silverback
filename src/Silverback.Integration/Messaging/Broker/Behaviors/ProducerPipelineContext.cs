@@ -26,13 +26,13 @@ namespace Silverback.Messaging.Broker.Behaviors
         }
 
         /// <summary>
-        ///     Gets or sets the envelope containing the message to be produced.
-        /// </summary>
-        public IOutboundEnvelope Envelope { get; set; }
-
-        /// <summary>
         ///     Gets the <see cref="IProducer" /> that triggered this pipeline.
         /// </summary>
         public IProducer Producer { get; }
+
+        /// <summary>
+        ///     Gets or sets the envelope containing the message to be produced.
+        /// </summary>
+        public IOutboundEnvelope Envelope { get; set; }
     }
 }

@@ -10,8 +10,13 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c> AddTransientSubscriber </c>, <c> AddScopedSubscriber </c> and
-    ///     <c> AddSingletonSubscriber </c> methods to the <see cref="ISilverbackBuilder" />.
+    ///     Adds the <c>
+    ///         AddTransientSubscriber
+    ///     </c>, <c>
+    ///         AddScopedSubscriber
+    ///     </c> and <c>
+    ///         AddSingletonSubscriber
+    ///     </c> methods to the <see cref="ISilverbackBuilder" />.
     /// </summary>
     public static class ServiceCollectionAddSubscriberExtensions
     {
@@ -51,8 +56,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register and the implementation to use.
@@ -71,10 +76,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
@@ -87,10 +94,12 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
@@ -100,13 +109,13 @@ namespace Microsoft.Extensions.DependencyInjection
             AddTransientSubscriber<ISubscriber, TSubscriber>(services);
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -114,7 +123,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -136,18 +147,20 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -158,19 +171,23 @@ namespace Microsoft.Extensions.DependencyInjection
             AddTransientSubscriber(services, typeof(ISubscriber), subscriberType, implementationFactory);
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -181,16 +198,20 @@ namespace Microsoft.Extensions.DependencyInjection
             AddTransientSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationFactory);
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -205,8 +226,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -237,8 +258,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register and the implementation to use.
@@ -256,10 +277,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
@@ -272,10 +295,12 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
@@ -285,13 +310,13 @@ namespace Microsoft.Extensions.DependencyInjection
             AddScopedSubscriber<ISubscriber, TSubscriber>(services);
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -299,7 +324,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -321,18 +348,20 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -343,19 +372,23 @@ namespace Microsoft.Extensions.DependencyInjection
             AddScopedSubscriber(services, typeof(ISubscriber), subscriberType, implementationFactory);
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -366,16 +399,20 @@ namespace Microsoft.Extensions.DependencyInjection
             AddScopedSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationFactory);
 
         /// <summary>
-        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -390,8 +427,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -422,8 +459,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register and the implementation to use.
@@ -440,13 +477,15 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -459,10 +498,12 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -472,12 +513,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
         /// <summary>
         ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     factory specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -485,7 +526,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -508,17 +551,19 @@ namespace Microsoft.Extensions.DependencyInjection
 
         /// <summary>
         ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     factory specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -530,18 +575,22 @@ namespace Microsoft.Extensions.DependencyInjection
 
         /// <summary>
         ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     factory specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
         /// </typeparam>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -553,15 +602,19 @@ namespace Microsoft.Extensions.DependencyInjection
 
         /// <summary>
         ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     factory specified in <paramref name="implementationFactory" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TSubscriber"> The type of the subscriber to add. </typeparam>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -573,12 +626,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
         /// <summary>
         ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
-        ///     instance specified in <paramref name="implementationInstance" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     instance specified in <paramref name="implementationInstance" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="baseType">
         ///     The subscribers base class or interface.
@@ -586,7 +639,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -607,17 +662,19 @@ namespace Microsoft.Extensions.DependencyInjection
 
         /// <summary>
         ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
-        ///     instance specified in <paramref name="implementationInstance" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     instance specified in <paramref name="implementationInstance" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="subscriberType">
         ///     The type of the subscriber to register.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -628,10 +685,9 @@ namespace Microsoft.Extensions.DependencyInjection
             AddSingletonSubscriber(services, typeof(ISubscriber), subscriberType, implementationInstance);
 
         /// <summary>
-        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with
-        ///     an
-        ///     instance specified in <paramref name="implementationInstance" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TBase">
         ///     The subscribers base class or interface.
@@ -640,10 +696,12 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The type of the subscriber to register.
         /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -654,19 +712,20 @@ namespace Microsoft.Extensions.DependencyInjection
             AddSingletonSubscriber(services, typeof(TBase), typeof(TSubscriber), implementationInstance);
 
         /// <summary>
-        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with
-        ///     an
-        ///     instance specified in <paramref name="implementationInstance" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <typeparam name="TSubscriber">
         ///     The type of the subscriber to register.
         /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>

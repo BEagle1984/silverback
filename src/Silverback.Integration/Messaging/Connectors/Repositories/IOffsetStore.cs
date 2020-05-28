@@ -12,9 +12,15 @@ namespace Silverback.Messaging.Connectors.Repositories
     /// </summary>
     public interface IOffsetStore : ITransactional
     {
-        /// <summary> Stores the offset of the processed message. </summary>
-        /// <param name="offset"> The offset to be stored. </param>
-        /// <param name="endpoint"> The endpoint the offset belongs to. </param>
+        /// <summary>
+        ///     Stores the offset of the processed message.
+        /// </summary>
+        /// <param name="offset">
+        ///     The offset to be stored.
+        /// </param>
+        /// <param name="endpoint">
+        ///     The endpoint the offset belongs to.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>

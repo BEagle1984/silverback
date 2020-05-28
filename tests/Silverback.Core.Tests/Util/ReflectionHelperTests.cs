@@ -50,6 +50,12 @@ namespace Silverback.Tests.Core.Util
             methodInfo!.ReturnsTask().Should().BeTrue();
         }
 
+        private static void NotAsyncWithVoid()
+        {
+        }
+
+        private static Task NotAsyncWithTask() => Task.CompletedTask;
+
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
         private static async Task AsyncWithTask()
@@ -61,11 +67,5 @@ namespace Silverback.Tests.Core.Util
         }
 
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-
-        private static void NotAsyncWithVoid()
-        {
-        }
-
-        private static Task NotAsyncWithTask() => Task.CompletedTask;
     }
 }

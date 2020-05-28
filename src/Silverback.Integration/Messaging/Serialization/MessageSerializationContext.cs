@@ -13,23 +13,35 @@ namespace Silverback.Messaging.Serialization
         ///     Initializes a new instance of the <see cref="MessageSerializationContext" /> class from the provided
         ///     <see cref="IEndpoint" />.
         /// </summary>
-        /// <param name="endpoint"> The related endpoint configuration. </param>
-        /// <param name="actualEndpointName"> The name of the actual related endpoint. </param>
+        /// <param name="endpoint">
+        ///     The related endpoint configuration.
+        /// </param>
+        /// <param name="actualEndpointName">
+        ///     The name of the actual related endpoint.
+        /// </param>
         public MessageSerializationContext(IEndpoint? endpoint, string? actualEndpointName = null)
         {
             Endpoint = endpoint;
             ActualEndpointName = actualEndpointName ?? endpoint?.Name;
         }
 
-        /// <summary> Gets the default instance of an empty context. </summary>
+        /// <summary>
+        ///     Gets the default instance of an empty context.
+        /// </summary>
         public static MessageSerializationContext Empty { get; } = new MessageSerializationContext(null);
 
-        /// <summary> Gets the related endpoint configuration. </summary>
+        /// <summary>
+        ///     Gets the related endpoint configuration.
+        /// </summary>
         public IEndpoint? Endpoint { get; }
 
         /// <summary>
-        ///     Gets the name of the actual endpoint (in case the <c> Endpoint </c> configuration points to multiple
-        ///     endpoints, for example if consuming multiple topics with a single <c> KafkaConsumer </c>).
+        ///     Gets the name of the actual endpoint (in case the <c>
+        ///         Endpoint
+        ///     </c> configuration points to multiple endpoints, for example if consuming multiple topics with a
+        ///     single <c>
+        ///         KafkaConsumer
+        ///     </c>).
         /// </summary>
         public string? ActualEndpointName { get; }
     }

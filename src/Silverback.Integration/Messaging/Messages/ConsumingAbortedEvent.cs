@@ -12,13 +12,13 @@ namespace Silverback.Messaging.Messages
     public class ConsumingAbortedEvent : ConsumingEvent
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConsumingAbortedEvent"/> class.
+        ///     Initializes a new instance of the <see cref="ConsumingAbortedEvent" /> class.
         /// </summary>
         /// <param name="context">
         ///     The context that is passed along the consumer behaviors pipeline.
         /// </param>
         /// <param name="exception">
-        ///    The <see cref="Exception" /> that was thrown while trying to process the messages.
+        ///     The <see cref="Exception" /> that was thrown while trying to process the messages.
         /// </param>
         public ConsumingAbortedEvent(ConsumerPipelineContext context, Exception exception)
             : base(context)

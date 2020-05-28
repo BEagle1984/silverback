@@ -10,8 +10,9 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c> AddInboundConnector </c> and related methods to the
-    ///     <see cref="IBrokerOptionsBuilder" />.
+    ///     Adds the <c>
+    ///         AddInboundConnector
+    ///     </c> and related methods to the <see cref="IBrokerOptionsBuilder" />.
     /// </summary>
     public static class BrokerOptionsBuilderAddInboundConnectorExtensions
     {

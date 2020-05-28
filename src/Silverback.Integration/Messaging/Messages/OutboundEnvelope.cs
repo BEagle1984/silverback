@@ -23,10 +23,10 @@ namespace Silverback.Messaging.Messages
             AutoUnwrap = autoUnwrap;
         }
 
-        public object? Message { get; set; }
-
         public bool AutoUnwrap { get; }
 
         public Type? OutboundConnectorType { get; }
+
+        public object? Message { get; set; }
     }
 }

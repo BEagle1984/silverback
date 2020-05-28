@@ -17,20 +17,21 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c> AddBroker </c> method to the <see cref="IBrokerOptionsBuilder" />.
+    ///     Adds the <c>
+    ///         AddBroker
+    ///     </c> method to the <see cref="IBrokerOptionsBuilder" />.
     /// </summary>
     public static class BrokerOptionsBuilderAddBrokerExtensions
     {
         /// <summary>
-        ///     Adds the specified <see cref="IBroker" /> implementation to allow producing and consuming
-        ///     messages.
+        ///     Adds the specified <see cref="IBroker" /> implementation to allow producing and consuming messages.
         /// </summary>
         /// <typeparam name="TBroker">
         ///     The type of the <see cref="IBroker" /> implementation to add.
         /// </typeparam>
         /// <param name="brokerOptionsBuilder">
-        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" />
-        ///     to add the services to.
+        ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+        ///     add the services to.
         /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.

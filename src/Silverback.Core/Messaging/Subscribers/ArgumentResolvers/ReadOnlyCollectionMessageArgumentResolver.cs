@@ -8,7 +8,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
     /// <summary>
-    ///     Resolves the parameters declared as <see cref="IReadOnlyCollection{T}" /> where <c> T </c> is
+    ///     Resolves the parameters declared as <see cref="IReadOnlyCollection{T}" /> where <c>T</c> is
     ///     compatible with the type of the message being published.
     /// </summary>
     public class ReadOnlyCollectionMessageArgumentResolver : IEnumerableMessageArgumentResolver

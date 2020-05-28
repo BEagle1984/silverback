@@ -23,7 +23,9 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="Confluent.Kafka.TopicPartitionOffset" /> representing the assigned
         ///     partitions.
         /// </param>
-        /// <param name="memberId"> The (dynamic) group member id of this consumer (as set by the broker). </param>
+        /// <param name="memberId">
+        ///     The (dynamic) group member id of this consumer (as set by the broker).
+        /// </param>
         public KafkaPartitionsAssignedEvent(
             IReadOnlyCollection<TopicPartition> partitions,
             string memberId)
@@ -37,7 +39,9 @@ namespace Silverback.Messaging.Messages
             MemberId = memberId;
         }
 
-        /// <summary> Gets the (dynamic) group member id of this consumer (as set by the broker). </summary>
+        /// <summary>
+        ///     Gets the (dynamic) group member id of this consumer (as set by the broker).
+        /// </summary>
         public string MemberId { get; }
 
         /// <summary>

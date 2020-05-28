@@ -7,6 +7,12 @@ namespace Silverback.Tests.Integration.TestTypes.Domain
 {
     public class TestEventWithHeaders : IIntegrationEvent, ITestEventWithHeaders
     {
+        [Header("x-readonly-string")]
+        public string ReadOnlyStringHeader { get; } = "readonly";
+
+        [Header("x-readonly-int")]
+        public int ReadOnlyIntHeader { get; } = 42;
+
         public string? Content { get; set; }
 
         [Header("x-string")]
@@ -15,17 +21,11 @@ namespace Silverback.Tests.Integration.TestTypes.Domain
         [Header("x-string-default", PublishDefaultValue = true)]
         public string? StringHeaderWithDefault { get; set; }
 
-        [Header("x-readonly-string")]
-        public string ReadOnlyStringHeader { get; } = "readonly";
-
         [Header("x-int")]
         public int IntHeader { get; set; }
 
         [Header("x-int-default", PublishDefaultValue = true)]
         public int IntHeaderWithDefault { get; set; }
-
-        [Header("x-readonly-int")]
-        public int ReadOnlyIntHeader { get; } = 42;
 
         public string? InheritedHeader { get; set; }
     }

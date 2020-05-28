@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         : TransactionalList<QueuedMessage>, IOutboundQueueWriter, IOutboundQueueReader
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InMemoryOutboundQueue"/> class.
+        ///     Initializes a new instance of the <see cref="InMemoryOutboundQueue" /> class.
         /// </summary>
         /// <param name="sharedItems">
         ///     The messages shared between the instances of this repository.

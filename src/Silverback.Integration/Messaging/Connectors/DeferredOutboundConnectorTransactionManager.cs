@@ -10,12 +10,15 @@ using Silverback.Messaging.Subscribers;
 namespace Silverback.Messaging.Connectors
 {
     /// <summary>
-    ///     Manages the consumer transaction calling <c> Commit </c> or <c> Rollback </c> on the
-    ///     <see cref="IOutboundQueueWriter" /> when the database transaction is being completed.
+    ///     Manages the consumer transaction calling <c>
+    ///         Commit
+    ///     </c> or <c>
+    ///         Rollback
+    ///     </c> on the <see cref="IOutboundQueueWriter" /> when the database transaction is being completed.
     /// </summary>
     /// <remarks>
-    ///     This isn't even necessary if using EF Core and the <see cref="DbOutboundQueueWriter" />, since it
-    ///     is already implicitly taking part in the save changes transaction.
+    ///     This isn't even necessary if using EF Core and the <see cref="DbOutboundQueueWriter" />, since it is
+    ///     already implicitly taking part in the save changes transaction.
     /// </remarks>
     public class DeferredOutboundConnectorTransactionManager : ISubscriber
     {

@@ -15,7 +15,9 @@ namespace Silverback.Messaging.Encryption
         /// <summary>
         ///     Initializes a new instance of the <see cref="SymmetricMessageDecryptor" /> class.
         /// </summary>
-        /// <param name="settings"> The encryption settings. </param>
+        /// <param name="settings">
+        ///     The encryption settings.
+        /// </param>
         public SymmetricMessageDecryptor(SymmetricEncryptionSettings settings)
             : base(settings)
         {

@@ -11,7 +11,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Subscribers.Subscriptions
 {
     /// <summary>
-    ///     Represents a subscription based on a type (e.g. <see cref="ISubscriber"/>).
+    ///     Represents a subscription based on a type (e.g. <see cref="ISubscriber" />).
     /// </summary>
     internal class TypeSubscription : ISubscription
     {
@@ -33,15 +33,6 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 .SelectMany(GetSubscribedMethods)
                 .ToList();
 
-        private IEnumerable<SubscribedMethod> GetSubscribedMethods(object subscriber)
-        {
-            var targetType = subscriber.GetType();
-
-            return GetMethods(targetType)
-                .Select(methodInfo => GetSubscribedMethod(targetType, methodInfo))
-                .ToList();
-        }
-
         private static SubscribedMethod GetSubscribedMethod(Type targetType, MethodInfo methodInfo)
         {
             var subscribeAttribute = methodInfo.GetCustomAttribute<SubscribeAttribute>();
@@ -52,6 +43,15 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 subscribeAttribute?.Exclusive,
                 subscribeAttribute?.Parallel,
                 subscribeAttribute?.MaxDegreeOfParallelism);
+        }
+
+        private IEnumerable<SubscribedMethod> GetSubscribedMethods(object subscriber)
+        {
+            var targetType = subscriber.GetType();
+
+            return GetMethods(targetType)
+                .Select(methodInfo => GetSubscribedMethod(targetType, methodInfo))
+                .ToList();
         }
 
         // Methods decorated with [Subscribe] can be declared in a base class.

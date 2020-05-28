@@ -23,7 +23,9 @@ namespace Silverback.Messaging.Connectors.Behaviors
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboundProducerBehavior" /> class.
         /// </summary>
-        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
         public OutboundProducerBehavior(IServiceProvider serviceProvider)
         {
             _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>().ToList();

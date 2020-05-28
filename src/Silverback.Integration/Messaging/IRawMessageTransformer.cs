@@ -15,7 +15,9 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Transforms the specified message.
         /// </summary>
-        /// <param name="message"> The message to be transformed. </param>
+        /// <param name="message">
+        ///     The message to be transformed.
+        /// </param>
         /// <param name="headers">
         ///     The headers collections (can be modified by the transformer).
         /// </param>

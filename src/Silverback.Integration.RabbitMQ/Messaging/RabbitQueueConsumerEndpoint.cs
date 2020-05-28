@@ -8,13 +8,17 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Silverback.Messaging
 {
-    /// <summary> Represents a queue to consume from. </summary>
+    /// <summary>
+    ///     Represents a queue to consume from.
+    /// </summary>
     public sealed class RabbitQueueConsumerEndpoint : RabbitConsumerEndpoint, IEquatable<RabbitQueueConsumerEndpoint>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitQueueConsumerEndpoint" /> class.
         /// </summary>
-        /// <param name="name"> The name of the queue. </param>
+        /// <param name="name">
+        ///     The name of the queue.
+        /// </param>
         public RabbitQueueConsumerEndpoint(string name)
             : base(name)
         {

@@ -22,15 +22,17 @@ namespace Silverback.Messaging.Messages
 
         public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(
             this Confluent.Kafka.Headers kafkaHeaders) =>
-            kafkaHeaders.Select(kafkaHeader =>
-                    new MessageHeader(
-                        kafkaHeader.Key,
-                        Decode(kafkaHeader.GetValueBytes())))
+            kafkaHeaders.Select(
+                    kafkaHeader =>
+                        new MessageHeader(
+                            kafkaHeader.Key,
+                            Decode(kafkaHeader.GetValueBytes())))
                 .ToList();
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private static byte[]? Encode(string? value) => value != null ? Encoding.GetBytes(value)
-                : null;
+        private static byte[]? Encode(string? value) => value != null
+            ? Encoding.GetBytes(value)
+            : null;
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private static string? Decode(byte[]? value) => value != null ? Encoding.GetString(value) : null;

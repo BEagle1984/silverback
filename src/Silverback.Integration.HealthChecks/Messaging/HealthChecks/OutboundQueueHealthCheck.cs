@@ -18,22 +18,27 @@ namespace Silverback.Messaging.HealthChecks
         private readonly IOutboundQueueHealthCheckService _service;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OutboundQueueHealthCheck"/> class.
+        ///     Initializes a new instance of the <see cref="OutboundQueueHealthCheck" /> class.
         /// </summary>
-        /// <param name="service">The <see cref="IOutboundQueueHealthCheckService"/> implementation to be used to monitor the outbound queue.</param>
+        /// <param name="service">
+        ///     The <see cref="IOutboundQueueHealthCheckService" /> implementation to be used to monitor the
+        ///     outbound queue.
+        /// </param>
         public OutboundQueueHealthCheck(IOutboundQueueHealthCheckService service)
         {
             _service = service;
         }
 
         /// <summary>
-        ///     Gets or sets the maximum message age, the check will fail when a message exceeds this age (default is 30
-        ///     seconds).
+        ///     Gets or sets the maximum message age, the check will fail when a message exceeds this age (default
+        ///     is 30 seconds).
         /// </summary>
         public static TimeSpan MaxMessageAge { get; set; } = TimeSpan.FromSeconds(30);
 
         /// <summary>
-        /// Gets or sets the maximum amount of messages in the queue (default is <c> null </c>, meaning unrestricted).
+        ///     Gets or sets the maximum amount of messages in the queue (default is <c>
+        ///         null
+        ///     </c>, meaning unrestricted).
         /// </summary>
         public static int? MaxQueueLength { get; set; }
 

@@ -20,7 +20,9 @@ namespace Silverback.Messaging.Encryption
         /// <summary>
         ///     Initializes a new instance of the <see cref="DecryptorConsumerBehavior" /> class.
         /// </summary>
-        /// <param name="factory"> The <see cref="IMessageTransformerFactory" />. </param>
+        /// <param name="factory">
+        ///     The <see cref="IMessageTransformerFactory" />.
+        /// </param>
         public DecryptorConsumerBehavior(IMessageTransformerFactory factory)
         {
             _factory = factory;

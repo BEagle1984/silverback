@@ -19,6 +19,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
     public class ConsumerScopeTests
     {
         private readonly ServiceProvider _serviceProvider;
+
         private readonly IBusConfigurator _configurator;
 
         public ConsumerScopeTests()
@@ -30,13 +31,15 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .AddScoped<ScopeIdentifier>()
                 .AddSilverback()
                 .UseModel()
-                .WithConnectionToMessageBroker(options => options
-                    .AddInMemoryBroker());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddInMemoryBroker());
 
-            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
-            {
-                ValidateScopes = true
-            });
+            _serviceProvider = services.BuildServiceProvider(
+                new ServiceProviderOptions
+                {
+                    ValidateScopes = true
+                });
 
             _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
         }
@@ -50,18 +53,18 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var message = new TestEventOne { Content = "Hello E2E!" };
 
             _configurator
-                .Subscribe((IIntegrationEvent _, IServiceProvider serviceProvider) =>
-                {
-                    var newScopeId = serviceProvider.GetRequiredService<ScopeIdentifier>().ScopeId;
-                    newScopeId.Should().NotBe(lastScopeId);
-                    lastScopeId = newScopeId;
-                    scopes++;
-                })
-                .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e")));
+                .Subscribe(
+                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    {
+                        var newScopeId = serviceProvider.GetRequiredService<ScopeIdentifier>().ScopeId;
+                        newScopeId.Should().NotBe(lastScopeId);
+                        lastScopeId = newScopeId;
+                        scopes++;
+                    })
+                .Connect(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                        .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -82,22 +85,23 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var message = new TestEventOne { Content = "Hello E2E!" };
 
             _configurator
-                .Subscribe((IIntegrationEvent _, IServiceProvider serviceProvider) =>
-                {
-                    var newScopeId = serviceProvider.GetRequiredService<ScopeIdentifier>().ScopeId;
-                    newScopeId.Should().NotBe(lastScopeId);
-                    lastScopeId = newScopeId;
-                    scopes++;
+                .Subscribe(
+                    (IIntegrationEvent _, IServiceProvider serviceProvider) =>
+                    {
+                        var newScopeId = serviceProvider.GetRequiredService<ScopeIdentifier>().ScopeId;
+                        newScopeId.Should().NotBe(lastScopeId);
+                        lastScopeId = newScopeId;
+                        scopes++;
 
-                    if (scopes != 3)
-                        throw new InvalidOperationException("Retry!");
-                })
-                .Connect(endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e"),
-                        errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)));
+                        if (scopes != 3)
+                            throw new InvalidOperationException("Retry!");
+                    })
+                .Connect(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                        .AddInbound(
+                            new KafkaConsumerEndpoint("test-e2e"),
+                            errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();

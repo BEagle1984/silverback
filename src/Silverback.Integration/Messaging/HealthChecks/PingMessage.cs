@@ -20,7 +20,9 @@ namespace Silverback.Messaging.HealthChecks
         /// <summary>
         ///     Creates a new instance of the <see cref="PingMessage" />.
         /// </summary>
-        /// <returns> The new <see cref="PingMessage" />. </returns>
+        /// <returns>
+        ///     The new <see cref="PingMessage" />.
+        /// </returns>
         public static PingMessage New() => new PingMessage { TimeStamp = DateTime.UtcNow };
     }
 }

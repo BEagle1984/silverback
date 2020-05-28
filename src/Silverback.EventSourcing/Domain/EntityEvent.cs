@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Silverback.Domain
 {
-    /// <inheritdoc cref="IEntityEvent"/>
+    /// <inheritdoc cref="IEntityEvent" />
     public abstract class EntityEvent : IEntityEvent
     {
         /// <inheritdoc />

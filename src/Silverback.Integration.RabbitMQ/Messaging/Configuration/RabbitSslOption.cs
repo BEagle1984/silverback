@@ -8,26 +8,40 @@ using System.Security.Authentication;
 
 namespace Silverback.Messaging.Configuration
 {
-    /// <summary> The RabbitMQ SSL options configuration. </summary>
+    /// <summary>
+    ///     The RabbitMQ SSL options configuration.
+    /// </summary>
     public sealed class RabbitSslOption : IEquatable<RabbitSslOption>
     {
-        /// <summary> Gets or sets the SSL policy errors that are deemed acceptable. </summary>
+        /// <summary>
+        ///     Gets or sets the SSL policy errors that are deemed acceptable.
+        /// </summary>
         public SslPolicyErrors? AcceptablePolicyErrors { get; set; }
 
-        /// <summary> Gets or sets the path to client certificate. </summary>
+        /// <summary>
+        ///     Gets or sets the path to client certificate.
+        /// </summary>
         public string? CertPassphrase { get; set; }
 
-        /// <summary> Gets or sets the path to client certificate. </summary>
+        /// <summary>
+        ///     Gets or sets the path to client certificate.
+        /// </summary>
         public string? CertPath { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether the peer certificate should be checked for revocation
-        ///     (default is <c> false </c>).
+        ///     (default is <c>
+        ///         false
+        ///     </c>).
         /// </summary>
-        /// <remarks> Uses the built-in .NET mechanics for checking a certificate against CRLs. </remarks>
+        /// <remarks>
+        ///     Uses the built-in .NET mechanics for checking a certificate against CRLs.
+        /// </remarks>
         public bool? CheckCertificateRevocation { get; set; }
 
-        /// <summary> Gets or sets a value indicating whether SSL should indeed be used. </summary>
+        /// <summary>
+        ///     Gets or sets a value indicating whether SSL should indeed be used.
+        /// </summary>
         public bool Enabled { get; set; }
 
         /// <summary>
@@ -36,7 +50,9 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public string? ServerName { get; set; }
 
-        /// <summary> Gets or sets the SSL protocol version. </summary>
+        /// <summary>
+        ///     Gets or sets the SSL protocol version.
+        /// </summary>
         public SslProtocols Version { get; set; }
 
         /// <inheritdoc />

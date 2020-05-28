@@ -13,9 +13,9 @@ using Silverback.Util;
 namespace Silverback.Messaging.Serialization
 {
     /// <summary>
-    ///     Serializes the messages in JSON format and relies on some added headers to determine the
-    ///     message type upon deserialization. This default serializer is ideal when the producer and the
-    ///     consumer are both using Silverback.
+    ///     Serializes the messages in JSON format and relies on some added headers to determine the message
+    ///     type upon deserialization. This default serializer is ideal when the producer and the consumer are
+    ///     both using Silverback.
     /// </summary>
     public class JsonMessageSerializer : IMessageSerializer
     {
@@ -82,7 +82,7 @@ namespace Silverback.Messaging.Serialization
             var jsonString = GetSystemEncoding().GetString(message);
 
             var deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings) ??
-                   throw new MessageSerializerException("The deserialization returned null.");
+                                     throw new MessageSerializerException("The deserialization returned null.");
 
             return (deserializedObject, type);
         }

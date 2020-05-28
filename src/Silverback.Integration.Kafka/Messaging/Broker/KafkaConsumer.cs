@@ -29,16 +29,27 @@ namespace Silverback.Messaging.Broker
 
         private int _messagesSinceCommit;
 
-        /// <summary> Initializes a new instance of the <see cref="KafkaConsumer" /> class. </summary>
-        /// <param name="broker"> The <see cref="IBroker" /> that is instantiating the consumer. </param>
-        /// <param name="endpoint"> The endpoint to be consumed. </param>
-        /// <param name="callback"> The delegate to be invoked when a message is received. </param>
-        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
-        /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" /> to be used to resolve the needed
-        ///     services.
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumer" /> class.
+        /// </summary>
+        /// <param name="broker">
+        ///     The <see cref="IBroker" /> that is instantiating the consumer.
         /// </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="endpoint">
+        ///     The endpoint to be consumed.
+        /// </param>
+        /// <param name="callback">
+        ///     The delegate to be invoked when a message is received.
+        /// </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be added to the pipeline.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public KafkaConsumer(
             KafkaBroker broker,
             KafkaConsumerEndpoint endpoint,

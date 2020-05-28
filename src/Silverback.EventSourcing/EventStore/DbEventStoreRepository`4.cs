@@ -14,17 +14,16 @@ namespace Silverback.EventStore
     ///     The base class for the event store repositories that persist the events into a database.
     /// </summary>
     /// <typeparam name="TDomainEntity">
-    ///     The type of the domain entity whose events are stored in this
-    ///     repository.
+    ///     The type of the domain entity whose events are stored in this repository.
     /// </typeparam>
-    /// <typeparam name="TKey"> The type of the domain entity key. </typeparam>
+    /// <typeparam name="TKey">
+    ///     The type of the domain entity key.
+    /// </typeparam>
     /// <typeparam name="TEventStoreEntity">
-    ///     The type of event store entity being persisted to the underlying
-    ///     storage.
+    ///     The type of event store entity being persisted to the underlying storage.
     /// </typeparam>
     /// <typeparam name="TEventEntity">
-    ///     The base type of the events that will be associated to the event store
-    ///     entity.
+    ///     The base type of the events that will be associated to the event store entity.
     /// </typeparam>
     public abstract class DbEventStoreRepository<TDomainEntity, TKey, TEventStoreEntity, TEventEntity>
         : EventStoreRepository<TDomainEntity, TEventStoreEntity, TEventEntity>
@@ -39,7 +38,9 @@ namespace Silverback.EventStore
         ///     <see cref="DbEventStoreRepository{TAggregateEntity, TKey, TEventStoreEntity, TEventEntity}" />
         ///     class.
         /// </summary>
-        /// <param name="dbContext"> The <see cref="IDbContext" /> to use as storage. </param>
+        /// <param name="dbContext">
+        ///     The <see cref="IDbContext" /> to use as storage.
+        /// </param>
         protected DbEventStoreRepository(IDbContext dbContext)
         {
             Check.NotNull(dbContext, nameof(dbContext));
@@ -47,7 +48,9 @@ namespace Silverback.EventStore
             _dbSet = dbContext.GetDbSet<TEventStoreEntity>();
         }
 
-        /// <summary> Gets the <see cref="IQueryable{T}" /> of event store entities. </summary>
+        /// <summary>
+        ///     Gets the <see cref="IQueryable{T}" /> of event store entities.
+        /// </summary>
         /// <remarks>
         ///     This <see cref="IQueryable{T}" /> is pre-configured to include the events and is meant for read only
         ///     (changes are not being tracked).
@@ -59,9 +62,20 @@ namespace Silverback.EventStore
         ///     Finds the event store matching the specified predicate and if found returns the domain entity after
         ///     having applied the stored events.
         /// </summary>
-        /// <param name="predicate"> The predicate applied to get the desired event store. </param>
-        /// <param name="snapshot"> The optional snapshot datetime. When not <c>null</c> only the events registered until the specified datetime are applied, returning the entity in its state back in that moment.</param>
-        /// <returns> The domain entity or <c>null</c> if not found. </returns>
+        /// <param name="predicate">
+        ///     The predicate applied to get the desired event store.
+        /// </param>
+        /// <param name="snapshot">
+        ///     The optional snapshot datetime. When not <c>
+        ///         null
+        ///     </c> only the events registered until the specified datetime are applied, returning the entity in
+        ///     its state back in that moment.
+        /// </param>
+        /// <returns>
+        ///     The domain entity or <c>
+        ///         null
+        ///     </c> if not found.
+        /// </returns>
         public TDomainEntity? Find(Expression<Func<TEventStoreEntity, bool>> predicate, DateTime? snapshot = null)
         {
             var eventStoreEntity = EventStores.FirstOrDefault(predicate);
@@ -76,13 +90,24 @@ namespace Silverback.EventStore
         ///     Finds the event store matching the specified predicate and if found returns the domain entity after
         ///     having applied the stored events.
         /// </summary>
-        /// <param name="predicate"> The predicate applied to get the desired event store. </param>
-        /// <param name="snapshot"> The optional snapshot datetime. When not <c>null</c> only the events registered until the specified datetime are applied, returning the entity in its state back in that moment.</param>
+        /// <param name="predicate">
+        ///     The predicate applied to get the desired event store.
+        /// </param>
+        /// <param name="snapshot">
+        ///     The optional snapshot datetime. When not <c>
+        ///         null
+        ///     </c> only the events registered until the specified datetime are applied, returning the entity in
+        ///     its state back in that moment.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the domain
-        ///     entity or <c>null</c> if not found.
+        ///     entity or <c>
+        ///         null
+        ///     </c> if not found.
         /// </returns>
-        public async Task<TDomainEntity?> FindAsync(Expression<Func<TEventStoreEntity, bool>> predicate, DateTime? snapshot = null)
+        public async Task<TDomainEntity?> FindAsync(
+            Expression<Func<TEventStoreEntity, bool>> predicate,
+            DateTime? snapshot = null)
         {
             var eventStoreEntity = await EventStores.FirstOrDefaultAsync(predicate);
 

@@ -9,22 +9,29 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
-    /// <summary> The configuration used to connect with the RabbitMQ broker. </summary>
+    /// <summary>
+    ///     The configuration used to connect with the RabbitMQ broker.
+    /// </summary>
     public sealed class RabbitConnectionConfig : IEquatable<RabbitConnectionConfig>, IValidatableEndpointSettings
     {
         private static readonly ConfigurationDictionaryComparer<string, object> ClientPropertiesComparer =
             new ConfigurationDictionaryComparer<string, object>();
 
-        /// <summary> Gets or sets the AMQP URI SSL protocols. </summary>
+        /// <summary>
+        ///     Gets or sets the AMQP URI SSL protocols.
+        /// </summary>
         public SslProtocols? AmqpUriSslProtocols { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the automatic connection recovery is enabled (default is
-        ///     <c> true </c>).
+        ///     Gets or sets a value indicating whether the automatic connection recovery is enabled (default is <c>
+        ///         true
+        ///     </c>).
         /// </summary>
         public bool? AutomaticRecoveryEnabled { get; set; }
 
-        /// <summary> Gets or sets the name of th e host to connect to. </summary>
+        /// <summary>
+        ///     Gets or sets the name of th e host to connect to.
+        /// </summary>
         public string? HostName { get; set; }
 
         /// <summary>
@@ -43,19 +50,29 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public TimeSpan? ContinuationTimeout { get; set; }
 
-        /// <summary> Gets or sets the port to connect on. </summary>
+        /// <summary>
+        ///     Gets or sets the port to connect on.
+        /// </summary>
         public int? Port { get; set; }
 
-        /// <summary> Gets or sets the timeout setting for the connection attempts. </summary>
+        /// <summary>
+        ///     Gets or sets the timeout setting for the connection attempts.
+        /// </summary>
         public TimeSpan? RequestedConnectionTimeout { get; set; }
 
-        /// <summary> Gets or sets the timeout setting for the socket read operations. </summary>
+        /// <summary>
+        ///     Gets or sets the timeout setting for the socket read operations.
+        /// </summary>
         public TimeSpan? SocketReadTimeout { get; set; }
 
-        /// <summary> Gets or sets the timeout setting for the socket write operations. </summary>
+        /// <summary>
+        ///     Gets or sets the timeout setting for the socket write operations.
+        /// </summary>
         public TimeSpan? SocketWriteTimeout { get; set; }
 
-        /// <summary> Gets or sets the SSL options setting. </summary>
+        /// <summary>
+        ///     Gets or sets the SSL options setting.
+        /// </summary>
         public RabbitSslOption Ssl { get; set; } = new RabbitSslOption();
 
         /// <summary>
@@ -64,20 +81,30 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public bool? TopologyRecoveryEnabled { get; set; }
 
-        /// <summary> Gets or sets the dictionary of client properties to be sent to the server. </summary>
+        /// <summary>
+        ///     Gets or sets the dictionary of client properties to be sent to the server.
+        /// </summary>
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public IDictionary<string, object> ClientProperties { get; set; } = new Dictionary<string, object>();
 
-        /// <summary> Gets or sets the password to use when authenticating to the server. </summary>
+        /// <summary>
+        ///     Gets or sets the password to use when authenticating to the server.
+        /// </summary>
         public string? Password { get; set; }
 
-        /// <summary> Gets or sets the maximum channel number to ask for. </summary>
+        /// <summary>
+        ///     Gets or sets the maximum channel number to ask for.
+        /// </summary>
         public ushort? RequestedChannelMax { get; set; }
 
-        /// <summary> Gets or sets the frame-max parameter to ask for (in bytes). </summary>
+        /// <summary>
+        ///     Gets or sets the frame-max parameter to ask for (in bytes).
+        /// </summary>
         public uint? RequestedFrameMax { get; set; }
 
-        /// <summary> Gets or sets the heartbeat timeout to use when negotiating with the server. </summary>
+        /// <summary>
+        ///     Gets or sets the heartbeat timeout to use when negotiating with the server.
+        /// </summary>
         public TimeSpan? RequestedHeartbeat { get; set; }
 
         /// <summary>
@@ -86,13 +113,19 @@ namespace Silverback.Messaging.Configuration
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "IO is correct")]
         public bool? UseBackgroundThreadsForIO { get; set; }
 
-        /// <summary> Gets or sets the username to use when authenticating to the server. </summary>
+        /// <summary>
+        ///     Gets or sets the username to use when authenticating to the server.
+        /// </summary>
         public string? UserName { get; set; }
 
-        /// <summary> Gets or sets the virtual host to access during this connection. </summary>
+        /// <summary>
+        ///     Gets or sets the virtual host to access during this connection.
+        /// </summary>
         public string? VirtualHost { get; set; }
 
-        /// <summary> Gets or sets the default client provided name to be used for connections. </summary>
+        /// <summary>
+        ///     Gets or sets the default client provided name to be used for connections.
+        /// </summary>
         public string? ClientProvidedName { get; set; }
 
         /// <inheritdoc />

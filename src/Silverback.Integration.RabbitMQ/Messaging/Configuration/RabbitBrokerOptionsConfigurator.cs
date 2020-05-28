@@ -9,7 +9,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     This class will be located via assembly scanning and invoked when a <see cref="RabbitBroker"/> is added to the <see cref="IServiceCollection"/>.
+    ///     This class will be located via assembly scanning and invoked when a <see cref="RabbitBroker" /> is
+    ///     added to the <see cref="IServiceCollection" />.
     /// </summary>
     public class RabbitBrokerOptionsConfigurator : IBrokerOptionsConfigurator<RabbitBroker>
     {

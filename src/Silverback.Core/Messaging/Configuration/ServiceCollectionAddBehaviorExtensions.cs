@@ -10,8 +10,13 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c> AddTransientBehavior </c>, <c> AddScopedBehavior </c> and
-    ///     <c> AddSingletonBehavior </c> methods to the <see cref="ISilverbackBuilder" />.
+    ///     Adds the <c>
+    ///         AddTransientBehavior
+    ///     </c>, <c>
+    ///         AddScopedBehavior
+    ///     </c> and <c>
+    ///         AddSingletonBehavior
+    ///     </c> methods to the <see cref="ISilverbackBuilder" />.
     /// </summary>
     public static class ServiceCollectionAddBehaviorExtensions
     {
@@ -38,13 +43,15 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TBehavior"> The type of the behavior to add. </typeparam>
+        /// <typeparam name="TBehavior">
+        ///     The type of the behavior to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
@@ -54,15 +61,16 @@ namespace Microsoft.Extensions.DependencyInjection
             AddTransientBehavior(services, typeof(TBehavior));
 
         /// <summary>
-        ///     Adds a scoped behavior with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     Adds a scoped behavior with a factory specified in <paramref name="implementationFactory" /> to the
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -78,12 +86,12 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped behavior of the type specified in <paramref name="behaviorType" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="behaviorType">
         ///     The type of the behavior to register and the implementation to use.
@@ -101,14 +109,16 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a scoped behavior of the type specified in <typeparamref name="TBehavior" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <typeparam name="TBehavior"> The type of the behavior to add. </typeparam>
+        /// <typeparam name="TBehavior">
+        ///     The type of the behavior to add.
+        /// </typeparam>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -117,15 +127,16 @@ namespace Microsoft.Extensions.DependencyInjection
             AddScopedBehavior(services, typeof(TBehavior));
 
         /// <summary>
-        ///     Adds a scoped behavior with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     Adds a scoped behavior with a factory specified in <paramref name="implementationFactory" /> to the
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -141,12 +152,12 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="behaviorType">
         ///     The type of the behavior to register and the implementation to use.
@@ -167,10 +178,12 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds a singleton behavior of the type specified in <typeparamref name="TBehavior" /> to the
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TBehavior"> The type of the behavior to add. </typeparam>
+        /// <typeparam name="TBehavior">
+        ///     The type of the behavior to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
@@ -180,15 +193,16 @@ namespace Microsoft.Extensions.DependencyInjection
             AddSingletonBehavior(services, typeof(TBehavior));
 
         /// <summary>
-        ///     Adds a singleton behavior with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton behavior with a factory specified in <paramref name="implementationFactory" /> to
+        ///     the specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
@@ -204,15 +218,16 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a singleton behavior with an
-        ///     instance specified in <paramref name="implementationInstance" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton behavior with an instance specified in <paramref name="implementationInstance" />
+        ///     to the specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>

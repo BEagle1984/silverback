@@ -16,13 +16,17 @@ namespace Silverback.Messaging.Messages
         ///     header. When a property is decorated with this attribute its value will be produced/consumed as
         ///     message header.
         /// </summary>
-        /// <param name="headerName"> The name of the header. </param>
+        /// <param name="headerName">
+        ///     The name of the header.
+        /// </param>
         public HeaderAttribute(string headerName)
         {
             HeaderName = headerName;
         }
 
-        /// <summary> Gets the name of the header. </summary>
+        /// <summary>
+        ///     Gets the name of the header.
+        /// </summary>
         public string HeaderName { get; }
 
         /// <summary>

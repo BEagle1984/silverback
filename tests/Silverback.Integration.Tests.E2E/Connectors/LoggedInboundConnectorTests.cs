@@ -22,8 +22,11 @@ namespace Silverback.Tests.Integration.E2E.Connectors
     public class LoggedInboundConnectorTests : IAsyncDisposable
     {
         private readonly SqliteConnection _connection;
+
         private readonly ServiceProvider _serviceProvider;
+
         private readonly IBusConfigurator _configurator;
+
         private readonly OutboundInboundSubscriber _subscriber;
 
         public LoggedInboundConnectorTests()
@@ -35,20 +38,23 @@ namespace Silverback.Tests.Integration.E2E.Connectors
 
             services
                 .AddNullLogger()
-                .AddDbContext<TestDbContext>(options => options
-                    .UseSqlite(_connection))
+                .AddDbContext<TestDbContext>(
+                    options => options
+                        .UseSqlite(_connection))
                 .AddSilverback()
                 .UseModel()
-                .WithConnectionToMessageBroker(options => options
-                    .AddInMemoryBroker()
-                    .AddDbLoggedInboundConnector())
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddInMemoryBroker()
+                        .AddDbLoggedInboundConnector())
                 .UseDbContext<TestDbContext>()
                 .AddSingletonSubscriber<OutboundInboundSubscriber>();
 
-            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
-            {
-                ValidateScopes = true
-            });
+            _serviceProvider = services.BuildServiceProvider(
+                new ServiceProviderOptions
+                {
+                    ValidateScopes = true
+                });
 
             _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
             _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
@@ -71,11 +77,10 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                 Content = "Hello E2E!"
             };
 
-            _configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(
-                    new KafkaProducerEndpoint("test-e2e"))
-                .AddInbound(
-                    new KafkaConsumerEndpoint("test-e2e")));
+            _configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                    .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
 
             using var scope = _serviceProvider.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();

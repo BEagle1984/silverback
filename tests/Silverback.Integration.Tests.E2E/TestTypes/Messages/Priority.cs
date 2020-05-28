@@ -6,7 +6,9 @@ namespace Silverback.Tests.Integration.E2E.TestTypes.Messages
     public enum Priority
     {
         Low,
+
         Normal,
+
         High
     }
 }

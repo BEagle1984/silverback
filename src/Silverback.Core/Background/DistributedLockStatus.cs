@@ -14,8 +14,7 @@ namespace Silverback.Background
         Acquired,
 
         /// <summary>
-        ///     The previously acquired lock has been lost for some reason (such as failure to send the
-        ///     heartbeat).
+        ///     The previously acquired lock has been lost for some reason (such as failure to send the heartbeat).
         /// </summary>
         Lost,
 

@@ -11,7 +11,9 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    /// Adds the <c>WithConnectionToMessageBroker</c> method to the <see cref="ISilverbackBuilder"/>.
+    ///     Adds the <c>
+    ///         WithConnectionToMessageBroker
+    ///     </c> method to the <see cref="ISilverbackBuilder" />.
     /// </summary>
     public static class SilverbackBuilderWithConnectionToExtensions
     {
@@ -19,10 +21,12 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Registers the types needed to connect with a message broker.
         /// </summary>
         /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to
-        ///     add the services to.
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the services to.
         /// </param>
-        /// <param name="optionsAction">Additional options (such as message broker type and connectors).</param>
+        /// <param name="optionsAction">
+        ///     Additional options (such as message broker type and connectors).
+        /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>

@@ -23,9 +23,10 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
 
             foreach (var msg in messages)
             {
-                newList.AddRange(msg is TSourceType
-                    ? _changedMessageFactory(msg)
-                    : new[] { msg });
+                newList.AddRange(
+                    msg is TSourceType
+                        ? _changedMessageFactory(msg)
+                        : new[] { msg });
             }
 
             return next(newList);

@@ -30,15 +30,25 @@ namespace Silverback.Messaging.Broker
 
         private IModel? _channel;
 
-        /// <summary> Initializes a new instance of the <see cref="RabbitProducer" /> class. </summary>
-        /// <param name="broker"> The <see cref="IBroker" /> that instantiated this producer. </param>
-        /// <param name="endpoint"> The endpoint to produce to. </param>
-        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RabbitProducer" /> class.
+        /// </summary>
+        /// <param name="broker">
+        ///     The <see cref="IBroker" /> that instantiated this producer.
+        /// </param>
+        /// <param name="endpoint">
+        ///     The endpoint to produce to.
+        /// </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be added to the pipeline.
+        /// </param>
         /// <param name="connectionFactory">
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
         ///     endpoint.
         /// </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public RabbitProducer(
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,

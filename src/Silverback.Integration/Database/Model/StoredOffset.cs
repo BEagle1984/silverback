@@ -10,12 +10,16 @@ namespace Silverback.Database.Model
     /// </summary>
     public class StoredOffset
     {
-        /// <summary> Gets or sets the offset key. </summary>
+        /// <summary>
+        ///     Gets or sets the offset key.
+        /// </summary>
         [Key]
         [MaxLength(300)]
         public string Key { get; set; } = null!;
 
-        /// <summary> Gets or sets the serialized offset. </summary>
+        /// <summary>
+        ///     Gets or sets the serialized offset.
+        /// </summary>
         [MaxLength(500)]
         public string Offset { get; set; } = null!;
     }

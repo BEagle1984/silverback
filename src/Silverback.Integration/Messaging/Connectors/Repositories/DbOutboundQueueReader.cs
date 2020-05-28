@@ -15,7 +15,8 @@ namespace Silverback.Messaging.Connectors.Repositories
 {
     /// <summary>
     ///     <para>
-    ///         Exposes the methods to read from the outbound queue. Used by the <see cref="IOutboundQueueWorker"/>.
+    ///         Exposes the methods to read from the outbound queue. Used by the
+    ///         <see cref="IOutboundQueueWorker" />.
     ///     </para>
     ///     <para>
     ///         An <see cref="IDbContext" /> is used to read from a queue stored in a database table.
@@ -25,7 +26,7 @@ namespace Silverback.Messaging.Connectors.Repositories
     public class DbOutboundQueueReader : RepositoryBase<OutboundMessage>, IOutboundQueueReader
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DbOutboundQueueReader"/> class.
+        ///     Initializes a new instance of the <see cref="DbOutboundQueueReader" /> class.
         /// </summary>
         /// <param name="dbContext">
         ///     The <see cref="IDbContext" /> to use as storage.
@@ -55,11 +56,12 @@ namespace Silverback.Messaging.Connectors.Repositories
                 .OrderBy(m => m.Id)
                 .Take(count)
                 .ToListAsync())
-            .Select(message => new DbQueuedMessage(
-                message.Id,
-                message.Content,
-                DefaultSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
-                DefaultSerializer.Deserialize<IProducerEndpoint>(message.Endpoint)))
+            .Select(
+                message => new DbQueuedMessage(
+                    message.Id,
+                    message.Content,
+                    DefaultSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
+                    DefaultSerializer.Deserialize<IProducerEndpoint>(message.Endpoint)))
             .ToList();
 
         /// <inheritdoc />

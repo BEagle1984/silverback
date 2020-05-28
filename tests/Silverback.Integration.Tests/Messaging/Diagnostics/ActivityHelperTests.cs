@@ -49,8 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.Start();
             activity.SetMessageHeaders(headers);
 
-            headers.Should().ContainEquivalentOf(
-                new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
+            headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
         }
 
         [Fact]
@@ -63,8 +62,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.TraceStateString = "Test";
             activity.SetMessageHeaders(headers);
 
-            headers.Should().ContainEquivalentOf(
-                new MessageHeader(DefaultMessageHeaders.TraceState, "Test"));
+            headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.TraceState, "Test"));
         }
 
         [Fact]
@@ -89,8 +87,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.AddBaggage("key1", "value1");
             activity.SetMessageHeaders(headers);
 
-            headers.Should().ContainEquivalentOf(
-                new MessageHeader(DefaultMessageHeaders.TraceBaggage, "key1=value1"));
+            headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.TraceBaggage, "key1=value1"));
         }
 
         [Fact]

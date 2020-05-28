@@ -17,7 +17,9 @@ namespace Silverback.Messaging.ErrorHandling
         ///     Returns a boolean value indicating whether the policy can handle the specified envelopes and the
         ///     specified exception.
         /// </summary>
-        /// <param name="envelopes"> The envelopes that failed to be processed. </param>
+        /// <param name="envelopes">
+        ///     The envelopes that failed to be processed.
+        /// </param>
         /// <param name="exception">
         ///     The exception that was thrown during the processing.
         /// </param>
@@ -29,7 +31,9 @@ namespace Silverback.Messaging.ErrorHandling
         /// <summary>
         ///     Handles the error and returns the <see cref="ErrorAction" /> to be performed by the consumer.
         /// </summary>
-        /// <param name="envelopes"> The envelopes that failed to be processed. </param>
+        /// <param name="envelopes">
+        ///     The envelopes that failed to be processed.
+        /// </param>
         /// <param name="exception">
         ///     The exception that was thrown during the processing.
         /// </param>

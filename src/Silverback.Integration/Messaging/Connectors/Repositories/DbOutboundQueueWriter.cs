@@ -14,12 +14,13 @@ using Silverback.Util;
 namespace Silverback.Messaging.Connectors.Repositories
 {
     /// <summary>
-    ///     Stores the outbound messages into the database. Used by the <see cref="DeferredOutboundConnector"/>.
+    ///     Stores the outbound messages into the database. Used by the <see cref="DeferredOutboundConnector" />
+    ///     .
     /// </summary>
     public class DbOutboundQueueWriter : RepositoryBase<OutboundMessage>, IOutboundQueueWriter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DbOutboundQueueWriter"/> class.
+        ///     Initializes a new instance of the <see cref="DbOutboundQueueWriter" /> class.
         /// </summary>
         /// <param name="dbContext">
         ///     The <see cref="IDbContext" /> to use as storage.

@@ -26,16 +26,18 @@ namespace Silverback.Messaging.Subscribers
         ///     The <see cref="MethodInfo" /> related to the subscribed method.
         /// </param>
         /// <param name="exclusive">
-        ///     A boolean value indicating whether the method can be executed concurrently to other methods
-        ///     handling the <b> same message </b>.
+        ///     A boolean value indicating whether the method can be executed concurrently to other methods handling
+        ///     the <b>
+        ///         same message
+        ///     </b>.
         /// </param>
         /// <param name="parallel">
-        ///     A boolean a value indicating whether the method can be executed concurrently when multiple
-        ///     messages are fired at the same time (e.g. in a batch).
+        ///     A boolean a value indicating whether the method can be executed concurrently when multiple messages
+        ///     are fired at the same time (e.g. in a batch).
         /// </param>
         /// <param name="maxDegreeOfParallelism">
-        ///     The maximum number of messages that are processed concurrently. Used only together with
-        ///     parallel = true.
+        ///     The maximum number of messages that are processed concurrently. Used only together with parallel =
+        ///     true.
         /// </param>
         public SubscribedMethod(
             Func<IServiceProvider, object> targetTypeFactory,
@@ -69,29 +71,28 @@ namespace Silverback.Messaging.Subscribers
         public IReadOnlyList<ParameterInfo> Parameters { get; }
 
         /// <summary>
-        ///     Gets a value indicating whether the method can be executed concurrently to other methods
-        ///     handling the <b> same message </b>.
-        ///     This value is set via the <see cref="SubscribeAttribute" />.
+        ///     Gets a value indicating whether the method can be executed concurrently to other methods handling
+        ///     the <b>
+        ///         same message
+        ///     </b>. This value is set via the <see cref="SubscribeAttribute" />.
         /// </summary>
         public bool IsExclusive { get; }
 
         /// <summary>
-        ///     Gets a value indicating whether the method can be executed concurrently when multiple messages
-        ///     are fired at the same time (e.g. in a batch).
-        ///     This value is set via the <see cref="SubscribeAttribute" />.
+        ///     Gets a value indicating whether the method can be executed concurrently when multiple messages are
+        ///     fired at the same time (e.g. in a batch). This value is set via the
+        ///     <see cref="SubscribeAttribute" />.
         /// </summary>
         public bool IsParallel { get; }
 
         /// <summary>
-        ///     Gets the maximum number of messages that are processed concurrently.
-        ///     Used only together with Parallel = true.
-        ///     This value is set via the <see cref="SubscribeAttribute" />.
+        ///     Gets the maximum number of messages that are processed concurrently. Used only together with
+        ///     Parallel = true. This value is set via the <see cref="SubscribeAttribute" />.
         /// </summary>
         public int? MaxDegreeOfParallelism { get; }
 
         /// <summary>
-        ///     Gets the filters to be applied.
-        ///     The filters are set via <see cref="MessageFilterAttribute" />.
+        ///     Gets the filters to be applied. The filters are set via <see cref="MessageFilterAttribute" />.
         /// </summary>
         public IReadOnlyCollection<IMessageFilter> Filters { get; }
 
@@ -101,7 +102,9 @@ namespace Silverback.Messaging.Subscribers
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the type or the necessary services.
         /// </param>
-        /// <returns> The target type . </returns>
+        /// <returns>
+        ///     The target type .
+        /// </returns>
         public object ResolveTargetType(IServiceProvider serviceProvider) =>
             _targetTypeFactory(serviceProvider);
     }

@@ -19,7 +19,9 @@ namespace Silverback.Tests.Core.EFCore30
     public sealed class DbContextEventsPublisherTests : IAsyncDisposable
     {
         private readonly TestDbContext _dbContext;
+
         private readonly IPublisher _publisher;
+
         private readonly SqliteConnection _connection;
 
         public DbContextEventsPublisherTests()
@@ -76,11 +78,12 @@ namespace Silverback.Tests.Core.EFCore30
 
             _publisher
                 .When(x => x.Publish(Arg.Any<IEnumerable<object>>()))
-                .Do(x =>
-                {
-                    if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
-                        entity.Entity.AddEvent<TestDomainEventTwo>();
-                });
+                .Do(
+                    x =>
+                    {
+                        if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
+                            entity.Entity.AddEvent<TestDomainEventTwo>();
+                    });
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 
@@ -96,11 +99,12 @@ namespace Silverback.Tests.Core.EFCore30
 
             _publisher
                 .When(x => x.PublishAsync(Arg.Any<IEnumerable<object>>()))
-                .Do(x =>
-                {
-                    if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
-                        entity.Entity.AddEvent<TestDomainEventTwo>();
-                });
+                .Do(
+                    x =>
+                    {
+                        if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
+                            entity.Entity.AddEvent<TestDomainEventTwo>();
+                    });
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 
@@ -129,11 +133,12 @@ namespace Silverback.Tests.Core.EFCore30
 
             _publisher
                 .When(x => x.PublishAsync(Arg.Any<IEnumerable<object>>()))
-                .Do(x =>
-                {
-                    if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
-                        throw new InvalidOperationException();
-                });
+                .Do(
+                    x =>
+                    {
+                        if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
+                            throw new InvalidOperationException();
+                    });
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 

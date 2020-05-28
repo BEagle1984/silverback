@@ -9,7 +9,6 @@ Its main features are:
 * Abstracted integration with a message broker
 * Apache Kafka and RabbitMQ integration
 * DDD, Domain Events and Transactional Messaging
-* Outbox table pattern implementation
 * Built-in error handling policies for consumers
 
 Discover more in the [project's website][docs-site].

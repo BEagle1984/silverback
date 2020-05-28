@@ -21,10 +21,14 @@ namespace Silverback.Messaging.Serialization
     public class AvroMessageSerializer<TMessage> : IKafkaMessageSerializer
         where TMessage : class
     {
-        /// <summary> Gets or sets the schema registry configuration. </summary>
+        /// <summary>
+        ///     Gets or sets the schema registry configuration.
+        /// </summary>
         public SchemaRegistryConfig SchemaRegistryConfig { get; set; } = new SchemaRegistryConfig();
 
-        /// <summary> Gets or sets the Avro serializer configuration. </summary>
+        /// <summary>
+        ///     Gets or sets the Avro serializer configuration.
+        /// </summary>
         public AvroSerializerConfig AvroSerializerConfig { get; set; } = new AvroSerializerConfig();
 
         /// <inheritdoc />

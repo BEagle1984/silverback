@@ -23,8 +23,12 @@ namespace Silverback.Messaging.Connectors
         /// <param name="brokerCollection">
         ///     The collection containing the available brokers.
         /// </param>
-        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public LoggedInboundConnector(
             IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,

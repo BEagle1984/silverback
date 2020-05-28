@@ -16,13 +16,17 @@ namespace Silverback.Messaging.Subscribers
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaGroupIdFilterAttribute" /> class.
         /// </summary>
-        /// <param name="groupId"> The list of group id whose messages have to be processed. </param>
+        /// <param name="groupId">
+        ///     The list of group id whose messages have to be processed.
+        /// </param>
         public KafkaGroupIdFilterAttribute(params string[] groupId)
         {
             GroupId = groupId;
         }
 
-        /// <summary> Gets the list of group id whose messages have to be processed. </summary>
+        /// <summary>
+        ///     Gets the list of group id whose messages have to be processed.
+        /// </summary>
         public string[] GroupId { get; }
 
         /// <inheritdoc />

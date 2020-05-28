@@ -16,7 +16,9 @@ namespace Silverback.Messaging.Connectors
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboundConnector" /> class.
         /// </summary>
-        /// <param name="brokerCollection"> The collection of <see cref="IBroker" />. </param>
+        /// <param name="brokerCollection">
+        ///     The collection of <see cref="IBroker" />.
+        /// </param>
         public OutboundConnector(IBrokerCollection brokerCollection)
         {
             _brokerCollection = brokerCollection;

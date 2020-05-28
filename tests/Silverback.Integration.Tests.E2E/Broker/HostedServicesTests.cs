@@ -20,14 +20,16 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var serviceProvider = new ServiceCollection()
                 .AddNullLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<InMemoryBroker>()
-                    .AddOutboundConnector()
-                    .AddOutboundWorker())
-                .Services.BuildServiceProvider(new ServiceProviderOptions
-                {
-                    ValidateScopes = true
-                });
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<InMemoryBroker>()
+                        .AddOutboundConnector()
+                        .AddOutboundWorker())
+                .Services.BuildServiceProvider(
+                    new ServiceProviderOptions
+                    {
+                        ValidateScopes = true
+                    });
 
             var hostedServices = serviceProvider.GetServices<IHostedService>();
 
@@ -42,14 +44,16 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var serviceProvider = new ServiceCollection()
                 .AddNullLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options
-                    .AddBroker<InMemoryBroker>()
-                    .AddInMemoryChunkStore())
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<InMemoryBroker>()
+                        .AddInMemoryChunkStore())
                 .Services
-                .BuildServiceProvider(new ServiceProviderOptions
-                {
-                    ValidateScopes = true
-                });
+                .BuildServiceProvider(
+                    new ServiceProviderOptions
+                    {
+                        ValidateScopes = true
+                    });
 
             var hostedServices = serviceProvider.GetServices<IHostedService>();
 

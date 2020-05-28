@@ -16,12 +16,16 @@ namespace Silverback.Messaging.Broker
         private readonly ConcurrentDictionary<string, InMemoryTopic> _topics =
             new ConcurrentDictionary<string, InMemoryTopic>();
 
-        /// <summary> Initializes a new instance of the <see cref="InMemoryBroker" /> class. </summary>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="InMemoryBroker" /> class.
+        /// </summary>
         /// <param name="behaviors">
         ///     The <see cref="IEnumerable{T}" /> containing the <see cref="IBrokerBehavior" /> to be passed to the
         ///     producers and consumers.
         /// </param>
-        /// <param name="loggerFactory"> The <see cref="ILoggerFactory" /> to be used to create the loggers. </param>
+        /// <param name="loggerFactory">
+        ///     The <see cref="ILoggerFactory" /> to be used to create the loggers.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>

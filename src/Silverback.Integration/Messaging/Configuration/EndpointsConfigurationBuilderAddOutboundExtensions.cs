@@ -10,7 +10,9 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     Adds the <c> AddOutbound </c> method to the <see cref="IEndpointsConfigurationBuilder" />.
+    ///     Adds the <c>
+    ///         AddOutbound
+    ///     </c> method to the <see cref="IEndpointsConfigurationBuilder" />.
     /// </summary>
     public static class EndpointsConfigurationBuilderAddOutboundExtensions
     {
@@ -20,7 +22,9 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoint"> The endpoint (topic). </param>
+        /// <param name="endpoint">
+        ///     The endpoint (topic).
+        /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be published to this endpoint.
         /// </typeparam>
@@ -46,7 +50,9 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoints"> The endpoints (topics). </param>
+        /// <param name="endpoints">
+        ///     The endpoints (topics).
+        /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be published to this endpoint.
         /// </typeparam>
@@ -72,7 +78,9 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoints"> The endpoints (topics). </param>
+        /// <param name="endpoints">
+        ///     The endpoints (topics).
+        /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be published to this endpoint.
         /// </typeparam>
@@ -98,7 +106,9 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoints"> The endpoints (topics). </param>
+        /// <param name="endpoints">
+        ///     The endpoints (topics).
+        /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be published to this endpoint.
         /// </typeparam>
@@ -120,7 +130,9 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoint"> The endpoint (topic). </param>
+        /// <param name="endpoint">
+        ///     The endpoint (topic).
+        /// </param>
         /// <param name="outboundConnectorType">
         ///     The type of the <see cref="IOutboundConnector" /> to be used. If not specified, the default one will
         ///     be used.
@@ -149,7 +161,9 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoints"> The endpoints (topics). </param>
+        /// <param name="endpoints">
+        ///     The endpoints (topics).
+        /// </param>
         /// <param name="outboundConnectorType">
         ///     The type of the <see cref="IOutboundConnector" /> to be used. If not specified, the default one will
         ///     be used.
@@ -179,7 +193,9 @@ namespace Silverback.Messaging.Configuration
         /// <param name="messageType">
         ///     The type of the messages to be published to this endpoint.
         /// </param>
-        /// <param name="endpoints"> The endpoints (topics). </param>
+        /// <param name="endpoints">
+        ///     The endpoints (topics).
+        /// </param>
         /// <param name="outboundConnectorType">
         ///     The type of the <see cref="IOutboundConnector" /> to be used. If not specified, the default one will
         ///     be used.

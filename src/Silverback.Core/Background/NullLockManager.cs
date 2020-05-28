@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace Silverback.Background
 {
     /// <summary>
-    ///     This implementation of <see cref="IDistributedLockManager" /> doesn't actually acquire nor
-    ///     check any
+    ///     This implementation of <see cref="IDistributedLockManager" /> doesn't actually acquire nor check any
     ///     lock. Is is used when the <see cref="NullLockSettings" /> are specified or no other
     ///     <see cref="IDistributedLockManager" /> is registered.
     /// </summary>

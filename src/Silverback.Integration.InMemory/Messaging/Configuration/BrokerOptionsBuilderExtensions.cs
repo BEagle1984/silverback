@@ -7,11 +7,15 @@ using Silverback.Messaging.Broker;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c> AddInMemoryBroker </c> method to the <see cref="IBrokerOptionsBuilder" />.
+    ///     Adds the <c>
+    ///         AddInMemoryBroker
+    ///     </c> method to the <see cref="IBrokerOptionsBuilder" />.
     /// </summary>
     public static class BrokerOptionsBuilderExtensions
     {
-        /// <summary> Registers the fake in-memory message broker. </summary>
+        /// <summary>
+        ///     Registers the fake in-memory message broker.
+        /// </summary>
         /// <param name="brokerOptionsBuilder">
         ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
         ///     add the services to.

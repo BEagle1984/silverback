@@ -106,7 +106,9 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc />
         public bool IsConnected { get; private set; }
 
-        /// <summary> Gets the <see cref="ILoggerFactory" />. </summary>
+        /// <summary>
+        ///     Gets the <see cref="ILoggerFactory" />.
+        /// </summary>
         protected ILoggerFactory LoggerFactory { get; }
 
         /// <inheritdoc />
@@ -225,13 +227,19 @@ namespace Silverback.Messaging.Broker
         ///     Returns a new instance of <see cref="IProducer" /> to publish to the specified endpoint. The
         ///     returned instance will be cached and reused for the same endpoint.
         /// </summary>
-        /// <param name="endpoint"> The endpoint. </param>
-        /// <param name="behaviors"> The behaviors to be plugged-in. </param>
+        /// <param name="endpoint">
+        ///     The endpoint.
+        /// </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be plugged-in.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
         ///     forwarded to the consumer.
         /// </param>
-        /// <returns> The instantiated <see cref="IProducer" />. </returns>
+        /// <returns>
+        ///     The instantiated <see cref="IProducer" />.
+        /// </returns>
         protected abstract IProducer InstantiateProducer(
             TProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
@@ -240,16 +248,22 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Returns a new instance of <see cref="IConsumer" /> to subscribe to the specified endpoint.
         /// </summary>
-        /// <param name="endpoint"> The endpoint. </param>
+        /// <param name="endpoint">
+        ///     The endpoint.
+        /// </param>
         /// <param name="callback">
         ///     The delegate to be invoked when a message is received.
         /// </param>
-        /// <param name="behaviors"> The behaviors to be plugged-in. </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be plugged-in.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
         ///     forwarded to the consumer.
         /// </param>
-        /// <returns> The instantiated <see cref="IConsumer" />. </returns>
+        /// <returns>
+        ///     The instantiated <see cref="IConsumer" />.
+        /// </returns>
         protected abstract IConsumer InstantiateConsumer(
             TConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
@@ -259,14 +273,18 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Connects all the consumers and starts consuming.
         /// </summary>
-        /// <param name="consumers"> The consumers to be started. </param>
+        /// <param name="consumers">
+        ///     The consumers to be started.
+        /// </param>
         protected virtual void Connect(IEnumerable<IConsumer> consumers) =>
             consumers.ForEach(c => c.Connect());
 
         /// <summary>
         ///     Disconnects all the consumers and stops consuming.
         /// </summary>
-        /// <param name="consumers"> The consumers to be stopped. </param>
+        /// <param name="consumers">
+        ///     The consumers to be stopped.
+        /// </param>
         protected virtual void Disconnect(IEnumerable<IConsumer> consumers) =>
             consumers.ForEach(c => c.Disconnect());
 
@@ -275,8 +293,9 @@ namespace Silverback.Messaging.Broker
         ///     resources.
         /// </summary>
         /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c> Dispose </c> method and not from
-        ///     the finalizer.
+        ///     A value indicating whether the method has been called by the <c>
+        ///         Dispose
+        ///     </c> method and not from the finalizer.
         /// </param>
         protected virtual void Dispose(bool disposing)
         {

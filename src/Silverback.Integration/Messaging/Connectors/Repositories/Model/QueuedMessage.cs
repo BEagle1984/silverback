@@ -16,9 +16,15 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         /// <summary>
         ///     Initializes a new instance of the <see cref="QueuedMessage" /> class.
         /// </summary>
-        /// <param name="content"> The message raw binary content (body). </param>
-        /// <param name="headers"> The message headers. </param>
-        /// <param name="endpoint"> The target endpoint. </param>
+        /// <param name="content">
+        ///     The message raw binary content (body).
+        /// </param>
+        /// <param name="headers">
+        ///     The message headers.
+        /// </param>
+        /// <param name="endpoint">
+        ///     The target endpoint.
+        /// </param>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public QueuedMessage(byte[]? content, IEnumerable<MessageHeader>? headers, IProducerEndpoint endpoint)
         {
@@ -27,15 +33,21 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
             Endpoint = endpoint;
         }
 
-        /// <summary> Gets the message raw binary content (body). </summary>
+        /// <summary>
+        ///     Gets the message raw binary content (body).
+        /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Content { get; }
 
-        /// <summary> Gets the message headers. </summary>
+        /// <summary>
+        ///     Gets the message headers.
+        /// </summary>
         public IReadOnlyCollection<MessageHeader>? Headers { get; }
 
-        /// <summary> Gets the target endpoint. </summary>
+        /// <summary>
+        ///     Gets the target endpoint.
+        /// </summary>
         public IProducerEndpoint Endpoint { get; }
     }
 }

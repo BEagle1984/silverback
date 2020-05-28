@@ -16,7 +16,9 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Initializes a new instance of the <see cref="MessageHeaderCollection" /> class.
         /// </summary>
-        /// <param name="headers"> The headers to be added to the collection. </param>
+        /// <param name="headers">
+        ///     The headers to be added to the collection.
+        /// </param>
         public MessageHeaderCollection(IEnumerable<MessageHeader>? headers = null)
         {
             if (headers != null)
@@ -26,16 +28,24 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets or sets the value of the header with the specified name.
         /// </summary>
-        /// <param name="name"> The header name. </param>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
         public string? this[string name]
         {
             get => GetValue(Check.NotNull(name, nameof(name)), true);
             set => AddOrReplace(name, value);
         }
 
-        /// <summary> Adds a new header. </summary>
-        /// <param name="name"> The header name. </param>
-        /// <param name="value"> The header value. </param>
+        /// <summary>
+        ///     Adds a new header.
+        /// </summary>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
+        /// <param name="value">
+        ///     The header value.
+        /// </param>
         public void Add(string name, object value)
         {
             Check.NotNull(name, nameof(name));
@@ -44,9 +54,15 @@ namespace Silverback.Messaging.Messages
             Add(name, value.ToString());
         }
 
-        /// <summary> Adds a new header. </summary>
-        /// <param name="name"> The header name. </param>
-        /// <param name="value"> The header value. </param>
+        /// <summary>
+        ///     Adds a new header.
+        /// </summary>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
+        /// <param name="value">
+        ///     The header value.
+        /// </param>
         public void Add(string name, string? value)
         {
             Check.NotNull(name, nameof(name));
@@ -54,16 +70,24 @@ namespace Silverback.Messaging.Messages
             Add(new MessageHeader(name, value));
         }
 
-        /// <summary> Removes all headers with the specified name. </summary>
-        /// <param name="name"> The header name. </param>
+        /// <summary>
+        ///     Removes all headers with the specified name.
+        /// </summary>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
         public void Remove(string name) =>
             RemoveAll(x => x.Name == name);
 
         /// <summary>
         ///     Adds a new header or replaces the header with the same name.
         /// </summary>
-        /// <param name="name"> The header name. </param>
-        /// <param name="newValue"> The new header value. </param>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
+        /// <param name="newValue">
+        ///     The new header value.
+        /// </param>
         public void AddOrReplace(string name, object? newValue)
         {
             Check.NotNull(name, nameof(name));
@@ -74,8 +98,12 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Adds a new header or replaces the header with the same name.
         /// </summary>
-        /// <param name="name"> The header name. </param>
-        /// <param name="newValue"> The new header value. </param>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
+        /// <param name="newValue">
+        ///     The new header value.
+        /// </param>
         public void AddOrReplace(string name, string? newValue)
         {
             Check.NotNull(name, nameof(name));
@@ -88,7 +116,9 @@ namespace Silverback.Messaging.Messages
         ///     Returns a boolean value indicating whether an header with the specified name has already been added
         ///     to the collection.
         /// </summary>
-        /// <param name="name"> The name to be checked. </param>
+        /// <param name="name">
+        ///     The name to be checked.
+        /// </param>
         /// <returns>
         ///     A boolean value indicating whether the name was found in the existing headers.
         /// </returns>
@@ -99,16 +129,22 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified name.
         ///     </para>
         ///     <para>
-        ///         It will return <c> null </c> if no header with that name is found in the collection.
+        ///         It will return <c>
+        ///             null
+        ///         </c> if no header with that name is found in the collection.
         ///     </para>
         /// </summary>
-        /// <param name="name"> The name of the header to be retrieved. </param>
+        /// <param name="name">
+        ///     The name of the header to be retrieved.
+        /// </param>
         /// <param name="throwIfNotFound">
         ///     A boolean value specifying whether an exception must be thrown if the header with the specified name
         ///     is not found (or the value cannot be converted to the specified type).
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c> null </c> if not found.
+        ///     The header value converted to the target type, or <c>
+        ///         null
+        ///     </c> if not found.
         /// </returns>
         public string? GetValue(string name, bool throwIfNotFound = false) =>
             this.AsEnumerable().GetValue(name, throwIfNotFound);
@@ -119,17 +155,25 @@ namespace Silverback.Messaging.Messages
         ///         <typeparamref name="T" />.
         ///     </para>
         ///     <para>
-        ///         It will return <c> null </c> if no header with that name is found in the collection.
+        ///         It will return <c>
+        ///             null
+        ///         </c> if no header with that name is found in the collection.
         ///     </para>
         /// </summary>
-        /// <typeparam name="T"> The type to convert the header value to. </typeparam>
-        /// <param name="name"> The name of the header to be retrieved. </param>
+        /// <typeparam name="T">
+        ///     The type to convert the header value to.
+        /// </typeparam>
+        /// <param name="name">
+        ///     The name of the header to be retrieved.
+        /// </param>
         /// <param name="throwIfNotFound">
         ///     A boolean value specifying whether an exception must be thrown if the header with the specified name
         ///     is not found (or the value cannot be converted to the specified type).
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c> null </c> if not found.
+        ///     The header value converted to the target type, or <c>
+        ///         null
+        ///     </c> if not found.
         /// </returns>
         public T? GetValue<T>(string name, bool throwIfNotFound = false)
             where T : struct =>
@@ -140,19 +184,28 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified name, casting it to the specified type.
         ///     </para>
         ///     <para>
-        ///         By default it will return <c> null </c> if no header with that name is found in the collection
-        ///         but this behavior can be changed setting the <paramref name="throwIfNotFound" /> parameter to
-        ///         <c> true </c>.
+        ///         By default it will return <c>
+        ///             null
+        ///         </c> if no header with that name is found in the collection but this behavior can be changed
+        ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>
+        ///             true
+        ///         </c>.
         ///     </para>
         /// </summary>
-        /// <param name="name"> The name of the header to be retrieved. </param>
-        /// <param name="targetType"> The type to convert the header value to. </param>
+        /// <param name="name">
+        ///     The name of the header to be retrieved.
+        /// </param>
+        /// <param name="targetType">
+        ///     The type to convert the header value to.
+        /// </param>
         /// <param name="throwIfNotFound">
         ///     A boolean value specifying whether an exception must be thrown if the header with the specified name
         ///     is not found (or the value cannot be converted to the specified type).
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c> null </c> if not found.
+        ///     The header value converted to the target type, or <c>
+        ///         null
+        ///     </c> if not found.
         /// </returns>
         public object? GetValue(string name, Type targetType, bool throwIfNotFound = false) =>
             this.AsEnumerable().GetValue(name, targetType, throwIfNotFound);
@@ -167,10 +220,16 @@ namespace Silverback.Messaging.Messages
         ///         name is found in the collection.
         ///     </para>
         /// </summary>
-        /// <typeparam name="T"> The type to convert the header value to. </typeparam>
-        /// <param name="name"> The name of the header to be retrieved. </param>
+        /// <typeparam name="T">
+        ///     The type to convert the header value to.
+        /// </typeparam>
+        /// <param name="name">
+        ///     The name of the header to be retrieved.
+        /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c> null </c> if not found.
+        ///     The header value converted to the target type, or <c>
+        ///         null
+        ///     </c> if not found.
         /// </returns>
         public T GetValueOrDefault<T>(string name)
             where T : struct =>
@@ -185,10 +244,16 @@ namespace Silverback.Messaging.Messages
         ///         collection.
         ///     </para>
         /// </summary>
-        /// <param name="name"> The name of the header to be retrieved. </param>
-        /// <param name="targetType"> The type to convert the header value to. </param>
+        /// <param name="name">
+        ///     The name of the header to be retrieved.
+        /// </param>
+        /// <param name="targetType">
+        ///     The type to convert the header value to.
+        /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c> null </c> if not found.
+        ///     The header value converted to the target type, or <c>
+        ///         null
+        ///     </c> if not found.
         /// </returns>
         public object? GetValueOrDefault(string name, Type targetType) =>
             this.AsEnumerable().GetValueOrDefault(name, targetType);

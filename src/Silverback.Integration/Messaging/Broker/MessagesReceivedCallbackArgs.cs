@@ -8,8 +8,8 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    ///     The argument passed to the <see cref="MessagesReceivedCallback" /> containing the received
-    ///     messages and the scoped service provider.
+    ///     The argument passed to the <see cref="MessagesReceivedCallback" /> containing the received messages
+    ///     and the scoped service provider.
     /// </summary>
     public class MessagesReceivedCallbackArgs
     {
@@ -36,9 +36,9 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        ///     Gets the collection of <see cref="IRawInboundEnvelope" /> (or <see cref="IInboundEnvelope" />
-        ///     when properly deserialized) that contain the messages that have been consumed and are ready to
-        ///     be processed.
+        ///     Gets the collection of <see cref="IRawInboundEnvelope" /> (or <see cref="IInboundEnvelope" /> when
+        ///     properly deserialized) that contain the messages that have been consumed and are ready to be
+        ///     processed.
         /// </summary>
         public IReadOnlyCollection<IRawInboundEnvelope> Envelopes { get; }
 

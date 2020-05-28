@@ -7,20 +7,30 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging
 {
-    /// <summary> Represents a queue or exchange to consume from. </summary>
+    /// <summary>
+    ///     Represents a queue or exchange to consume from.
+    /// </summary>
     public abstract class RabbitConsumerEndpoint : ConsumerEndpoint
     {
-        /// <summary> Initializes a new instance of the <see cref="RabbitConsumerEndpoint" /> class. </summary>
-        /// <param name="name"> The name of the queue or exchange. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RabbitConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="name">
+        ///     The name of the queue or exchange.
+        /// </param>
         protected RabbitConsumerEndpoint(string name)
             : base(name)
         {
         }
 
-        /// <summary> Gets or sets the RabbitMQ connection settings. </summary>
+        /// <summary>
+        ///     Gets or sets the RabbitMQ connection settings.
+        /// </summary>
         public RabbitConnectionConfig Connection { get; set; } = new RabbitConnectionConfig();
 
-        /// <summary> Gets or sets the queue configuration. </summary>
+        /// <summary>
+        ///     Gets or sets the queue configuration.
+        /// </summary>
         public RabbitQueueConfig Queue { get; set; } = new RabbitQueueConfig();
 
         /// <summary>
@@ -29,10 +39,14 @@ namespace Silverback.Messaging
         /// </summary>
         public int AcknowledgeEach { get; set; } = 1;
 
-        /// <summary> Gets or sets the QoS prefetch size parameter for the consumer. </summary>
+        /// <summary>
+        ///     Gets or sets the QoS prefetch size parameter for the consumer.
+        /// </summary>
         public uint PrefetchSize { get; set; }
 
-        /// <summary> Gets or sets the QoS prefetch count parameter for the consumer. </summary>
+        /// <summary>
+        ///     Gets or sets the QoS prefetch count parameter for the consumer.
+        /// </summary>
         public ushort PrefetchCount { get; set; }
 
         /// <inheritdoc />
@@ -58,7 +72,9 @@ namespace Silverback.Messaging
         ///     Determines whether the specified <see cref="RabbitConsumerEndpoint" /> is equal to the current
         ///     <see cref="RabbitConsumerEndpoint" />.
         /// </summary>
-        /// <param name="other"> The object to compare with the current object. </param>
+        /// <param name="other">
+        ///     The object to compare with the current object.
+        /// </param>
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>

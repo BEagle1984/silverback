@@ -22,7 +22,9 @@ namespace Silverback.Messaging.Broker.Behaviors
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services in the current
         ///     pipeline.
         /// </param>
-        /// <param name="next"> The next behavior in the pipeline. </param>
+        /// <param name="next">
+        ///     The next behavior in the pipeline.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>

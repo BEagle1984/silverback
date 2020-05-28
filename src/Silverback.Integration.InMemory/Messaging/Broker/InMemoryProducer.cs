@@ -14,14 +14,20 @@ namespace Silverback.Messaging.Broker
     public class InMemoryProducer : Producer<InMemoryBroker, IProducerEndpoint>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InMemoryProducer"/> class.
+        ///     Initializes a new instance of the <see cref="InMemoryProducer" /> class.
         /// </summary>
         /// <param name="broker">
         ///     The <see cref="IBroker" /> that instantiated this producer.
         /// </param>
-        /// <param name="endpoint"> The endpoint to produce to. </param>
-        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="endpoint">
+        ///     The endpoint to produce to.
+        /// </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be added to the pipeline.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public InMemoryProducer(
             InMemoryBroker broker,
             IProducerEndpoint endpoint,

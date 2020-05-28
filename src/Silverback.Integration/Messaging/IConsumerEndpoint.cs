@@ -4,7 +4,8 @@
 namespace Silverback.Messaging
 {
     /// <summary>
-    ///     Represents a message broker endpoint to consume from (such as a Kafka topic or RabbitMQ queue or exchange).
+    ///     Represents a message broker endpoint to consume from (such as a Kafka topic or RabbitMQ queue or
+    ///     exchange).
     /// </summary>
     public interface IConsumerEndpoint : IEndpoint
     {

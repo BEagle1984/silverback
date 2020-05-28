@@ -6,8 +6,8 @@ using System;
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
     /// <summary>
-    ///     Resolves the parameters declared with a type that is compatible with the type of the message
-    ///     being published.
+    ///     Resolves the parameters declared with a type that is compatible with the type of the message being
+    ///     published.
     /// </summary>
     public class SingleMessageArgumentResolver : ISingleMessageArgumentResolver
     {

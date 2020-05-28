@@ -36,14 +36,24 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private IProducer<byte[]?, byte[]?>? _innerProducer;
 
-        /// <summary> Initializes a new instance of the <see cref="KafkaProducer" /> class. </summary>
-        /// <param name="broker"> The <see cref="IBroker" /> that instantiated this producer. </param>
-        /// <param name="endpoint"> The endpoint to produce to. </param>
-        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducer" /> class.
+        /// </summary>
+        /// <param name="broker">
+        ///     The <see cref="IBroker" /> that instantiated this producer.
+        /// </param>
+        /// <param name="endpoint">
+        ///     The endpoint to produce to.
+        /// </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be added to the pipeline.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public KafkaProducer(
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,

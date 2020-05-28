@@ -18,9 +18,15 @@ namespace Silverback.Messaging.Broker
         /// <param name="broker">
         ///     The <see cref="IBroker" /> that instantiated this producer.
         /// </param>
-        /// <param name="endpoint"> The endpoint to produce to. </param>
-        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="endpoint">
+        ///     The endpoint to produce to.
+        /// </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be added to the pipeline.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         protected Producer(
             TBroker broker,
             TEndpoint endpoint,

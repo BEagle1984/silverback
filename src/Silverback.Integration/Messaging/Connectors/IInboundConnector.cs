@@ -13,7 +13,9 @@ namespace Silverback.Messaging.Connectors
         /// <summary>
         ///     Binds to the specified endpoint to consume it.
         /// </summary>
-        /// <param name="endpoint"> The endpoint to be consumed. </param>
+        /// <param name="endpoint">
+        ///     The endpoint to be consumed.
+        /// </param>
         /// <param name="errorPolicy">
         ///     The optional error policy to be applied when an exception is thrown during the processing of a
         ///     message.

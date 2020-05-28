@@ -26,8 +26,12 @@ namespace Silverback.Messaging.Connectors
         /// <param name="brokerCollection">
         ///     The collection containing the available brokers.
         /// </param>
-        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         protected ExactlyOnceInboundConnector(
             IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
@@ -48,13 +52,15 @@ namespace Silverback.Messaging.Connectors
         }
 
         /// <summary>
-        ///     Checks whether the message contained in the specified envelope must be processed. It ensures
-        ///     that each message is processed exactly once.
+        ///     Checks whether the message contained in the specified envelope must be processed. It ensures that
+        ///     each message is processed exactly once.
         /// </summary>
         /// <param name="envelope">
         ///     The <see cref="IRawInboundEnvelope" /> containing the message to be processed.
         /// </param>
-        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the result of the asynchronous operation. The task
         ///     result contains a value indicating whether the message must be processed.
@@ -70,7 +76,7 @@ namespace Silverback.Messaging.Connectors
                     if (await MustProcess(envelope, serviceProvider))
                         return true;
 
-                    _logger.LogDebug(
+                    _logger.LogInformation(
                         EventIds.ExactlyOnceInboundConnectorMessageAlreadyProcessed,
                         "Message is being skipped since it was already processed.",
                         envelope);

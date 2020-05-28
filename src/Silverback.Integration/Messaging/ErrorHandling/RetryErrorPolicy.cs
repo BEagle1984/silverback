@@ -27,8 +27,12 @@ namespace Silverback.Messaging.ErrorHandling
         /// <summary>
         ///     Initializes a new instance of the <see cref="RetryErrorPolicy" /> class.
         /// </summary>
-        /// <param name="serviceProvider"> The <see cref="IServiceProvider" />. </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         /// <param name="initialDelay">
         ///     The optional delay to be applied to the first retry.
         /// </param>
@@ -54,7 +58,10 @@ namespace Silverback.Messaging.ErrorHandling
         {
             await ApplyDelay(envelopes);
 
-            _logger.LogInformation(EventIds.RetryErrorPolicyApplyPolicy, "The message(s) will be processed again.", envelopes);
+            _logger.LogInformation(
+                EventIds.RetryErrorPolicyApplyPolicy,
+                "The message(s) will be processed again.",
+                envelopes);
 
             return ErrorAction.Retry;
         }

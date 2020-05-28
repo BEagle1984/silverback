@@ -24,8 +24,8 @@ namespace Silverback.Background
         ///     Specifies all settings of the lock to be acquired.
         /// </param>
         /// <param name="lockManager">
-        ///     The <see cref="IDistributedLockManager" /> that generated the lock and can be used to
-        ///     keep it alive and finally release it.
+        ///     The <see cref="IDistributedLockManager" /> that generated the lock and can be used to keep it alive
+        ///     and finally release it.
         /// </param>
         public DistributedLock(DistributedLockSettings settings, IDistributedLockManager lockManager)
         {

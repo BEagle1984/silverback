@@ -29,16 +29,15 @@ namespace Silverback.Background
         ///     <see cref="System.Guid" />).
         /// </param>
         /// <param name="acquireTimeout">
-        ///     After the acquire timeout is expired the lock manager will abort the lock acquisition
-        ///     (default is no timeout).
+        ///     After the acquire timeout is expired the lock manager will abort the lock acquisition (default is no
+        ///     timeout).
         /// </param>
         /// <param name="acquireRetryInterval">
-        ///     The interval at which the lock manager checks if a lock can be acquired for the
-        ///     specified resource (default is 30 seconds).
+        ///     The interval at which the lock manager checks if a lock can be acquired for the specified resource
+        ///     (default is 30 seconds).
         /// </param>
         /// <param name="heartbeatTimeout">
-        ///     After the heartbeat timeout is expired the lock will be considered released (default is
-        ///     1 minute).
+        ///     After the heartbeat timeout is expired the lock will be considered released (default is 1 minute).
         /// </param>
         /// <param name="heartbeatInterval">
         ///     The interval at which the heartbeat has to be sent (default is 1 second).
@@ -74,11 +73,6 @@ namespace Silverback.Background
         public static DistributedLockSettings NoLock { get; } = new NullLockSettings();
 
         /// <summary>
-        ///     Gets the name of the lock / the resource being locked.
-        /// </summary>
-        public string ResourceName { get; private set; }
-
-        /// <summary>
         ///     Gets a unique identifier representing the entity trying to acquire the lock.
         /// </summary>
         public string UniqueId { get; }
@@ -108,6 +102,11 @@ namespace Silverback.Background
         ///     Gets the maximum number of heartbeats that can be failed to be sent before stopping.
         /// </summary>
         public int FailedHeartbeatsThreshold { get; }
+
+        /// <summary>
+        ///     Gets the name of the lock / the resource being locked.
+        /// </summary>
+        public string ResourceName { get; private set; }
 
         internal void EnsureResourceNameIsSet(string fallback)
         {

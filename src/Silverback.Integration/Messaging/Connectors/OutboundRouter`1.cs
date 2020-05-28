@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Connectors
             TMessage message,
             MessageHeaderCollection headers);
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         IEnumerable<IProducerEndpoint> IOutboundRouter.GetDestinationEndpoints(
             object message,
             MessageHeaderCollection headers) =>

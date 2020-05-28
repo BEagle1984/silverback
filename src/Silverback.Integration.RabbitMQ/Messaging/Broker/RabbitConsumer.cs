@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Broker
         private RabbitOffset? _pendingOffset;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RabbitConsumer"/> class.
+        ///     Initializes a new instance of the <see cref="RabbitConsumer" /> class.
         /// </summary>
         /// <param name="broker">
         ///     The <see cref="IBroker" /> that is instantiating the consumer.
@@ -47,8 +47,12 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="callback"> The delegate to be invoked when a message is received. </param>
-        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
+        /// <param name="callback">
+        ///     The delegate to be invoked when a message is received.
+        /// </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be added to the pipeline.
+        /// </param>
         /// <param name="connectionFactory">
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
         ///     endpoint.
@@ -56,7 +60,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public RabbitConsumer(
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,

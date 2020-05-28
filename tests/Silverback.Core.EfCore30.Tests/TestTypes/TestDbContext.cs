@@ -42,7 +42,8 @@ namespace Silverback.Tests.Core.EFCore30.TestTypes
         public override Task<int> SaveChangesAsync(
             bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
-            => _eventsPublisher.ExecuteSaveTransactionAsync(() =>
-                base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
+            => _eventsPublisher.ExecuteSaveTransactionAsync(
+                () =>
+                    base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
     }
 }

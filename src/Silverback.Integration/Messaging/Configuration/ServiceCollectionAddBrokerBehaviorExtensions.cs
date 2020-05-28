@@ -9,23 +9,25 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    /// Adds the <c>AddSingletonBrokerBehavior</c> method to the <see cref="IServiceCollection"/>.
+    ///     Adds the <c>
+    ///         AddSingletonBrokerBehavior
+    ///     </c> method to the <see cref="IServiceCollection" />.
     /// </summary>
     public static class ServiceCollectionAddBrokerBehaviorExtensions
     {
         /// <summary>
-        ///     Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the specified
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <param name="behaviorType">
         ///     The type of the behavior to register and the implementation to use.
         /// </param>
         /// <returns>
-        ///     The <see cref="IServiceCollection"/> so that additional calls can be chained.
+        ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
         public static IServiceCollection AddSingletonBrokerBehavior(this IServiceCollection services, Type behaviorType)
         {
@@ -40,30 +42,33 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds a singleton behavior of the type specified in <typeparamref name="TBehavior" /> to the
         ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
-        /// <typeparam name="TBehavior"> The type of the behavior to add. </typeparam>
+        /// <typeparam name="TBehavior">
+        ///     The type of the behavior to add.
+        /// </typeparam>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
         /// <returns>
-        ///     The <see cref="IServiceCollection"/> so that additional calls can be chained.
+        ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
         public static IServiceCollection AddSingletonBrokerBehavior<TBehavior>(this IServiceCollection services)
             where TBehavior : class, IBrokerBehavior =>
             AddSingletonBrokerBehavior(services, typeof(TBehavior));
 
         /// <summary>
-        ///     Adds a singleton behavior with a
-        ///     factory specified in <paramref name="implementationFactory" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton behavior with a factory specified in <paramref name="implementationFactory" /> to
+        ///     the specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationFactory"> The factory that creates the service. </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
         /// <returns>
-        ///     The <see cref="IServiceCollection"/> so that additional calls can be chained.
+        ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
         public static IServiceCollection AddSingletonBrokerBehavior(
             this IServiceCollection services,
@@ -77,17 +82,18 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a singleton behavior with an
-        ///     instance specified in <paramref name="implementationInstance" /> to the
-        ///     specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        ///     Adds a singleton behavior with an instance specified in <paramref name="implementationInstance" />
+        ///     to the specified <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="services">
-        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
-        ///     service to.
+        ///     The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the service
+        ///     to.
         /// </param>
-        /// <param name="implementationInstance"> The instance of the service. </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
         /// <returns>
-        ///     The <see cref="IServiceCollection"/> so that additional calls can be chained.
+        ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
         public static IServiceCollection AddSingletonBrokerBehavior(
             this IServiceCollection services,

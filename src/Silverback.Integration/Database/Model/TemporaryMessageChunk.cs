@@ -19,7 +19,9 @@ namespace Silverback.Database.Model
         [MaxLength(300)]
         public string MessageId { get; set; } = null!;
 
-        /// <summary> Gets or sets the chunk index (sequence). </summary>
+        /// <summary>
+        ///     Gets or sets the chunk index (sequence).
+        /// </summary>
         [Key]
         public int ChunkIndex { get; set; }
 
@@ -28,7 +30,9 @@ namespace Silverback.Database.Model
         /// </summary>
         public int ChunksCount { get; set; }
 
-        /// <summary> Gets or sets the chunk binary content. </summary>
+        /// <summary>
+        ///     Gets or sets the chunk binary content.
+        /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
         public byte[] Content { get; set; } = null!;
 

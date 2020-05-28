@@ -8,23 +8,33 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging
 {
-    /// <summary> Represents a queue or exchange to produce to. </summary>
+    /// <summary>
+    ///     Represents a queue or exchange to produce to.
+    /// </summary>
     public abstract class RabbitProducerEndpoint : ProducerEndpoint
     {
-        /// <summary> Initializes a new instance of the <see cref="RabbitProducerEndpoint" /> class. </summary>
-        /// <param name="name"> The name of the queue or exchange. </param>
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RabbitProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="name">
+        ///     The name of the queue or exchange.
+        /// </param>
         protected RabbitProducerEndpoint(string name)
             : base(name)
         {
         }
 
-        /// <summary> Gets or sets the RabbitMQ connection settings. </summary>
+        /// <summary>
+        ///     Gets or sets the RabbitMQ connection settings.
+        /// </summary>
         public RabbitConnectionConfig Connection { get; set; } = new RabbitConnectionConfig();
 
         /// <summary>
         ///     Gets or sets the maximum amount of time to wait for the message produce to be acknowledge before
-        ///     considering it failed. Set it to <c> null </c> to proceed without waiting for a positive or negative
-        ///     acknowledgment (default is a quite conservative 5 seconds).
+        ///     considering it failed. Set it to <c>
+        ///         null
+        ///     </c> to proceed without waiting for a positive or negative acknowledgment (default is a quite
+        ///     conservative 5 seconds).
         /// </summary>
         public TimeSpan? ConfirmationTimeout { get; set; } = TimeSpan.FromSeconds(5);
 
@@ -43,7 +53,9 @@ namespace Silverback.Messaging
         ///     Determines whether the specified <see cref="RabbitProducerEndpoint" /> is equal to the current
         ///     <see cref="RabbitProducerEndpoint" />.
         /// </summary>
-        /// <param name="other"> The object to compare with the current object. </param>
+        /// <param name="other">
+        ///     The object to compare with the current object.
+        /// </param>
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>

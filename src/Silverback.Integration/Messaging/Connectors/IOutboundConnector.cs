@@ -14,8 +14,12 @@ namespace Silverback.Messaging.Connectors
         /// <summary>
         ///     Forwards the message to the message broker endpoint.
         /// </summary>
-        /// <param name="envelope">The envelope containing the message to be produced.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        /// <param name="envelope">
+        ///     The envelope containing the message to be produced.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
         Task RelayMessage(IOutboundEnvelope envelope);
     }
 }

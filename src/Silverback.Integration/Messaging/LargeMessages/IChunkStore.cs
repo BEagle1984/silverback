@@ -21,7 +21,9 @@ namespace Silverback.Messaging.LargeMessages
         /// </summary>
         bool HasNotPersistedChunks { get; }
 
-        /// <summary> Stores the specified chunk. </summary>
+        /// <summary>
+        ///     Stores the specified chunk.
+        /// </summary>
         /// <param name="messageId">
         ///     The unique identifier of the message this chunk belongs to.
         /// </param>
@@ -31,7 +33,9 @@ namespace Silverback.Messaging.LargeMessages
         /// <param name="chunksCount">
         ///     The total number of chunks for this same message.
         /// </param>
-        /// <param name="content"> The actual chunk binary content. </param>
+        /// <param name="content">
+        ///     The actual chunk binary content.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -40,7 +44,9 @@ namespace Silverback.Messaging.LargeMessages
         /// <summary>
         ///     Returns the number of (unique) chunks stored for a certain message.
         /// </summary>
-        /// <param name="messageId"> The message unique identifier. </param>
+        /// <param name="messageId">
+        ///     The message unique identifier.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the count.
         /// </returns>
@@ -49,7 +55,9 @@ namespace Silverback.Messaging.LargeMessages
         /// <summary>
         ///     Returns all stored chunks of the specified message.
         /// </summary>
-        /// <param name="messageId"> The message unique identifier. </param>
+        /// <param name="messageId">
+        ///     The message unique identifier.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a dictionary
         ///     with the chunks.
@@ -58,9 +66,13 @@ namespace Silverback.Messaging.LargeMessages
 
         /// <summary>
         ///     Removes all chunks related to the specified message. This method is called when the full message is
-        ///     consumed. The changes will not be effective until <c> Commit </c> is called.
+        ///     consumed. The changes will not be effective until <c>
+        ///         Commit
+        ///     </c> is called.
         /// </summary>
-        /// <param name="messageId"> The message unique identifier. </param>
+        /// <param name="messageId">
+        ///     The message unique identifier.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -68,7 +80,9 @@ namespace Silverback.Messaging.LargeMessages
 
         /// <summary>
         ///     Removes all chunks older than the specified threshold. The changes will be immediately effective
-        ///     without having to invoke the <c> Commit </c> method.
+        ///     without having to invoke the <c>
+        ///         Commit
+        ///     </c> method.
         /// </summary>
         /// <param name="threshold">
         ///     The datetime specifying the max age of the chunks to be kept.

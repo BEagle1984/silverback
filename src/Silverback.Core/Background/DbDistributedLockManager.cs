@@ -30,7 +30,9 @@ namespace Silverback.Background
         /// <param name="serviceScopeFactory">
         ///     The <see cref="IServiceScopeFactory" /> used to resolve the scoped types.
         /// </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         public DbDistributedLockManager(
             IServiceScopeFactory serviceScopeFactory,
             ILogger<DbDistributedLockManager> logger)
@@ -260,6 +262,21 @@ namespace Silverback.Background
         private static DateTime GetHeartbeatThreshold(TimeSpan heartbeatTimeout) =>
             DateTime.UtcNow.Subtract(heartbeatTimeout);
 
+        private static async Task Release(string resourceName, string uniqueId, IServiceProvider serviceProvider)
+        {
+            var (dbSet, dbContext) = GetDbSet(serviceProvider);
+
+            var lockRecord = await dbSet.AsQueryable()
+                .FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId);
+
+            if (lockRecord == null)
+                return;
+
+            dbSet.Remove(lockRecord);
+
+            await dbContext.SaveChangesAsync();
+        }
+
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task<bool> TryAcquireLock(DistributedLockSettings settings)
         {
@@ -279,21 +296,6 @@ namespace Silverback.Background
             }
 
             return false;
-        }
-
-        private static async Task Release(string resourceName, string uniqueId, IServiceProvider serviceProvider)
-        {
-            var (dbSet, dbContext) = GetDbSet(serviceProvider);
-
-            var lockRecord = await dbSet.AsQueryable()
-                .FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId);
-
-            if (lockRecord == null)
-                return;
-
-            dbSet.Remove(lockRecord);
-
-            await dbContext.SaveChangesAsync();
         }
     }
 }

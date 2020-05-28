@@ -1,0 +1,85 @@
+- name: Overview
+  href: overview.md
+- name: Quickstart
+  items:
+  - name: Introduction
+    href: 01-quickstart/01-introduction.md
+  - name: Using the Bus
+    items:
+    - name: Enabling the Bus
+      href: 01-quickstart/02-bus/01-bus.md
+    - name: Creating the Message model
+      href: 01-quickstart/02-bus/02-model.md
+    - name: Publish
+      href: 01-quickstart/02-bus/03-publish.md
+    - name: Subscribe
+      href: 01-quickstart/02-bus/04-subscribe.md
+  - name: DDD and Domain Events
+    href: 01-quickstart/03-domain-events.md
+  - name: Integration using a Message Broker
+    items:
+    - name: Connecting to a Message Broker
+      href: 01-quickstart/04-message-broker/01-message-broker.md
+    - name: Translating Messages
+      href: 01-quickstart/04-message-broker/02-translating.md
+    - name: Message Headers
+      href: 01-quickstart/04-message-broker/03-headers.md
+  - name: Behaviors
+    href: 01-quickstart/05-behaviors.md
+  - name: Testing
+    href: 01-quickstart/06-testing.md
+  - name: Event Sourcing
+    href: 01-quickstart/07-event-sourcing.md
+- name: Broker Configuration
+  items:
+    - name: Endpoint
+      href: 02-configuration/01-endpoint.md
+    - name: Outbound Connector
+      href: 02-configuration/02-outbound.md
+    - name: Inbound Connector
+      href: 02-configuration/03-inbound.md
+    - name: Mixed Configurations
+      href: 02-configuration/04-mixed.md
+- name: Advanced
+  items:
+    - name: Serialization
+      href: 03-advanced/01-serialization.md
+    - name: Chunking
+      href: 03-advanced/02-chunking.md
+    - name: Encryption
+      href: 03-advanced/03-encryption.md
+    - name: Binary Files
+      href: 03-advanced/04-binary-files.md
+    - name: Observable Bus
+      href: 03-advanced/05-rx.md
+    - name: Using IBroker
+      href: 03-advanced/06-broker.md
+    - name: Message Identifier
+      href: 03-advanced/07-message-id.md
+    - name: IInboundEnvelope
+      href: 03-advanced/08-iinboundenvelope.md
+- name: Kafka Specific
+  items:
+    - name: Message Key (partitioning)
+      href: 04-kafka/01-kafka-message-key.md
+    - name: Multiple Consumer Groups (in same process)
+      href: 04-kafka/02-multiple-consumer-groups.md
+    - name: Kafka Events
+      href: 04-kafka/03-kafka-events.md
+- name: RabbitMQ Specific
+  items:
+    - name: Routing Key
+      href: 05-rabbit/01-routing-key.md
+- name: Extras
+  items:
+    - name: Sample DbContext (EF Core)
+      href: 06-extras/01-dbcontext.md
+    - name: Distributed Background Services
+      href: 06-extras/02-background-services.md
+- name: Source Code
+  items:
+    - name: Contributing
+      href: 09-source/01-contributing.md
+    - name: Samples
+      href: 09-source/02-samples.md
+

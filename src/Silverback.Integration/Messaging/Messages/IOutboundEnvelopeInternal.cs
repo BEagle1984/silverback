@@ -10,8 +10,10 @@ namespace Silverback.Messaging.Messages
     internal interface IOutboundEnvelopeInternal : IOutboundEnvelope
     {
         /// <summary>
-        ///     Gets the type of the <see cref="IOutboundConnector" /> to be used when publishing these messages.
-        ///     If <c>null</c>, the default <see cref="IOutboundConnector" /> will be used.
+        ///     Gets the type of the <see cref="IOutboundConnector" /> to be used when publishing these messages. If
+        ///     <c>
+        ///         null
+        ///     </c>, the default <see cref="IOutboundConnector" /> will be used.
         /// </summary>
         Type? OutboundConnectorType { get; }
     }

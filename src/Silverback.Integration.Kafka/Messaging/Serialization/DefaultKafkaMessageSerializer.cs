@@ -20,7 +20,9 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Initializes a new instance of the <see cref="DefaultKafkaMessageSerializer" /> class.
         /// </summary>
-        /// <param name="serializer"> The <see cref="IMessageSerializer" /> to be used. </param>
+        /// <param name="serializer">
+        ///     The <see cref="IMessageSerializer" /> to be used.
+        /// </param>
         public DefaultKafkaMessageSerializer(IMessageSerializer serializer)
         {
             _serializer = serializer;

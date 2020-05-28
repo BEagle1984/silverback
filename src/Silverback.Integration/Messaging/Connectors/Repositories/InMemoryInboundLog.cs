@@ -15,7 +15,9 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///         Used by the <see cref="LoggedInboundConnector" /> to keep track of each processed message and
     ///         guarantee that each one is processed only once.
     ///     </para>
-    ///     <para> The log is simply persisted in memory. </para>
+    ///     <para>
+    ///         The log is simply persisted in memory.
+    ///     </para>
     /// </summary>
     public class InMemoryInboundLog : TransactionalList<InboundLogEntry>, IInboundLog
     {

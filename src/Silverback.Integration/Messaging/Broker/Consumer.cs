@@ -32,12 +32,18 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="receivedCallback"> The delegate to be invoked when a message is received. </param>
-        /// <param name="behaviors"> The behaviors to be added to the pipeline. </param>
+        /// <param name="receivedCallback">
+        ///     The delegate to be invoked when a message is received.
+        /// </param>
+        /// <param name="behaviors">
+        ///     The behaviors to be added to the pipeline.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
-        /// <param name="logger"> The <see cref="ILogger" />. </param>
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
         protected Consumer(
             IBroker broker,
             IConsumerEndpoint endpoint,
@@ -100,15 +106,22 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline and finally
-        ///     invoking the callback method.
+        ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline and
+        ///     finally invoking the callback method.
         /// </summary>
-        /// <param name="message"> The body of the consumed message. </param>
-        /// <param name="headers"> The headers of the consumed message. </param>
+        /// <param name="message">
+        ///     The body of the consumed message.
+        /// </param>
+        /// <param name="headers">
+        ///     The headers of the consumed message.
+        /// </param>
         /// <param name="sourceEndpointName">
         ///     The name of the actual endpoint (topic) where the message has been delivered.
         /// </param>
-        /// <param name="offset"> The offset of the consumed message. </param>a
+        /// <param name="offset">
+        ///     The offset of the consumed message.
+        /// </param>
+        /// a
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -133,8 +146,9 @@ namespace Silverback.Messaging.Broker
         ///     resources.
         /// </summary>
         /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c> Dispose </c> method and not
-        ///     from the finalizer.
+        ///     A value indicating whether the method has been called by the <c>
+        ///         Dispose
+        ///     </c> method and not from the finalizer.
         /// </param>
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         protected virtual void Dispose(bool disposing)

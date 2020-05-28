@@ -20,8 +20,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         private readonly IPublisher _publisher;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ReadOnlyCollectionMessagesReturnValueHandler" />
-        ///     class.
+        ///     Initializes a new instance of the <see cref="ReadOnlyCollectionMessagesReturnValueHandler" /> class.
         /// </summary>
         /// <param name="publisher">
         ///     The <see cref="IPublisher" /> to be used to publish the messages.

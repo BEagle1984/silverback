@@ -12,9 +12,9 @@ namespace Silverback.Messaging.Connectors
     public interface IOutboundRouter
     {
         /// <summary>
-        ///     Gets the endpoints that are potentially targeted by this router. This collection could be built
-        ///     over time in case of a dynamic <see cref="IOutboundRouter" /> but that's not optimal as it used
-        ///     for example by the health checks to ping all possible endpoints.
+        ///     Gets the endpoints that are potentially targeted by this router. This collection could be built over
+        ///     time in case of a dynamic <see cref="IOutboundRouter" /> but that's not optimal as it used for
+        ///     example by the health checks to ping all possible endpoints.
         /// </summary>
         IEnumerable<IProducerEndpoint> Endpoints { get; }
 
@@ -22,9 +22,15 @@ namespace Silverback.Messaging.Connectors
         ///     Returns the collection of <see cref="IProducerEndpoint" /> representing the endpoints where the
         ///     specified message must be produced.
         /// </summary>
-        /// <param name="message"> The message to be routed. </param>
-        /// <param name="headers"> The message headers collection. </param>
-        /// <returns> The endpoints to produce to. </returns>
+        /// <param name="message">
+        ///     The message to be routed.
+        /// </param>
+        /// <param name="headers">
+        ///     The message headers collection.
+        /// </param>
+        /// <returns>
+        ///     The endpoints to produce to.
+        /// </returns>
         IEnumerable<IProducerEndpoint> GetDestinationEndpoints(object message, MessageHeaderCollection headers);
     }
 }

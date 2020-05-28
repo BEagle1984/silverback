@@ -19,7 +19,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         private readonly InMemoryOutboundQueue _queue;
 
         private readonly IOutboundEnvelope _sampleOutboundEnvelope = new OutboundEnvelope(
-            new TestEventOne { Content = "Test" }, null, TestProducerEndpoint.GetDefault());
+            new TestEventOne { Content = "Test" },
+            null,
+            TestProducerEndpoint.GetDefault());
 
         public InMemoryOutboundQueueTests()
         {

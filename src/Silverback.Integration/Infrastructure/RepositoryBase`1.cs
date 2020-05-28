@@ -18,7 +18,9 @@ namespace Silverback.Infrastructure
         /// <summary>
         ///     Initializes a new instance of the <see cref="RepositoryBase{TEntity}" /> class.
         /// </summary>
-        /// <param name="dbContext"> The <see cref="IDbContext" /> to be used. </param>
+        /// <param name="dbContext">
+        ///     The <see cref="IDbContext" /> to be used.
+        /// </param>
         protected RepositoryBase(IDbContext dbContext)
         {
             DbContext = Check.NotNull(dbContext, nameof(dbContext));

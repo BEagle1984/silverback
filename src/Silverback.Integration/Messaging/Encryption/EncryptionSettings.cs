@@ -6,7 +6,7 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging.Encryption
 {
     /// <summary>
-    ///     The base class for <see cref="SymmetricEncryptionSettings"/> and other future encryption types.
+    ///     The base class for <see cref="SymmetricEncryptionSettings" /> and other future encryption types.
     /// </summary>
     public abstract class EncryptionSettings : IValidatableEndpointSettings
     {

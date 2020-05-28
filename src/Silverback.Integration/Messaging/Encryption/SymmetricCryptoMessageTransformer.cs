@@ -31,7 +31,9 @@ namespace Silverback.Messaging.Encryption
             Settings = settings;
         }
 
-        /// <summary> Gets the current encryption settings. </summary>
+        /// <summary>
+        ///     Gets the current encryption settings.
+        /// </summary>
         protected SymmetricEncryptionSettings Settings { get; }
 
         /// <inheritdoc />
@@ -45,10 +47,18 @@ namespace Silverback.Messaging.Encryption
             return await Transform(message, algorithm);
         }
 
-        /// <summary> Applies the encryption. </summary>
-        /// <param name="message"> The clear text message. </param>
-        /// <param name="algorithm"> The algorithm to be used. </param>
-        /// <returns> The cipher message. </returns>
+        /// <summary>
+        ///     Applies the encryption.
+        /// </summary>
+        /// <param name="message">
+        ///     The clear text message.
+        /// </param>
+        /// <param name="algorithm">
+        ///     The algorithm to be used.
+        /// </param>
+        /// <returns>
+        ///     The cipher message.
+        /// </returns>
         protected virtual async Task<byte[]> Transform(byte[] message, SymmetricAlgorithm algorithm)
         {
             Check.NotNull(message, nameof(message));
@@ -104,7 +114,9 @@ namespace Silverback.Messaging.Encryption
         /// <param name="algorithm">
         ///     The <see cref="SymmetricAlgorithm" /> to be used.
         /// </param>
-        /// <returns> The <see cref="ICryptoTransform" />. </returns>
+        /// <returns>
+        ///     The <see cref="ICryptoTransform" />.
+        /// </returns>
         protected abstract ICryptoTransform CreateCryptoTransform(SymmetricAlgorithm algorithm);
     }
 }

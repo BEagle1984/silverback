@@ -86,6 +86,18 @@ namespace Silverback.Messaging.ErrorHandling
             return minAttempts + 1;
         }
 
+        private static void UpdateFailedAttemptsHeader(
+            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
+            int attempt) =>
+            envelopes?.ForEach(
+                msg =>
+                {
+                    if (attempt == 0)
+                        msg.Headers.Remove(DefaultMessageHeaders.FailedAttempts);
+                    else
+                        msg.Headers.AddOrReplace(DefaultMessageHeaders.FailedAttempts, attempt);
+                });
+
         private async Task<MessageHandlerResult> HandleMessages(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
@@ -134,15 +146,5 @@ namespace Silverback.Messaging.ErrorHandling
                 return MessageHandlerResult.Error(action);
             }
         }
-
-        private static void UpdateFailedAttemptsHeader(IReadOnlyCollection<IRawInboundEnvelope> envelopes, int attempt) =>
-            envelopes?.ForEach(
-                msg =>
-                {
-                    if (attempt == 0)
-                        msg.Headers.Remove(DefaultMessageHeaders.FailedAttempts);
-                    else
-                        msg.Headers.AddOrReplace(DefaultMessageHeaders.FailedAttempts, attempt);
-                });
     }
 }

@@ -154,11 +154,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             };
 
             var broker = _configurator
-                .Subscribe(
-                    (IIntegrationEvent _) =>
-                    {
-                        throw new InvalidOperationException("Retry!");
-                    })
+                .Subscribe((IIntegrationEvent _) => { throw new InvalidOperationException("Retry!"); })
                 .Connect(
                     endpoints => endpoints
                         .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
@@ -195,11 +191,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             };
 
             var broker = _configurator
-                .Subscribe(
-                    (IIntegrationEvent _) =>
-                    {
-                        throw new InvalidOperationException("Retry!");
-                    })
+                .Subscribe((IIntegrationEvent _) => { throw new InvalidOperationException("Retry!"); })
                 .Connect(
                     endpoints => endpoints
                         .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))

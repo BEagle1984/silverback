@@ -12,13 +12,19 @@ using Silverback.Util;
 
 namespace Silverback.Domain
 {
-    /// <summary> The base class for the domain entities that are persisted in the event store. </summary>
+    /// <summary>
+    ///     The base class for the domain entities that are persisted in the event store.
+    /// </summary>
     /// <remarks>
     ///     It's not mandatory to use this base class as long as long as the domain entities implement the
     ///     <see cref="IEventSourcingDomainEntity{TKey}" /> interface.
     /// </remarks>
-    /// <typeparam name="TKey"> The type of the entity key. </typeparam>
-    /// <typeparam name="TDomainEvent"> The base type of the domain events. </typeparam>
+    /// <typeparam name="TKey">
+    ///     The type of the entity key.
+    /// </typeparam>
+    /// <typeparam name="TDomainEvent">
+    ///     The base type of the domain events.
+    /// </typeparam>
     public abstract class EventSourcingDomainEntity<TKey, TDomainEvent>
         : MessagesSource<TDomainEvent>, IEventSourcingDomainEntity<TKey>
     {
@@ -35,10 +41,12 @@ namespace Silverback.Domain
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="EventSourcingDomainEntity{TKey, TDomainEvent}" />
-        ///     class from the stored events.
+        ///     Initializes a new instance of the <see cref="EventSourcingDomainEntity{TKey, TDomainEvent}" /> class
+        ///     from the stored events.
         /// </summary>
-        /// <param name="events"> The stored events to be re-applied to rebuild the entity state. </param>
+        /// <param name="events">
+        ///     The stored events to be re-applied to rebuild the entity state.
+        /// </param>
         protected EventSourcingDomainEntity(IReadOnlyCollection<IEntityEvent> events)
         {
             Check.NotEmpty(events, nameof(events));
@@ -52,12 +60,16 @@ namespace Silverback.Domain
             ClearMessages();
         }
 
-        /// <summary> Gets the domain events that have been added but not yet published. </summary>
+        /// <summary>
+        ///     Gets the domain events that have been added but not yet published.
+        /// </summary>
         [NotMapped]
         public IEnumerable<TDomainEvent> DomainEvents =>
             GetMessages()?.Cast<TDomainEvent>() ?? Enumerable.Empty<TDomainEvent>();
 
-        /// <summary> Gets the events that have been applied to build the current state. </summary>
+        /// <summary>
+        ///     Gets the events that have been applied to build the current state.
+        /// </summary>
         [NotMapped]
         public IEnumerable<IEntityEvent> Events =>
             (_storedEvents ?? Enumerable.Empty<IEntityEvent>()).Union(_newEvents ?? Enumerable.Empty<IEntityEvent>())
@@ -72,9 +84,15 @@ namespace Silverback.Domain
         /// <inheritdoc />
         public IEnumerable<IEntityEvent> GetNewEvents() => _newEvents?.AsReadOnly() ?? Enumerable.Empty<IEntityEvent>();
 
-        /// <summary> Adds the specified event and applies it to update the entity state. </summary>
-        /// <param name="entityEvent"> The event to be added. </param>
-        /// <returns> The <see cref="IEntityEvent" /> that was added and applied. </returns>
+        /// <summary>
+        ///     Adds the specified event and applies it to update the entity state.
+        /// </summary>
+        /// <param name="entityEvent">
+        ///     The event to be added.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IEntityEvent" /> that was added and applied.
+        /// </returns>
         protected virtual IEntityEvent AddAndApplyEvent(IEntityEvent entityEvent)
         {
             Check.NotNull(entityEvent, nameof(entityEvent));

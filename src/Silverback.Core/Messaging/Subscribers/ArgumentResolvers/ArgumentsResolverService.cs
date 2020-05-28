@@ -9,7 +9,7 @@ using System.Reflection;
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
     /// <summary>
-    ///     Calls the registered <see cref="IArgumentResolver"/>'s.
+    ///     Calls the registered <see cref="IArgumentResolver" />'s.
     /// </summary>
     internal class ArgumentsResolverService
     {
