@@ -10,13 +10,7 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c>
-    ///         AddTransientSubscriber
-    ///     </c>, <c>
-    ///         AddScopedSubscriber
-    ///     </c> and <c>
-    ///         AddSingletonSubscriber
-    ///     </c> methods to the <see cref="ISilverbackBuilder" />.
+    ///     Adds the <c>AddTransientSubscriber</c>, <c>AddScopedSubscriber</c> and <c>AddSingletonSubscriber</c> methods to the <see cref="ISilverbackBuilder" />.
     /// </summary>
     public static class SilverbackBuilderAddSubscriberExtensions
     {

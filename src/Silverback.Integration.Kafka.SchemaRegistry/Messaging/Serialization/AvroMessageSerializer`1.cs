@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         public AvroSerializerConfig AvroSerializerConfig { get; set; } = new AvroSerializerConfig();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.Serialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Serialize(
             object? message,
@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context) =>
             AsyncHelper.RunSynchronously(() => SerializeAsync(message, messageHeaders, context));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.Deserialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public (object?, Type) Deserialize(
             byte[]? message,
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context) =>
             AsyncHelper.RunSynchronously(() => DeserializeAsync(message, messageHeaders, context));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task<byte[]?> SerializeAsync(
             object? message,
@@ -55,7 +55,7 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context) =>
             await SerializeAsync<TMessage>(message, MessageComponentType.Value, context);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task<(object?, Type)> DeserializeAsync(
             byte[]? message,
@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Serialization
             return (deserialized, type);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[] SerializeKey(
             string key,
@@ -83,7 +83,7 @@ namespace Silverback.Messaging.Serialization
             return serializedKey ?? Array.Empty<byte>();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IKafkaMessageSerializer.DeserializeKey" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public string DeserializeKey(
             byte[] key,

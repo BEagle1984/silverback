@@ -12,10 +12,10 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public class SerializerProducerBehavior : IProducerBehavior, ISorted
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Serializer;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IProducerBehavior.Handle" />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));

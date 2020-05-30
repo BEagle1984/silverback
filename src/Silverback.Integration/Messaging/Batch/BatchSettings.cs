@@ -7,9 +7,7 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging.Batch
 {
     /// <summary>
-    ///     The batch consuming settings. To enable batch consuming just set the <c>
-    ///         Size
-    ///     </c> property to a value greater than 1.
+    ///     The batch consuming settings. To enable batch consuming just set the <c>Size</c> property to a value greater than 1.
     /// </summary>
     public sealed class BatchSettings : IEquatable<BatchSettings>, IValidatableEndpointSettings
     {
@@ -21,13 +19,11 @@ namespace Silverback.Messaging.Batch
 
         /// <summary>
         ///     Gets or sets the maximum amount of time to wait for the batch to be filled. After this time the
-        ///     batch will be processed even if the specified <c>
-        ///         Size
-        ///     </c> is not reached.
+        ///     batch will be processed even if the specified <c>Size</c> is not reached.
         /// </summary>
         public TimeSpan MaxWaitTime { get; set; } = TimeSpan.MaxValue;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(BatchSettings? other)
         {
             if (other is null)
@@ -40,7 +36,7 @@ namespace Silverback.Messaging.Batch
                    MaxWaitTime.Equals(other.MaxWaitTime);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -55,10 +51,10 @@ namespace Silverback.Messaging.Batch
             return Equals((BatchSettings)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         public override int GetHashCode() => 0;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public void Validate()
         {
             if (Size < 1)

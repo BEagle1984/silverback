@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Broker
         internal InMemoryTopic GetTopic(string name) =>
             _topics.GetOrAdd(name, _ => new InMemoryTopic(name));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
         protected override IProducer InstantiateProducer(
             IProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Broker
                 behaviors,
                 LoggerFactory.CreateLogger<InMemoryProducer>());
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
@@ -72,7 +72,7 @@ namespace Silverback.Messaging.Broker
                     LoggerFactory.CreateLogger<InMemoryConsumer>()));
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.Disconnect(IEnumerable{IConsumer})" />
         protected override void Disconnect(IEnumerable<IConsumer> consumers)
         {
             base.Disconnect(consumers);

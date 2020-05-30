@@ -21,11 +21,10 @@ namespace Silverback.Messaging.Connectors
         /// </summary>
         public int Consumers { get; set; } = 1;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public void Validate()
         {
-            if (Batch != null)
-                Batch.Validate();
+            Batch?.Validate();
 
             if (Consumers < 1)
                 throw new EndpointConfigurationException("Consumers must be greater or equal to 1.");

@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
     /// </summary>
     public class ObservableMessageArgumentResolver : IEnumerableMessageArgumentResolver
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="Silverback.Messaging.Subscribers.ArgumentResolvers.IArgumentResolver.CanResolve" />
         public bool CanResolve(Type parameterType)
         {
             Check.NotNull(parameterType, nameof(parameterType));
@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
                    parameterType.GetGenericTypeDefinition() == typeof(IObservable<>);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />
         public Type GetMessageType(Type parameterType)
         {
             Check.NotNull(parameterType, nameof(parameterType));
@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             return parameterType.GetGenericArguments()[0];
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEnumerableMessageArgumentResolver.GetValue" />
         public object GetValue(IReadOnlyCollection<object> messages, Type targetMessageType) =>
             messages.ToObservable().OfType(targetMessageType);
     }

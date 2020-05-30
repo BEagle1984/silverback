@@ -9,10 +9,10 @@ namespace Silverback.Domain
     public abstract class DomainEvent<TEntity> : IDomainEvent<TEntity>
         where TEntity : class
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDomainEvent{TEntity}.Source" />
         public TEntity? Source { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageWithSource.Source" />
         object? IMessageWithSource.Source
         {
             get => Source;

@@ -8,7 +8,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IOutboundConnector" />
     public class OutboundConnector : IOutboundConnector
     {
         private readonly IBrokerCollection _brokerCollection;
@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Connectors
             _brokerCollection = brokerCollection;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundConnector.RelayMessage" />
         public Task RelayMessage(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));

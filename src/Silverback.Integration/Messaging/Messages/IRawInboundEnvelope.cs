@@ -14,12 +14,8 @@ namespace Silverback.Messaging.Messages
         new IConsumerEndpoint Endpoint { get; }
 
         /// <summary>
-        ///     Gets the name of the actual source endpoint (in case the <c>
-        ///         Endpoint
-        ///     </c> configuration points to multiple endpoints, for example if consuming multiple topics with a
-        ///     single <c>
-        ///         KafkaConsumer
-        ///     </c>).
+        ///     Gets the name of the actual source endpoint (in case the <c>Endpoint</c> configuration points to multiple endpoints, for example if consuming multiple topics with a
+        ///     single <c>KafkaConsumer</c>).
         /// </summary>
         string ActualEndpointName { get; }
     }

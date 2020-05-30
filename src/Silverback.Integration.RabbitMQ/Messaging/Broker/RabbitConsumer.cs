@@ -77,7 +77,7 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer.Connect" />
         public override void Connect()
         {
             if (_consumer != null)
@@ -94,7 +94,7 @@ namespace Silverback.Messaging.Broker
                 _consumer);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer.Disconnect" />
         public override void Disconnect()
         {
             if (_consumer == null)
@@ -114,14 +114,14 @@ namespace Silverback.Messaging.Broker
             _disconnecting = false;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.CommitCore" />
         protected override Task CommitCore(IReadOnlyCollection<RabbitOffset> offsets)
         {
             CommitOrStoreOffset(offsets.OrderBy(offset => offset.DeliveryTag).Last());
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.RollbackCore" />
         protected override Task RollbackCore(IReadOnlyCollection<RabbitOffset> offsets)
         {
             BasicNack(offsets.Max(offset => offset.DeliveryTag));

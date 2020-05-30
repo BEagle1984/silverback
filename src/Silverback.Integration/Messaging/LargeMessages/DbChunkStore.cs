@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
+using Silverback.Messaging.Connectors;
 
 namespace Silverback.Messaging.LargeMessages
 {
@@ -30,10 +31,10 @@ namespace Silverback.Messaging.LargeMessages
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.HasNotPersistedChunks" />
         public bool HasNotPersistedChunks { get; } = false;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.Store" />
         public async Task Store(string messageId, int chunkIndex, int chunksCount, byte[] content)
         {
             await _semaphore.WaitAsync();
@@ -63,7 +64,7 @@ namespace Silverback.Messaging.LargeMessages
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITransactional.Commit" />
         public async Task Commit()
         {
             await _semaphore.WaitAsync();
@@ -79,24 +80,24 @@ namespace Silverback.Messaging.LargeMessages
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITransactional.Rollback" />
         public Task Rollback()
         {
             // Nothing to do, just not saving the changes made to the DbContext
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.CountChunks" />
         public Task<int> CountChunks(string messageId) =>
             DbSet.AsQueryable().CountAsync(chunk => chunk.MessageId == messageId);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.GetChunks" />
         public Task<Dictionary<int, byte[]>> GetChunks(string messageId) =>
             DbSet.AsQueryable()
                 .Where(chunk => chunk.MessageId == messageId)
                 .ToDictionaryAsync(chunk => chunk.ChunkIndex, chunk => chunk.Content);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.Cleanup(string)" />
         public async Task Cleanup(string messageId)
         {
             await _semaphore.WaitAsync();
@@ -128,7 +129,7 @@ namespace Silverback.Messaging.LargeMessages
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.Cleanup(System.DateTime)" />
         public async Task Cleanup(DateTime threshold)
         {
             var expiredEntities = (await DbSet
@@ -146,7 +147,7 @@ namespace Silverback.Messaging.LargeMessages
             await DbContext.SaveChangesAsync();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             _semaphore.Dispose();

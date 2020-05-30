@@ -64,10 +64,10 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public long Offset { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffset.Key" />
         public string Key { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffset.Value" />
         public string Value { get; }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace Silverback.Messaging.Broker
         /// </param>
         public static bool operator !=(KafkaOffset left, KafkaOffset right) => !(left == right);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffset.ToLogString" />
         public string ToLogString() => $"{Partition}@{Offset}";
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace Silverback.Messaging.Broker
             return Offset.CompareTo(other.Offset);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IComparable{T}.CompareTo" />
         public int CompareTo(IOffset? other)
         {
             if (ReferenceEquals(this, other))
@@ -186,7 +186,7 @@ namespace Silverback.Messaging.Broker
                 : throw new ArgumentException($"Object must be of type {nameof(KafkaOffset)}");
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj))
@@ -201,7 +201,7 @@ namespace Silverback.Messaging.Broker
             return CompareTo(other) == 0;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         public override int GetHashCode() => HashCode.Combine(Topic, Partition, Offset);
 
         internal TopicPartitionOffset AsTopicPartitionOffset() =>

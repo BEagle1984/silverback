@@ -36,10 +36,10 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="OutboundRouter{TMessage}.Endpoints" />
         public override IEnumerable<IProducerEndpoint> Endpoints => _endpoints;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="OutboundRouter{TMessage}.GetDestinationEndpoints" />
         /// <remarks>
         ///     Always returns the endpoints provided in the constructor.
         /// </remarks>

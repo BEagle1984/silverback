@@ -9,13 +9,13 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IRabbitConnectionFactory" />
     public sealed class RabbitConnectionFactory : IRabbitConnectionFactory
     {
         private readonly ConcurrentDictionary<RabbitConnectionConfig, IConnection> _connections =
             new ConcurrentDictionary<RabbitConnectionConfig, IConnection>();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IRabbitConnectionFactory.GetChannel(RabbitProducerEndpoint)" />
         public IModel GetChannel(RabbitProducerEndpoint endpoint)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Broker
             return channel;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IRabbitConnectionFactory.GetChannel(RabbitConsumerEndpoint)" />
         public (IModel channel, string queueName) GetChannel(RabbitConsumerEndpoint endpoint)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -99,7 +99,7 @@ namespace Silverback.Messaging.Broker
             return (channel, queueName!);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             _connections.ForEach(c => c.Value?.Dispose());

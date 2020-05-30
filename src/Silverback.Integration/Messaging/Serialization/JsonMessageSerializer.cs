@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Serialization
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.Serialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual byte[]? Serialize(
             object? message,
@@ -65,7 +65,7 @@ namespace Silverback.Messaging.Serialization
             return GetSystemEncoding().GetBytes(json);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.Deserialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual (object?, Type) Deserialize(
             byte[]? message,
@@ -87,7 +87,7 @@ namespace Silverback.Messaging.Serialization
             return (deserializedObject, type);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual Task<byte[]?> SerializeAsync(
             object? message,
@@ -95,7 +95,7 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context) =>
             Task.FromResult(Serialize(message, messageHeaders, context));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual Task<(object?, Type)> DeserializeAsync(
             byte[]? message,

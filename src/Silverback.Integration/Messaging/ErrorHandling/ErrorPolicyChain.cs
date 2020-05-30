@@ -67,7 +67,7 @@ namespace Silverback.Messaging.ErrorHandling
             StackMaxFailedAttempts(policies);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ErrorPolicyBase.ApplyPolicy" />
         protected override Task<ErrorAction> ApplyPolicy(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)

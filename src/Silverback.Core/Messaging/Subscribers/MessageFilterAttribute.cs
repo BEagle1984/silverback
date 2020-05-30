@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Subscribers
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
     public abstract class MessageFilterAttribute : Attribute, IMessageFilter
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageFilter.MustProcess" />
         public abstract bool MustProcess(object message);
     }
 }

@@ -123,7 +123,7 @@ namespace Silverback.Messaging.Broker
             _cancellationTokenSource?.Dispose();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             StopConsuming();

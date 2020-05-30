@@ -63,7 +63,7 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer.Connect" />
         public override void Connect()
         {
             if (_innerConsumer != null)
@@ -87,7 +87,7 @@ namespace Silverback.Messaging.Broker
                 Endpoint.Configuration.BootstrapServers);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer.Disconnect" />
         public override void Disconnect()
         {
             if (_innerConsumer == null)
@@ -108,7 +108,7 @@ namespace Silverback.Messaging.Broker
                 Endpoint.Configuration.BootstrapServers);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.CommitCore" />
         protected override Task CommitCore(IReadOnlyCollection<KafkaOffset> offsets)
         {
             if (_innerConsumer == null)
@@ -134,7 +134,7 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.RollbackCore" />
         protected override Task RollbackCore(IReadOnlyCollection<KafkaOffset> offsets)
         {
             // Nothing to do here. With Kafka the uncommitted messages will be implicitly re-consumed.

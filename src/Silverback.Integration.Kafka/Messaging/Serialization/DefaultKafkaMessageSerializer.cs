@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Serialization
             _serializer = serializer;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.Serialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Serialize(
             object? message,
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context) =>
             _serializer.Serialize(message, messageHeaders, context);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.Deserialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public (object?, Type) Deserialize(
             byte[]? message,
@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context) =>
             _serializer.Deserialize(message, messageHeaders, context);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<byte[]?> SerializeAsync(
             object? message,
@@ -52,7 +52,7 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context) =>
             _serializer.SerializeAsync(message, messageHeaders, context);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<(object?, Type)> DeserializeAsync(
             byte[]? message,
@@ -60,14 +60,14 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context) =>
             _serializer.DeserializeAsync(message, messageHeaders, context);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
         public byte[] SerializeKey(
             string key,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Encoding.UTF8.GetBytes(key);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IKafkaMessageSerializer.DeserializeKey" />
         public string DeserializeKey(
             byte[] key,
             MessageHeaderCollection messageHeaders,

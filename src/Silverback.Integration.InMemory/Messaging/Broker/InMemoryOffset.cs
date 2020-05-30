@@ -26,10 +26,10 @@ namespace Silverback.Messaging.Broker
             Value = offset.ToString(CultureInfo.InvariantCulture);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffset.Key" />
         public string Key { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffset.Value" />
         public string Value { get; }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Silverback.Messaging.Broker
         /// </param>
         public static bool operator !=(InMemoryOffset left, InMemoryOffset right) => !(left == right);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffset.ToLogString" />
         public string ToLogString() => Offset.ToString(CultureInfo.InvariantCulture);
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Silverback.Messaging.Broker
             return Offset.CompareTo(other.Offset);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IComparable{T}.CompareTo" />
         public int CompareTo(IOffset? other)
         {
             if (ReferenceEquals(this, other))
@@ -153,7 +153,7 @@ namespace Silverback.Messaging.Broker
                 : throw new ArgumentException($"Object must be of type {nameof(InMemoryOffset)}");
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj))
@@ -168,7 +168,7 @@ namespace Silverback.Messaging.Broker
             return CompareTo(other) == 0;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         public override int GetHashCode() => HashCode.Combine(Key, Value, Offset);
     }
 }

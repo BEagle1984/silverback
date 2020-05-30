@@ -12,9 +12,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     Adds the <c>
-    ///         Subscribe
-    ///     </c> methods to the <see cref="IBusConfigurator" />.
+    ///     Adds the <c>Subscribe</c> methods to the <see cref="IBusConfigurator" />.
     /// </summary>
     public static class BusConfiguratorSubscribeExtensions
     {

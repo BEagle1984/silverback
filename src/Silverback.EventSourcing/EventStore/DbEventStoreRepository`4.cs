@@ -66,15 +66,11 @@ namespace Silverback.EventStore
         ///     The predicate applied to get the desired event store.
         /// </param>
         /// <param name="snapshot">
-        ///     The optional snapshot datetime. When not <c>
-        ///         null
-        ///     </c> only the events registered until the specified datetime are applied, returning the entity in
+        ///     The optional snapshot datetime. When not <c>null</c> only the events registered until the specified datetime are applied, returning the entity in
         ///     its state back in that moment.
         /// </param>
         /// <returns>
-        ///     The domain entity or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The domain entity or <c>null</c> if not found.
         /// </returns>
         public TDomainEntity? Find(Expression<Func<TEventStoreEntity, bool>> predicate, DateTime? snapshot = null)
         {
@@ -94,16 +90,12 @@ namespace Silverback.EventStore
         ///     The predicate applied to get the desired event store.
         /// </param>
         /// <param name="snapshot">
-        ///     The optional snapshot datetime. When not <c>
-        ///         null
-        ///     </c> only the events registered until the specified datetime are applied, returning the entity in
+        ///     The optional snapshot datetime. When not <c>null</c> only the events registered until the specified datetime are applied, returning the entity in
         ///     its state back in that moment.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the domain
-        ///     entity or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     entity or <c>null</c> if not found.
         /// </returns>
         public async Task<TDomainEntity?> FindAsync(
             Expression<Func<TEventStoreEntity, bool>> predicate,
@@ -117,7 +109,7 @@ namespace Silverback.EventStore
             return GetDomainEntity(eventStoreEntity, snapshot);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="EventStoreRepository{TDomainEntity,TEventStoreEntity,TEventEntity}.GetEventStoreEntity(TDomainEntity)" />
         protected override TEventStoreEntity? GetEventStoreEntity(TDomainEntity domainEntity)
         {
             Check.NotNull(domainEntity, nameof(domainEntity));
@@ -128,7 +120,7 @@ namespace Silverback.EventStore
             return _dbSet.Find(domainEntity.Id);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="EventStoreRepository{TDomainEntity,TEventStoreEntity,TEventEntity}.GetEventStoreEntityAsync(TDomainEntity)" />
         protected override async Task<TEventStoreEntity?> GetEventStoreEntityAsync(TDomainEntity domainEntity)
         {
             Check.NotNull(domainEntity, nameof(domainEntity));
@@ -139,10 +131,10 @@ namespace Silverback.EventStore
             return await _dbSet.FindAsync(domainEntity.Id);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="EventStoreRepository{TDomainEntity,TEventStoreEntity,TEventEntity}.AddEventStoreEntity" />
         protected override void AddEventStoreEntity(TEventStoreEntity eventStoreEntity) => _dbSet.Add(eventStoreEntity);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="EventStoreRepository{TDomainEntity,TEventStoreEntity,TEventEntity}.RemoveCore" />
         protected override void RemoveCore(TEventStoreEntity eventStore) => _dbSet.Remove(eventStore);
     }
 }

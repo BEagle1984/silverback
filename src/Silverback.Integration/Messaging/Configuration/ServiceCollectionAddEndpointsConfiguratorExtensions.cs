@@ -8,9 +8,7 @@ using Silverback.Messaging.Configuration;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c>
-    ///         AddEndpointsConfigurator
-    ///     </c> method to the <see cref="IServiceCollection" />.
+    ///     Adds the <c>AddEndpointsConfigurator</c> method to the <see cref="IServiceCollection" />.
     /// </summary>
     public static class ServiceCollectionAddEndpointsConfiguratorExtensions
     {

@@ -18,9 +18,7 @@ namespace Silverback.Messaging.Connectors
 
         /// <summary>
         ///     Gets or sets a value indicating whether the messages to be routed through an outbound connector have
-        ///     also to be published to the internal bus, to be locally subscribed. The default is <c>
-        ///         false
-        ///     </c>.
+        ///     also to be published to the internal bus, to be locally subscribed. The default is <c>false</c>.
         /// </summary>
         bool PublishOutboundMessagesToInternalBus { get; set; }
 
@@ -34,9 +32,7 @@ namespace Silverback.Messaging.Connectors
         ///     The router to be used to determine the destination endpoint.
         /// </param>
         /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used. If <c>
-        ///         null
-        ///     </c>, the default <see cref="IOutboundConnector" /> will be used.
+        ///     The type of the <see cref="IOutboundConnector" /> to be used. If <c>null</c>, the default <see cref="IOutboundConnector" /> will be used.
         /// </param>
         /// <returns>
         ///     The <see cref="IOutboundRoutingConfiguration" /> so that additional calls can be chained.
@@ -53,9 +49,7 @@ namespace Silverback.Messaging.Connectors
         ///     The router to be used to determine the destination endpoint.
         /// </param>
         /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used. If <c>
-        ///         null
-        ///     </c>, the default <see cref="IOutboundConnector" /> will be used.
+        ///     The type of the <see cref="IOutboundConnector" /> to be used. If <c>null</c>, the default <see cref="IOutboundConnector" /> will be used.
         /// </param>
         /// <returns>
         ///     The <see cref="IOutboundRoutingConfiguration" /> so that additional calls can be chained.

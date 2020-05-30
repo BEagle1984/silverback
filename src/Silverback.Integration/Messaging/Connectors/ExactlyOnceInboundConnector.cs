@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Connectors
             _logger = logger;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="InboundConnector.RelayMessages" />
         protected override async Task RelayMessages(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             IServiceProvider serviceProvider)

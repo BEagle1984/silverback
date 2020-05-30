@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Serialization
     {
         private readonly Type _type = typeof(TMessage);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="JsonMessageSerializer.Serialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override byte[]? Serialize(
             object? message,
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Serialization
             return GetSystemEncoding().GetBytes(jsonString);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="JsonMessageSerializer.Deserialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override (object?, Type) Deserialize(
             byte[]? message,

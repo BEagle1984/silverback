@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffsetStore.Store" />
         public async Task Store(IComparableOffset offset, IConsumerEndpoint endpoint)
         {
             Check.NotNull(offset, nameof(offset));
@@ -73,7 +73,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITransactional.Commit" />
         public async Task Commit()
         {
             await _semaphore.WaitAsync();
@@ -89,14 +89,14 @@ namespace Silverback.Messaging.Connectors.Repositories
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITransactional.Rollback" />
         public Task Rollback()
         {
             // Nothing to do, just not saving the changes made to the DbContext
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffsetStore.GetLatestValue" />
         public async Task<IComparableOffset?> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint)
         {
             Check.NotNull(offsetKey, nameof(offsetKey));
@@ -110,7 +110,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                 : null;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             _semaphore.Dispose();

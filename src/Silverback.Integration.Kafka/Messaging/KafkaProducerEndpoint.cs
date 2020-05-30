@@ -29,7 +29,7 @@ namespace Silverback.Messaging
         /// </summary>
         public KafkaProducerConfig Configuration { get; set; } = new KafkaProducerConfig();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ProducerEndpoint.Validate" />
         public override void Validate()
         {
             base.Validate();
@@ -40,7 +40,7 @@ namespace Silverback.Messaging
             Configuration.Validate();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(KafkaProducerEndpoint? other)
         {
             if (other is null)
@@ -52,7 +52,7 @@ namespace Silverback.Messaging
             return BaseEquals(other) && Equals(Configuration, other.Configuration);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -67,7 +67,7 @@ namespace Silverback.Messaging
             return Equals((KafkaProducerEndpoint)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
     }

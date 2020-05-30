@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Connectors
         /// <summary>
         ///     Calls the <see cref="IOutboundQueueWorker" /> to process the queue at regular intervals.
         /// </summary>
-        /// <inheritdoc />
+        /// <inheritdoc cref="RecurringDistributedBackgroundService.ExecuteRecurringAsync" />
         protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) =>
             _outboundQueueWorker.ProcessQueue(stoppingToken);
     }

@@ -12,7 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.HealthChecks
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IOutboundEndpointsHealthCheckService" />
     public class OutboundEndpointsHealthCheckService : IOutboundEndpointsHealthCheckService
     {
         private readonly IOutboundRoutingConfiguration _outboundRoutingConfiguration;
@@ -39,7 +39,7 @@ namespace Silverback.Messaging.HealthChecks
             _brokerCollection = Check.NotNull(brokerCollection, nameof(brokerCollection));
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundEndpointsHealthCheckService.PingAllEndpoints" />
         [SuppressMessage("", "CA1031", Justification = "Exception is returned")]
         public async Task<IReadOnlyCollection<EndpointCheckResult>> PingAllEndpoints()
         {

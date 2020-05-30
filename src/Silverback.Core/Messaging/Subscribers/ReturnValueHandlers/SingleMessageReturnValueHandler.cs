@@ -33,16 +33,16 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
             _busOptions = busOptions;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
         public bool CanHandle(object returnValue) =>
             returnValue != null &&
             _busOptions.MessageTypes.Any(t => t.IsInstanceOfType(returnValue));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValueHandler.Handle" />
         public void Handle(object returnValue) =>
             _publisher.Publish<object>(returnValue);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
         public Task HandleAsync(object returnValue) =>
             _publisher.PublishAsync<object>(returnValue);
     }

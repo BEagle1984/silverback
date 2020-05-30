@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
     /// </summary>
     public class EnumerableMessageArgumentResolver : IEnumerableMessageArgumentResolver
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArgumentResolver.CanResolve" />
         public bool CanResolve(Type parameterType)
         {
             Check.NotNull(parameterType, nameof(parameterType));
@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
                    parameterType.GetGenericTypeDefinition() == typeof(IEnumerable<>);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />
         public Type GetMessageType(Type parameterType)
         {
             Check.NotNull(parameterType, nameof(parameterType));
@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             return parameterType.GetGenericArguments()[0];
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEnumerableMessageArgumentResolver.GetValue" />
         public object GetValue(IReadOnlyCollection<object> messages, Type targetMessageType) =>
             messages.OfType(targetMessageType).ToList(targetMessageType);
     }

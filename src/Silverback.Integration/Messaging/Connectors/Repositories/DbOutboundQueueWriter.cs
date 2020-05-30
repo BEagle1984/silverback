@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueWriter.Enqueue" />
         public Task Enqueue(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
@@ -52,14 +52,14 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueWriter.Commit" />
         public Task Commit()
         {
             // Nothing to do, the transaction is implicitly committed calling `SaveChanges` on the DbContext.
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueWriter.Rollback" />
         public Task Rollback()
         {
             // Nothing to do, the transaction is aborted by the DbContext

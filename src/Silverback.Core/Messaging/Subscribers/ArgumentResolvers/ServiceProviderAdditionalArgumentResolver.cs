@@ -24,10 +24,10 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             _serviceProvider = serviceProvider;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArgumentResolver.CanResolve" />
         public bool CanResolve(Type parameterType) => true;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IAdditionalArgumentResolver.GetValue" />
         public object GetValue(Type parameterType) => _serviceProvider.GetService(parameterType);
     }
 }

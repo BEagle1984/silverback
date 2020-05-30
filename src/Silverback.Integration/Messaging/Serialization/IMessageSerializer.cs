@@ -47,9 +47,7 @@ namespace Silverback.Messaging.Serialization
         ///     The context information.
         /// </param>
         /// <returns>
-        ///     The deserialized message (or <c>
-        ///         null
-        ///     </c> when the input is null or empty) and the type of the message.
+        ///     The deserialized message (or <c>null</c> when the input is null or empty) and the type of the message.
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         (object?, Type) Deserialize(
@@ -93,9 +91,7 @@ namespace Silverback.Messaging.Serialization
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
-        ///     deserialized message (or <c>
-        ///         null
-        ///     </c> when the input is null or empty) and the type of the message.
+        ///     deserialized message (or <c>null</c> when the input is null or empty) and the type of the message.
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         Task<(object?, Type)> DeserializeAsync(

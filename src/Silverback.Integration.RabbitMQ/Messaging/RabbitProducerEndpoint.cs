@@ -31,14 +31,12 @@ namespace Silverback.Messaging
 
         /// <summary>
         ///     Gets or sets the maximum amount of time to wait for the message produce to be acknowledge before
-        ///     considering it failed. Set it to <c>
-        ///         null
-        ///     </c> to proceed without waiting for a positive or negative acknowledgment (default is a quite
+        ///     considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment (default is a quite
         ///     conservative 5 seconds).
         /// </summary>
         public TimeSpan? ConfirmationTimeout { get; set; } = TimeSpan.FromSeconds(5);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ProducerEndpoint.Validate" />
         public override void Validate()
         {
             base.Validate();
@@ -49,25 +47,16 @@ namespace Silverback.Messaging
             Connection.Validate();
         }
 
-        /// <summary>
-        ///     Determines whether the specified <see cref="RabbitProducerEndpoint" /> is equal to the current
-        ///     <see cref="RabbitProducerEndpoint" />.
-        /// </summary>
-        /// <param name="other">
-        ///     The object to compare with the current object.
-        /// </param>
-        /// <returns>
-        ///     Returns a value indicating whether the other object is equal to the current object.
-        /// </returns>
-        protected bool BaseEquals(RabbitProducerEndpoint other)
+        /// <inheritdoc cref="Endpoint.BaseEquals" />
+        protected override bool BaseEquals(Endpoint? other)
         {
-            if (other is null)
-                return false;
-
             if (ReferenceEquals(this, other))
                 return true;
 
-            return base.BaseEquals(other) && Equals(Connection, other.Connection);
+            if (!(other is RabbitProducerEndpoint otherRabbitProducerEndpoint))
+                return false;
+
+            return base.BaseEquals(other) && Equals(Connection, otherRabbitProducerEndpoint.Connection);
         }
     }
 }

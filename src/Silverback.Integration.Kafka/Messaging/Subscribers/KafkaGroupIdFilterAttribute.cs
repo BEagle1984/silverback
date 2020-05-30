@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Subscribers
         /// </summary>
         public string[] GroupId { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="MessageFilterAttribute.MustProcess" />
         public override bool MustProcess(object message) =>
             message is IInboundEnvelope inboundEnvelope &&
             inboundEnvelope.Endpoint is KafkaConsumerEndpoint endpoint &&

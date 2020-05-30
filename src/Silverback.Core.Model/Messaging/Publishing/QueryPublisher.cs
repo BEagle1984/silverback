@@ -8,7 +8,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Publishing
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IQueryPublisher" />
     public class QueryPublisher : IQueryPublisher
     {
         private readonly IPublisher _publisher;
@@ -24,19 +24,19 @@ namespace Silverback.Messaging.Publishing
             _publisher = publisher;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IQueryPublisher.Execute{TResult}(IQuery{TResult})" />
         public TResult Execute<TResult>(IQuery<TResult> queryMessage) =>
             _publisher.Publish<TResult>(queryMessage).SingleOrDefault();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IQueryPublisher.Execute{TResult}(IEnumerable{IQuery{TResult}})" />
         public IReadOnlyCollection<TResult> Execute<TResult>(IEnumerable<IQuery<TResult>> queryMessages) =>
             _publisher.Publish<TResult>(queryMessages);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IQueryPublisher.ExecuteAsync{TResult}(IQuery{TResult})" />
         public async Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage) =>
             (await _publisher.PublishAsync<TResult>(queryMessage)).SingleOrDefault();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IQueryPublisher.ExecuteAsync{TResult}(IEnumerable{IQuery{TResult}})" />
         public Task<IReadOnlyCollection<TResult>> ExecuteAsync<TResult>(IEnumerable<IQuery<TResult>> queryMessages) =>
             _publisher.PublishAsync<TResult>(queryMessages);
     }

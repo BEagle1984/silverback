@@ -18,9 +18,7 @@ namespace Silverback.Util
         ///     The second of the two objects to be compared.
         /// </param>
         /// <returns>
-        ///     <c>
-        ///         true
-        ///     </c> if the two objects serializes to the same JSON representation.
+        ///     <c>true</c> if the two objects serializes to the same JSON representation.
         /// </returns>
         public static bool JsonEquals(object? objA, object? objB) =>
             ReferenceEquals(objA, objB) ||

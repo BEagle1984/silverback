@@ -16,10 +16,10 @@ namespace Silverback.Messaging.LargeMessages
     /// </summary>
     public class ChunkSplitterProducerBehavior : IProducerBehavior, ISorted
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.ChunkSplitter;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IProducerBehavior.Handle" />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));

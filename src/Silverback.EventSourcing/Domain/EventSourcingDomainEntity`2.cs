@@ -75,13 +75,13 @@ namespace Silverback.Domain
             (_storedEvents ?? Enumerable.Empty<IEntityEvent>()).Union(_newEvents ?? Enumerable.Empty<IEntityEvent>())
             .ToList().AsReadOnly();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventSourcingDomainEntity{TKey}.Id" />
         public TKey Id { get; protected set; } = default!;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventSourcingDomainEntity.GetVersion" />
         public int GetVersion() => Events.Count();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventSourcingDomainEntity.GetNewEvents" />
         public IEnumerable<IEntityEvent> GetNewEvents() => _newEvents?.AsReadOnly() ?? Enumerable.Empty<IEntityEvent>();
 
         /// <summary>

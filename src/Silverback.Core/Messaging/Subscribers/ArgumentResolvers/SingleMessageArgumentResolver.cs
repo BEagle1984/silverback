@@ -11,13 +11,13 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
     /// </summary>
     public class SingleMessageArgumentResolver : ISingleMessageArgumentResolver
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArgumentResolver.CanResolve" />
         public bool CanResolve(Type parameterType) => true;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />
         public Type GetMessageType(Type parameterType) => parameterType;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISingleMessageArgumentResolver.GetValue" />
         public object GetValue(object message) => message;
     }
 }

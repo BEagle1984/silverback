@@ -19,10 +19,10 @@ namespace Silverback.Messaging.Diagnostics
     /// </summary>
     public class ActivityConsumerBehavior : IConsumerBehavior, ISorted
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Activity;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,

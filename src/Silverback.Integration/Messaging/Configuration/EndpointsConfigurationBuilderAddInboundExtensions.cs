@@ -11,9 +11,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     Adds the <c>
-    ///         AddOutbound
-    ///     </c> method to the <see cref="IEndpointsConfigurationBuilder" />.
+    ///     Adds the <c>AddOutbound</c> method to the <see cref="IEndpointsConfigurationBuilder" />.
     /// </summary>
     public static class EndpointsConfigurationBuilderAddInboundExtensions
     {

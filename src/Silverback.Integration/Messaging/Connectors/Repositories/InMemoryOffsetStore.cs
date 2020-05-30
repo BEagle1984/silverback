@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffsetStore.Store" />
         public Task Store(IComparableOffset offset, IConsumerEndpoint endpoint)
         {
             Check.NotNull(offset, nameof(offset));
@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffsetStore.GetLatestValue" />
         public Task<IComparableOffset?> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint) =>
             Task.FromResult(
                 (IComparableOffset?)Items.Union(UncommittedItems)

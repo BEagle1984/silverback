@@ -58,14 +58,14 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public IProducerEndpoint Endpoint { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IProducer.Behaviors" />
         public IReadOnlyCollection<IProducerBehavior> Behaviors { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?)" />
         public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
             Produce(new OutboundEnvelope(message, headers, Endpoint));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
         public void Produce(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(
                 () =>
@@ -80,11 +80,11 @@ namespace Silverback.Messaging.Broker
                             return Task.CompletedTask;
                         }));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
         public Task ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
             ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
         public async Task ProduceAsync(IOutboundEnvelope envelope) =>
             await ExecutePipeline(
                 Behaviors,

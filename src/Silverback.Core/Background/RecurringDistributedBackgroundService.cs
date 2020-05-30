@@ -67,7 +67,7 @@ namespace Silverback.Background
             _logger = logger;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="DistributedBackgroundService.ExecuteLockedAsync" />
         protected override async Task ExecuteLockedAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)

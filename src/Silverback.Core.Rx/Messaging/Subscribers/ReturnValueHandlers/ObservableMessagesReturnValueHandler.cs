@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
             _busOptions = busOptions;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
         public bool CanHandle(object returnValue) =>
             returnValue != null &&
             returnValue.GetType().GetInterfaces().Any(
@@ -45,11 +45,11 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
                          messageType =>
                              messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValueHandler.Handle" />
         public void Handle(object returnValue) =>
             _publisher.Publish<object>(((IObservable<object>)returnValue).ToEnumerable());
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
         public Task HandleAsync(object returnValue) =>
             _publisher.PublishAsync<object>(((IObservable<object>)returnValue).ToEnumerable());
     }

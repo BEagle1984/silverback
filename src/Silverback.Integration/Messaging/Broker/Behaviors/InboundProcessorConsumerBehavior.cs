@@ -32,14 +32,14 @@ namespace Silverback.Messaging.Broker.Behaviors
             _errorPolicyHelper = Check.NotNull(errorPolicyHelper, nameof(errorPolicyHelper));
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.InboundProcessor;
 
         internal MessageBatch? Batch { get; set; }
 
         internal IErrorPolicy? ErrorPolicy { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,

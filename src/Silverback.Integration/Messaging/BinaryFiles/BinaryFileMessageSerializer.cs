@@ -21,7 +21,7 @@ namespace Silverback.Messaging.BinaryFiles
         /// </summary>
         public static BinaryFileMessageSerializer Default { get; } = new BinaryFileMessageSerializer();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.Serialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual byte[]? Serialize(
             object? message,
@@ -51,7 +51,7 @@ namespace Silverback.Messaging.BinaryFiles
             return binaryFileMessage.Content;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.Deserialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public virtual (object?, Type) Deserialize(
             byte[]? message,
@@ -68,7 +68,7 @@ namespace Silverback.Messaging.BinaryFiles
             return (messageModel, type);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<byte[]?> SerializeAsync(
             object? message,
@@ -76,7 +76,7 @@ namespace Silverback.Messaging.BinaryFiles
             MessageSerializationContext context) =>
             Task.FromResult(Serialize(message, messageHeaders, context));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<(object?, Type)> DeserializeAsync(
             byte[]? message,

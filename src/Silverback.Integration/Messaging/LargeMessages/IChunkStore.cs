@@ -66,9 +66,7 @@ namespace Silverback.Messaging.LargeMessages
 
         /// <summary>
         ///     Removes all chunks related to the specified message. This method is called when the full message is
-        ///     consumed. The changes will not be effective until <c>
-        ///         Commit
-        ///     </c> is called.
+        ///     consumed. The changes will not be effective until <c>Commit</c> is called.
         /// </summary>
         /// <param name="messageId">
         ///     The message unique identifier.
@@ -80,9 +78,7 @@ namespace Silverback.Messaging.LargeMessages
 
         /// <summary>
         ///     Removes all chunks older than the specified threshold. The changes will be immediately effective
-        ///     without having to invoke the <c>
-        ///         Commit
-        ///     </c> method.
+        ///     without having to invoke the <c>Commit</c> method.
         /// </summary>
         /// <param name="threshold">
         ///     The datetime specifying the max age of the chunks to be kept.

@@ -5,16 +5,16 @@ using System;
 
 namespace Silverback.EventStore
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IEventEntity" />
     public abstract class EventEntity : IEventEntity
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventEntity.Timestamp" />
         public DateTime Timestamp { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventEntity.Sequence" />
         public int Sequence { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventEntity.SerializedEvent" />
         public string SerializedEvent { get; set; } = null!;
     }
 }

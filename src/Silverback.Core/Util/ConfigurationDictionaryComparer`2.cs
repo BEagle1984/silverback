@@ -18,8 +18,7 @@ namespace Silverback.Util
     ///                 </description>
     ///             </item> <item>
     ///                 <description>
-    ///                     entries with null values (or <c>
-    ///                         default(TValue)
+    ///                     entries with null values (or <c>                default(TValue)
     ///                     </c>) and equivalent to completely missing entries
     ///                 </description>
     ///             </item> <item>

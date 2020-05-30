@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueReader.GetMaxAge" />
         public async Task<TimeSpan> GetMaxAge()
         {
             var oldestCreated = await DbSet.AsQueryable()
@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             return DateTime.UtcNow - oldestCreated;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueReader.Dequeue" />
         public async Task<IReadOnlyCollection<QueuedMessage>> Dequeue(int count) =>
             (await DbSet.AsQueryable()
                 .OrderBy(m => m.Id)
@@ -64,14 +64,14 @@ namespace Silverback.Messaging.Connectors.Repositories
                     DefaultSerializer.Deserialize<IProducerEndpoint>(message.Endpoint)))
             .ToList();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueReader.Retry" />
         public Task Retry(QueuedMessage queuedMessage)
         {
             // Nothing to do, the message is retried if not marked as produced
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueReader.Acknowledge" />
         public async Task Acknowledge(QueuedMessage queuedMessage)
         {
             if (!(queuedMessage is DbQueuedMessage dbQueuedMessage))
@@ -83,7 +83,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             await DbContext.SaveChangesAsync();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueReader.GetLength" />
         public Task<int> GetLength() => DbSet.AsQueryable().CountAsync();
     }
 }

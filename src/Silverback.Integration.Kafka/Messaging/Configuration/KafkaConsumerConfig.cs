@@ -31,13 +31,11 @@ namespace Silverback.Messaging.Configuration
 
         /// <summary>
         ///     Specifies whether the consumer has to be automatically restarted if a <see cref="KafkaException" />
-        ///     is thrown while polling/consuming (default is <c>
-        ///         true
-        ///     </c>).
+        ///     is thrown while polling/consuming (default is <c>true</c>).
         /// </summary>
         public bool EnableAutoRecovery { get; set; } = true;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ConfluentClientConfigProxy.Validate" />
         public override void Validate()
         {
             if (IsAutoCommitEnabled && CommitOffsetEach >= 0)
@@ -63,7 +61,7 @@ namespace Silverback.Messaging.Configuration
             EnableAutoOffsetStore = false;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(KafkaConsumerConfig? other)
         {
             if (other is null)
@@ -76,7 +74,7 @@ namespace Silverback.Messaging.Configuration
                    ConfluentConfigComparer.Equals(ConfluentConfig, other.ConfluentConfig);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -91,7 +89,7 @@ namespace Silverback.Messaging.Configuration
             return Equals((KafkaConsumerConfig)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         public override int GetHashCode() => 0;
     }
 }

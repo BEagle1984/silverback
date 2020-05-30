@@ -129,8 +129,7 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified name.
         ///     </para>
         ///     <para>
-        ///         It will return <c>
-        ///             null
+        ///         It will return <c>    null
         ///         </c> if no header with that name is found in the collection.
         ///     </para>
         /// </summary>
@@ -142,9 +141,7 @@ namespace Silverback.Messaging.Messages
         ///     is not found (or the value cannot be converted to the specified type).
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
         public string? GetValue(string name, bool throwIfNotFound = false) =>
             this.AsEnumerable().GetValue(name, throwIfNotFound);
@@ -155,8 +152,7 @@ namespace Silverback.Messaging.Messages
         ///         <typeparamref name="T" />.
         ///     </para>
         ///     <para>
-        ///         It will return <c>
-        ///             null
+        ///         It will return <c>    null
         ///         </c> if no header with that name is found in the collection.
         ///     </para>
         /// </summary>
@@ -171,9 +167,7 @@ namespace Silverback.Messaging.Messages
         ///     is not found (or the value cannot be converted to the specified type).
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
         public T? GetValue<T>(string name, bool throwIfNotFound = false)
             where T : struct =>
@@ -184,11 +178,9 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified name, casting it to the specified type.
         ///     </para>
         ///     <para>
-        ///         By default it will return <c>
-        ///             null
+        ///         By default it will return <c>    null
         ///         </c> if no header with that name is found in the collection but this behavior can be changed
-        ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>
-        ///             true
+        ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>    true
         ///         </c>.
         ///     </para>
         /// </summary>
@@ -203,9 +195,7 @@ namespace Silverback.Messaging.Messages
         ///     is not found (or the value cannot be converted to the specified type).
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
         public object? GetValue(string name, Type targetType, bool throwIfNotFound = false) =>
             this.AsEnumerable().GetValue(name, targetType, throwIfNotFound);
@@ -227,9 +217,7 @@ namespace Silverback.Messaging.Messages
         ///     The name of the header to be retrieved.
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
         public T GetValueOrDefault<T>(string name)
             where T : struct =>
@@ -251,9 +239,7 @@ namespace Silverback.Messaging.Messages
         ///     The type to convert the header value to.
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
         public object? GetValueOrDefault(string name, Type targetType) =>
             this.AsEnumerable().GetValueOrDefault(name, targetType);

@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Broker
             _loggerFactory = loggerFactory;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
         protected override IProducer InstantiateProducer(
             KafkaProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Broker
                 serviceProvider,
                 _loggerFactory.CreateLogger<KafkaProducer>());
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
             KafkaConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,

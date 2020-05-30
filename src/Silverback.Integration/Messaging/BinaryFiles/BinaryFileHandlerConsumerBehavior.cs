@@ -17,10 +17,10 @@ namespace Silverback.Messaging.BinaryFiles
     /// </summary>
     public class BinaryFileHandlerConsumerBehavior : IConsumerBehavior, ISorted
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.BinaryFileHandler;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,

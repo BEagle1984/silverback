@@ -9,9 +9,7 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c>
-    ///         AddSingletonOutboundRouter
-    ///     </c> method to the <see cref="IBrokerOptionsBuilder" />.
+    ///     Adds the <c>AddSingletonOutboundRouter</c> method to the <see cref="IBrokerOptionsBuilder" />.
     /// </summary>
     public static class BrokerOptionsBuilderAddOutboundRouterExtensions
     {

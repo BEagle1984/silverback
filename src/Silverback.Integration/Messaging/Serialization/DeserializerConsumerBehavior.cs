@@ -15,10 +15,10 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public class DeserializerConsumerBehavior : IConsumerBehavior, ISorted
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Deserializer;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,

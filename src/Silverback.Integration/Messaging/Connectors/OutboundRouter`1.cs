@@ -6,18 +6,18 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Connectors
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IOutboundRouter{TMessage}" />
     public abstract class OutboundRouter<TMessage> : IOutboundRouter<TMessage>
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundRouter.Endpoints" />
         public abstract IEnumerable<IProducerEndpoint> Endpoints { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundRouter{TMessage}.GetDestinationEndpoints(TMessage,MessageHeaderCollection)" />
         public abstract IEnumerable<IProducerEndpoint> GetDestinationEndpoints(
             TMessage message,
             MessageHeaderCollection headers);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundRouter.GetDestinationEndpoints" />
         IEnumerable<IProducerEndpoint> IOutboundRouter.GetDestinationEndpoints(
             object message,
             MessageHeaderCollection headers) =>

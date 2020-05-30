@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Subscribers
             _syncedSubject = Subject.Synchronize(_subject);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IObservable{T}.Subscribe" />
         public IDisposable Subscribe(IObserver<object> observer) =>
             _syncedSubject.Subscribe(observer);
 

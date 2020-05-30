@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueWriter.Enqueue" />
         public Task Enqueue(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
@@ -51,17 +51,17 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueReader.GetLength" />
         public Task<int> GetLength() => Task.FromResult(CommittedItemsCount);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueReader.GetMaxAge" />
         public Task<TimeSpan> GetMaxAge() => Task.FromResult(TimeSpan.Zero);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueReader.Dequeue" />
         public Task<IReadOnlyCollection<QueuedMessage>> Dequeue(int count) =>
             Task.FromResult((IReadOnlyCollection<QueuedMessage>)Items.Take(count).Select(item => item.Item).ToList());
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueReader.Retry" />
         public Task Retry(QueuedMessage queuedMessage)
         {
             // Nothing to do in the current implementation
@@ -70,7 +70,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueReader.Acknowledge" />
         public Task Acknowledge(QueuedMessage queuedMessage)
         {
             Remove(queuedMessage);

@@ -49,7 +49,7 @@ namespace Silverback.Messaging
         /// </summary>
         public ushort PrefetchCount { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Endpoint.Validate" />
         public override void Validate()
         {
             base.Validate();
@@ -68,25 +68,18 @@ namespace Silverback.Messaging
                 throw new EndpointConfigurationException("AcknowledgeEach cannot be less than 1");
         }
 
-        /// <summary>
-        ///     Determines whether the specified <see cref="RabbitConsumerEndpoint" /> is equal to the current
-        ///     <see cref="RabbitConsumerEndpoint" />.
-        /// </summary>
-        /// <param name="other">
-        ///     The object to compare with the current object.
-        /// </param>
-        /// <returns>
-        ///     Returns a value indicating whether the other object is equal to the current object.
-        /// </returns>
-        protected bool BaseEquals(RabbitConsumerEndpoint other)
+        /// <inheritdoc cref="Endpoint.BaseEquals" />
+        protected override bool BaseEquals(Endpoint? other)
         {
-            if (other is null)
-                return false;
-
             if (ReferenceEquals(this, other))
                 return true;
 
-            return base.BaseEquals(other) && Equals(Connection, other.Connection) && Equals(Queue, other.Queue);
+            if (!(other is RabbitConsumerEndpoint otherRabbitConsumerEndpoint))
+                return false;
+
+            return base.BaseEquals(other) &&
+                   Equals(Connection, otherRabbitConsumerEndpoint.Connection) &&
+                   Equals(Queue, otherRabbitConsumerEndpoint.Queue);
         }
     }
 }

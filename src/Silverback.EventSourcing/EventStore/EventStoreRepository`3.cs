@@ -143,11 +143,7 @@ namespace Silverback.EventStore
         ///     Adds the new event store entity to the storage, without committing yet.
         /// </summary>
         /// <remarks>
-        ///     In EF Core this equals to adding the entity to the <c>
-        ///         DbSet
-        ///     </c> without calling <c>
-        ///         SaveChanges
-        ///     </c> (that will be called later by the framework).
+        ///     In EF Core this equals to adding the entity to the <c>DbSet</c> without calling <c>SaveChanges</c> (that will be called later by the framework).
         /// </remarks>
         /// <param name="eventStoreEntity">
         ///     The event store entity to be added.

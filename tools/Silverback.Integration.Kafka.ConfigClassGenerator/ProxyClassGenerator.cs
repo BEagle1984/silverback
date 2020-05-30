@@ -155,7 +155,7 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
                 _builder!.AppendLine(
                     "        internal abstract Confluent.Kafka.ClientConfig ConfluentBaseConfig { get; }");
                 _builder!.AppendLine();
-                _builder!.AppendLine("        /// <inheritdoc />");
+                _builder!.AppendLine("        /// <inheritdoc cref=\"IValidatableEndpointSettings.Validate\" />");
                 _builder!.AppendLine("        public abstract void Validate();");
             }
             else

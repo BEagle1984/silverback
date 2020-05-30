@@ -31,9 +31,7 @@ namespace Silverback.Messaging.Configuration
 
         /// <summary>
         ///     Specifies whether the producer has to be disposed and recreated if a <see cref="KafkaException" />
-        ///     is thrown (default is <c>
-        ///         false
-        ///     </c>).<br />
+        ///     is thrown (default is <c>false</c>).<br />
         /// </summary>
         public bool DisposeOnException { get; set; } = true;
 
@@ -47,7 +45,7 @@ namespace Silverback.Messaging.Configuration
              DeliveryReportFields == "all" ||
              DeliveryReportFields.Contains("status", StringComparison.Ordinal));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ConfluentClientConfigProxy.Validate" />
         public override void Validate()
         {
             if (ThrowIfNotAcknowledged && !ArePersistenceStatusReportsEnabled)
@@ -60,7 +58,7 @@ namespace Silverback.Messaging.Configuration
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(KafkaProducerConfig? other)
         {
             if (other is null)
@@ -72,7 +70,7 @@ namespace Silverback.Messaging.Configuration
             return ConfluentConfigComparer.Equals(ConfluentConfig, other.ConfluentConfig);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -87,7 +85,7 @@ namespace Silverback.Messaging.Configuration
             return Equals((KafkaProducerConfig)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         public override int GetHashCode() => 0;
     }
 }

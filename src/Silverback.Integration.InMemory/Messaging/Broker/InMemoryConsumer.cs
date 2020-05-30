@@ -48,20 +48,16 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        ///     The event fired whenever the <c>
-        ///         Commit
-        ///     </c> method is called to acknowledge the successful processing of a message.
+        ///     The event fired whenever the <c>Commit</c> method is called to acknowledge the successful processing of a message.
         /// </summary>
         public event EventHandler<OffsetsEventArgs>? CommitCalled;
 
         /// <summary>
-        ///     The event fired whenever the <c>
-        ///         Rollback
-        ///     </c> method is called to notify that the message couldn't be processed.
+        ///     The event fired whenever the <c>Rollback</c> method is called to notify that the message couldn't be processed.
         /// </summary>
         public event EventHandler<OffsetsEventArgs>? RollbackCalled;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer.Commit(IReadOnlyCollection{IOffset})" />
         public override Task Commit(IReadOnlyCollection<IOffset> offsets)
         {
             CommitCalled?.Invoke(this, new OffsetsEventArgs(offsets));
@@ -69,7 +65,7 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer.Rollback(IReadOnlyCollection{IOffset})" />
         public override Task Rollback(IReadOnlyCollection<IOffset> offsets)
         {
             RollbackCalled?.Invoke(this, new OffsetsEventArgs(offsets));
@@ -77,12 +73,12 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer.Connect" />
         public override void Connect()
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer.Disconnect" />
         public override void Disconnect()
         {
         }

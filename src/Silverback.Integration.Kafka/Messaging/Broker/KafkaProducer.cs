@@ -67,17 +67,17 @@ namespace Silverback.Messaging.Broker
             _kafkaEventsHandler = serviceProvider.GetRequiredService<KafkaEventsHandler>();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             DisposeInnerProducer();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Producer.ProduceCore" />
         protected override IOffset? ProduceCore(IRawOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceAsyncCore(envelope));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Producer.ProduceAsyncCore" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         protected override async Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope)
         {

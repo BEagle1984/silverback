@@ -4,9 +4,7 @@
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     Declares the <c>
-    ///         Validate
-    ///     </c> method that is used to check the provided settings.
+    ///     Declares the <c>Validate</c> method that is used to check the provided settings.
     /// </summary>
     public interface IValidatableEndpointSettings
     {

@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Connectors
     /// </typeparam>
     public abstract class SimpleOutboundRouter<TMessage> : OutboundRouter<TMessage>
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="OutboundRouter{TMessage}.GetDestinationEndpoints" />
         public override IEnumerable<IProducerEndpoint> GetDestinationEndpoints(
             TMessage message,
             MessageHeaderCollection headers)
@@ -29,9 +29,7 @@ namespace Silverback.Messaging.Connectors
 
         /// <summary>
         ///     Returns the <see cref="IProducerEndpoint" /> representing the endpoint where the specified message
-        ///     must be produced. When <c>
-        ///         null
-        ///     </c> is returned, the message will not be be published.
+        ///     must be produced. When <c>null</c> is returned, the message will not be be published.
         /// </summary>
         /// <param name="message">
         ///     The message to be routed.
@@ -40,9 +38,7 @@ namespace Silverback.Messaging.Connectors
         ///     The message headers collection.
         /// </param>
         /// <returns>
-        ///     The endpoint to route the message to, or <c>
-        ///         null
-        ///     </c> if the message doesn't have to be routed.
+        ///     The endpoint to route the message to, or <c>null</c> if the message doesn't have to be routed.
         /// </returns>
         protected abstract IProducerEndpoint? GetDestinationEndpoint(TMessage message, MessageHeaderCollection headers);
     }

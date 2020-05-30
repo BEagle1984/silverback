@@ -23,9 +23,7 @@ namespace Silverback.Background
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the acquired
-        ///     <see cref="DistributedLock" /> (or <c>
-        ///         null
-        ///     </c> if no lock was actually acquired).
+        ///     <see cref="DistributedLock" /> (or <c>null</c> if no lock was actually acquired).
         /// </returns>
         Task<DistributedLock?> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default);
 

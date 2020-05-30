@@ -15,10 +15,10 @@ namespace Silverback.Messaging.Behaviors
     /// </summary>
     public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior, ISorted
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IProducerBehavior.Handle" />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));

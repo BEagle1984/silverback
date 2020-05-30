@@ -8,9 +8,7 @@ using Silverback.Messaging.Broker;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c>
-    ///         OverrideWithInMemoryBroker
-    ///     </c> method to the <see cref="IServiceCollection" />.
+    ///     Adds the <c>OverrideWithInMemoryBroker</c> method to the <see cref="IServiceCollection" />.
     /// </summary>
     public static class ServiceCollectionExtensions
     {

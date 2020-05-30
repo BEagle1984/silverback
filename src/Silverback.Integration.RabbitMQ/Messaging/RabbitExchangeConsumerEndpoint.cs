@@ -41,7 +41,7 @@ namespace Silverback.Messaging
         /// </summary>
         public string? RoutingKey { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="RabbitConsumerEndpoint.Validate" />
         public override void Validate()
         {
             base.Validate();
@@ -52,10 +52,10 @@ namespace Silverback.Messaging
             Exchange.Validate();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ConsumerEndpoint.GetUniqueConsumerGroupName" />
         public override string GetUniqueConsumerGroupName() => !string.IsNullOrEmpty(QueueName) ? QueueName : Name;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(RabbitExchangeConsumerEndpoint? other)
         {
             if (other is null)
@@ -70,7 +70,7 @@ namespace Silverback.Messaging
                    string.Equals(RoutingKey, other.RoutingKey, StringComparison.Ordinal);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -85,7 +85,7 @@ namespace Silverback.Messaging
             return Equals((RabbitExchangeConsumerEndpoint)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
     }

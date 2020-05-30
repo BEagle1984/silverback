@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Encryption
         /// </summary>
         protected SymmetricEncryptionSettings Settings { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IRawMessageTransformer.TransformAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task<byte[]?> TransformAsync(byte[]? message, MessageHeaderCollection headers)
         {

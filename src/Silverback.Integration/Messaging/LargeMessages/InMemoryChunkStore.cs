@@ -29,16 +29,16 @@ namespace Silverback.Messaging.LargeMessages
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.HasNotPersistedChunks" />
         public bool HasNotPersistedChunks =>
             Items.Any(item => !_pendingCleanups.Contains(item.Item.MessageId)) ||
             UncommittedItems.Any(item => !_pendingCleanups.Contains(item.Item.MessageId));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.Store" />
         public async Task Store(string messageId, int chunkIndex, int chunksCount, byte[] content) =>
             await Add(new InMemoryTemporaryMessageChunk(messageId, chunkIndex, content));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.CountChunks" />
         public Task<int> CountChunks(string messageId) =>
             Task.FromResult(
                 Items.Union(UncommittedItems)
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.LargeMessages
                     .Distinct()
                     .Count());
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.GetChunks" />
         public Task<Dictionary<int, byte[]>> GetChunks(string messageId) =>
             Task.FromResult(
                 Items.Union(UncommittedItems)
@@ -56,7 +56,7 @@ namespace Silverback.Messaging.LargeMessages
                     .Select(items => items.First())
                     .ToDictionary(item => item.Item.ChunkIndex, item => item.Item.Content));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.Cleanup(string)" />
         public Task Cleanup(string messageId)
         {
             _pendingCleanups.Add(messageId);
@@ -64,7 +64,7 @@ namespace Silverback.Messaging.LargeMessages
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStore.Cleanup(System.DateTime)" />
         public Task Cleanup(DateTime threshold)
         {
             lock (Items)

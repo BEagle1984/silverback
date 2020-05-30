@@ -14,7 +14,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.ErrorHandling
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IErrorPolicy" />
     public abstract class ErrorPolicyBase : IErrorPolicy
     {
         private readonly IServiceProvider _serviceProvider;
@@ -50,11 +50,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         /// <summary>
         ///     Restricts the application of this policy to the specified exception type only. It is possible to
-        ///     combine multiple calls to <c>
-        ///         ApplyTo
-        ///     </c> and <c>
-        ///         Exclude
-        ///     </c>.
+        ///     combine multiple calls to <c>ApplyTo</c> and <c>Exclude</c>.
         /// </summary>
         /// <typeparam name="T">
         ///     The type of the exception to be handled.
@@ -71,11 +67,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         /// <summary>
         ///     Restricts the application of this policy to the specified exception type only. It is possible to
-        ///     combine multiple calls to <c>
-        ///         ApplyTo
-        ///     </c> and <c>
-        ///         Exclude
-        ///     </c>.
+        ///     combine multiple calls to <c>ApplyTo</c> and <c>Exclude</c>.
         /// </summary>
         /// <param name="exceptionType">
         ///     The type of the exception to be handled.
@@ -91,11 +83,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         /// <summary>
         ///     Restricts the application of this policy to all exceptions but the specified type. It is possible to
-        ///     combine multiple calls to <c>
-        ///         ApplyTo
-        ///     </c> and <c>
-        ///         Exclude
-        ///     </c>.
+        ///     combine multiple calls to <c>ApplyTo</c> and <c>Exclude</c>.
         /// </summary>
         /// <typeparam name="T">
         ///     The type of the exception to be ignored.
@@ -112,11 +100,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         /// <summary>
         ///     Restricts the application of this policy to all exceptions but the specified type. It is possible to
-        ///     combine multiple calls to <c>
-        ///         ApplyTo
-        ///     </c> and <c>
-        ///         Exclude
-        ///     </c>.
+        ///     combine multiple calls to <c>ApplyTo</c> and <c>Exclude</c>.
         /// </summary>
         /// <param name="exceptionType">
         ///     The type of the exception to be ignored.
@@ -180,7 +164,7 @@ namespace Silverback.Messaging.ErrorHandling
             return this;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IErrorPolicy.CanHandle" />
         public virtual bool CanHandle(IReadOnlyCollection<IRawInboundEnvelope> envelopes, Exception exception) =>
             envelopes.All(envelope => CanHandle(envelope, exception));
 
@@ -255,7 +239,7 @@ namespace Silverback.Messaging.ErrorHandling
             return true;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IErrorPolicy.HandleError" />
         public async Task<ErrorAction> HandleError(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)

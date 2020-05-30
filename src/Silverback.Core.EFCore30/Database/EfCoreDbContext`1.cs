@@ -30,7 +30,7 @@ namespace Silverback.Database
             _dbContext = Check.NotNull(dbContext, nameof(dbContext));
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDbContext.GetDbSet{TEntity}" />
         public IDbSet<TEntity> GetDbSet<TEntity>()
             where TEntity : class =>
             new EfCoreDbSet<TEntity>(
@@ -38,10 +38,10 @@ namespace Silverback.Database
                 throw new DatabaseTableNotFoundException(
                     $"The DbContext doesn't contain a DbSet<{typeof(TEntity).FullName}>."));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDbContext.SaveChanges" />
         public void SaveChanges() => _dbContext.SaveChanges();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDbContext.SaveChangesAsync" />
         public Task SaveChangesAsync() => _dbContext.SaveChangesAsync();
     }
 }

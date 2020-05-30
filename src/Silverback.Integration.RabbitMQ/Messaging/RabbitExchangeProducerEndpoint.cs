@@ -31,7 +31,7 @@ namespace Silverback.Messaging
         /// </summary>
         public RabbitExchangeConfig Exchange { get; set; } = new RabbitExchangeConfig();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="RabbitProducerEndpoint.Validate" />
         public override void Validate()
         {
             base.Validate();
@@ -42,7 +42,7 @@ namespace Silverback.Messaging
             Exchange.Validate();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(RabbitExchangeProducerEndpoint? other)
         {
             if (other is null)
@@ -54,7 +54,7 @@ namespace Silverback.Messaging
             return BaseEquals(other) && Equals(Exchange, other.Exchange);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -69,7 +69,7 @@ namespace Silverback.Messaging
             return Equals((RabbitExchangeProducerEndpoint)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
     }

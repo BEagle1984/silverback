@@ -9,9 +9,7 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c>
-    ///         AddSingletonBrokerBehavior
-    ///     </c> method to the <see cref="IServiceCollection" />.
+    ///     Adds the <c>AddSingletonBrokerBehavior</c> method to the <see cref="IServiceCollection" />.
     /// </summary>
     public static class ServiceCollectionAddBrokerBehaviorExtensions
     {

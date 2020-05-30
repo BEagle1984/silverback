@@ -7,7 +7,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Publishing
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IEventPublisher" />
     public class EventPublisher : IEventPublisher
     {
         private readonly IPublisher _publisher;
@@ -23,16 +23,16 @@ namespace Silverback.Messaging.Publishing
             _publisher = publisher;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventPublisher.Publish(IEvent)" />
         public void Publish(IEvent eventMessage) => _publisher.Publish(eventMessage);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventPublisher.Publish(IEnumerable{IEvent})" />
         public void Publish(IEnumerable<IEvent> eventMessages) => _publisher.Publish(eventMessages);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventPublisher.PublishAsync(IEvent)" />
         public Task PublishAsync(IEvent eventMessage) => _publisher.PublishAsync(eventMessage);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventPublisher.PublishAsync(IEnumerable{IEvent})" />
         public Task PublishAsync(IEnumerable<IEvent> eventMessages) => _publisher.PublishAsync(eventMessages);
     }
 }

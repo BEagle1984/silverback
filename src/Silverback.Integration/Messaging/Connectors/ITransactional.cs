@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 namespace Silverback.Messaging.Connectors
 {
     /// <summary>
-    ///     Declares the <c>
-    ///         Commit
-    ///     </c> and <c>
-    ///         Rollback
-    ///     </c> methods, allowing the service to be enlisted into the consumer transaction (see
+    ///     Declares the <c>Commit</c> and <c>Rollback</c> methods, allowing the service to be enlisted into the consumer transaction (see
     ///     <see cref="ConsumerTransactionManager" />).
     /// </summary>
     public interface ITransactional

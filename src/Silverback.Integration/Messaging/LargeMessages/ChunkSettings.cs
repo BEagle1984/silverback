@@ -8,9 +8,7 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging.LargeMessages
 {
     /// <summary>
-    ///     The chunking settings. To enable chunking just set the <c>
-    ///         Size
-    ///     </c> property to the desired (maximum) chunk size.
+    ///     The chunking settings. To enable chunking just set the <c>Size</c> property to the desired (maximum) chunk size.
     /// </summary>
     public sealed class ChunkSettings : IEquatable<ChunkSettings>, IValidatableEndpointSettings
     {
@@ -19,7 +17,7 @@ namespace Silverback.Messaging.LargeMessages
         /// </summary>
         public int Size { get; set; } = int.MaxValue;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public void Validate()
         {
             if (Size < 1)
@@ -38,7 +36,7 @@ namespace Silverback.Messaging.LargeMessages
             return Size == other.Size;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -53,7 +51,7 @@ namespace Silverback.Messaging.LargeMessages
             return Equals((ChunkSettings)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode() => Size;
     }

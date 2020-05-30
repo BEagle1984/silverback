@@ -33,13 +33,13 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public ulong DeliveryTag { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffset.Key" />
         public string Key => ConsumerTag;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffset.Value" />
         public string Value => DeliveryTag.ToString(CultureInfo.InvariantCulture);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOffset.ToLogString" />
         public string ToLogString() => DeliveryTag.ToString(CultureInfo.InvariantCulture);
     }
 }

@@ -31,10 +31,10 @@ namespace Silverback.Messaging.Connectors.Behaviors
             _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>().ToList();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundProducer;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBehavior.Handle" />
         public async Task<IReadOnlyCollection<object?>> Handle(
             IReadOnlyCollection<object> messages,
             MessagesHandler next)

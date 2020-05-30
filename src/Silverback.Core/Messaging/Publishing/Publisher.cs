@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Publishing
             _logger = logger;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPublisher.Publish(object)" />
         public void Publish(object message)
         {
             Check.NotNull(message, nameof(message));
@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Publishing
             Publish(new[] { message });
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPublisher.Publish{TResult}(object)" />
         public IReadOnlyCollection<TResult> Publish<TResult>(object message)
         {
             Check.NotNull(message, nameof(message));
@@ -58,14 +58,14 @@ namespace Silverback.Messaging.Publishing
             return Publish<TResult>(new[] { message });
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPublisher.Publish(IEnumerable{object})" />
         public void Publish(IEnumerable<object> messages) => Publish(messages, false).Wait();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPublisher.Publish{TResult}(IEnumerable{object})" />
         public IReadOnlyCollection<TResult> Publish<TResult>(IEnumerable<object> messages) =>
             CastResults<TResult>(Publish(messages, false).Result).ToList();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPublisher.PublishAsync(object)" />
         public Task PublishAsync(object message)
         {
             Check.NotNull(message, nameof(message));
@@ -73,14 +73,14 @@ namespace Silverback.Messaging.Publishing
             return PublishAsync(new[] { message });
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object)" />
         public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
             await PublishAsync<TResult>(new[] { message });
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPublisher.PublishAsync(IEnumerable{object})" />
         public Task PublishAsync(IEnumerable<object> messages) => Publish(messages, true);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(IEnumerable{object})" />
         public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) =>
             CastResults<TResult>(await Publish(messages, true)).ToList();
 

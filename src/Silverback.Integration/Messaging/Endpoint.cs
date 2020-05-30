@@ -26,16 +26,16 @@ namespace Silverback.Messaging
         /// </summary>
         public static IMessageSerializer DefaultSerializer { get; } = JsonMessageSerializer.Default;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEndpoint.Name" />
         public string Name { get; protected set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEndpoint.Serializer" />
         public IMessageSerializer Serializer { get; set; } = DefaultSerializer;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEndpoint.Encryption" />
         public EncryptionSettings? Encryption { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEndpoint.Validate" />
         public virtual void Validate()
         {
             if (string.IsNullOrEmpty(Name))
@@ -57,7 +57,7 @@ namespace Silverback.Messaging
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
-        protected bool BaseEquals(Endpoint? other)
+        protected virtual bool BaseEquals(Endpoint? other)
         {
             if (other is null)
                 return false;

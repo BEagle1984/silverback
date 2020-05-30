@@ -31,10 +31,10 @@ namespace Silverback.Messaging.LargeMessages
             _pendingOffsetsByConsumer = new ConcurrentDictionary<IConsumer, List<IOffset>>();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.ChunkAggregator;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumerBehavior.Handle" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task Handle(
             ConsumerPipelineContext context,

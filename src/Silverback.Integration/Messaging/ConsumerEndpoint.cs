@@ -17,7 +17,7 @@ namespace Silverback.Messaging
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumerEndpoint.GetUniqueConsumerGroupName" />
         public abstract string GetUniqueConsumerGroupName();
     }
 }

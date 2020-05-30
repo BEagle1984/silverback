@@ -15,7 +15,10 @@ using Silverback.Util;
 
 namespace Silverback.Background
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     Implements a lock mechanism that relies on a shared database table to synchronize different
+    ///     processes.
+    /// </summary>
     public class DbDistributedLockManager : IDistributedLockManager
     {
         private static readonly IDistributedLockManager NullLockManager = new NullLockManager();
@@ -41,7 +44,7 @@ namespace Silverback.Background
             _logger = Check.NotNull(logger, nameof(logger));
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDistributedLockManager.Acquire" />
         public async Task<DistributedLock?> Acquire(
             DistributedLockSettings settings,
             CancellationToken cancellationToken = default)
@@ -85,7 +88,7 @@ namespace Silverback.Background
             throw new TimeoutException($"Timeout waiting to get the required lock '{settings.ResourceName}'.");
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDistributedLockManager.CheckIsStillLocked" />
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task<bool> CheckIsStillLocked(DistributedLockSettings settings)
         {
@@ -116,7 +119,7 @@ namespace Silverback.Background
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDistributedLockManager.SendHeartbeat" />
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task<bool> SendHeartbeat(DistributedLockSettings settings)
         {
@@ -143,7 +146,7 @@ namespace Silverback.Background
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDistributedLockManager.Release" />
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task Release(DistributedLockSettings settings)
         {

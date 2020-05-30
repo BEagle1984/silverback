@@ -3,7 +3,7 @@
 
 namespace Silverback.Messaging.Messages
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IInboundEnvelope" />
     public interface IInboundEnvelope<out TMessage> : IInboundEnvelope
         where TMessage : class
     {

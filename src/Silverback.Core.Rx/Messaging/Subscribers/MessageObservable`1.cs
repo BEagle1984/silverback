@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace Silverback.Messaging.Subscribers
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IMessageObservable{TMessage}" />
     public class MessageObservable<TMessage> : IMessageObservable<TMessage>
     {
         private readonly IObservable<TMessage> _innerObservable;
@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Subscribers
             _innerObservable = observable.OfType<TMessage>();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IObservable{T}.Subscribe" />
         public IDisposable Subscribe(IObserver<TMessage> observer) =>
             _innerObservable.Subscribe(observer);
     }

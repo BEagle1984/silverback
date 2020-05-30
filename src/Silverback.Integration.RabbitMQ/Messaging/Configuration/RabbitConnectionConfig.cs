@@ -23,9 +23,7 @@ namespace Silverback.Messaging.Configuration
         public SslProtocols? AmqpUriSslProtocols { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the automatic connection recovery is enabled (default is <c>
-        ///         true
-        ///     </c>).
+        ///     Gets or sets a value indicating whether the automatic connection recovery is enabled (default is <c>true</c>).
         /// </summary>
         public bool? AutomaticRecoveryEnabled { get; set; }
 
@@ -128,13 +126,13 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public string? ClientProvidedName { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public void Validate()
         {
             // Nothing to validate?
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(RabbitConnectionConfig? other)
         {
             if (other is null)
@@ -166,7 +164,7 @@ namespace Silverback.Messaging.Configuration
                    string.Equals(ClientProvidedName, other.ClientProvidedName, StringComparison.Ordinal);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -181,7 +179,7 @@ namespace Silverback.Messaging.Configuration
             return Equals((RabbitConnectionConfig)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode()
         {

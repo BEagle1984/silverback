@@ -24,10 +24,10 @@ namespace Silverback.Messaging
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ConsumerEndpoint.GetUniqueConsumerGroupName" />
         public override string GetUniqueConsumerGroupName() => Name;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(RabbitQueueConsumerEndpoint? other)
         {
             if (other is null)
@@ -39,7 +39,7 @@ namespace Silverback.Messaging
             return BaseEquals(other) && Equals(Queue, other.Queue);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -51,7 +51,7 @@ namespace Silverback.Messaging
             return Equals((RabbitQueueConsumerEndpoint)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
     }

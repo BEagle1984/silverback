@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public class KafkaBrokerOptionsConfigurator : IBrokerOptionsConfigurator<KafkaBroker>
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBrokerOptionsConfigurator{TBroker}.Configure" />
         public void Configure(IBrokerOptionsBuilder brokerOptionsBuilder)
         {
             Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));

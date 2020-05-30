@@ -15,9 +15,9 @@ namespace Silverback.Messaging.Configuration
         ///     Gets or sets a value indicating whether the queue is used by only one connection and will be deleted
         ///     when that connection closes.
         /// </summary>
-        public bool IsExclusive { get; set; } = false;
+        public bool IsExclusive { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(RabbitQueueConfig? other)
         {
             if (other is null)
@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Configuration
             return BaseEquals(other) && IsExclusive == other.IsExclusive;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Configuration
             return Equals((RabbitQueueConfig)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode() => HashCode.Combine(IsDurable, IsAutoDeleteEnabled, Arguments, IsExclusive);
     }

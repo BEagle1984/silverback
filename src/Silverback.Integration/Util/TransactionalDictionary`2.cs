@@ -46,9 +46,7 @@ namespace Silverback.Util
 
         /// <summary>
         ///     Gets the <see cref="Dictionary{TKey,TValue}" /> containing the pending items that will be persisted
-        ///     when <c>
-        ///         Commit
-        ///     </c> is called.
+        ///     when <c>Commit</c> is called.
         /// </summary>
         protected Dictionary<TKey, TValue> UncommittedItems { get; }
 

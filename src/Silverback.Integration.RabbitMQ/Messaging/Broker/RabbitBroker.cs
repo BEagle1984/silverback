@@ -45,7 +45,7 @@ namespace Silverback.Messaging.Broker
             _connectionFactory = connectionFactory;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
         protected override IProducer InstantiateProducer(
             RabbitProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
@@ -57,7 +57,7 @@ namespace Silverback.Messaging.Broker
                 _connectionFactory,
                 _loggerFactory.CreateLogger<RabbitProducer>());
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
             RabbitConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
@@ -72,7 +72,7 @@ namespace Silverback.Messaging.Broker
                 serviceProvider,
                 _loggerFactory.CreateLogger<RabbitConsumer>());
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.Dispose(bool)" />
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

@@ -45,7 +45,7 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public int Count => _brokers.Count;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBrokerCollection.GetProducer" />
         public IProducer GetProducer(IProducerEndpoint endpoint)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Broker
                 .GetProducer(endpoint);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBrokerCollection.AddConsumer(IConsumerEndpoint,MessagesReceivedCallback)" />
         public IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback)
         {
             Check.NotNull(callback, nameof(callback));
@@ -73,7 +73,7 @@ namespace Silverback.Messaging.Broker
                 });
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBrokerCollection.AddConsumer(IConsumerEndpoint,MessagesReceivedAsyncCallback)" />
         public IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -87,16 +87,16 @@ namespace Silverback.Messaging.Broker
                 .AddConsumer(endpoint, callback);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBrokerCollection.Connect" />
         public void Connect() => _brokers.ForEach(broker => broker.Connect());
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBrokerCollection.Disconnect" />
         public void Disconnect() => _brokers.ForEach(broker => broker.Disconnect());
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
         public IEnumerator<IBroker> GetEnumerator() => _brokers.GetEnumerator();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
         IEnumerator IEnumerable.GetEnumerator() => _brokers.GetEnumerator();
 
         private IBroker FindBroker(

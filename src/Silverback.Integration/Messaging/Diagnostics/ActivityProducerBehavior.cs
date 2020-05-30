@@ -13,10 +13,10 @@ namespace Silverback.Messaging.Diagnostics
     /// </summary>
     public class ActivityProducerBehavior : IProducerBehavior, ISorted
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Activity;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IProducerBehavior.Handle" />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));

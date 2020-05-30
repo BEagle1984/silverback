@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 namespace Silverback.Messaging.Publishing
 {
     /// <summary>
-    ///     The delegate representing the <c>
-    ///         Handle
-    ///     </c> method of the <see cref="IBehavior" />.
+    ///     The delegate representing the <c>Handle</c> method of the <see cref="IBehavior" />.
     /// </summary>
     /// <param name="messages">
     ///     The messages being published.

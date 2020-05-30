@@ -9,9 +9,7 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c>
-    ///         UseModel
-    ///     </c> method to the <see cref="ISilverbackBuilder" />.
+    ///     Adds the <c>UseModel</c> method to the <see cref="ISilverbackBuilder" />.
     /// </summary>
     public static class SilverbackBuilderExtensions
     {

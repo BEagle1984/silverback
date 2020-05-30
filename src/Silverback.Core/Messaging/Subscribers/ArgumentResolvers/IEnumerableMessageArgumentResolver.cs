@@ -19,11 +19,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         ///     The messages being published.
         /// </param>
         /// <param name="targetMessageType">
-        ///     The actual message type being declared by the subscribed method (e.g. <c>
-        ///         TMessage
-        ///     </c> for an <c>
-        ///         IEnumerable&lt;TMessage&gt;
-        ///     </c>).
+        ///     The actual message type being declared by the subscribed method (e.g. <c>TMessage</c> for an <c>IEnumerable&lt;TMessage&gt;</c>).
         /// </param>
         /// <returns>
         ///     The actual value to be forwarded to the subscribed method.

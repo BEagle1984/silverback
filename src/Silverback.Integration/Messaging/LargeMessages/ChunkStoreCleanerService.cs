@@ -47,7 +47,7 @@ namespace Silverback.Messaging.LargeMessages
             _storeCleaner = storeCleaner;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="RecurringDistributedBackgroundService.ExecuteRecurringAsync" />
         protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) =>
             _storeCleaner.Cleanup();
     }

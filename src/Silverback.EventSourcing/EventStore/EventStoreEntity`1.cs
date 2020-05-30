@@ -7,17 +7,17 @@ using Silverback.Util;
 
 namespace Silverback.EventStore
 {
-    /// <inheritdoc cref="Silverback.EventStore.IEventStoreEntity{TEventEntity}" />
+    /// <inheritdoc cref="IEventStoreEntity{TEventEntity}" />
     public class EventStoreEntity<TEventEntity> : MessagesSource<object>, IEventStoreEntity<TEventEntity>
         where TEventEntity : IEventEntity
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventStoreEntity{TEventEntity}.Events" />
         public ICollection<TEventEntity> Events { get; } = new HashSet<TEventEntity>(); // TODO: HashSet?
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventStoreEntity{TEventEntity}.EntityVersion" />
         public int EntityVersion { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEventStoreEntity{TEventEntity}.AddDomainEvents" />
         public void AddDomainEvents(IEnumerable<object> events) => events?.ForEach(AddEvent);
     }
 }

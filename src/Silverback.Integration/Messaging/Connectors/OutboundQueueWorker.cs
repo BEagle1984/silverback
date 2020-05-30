@@ -44,9 +44,7 @@ namespace Silverback.Messaging.Connectors
         /// </param>
         /// <param name="enforceMessageOrder">
         ///     Specifies whether the messages must be produced in the same order as they were added to the queue.
-        ///     If set to <c>
-        ///         true
-        ///     </c> the message order will be ensured, retrying the same message until it can be successfully
+        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be successfully
         ///     produced.
         /// </param>
         /// <param name="readPackageSize">
@@ -66,7 +64,7 @@ namespace Silverback.Messaging.Connectors
             _readPackageSize = readPackageSize;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundQueueWorker.ProcessQueue" />
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task ProcessQueue(CancellationToken stoppingToken)
         {

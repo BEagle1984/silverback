@@ -43,7 +43,7 @@ namespace Silverback.Messaging
         /// </summary>
         public KafkaConsumerConfig Configuration { get; set; } = new KafkaConsumerConfig();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Endpoint.Validate" />
         public override void Validate()
         {
             base.Validate();
@@ -54,13 +54,13 @@ namespace Silverback.Messaging
             Configuration.Validate();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ConsumerEndpoint.GetUniqueConsumerGroupName" />
         public override string GetUniqueConsumerGroupName() =>
             !string.IsNullOrEmpty(Configuration.GroupId)
                 ? Configuration.GroupId
                 : Name;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(KafkaConsumerEndpoint? other)
         {
             if (other is null)
@@ -72,7 +72,7 @@ namespace Silverback.Messaging
             return BaseEquals(other) && Equals(Configuration, other.Configuration);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -87,7 +87,7 @@ namespace Silverback.Messaging
             return Equals((KafkaConsumerEndpoint)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
     }

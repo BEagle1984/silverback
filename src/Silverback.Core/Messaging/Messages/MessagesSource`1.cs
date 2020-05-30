@@ -12,9 +12,7 @@ namespace Silverback.Messaging.Messages
     ///     <see cref="IMessagesSource" /> implementation.
     /// </summary>
     /// <remarks>
-    ///     This is the base class of the <c>
-    ///         DomainEntity
-    ///     </c> defined in Silverback.Core.Model.
+    ///     This is the base class of the <c>DomainEntity</c> defined in Silverback.Core.Model.
     /// </remarks>
     /// <typeparam name="TBaseEvent">
     ///     The base type of the events being published.
@@ -23,10 +21,10 @@ namespace Silverback.Messaging.Messages
     {
         private List<TBaseEvent>? _events;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessagesSource.GetMessages" />
         public IEnumerable<object>? GetMessages() => _events?.Cast<object>();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessagesSource.ClearMessages" />
         public void ClearMessages() => _events?.Clear();
 
         /// <summary>
@@ -65,11 +63,7 @@ namespace Silverback.Messaging.Messages
         ///     The type of the event.
         /// </typeparam>
         /// <param name="allowMultiple">
-        ///     if set to <c>
-        ///         false
-        ///     </c> only one instance of the specified type <c>
-        ///         TEvent
-        ///     </c> will be added.
+        ///     if set to <c>false</c> only one instance of the specified type <c>TEvent</c> will be added.
         /// </param>
         /// <returns>
         ///     The <typeparamref name="TEvent" /> instance that was added.

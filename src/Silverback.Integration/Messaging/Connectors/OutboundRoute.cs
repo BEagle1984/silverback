@@ -27,13 +27,13 @@ namespace Silverback.Messaging.Connectors
             OutboundConnectorType = outboundConnectorType;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundRoute.MessageType" />
         public Type MessageType { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundRoute.Router" />
         public IOutboundRouter Router { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IOutboundRoute.OutboundConnectorType" />
         public Type? OutboundConnectorType { get; }
     }
 }

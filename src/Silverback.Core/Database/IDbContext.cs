@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 namespace Silverback.Database
 {
     /// <summary>
-    ///     Abstracts the <c>
-    ///         DbContext
-    ///     </c> functionality to allow for multiple and decoupled implementations.
+    ///     Abstracts the <c>DbContext</c> functionality to allow for multiple and decoupled implementations.
     /// </summary>
     public interface IDbContext
     {

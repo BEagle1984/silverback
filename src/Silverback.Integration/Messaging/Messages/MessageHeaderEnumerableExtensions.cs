@@ -36,8 +36,7 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified key.
         ///     </para>
         ///     <para>
-        ///         It will return <c>
-        ///             null
+        ///         It will return <c>    null
         ///         </c> if no header with that key is found in the collection.
         ///     </para>
         /// </summary>
@@ -52,9 +51,7 @@ namespace Silverback.Messaging.Messages
         ///     is not found (or the value cannot be converted to the specified type).
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
         public static string? GetValue(
             this IEnumerable<MessageHeader> headers,
@@ -68,8 +65,7 @@ namespace Silverback.Messaging.Messages
         ///         <typeparamref name="T" />.
         ///     </para>
         ///     <para>
-        ///         It will return <c>
-        ///             null
+        ///         It will return <c>    null
         ///         </c> if no header with that key is found in the collection.
         ///     </para>
         /// </summary>
@@ -87,9 +83,7 @@ namespace Silverback.Messaging.Messages
         ///     is not found (or the value cannot be converted to the specified type).
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
         public static T? GetValue<T>(this IEnumerable<MessageHeader> headers, string key, bool throwIfNotFound = false)
             where T : struct =>
@@ -100,11 +94,9 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified key, casting it to the specified type.
         ///     </para>
         ///     <para>
-        ///         By default it will return <c>
-        ///             null
+        ///         By default it will return <c>    null
         ///         </c> if no header with that key is found in the collection but this behavior can be changed
-        ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>
-        ///             true
+        ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>    true
         ///         </c>.
         ///     </para>
         /// </summary>
@@ -122,9 +114,7 @@ namespace Silverback.Messaging.Messages
         ///     is not found (or the value cannot be converted to the specified type).
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
         [SuppressMessage("", "CA1031", Justification = "Rethrown if desired")]
         public static object? GetValue(
@@ -187,9 +177,7 @@ namespace Silverback.Messaging.Messages
         ///     The key of the header to be retrieved.
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
         public static T GetValueOrDefault<T>(this IEnumerable<MessageHeader> headers, string key)
             where T : struct =>
@@ -214,9 +202,7 @@ namespace Silverback.Messaging.Messages
         ///     The type to convert the header value to.
         /// </param>
         /// <returns>
-        ///     The header value converted to the target type, or <c>
-        ///         null
-        ///     </c> if not found.
+        ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
         public static object? GetValueOrDefault(this IEnumerable<MessageHeader> headers, string key, Type targetType) =>
             GetValue(headers, key, targetType) ?? targetType.GetDefaultValue();

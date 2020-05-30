@@ -67,7 +67,7 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumer.Behaviors" />
         public IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
 
         /// <summary>
@@ -80,25 +80,25 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public IConsumerEndpoint Endpoint { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumer.Commit(IOffset)" />
         public Task Commit(IOffset offset) => Commit(new[] { offset });
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumer.Commit(IReadOnlyCollection{IOffset})" />
         public abstract Task Commit(IReadOnlyCollection<IOffset> offsets);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumer.Rollback(IOffset)" />
         public Task Rollback(IOffset offset) => Rollback(new[] { offset });
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumer.Rollback(IReadOnlyCollection{IOffset})" />
         public abstract Task Rollback(IReadOnlyCollection<IOffset> offsets);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumer.Connect" />
         public abstract void Connect();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumer.Disconnect" />
         public abstract void Disconnect();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             Dispose(true);
@@ -146,9 +146,7 @@ namespace Silverback.Messaging.Broker
         ///     resources.
         /// </summary>
         /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c>
-        ///         Dispose
-        ///     </c> method and not from the finalizer.
+        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
         /// </param>
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         protected virtual void Dispose(bool disposing)

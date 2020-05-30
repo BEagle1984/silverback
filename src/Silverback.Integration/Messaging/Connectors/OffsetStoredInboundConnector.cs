@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Connectors
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ExactlyOnceInboundConnector.MustProcess" />
         protected override async Task<bool> MustProcess(IRawInboundEnvelope envelope, IServiceProvider serviceProvider)
         {
             Check.NotNull(envelope, nameof(envelope));

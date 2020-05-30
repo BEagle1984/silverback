@@ -73,13 +73,13 @@ namespace Silverback.Messaging.Broker
             ConsumerEndpointType = typeof(TConsumerEndpoint);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBroker.ProducerEndpointType" />
         public Type ProducerEndpointType { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBroker.ConsumerEndpointType" />
         public Type ConsumerEndpointType { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBroker.Producers" />
         public IReadOnlyList<IProducer> Producers
         {
             get
@@ -91,7 +91,7 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBroker.Consumers" />
         public IReadOnlyList<IConsumer> Consumers
         {
             get
@@ -103,7 +103,7 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBroker.IsConnected" />
         public bool IsConnected { get; private set; }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         protected ILoggerFactory LoggerFactory { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBroker.GetProducer" />
         public virtual IProducer GetProducer(IProducerEndpoint endpoint)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -135,7 +135,7 @@ namespace Silverback.Messaging.Broker
                 });
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBroker.AddConsumer(IConsumerEndpoint,MessagesReceivedCallback)" />
         public virtual IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback)
         {
             Check.NotNull(callback, nameof(callback));
@@ -149,7 +149,7 @@ namespace Silverback.Messaging.Broker
                 });
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBroker.AddConsumer(IConsumerEndpoint,MessagesReceivedAsyncCallback)" />
         public virtual IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -176,7 +176,7 @@ namespace Silverback.Messaging.Broker
             return consumer;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBroker.Connect" />
         public void Connect()
         {
             if (IsConnected)
@@ -193,7 +193,7 @@ namespace Silverback.Messaging.Broker
             _logger.LogInformation(EventIds.BrokerConnected, "Connected to message broker ({broker})!", GetType().Name);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBroker.Disconnect" />
         public void Disconnect()
         {
             if (!IsConnected)
@@ -216,7 +216,7 @@ namespace Silverback.Messaging.Broker
                 GetType().Name);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             Dispose(true);
@@ -293,9 +293,7 @@ namespace Silverback.Messaging.Broker
         ///     resources.
         /// </summary>
         /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c>
-        ///         Dispose
-        ///     </c> method and not from the finalizer.
+        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
         /// </param>
         protected virtual void Dispose(bool disposing)
         {

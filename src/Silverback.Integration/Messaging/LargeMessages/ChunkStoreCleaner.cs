@@ -10,7 +10,7 @@ using Silverback.Diagnostics;
 
 namespace Silverback.Messaging.LargeMessages
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IChunkStoreCleaner" />
     public class ChunkStoreCleaner : IChunkStoreCleaner
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -41,7 +41,7 @@ namespace Silverback.Messaging.LargeMessages
             _logger = logger;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChunkStoreCleaner.Cleanup" />
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task Cleanup()
         {

@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Configuration
         ///     Gets or sets a value indicating whether the queue or the exchange will be automatically deleted when
         ///     the last consumer unsubscribes.
         /// </summary>
-        public bool IsAutoDeleteEnabled { get; set; } = false;
+        public bool IsAutoDeleteEnabled { get; set; }
 
         /// <summary>
         ///     Gets or sets the optional arguments dictionary. The arguments are used by plugins and
@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Configuration
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public Dictionary<string, object>? Arguments { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public virtual void Validate()
         {
         }
@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
-        protected bool BaseEquals(RabbitEndpointConfig? other)
+        protected virtual bool BaseEquals(RabbitEndpointConfig? other)
         {
             if (other is null)
                 return false;

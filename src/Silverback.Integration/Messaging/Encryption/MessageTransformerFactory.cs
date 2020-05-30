@@ -5,10 +5,10 @@ using System;
 
 namespace Silverback.Messaging.Encryption
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IMessageTransformerFactory" />
     public class MessageTransformerFactory : IMessageTransformerFactory
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageTransformerFactory.GetEncryptor" />
         public IMessageEncryptor GetEncryptor(EncryptionSettings settings)
         {
             switch (settings)
@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Encryption
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMessageTransformerFactory.GetDecryptor" />
         public IMessageDecryptor GetDecryptor(EncryptionSettings settings)
         {
             switch (settings)

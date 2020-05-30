@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 namespace Silverback.Database
 {
     /// <summary>
-    ///     Abstracts the <c>
-    ///         DbSet
-    ///     </c> functionality to allow for multiple and decoupled implementations.
+    ///     Abstracts the <c>DbSet</c> functionality to allow for multiple and decoupled implementations.
     /// </summary>
     /// <typeparam name="TEntity">
     ///     The type of the entity being stored in this set.
@@ -50,32 +48,24 @@ namespace Silverback.Database
         void RemoveRange(IEnumerable<TEntity> entities);
 
         /// <summary>
-        ///     Finds the entity with the specified key(s). Returns <c>
-        ///         null
-        ///     </c> if not found.
+        ///     Finds the entity with the specified key(s). Returns <c>null</c> if not found.
         /// </summary>
         /// <param name="keyValues">
         ///     The entity keys.
         /// </param>
         /// <returns>
-        ///     The entity found, or <c>
-        ///         null
-        ///     </c>.
+        ///     The entity found, or <c>null</c>.
         /// </returns>
         TEntity Find(params object[] keyValues);
 
         /// <summary>
-        ///     Finds the entity with the specified key(s). Returns <c>
-        ///         null
-        ///     </c> if not found.
+        ///     Finds the entity with the specified key(s). Returns <c>null</c> if not found.
         /// </summary>
         /// <param name="keyValues">
         ///     The entity keys.
         /// </param>
         /// <returns>
-        ///     The entity found, or <c>
-        ///         null
-        ///     </c>.
+        ///     The entity found, or <c>null</c>.
         /// </returns>
         Task<TEntity> FindAsync(params object[] keyValues);
 

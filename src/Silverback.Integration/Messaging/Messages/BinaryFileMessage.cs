@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Messages
         [Header(DefaultMessageHeaders.ContentType)]
         public string ContentType { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBinaryFileMessage.Content" />
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Content { get; set; }

@@ -15,10 +15,10 @@ namespace Silverback.Messaging.Headers
     /// </summary>
     public class HeadersReaderConsumerBehavior : IConsumerBehavior, ISorted
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.HeadersReader;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,

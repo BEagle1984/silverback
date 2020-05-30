@@ -7,9 +7,7 @@ using Silverback.Messaging.Broker;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c>
-    ///         AddKafka
-    ///     </c> method to the <see cref="IBrokerOptionsBuilder" />.
+    ///     Adds the <c>AddKafka</c> method to the <see cref="IBrokerOptionsBuilder" />.
     /// </summary>
     public static class BrokerOptionsBuilderExtensions
     {

@@ -21,7 +21,7 @@ namespace Silverback.Messaging.BinaryFiles
     {
         private readonly Type _type = typeof(TModel);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="BinaryFileMessageSerializer.Serialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override byte[]? Serialize(
             object? message,
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.BinaryFiles
             return binaryFileMessage.Content;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="BinaryFileMessageSerializer.Deserialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override (object?, Type) Deserialize(
             byte[]? message,

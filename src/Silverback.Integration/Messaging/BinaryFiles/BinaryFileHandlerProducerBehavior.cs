@@ -17,10 +17,10 @@ namespace Silverback.Messaging.BinaryFiles
     {
         private readonly BinaryFileMessageSerializer _binaryFileMessageSerializer = new BinaryFileMessageSerializer();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BinaryFileHandler;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IProducerBehavior.Handle" />
         public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));

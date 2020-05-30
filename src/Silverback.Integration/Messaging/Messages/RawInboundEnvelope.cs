@@ -22,10 +22,10 @@ namespace Silverback.Messaging.Messages
             ActualEndpointName = actualEndpointName;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IRawInboundEnvelope.Endpoint" />
         public new IConsumerEndpoint Endpoint => (IConsumerEndpoint)base.Endpoint;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IRawInboundEnvelope.ActualEndpointName" />
         public string ActualEndpointName { get; }
     }
 }

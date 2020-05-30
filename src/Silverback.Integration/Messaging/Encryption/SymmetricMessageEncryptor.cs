@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Encryption
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="SymmetricCryptoMessageTransformer.Transform" />
         protected override async Task<byte[]> Transform(byte[] message, SymmetricAlgorithm algorithm)
         {
             var encryptedMessage = await base.Transform(message, algorithm);
@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Encryption
             return fullMessage;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="SymmetricCryptoMessageTransformer.CreateCryptoTransform" />
         protected override ICryptoTransform CreateCryptoTransform(SymmetricAlgorithm algorithm) =>
             algorithm.CreateEncryptor();
     }

@@ -36,12 +36,8 @@ namespace Silverback.Messaging.Serialization
         public IEndpoint? Endpoint { get; }
 
         /// <summary>
-        ///     Gets the name of the actual endpoint (in case the <c>
-        ///         Endpoint
-        ///     </c> configuration points to multiple endpoints, for example if consuming multiple topics with a
-        ///     single <c>
-        ///         KafkaConsumer
-        ///     </c>).
+        ///     Gets the name of the actual endpoint (in case the <c>Endpoint</c> configuration points to multiple endpoints, for example if consuming multiple topics with a
+        ///     single <c>KafkaConsumer</c>).
         /// </summary>
         public string? ActualEndpointName { get; }
     }

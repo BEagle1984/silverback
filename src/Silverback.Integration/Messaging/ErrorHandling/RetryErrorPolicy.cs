@@ -51,7 +51,7 @@ namespace Silverback.Messaging.ErrorHandling
             _logger = logger;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ErrorPolicyBase.ApplyPolicy" />
         protected override async Task<ErrorAction> ApplyPolicy(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)

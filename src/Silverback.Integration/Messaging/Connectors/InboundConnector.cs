@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Connectors
             _logger = logger;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInboundConnector.Bind" />
         public virtual IInboundConnector Bind(
             IConsumerEndpoint endpoint,
             IErrorPolicy? errorPolicy = null,

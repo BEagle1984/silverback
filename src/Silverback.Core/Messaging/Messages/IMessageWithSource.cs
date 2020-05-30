@@ -4,9 +4,7 @@
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Exposes a <c>
-    ///         Source
-    ///     </c> property referencing the object that generated the message.
+    ///     Exposes a <c>Source</c> property referencing the object that generated the message.
     /// </summary>
     public interface IMessageWithSource
     {

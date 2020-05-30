@@ -58,11 +58,11 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer.Commit(IReadOnlyCollection{IOffset})" />
         public override Task Commit(IReadOnlyCollection<IOffset> offsets) =>
             CommitCore(offsets.Cast<TOffset>().ToList());
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Consumer.Rollback(IReadOnlyCollection{IOffset})" />
         public override Task Rollback(IReadOnlyCollection<IOffset> offsets) =>
             RollbackCore(offsets.Cast<TOffset>().ToList());
 

@@ -11,9 +11,7 @@ using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c>
-    ///         AddSilverback
-    ///     </c> method to the <see cref="IServiceCollection" />.
+    ///     Adds the <c>AddSilverback</c> method to the <see cref="IServiceCollection" />.
     /// </summary>
     public static class ServiceCollectionAddSilverbackExtensions
     {

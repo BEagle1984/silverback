@@ -63,7 +63,7 @@ namespace Silverback.Messaging.Broker
             Task.Run(() => ProcessQueue(_cancellationTokenSource.Token));
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             Flush();
@@ -77,11 +77,11 @@ namespace Silverback.Messaging.Broker
             _channel = null;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Producer.ProduceCore" />
         protected override IOffset? ProduceCore(IRawOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceAsyncCore(envelope));
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Producer.ProduceAsyncCore" />
         protected override Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope)
         {
             var queuedMessage = new QueuedMessage(envelope);

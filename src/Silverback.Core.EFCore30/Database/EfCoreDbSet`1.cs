@@ -13,7 +13,9 @@ namespace Silverback.Database
     /// <summary>
     ///     An implementation of <see cref="IDbSet{TEntity}" /> that works with Entity Framework Core.
     /// </summary>
-    /// <inheritdoc cref="IDbSet{TEntity}" />
+    /// <typeparam name="TEntity">
+    ///     The type of the entity being stored in this set.
+    /// </typeparam>
     public class EfCoreDbSet<TEntity> : IDbSet<TEntity>
         where TEntity : class
     {
@@ -30,25 +32,25 @@ namespace Silverback.Database
             _dbSet = dbSet;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDbSet{TEntity}.Add" />
         public TEntity Add(TEntity entity) => _dbSet.Add(entity).Entity;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDbSet{TEntity}.Remove" />
         public TEntity Remove(TEntity entity) => _dbSet.Remove(entity).Entity;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDbSet{TEntity}.RemoveRange" />
         public void RemoveRange(IEnumerable<TEntity> entities) => _dbSet.RemoveRange(entities);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDbSet{TEntity}.Find" />
         public TEntity Find(params object[] keyValues) => _dbSet.Find(keyValues);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDbSet{TEntity}.FindAsync" />
         public async Task<TEntity> FindAsync(params object[] keyValues) => await _dbSet.FindAsync(keyValues);
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDbSet{TEntity}.AsQueryable" />
         public IQueryable<TEntity> AsQueryable() => _dbSet;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDbSet{TEntity}.GetLocalCache" />
         [SuppressMessage("", "CA1024", Justification = "It must stay a method for backward compatibility")]
         public IEnumerable<TEntity> GetLocalCache() => _dbSet.Local;
     }

@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public string? ExchangeType { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="RabbitEndpointConfig.Validate" />
         public override void Validate()
         {
             base.Validate();
@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Configuration
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(RabbitExchangeConfig? other)
         {
             if (other is null)
@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Configuration
             return BaseEquals(other) && ExchangeType == other.ExchangeType;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Configuration
             return Equals((RabbitExchangeConfig)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode() => HashCode.Combine(IsDurable, IsAutoDeleteEnabled, Arguments, ExchangeType);
     }

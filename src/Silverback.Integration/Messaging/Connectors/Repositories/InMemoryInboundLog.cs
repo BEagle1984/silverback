@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInboundLog.Add" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task Add(IRawInboundEnvelope envelope)
         {
@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Add(logEntry);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInboundLog.Exists" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<bool> Exists(IRawInboundEnvelope envelope)
         {
@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                         item.Item.ConsumerGroupName == consumerGroupName));
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInboundLog.GetLength" />
         public Task<int> GetLength()
         {
             return Task.FromResult(CommittedItemsCount);

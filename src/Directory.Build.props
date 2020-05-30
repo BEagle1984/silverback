@@ -18,8 +18,8 @@
         <CodeAnalysisRuleSet>..\..\CodeAnalysis.Global.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="SauceControl.InheritDoc" Version="1.0.0" />
-    </ItemGroup>
+<!--    <ItemGroup>-->
+<!--        <PackageReference Include="SauceControl.InheritDoc" Version="1.0.0" />-->
+<!--    </ItemGroup>-->
 
 </Project>

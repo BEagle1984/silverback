@@ -34,7 +34,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInboundLog.Add" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task Add(IRawInboundEnvelope envelope)
         {
@@ -55,21 +55,21 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITransactional.Commit" />
         public async Task Commit()
         {
             // Call SaveChanges, in case it isn't called by a subscriber
             await DbContext.SaveChangesAsync();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITransactional.Rollback" />
         public Task Rollback()
         {
             // Nothing to do, just not saving the changes made to the DbContext
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInboundLog.Exists" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<bool> Exists(IRawInboundEnvelope envelope)
         {
@@ -85,7 +85,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                     logEntry.ConsumerGroupName == consumerGroupName);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInboundLog.GetLength" />
         public Task<int> GetLength() => DbSet.AsQueryable().CountAsync();
     }
 }

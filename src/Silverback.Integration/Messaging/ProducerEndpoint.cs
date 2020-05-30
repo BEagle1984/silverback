@@ -27,7 +27,7 @@ namespace Silverback.Messaging
         /// </summary>
         public ChunkSettings Chunk { get; set; } = new ChunkSettings();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="Endpoint.Validate" />
         public override void Validate()
         {
             base.Validate();
@@ -35,25 +35,16 @@ namespace Silverback.Messaging
             Chunk?.Validate();
         }
 
-        /// <summary>
-        ///     Determines whether the specified <see cref="ProducerEndpoint" /> is equal to the current
-        ///     <see cref="ProducerEndpoint" />.
-        /// </summary>
-        /// <param name="other">
-        ///     The object to compare with the current object.
-        /// </param>
-        /// <returns>
-        ///     Returns a value indicating whether the other object is equal to the current object.
-        /// </returns>
-        protected bool BaseEquals(ProducerEndpoint? other)
+        /// <inheritdoc cref="Endpoint.BaseEquals" />
+        protected override bool BaseEquals(Endpoint? other)
         {
-            if (other is null)
-                return false;
-
             if (ReferenceEquals(this, other))
                 return true;
 
-            return base.BaseEquals(other) && Equals(Chunk, other.Chunk);
+            if (!(other is ProducerEndpoint otherProducerEndpoint))
+                return false;
+
+            return base.BaseEquals(other) && Equals(Chunk, otherProducerEndpoint.Chunk);
         }
     }
 }

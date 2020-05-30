@@ -675,7 +675,7 @@ namespace Silverback.Messaging.Configuration
 
         internal abstract ClientConfig ConfluentBaseConfig { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public abstract void Validate();
     }
 

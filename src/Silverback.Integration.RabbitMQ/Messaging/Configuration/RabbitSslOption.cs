@@ -30,9 +30,7 @@ namespace Silverback.Messaging.Configuration
 
         /// <summary>
         ///     Gets or sets a value indicating whether the peer certificate should be checked for revocation
-        ///     (default is <c>
-        ///         false
-        ///     </c>).
+        ///     (default is <c>false</c>).
         /// </summary>
         /// <remarks>
         ///     Uses the built-in .NET mechanics for checking a certificate against CRLs.
@@ -55,7 +53,7 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public SslProtocols Version { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(RabbitSslOption? other)
         {
             if (other is null)
@@ -72,7 +70,7 @@ namespace Silverback.Messaging.Configuration
                    Version == other.Version;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -87,7 +85,7 @@ namespace Silverback.Messaging.Configuration
             return Equals((RabbitSslOption)obj);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode()
         {

@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Encryption
     /// </summary>
     public abstract class EncryptionSettings : IValidatableEndpointSettings
     {
-        /// <inheritdoc />
+        /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public abstract void Validate();
     }
 }

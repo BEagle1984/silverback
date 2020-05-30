@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Encryption
         {
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="SymmetricCryptoMessageTransformer.Transform" />
         protected override Task<byte[]> Transform(byte[] message, SymmetricAlgorithm algorithm)
         {
             if (Settings.InitializationVector == null)
@@ -35,10 +35,8 @@ namespace Silverback.Messaging.Encryption
             return base.Transform(message, algorithm);
         }
 
-        /// <inheritdoc />
-        protected override ICryptoTransform CreateCryptoTransform(SymmetricAlgorithm algorithm)
-        {
-            return algorithm.CreateDecryptor();
-        }
+        /// <inheritdoc cref="SymmetricCryptoMessageTransformer.CreateCryptoTransform" />
+        protected override ICryptoTransform CreateCryptoTransform(SymmetricAlgorithm algorithm) =>
+            algorithm.CreateDecryptor();
     }
 }
