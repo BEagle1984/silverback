@@ -36,7 +36,7 @@ namespace Silverback.Examples.Consumer
 
             _serviceProvider = services.BuildServiceProvider();
             _serviceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
-            _brokers = Configure(_serviceProvider.GetService<BusConfigurator>());
+            _brokers = Configure(_serviceProvider.GetService<IBusConfigurator>());
 
             Console.CancelKeyPress += OnCancelKeyPress;
 
@@ -45,7 +45,7 @@ namespace Silverback.Examples.Consumer
 
         protected abstract void ConfigureServices(IServiceCollection services);
 
-        protected abstract IBrokerCollection Configure(BusConfigurator busConfigurator);
+        protected abstract IBrokerCollection Configure(IBusConfigurator busConfigurator);
 
         private void OnCancelKeyPress(object _, ConsoleCancelEventArgs args)
         {

@@ -1,19 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.102
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Examples.Main", "src\Silverback.Examples.Main\Silverback.Examples.Main.csproj", "{805ECDC3-1A11-4B5D-8A82-C0A9C646F2CB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Examples.Common", "src\Silverback.Examples.Common\Silverback.Examples.Common.csproj", "{DE771E63-2FF3-48BD-9E1E-E13C722B7C6D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2BDFE494-1306-4E9B-AC16-16C04615CCB5}"
-ProjectSection(SolutionItems) = preProject
-	Silverback.Examples.sln.DotSettings = Silverback.Examples.sln.DotSettings
-	..\..\docker-compose.yaml = ..\..\docker-compose.yaml
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		..\Directory.Build.props = ..\Directory.Build.props
+		..\..\docker-compose.yaml = ..\..\docker-compose.yaml
+		Silverback.Examples.sln.DotSettings = Silverback.Examples.sln.DotSettings
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Examples.Consumer", "src\Silverback.Examples.Consumer\Silverback.Examples.Consumer.csproj", "{767EDB5E-A47E-48DE-8DCA-B0C3A88D9FDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silverback.Examples.Consumer", "src\Silverback.Examples.Consumer\Silverback.Examples.Consumer.csproj", "{767EDB5E-A47E-48DE-8DCA-B0C3A88D9FDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,7 +40,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C63B177A-4093-41D1-BDB7-195F29F145CB}
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal

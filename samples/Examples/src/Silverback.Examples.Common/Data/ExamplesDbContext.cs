@@ -4,10 +4,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Silverback.Background.Model;
+using Silverback.Database.Model;
 using Silverback.EntityFrameworkCore;
-using Silverback.Messaging.Connectors.Model;
-using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Publishing;
 
 namespace Silverback.Examples.Common.Data
@@ -28,7 +26,7 @@ namespace Silverback.Examples.Common.Data
         }
 
         public DbSet<OutboundMessage> OutboundMessages { get; set; }
-        public DbSet<InboundMessage> InboundMessages { get; set; }
+        public DbSet<InboundLogEntry> InboundMessages { get; set; }
         public DbSet<StoredOffset> StoredOffsets { get; set; }
         public DbSet<TemporaryMessageChunk> Chunks { get; set; }
         public DbSet<Lock> Locks { get; set; }
@@ -40,7 +38,7 @@ namespace Silverback.Examples.Common.Data
             modelBuilder.Entity<OutboundMessage>()
                 .ToTable("Messaging_OutboundMessages");
 
-            modelBuilder.Entity<InboundMessage>()
+            modelBuilder.Entity<InboundLogEntry>()
                 .ToTable("Messaging_InboundMessages")
                 .HasKey(t => new { t.MessageId, t.EndpointName });
 
@@ -49,7 +47,7 @@ namespace Silverback.Examples.Common.Data
 
             modelBuilder.Entity<TemporaryMessageChunk>()
                 .ToTable("Messaging_MessageChunks")
-                .HasKey(t => new { t.OriginalMessageId, t.ChunkId });
+                .HasKey(t => new { t.MessageId, t.ChunkIndex });
         }
 
         public override int SaveChanges()

@@ -41,7 +41,7 @@ namespace Silverback.Examples.Consumer
             // Behaviors
             .AddScopedBehavior<LogHeadersBehavior>();
 
-        protected override IBrokerCollection Configure(BusConfigurator busConfigurator) => busConfigurator
+        protected override IBrokerCollection Configure(IBusConfigurator busConfigurator) => busConfigurator
             .Connect();
     }
 }

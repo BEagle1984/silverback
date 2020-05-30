@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +30,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             .UseModel()
             .WithConnectionToMessageBroker(options => options.AddKafka());
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
+        protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider)
         {
         }
 
@@ -62,28 +63,34 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
                 TypeNameHandling = TypeNameHandling.None
             };
 
-            public byte[] Serialize(
-                object message,
+            [SuppressMessage("", "SA1011", Justification = "False positive")]
+            public byte[]? Serialize(
+                object? message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
                 Encoding.ASCII.GetBytes(
                     JsonConvert.SerializeObject(message, _settings));
 
-            public object Deserialize(
-                byte[] message,
+            [SuppressMessage("", "SA1011", Justification = "False positive")]
+            public (object?, Type) Deserialize(
+                byte[]? message,
                 MessageHeaderCollection messageHeaders,
-                MessageSerializationContext context) =>
-                JsonConvert.DeserializeObject<LegacyMessage>(
-                    Encoding.ASCII.GetString(message));
+                MessageSerializationContext context)
+            {
+                var deserialized = message != null ? JsonConvert.DeserializeObject<LegacyMessage>(Encoding.ASCII.GetString(message)) : null;
+                return (deserialized, typeof(LegacyMessage));
+            }
 
-            public Task<byte[]> SerializeAsync(
+            [SuppressMessage("", "SA1011", Justification = "False positive")]
+            public Task<byte[]?> SerializeAsync(
                 object message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
                 Task.FromResult(Serialize(message, messageHeaders, context));
 
-            public Task<object> DeserializeAsync(
-                byte[] message,
+            [SuppressMessage("", "SA1011", Justification = "False positive")]
+            public Task<(object?, Type)> DeserializeAsync(
+                byte[]? message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
                 Task.FromResult(Deserialize(message, messageHeaders, context));

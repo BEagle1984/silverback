@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
@@ -28,7 +29,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
             .UseModel()
             .WithConnectionToMessageBroker(options => options.AddKafka());
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
+        protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-error-events2")
                 {
@@ -48,26 +49,30 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
 
         private class BuggySerializer : IMessageSerializer
         {
-            public byte[] Serialize(
-                object message,
+            [SuppressMessage("", "SA1011", Justification = "False positive")]
+            public byte[]? Serialize(
+                object? message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
                 new byte[] { 0, 1, 2, 3, 4 };
 
-            public object Deserialize(
-                byte[] message,
+            [SuppressMessage("", "SA1011", Justification = "False positive")]
+            public (object?, Type) Deserialize(
+                byte[]? message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
                 throw new NotImplementedException();
 
-            public Task<byte[]> SerializeAsync(
+            [SuppressMessage("", "SA1011", Justification = "False positive")]
+            public Task<byte[]?> SerializeAsync(
                 object message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
                 Task.FromResult(Serialize(message, messageHeaders, context));
 
-            public Task<object> DeserializeAsync(
-                byte[] message,
+            [SuppressMessage("", "SA1011", Justification = "False positive")]
+            public Task<(object?, Type)> DeserializeAsync(
+                byte[]? message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
                 throw new NotImplementedException();

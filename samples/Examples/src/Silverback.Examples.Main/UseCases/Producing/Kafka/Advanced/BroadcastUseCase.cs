@@ -26,7 +26,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             .UseModel()
             .WithConnectionToMessageBroker(options => options.AddKafka());
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
+        protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
                 .AddOutbound<IIntegrationEvent>(
                     new KafkaProducerEndpoint("silverback-examples-events")

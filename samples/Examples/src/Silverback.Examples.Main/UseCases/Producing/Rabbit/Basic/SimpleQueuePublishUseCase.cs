@@ -25,7 +25,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Rabbit.Basic
             .UseModel()
             .WithConnectionToMessageBroker(options => options.AddRabbit());
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
+        protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
                 .AddOutbound<IIntegrationEvent>(new RabbitQueueProducerEndpoint("silverback-examples-events-queue")
                 {

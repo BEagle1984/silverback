@@ -36,7 +36,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.HealthCheck
                     .AddDbOutboundWorker());
         }
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider)
+        protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider)
         {
             configurator.Connect(endpoints => endpoints
                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
@@ -72,7 +72,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.HealthCheck
             ConsoleHelper.ResetColor();
 
             var result = await new OutboundQueueHealthCheckService(
-                    serviceProvider.GetRequiredService<IOutboundQueueConsumer>())
+                    serviceProvider.GetRequiredService<IOutboundQueueReader>())
                 .CheckIsHealthy(maxAge: TimeSpan.FromMilliseconds(100), maxQueueLength: 1);
 
             Console.ForegroundColor = Constants.PrimaryColor;

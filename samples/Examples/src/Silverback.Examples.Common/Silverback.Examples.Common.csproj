@@ -20,7 +20,7 @@
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
-    <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="3.0.1" />
+    <PackageReference Include="Silverback.Core.EntityFrameworkCore" Version="3.0.1$(DatabasePackagesVersionSuffix)" />
     <PackageReference Include="Silverback.Core.Model" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Core.Rx" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Integration" Version="$(BaseVersion)" />

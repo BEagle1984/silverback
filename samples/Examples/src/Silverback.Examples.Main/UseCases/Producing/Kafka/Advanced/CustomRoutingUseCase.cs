@@ -30,7 +30,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             .WithConnectionToMessageBroker(options => options.AddKafka())
             .AddSingletonOutboundRouter<PrioritizedOutboundRouter>();
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
+        protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
                 .AddOutbound<SimpleIntegrationEvent, PrioritizedOutboundRouter>());
 

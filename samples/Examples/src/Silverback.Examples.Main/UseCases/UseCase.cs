@@ -68,7 +68,7 @@ namespace Silverback.Examples.Main.UseCases
 
             scope.ServiceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
 
-            Configure(scope.ServiceProvider.GetService<BusConfigurator>(), scope.ServiceProvider);
+            Configure(scope.ServiceProvider.GetService<IBusConfigurator>(), scope.ServiceProvider);
 
             PreExecute(scope.ServiceProvider);
         }
@@ -94,7 +94,7 @@ namespace Silverback.Examples.Main.UseCases
         ///     <param>Configures the Bus.</param>
         ///     <param>(Same to what is normally done in the Startup.cs.)</param>
         /// </summary>
-        protected abstract void Configure(BusConfigurator configurator, IServiceProvider serviceProvider);
+        protected abstract void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider);
 
         /// <summary>
         ///     Executes the necessary logic to demonstrate the use case.

@@ -35,7 +35,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Rabbit.Deferred
                 .AddDbOutboundWorker())
             .AddSingletonBehavior<CustomHeadersBehavior>();
 
-        protected override void Configure(BusConfigurator configurator, IServiceProvider serviceProvider) =>
+        protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
             configurator.Connect(endpoints => endpoints
                 .AddOutbound<IIntegrationEvent>(new RabbitExchangeProducerEndpoint("silverback-examples-events-fanout")
                 {
