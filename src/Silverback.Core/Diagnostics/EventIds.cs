@@ -369,14 +369,14 @@ namespace Silverback.Diagnostics
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId KafkaConsumerConnected { get; } =
-            new EventId(54, Prefix + nameof(KafkaConsumerConnected));
+        public static EventId ConsumerConnected { get; } =
+            new EventId(54, Prefix + nameof(ConsumerConnected));
 
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId KafkaConsumerDisconnected { get; } =
-            new EventId(55, Prefix + nameof(KafkaConsumerDisconnected));
+        public static EventId ConsumerDisconnected { get; } =
+            new EventId(55, Prefix + nameof(ConsumerDisconnected));
 
         /// <summary>
         ///     Gets ...
@@ -387,16 +387,16 @@ namespace Silverback.Diagnostics
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId KafkaInnerConsumerWrapperNoReconnectFatalError { get; } = new EventId(
+        public static EventId KafkaConsumerNoReconnectFatalError { get; } = new EventId(
             57,
-            Prefix + nameof(KafkaInnerConsumerWrapperNoReconnectFatalError));
+            Prefix + nameof(KafkaConsumerNoReconnectFatalError));
 
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId KafkaInnerConsumerWrapperConsumingCanceled { get; } = new EventId(
+        public static EventId KafkaConsumerConsumingCanceled { get; } = new EventId(
             58,
-            Prefix + nameof(KafkaInnerConsumerWrapperConsumingCanceled));
+            Prefix + nameof(KafkaConsumerConsumingCanceled));
 
         /// <summary>
         ///     Gets ...
@@ -428,9 +428,9 @@ namespace Silverback.Diagnostics
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId RabbitConsumerSuccessfullyCommited { get; } = new EventId(
+        public static EventId RabbitConsumerSuccessfullyCommitted { get; } = new EventId(
             63,
-            Prefix + nameof(RabbitConsumerSuccessfullyCommited));
+            Prefix + nameof(RabbitConsumerSuccessfullyCommitted));
 
         /// <summary>
         ///     Gets ...
@@ -456,9 +456,9 @@ namespace Silverback.Diagnostics
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId RabbitProducerQueueProcessingCancelled { get; } = new EventId(
+        public static EventId RabbitProducerQueueProcessingCanceled { get; } = new EventId(
             67,
-            Prefix + nameof(RabbitProducerQueueProcessingCancelled));
+            Prefix + nameof(RabbitProducerQueueProcessingCanceled));
 
         /// <summary>
         ///     Gets ...

@@ -26,15 +26,16 @@ namespace Silverback.Examples.Consumer.Subscribers
                 message.Partitions.Count,
                 string.Join(", ", message.Partitions.Select(partition => partition.TopicPartition.ToString())));
 
-        // public void OnPartitionsAssignedResetOffset(KafkaPartitionsAssignedEvent message)
-        // {
-        //     message.Partitions = message.Partitions
-        //         .Select(topicPartitionOffset =>
-        //             new TopicPartitionOffset(
-        //                 topicPartitionOffset.TopicPartition,
-        //                 Offset.Beginning))
-        //         .ToList();
-        // }
+        public void OnPartitionsAssignedResetOffset(KafkaPartitionsAssignedEvent message)
+        {
+            // Always skip to the end of each partition
+            message.Partitions = message.Partitions
+                .Select(topicPartitionOffset =>
+                    new TopicPartitionOffset(
+                        topicPartitionOffset.TopicPartition,
+                        Offset.End))
+                .ToList();
+        }
 
         public void OnPartitionsRevoked(KafkaPartitionsRevokedEvent message) =>
             _logger.LogInformation(

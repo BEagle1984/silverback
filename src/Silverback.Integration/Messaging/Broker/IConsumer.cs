@@ -28,6 +28,12 @@ namespace Silverback.Messaging.Broker
         IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether this consumer is connected to the message broker and ready to consume
+        ///     messages.
+        /// </summary>
+        bool IsConnected { get; }
+
+        /// <summary>
         ///     <param>
         ///         Confirms that the message at the specified offset has been successfully processed.
         ///     </param>

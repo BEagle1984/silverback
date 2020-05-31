@@ -26,8 +26,6 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        public bool IsConnected { get; set; }
-
         public int AcknowledgeCount { get; set; }
 
         public Task TestHandleMessage(
@@ -70,9 +68,13 @@ namespace Silverback.Tests.Integration.TestTypes
             await HandleMessage(rawMessage, headers, "test-topic", offset);
         }
 
-        public override void Connect() => IsConnected = true;
+        protected override void ConnectCore()
+        {
+        }
 
-        public override void Disconnect() => IsConnected = true;
+        protected override void DisconnectCore()
+        {
+        }
 
         protected override Task CommitCore(IReadOnlyCollection<TestOffset> offsets)
         {

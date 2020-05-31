@@ -76,6 +76,9 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.Behaviors" />
         public IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
 
+        /// <inheritdoc cref="IConsumer.IsConnected" />
+        public bool IsConnected { get; private set; }
+
         /// <inheritdoc cref="IConsumer.Commit(IOffset)" />
         public Task Commit(IOffset offset) => Commit(new[] { offset });
 
@@ -89,10 +92,30 @@ namespace Silverback.Messaging.Broker
         public abstract Task Rollback(IReadOnlyCollection<IOffset> offsets);
 
         /// <inheritdoc cref="IConsumer.Connect" />
-        public abstract void Connect();
+        public void Connect()
+        {
+            if (IsConnected)
+                return;
+
+            ConnectCore();
+
+            IsConnected = true;
+
+            _logger.LogDebug(EventIds.ConsumerConnected, "Connected consumer to topic {topic}.", Endpoint.Name);
+        }
 
         /// <inheritdoc cref="IConsumer.Disconnect" />
-        public abstract void Disconnect();
+        public void Disconnect()
+        {
+            if (!IsConnected)
+                return;
+
+            DisconnectCore();
+
+            IsConnected = false;
+
+            _logger.LogDebug(EventIds.ConsumerDisconnected, "Disconnected consumer from topic {topic}.", Endpoint.Name);
+        }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
@@ -100,6 +123,16 @@ namespace Silverback.Messaging.Broker
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        /// <summary>
+        ///     Connects and starts consuming.
+        /// </summary>
+        protected abstract void ConnectCore();
+
+        /// <summary>
+        ///     Disconnects and stops consuming.
+        /// </summary>
+        protected abstract void DisconnectCore();
 
         /// <summary>
         ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline and
@@ -142,7 +175,8 @@ namespace Silverback.Messaging.Broker
         ///     resources.
         /// </summary>
         /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
+        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
+        ///     finalizer.
         /// </param>
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         protected virtual void Dispose(bool disposing)

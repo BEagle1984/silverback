@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Broker
             producerBuilder.SetStatisticsHandler(OnProducerStatistics);
 
         public void SetConsumerEventsHandlers(
-            KafkaInnerConsumerWrapper ownerConsumer,
+            KafkaConsumer ownerConsumer,
             ConsumerBuilder<byte[], byte[]> consumerBuilder) =>
             consumerBuilder
                 .SetStatisticsHandler(OnConsumerStatistics)
@@ -149,12 +149,12 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private void OnConsumerError(KafkaInnerConsumerWrapper consumerWrapper, Error error)
+        private void OnConsumerError(KafkaConsumer consumer, Error error)
         {
             // Ignore errors if not consuming anymore
             // (lidrdkafka randomly throws some "brokers are down"
             // while disconnecting)
-            if (!consumerWrapper.IsConsuming)
+            if (!consumer.IsConnected)
                 return;
 
             var kafkaErrorEvent = new KafkaErrorEvent(error);
@@ -179,7 +179,7 @@ namespace Silverback.Messaging.Broker
                 EventIds.KafkaEventsHandlerErrorInKafkaConsumer,
                 "Error in Kafka consumer: {error} (topic(s): {topics})",
                 error,
-                consumerWrapper.Endpoint.Names);
+                ((KafkaConsumerEndpoint)consumer.Endpoint).Names);
         }
     }
 }

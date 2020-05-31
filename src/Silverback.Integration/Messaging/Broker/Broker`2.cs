@@ -277,7 +277,7 @@ namespace Silverback.Messaging.Broker
         ///     The consumers to be started.
         /// </param>
         protected virtual void Connect(IEnumerable<IConsumer> consumers) =>
-            consumers.ForEach(c => c.Connect());
+            consumers.ForEach(consumer => consumer.Connect());
 
         /// <summary>
         ///     Disconnects all the consumers and stops consuming.
@@ -286,7 +286,7 @@ namespace Silverback.Messaging.Broker
         ///     The consumers to be stopped.
         /// </param>
         protected virtual void Disconnect(IEnumerable<IConsumer> consumers) =>
-            consumers.ForEach(c => c.Disconnect());
+            consumers.ForEach(consumer => consumer.Disconnect());
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged

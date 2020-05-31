@@ -77,8 +77,8 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
-        /// <inheritdoc cref="Consumer.Connect" />
-        public override void Connect()
+        /// <inheritdoc cref="Consumer.ConnectCore" />
+        protected override void ConnectCore()
         {
             if (_consumer != null)
                 return;
@@ -94,8 +94,8 @@ namespace Silverback.Messaging.Broker
                 _consumer);
         }
 
-        /// <inheritdoc cref="Consumer.Disconnect" />
-        public override void Disconnect()
+        /// <inheritdoc cref="Consumer.DisconnectCore" />
+        protected override void DisconnectCore()
         {
             if (_consumer == null)
                 return;
@@ -204,7 +204,7 @@ namespace Silverback.Messaging.Broker
                 _channel.BasicAck(deliveryTag, true);
 
                 _logger.LogDebug(
-                    EventIds.RabbitConsumerSuccessfullyCommited,
+                    EventIds.RabbitConsumerSuccessfullyCommitted,
                     "Successfully committed (basic.ack) the delivery tag {deliveryTag}.",
                     deliveryTag);
             }

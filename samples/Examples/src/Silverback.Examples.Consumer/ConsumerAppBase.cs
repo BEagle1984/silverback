@@ -13,15 +13,16 @@ namespace Silverback.Examples.Consumer
 {
     public abstract class ConsumerAppBase
     {
-        private IServiceProvider _serviceProvider;
-        private IBrokerCollection _brokers;
-
-        public string ConsumerGroupName { get; set; }
+        private IBrokerCollection? _brokers;
 
         protected ConsumerAppBase()
         {
             ConsumerGroupName = GetType().Name;
         }
+
+        public string ConsumerGroupName { get; set; }
+
+        protected IServiceProvider? ServiceProvider { get; private set; }
 
         public void Start()
         {
@@ -34,9 +35,9 @@ namespace Silverback.Examples.Consumer
                 SqlServerConnectionHelper.GetConsumerConnectionString(GetType().Name));
             ConfigureServices(services);
 
-            _serviceProvider = services.BuildServiceProvider();
-            _serviceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
-            _brokers = Configure(_serviceProvider.GetService<IBusConfigurator>());
+            ServiceProvider = services.BuildServiceProvider();
+            ServiceProvider.GetRequiredService<ExamplesDbContext>().Database.EnsureCreated();
+            _brokers = Configure(ServiceProvider.GetService<IBusConfigurator>());
 
             Console.CancelKeyPress += OnCancelKeyPress;
 
@@ -47,9 +48,16 @@ namespace Silverback.Examples.Consumer
 
         protected abstract IBrokerCollection Configure(IBusConfigurator busConfigurator);
 
-        private void OnCancelKeyPress(object _, ConsoleCancelEventArgs args)
+        protected virtual void Exit()
+        {
+        }
+
+        private void OnCancelKeyPress(object sender, ConsoleCancelEventArgs args)
         {
             args.Cancel = true;
+
+            Exit();
+
             _brokers?.Disconnect();
 
             Console.CancelKeyPress -= OnCancelKeyPress;
@@ -79,7 +87,7 @@ namespace Silverback.Examples.Consumer
         {
             Console.WriteLine($"Initializing {GetType().Name} (group: {ConsumerGroupName})...");
             Console.ForegroundColor = Constants.SecondaryColor;
-            Console.WriteLine($"(press CTRL-C to exit)");
+            Console.WriteLine("(press CTRL-C to exit)");
             Console.WriteLine();
             ConsoleHelper.ResetColor();
         }
