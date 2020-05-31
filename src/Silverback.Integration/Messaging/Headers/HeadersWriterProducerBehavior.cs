@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Headers
     /// <summary>
     ///     Maps the properties decorated with the <see cref="HeaderAttribute" /> to the message headers.
     /// </summary>
-    public class HeadersWriterProducerBehavior : IProducerBehavior, ISorted
+    public class HeadersWriterProducerBehavior : IProducerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.HeadersWriter;

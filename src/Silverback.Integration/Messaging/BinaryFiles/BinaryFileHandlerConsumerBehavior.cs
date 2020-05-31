@@ -15,7 +15,7 @@ namespace Silverback.Messaging.BinaryFiles
     ///     Switches to the <see cref="BinaryFileMessageSerializer" /> if the message being consumed is a binary
     ///     message (according to the x-message-type header).
     /// </summary>
-    public class BinaryFileHandlerConsumerBehavior : IConsumerBehavior, ISorted
+    public class BinaryFileHandlerConsumerBehavior : IConsumerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.BinaryFileHandler;

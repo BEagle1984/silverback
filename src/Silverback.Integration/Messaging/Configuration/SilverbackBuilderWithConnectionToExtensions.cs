@@ -4,7 +4,6 @@
 using System;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Diagnostics;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
@@ -35,10 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services
-                .AddSingleton<IBrokerCollection, BrokerCollection>()
-                .AddSingleton<IErrorPolicyBuilder, ErrorPolicyBuilder>()
-                .AddSingletonBrokerBehavior<ActivityProducerBehavior>()
-                .AddSingletonBrokerBehavior<ActivityConsumerBehavior>();
+                .AddSingleton<IBrokerCollection, BrokerCollection>();
 
             var options = new BrokerOptionsBuilder(silverbackBuilder);
             optionsAction?.Invoke(options);

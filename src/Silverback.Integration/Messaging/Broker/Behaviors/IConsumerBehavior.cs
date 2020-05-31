@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Behaviors
     ///     Can be used to build a custom pipeline, plugging some functionality into the
     ///     <see cref="IConsumer" />.
     /// </summary>
-    public interface IConsumerBehavior : IBrokerBehavior
+    public interface IConsumerBehavior : IBrokerBehavior, ISorted
     {
         /// <summary>
         ///     Process, handles or transforms the message being consumed.

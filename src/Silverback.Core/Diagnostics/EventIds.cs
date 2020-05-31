@@ -143,37 +143,30 @@ namespace Silverback.Diagnostics
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId KafkaInnerConsumerWrapperEndOfPartition { get; } = new EventId(
+        public static EventId KafkaConsumerEndOfPartition { get; } = new EventId(
             20,
-            Prefix + nameof(KafkaInnerConsumerWrapperEndOfPartition));
+            Prefix + nameof(KafkaConsumerEndOfPartition));
 
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId KafkaInnerConsumerWrapperConsumingMessage { get; } = new EventId(
+        public static EventId KafkaConsumerConsumingMessage { get; } = new EventId(
             21,
-            Prefix + nameof(KafkaInnerConsumerWrapperConsumingMessage));
+            Prefix + nameof(KafkaConsumerConsumingMessage));
 
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId KafkaInnerConsumerWrapperKafkaException { get; } = new EventId(
+        public static EventId KafkaConsumerKafkaException { get; } = new EventId(
             22,
-            Prefix + nameof(KafkaInnerConsumerWrapperKafkaException));
+            Prefix + nameof(KafkaConsumerKafkaException));
 
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId KafkaInnerConsumerWrapperFatalError { get; } = new EventId(
-            23,
-            Prefix + nameof(KafkaInnerConsumerWrapperFatalError));
-
-        /// <summary>
-        ///     Gets ...
-        /// </summary>
-        public static EventId KafkaInnerConsumerWrapperFaildToRecoverFromConsumerException { get; } = new EventId(
+        public static EventId KafkaConsumerFailedToRecoverFromConsumerException { get; } = new EventId(
             24,
-            Prefix + nameof(KafkaInnerConsumerWrapperFaildToRecoverFromConsumerException));
+            Prefix + nameof(KafkaConsumerFailedToRecoverFromConsumerException));
 
         /// <summary>
         ///     Gets ...
@@ -381,8 +374,9 @@ namespace Silverback.Diagnostics
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId KafkaConsumerFatalError { get; } =
-            new EventId(56, Prefix + nameof(KafkaConsumerFatalError));
+        public static EventId ConsumerFatalError { get; } = new EventId(
+            56,
+            Prefix + nameof(ConsumerFatalError));
 
         /// <summary>
         ///     Gets ...
@@ -418,12 +412,6 @@ namespace Silverback.Diagnostics
         public static EventId RabbitConsumerConsumingMessage { get; } = new EventId(
             61,
             Prefix + nameof(RabbitConsumerConsumingMessage));
-
-        /// <summary>
-        ///     Gets ...
-        /// </summary>
-        public static EventId RabbitConsumerFatalError { get; } =
-            new EventId(62, Prefix + nameof(RabbitConsumerFatalError));
 
         /// <summary>
         ///     Gets ...

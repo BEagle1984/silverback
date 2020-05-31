@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Serialization
     /// <summary>
     ///     Serializes the message being produced using the configured <see cref="IMessageSerializer" />.
     /// </summary>
-    public class SerializerProducerBehavior : IProducerBehavior, ISorted
+    public class SerializerProducerBehavior : IProducerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Serializer;

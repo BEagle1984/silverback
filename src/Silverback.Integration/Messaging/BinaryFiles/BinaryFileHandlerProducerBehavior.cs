@@ -13,7 +13,7 @@ namespace Silverback.Messaging.BinaryFiles
     ///     Switches to the <see cref="BinaryFileMessageSerializer" /> if the message being produced implements
     ///     the <see cref="IBinaryFileMessage" /> interface.
     /// </summary>
-    public class BinaryFileHandlerProducerBehavior : IProducerBehavior, ISorted
+    public class BinaryFileHandlerProducerBehavior : IProducerBehavior
     {
         private readonly BinaryFileMessageSerializer _binaryFileMessageSerializer = new BinaryFileMessageSerializer();
 

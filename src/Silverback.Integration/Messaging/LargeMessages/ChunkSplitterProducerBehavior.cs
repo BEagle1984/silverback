@@ -14,7 +14,7 @@ namespace Silverback.Messaging.LargeMessages
     /// <summary>
     ///     Splits the messages into chunks according to the <see cref="ChunkSettings" />.
     /// </summary>
-    public class ChunkSplitterProducerBehavior : IProducerBehavior, ISorted
+    public class ChunkSplitterProducerBehavior : IProducerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.ChunkSplitter;

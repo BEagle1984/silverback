@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Encryption
     /// <summary>
     ///     Decrypts the message according to the <see cref="EncryptionSettings" />.
     /// </summary>
-    public class DecryptorConsumerBehavior : IConsumerBehavior, ISorted
+    public class DecryptorConsumerBehavior : IConsumerBehavior
     {
         private readonly IMessageTransformerFactory _factory;
 

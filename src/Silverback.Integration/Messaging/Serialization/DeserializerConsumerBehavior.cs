@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Serialization
     /// <summary>
     ///     Deserializes the messages being consumed using the configured <see cref="IMessageSerializer" />.
     /// </summary>
-    public class DeserializerConsumerBehavior : IConsumerBehavior, ISorted
+    public class DeserializerConsumerBehavior : IConsumerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Deserializer;

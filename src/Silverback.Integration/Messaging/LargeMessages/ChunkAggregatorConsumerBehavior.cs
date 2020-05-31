@@ -19,7 +19,7 @@ namespace Silverback.Messaging.LargeMessages
     /// <summary>
     ///     Temporary stores and aggregates the message chunks to rebuild the original message.
     /// </summary>
-    public class ChunkAggregatorConsumerBehavior : IConsumerBehavior, ISorted, ISubscriber
+    public class ChunkAggregatorConsumerBehavior : IConsumerBehavior, ISubscriber
     {
         private readonly ConcurrentDictionary<IConsumer, List<IOffset>> _pendingOffsetsByConsumer;
 

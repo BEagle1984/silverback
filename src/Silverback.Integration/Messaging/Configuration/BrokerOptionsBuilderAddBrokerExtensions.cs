@@ -6,7 +6,9 @@ using System.Linq;
 using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.LargeMessages;
@@ -41,6 +43,15 @@ namespace Microsoft.Extensions.DependencyInjection
 
             if (!brokerOptionsBuilder.SilverbackBuilder.Services.ContainsAny<IBroker>())
             {
+                // Pipeline - Activity
+                brokerOptionsBuilder.SilverbackBuilder.Services
+                    .AddSingletonBrokerBehavior<ActivityProducerBehavior>()
+                    .AddSingletonBrokerBehavior<ActivityConsumerBehavior>();
+
+                // Pipeline - Exception Logger
+                brokerOptionsBuilder.SilverbackBuilder.Services
+                    .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>();
+
                 // Pipeline - Serialization
                 brokerOptionsBuilder.SilverbackBuilder.Services
                     .AddSingletonBrokerBehavior<SerializerProducerBehavior>()
@@ -78,6 +89,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 // Pipeline - Inbound Processor
                 brokerOptionsBuilder.SilverbackBuilder.Services
                     .AddSingletonBrokerBehavior<InboundProcessorConsumerBehaviorFactory>()
+                    .AddSingleton<IErrorPolicyBuilder, ErrorPolicyBuilder>()
                     .AddScopedSubscriber<ConsumerTransactionManager>();
 
                 // Support - Transactional Lists

@@ -9,6 +9,8 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class EmptyBehavior : IConsumerBehavior, IProducerBehavior
     {
+        public int SortIndex => 0;
+
         public Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,

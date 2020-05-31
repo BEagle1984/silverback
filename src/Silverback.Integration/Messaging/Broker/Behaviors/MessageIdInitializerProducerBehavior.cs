@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Behaviors
     /// <summary>
     ///     It ensures that an x-message-id header is always produced.
     /// </summary>
-    public class MessageIdInitializerProducerBehavior : IProducerBehavior, ISorted
+    public class MessageIdInitializerProducerBehavior : IProducerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer;

@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Diagnostics
     /// <summary>
     ///     Starts an <see cref="Activity" /> with the tracing information from the message headers.
     /// </summary>
-    public class ActivityConsumerBehavior : IConsumerBehavior, ISorted
+    public class ActivityConsumerBehavior : IConsumerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Activity;

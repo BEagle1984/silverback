@@ -11,7 +11,7 @@ using Silverback.Util;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes
 {
-    public class SpyBrokerBehavior : IProducerBehavior, IConsumerBehavior, ISorted
+    public class SpyBrokerBehavior : IProducerBehavior, IConsumerBehavior
     {
         private readonly List<IOutboundEnvelope> _outboundEnvelopes = new List<IOutboundEnvelope>();
 

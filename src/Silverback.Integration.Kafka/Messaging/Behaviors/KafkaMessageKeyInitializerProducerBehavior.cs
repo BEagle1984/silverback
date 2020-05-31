@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Behaviors
     ///     <see cref="KafkaKeyMemberAttribute" />. The header will be used by the
     ///     <see cref="Messaging.Broker.KafkaProducer" /> to set the actual message key.
     /// </summary>
-    public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior, ISorted
+    public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;

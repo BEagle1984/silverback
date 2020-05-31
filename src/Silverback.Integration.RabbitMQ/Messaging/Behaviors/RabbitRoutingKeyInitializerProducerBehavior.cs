@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Behaviors
     ///     <see cref="RabbitRoutingKeyAttribute" />. The header will be used by the
     ///     <see cref="Messaging.Broker.RabbitProducer" /> to set the actual routing key.
     /// </summary>
-    public class RabbitRoutingKeyInitializerProducerBehavior : IProducerBehavior, ISorted
+    public class RabbitRoutingKeyInitializerProducerBehavior : IProducerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;

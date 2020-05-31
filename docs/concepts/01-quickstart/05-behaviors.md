@@ -66,9 +66,32 @@ public class Startup
 > [!Note]
 > All `AddBehavior` methods are available also as extensions to the `IServiceCollection` and it isn't therefore mandatory to call them immediately after `AddSilverback`.
 
+### Sorting
+
+The order in which the behaviors are executed might matter and it is possible to precisely define it implementing the `ISorted` interface.
+
+```csharp
+public class SortedBehavior : IBehavior, ISorted
+{
+    public int SortIndex => 120;
+
+    public Task<IReadOnlyCollection<object>> Handle(
+        IReadOnlyCollection<object> messages, 
+        MessagesHandler next)
+    {
+        // ...your logic...
+
+        return next(messages);
+    }
+}
+```
+
 ## IProducerBehavior and IConsumerBehavior
 
 The `IProducerBehavior` and `IConsumerBehavior` are similar to the `IBehavior` but work at a lower level, much closer to the message broker.
+
+> [!Note]
+> `IProducerBehavior` and `IConsumerBehavior` inherit the `ISorted` interface. It is therefore mandatory to specify the exact sort index of each behavior.
 
 ### IProducerBehavior example
 
@@ -78,6 +101,8 @@ The following example demonstrate how to set a custom message header on each out
 ```csharp
 public class CustomHeadersProducerBehavior : IProducerBehavior
 {
+    public int SortIndex => 1000;
+
     public async Task Handle(
         ProducerPipelineContext context, 
         RawOutboundEnvelopeHandler next)
@@ -118,6 +143,8 @@ public class LogHeadersConsumerBehavior : IConsumerBehavior
     {
         _logger = logger;
     }
+
+    public int SortIndex => 1000;
 
     public async Task Handle(
         ConsumerPipelineContext context, 
@@ -194,26 +221,6 @@ public class TracingBehavior : IBehavior
 }
 ```
 
-## Sorting
-
-The order in which the behaviors are executed does obviously matter and it is possible to precisely define it implementing the `ISorted` interface.
-
-```csharp
-public class SortedBehavior : IBehavior, ISorted
-{
-    public int SortIndex => 120;
-
-    public Task<IReadOnlyCollection<object>> Handle(
-        IReadOnlyCollection<object> messages, 
-        MessagesHandler next)
-    {
-        // ...your logic...
-
-        return next(messages);
-    }
-}
-```
-
 The sort index of the built-in behaviors is described in the next chapter.
 
 ## Built-in behaviors
@@ -254,6 +261,7 @@ This behaviors are the foundation of the consumer pipeline and contain the actua
 Name | Index | Description
 :-- | --: | :--
 `ActivityConsumerBehavior` | 100 | Starts an `Activity` with the tracing information from the message headers.
+`FatalExceptionLoggerConsumerBehavior` | 110 | Logs the unhandled exceptions thrown while processing the message.
 `InboundProcessorConsumerBehavior` | 200 | Handles the retry policies, batch consuming and scope management of the messages that are consumed via an inbound connector.
 `ChunkAggregatorConsumerBehavior` | 300 | Temporary stores and aggregates the message chunks to rebuild the original message.
 `DecryptorConsumerBehavior` | 400 | Decrypts the message according to the `EncryptionSettings`.

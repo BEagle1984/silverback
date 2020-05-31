@@ -131,11 +131,9 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task TryHandleMessage(object sender, BasicDeliverEventArgs deliverEventArgs)
         {
-            RabbitOffset? offset = null;
-
             try
             {
-                offset = new RabbitOffset(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
+                var offset = new RabbitOffset(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
 
                 _logger.LogDebug(
                     EventIds.RabbitConsumerConsumingMessage,
@@ -152,12 +150,9 @@ namespace Silverback.Messaging.Broker
                     Endpoint.Name,
                     offset);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                const string errorMessage =
-                    "Fatal error occurred consuming the message {offset} from endpoint {endpointName}. " +
-                    "The consumer will be stopped.";
-                _logger.LogCritical(EventIds.RabbitConsumerFatalError, ex, errorMessage, offset?.Value, Endpoint.Name);
+                /* Logged by the FatalExceptionLoggerConsumerBehavior */
 
                 Disconnect();
             }

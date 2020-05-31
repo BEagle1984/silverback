@@ -75,6 +75,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int Activity = 100;
 
             /// <summary>
+            ///     The <see cref="FatalExceptionLoggerConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int FatalExceptionLogger = 110;
+
+            /// <summary>
             ///     The <see cref="InboundProcessorConsumerBehavior" /> sort index.
             /// </summary>
             public const int InboundProcessor = 200;

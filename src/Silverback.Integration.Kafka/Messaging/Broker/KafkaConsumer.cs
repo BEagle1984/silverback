@@ -155,15 +155,22 @@ namespace Silverback.Messaging.Broker
 
             using var timeoutCancellationTokenSource = new CancellationTokenSource(CloseTimeout);
 
-            // Workaround for Close getting stuck
-            Task.Run(
-                    () =>
-                    {
-                        _innerConsumer.Close();
-                        _innerConsumer.Dispose();
-                    },
-                    timeoutCancellationTokenSource.Token)
-                .Wait(timeoutCancellationTokenSource.Token);
+            try
+            {
+                // Workaround for Close getting stuck
+                Task.Run(
+                        () =>
+                        {
+                            _innerConsumer.Close();
+                            _innerConsumer.Dispose();
+                        },
+                        timeoutCancellationTokenSource.Token)
+                    .Wait(timeoutCancellationTokenSource.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignored
+            }
 
             _innerConsumer = null;
         }
@@ -203,12 +210,10 @@ namespace Silverback.Messaging.Broker
                     if (!await AutoRecoveryIfEnabled(ex))
                         break;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogCritical(
-                        EventIds.KafkaInnerConsumerWrapperFatalError,
-                        ex,
-                        "Fatal error occurred consuming a message. The consumer will be stopped.");
+                    /* Logged by the FatalExceptionLoggerConsumerBehavior */
+
                     break;
                 }
             }
@@ -237,7 +242,7 @@ namespace Silverback.Messaging.Broker
             if (result.IsPartitionEOF)
             {
                 _logger.LogInformation(
-                    EventIds.KafkaInnerConsumerWrapperEndOfPartition,
+                    EventIds.KafkaConsumerEndOfPartition,
                     "Partition EOF reached: {topic} {partition} @{offset}.",
                     result.Topic,
                     result.Partition,
@@ -247,7 +252,7 @@ namespace Silverback.Messaging.Broker
 
             _hasConsumedAtLeastOnce = true;
             _logger.LogDebug(
-                EventIds.KafkaInnerConsumerWrapperConsumingMessage,
+                EventIds.KafkaConsumerConsumingMessage,
                 "Consuming message: {topic} {partition} @{offset}.",
                 result.Topic,
                 result.Partition,
@@ -303,7 +308,7 @@ namespace Silverback.Messaging.Broker
             if (Endpoint.Configuration.EnableAutoRecovery)
             {
                 _logger.LogWarning(
-                    EventIds.KafkaInnerConsumerWrapperKafkaException,
+                    EventIds.KafkaConsumerKafkaException,
                     ex,
                     "KafkaException occurred. The consumer will try to recover. (topic(s): {topics})",
                     (object)Endpoint.Names);
@@ -341,7 +346,7 @@ namespace Silverback.Messaging.Broker
                 catch (Exception ex)
                 {
                     _logger.LogCritical(
-                        EventIds.KafkaInnerConsumerWrapperFaildToRecoverFromConsumerException,
+                        EventIds.KafkaConsumerFailedToRecoverFromConsumerException,
                         ex,
                         "Failed to recover from consumer exception. Will retry in {SecondsUntilRetry} seconds.",
                         RecoveryDelay.TotalSeconds);

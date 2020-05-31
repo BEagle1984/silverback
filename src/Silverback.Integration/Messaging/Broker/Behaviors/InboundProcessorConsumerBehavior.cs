@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Broker.Behaviors
     ///     Handles the retry policies, batch consuming and scope management of the messages that are consumed
     ///     via an inbound connector.
     /// </summary>
-    public class InboundProcessorConsumerBehavior : IConsumerBehavior, ISorted
+    public class InboundProcessorConsumerBehavior : IConsumerBehavior
     {
         private readonly IErrorPolicyHelper _errorPolicyHelper;
 

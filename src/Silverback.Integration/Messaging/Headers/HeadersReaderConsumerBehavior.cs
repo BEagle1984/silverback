@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Headers
     /// <summary>
     ///     Maps the headers with the properties decorated with the <see cref="HeaderAttribute" />.
     /// </summary>
-    public class HeadersReaderConsumerBehavior : IConsumerBehavior, ISorted
+    public class HeadersReaderConsumerBehavior : IConsumerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.HeadersReader;
