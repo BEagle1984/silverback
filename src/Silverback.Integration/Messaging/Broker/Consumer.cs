@@ -67,18 +67,14 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        /// <inheritdoc cref="IConsumer.Behaviors" />
-        public IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
-
-        /// <summary>
-        ///     Gets the <see cref="IBroker" /> that owns this consumer.
-        /// </summary>
+        /// <inheritdoc cref="IConsumer.Broker" />
         public IBroker Broker { get; }
 
-        /// <summary>
-        ///     Gets the <see cref="IConsumerEndpoint" /> representing the endpoint that is being consumed.
-        /// </summary>
+        /// <inheritdoc cref="IConsumer.Endpoint" />
         public IConsumerEndpoint Endpoint { get; }
+
+        /// <inheritdoc cref="IConsumer.Behaviors" />
+        public IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
 
         /// <inheritdoc cref="IConsumer.Commit(IOffset)" />
         public Task Commit(IOffset offset) => Commit(new[] { offset });

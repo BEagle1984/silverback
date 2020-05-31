@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
         public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundProducer;
 
         /// <inheritdoc cref="IBehavior.Handle" />
-        public async Task<IReadOnlyCollection<object?>> Handle(
+        public async Task<IReadOnlyCollection<object>> Handle(
             IReadOnlyCollection<object> messages,
             MessagesHandler next)
         {

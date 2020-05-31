@@ -17,6 +17,9 @@ namespace Silverback.Messaging
         {
         }
 
+        /// <inheritdoc cref="IConsumerEndpoint.ThrowIfUnhandled" />
+        public bool ThrowIfUnhandled { get; set; }
+
         /// <inheritdoc cref="IConsumerEndpoint.GetUniqueConsumerGroupName" />
         public abstract string GetUniqueConsumerGroupName();
     }

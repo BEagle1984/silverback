@@ -63,7 +63,7 @@ On the other hand it isn't a big deal if multiple producers are writing in the s
 
 
 > [!Important]
-> It isn't guaranteed that you will never consume a message twice, if you use multiple producers to write into the topic or queue. It is up to you to ensure idempotency or enable exactly-once processing through the inbound connector (see [Inbound Connector]({{ site.baseurl }}/docs/configuration/inbound)).
+> It isn't guaranteed that you will never consume a message twice, if you use multiple producers to write into the topic or queue. It is up to you to ensure idempotency or enable exactly-once processing through the inbound connector (see <xref:inbound>).
 
 ```csharp
 public class Startup

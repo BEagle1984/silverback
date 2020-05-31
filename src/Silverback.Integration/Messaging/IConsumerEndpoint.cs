@@ -10,6 +10,13 @@ namespace Silverback.Messaging
     public interface IConsumerEndpoint : IEndpoint
     {
         /// <summary>
+        ///     Gets or sets a value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     received message. The default is <c>false</c> and it means that the unhandled messages are silently
+        ///     discarded.
+        /// </summary>
+        bool ThrowIfUnhandled { get; set; }
+
+        /// <summary>
         ///     Gets a unique name for the consumer group (e.g. Kafka's consumer group id). This value (joint with
         ///     the endpoint name) will be used for example to ensure the exactly-once delivery.
         /// </summary>

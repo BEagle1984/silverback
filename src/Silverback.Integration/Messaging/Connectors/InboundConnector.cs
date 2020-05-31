@@ -99,7 +99,7 @@ namespace Silverback.Messaging.Connectors
 
             var consumer = _brokerCollection.AddConsumer(
                 endpoint,
-                args => RelayMessages(args.Envelopes, args.ServiceProvider));
+                args => RelayMessages(args.Consumer, args.Envelopes, args.ServiceProvider));
 
             ConfigureInboundProcessorBehavior(errorPolicy, settings, consumer);
         }
@@ -107,6 +107,9 @@ namespace Silverback.Messaging.Connectors
         /// <summary>
         ///     Publishes the received messages into the internal bus to be forwarded to the subscribers.
         /// </summary>
+        /// <param name="consumer">
+        ///     The <see cref="IConsumer" /> that received the messages.
+        /// </param>
         /// <param name="envelopes">
         ///     The envelopes containing the messages to be published.
         /// </param>
@@ -117,13 +120,16 @@ namespace Silverback.Messaging.Connectors
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         protected virtual async Task RelayMessages(
+            IConsumer consumer,
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             IServiceProvider serviceProvider)
         {
+            Check.NotNull(consumer, nameof(consumer));
             Check.NotNull(envelopes, nameof(envelopes));
             Check.NotNull(serviceProvider, nameof(serviceProvider));
 
-            await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(envelopes);
+            await serviceProvider.GetRequiredService<IPublisher>()
+                .PublishAsync(envelopes, consumer.Endpoint.ThrowIfUnhandled);
         }
 
         private void ConfigureInboundProcessorBehavior(

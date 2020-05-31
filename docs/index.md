@@ -106,7 +106,7 @@ title: "Home"
         </div>
         <div class="row">
             <div class="col-md-12 more">
-                <a href="concepts/overview.html" class="btn btn-default btn-lg"><i class="fas fa-search-plus"></i> Discover more</a>
+                <a href="xref:overview" class="btn btn-default btn-lg"><i class="fas fa-search-plus"></i> Discover more</a>
             </div>
         </div>
     </div>

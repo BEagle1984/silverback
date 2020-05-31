@@ -11,6 +11,7 @@ uid: releases
 * Improved code quality (enanched CI pipeline to use Roslyn analyzers and integrate [SonarCloud](https://sonarcloud.io/dashboard?id=silverback))
 * Enabled nullable reference types and decorated the entire code base
 * Documented the entire public API (see [API Documentation](~/api/Microsoft.Extensions.DependencyInjection.html))
+* Option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see `throwIfUnhandled` argument in the [`IPublisher`](xref:Silverback.Messaging.IPublisher) methods and [`ThrowIfUnhandled`](xref:Silverback.Messaging.IConsumerEndpoint#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled) property in the [`IConsumerEndpoint`](xref:Silverback.Messaging.IConsumerEndpoint))
 
 ### Fixes
 
@@ -34,8 +35,8 @@ uid: releases
 * Some changes to error policies:
     * `Apply` method is now async
     * Changed the signature of the transfor function in the `MovePolicy`
-* Removed `IMessageIdProvider` and all related logic: **the `Id` or `MessageId` property will not be automatically initialized anymore and its value will not be used as identifier for the outbound message anymore (refer to the [Message Identifier](advanced/message-id) page for further details on how to set a custom message id, if needed)
-* `WithConnectionTo<>`, `WithConnectionToKafka`, `WithConnectionToRabbitMQ` and `WithInMemoryBroker` have been removed, please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit`/`AddInMemoryBroker` methods (see [Connecting to a Message Broker](quickstart/message-broker))
+* Removed `IMessageIdProvider` and all related logic: **the `Id` or `MessageId` property will not be automatically initialized anymore and its value will not be used as identifier for the outbound message anymore (refer to the <xref:message-id> page for further details on how to set a custom message id, if needed)
+* `WithConnectionTo<>`, `WithConnectionToKafka`, `WithConnectionToRabbitMQ` and `WithInMemoryBroker` have been removed, please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit`/`AddInMemoryBroker` methods (see <xref:message-broker>)
 * Some minor breaking changes to the `InMemoryBroker`
 * Removed `PartitioningKeyMemberAttribute`, use `KafkaKeyMemberAttribute` instead
 * `Silverback.Integration.Configuration` has been discontinued
@@ -43,15 +44,15 @@ uid: releases
 ## [2.1.1](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1)
 
 ### What's new
-* Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see [Connecting to a Message Broker](quickstart/message-broker))
-* End-to-End message encryption (see [Encryption](advanced/encryption))
-* Dynamic custom routing of outbound messages (see [Outbound Connector](configuration/outbound))
-* Better support for message headers (see [Message Headers](quickstart/headers))
-* Binary files support (see [Binary Files](advanced/binary-files))
+* Multiple message brokers (Kafka and RabbitMQ) can be used together in the same application (see <xref:message-broker>)
+* End-to-End message encryption (see <xref:encryption>)
+* Dynamic custom routing of outbound messages (see <xref:outbound>)
+* Better support for message headers (see <xref:headers>)
+* Binary files support (see <xref:binary-files>)
 * The `IIntegrationMessage` is not required to have an `Id` property anymore (the `x-message-id` header will still be generated and if the property exists will continue to be automatically initialized)
-* `x-first-chunk-offset` header added by default (see [Message Headers](quickstart/headers))
+* `x-first-chunk-offset` header added by default (see <xref:headers>)
 * <span class="area-kafka" /> The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
-* <span class="area-kafka" /> Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see [Serialization](advanced/serialization))
+* <span class="area-kafka" /> Added support for [Apache Avro](https://avro.apache.org/) and schema registry <xref:serialization>)
 * <span class="area-kafka" /> Upgrade to [Confluent.Kafka 1.4.2](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.2)
 * <span class="area-rabbit" /> Added consumer `PrefetchSize` and `PrefetchCount` settings (see [Endpoint](configuration/endpoint))
 * <span class="area-rabbit" /> Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint](configuration/endpoint))
@@ -68,12 +69,12 @@ These changes shouldn't affect you unless you built your own `IBroker` implement
 
 ### Announced Breaking Changes
 These aren't real breaking changes but some methods have been marked as deprecated and will be removed in one of the next major releases:
-* `WithConnectionTo<>`, `WithConnectionToKafka` and `WithConnectionToRabbitMQ` are deprecated (they will still be supported in this version), please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit` methods (see [Connecting to a Message Broker](quickstart/message-broker))
+* `WithConnectionTo<>`, `WithConnectionToKafka` and `WithConnectionToRabbitMQ` are deprecated (they will still be supported in this version), please use the new `WithConnectionToMessageBroker` and `AddKafka`/`AddRabbit` methods (see <xref:message-broker>)
 
 ## [2.0.0](https://github.com/BEagle1984/silverback/releases/tag/v2.0.0)
 
 ### What's new
-* Created `Silverback.Integration.RabbitMQ` package to connect Silverback with RabbitMQ (see [Connecting to a Message Broker](quickstart/message-broker))
+* Created `Silverback.Integration.RabbitMQ` package to connect Silverback with RabbitMQ (see <xref:message-broker>)
 * Messages with an empty body can now be subscribed (you must subscribe to the `IInboundEnvelope`) [[#61](https://github.com/BEagle1984/silverback/issues/61)]
 * The Kafka partition start offset can now be manually set when a partition is assigned to the consumer (see [Kafka Events](kafka/events)) [[#57](https://github.com/BEagle1984/silverback/issues/57)]
 * Full support for multiple consumer groups running in the same process (see [Multiple Consumer Groups (in same process)](kafka/multiple-consumer-groups)) [[#59](https://github.com/BEagle1984/silverback/issues/59)]
@@ -97,7 +98,7 @@ These aren't real breaking changes but some methods have been marked as deprecat
 ### What's new
 * Added `IEndpointsConfigurator` interface to allow splitting the endpoints configuration across multiple types (see [Connecting to a Message Broker](quickstart/message-broker#using-iendpointsconfigurator))
 * Added support for distributed tracing (based on [System.Diagnostics](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=netcore-3.1))
-* Added `IProducerBehavior` and `IConsumerBehavior` to create an extension point closer to the actual message broker logic (see [Behaviors](quickstart/behaviors))
+* Added `IProducerBehavior` and `IConsumerBehavior` to create an extension point closer to the actual message broker logic (see <xref:behaviors>)
 
 ### Breaking Changes
 * `ISortedBehavior` was removed and replaced by a generic `ISorted` interface
@@ -144,7 +145,7 @@ These aren't real breaking changes but some methods have been marked as deprecat
 * The Kafka consumer automatically recovers from fatal errors (can be disabled via Endpoint configuration)
 * Support for .Net Core 3.0 and Entity Framework Core 3.0
 * Refactored packages (EF binding logic is now in a single package, versioned after the related EF version)
-* Better and cleaner configuration API (see for example [Using the Bus](quickstart/bus) and [Behaviors](quickstart/behaviors))
+* Better and cleaner configuration API (see for example [Using the Bus](quickstart/bus) and <xref:behaviors>)
 * Some performance improvements and optimizations (including [#37](https://github.com/BEagle1984/silverback/issues/37))
 * Improved database locks mechanism (used also to run the `OutboundQueueWorker`)
 
@@ -155,13 +156,13 @@ These aren't real breaking changes but some methods have been marked as deprecat
 * Other small fixes to improve stability and reliability
 
 ### Breaking Changes
-* By default the messages published via `IPublisher` that are routed to an outbound endpoint are not sent through to the internal bus and cannot therfore be subscribed locally, within the same process (see [Outbound Connector](configuration/outbound))
+* By default the messages published via `IPublisher` that are routed to an outbound endpoint are not sent through to the internal bus and cannot therfore be subscribed locally, within the same process (see <xref:outbound>)
 * Some changes in `IInboundMessage` and `IOutboundMessage` interfaces
 * Changes to the schema of the outbox table (`Silverback.Messaging.Connectors.Model.OutboundMessage`)
-* The configuration fluent API changed quite a bit, refer to the current documentation (e.g. [Using the Bus](quickstart/bus) and [Connecting to a Message Broker](quickstart/message-broker))
+* The configuration fluent API changed quite a bit, refer to the current documentation (e.g. [Using the Bus](quickstart/bus) and <xref:message-broker>)
 
-`WithConnectionTo<KafkaBroker>` has to be replaced with `WithConnectionToKafka` in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see [Kafka Message Key](kafka/message-key))
-{: .notice--important}
+> [!Important]
+> `WithConnectionTo<KafkaBroker>` has to be replaced with `WithConnectionToKafka` in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see [Kafka Message Key](kafka/message-key))
 
 * `Silverback.Integration.EntityFrameworkCore` and `Silverback.EventSourcing.EntityFrameworkCore` have been deprecated (`Silverback.Core.EntityFrameworkCore` contains all the necessary logic to use EF as store)
 * `KeyMemberAttribute` has been renamed to `PartitioningKeyMemberAttribute` (see [Kafka Message Key](kafka/message-key))
@@ -195,7 +196,7 @@ Released two versions mostly to fix bugs, do some small adjustments according to
 ## 0.6.0
 
 ### What's new
-* Added support for message headers (only accessible from [Behaviors](quickstart/behaviors) or "low-level" [Broker](advanced/broker) implementation)
+* Added support for message headers (see <xref:behaviors> and <xref:ibroker>)
 * Simplified message subscription even further: now all public methods of the types implementing the marker interface `ISubscriber` are automatically subscribed by default without having to annotate them with the `SubscribeAttribute` (this behavior is customizable)
 * Upgrade to [Confluent.Kafka 1.0.0-RC1](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.0-RC1)
 
@@ -210,9 +211,9 @@ Some releases where done adding quite a few features-
 * Delegate subscription as an alternative to `SubscribeAttribute` based subscription
 * Improved support for Rx.net
 * Support for legacy messages and POCO classes
-* Offset storage as an alternative and more optimized way to guarantee exactly once processing, storing just the offset of the last message instead of logging every message  (see [Inbound Connector](configuration/inbound))
-* Behaviors as a convenient way to implement your cross-cutting concerns (like logging, validation, etc.) to be plugged into the internal bus publishing pipeline (see [Behaviors](quickstart/behaviors))
-* Message chunking to automatically split the larger messages and rebuild them on the other end (see [Chunking](advanced/chunking))
+* Offset storage as an alternative and more optimized way to guarantee exactly once processing, storing just the offset of the last message instead of logging every message (see <xref:inbound>)
+* Behaviors as a convenient way to implement your cross-cutting concerns (like logging, validation, etc.) to be plugged into the internal bus publishing pipeline (see <xref:behaviors>)
+* Message chunking to automatically split the larger messages and rebuild them on the other end (see <xref:chunking>)
 * much more...a huge amount of refactorings
 
 ### Fixes

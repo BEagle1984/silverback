@@ -48,14 +48,10 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        /// <summary>
-        ///     Gets the <see cref="IBroker" /> instance that owns this .
-        /// </summary>
+        /// <inheritdoc cref="IProducer.Broker" />
         public IBroker Broker { get; }
 
-        /// <summary>
-        ///     Gets the <see cref="IProducerEndpoint" /> this instance is connected to.
-        /// </summary>
+        /// <inheritdoc cref="IProducer.Endpoint" />
         public IProducerEndpoint Endpoint { get; }
 
         /// <inheritdoc cref="IProducer.Behaviors" />

@@ -27,6 +27,20 @@ namespace Silverback.Messaging.Publishing
         ///     its subscribers and the method will not complete until all subscribers have processed it (unless
         ///     using Silverback.Integration to produce and consume the message through a message broker).
         /// </summary>
+        /// <param name="commandMessage">
+        ///     The command to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        void Execute(ICommand commandMessage, bool throwIfUnhandled);
+
+        /// <summary>
+        ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to
+        ///     its subscribers and the method will not complete until all subscribers have processed it (unless
+        ///     using Silverback.Integration to produce and consume the message through a message broker).
+        /// </summary>
         /// <typeparam name="TResult">
         ///     The type of the result that is expected to be returned by the subscribers.
         /// </typeparam>
@@ -37,6 +51,26 @@ namespace Silverback.Messaging.Publishing
         ///     The command result.
         /// </returns>
         TResult Execute<TResult>(ICommand<TResult> commandMessage);
+
+        /// <summary>
+        ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to
+        ///     its subscribers and the method will not complete until all subscribers have processed it (unless
+        ///     using Silverback.Integration to produce and consume the message through a message broker).
+        /// </summary>
+        /// <typeparam name="TResult">
+        ///     The type of the result that is expected to be returned by the subscribers.
+        /// </typeparam>
+        /// <param name="commandMessage">
+        ///     The command to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        /// <returns>
+        ///     The command result.
+        /// </returns>
+        TResult Execute<TResult>(ICommand<TResult> commandMessage, bool throwIfUnhandled);
 
         /// <summary>
         ///     Executes the specified commands publishing them to the internal bus. The messages will be forwarded
@@ -55,6 +89,21 @@ namespace Silverback.Messaging.Publishing
         ///     messages (unless using Silverback.Integration to produce and consume the messages through a message
         ///     broker).
         /// </summary>
+        /// <param name="commandMessages">
+        ///     The commands to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        void Execute(IEnumerable<ICommand> commandMessages, bool throwIfUnhandled);
+
+        /// <summary>
+        ///     Executes the specified commands publishing them to the internal bus. The messages will be forwarded
+        ///     to their subscribers and the method will not complete until all subscribers have processed all
+        ///     messages (unless using Silverback.Integration to produce and consume the messages through a message
+        ///     broker).
+        /// </summary>
         /// <typeparam name="TResult">
         ///     The type of the result that is expected to be returned by the subscribers.
         /// </typeparam>
@@ -65,6 +114,29 @@ namespace Silverback.Messaging.Publishing
         ///     The commands result.
         /// </returns>
         IReadOnlyCollection<TResult> Execute<TResult>(IEnumerable<ICommand<TResult>> commandMessages);
+
+        /// <summary>
+        ///     Executes the specified commands publishing them to the internal bus. The messages will be forwarded
+        ///     to their subscribers and the method will not complete until all subscribers have processed all
+        ///     messages (unless using Silverback.Integration to produce and consume the messages through a message
+        ///     broker).
+        /// </summary>
+        /// <typeparam name="TResult">
+        ///     The type of the result that is expected to be returned by the subscribers.
+        /// </typeparam>
+        /// <param name="commandMessages">
+        ///     The commands to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        /// <returns>
+        ///     The commands result.
+        /// </returns>
+        IReadOnlyCollection<TResult> Execute<TResult>(
+            IEnumerable<ICommand<TResult>> commandMessages,
+            bool throwIfUnhandled);
 
         /// <summary>
         ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to
@@ -86,6 +158,24 @@ namespace Silverback.Messaging.Publishing
         ///     it (unless using Silverback.Integration to produce and consume the message through a message
         ///     broker).
         /// </summary>
+        /// <param name="commandMessage">
+        ///     The command to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" />representing the asynchronous operation.
+        /// </returns>
+        Task ExecuteAsync(ICommand commandMessage, bool throwIfUnhandled);
+
+        /// <summary>
+        ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to
+        ///     its subscribers and the <see cref="Task" /> will not complete until all subscribers have processed
+        ///     it (unless using Silverback.Integration to produce and consume the message through a message
+        ///     broker).
+        /// </summary>
         /// <typeparam name="TResult">
         ///     The type of the result that is expected to be returned by the subscribers.
         /// </typeparam>
@@ -97,6 +187,28 @@ namespace Silverback.Messaging.Publishing
         ///     result.
         /// </returns>
         Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage);
+
+        /// <summary>
+        ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to
+        ///     its subscribers and the <see cref="Task" /> will not complete until all subscribers have processed
+        ///     it (unless using Silverback.Integration to produce and consume the message through a message
+        ///     broker).
+        /// </summary>
+        /// <typeparam name="TResult">
+        ///     The type of the result that is expected to be returned by the subscribers.
+        /// </typeparam>
+        /// <param name="commandMessage">
+        ///     The command to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the command
+        ///     result.
+        /// </returns>
+        Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage, bool throwIfUnhandled);
 
         /// <summary>
         ///     Executes the specified commands publishing them to the internal bus. The messages will be forwarded
@@ -118,6 +230,24 @@ namespace Silverback.Messaging.Publishing
         ///     processed all messages (unless using Silverback.Integration to produce and consume the messages
         ///     through a message broker).
         /// </summary>
+        /// <param name="commandMessages">
+        ///     The commands to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task ExecuteAsync(IEnumerable<ICommand> commandMessages, bool throwIfUnhandled);
+
+        /// <summary>
+        ///     Executes the specified commands publishing them to the internal bus. The messages will be forwarded
+        ///     to their subscribers and the <see cref="Task" /> will not complete until all subscribers have
+        ///     processed all messages (unless using Silverback.Integration to produce and consume the messages
+        ///     through a message broker).
+        /// </summary>
         /// <typeparam name="TResult">
         ///     The type of the result that is expected to be returned by the subscribers.
         /// </typeparam>
@@ -129,5 +259,29 @@ namespace Silverback.Messaging.Publishing
         ///     result.
         /// </returns>
         Task<IReadOnlyCollection<TResult>> ExecuteAsync<TResult>(IEnumerable<ICommand<TResult>> commandMessages);
+
+        /// <summary>
+        ///     Executes the specified commands publishing them to the internal bus. The messages will be forwarded
+        ///     to their subscribers and the <see cref="Task" /> will not complete until all subscribers have
+        ///     processed all messages (unless using Silverback.Integration to produce and consume the messages
+        ///     through a message broker).
+        /// </summary>
+        /// <typeparam name="TResult">
+        ///     The type of the result that is expected to be returned by the subscribers.
+        /// </typeparam>
+        /// <param name="commandMessages">
+        ///     The commands to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the commands
+        ///     result.
+        /// </returns>
+        Task<IReadOnlyCollection<TResult>> ExecuteAsync<TResult>(
+            IEnumerable<ICommand<TResult>> commandMessages,
+            bool throwIfUnhandled);
     }
 }

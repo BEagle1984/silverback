@@ -8,12 +8,12 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class WrappedInboundMessageSubscriber : ISubscriber
+    public class InboundEnvelopeSubscriber : ISubscriber
     {
         public List<IInboundEnvelope<object>> ReceivedEnvelopes { get; } = new List<IInboundEnvelope<object>>();
 
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-        private void OnMessageReceived(IInboundEnvelope<object> envelope) => ReceivedEnvelopes.Add(envelope);
+        private void OnMessageReceived(IInboundEnvelope<IMessage> envelope) => ReceivedEnvelopes.Add(envelope);
     }
 }

@@ -74,6 +74,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
 
             public EncryptionSettings? Encryption { get; } = null;
 
+            public bool ThrowIfUnhandled { get; set; }
+
             public void Validate()
             {
             }

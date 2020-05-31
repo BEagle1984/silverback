@@ -43,12 +43,13 @@ namespace Silverback.Messaging.Connectors
 
         /// <inheritdoc cref="InboundConnector.RelayMessages" />
         protected override async Task RelayMessages(
+            IConsumer consumer,
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             IServiceProvider serviceProvider)
         {
             envelopes = (await EnsureExactlyOnce(envelopes, serviceProvider)).ToList();
 
-            await base.RelayMessages(envelopes, serviceProvider);
+            await base.RelayMessages(consumer, envelopes, serviceProvider);
         }
 
         /// <summary>

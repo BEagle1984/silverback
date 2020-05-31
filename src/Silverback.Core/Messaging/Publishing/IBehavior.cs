@@ -25,6 +25,6 @@ namespace Silverback.Messaging.Publishing
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the result
         ///     values (if any).
         /// </returns>
-        Task<IReadOnlyCollection<object?>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next);
+        Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next);
     }
 }

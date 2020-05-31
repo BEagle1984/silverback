@@ -227,10 +227,10 @@ This behaviors act in the internal bus pipeline.
 Name | Index | Description
 :-- | --: | :--
 `OutboundProducerBehavior` | 200 | Produces the `IOutboundEnvelope<TMessage>` through the correct `IOutboundConnector` instance.
-`OutboundRouterBehavior` | 300 | Routes the messages to the outbound endpoint by wrapping them in an `IOutboundEnvelope<TMessage>` that is republished to the bus.
+`OutboundRouterBehavior` | 300 | Routes the messages to the outbound endpoint by wrapping them in an `IOutboundEnvelope<TMessage>` that is republished to the bus. The built-in `OutboundMessageProducer` subscribes to those messages and produces them to the endpoint.
 
-The sort index is counterintoutive, as the `OutboundRouterBehavior` is actually needed **before** the `OutboundProducerBehavior`, but that happen in two separate and consecutive pipelines to give you the chance to subscribe to the `IOutboundEnvelope` if needed. So the `OutboundRouterBehavior` creates the `IOutboundEnvelope` and publishes it to the internal bus for the next `OutboundProducerBehavior` to catch it and forward it to the configured `IOutboundConnector` (at this point the message is not forwaded anymore to the next behavior in the pipeline).
-{: .notice--note}
+> [!Note]
+> The sort index might be counterintuitive, as the `OutboundRouterBehavior` is actually needed **before** the `OutboundProducerBehavior`, but that happen in two separate and consecutive pipelines to give you the chance to subscribe to the `IOutboundEnvelope` if needed. So the `OutboundRouterBehavior` creates the `IOutboundEnvelope` and publishes it to the internal bus for the next `OutboundProducerBehavior` to catch it and forward it to the configured `IOutboundConnector` (at this point the message is not forwarded anymore to the next behavior in the pipeline).
 
 ### IProducerBehavior
 

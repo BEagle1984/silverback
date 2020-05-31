@@ -108,7 +108,7 @@ namespace Silverback.Messaging.Broker
                 _ => _brokers.FirstOrDefault(
                          broker => endpointTypePropertySelector.Invoke(broker).IsAssignableFrom(endpointType)) ??
                      throw new InvalidOperationException(
-                         $"No message broker could be found to handle the endpoint of type \"{endpointType.Name}\". " +
+                         $"No message broker could be found to handle the endpoint of type {endpointType.Name}. " +
                          "Please register the necessary IBroker implementation with the DI container."));
     }
 }

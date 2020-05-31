@@ -49,6 +49,7 @@ namespace Silverback.Messaging.Subscribers
                 $"in type '{methodInfo?.DeclaringType?.FullName}'. --> " +
                 message)
         {
+            MethodInfo = methodInfo;
         }
 
         /// <summary>
@@ -82,5 +83,11 @@ namespace Silverback.Messaging.Subscribers
             : base(info, context)
         {
         }
+
+        /// <summary>
+        ///     Gets the <see cref="MethodInfo" /> representing the subscribed method whose invocation thrown the
+        ///     exception.
+        /// </summary>
+        public MethodInfo? MethodInfo { get; }
     }
 }

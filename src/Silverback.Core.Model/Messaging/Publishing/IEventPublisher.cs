@@ -23,6 +23,20 @@ namespace Silverback.Messaging.Publishing
         void Publish(IEvent eventMessage);
 
         /// <summary>
+        ///     Publishes the specified event to the internal bus. The message will be forwarded to its subscribers
+        ///     and the method will not complete until all subscribers have processed it (unless using
+        ///     Silverback.Integration to produce and consume the message through a message broker).
+        /// </summary>
+        /// <param name="eventMessage">
+        ///     The event to be published.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        void Publish(IEvent eventMessage, bool throwIfUnhandled);
+
+        /// <summary>
         ///     Publishes the specified events publishing them to the internal bus. The messages will be forwarded
         ///     to their subscribers and the method will not complete until all subscribers have processed all
         ///     messages (unless using Silverback.Integration to produce and consume the messages through a message
@@ -32,6 +46,21 @@ namespace Silverback.Messaging.Publishing
         ///     The events to be executed.
         /// </param>
         void Publish(IEnumerable<IEvent> eventMessages);
+
+        /// <summary>
+        ///     Publishes the specified events publishing them to the internal bus. The messages will be forwarded
+        ///     to their subscribers and the method will not complete until all subscribers have processed all
+        ///     messages (unless using Silverback.Integration to produce and consume the messages through a message
+        ///     broker).
+        /// </summary>
+        /// <param name="eventMessages">
+        ///     The events to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        void Publish(IEnumerable<IEvent> eventMessages, bool throwIfUnhandled);
 
         /// <summary>
         ///     Publishes the specified event to the internal bus. The message will be forwarded to its subscribers
@@ -47,6 +76,23 @@ namespace Silverback.Messaging.Publishing
         Task PublishAsync(IEvent eventMessage);
 
         /// <summary>
+        ///     Publishes the specified event to the internal bus. The message will be forwarded to its subscribers
+        ///     and the <see cref="Task" /> will not complete until all subscribers have processed it (unless using
+        ///     Silverback.Integration to produce and consume the message through a message broker).
+        /// </summary>
+        /// <param name="eventMessage">
+        ///     The event to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task PublishAsync(IEvent eventMessage, bool throwIfUnhandled);
+
+        /// <summary>
         ///     Publishes the specified events publishing them to the internal bus. The messages will be forwarded
         ///     to their subscribers and the <see cref="Task" /> will not complete until all subscribers have
         ///     processed all messages (unless using Silverback.Integration to produce and consume the messages
@@ -59,5 +105,23 @@ namespace Silverback.Messaging.Publishing
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         Task PublishAsync(IEnumerable<IEvent> eventMessages);
+
+        /// <summary>
+        ///     Publishes the specified events publishing them to the internal bus. The messages will be forwarded
+        ///     to their subscribers and the <see cref="Task" /> will not complete until all subscribers have
+        ///     processed all messages (unless using Silverback.Integration to produce and consume the messages
+        ///     through a message broker).
+        /// </summary>
+        /// <param name="eventMessages">
+        ///     The events to be executed.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task PublishAsync(IEnumerable<IEvent> eventMessages, bool throwIfUnhandled);
     }
 }

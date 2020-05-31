@@ -13,8 +13,17 @@ namespace Silverback.Messaging.Broker
     public interface IConsumer
     {
         /// <summary>
-        ///     Gets the collection of <see cref="IConsumerBehavior" /> configured for this <see cref="IConsumer" />
-        ///     .
+        ///     Gets the <see cref="IBroker" /> that owns this consumer.
+        /// </summary>
+        IBroker Broker { get; }
+
+        /// <summary>
+        ///     Gets the <see cref="IConsumerEndpoint" /> representing the endpoint that is being consumed.
+        /// </summary>
+        IConsumerEndpoint Endpoint { get; }
+
+        /// <summary>
+        ///     Gets the collection of <see cref="IConsumerBehavior" /> configured for this <see cref="IConsumer" />.
         /// </summary>
         IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
 

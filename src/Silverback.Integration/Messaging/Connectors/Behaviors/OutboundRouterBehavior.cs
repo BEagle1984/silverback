@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Connectors.Behaviors
         public int SortIndex { get; } = IntegrationBehaviorsSortIndexes.OutboundRouter;
 
         /// <inheritdoc cref="IBehavior.Handle" />
-        public async Task<IReadOnlyCollection<object?>> Handle(
+        public async Task<IReadOnlyCollection<object>> Handle(
             IReadOnlyCollection<object> messages,
             MessagesHandler next)
         {

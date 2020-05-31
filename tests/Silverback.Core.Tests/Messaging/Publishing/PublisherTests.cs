@@ -1527,6 +1527,56 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             _filteredSubscriber.ReceivedMessagesCount.Should().Be(2);
         }
 
+        [Fact]
+        public void Publish_NotSubscribedMessageWithThrowIfUnhandled_ExceptionThrown()
+        {
+            var publisher = GetPublisher(_syncSubscriber);
+
+            Action act = () => publisher.Publish(new UnhandledMessage(), true);
+
+            act.Should().ThrowExactly<AggregateException>();
+        }
+
+        [Fact]
+        public void PublishAsync_NotSubscribedMessageWithThrowIfUnhandled_ExceptionThrown()
+        {
+            var publisher = GetPublisher(_syncSubscriber);
+
+            Func<Task> act = () => publisher.PublishAsync(new UnhandledMessage(), true);
+
+            act.Should().ThrowExactly<UnhandledMessageException>();
+        }
+
+        [Fact]
+        public void Publish_NotSubscribedMessageWithoutThrowIfUnhandled_ExceptionThrown()
+        {
+            var publisher = GetPublisher(_syncSubscriber);
+
+            Action act = () => publisher.Publish(new UnhandledMessage());
+
+            act.Should().NotThrow();
+        }
+
+        [Fact]
+        public void PublishAsync_NotSubscribedMessageWithoutThrowIfUnhandled_ExceptionThrown()
+        {
+            var publisher = GetPublisher(_syncSubscriber);
+
+            Func<Task> act = () => publisher.PublishAsync(new UnhandledMessage());
+
+            act.Should().NotThrow();
+        }
+
+        [Fact]
+        public void PublishAsync_WithoutSubscribersDisablingException_NoExceptionThrown()
+        {
+            var publisher = GetPublisher();
+
+            Func<Task> act = () => publisher.PublishAsync(new TestCommandOne());
+
+            act.Should().NotThrow();
+        }
+
         private static IPublisher GetPublisher(params ISubscriber[] subscribers) =>
             GetPublisher(null, subscribers);
 

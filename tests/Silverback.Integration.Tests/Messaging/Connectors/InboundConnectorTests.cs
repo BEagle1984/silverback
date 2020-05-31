@@ -13,6 +13,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Xunit;
@@ -23,7 +24,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
     {
         private readonly TestSubscriber _testSubscriber;
 
-        private readonly WrappedInboundMessageSubscriber _inboundSubscriber;
+        private readonly InboundEnvelopeSubscriber _inboundSubscriber;
 
         private readonly SomeUnhandledMessageSubscriber _someUnhandledMessageSubscriber;
 
@@ -38,7 +39,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var services = new ServiceCollection();
 
             _testSubscriber = new TestSubscriber();
-            _inboundSubscriber = new WrappedInboundMessageSubscriber();
+            _inboundSubscriber = new InboundEnvelopeSubscriber();
             _someUnhandledMessageSubscriber = new SomeUnhandledMessageSubscriber();
 
             services.AddNullLogger();
@@ -756,6 +757,35 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _testSubscriber.ReceivedMessages.OfType<BatchAbortedEvent>().Count().Should().Be(3);
             _testSubscriber.ReceivedMessages.OfType<BatchProcessedEvent>().Count().Should().Be(1);
             _testSubscriber.ReceivedMessages.OfType<TestEventOne>().Count().Should().Be(2);
+        }
+
+        [Fact]
+        public void Bind_PushUnsubscribedMessage_NoExceptionThrown()
+        {
+            _connector.Bind(TestConsumerEndpoint.GetDefault());
+            _broker.Connect();
+
+            var consumer = (TestConsumer)_broker.Consumers[0];
+            Func<Task> act = () => consumer.TestHandleMessage(new UnsubscribedMessage());
+
+            act.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Bind_PushUnsubscribedMessageWithThrowIfUnhandled_ExceptionThrown()
+        {
+            _connector.Bind(TestConsumerEndpoint.GetDefault());
+            _connector.Bind(
+                new TestConsumerEndpoint("test")
+                {
+                    ThrowIfUnhandled = true
+                });
+            _broker.Connect();
+
+            var consumer = (TestConsumer)_broker.Consumers[0];
+            Func<Task> act = () => consumer.TestHandleMessage(new UnsubscribedMessage());
+
+            act.Should().ThrowExactly<UnhandledMessageException>();
         }
     }
 }

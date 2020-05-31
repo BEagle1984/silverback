@@ -19,7 +19,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 {
-    public class OutboundProducingBehaviorTests
+    public class OutboundProducerBehaviorTests
     {
         private readonly OutboundProducerBehavior _behavior;
 
@@ -27,7 +27,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
         private readonly TestBroker _broker;
 
-        public OutboundProducingBehaviorTests()
+        public OutboundProducerBehaviorTests()
         {
             var services = new ServiceCollection();
 

@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Configuration
         private const bool KafkaDefaultEnableDeliveryReports = true;
 
         /// <summary>
-        ///     Gets a boolean value indicating whether delivery reports are enabled according to the explicit
+        ///     Gets a value indicating whether delivery reports are enabled according to the explicit
         ///     configuration and Kafka defaults.
         /// </summary>
         public bool AreDeliveryReportsEnabled => EnableDeliveryReports ?? KafkaDefaultEnableDeliveryReports;
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Configuration
         public bool DisposeOnException { get; set; } = true;
 
         /// <summary>
-        ///     Gets a boolean value indicating whether the persistence status will be returned as part of the
+        ///     Gets a value indicating whether the persistence status will be returned as part of the
         ///     delivery reports according to the explicit configuration and Kafka defaults.
         /// </summary>
         internal bool ArePersistenceStatusReportsEnabled =>

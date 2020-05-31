@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
@@ -43,63 +44,96 @@ namespace Silverback.Messaging.Publishing
         }
 
         /// <inheritdoc cref="IPublisher.Publish(object)" />
-        public void Publish(object message)
+        public void Publish(object message) => Publish(message, false);
+
+        /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
+        public void Publish(object message, bool throwIfUnhandled)
         {
             Check.NotNull(message, nameof(message));
 
-            Publish(new[] { message });
+            Publish(new[] { message }, throwIfUnhandled);
         }
 
         /// <inheritdoc cref="IPublisher.Publish{TResult}(object)" />
-        public IReadOnlyCollection<TResult> Publish<TResult>(object message)
+        public IReadOnlyCollection<TResult> Publish<TResult>(object message) => Publish<TResult>(message, false);
+
+        /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
+        public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled)
         {
             Check.NotNull(message, nameof(message));
 
-            return Publish<TResult>(new[] { message });
+            return Publish<TResult>(new[] { message }, throwIfUnhandled);
         }
 
         /// <inheritdoc cref="IPublisher.Publish(IEnumerable{object})" />
-        public void Publish(IEnumerable<object> messages) => Publish(messages, false).Wait();
+        public void Publish(IEnumerable<object> messages) => Publish(messages, false);
+
+        /// <inheritdoc cref="IPublisher.Publish(IEnumerable{object}, bool)" />
+        public void Publish(IEnumerable<object> messages, bool throwIfUnhandled) =>
+            Publish(messages, throwIfUnhandled, false).Wait();
 
         /// <inheritdoc cref="IPublisher.Publish{TResult}(IEnumerable{object})" />
         public IReadOnlyCollection<TResult> Publish<TResult>(IEnumerable<object> messages) =>
-            CastResults<TResult>(Publish(messages, false).Result).ToList();
+            Publish<TResult>(messages, true);
+
+        /// <inheritdoc cref="IPublisher.Publish{TResult}(IEnumerable{object}, bool)" />
+        public IReadOnlyCollection<TResult> Publish<TResult>(
+            IEnumerable<object> messages,
+            bool throwIfUnhandled) =>
+            CastResults<TResult>(Publish(messages, throwIfUnhandled, false).Result).ToList();
 
         /// <inheritdoc cref="IPublisher.PublishAsync(object)" />
-        public Task PublishAsync(object message)
+        public Task PublishAsync(object message) => PublishAsync(message, false);
+
+        /// <inheritdoc cref="IPublisher.PublishAsync(object, bool)" />
+        public Task PublishAsync(object message, bool throwIfUnhandled)
         {
             Check.NotNull(message, nameof(message));
 
-            return PublishAsync(new[] { message });
+            return PublishAsync(new[] { message }, throwIfUnhandled);
         }
 
         /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object)" />
-        public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
-            await PublishAsync<TResult>(new[] { message });
+        public Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
+            PublishAsync<TResult>(message, false);
+
+        /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, bool)" />
+        public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(
+            object message,
+            bool throwIfUnhandled) =>
+            await PublishAsync<TResult>(new[] { message }, throwIfUnhandled);
 
         /// <inheritdoc cref="IPublisher.PublishAsync(IEnumerable{object})" />
-        public Task PublishAsync(IEnumerable<object> messages) => Publish(messages, true);
+        public Task PublishAsync(IEnumerable<object> messages) => PublishAsync(messages, false);
+
+        /// <inheritdoc cref="IPublisher.PublishAsync(IEnumerable{object}, bool)" />
+        public Task PublishAsync(IEnumerable<object> messages, bool throwIfUnhandled) =>
+            Publish(messages, throwIfUnhandled, true);
 
         /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(IEnumerable{object})" />
-        public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) =>
-            CastResults<TResult>(await Publish(messages, true)).ToList();
+        public Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(IEnumerable<object> messages) =>
+            PublishAsync<TResult>(messages, false);
 
-        private static Task<IReadOnlyCollection<object?>> ExecutePipeline(
+        /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(IEnumerable{object}, bool)" />
+        public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(
+            IEnumerable<object> messages,
+            bool throwIfUnhandled) =>
+            CastResults<TResult>(await Publish(messages, throwIfUnhandled, true)).ToList();
+
+        private static Task<IReadOnlyCollection<object>> ExecuteBehaviorsPipeline(
             IReadOnlyCollection<IBehavior> behaviors,
-            IReadOnlyCollection<object> messages,
-            Func<IReadOnlyCollection<object>, Task<IReadOnlyCollection<object?>>> finalAction)
+            IReadOnlyCollection<object> messages)
         {
             if (behaviors != null && behaviors.Any())
             {
                 return behaviors.First().Handle(
                     messages,
-                    nextMessages => ExecutePipeline(
+                    nextMessages => ExecuteBehaviorsPipeline(
                         behaviors.Skip(1).ToList(),
-                        nextMessages,
-                        finalAction));
+                        nextMessages));
             }
 
-            return finalAction(messages);
+            return Task.FromResult(messages);
         }
 
         private IEnumerable<TResult> CastResults<TResult>(IReadOnlyCollection<object?> results)
@@ -114,7 +148,7 @@ namespace Silverback.Messaging.Publishing
                 {
                     _logger.LogDebug(
                         EventIds.PublisherDiscardingResult,
-                        "Discarding result of type '{Type}' because it doesn't match the expected return type '{ExpectedType}'.",
+                        "Discarding result of type {Type} because it doesn't match the expected return type {ExpectedType}.",
                         result?.GetType().FullName,
                         typeof(TResult).FullName);
                 }
@@ -123,42 +157,72 @@ namespace Silverback.Messaging.Publishing
 
         private async Task<IReadOnlyCollection<object?>> Publish(
             IEnumerable<object> messages,
+            bool throwIfUnhandled,
             bool executeAsync)
         {
             Check.NotNull(messages, nameof(messages));
 
-            var messagesList = messages.ToList(); // TODO: Avoid cloning?
+            IReadOnlyCollection<object> messagesList = messages.ToList(); // TODO: Avoid cloning?
 
             if (!messagesList.Any())
                 return Array.Empty<object>();
 
             Check.HasNoNulls(messagesList, nameof(messages));
 
-            return await ExecutePipeline(
+            messagesList = await ExecuteBehaviorsPipeline(
                 GetBehaviors(),
-                messagesList,
-                async finalMessages =>
-                    (await InvokeExclusiveMethods(finalMessages, executeAsync))
-                    .Union(await InvokeNonExclusiveMethods(finalMessages, executeAsync))
-                    .ToList());
+                messagesList);
+
+            var results = await InvokeSubscribedMethods(messagesList, executeAsync);
+
+            bool allMessagesHandled =
+                messagesList.All(
+                    message => results.Any(
+                        result =>
+                            result.HandledMessages.Contains(message) ||
+                            message is IEnvelope envelope && result.HandledMessages.Contains(envelope.Message)));
+
+            if (!allMessagesHandled && throwIfUnhandled)
+            {
+                var errorMessage = messagesList.Count == 1
+                    ? $"No subscriber could be found to handle the message of type {messagesList.First().GetType().FullName}."
+                    : "No subscriber could be found to handle some of the published messages " +
+                      $"({string.Join(", ", messagesList.Select(message => message.GetType().FullName).Distinct())}).";
+
+                throw new UnhandledMessageException(messagesList, errorMessage);
+            }
+
+            return results.SelectMany(result => result.ReturnValues).ToList();
         }
 
-        private async Task<IReadOnlyCollection<object?>> InvokeExclusiveMethods(
+        private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeSubscribedMethods(
             IReadOnlyCollection<object> messages,
+            bool executeAsync)
+        {
+            var methods = GetMethodsLoader().GetSubscribedMethods();
+            return (await InvokeExclusiveMethods(messages, methods, executeAsync))
+                .Union(await InvokeNonExclusiveMethods(messages, methods, executeAsync))
+                .ToList();
+        }
+
+        private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeExclusiveMethods(
+            IReadOnlyCollection<object> messages,
+            IReadOnlyCollection<SubscribedMethod> methods,
             bool executeAsync) =>
-            (await GetMethodsLoader().GetSubscribedMethods()
+            (await methods
                 .Where(method => method.IsExclusive)
-                .SelectManyAsync(
+                .SelectAsync(
                     method =>
                         GetMethodInvoker().Invoke(method, messages, executeAsync)))
             .ToList();
 
-        private async Task<IReadOnlyCollection<object?>> InvokeNonExclusiveMethods(
+        private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethods(
             IReadOnlyCollection<object> messages,
+            IReadOnlyCollection<SubscribedMethod> methods,
             bool executeAsync) =>
-            (await GetMethodsLoader().GetSubscribedMethods()
+            (await methods
                 .Where(method => !method.IsExclusive)
-                .ParallelSelectManyAsync(
+                .ParallelSelectAsync(
                     method =>
                         GetMethodInvoker().Invoke(method, messages, executeAsync)))
             .ToList();

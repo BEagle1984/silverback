@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Subscribers
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         }
 
-        public async Task<IEnumerable<object?>> Invoke(
+        public async Task<MethodInvocationResult> Invoke(
             SubscribedMethod subscribedMethod,
             IReadOnlyCollection<object> messages,
             bool executeAsync)
@@ -39,12 +39,12 @@ namespace Silverback.Messaging.Subscribers
                 _argumentsResolver.GetMessageArgumentResolver(subscribedMethod);
 
             if (messageArgumentResolver == null)
-                return Array.Empty<object>();
+                return MethodInvocationResult.Empty;
 
             messages = UnwrapEnvelopesAndFilterMessages(messages, targetMessageType, subscribedMethod);
 
             if (!messages.Any())
-                return Array.Empty<object>();
+                return MethodInvocationResult.Empty;
 
             var target = subscribedMethod.ResolveTargetType(_serviceProvider);
             var parameterValues = GetShiftedParameterValuesArray(subscribedMethod);
@@ -55,7 +55,6 @@ namespace Silverback.Messaging.Subscribers
             {
                 case ISingleMessageArgumentResolver singleResolver:
                     returnValues = (await messages
-                            .OfType(targetMessageType)
                             .SelectAsync(
                                 message =>
                                 {
@@ -77,7 +76,9 @@ namespace Silverback.Messaging.Subscribers
                         "ISingleMessageArgumentResolver or IEnumerableMessageArgumentResolver.");
             }
 
-            return await _returnValueHandler.HandleReturnValues(returnValues, executeAsync);
+            return new MethodInvocationResult(
+                messages,
+                await _returnValueHandler.HandleReturnValues(returnValues, executeAsync));
         }
 
         private static IReadOnlyCollection<object> UnwrapEnvelopesAndFilterMessages(

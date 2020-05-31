@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Configuration
         private const bool KafkaDefaultAutoCommitEnabled = true;
 
         /// <summary>
-        ///     Gets a boolean value indicating whether autocommit is enabled according to the explicit
+        ///     Gets a value indicating whether autocommit is enabled according to the explicit
         ///     configuration and Kafka defaults.
         /// </summary>
         public bool IsAutoCommitEnabled => EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled;
