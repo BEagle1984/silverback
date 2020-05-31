@@ -21,7 +21,9 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
     public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint, KafkaOffset>
     {
-        private static readonly TimeSpan RecoveryDelay = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan RecoveryDelay = TimeSpan.FromSeconds(5); // TODO: Could be configurable
+
+        private static readonly TimeSpan CloseTimeout = TimeSpan.FromSeconds(30); // TODO: Should be configurable
 
         private readonly ILogger<KafkaConsumer> _logger;
 
@@ -151,8 +153,17 @@ namespace Silverback.Messaging.Broker
             if (_innerConsumer == null)
                 return;
 
-            _innerConsumer.Close();
-            _innerConsumer.Dispose();
+            using var timeoutCancellationTokenSource = new CancellationTokenSource(CloseTimeout);
+
+            // Workaround for Close getting stuck
+            Task.Run(
+                    () =>
+                    {
+                        _innerConsumer.Close();
+                        _innerConsumer.Dispose();
+                    },
+                    timeoutCancellationTokenSource.Token)
+                .Wait(timeoutCancellationTokenSource.Token);
 
             _innerConsumer = null;
         }
