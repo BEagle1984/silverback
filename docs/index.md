@@ -22,7 +22,7 @@ title: "Home"
             </div>
         </div>
     </div>
-    <div class="container body-container keys">
+    <div class="container body-container body-content keys">
         <div class="row">
             <div class="col-md-4 key">
                 <i class="icon fas fa-paper-plane"></i>

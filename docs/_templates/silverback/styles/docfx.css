@@ -23,6 +23,16 @@ a.disable:hover {
   color: #333;
 }
 
+.container, .container-fluid {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+.row {
+  margin-right: 0;
+  margin-left: 0;
+}
+
 h1,
 h2,
 h3,
@@ -173,9 +183,17 @@ h6,
 .navbar > li > a {
   padding: 15px 10px;
 }
+.subnav {
+  border-bottom: 1px solid #e7e7e7;
+  background-color: #f8f8f8;
+}
 #wrapper {
   min-height: 100%;
   position: relative;
+  background: #ddd;
+}
+.body-content {
+  background: #fff;
 }
 /* .navbar-form {
   margin: 0px -15px;
@@ -533,13 +551,11 @@ article section {
 
 .sidetoc {
   position: fixed;
-  width: 260px;
+  width: 230px;
   top: 150px;
   bottom: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  /* background-color: #f1f1f1; */
-  border-left: 1px solid #e7e7e7;
   border-right: 1px solid #e7e7e7;
   z-index: 1;
 }
@@ -558,7 +574,7 @@ body .toc {
 }
 .sidetoc-expand > .caret {
   margin-left: 0px;
-  margin-top: -2px;
+  margin-top: 3px;
 }
 .sidetoc-expand > .caret-side {
   border-left: 4px solid;
@@ -572,8 +588,8 @@ body .toc {
 }
 
 .toc {
-  margin: 0px 0 0 10px;
-  padding: 0 10px;
+  margin: 0;
+  padding: 0 10px 0px 10px;
 }
 .expand-stub {
   position: absolute;
@@ -614,17 +630,22 @@ body .toc {
 .toc .nav > li.in > .expand-stub::before,
 .toc .nav > li.in.active > .expand-stub::before,
 .toc .nav > li.filtered > .expand-stub::before {
-  margin-top: 4px;
+  margin-top: -2px;
+  margin-left: 0px;
   transform: rotate(-90deg);
+  font-size: 24px;
+  font-weight: 100;
 }
 
 .toc .nav > li > .expand-stub::before,
 .toc .nav > li.active > .expand-stub::before {
   content: "\2039";
   position: absolute;
-  margin-left: -2px;
-  margin-top: 6px;
+  margin-left: 3px;
+  margin-top: 1px;
   transform: rotate(180deg);
+  font-size: 24px;
+  font-weight: 100;
 }
 
 .toc .nav > li.filtered > ul,
@@ -663,10 +684,9 @@ body .toc {
 .sidefilter {
   position: fixed;
   top: 90px;
-  width: 260px;
+  width: 230px;
   /* background-color: #f1f1f1; */
   padding: 15px;
-  border-left: 1px solid #e7e7e7;
   border-right: 1px solid #e7e7e7;
   z-index: 1;
 }
@@ -710,7 +730,7 @@ body .toc {
 }
 
 .article.grid-right {
-  margin-left: 280px;
+  margin-left: 250px;
 }
 
 .inheritance hr {
@@ -720,6 +740,9 @@ body .toc {
 .article img {
   max-width: 100%;
 }
+div [role="complementary"]{
+  padding-left: 0;
+}
 .sideaffix {
   margin-top: 50px;
   font-size: 14px;
@@ -728,6 +751,7 @@ body .toc {
   top: 100px;
   bottom: 10px;
   position: fixed;
+  width: 140px;
 }
 .sideaffix.shiftup {
   bottom: 70px;
@@ -740,9 +764,9 @@ body .toc {
   margin-bottom: 20px;
 }
 .sideaffix > div.contribution > ul > li > a.contribution-link {
-  padding: 6px 10px;
-  font-weight: bold;
-  font-size: 16px;
+  padding: 6px 0;
+  font-weight: normal;
+  font-size: 14px;
 }
 .sideaffix > div.contribution > ul > li > a.contribution-link:hover {
   background-color: #ffffff;
@@ -753,7 +777,7 @@ body .toc {
 .affix h5 {
   /* font-weight: bold; */
   /* text-transform: uppercase; */
-  padding-left: 10px;
+  /* padding-left: 10px; */
   /* font-size: 12px; */
 }
 .affix > ul.level1 {
@@ -761,57 +785,59 @@ body .toc {
   padding-bottom: 10px;
   height: calc(100% - 100px);
 }
-.affix ul > li > a:before {
-  color: #cccccc;
-  position: absolute;
-}
-.affix ul > li > a:hover {
-  background: none;
-  color: #666666;
+.affix ul ul {
+  display: none;
 }
 .affix ul > li.active > a,
 .affix ul > li.active > a:before {
   color: #0065b3;
 }
+.affix ul > li > a:hover {
+  color: #23527c !important;
+  text-decoration: underline;
+  background: inherit;
+}
 .affix ul > li > a {
-  padding: 5px 12px;
-  color: #666666;
+  padding: 3px 5px 3px 5px;
+  margin: 2px 0px;
+  color: #0065b3;
+  border-left: 3px solid transparent;
 }
 .affix > ul > li.active:last-child {
   margin-bottom: 50px;
-}
-.affix > ul > li > a:before {
-  content: "|";
-  font-size: 16px;
-  top: 1px;
-  left: 0;
-}
-.affix > ul > li.active > a,
-.affix > ul > li.active > a:before {
-  color: #0065b3;
-  font-weight: bold;
-}
-.affix ul ul {
-  padding: 0px 10px;
-}
-.affix ul ul > li > a {
-  padding: 2px 15px;
-}
-.affix ul ul > li > a:before {
-  content: "|";
-  font-size: 14px;
-  top: -1px;
-  left: 5px;
-}
-.affix ul > li > a:before,
-.affix ul ul {
-  display: none;
 }
 .affix ul > li.active > ul,
 .affix ul > li.active > a:before,
 .affix ul > li > a:hover:before {
   display: block;
-  white-space: nowrap;
+}
+.affix > ul > li.active > a {
+  border-left: 3px solid #0065b3;
+  font-weight: 500;
+}
+.affix ul ul {
+  padding: 0px 5px;
+}
+.affix ul ul > li > a {
+  margin: 0;
+  padding: 2px 5px 2px 10px;
+  border-left: 0;
+  font-size: 14px;
+}
+.affix ul ul ul > li > a {
+  font-size: 14px;
+}
+.affix ul ul > li.active > a {
+  color: #0065b3;
+  border-left: 0;
+  font-weight: 500;
+}
+.affix ul ul > li.active > a:before {
+  content: "\203A";
+  top: 4px;
+  left: 0;
+  font-size: 12px;
+  position: absolute;
 }
 .codewrapper {
   position: relative;
@@ -946,9 +972,6 @@ footer {
   .mobile-hide {
     display: none;
   }
-  .breadcrumb {
-    white-space: inherit;
-  }
 
   /* workaround for #hashtag url is no longer needed*/
   h1:before,
@@ -961,7 +984,7 @@ footer {
 }
 
 /* For toc iframe */
-@media (max-width: 260px) {
+@media (max-width: 230px) {
   .toc .level2 > li {
     display: block;
   }
