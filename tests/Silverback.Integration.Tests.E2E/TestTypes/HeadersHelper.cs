@@ -15,5 +15,13 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
                 new MessageHeader(DefaultMessageHeaders.ChunksCount, chunksCount),
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TMessage).AssemblyQualifiedName)
             };
+
+        public static MessageHeader[] GetChunkHeaders<TMessage>(int chunkIndex, int chunksCount) =>
+            new[]
+            {
+                new MessageHeader(DefaultMessageHeaders.ChunkIndex, chunkIndex),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, chunksCount),
+                new MessageHeader(DefaultMessageHeaders.MessageType, typeof(TMessage).AssemblyQualifiedName)
+            };
     }
 }

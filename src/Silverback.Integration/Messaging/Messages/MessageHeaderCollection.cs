@@ -113,6 +113,23 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <summary>
+        ///     Adds a new header if no header with the same name is already set.
+        /// </summary>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
+        /// <param name="newValue">
+        ///     The new header value.
+        /// </param>
+        public void AddIfNotExists(string name, string? newValue)
+        {
+            Check.NotNull(name, nameof(name));
+
+            if (!Contains(name))
+                Add(name, newValue);
+        }
+
+        /// <summary>
         ///     Returns a boolean value indicating whether an header with the specified name has already been added
         ///     to the collection.
         /// </summary>
@@ -129,8 +146,7 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified name.
         ///     </para>
         ///     <para>
-        ///         It will return <c>    null
-        ///         </c> if no header with that name is found in the collection.
+        ///         It will return <c>null</c> if no header with that name is found in the collection.
         ///     </para>
         /// </summary>
         /// <param name="name">
@@ -152,8 +168,7 @@ namespace Silverback.Messaging.Messages
         ///         <typeparamref name="T" />.
         ///     </para>
         ///     <para>
-        ///         It will return <c>    null
-        ///         </c> if no header with that name is found in the collection.
+        ///         It will return <c>null</c> if no header with that name is found in the collection.
         ///     </para>
         /// </summary>
         /// <typeparam name="T">
@@ -178,10 +193,8 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified name, casting it to the specified type.
         ///     </para>
         ///     <para>
-        ///         By default it will return <c>    null
-        ///         </c> if no header with that name is found in the collection but this behavior can be changed
-        ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>    true
-        ///         </c>.
+        ///         By default it will return <c>null</c> if no header with that name is found in the collection but this behavior can be changed
+        ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>true</c>.
         ///     </para>
         /// </summary>
         /// <param name="name">

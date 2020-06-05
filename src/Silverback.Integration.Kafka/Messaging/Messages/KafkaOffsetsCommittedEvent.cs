@@ -15,19 +15,17 @@ namespace Silverback.Messaging.Messages
     ///     Possible error conditions: <list type="bullet">
     ///         <item>
     ///             <description>
-    ///                 Entire request failed: <c>            Error
-    ///                 </c> is set, but not per-partition errors.
+    ///                 Entire request failed: <c>Error</c> is set, but not per-partition errors.
     ///             </description>
     ///         </item> <item>
     ///             <description>
-    ///                 All partitions failed: <c>            Error
-    ///                 </c> is set to the value of the last failed partition, but each partition may have
-    ///                 different errors.
+    ///                 All partitions failed: <c>Error</c> is set to the value of the last failed partition, but
+    ///                 each partition may have different errors.
     ///             </description>
     ///         </item> <item>
     ///             <description>
-    ///                 Some partitions failed: global <c>            Error
-    ///                 </c> is success ( <see cref="Confluent.Kafka.ErrorCode.NoError" />).
+    ///                 Some partitions failed: global <c>Error</c> is success
+    ///                 (<see cref="Confluent.Kafka.ErrorCode.NoError" />).
     ///             </description>
     ///         </item>
     ///     </list>

@@ -36,8 +36,7 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified key.
         ///     </para>
         ///     <para>
-        ///         It will return <c>    null
-        ///         </c> if no header with that key is found in the collection.
+        ///         It will return <c>null</c> if no header with that key is found in the collection.
         ///     </para>
         /// </summary>
         /// <param name="headers">
@@ -65,8 +64,7 @@ namespace Silverback.Messaging.Messages
         ///         <typeparamref name="T" />.
         ///     </para>
         ///     <para>
-        ///         It will return <c>    null
-        ///         </c> if no header with that key is found in the collection.
+        ///         It will return <c>null</c> if no header with that key is found in the collection.
         ///     </para>
         /// </summary>
         /// <typeparam name="T">
@@ -94,10 +92,8 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified key, casting it to the specified type.
         ///     </para>
         ///     <para>
-        ///         By default it will return <c>    null
-        ///         </c> if no header with that key is found in the collection but this behavior can be changed
-        ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>    true
-        ///         </c>.
+        ///         By default it will return <c>null</c> if no header with that key is found in the collection but this behavior can be changed
+        ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>true</c>.
         ///     </para>
         /// </summary>
         /// <param name="headers">

@@ -11,8 +11,7 @@ namespace Silverback
     ///         Used for example to sort the behaviors.
     ///     </para>
     ///     <para>
-    ///         The <c>    SortBySortIndex
-    ///         </c> extension method can be used to sort the enumerable collections of objects implementing
+    ///         The <c>SortBySortIndex</c> extension method can be used to sort the enumerable collections of objects implementing
     ///         this interface.
     ///     </para>
     /// </remarks>

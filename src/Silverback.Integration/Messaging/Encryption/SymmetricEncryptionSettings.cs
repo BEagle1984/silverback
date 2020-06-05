@@ -23,8 +23,7 @@ namespace Silverback.Messaging.Encryption
         ///         Gets or sets the block size, in bits, of the cryptographic operation.
         ///     </para>
         ///     <para>
-        ///         If <c>    null
-        ///         </c>, the default value for the specified algorithm will be used.
+        ///         If <c>null</c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
         public int? BlockSize { get; set; }
@@ -35,8 +34,7 @@ namespace Silverback.Messaging.Encryption
         ///         (CFB) and Output Feedback (OFB) cipher modes.
         ///     </para>
         ///     <para>
-        ///         If <c>    null
-        ///         </c>, the default value for the specified algorithm will be used.
+        ///         If <c>null</c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
         public int? FeedbackSize { get; set; }
@@ -48,8 +46,7 @@ namespace Silverback.Messaging.Encryption
         ///     <para>
         ///         <b>
         ///             Important:
-        ///         </b> If <c>    null
-        ///         </c> no fixed IV is provided and the producer will automatically generate a random one for each
+        ///         </b> If <c>null</c> no fixed IV is provided and the producer will automatically generate a random one for each
         ///         message that will also be prepended to the actual encrypted message to be available to the
         ///         consumer.
         ///     </para>
@@ -70,8 +67,7 @@ namespace Silverback.Messaging.Encryption
         ///         Gets or sets the mode for operation of the symmetric algorithm.
         ///     </para>
         ///     <para>
-        ///         If <c>    null
-        ///         </c>, the default value for the specified algorithm will be used.
+        ///         If <c>null</c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
         public CipherMode? CipherMode { get; set; }
@@ -81,8 +77,7 @@ namespace Silverback.Messaging.Encryption
         ///         Gets or sets the padding mode used in the symmetric algorithm.
         ///     </para>
         ///     <para>
-        ///         If <c>    null
-        ///         </c>, the default value for the specified algorithm will be used.
+        ///         If <c>null</c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
         public PaddingMode? PaddingMode { get; set; }

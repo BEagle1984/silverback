@@ -32,8 +32,7 @@ namespace Silverback.Messaging
         ///         consumer.
         ///     </para>
         ///     <para>
-        ///         Set it to <c>    null
-        ///         </c> (default) to disable this feature.
+        ///         Set it to <c>null</c> (default) to disable this feature.
         ///     </para>
         /// </summary>
         EncryptionSettings? Encryption { get; }

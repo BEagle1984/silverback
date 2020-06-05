@@ -11,21 +11,25 @@ namespace Silverback.Util
     ///         This comparer is meant to be used for configuration dictionaries only.
     ///     </para>
     ///     <para>
-    ///         Nome of the applied rules: <list type="bullet">
+    ///         Nome of the applied rules:
+    ///         <list type="bullet">
     ///             <item>
     ///                 <description>
     ///                     a null dictionary is equal to an empty dictionary
     ///                 </description>
-    ///             </item> <item>
+    ///             </item>
+    ///             <item>
     ///                 <description>
-    ///                     entries with null values (or <c>                default(TValue)
-    ///                     </c>) and equivalent to completely missing entries
+    ///                     entries with null values (or <c>default(TValue)</c>) and equivalent to completely
+    ///                     missing entries
     ///                 </description>
-    ///             </item> <item>
+    ///             </item>
+    ///             <item>
     ///                 <description>
     ///                     the default comparer is used for values
     ///                 </description>
-    ///             </item> <item>
+    ///             </item>
+    ///             <item>
     ///                 <description>
     ///                     multiple entries with the same key are not allowed
     ///                 </description>

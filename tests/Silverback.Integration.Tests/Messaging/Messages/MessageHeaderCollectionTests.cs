@@ -132,6 +132,39 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         }
 
         [Fact]
+        public void AddIfNotExists_ExistingHeader_ValueNotChanged()
+        {
+            var collection = new MessageHeaderCollection
+            {
+                { "one", "1" },
+                { "two", "2" }
+            };
+
+            collection.AddIfNotExists("one", "1(2)");
+
+            collection.Should().BeEquivalentTo(
+                new MessageHeader("one", "1"),
+                new MessageHeader("two", "2"));
+        }
+
+        [Fact]
+        public void AddIfNotExists_NewHeader_HeaderAdded()
+        {
+            var collection = new MessageHeaderCollection
+            {
+                { "one", "1" },
+                { "two", "2" }
+            };
+
+            collection.AddIfNotExists("three", "3");
+
+            collection.Should().BeEquivalentTo(
+                new MessageHeader("one", "1"),
+                new MessageHeader("two", "2"),
+                new MessageHeader("three", "3"));
+        }
+
+        [Fact]
         public void Contains_ExistingKey_ReturnsTrue()
         {
             var collection = new MessageHeaderCollection

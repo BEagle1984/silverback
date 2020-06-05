@@ -288,12 +288,13 @@ namespace Silverback.Messaging.Broker
 
             if (message.Key != null)
             {
-                headers.AddOrReplace(
-                    KafkaMessageHeaders.KafkaMessageKey,
-                    _serializer.DeserializeKey(
-                        message.Key,
-                        headers,
-                        new MessageSerializationContext(Endpoint, tpo.Topic)));
+                string deserializedKafkaKey = _serializer.DeserializeKey(
+                    message.Key,
+                    headers,
+                    new MessageSerializationContext(Endpoint, tpo.Topic));
+
+                headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, deserializedKafkaKey);
+                headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
             }
 
             await HandleMessage(
