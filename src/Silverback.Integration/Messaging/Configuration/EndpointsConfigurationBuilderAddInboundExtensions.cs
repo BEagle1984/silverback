@@ -41,6 +41,7 @@ namespace Silverback.Messaging.Configuration
             InboundConnectorSettings? settings = null)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             endpointsConfigurationBuilder.AddInbound(endpoint, null, errorPolicyFactory, settings);
 
@@ -77,6 +78,7 @@ namespace Silverback.Messaging.Configuration
             where TConnector : IInboundConnector
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             endpointsConfigurationBuilder.AddInbound(endpoint, typeof(TConnector), errorPolicyFactory, settings);
 
@@ -114,6 +116,7 @@ namespace Silverback.Messaging.Configuration
             InboundConnectorSettings? settings = null)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             var inboundConnectors = endpointsConfigurationBuilder.ServiceProvider
                 .GetServices<IInboundConnector>().ToList();

@@ -38,6 +38,7 @@ namespace Silverback.Messaging.Configuration
             where TConnector : IOutboundConnector
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             return endpointsConfigurationBuilder.AddOutbound<TMessage, TConnector>(new[] { endpoint });
         }
@@ -66,6 +67,7 @@ namespace Silverback.Messaging.Configuration
             where TConnector : IOutboundConnector
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoints, nameof(endpoints));
 
             return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), endpoints, typeof(TConnector));
         }
@@ -94,6 +96,7 @@ namespace Silverback.Messaging.Configuration
             where TConnector : IOutboundConnector
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoints, nameof(endpoints));
 
             return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), endpoints, typeof(TConnector));
         }
@@ -118,6 +121,7 @@ namespace Silverback.Messaging.Configuration
             params IProducerEndpoint[] endpoints)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoints, nameof(endpoints));
 
             return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), endpoints);
         }
@@ -147,6 +151,7 @@ namespace Silverback.Messaging.Configuration
             Type? outboundConnectorType = null)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoint, nameof(endpoint));
 
             return endpointsConfigurationBuilder.AddOutbound<TMessage>(
                 new[] { endpoint },
@@ -178,6 +183,7 @@ namespace Silverback.Messaging.Configuration
             Type? outboundConnectorType = null)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoints, nameof(endpoints));
 
             return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), endpoints, outboundConnectorType);
         }
@@ -208,6 +214,7 @@ namespace Silverback.Messaging.Configuration
             Type? outboundConnectorType = null)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoints, nameof(endpoints));
 
             return endpointsConfigurationBuilder.AddOutbound(
                 messageType,
@@ -293,6 +300,7 @@ namespace Silverback.Messaging.Configuration
             where TConnector : IOutboundConnector
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(router, nameof(router));
 
             return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), router, typeof(TConnector));
         }
@@ -322,6 +330,7 @@ namespace Silverback.Messaging.Configuration
             Type? outboundConnectorType = null)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(router, nameof(router));
 
             return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), router, outboundConnectorType);
         }
@@ -388,6 +397,7 @@ namespace Silverback.Messaging.Configuration
             Type? outboundConnectorType)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(router, nameof(router));
 
             endpointsConfigurationBuilder.GetOutboundRoutingConfiguration()
                 .Add(messageType, router, outboundConnectorType);

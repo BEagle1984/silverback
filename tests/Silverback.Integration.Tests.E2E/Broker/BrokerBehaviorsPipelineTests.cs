@@ -290,7 +290,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
         }
 
         [Fact]
-        public async Task ChunkingWithWithCustomHeaders_HeadersTransferred()
+        public async Task ChunkingWithCustomHeaders_HeadersTransferred()
         {
             var message = new TestEventWithHeaders
             {
@@ -322,6 +322,46 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 new MessageHeader("x-custom-header", "Hello header!"));
             _spyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-custom-header2", "False"));
+        }
+
+        [Fact]
+        public async Task ChunkingWithRemappedHeaderNames_HeadersRemappedAndMessageReceived()
+        {
+            var message = new TestEventOne
+            {
+                Content = "Hello E2E!"
+            };
+
+            _configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("test-e2e")
+                        {
+                            Chunk = new ChunkSettings
+                            {
+                                Size = 10
+                            }
+                        })
+                    .AddInbound(new KafkaConsumerEndpoint("test-e2e"))
+                    .WithCustomHeaderName(DefaultMessageHeaders.ChunkIndex, "x-ch-id")
+                    .WithCustomHeaderName(DefaultMessageHeaders.ChunksCount, "x-ch-cnt"));
+
+            using var scope = _serviceProvider.CreateScope();
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(message);
+
+            _spyBehavior.OutboundEnvelopes.ForEach(
+                envelope =>
+                {
+                    envelope.Headers.GetValue("x-ch-id").Should().NotBeNullOrEmpty();
+                    envelope.Headers.GetValue("x-ch-cnt").Should().NotBeNullOrEmpty();
+                    envelope.Headers.GetValue(DefaultMessageHeaders.ChunkIndex).Should().BeNull();
+                    envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).Should().BeNull();
+                });
+
+            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            _spyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
 
         [Fact]

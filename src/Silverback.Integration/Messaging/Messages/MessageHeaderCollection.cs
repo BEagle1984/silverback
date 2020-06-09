@@ -256,5 +256,19 @@ namespace Silverback.Messaging.Messages
         /// </returns>
         public object? GetValueOrDefault(string name, Type targetType) =>
             this.AsEnumerable().GetValueOrDefault(name, targetType);
+
+        /// <summary>
+        ///     Creates a new <see cref="MessageHeaderCollection"/> cloning all the headers in the current collection.
+        /// </summary>
+        /// <returns>
+        ///     A clone of the current collection.
+        /// </returns>
+        public IEnumerable<MessageHeader> Clone()
+        {
+            var clone = new MessageHeaderCollection();
+            clone.AddRange(this.Select(header => new MessageHeader(header.Name, header.Value)));
+
+            return clone;
+        }
     }
 }

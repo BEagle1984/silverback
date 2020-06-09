@@ -62,6 +62,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <see cref="ChunkSplitterProducerBehavior" /> sort index.
             /// </summary>
             public const int ChunkSplitter = 1000;
+
+            /// <summary>
+            ///     The <see cref="CustomHeadersMapperProducerBehavior" /> sort index.
+            /// </summary>
+            public const int CustomHeadersMapper = 1100;
         }
 
         /// <summary>
@@ -78,6 +83,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <see cref="FatalExceptionLoggerConsumerBehavior" /> sort index.
             /// </summary>
             public const int FatalExceptionLogger = 110;
+
+            /// <summary>
+            ///     The <see cref="CustomHeadersMapperConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int CustomHeadersMapper = 150;
 
             /// <summary>
             ///     The <see cref="InboundProcessorConsumerBehavior" /> sort index.

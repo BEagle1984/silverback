@@ -17,7 +17,6 @@ The `HeaderAttribute` usage is very simple: you just have to decorate the proper
 
 The headers value will also automatically be mapped back to the property upon consuming if the property declares a setter.
 
-# [Message Model](#tab/attribute)
 ```csharp
 using Silverback.Messaging.Messages;
 
@@ -39,7 +38,6 @@ namespace Sample
     }
 }
 ```
-***
 
 > [!Note]
 > The `PublishDefaultValue` boolean property defines whether the header has to be published even if the property is set to the default value for its data type. The default is `false`.
@@ -56,13 +54,13 @@ Here is the list of the default headers that may be sent.
 
 Header Key | Description
 :-- | :--
-`x-message-id` | The message <xref:message-id>.
+`x-message-id` | The [message identifier](xref:xref:message-id).
 `x-message-type` | The assembly qualified name of the message type. Used by the default `JsonMessageSerializer`.
 `x-failed-attempts` | If an exception if thrown the failed attempts will be incremented and stored as header. This is necessary for the [error policies](xref:inbound#error-handling) to work.
-`x-source-endpoint` | This will be set by the `Move` is being moved from.
-`x-chunk-id` | The unique id of the message chunk, used when <xref:chunking> is enabled.
-`x-chunks-count` | The total number of chunks the message was split into, used when <xref:chunking> is enabled.
-`x-first-chunk-offset` | The `IOffset` value of the first chunk of the same message, used when <xref:chunking> is enabled.
+`x-source-endpoint` | This will be set by the `Move` error policy and will contain the name of the endpoint the failed message is being moved from.
+`x-chunk-id` | The unique id of the message chunk, used when [chunking](xref:chunking) is enabled.
+`x-chunks-count` | The total number of chunks the message was split into, used when [chunking](xref:chunking) is enabled.
+`x-first-chunk-offset` | The `IOffset` value of the first chunk of the same message, used when [chunking](xref:chunking) is enabled.
 `x-batch-id` | The unique id assigned to the messages batch, used mostly for tracing, when [batch processing](xref:inbound#batch-processing) is enabled.
 `x-batch-size` | The total number of messages in the batch, used mostly for tracing, when [batch processing](xref:inbound#batch-processing) is enabled.
 `traceparent` | The current `Activity.Id`, used by the `IConsumer` implementation to set the `Activity.ParentId`, thus enabling distributed tracing across the message broker. Note that an `Activity` is automatically started by the default `IProducer` implementation. See [System.Diagnostics documentation](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=netcore-3.1) for details about `Activity` and distributed tracing in asp.net core and [W3C Trace Context proposal](https://www.w3.org/TR/trace-context-1) for details about the headers.
@@ -89,3 +87,19 @@ Header Key | Constant
 `tracebaggage` | `DefaultMessageHeaders.TraceBaggage`
 `content-type` | `DefaultMessageHeaders.ContentType`
 `x-kafka-message-key` | `KafkaMessageHeaders.KafkaKey`
+
+The default header names can be overridden using the `WithCustomHeaderName` method.
+
+```csharp
+public class Startup
+{
+    public void Configure(IBusConfigurator busConfigurator)
+    {
+        busConfigurator.Connect(endpoints => endpoints
+            .AddInbound(...)
+            .AddOutbound<...>(...)
+            .WithCustomHeaderName(DefaultMessageHeaders.ChunkId, "x-ch-id")
+            .WithCustomHeaderName(DefaultMessageHeaders.ChunksCount, "x-ch-cnt"));
+    }
+}
+```

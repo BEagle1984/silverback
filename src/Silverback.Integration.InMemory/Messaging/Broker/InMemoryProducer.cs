@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Broker
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            return Broker.GetTopic(Endpoint.Name).Publish(envelope.RawMessage, envelope.Headers);
+            return Broker.GetTopic(Endpoint.Name).Publish(envelope.RawMessage, envelope.Headers.Clone());
         }
 
         /// <inheritdoc cref="Producer.ProduceAsyncCore" />
@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Broker
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            return Broker.GetTopic(Endpoint.Name).PublishAsync(envelope.RawMessage, envelope.Headers);
+            return Broker.GetTopic(Endpoint.Name).PublishAsync(envelope.RawMessage, envelope.Headers.Clone());
         }
     }
 }
