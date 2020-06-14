@@ -144,6 +144,17 @@ namespace Silverback.Examples.Consumer.Configuration
                     policy.Retry().MaxFailedAttempts(2),
                     policy.Skip().LogWithLevel(LogLevel.Critical)))
             .AddInbound(
+                new KafkaConsumerEndpoint("silverback-examples-error-events3")
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://localhost:9092",
+                        GroupId = _app.ConsumerGroupName,
+                        AutoOffsetReset = AutoOffsetReset.Earliest
+                    }
+                },
+                policy => policy.Retry().MaxFailedAttempts(5))
+            .AddInbound(
                 new KafkaConsumerEndpoint("silverback-examples-error-unhandled")
                 {
                     Configuration = new KafkaConsumerConfig

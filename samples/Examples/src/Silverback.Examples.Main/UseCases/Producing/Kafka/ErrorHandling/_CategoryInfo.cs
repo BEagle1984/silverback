@@ -20,6 +20,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
 
         public IEnumerable<Type> Children => new List<Type>
         {
+            typeof(RetryErrorPolicyUseCase),
             typeof(RetryAndMoveErrorPolicyUseCase),
             typeof(RetryAndSkipErrorPolicyUseCase),
             typeof(RetryAndSkipErrorPolicyUseCase2),
