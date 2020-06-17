@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///     </para>
     /// </summary>
     // TODO: Test maybe?
-    public sealed class DbOffsetStore : RepositoryBase<StoredOffset>, IOffsetStore, IDisposable
+    public sealed class DbOffsetStore : RepositoryBase<StoredOffset>, IOffsetStore
     {
         private static readonly JsonSerializerSettings SerializerSettings =
             new JsonSerializerSettings
@@ -34,8 +34,6 @@ namespace Silverback.Messaging.Connectors.Repositories
                 DefaultValueHandling = DefaultValueHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.Auto
             };
-
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DbOffsetStore" /> class.
@@ -54,39 +52,21 @@ namespace Silverback.Messaging.Connectors.Repositories
             Check.NotNull(offset, nameof(offset));
             Check.NotNull(endpoint, nameof(endpoint));
 
-            await _semaphore.WaitAsync();
+            var storedOffsetEntity = await DbSet.FindAsync(GetKey(offset.Key, endpoint)) ??
+                                     DbSet.Add(
+                                         new StoredOffset
+                                         {
+                                             Key = GetKey(offset.Key, endpoint)
+                                         });
 
-            try
-            {
-                var storedOffsetEntity = await DbSet.FindAsync(GetKey(offset.Key, endpoint)) ??
-                                         DbSet.Add(
-                                             new StoredOffset
-                                             {
-                                                 Key = GetKey(offset.Key, endpoint)
-                                             });
-
-                storedOffsetEntity.Offset = JsonConvert.SerializeObject(offset, typeof(IOffset), SerializerSettings);
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+            storedOffsetEntity.Offset = JsonConvert.SerializeObject(offset, typeof(IOffset), SerializerSettings);
         }
 
         /// <inheritdoc cref="ITransactional.Commit" />
         public async Task Commit()
         {
-            await _semaphore.WaitAsync();
-
-            try
-            {
-                // Call SaveChanges, in case it isn't called by a subscriber
-                await DbContext.SaveChangesAsync();
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+            // Call SaveChanges, in case it isn't called by a subscriber
+            await DbContext.SaveChangesAsync();
         }
 
         /// <inheritdoc cref="ITransactional.Rollback" />
@@ -108,12 +88,6 @@ namespace Silverback.Messaging.Connectors.Repositories
             return storedOffsetEntity?.Offset != null
                 ? JsonConvert.DeserializeObject<IComparableOffset>(storedOffsetEntity.Offset, SerializerSettings)
                 : null;
-        }
-
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        public void Dispose()
-        {
-            _semaphore.Dispose();
         }
 
         private static string GetKey(string offsetKey, IConsumerEndpoint endpoint) =>
