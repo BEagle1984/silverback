@@ -56,7 +56,7 @@ namespace Silverback.Database
         /// <returns>
         ///     The entity found, or <c>null</c>.
         /// </returns>
-        TEntity Find(params object[] keyValues);
+        TEntity? Find(params object[] keyValues);
 
         /// <summary>
         ///     Finds the entity with the specified key(s). Returns <c>null</c> if not found.
@@ -67,7 +67,7 @@ namespace Silverback.Database
         /// <returns>
         ///     The entity found, or <c>null</c>.
         /// </returns>
-        Task<TEntity> FindAsync(params object[] keyValues);
+        Task<TEntity?> FindAsync(params object[] keyValues);
 
         /// <summary>
         ///     Returns an <see cref="IQueryable" /> to query the set.

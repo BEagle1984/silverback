@@ -70,7 +70,8 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             var person = _efCoreDbContext.GetDbSet<Person>().Find(2);
 
-            person.Name.Should().Be("Mandy");
+            person.Should().NotBeNull();
+            person!.Name.Should().Be("Mandy");
         }
 
         [Fact]
@@ -82,7 +83,8 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             var person = await _efCoreDbContext.GetDbSet<Person>().FindAsync(2);
 
-            person.Name.Should().Be("Mandy");
+            person.Should().NotBeNull();
+            person!.Name.Should().Be("Mandy");
         }
 
         [Fact]

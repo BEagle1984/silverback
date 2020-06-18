@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
@@ -16,11 +17,32 @@ namespace Silverback.Messaging.Broker
         /// <param name="key">
         ///     The unique key of the queue, topic or partition this offset belongs to.
         /// </param>
+        /// <param name="value">
+        ///     The offset value.
+        /// </param>
+        public InMemoryOffset(string key, string value)
+        {
+            Check.NotEmpty(key, nameof(key));
+            Check.NotEmpty(value, nameof(value));
+
+            Key = key;
+            Offset = int.Parse(value, CultureInfo.InvariantCulture);
+            Value = value;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="InMemoryOffset" /> class.
+        /// </summary>
+        /// <param name="key">
+        ///     The unique key of the queue, topic or partition this offset belongs to.
+        /// </param>
         /// <param name="offset">
         ///     The offset value.
         /// </param>
         public InMemoryOffset(string key, int offset)
         {
+            Check.NotEmpty(key, nameof(key));
+
             Key = key;
             Offset = offset;
             Value = offset.ToString(CultureInfo.InvariantCulture);

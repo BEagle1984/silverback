@@ -17,6 +17,10 @@ namespace Silverback.Messaging.Broker
     ///         the exactly-one delivery using the <see cref="OffsetStoredInboundConnector" />.
     ///     </para>
     /// </summary>
+    /// <remarks>
+    ///     The classes implementing this interface should also implement a public constructor accepting key and
+    ///     value as string arguments.
+    /// </remarks>
     public interface IOffset
     {
         /// <summary>
@@ -33,8 +37,8 @@ namespace Silverback.Messaging.Broker
         ///     Returns a string representation of the offset suitable for logging purpose.
         /// </summary>
         /// <returns>
-        ///     For an optimal readability of the logs this string should include the topic/queue subset such as the
-        ///     partition in Kafka, but not the topic/queue name.
+        ///     For an optimal readability of the logs this string should include the topic/queue subset (such as the
+        ///     partition in Kafka) but not the topic/queue name (that's already logged).
         /// </returns>
         string ToLogString();
     }

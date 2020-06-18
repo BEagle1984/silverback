@@ -48,7 +48,7 @@ namespace Silverback.Util
 
         [ContractAnnotation("value:null => halt")]
         public static string NotEmpty(
-            string? value,
+            [ValidatedNotNullAttribute] string? value,
             [InvokerParameterName] string parameterName)
         {
             Exception? exception = null;

@@ -42,10 +42,10 @@ namespace Silverback.Database
         public void RemoveRange(IEnumerable<TEntity> entities) => _dbSet.RemoveRange(entities);
 
         /// <inheritdoc cref="IDbSet{TEntity}.Find" />
-        public TEntity Find(params object[] keyValues) => _dbSet.Find(keyValues);
+        public TEntity? Find(params object[] keyValues) => _dbSet.Find(keyValues);
 
         /// <inheritdoc cref="IDbSet{TEntity}.FindAsync" />
-        public async Task<TEntity> FindAsync(params object[] keyValues) => await _dbSet.FindAsync(keyValues);
+        public async Task<TEntity?> FindAsync(params object[] keyValues) => await _dbSet.FindAsync(keyValues);
 
         /// <inheritdoc cref="IDbSet{TEntity}.AsQueryable" />
         public IQueryable<TEntity> AsQueryable() => _dbSet;

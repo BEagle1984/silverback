@@ -2,13 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories
@@ -56,10 +56,15 @@ namespace Silverback.Messaging.Connectors.Repositories
                                      DbSet.Add(
                                          new StoredOffset
                                          {
-                                             Key = GetKey(offset.Key, endpoint)
+                                             Key = GetKey(offset.Key, endpoint),
+                                             ClrType = offset.GetType().AssemblyQualifiedName
                                          });
 
-            storedOffsetEntity.Offset = JsonConvert.SerializeObject(offset, typeof(IOffset), SerializerSettings);
+            storedOffsetEntity.Value = offset.Value;
+
+#pragma warning disable 618
+            storedOffsetEntity.Offset = null;
+#pragma warning restore 618
         }
 
         /// <inheritdoc cref="ITransactional.Commit" />
@@ -85,9 +90,33 @@ namespace Silverback.Messaging.Connectors.Repositories
             var storedOffsetEntity = await DbSet.FindAsync(GetKey(offsetKey, endpoint)) ??
                                      await DbSet.FindAsync(offsetKey);
 
-            return storedOffsetEntity?.Offset != null
-                ? JsonConvert.DeserializeObject<IComparableOffset>(storedOffsetEntity.Offset, SerializerSettings)
-                : null;
+            return DeserializeOffset(storedOffsetEntity);
+        }
+
+        private static IComparableOffset? DeserializeOffset(StoredOffset? storedOffsetEntity)
+        {
+            if (storedOffsetEntity == null)
+                return null;
+
+            if (storedOffsetEntity.Value != null)
+            {
+                var offsetType = TypesCache.GetType(storedOffsetEntity.ClrType!);
+                var offset = (IComparableOffset)Activator.CreateInstance(
+                    offsetType,
+                    storedOffsetEntity.Key,
+                    storedOffsetEntity.Value);
+
+                return offset;
+            }
+
+#pragma warning disable 618
+            if (storedOffsetEntity.Offset != null)
+            {
+                return JsonConvert.DeserializeObject<IComparableOffset>(storedOffsetEntity.Offset, SerializerSettings);
+            }
+#pragma warning restore 618
+
+            throw new InvalidOperationException("The offset cannot be deserialized. Both Value and Offset are null.");
         }
 
         private static string GetKey(string offsetKey, IConsumerEndpoint endpoint) =>

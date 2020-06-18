@@ -11,6 +11,22 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitOffset" /> class.
         /// </summary>
+        /// <param name="key">
+        ///     The unique key of the queue, topic or partition this offset belongs to.
+        /// </param>
+        /// <param name="value">
+        ///     The offset value.
+        /// </param>
+        public RabbitOffset(string key, string value)
+        {
+            ConsumerTag = key;
+            DeliveryTag = ulong.Parse(value, CultureInfo.InvariantCulture);
+            Value = value;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RabbitOffset" /> class.
+        /// </summary>
         /// <param name="consumerTag">
         ///     The consumer identifier.
         /// </param>
@@ -21,6 +37,7 @@ namespace Silverback.Messaging.Broker
         {
             ConsumerTag = consumerTag;
             DeliveryTag = deliveryTag;
+            Value = DeliveryTag.ToString(CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -37,7 +54,7 @@ namespace Silverback.Messaging.Broker
         public string Key => ConsumerTag;
 
         /// <inheritdoc cref="IOffset.Value" />
-        public string Value => DeliveryTag.ToString(CultureInfo.InvariantCulture);
+        public string Value { get; }
 
         /// <inheritdoc cref="IOffset.ToLogString" />
         public string ToLogString() => DeliveryTag.ToString(CultureInfo.InvariantCulture);

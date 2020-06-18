@@ -78,6 +78,10 @@ namespace Silverback.Messaging.Connectors.Repositories
                 throw new InvalidOperationException("A DbQueuedMessage is expected.");
 
             var entity = await DbSet.FindAsync(dbQueuedMessage.Id);
+
+            if (entity == null)
+                return;
+
             DbSet.Remove(entity);
 
             await DbContext.SaveChangesAsync();

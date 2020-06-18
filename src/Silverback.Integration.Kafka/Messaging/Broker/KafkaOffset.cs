@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Confluent.Kafka;
-using Newtonsoft.Json;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -12,6 +12,31 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IComparableOffset" />
     public sealed class KafkaOffset : IComparableOffset
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaOffset" /> class.
+        /// </summary>
+        /// <param name="key">
+        ///     The unique key of the queue, topic or partition this offset belongs to.
+        /// </param>
+        /// <param name="value">
+        ///     The offset value.
+        /// </param>
+        public KafkaOffset(string key, string value)
+        {
+            Check.NotEmpty(key, nameof(key));
+            Check.NotEmpty(value, nameof(value));
+
+            Key = key;
+            Value = value;
+
+            int topicPartitionSeparatorIndex = key.IndexOf('[', StringComparison.Ordinal);
+            Topic = key.Substring(0, topicPartitionSeparatorIndex);
+            Partition = int.Parse(
+                key.Substring(topicPartitionSeparatorIndex + 1, key.Length - topicPartitionSeparatorIndex - 2),
+                CultureInfo.InvariantCulture);
+            Offset = int.Parse(value, CultureInfo.InvariantCulture);
+        }
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaOffset" /> class.
         /// </summary>
@@ -24,15 +49,16 @@ namespace Silverback.Messaging.Broker
         /// <param name="offset">
         ///     The offset in the partition.
         /// </param>
-        [JsonConstructor]
         public KafkaOffset(string topic, int partition, long offset)
         {
+            Check.NotEmpty(topic, nameof(topic));
+
             Topic = topic;
             Partition = partition;
             Offset = offset;
 
             Key = $"{topic}[{partition}]";
-            Value = $"{offset}";
+            Value = offset.ToString(CultureInfo.InvariantCulture);
         }
 
         /// <summary>
