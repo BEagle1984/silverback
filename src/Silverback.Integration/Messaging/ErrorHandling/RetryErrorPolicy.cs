@@ -49,9 +49,9 @@ namespace Silverback.Messaging.ErrorHandling
 
         private void ApplyDelay(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
-            var delay = _initialDelay.Milliseconds +
+            var delay = (int)_initialDelay.TotalMilliseconds +
                         envelopes.First().Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) *
-                        _delayIncrement.Milliseconds;
+                        (int)_delayIncrement.TotalMilliseconds;
 
             if (delay <= 0)
                 return;

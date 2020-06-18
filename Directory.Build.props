@@ -6,7 +6,7 @@
     <License>MIT</License>
     <Copyright>Copyright (c) 2020 Sergio Aquilini</Copyright>
     <VersionSuffix></VersionSuffix>
-    <BaseVersion>2.1.1$(VersionSuffix)</BaseVersion>
+    <BaseVersion>2.1.2$(VersionSuffix)</BaseVersion>
     <ProjectUrl>https://beagle1984.github.io/silverback/</ProjectUrl>
     <RepositoryUrl>https://github.com/BEagle1984/silverback/</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
