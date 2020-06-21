@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 #pragma warning disable 1591 // Will maybe document later
 
@@ -12,98 +12,98 @@ namespace Silverback.Messaging.Messages.Statistics
     [SuppressMessage("ReSharper", "SA1600", Justification = "Will maybe document later")]
     public class BrokerStatistics
     {
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
-        [JsonProperty("nodeid")]
+        [JsonPropertyName("nodeid")]
         public long NodeId { get; set; }
 
-        [JsonProperty("nodename")]
+        [JsonPropertyName("nodename")]
         public string NodeName { get; set; } = string.Empty;
 
-        [JsonProperty("source")]
+        [JsonPropertyName("source")]
         public string Source { get; set; } = string.Empty;
 
-        [JsonProperty("state")]
+        [JsonPropertyName("state")]
         public string State { get; set; } = string.Empty;
 
-        [JsonProperty("stateage")]
+        [JsonPropertyName("stateage")]
         public long StateAge { get; set; }
 
-        [JsonProperty("outbuf_cnt")]
+        [JsonPropertyName("outbuf_cnt")]
         public long OutbufCnt { get; set; }
 
-        [JsonProperty("outbuf_msg_cnt")]
+        [JsonPropertyName("outbuf_msg_cnt")]
         public long OutbufMsgCnt { get; set; }
 
-        [JsonProperty("waitresp_cnt")]
+        [JsonPropertyName("waitresp_cnt")]
         public long WaitRespCnt { get; set; }
 
-        [JsonProperty("waitresp_msg_cnt")]
+        [JsonPropertyName("waitresp_msg_cnt")]
         public long WaitRespMsgCnt { get; set; }
 
-        [JsonProperty("tx")]
+        [JsonPropertyName("tx")]
         public long Tx { get; set; }
 
-        [JsonProperty("txbytes")]
+        [JsonPropertyName("txbytes")]
         public long TxBytes { get; set; }
 
-        [JsonProperty("txerrs")]
+        [JsonPropertyName("txerrs")]
         public long TxErrs { get; set; }
 
-        [JsonProperty("txretries")]
+        [JsonPropertyName("txretries")]
         public long TxRetries { get; set; }
 
-        [JsonProperty("req_timeouts")]
+        [JsonPropertyName("req_timeouts")]
         public long ReqTimeouts { get; set; }
 
-        [JsonProperty("rx")]
+        [JsonPropertyName("rx")]
         public long Rx { get; set; }
 
-        [JsonProperty("rxbytes")]
+        [JsonPropertyName("rxbytes")]
         public long RxBytes { get; set; }
 
-        [JsonProperty("rxerrs")]
+        [JsonPropertyName("rxerrs")]
         public long RxErrs { get; set; }
 
-        [JsonProperty("rxcorriderrs")]
+        [JsonPropertyName("rxcorriderrs")]
         public long RxCorriderrs { get; set; }
 
-        [JsonProperty("rxpartial")]
+        [JsonPropertyName("rxpartial")]
         public long RxPartial { get; set; }
 
-        [JsonProperty("zbuf_grow")]
+        [JsonPropertyName("zbuf_grow")]
         public long ZBufGrow { get; set; }
 
-        [JsonProperty("buf_grow")]
+        [JsonPropertyName("buf_grow")]
         public long BufGrow { get; set; }
 
-        [JsonProperty("wakeups")]
+        [JsonPropertyName("wakeups")]
         public long Wakeups { get; set; }
 
-        [JsonProperty("connects")]
+        [JsonPropertyName("connects")]
         public long Connects { get; set; }
 
-        [JsonProperty("disconnects")]
+        [JsonPropertyName("disconnects")]
         public long Disconnects { get; set; }
 
-        [JsonProperty("int_latency")]
+        [JsonPropertyName("int_latency")]
         public WindowStatistics IntLatency { get; set; } = new WindowStatistics();
 
-        [JsonProperty("outbuf_latency")]
+        [JsonPropertyName("outbuf_latency")]
         public WindowStatistics OutbufLatency { get; set; } = new WindowStatistics();
 
-        [JsonProperty("rtt")]
+        [JsonPropertyName("rtt")]
         public WindowStatistics Rtt { get; set; } = new WindowStatistics();
 
-        [JsonProperty("throttle")]
+        [JsonPropertyName("throttle")]
         public WindowStatistics Throttle { get; set; } = new WindowStatistics();
 
-        [JsonProperty("req")]
+        [JsonPropertyName("req")]
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public Dictionary<string, long> Requests { get; set; } = new Dictionary<string, long>();
 
-        [JsonProperty("toppars")]
+        [JsonPropertyName("toppars")]
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public Dictionary<string, TopicPartitions> TopicPartitions { get; set; } =
             new Dictionary<string, TopicPartitions>();

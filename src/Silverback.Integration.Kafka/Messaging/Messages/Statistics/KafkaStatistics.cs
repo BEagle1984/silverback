@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 #pragma warning disable 1591 // Will maybe document later
 
@@ -17,78 +17,78 @@ namespace Silverback.Messaging.Messages.Statistics
     [SuppressMessage("ReSharper", "SA1600", Justification = "Will maybe document later")]
     public class KafkaStatistics
     {
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
-        [JsonProperty("client_id")]
+        [JsonPropertyName("client_id")]
         public string ClientId { get; set; } = string.Empty;
 
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public string Type { get; set; } = string.Empty;
 
-        [JsonProperty("ts")]
+        [JsonPropertyName("ts")]
         public long Ts { get; set; }
 
-        [JsonProperty("time")]
+        [JsonPropertyName("time")]
         public long Time { get; set; }
 
-        [JsonProperty("replyq")]
+        [JsonPropertyName("replyq")]
         public long ReplyQ { get; set; }
 
-        [JsonProperty("msg_cnt")]
+        [JsonPropertyName("msg_cnt")]
         public long MsgCnt { get; set; }
 
-        [JsonProperty("msg_size")]
+        [JsonPropertyName("msg_size")]
         public long MsgSize { get; set; }
 
-        [JsonProperty("msg_max")]
+        [JsonPropertyName("msg_max")]
         public long MsgMax { get; set; }
 
-        [JsonProperty("msg_size_max")]
+        [JsonPropertyName("msg_size_max")]
         public long MsgSizeMax { get; set; }
 
-        [JsonProperty("simple_cnt")]
+        [JsonPropertyName("simple_cnt")]
         public long SimpleCnt { get; set; }
 
-        [JsonProperty("metadata_cache_cnt")]
+        [JsonPropertyName("metadata_cache_cnt")]
         public long MetadataCacheCnt { get; set; }
 
-        [JsonProperty("brokers")]
+        [JsonPropertyName("brokers")]
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public Dictionary<string, BrokerStatistics> Brokers { get; set; } = new Dictionary<string, BrokerStatistics>();
 
-        [JsonProperty("topics")]
+        [JsonPropertyName("topics")]
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public Dictionary<string, TopicStatistics> Topics { get; set; } = new Dictionary<string, TopicStatistics>();
 
-        [JsonProperty("cgrp")]
+        [JsonPropertyName("cgrp")]
         public ConsumerGroupStatistics ConsumerGroup { get; set; } = new ConsumerGroupStatistics();
 
-        [JsonProperty("eos")]
+        [JsonPropertyName("eos")]
         public ExactlyOnceSemanticsStatistics ExactlyOnceSemantics { get; set; } = new ExactlyOnceSemanticsStatistics();
 
-        [JsonProperty("tx")]
+        [JsonPropertyName("tx")]
         public long Tx { get; set; }
 
-        [JsonProperty("tx_bytes")]
+        [JsonPropertyName("tx_bytes")]
         public long TxBytes { get; set; }
 
-        [JsonProperty("rx")]
+        [JsonPropertyName("rx")]
         public long Rx { get; set; }
 
-        [JsonProperty("rx_bytes")]
+        [JsonPropertyName("rx_bytes")]
         public long RxBytes { get; set; }
 
-        [JsonProperty("txmsgs")]
+        [JsonPropertyName("txmsgs")]
         public long TxMsgs { get; set; }
 
-        [JsonProperty("txmsg_bytes")]
+        [JsonPropertyName("txmsg_bytes")]
         public long TxMsgBytes { get; set; }
 
-        [JsonProperty("rxmsgs")]
+        [JsonPropertyName("rxmsgs")]
         public long RxMsgs { get; set; }
 
-        [JsonProperty("rxmsg_bytes")]
+        [JsonPropertyName("rxmsg_bytes")]
         public long RxMsgBytes { get; set; }
     }
 }

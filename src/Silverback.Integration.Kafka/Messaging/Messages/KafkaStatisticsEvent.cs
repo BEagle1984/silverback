@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Newtonsoft.Json;
+using System.Text.Json;
 using Silverback.Messaging.Messages.Statistics;
 
 namespace Silverback.Messaging.Messages
@@ -38,6 +38,6 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets the statistics as typed <see cref="KafkaStatistics" /> object.
         /// </summary>
-        public KafkaStatistics Statistics => _statistics ??= JsonConvert.DeserializeObject<KafkaStatistics>(Raw);
+        public KafkaStatistics Statistics => _statistics ??= JsonSerializer.Deserialize<KafkaStatistics>(Raw);
     }
 }
