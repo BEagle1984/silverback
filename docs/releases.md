@@ -1,4 +1,4 @@
-    ---
+---
 uid: releases
 ---
 
@@ -40,6 +40,11 @@ uid: releases
 * Some minor breaking changes to the `InMemoryBroker`
 * Removed `PartitioningKeyMemberAttribute`, use `KafkaKeyMemberAttribute` instead
 * `Silverback.Integration.Configuration` has been discontinued
+
+## [2.1.2](https://github.com/BEagle1984/silverback/releases/tag/v2.1.2)
+
+### Fixes
+* Fixed delay in Retry policy [[#97](https://github.com/BEagle1984/silverback/issues/97)]
 
 ## [2.1.1](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1)
 
