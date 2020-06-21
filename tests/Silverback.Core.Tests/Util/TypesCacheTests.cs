@@ -25,8 +25,8 @@ namespace Silverback.Tests.Core.Util
         public void GetType_WrongAssemblyVersion_TypeReturned()
         {
             var typeName =
-                "Silverback.Tests.Integration.TestTypes.Domain.TestEventOne, " +
-                "Silverback.Integration.Tests, Version=123.123.123.123";
+                "Silverback.Tests.Core.TestTypes.Messages.TestEventOne, " +
+                "Silverback.Core.Tests, Version=123.123.123.123";
 
             var type = TypesCache.GetType(typeName);
 
@@ -36,7 +36,7 @@ namespace Silverback.Tests.Core.Util
         [Fact]
         public void GetType_NonExistingType_ExceptionThrown()
         {
-            var typeName = "Baaaad.Event, Silverback.Integration.Tests";
+            var typeName = "Baaaad.Event, Silverback.Core.Tests";
 
             Action act = () => TypesCache.GetType(typeName);
 
@@ -46,7 +46,7 @@ namespace Silverback.Tests.Core.Util
         [Fact]
         public void GetType_IncompleteTypeName_TypeReturned()
         {
-            var typeName = "Silverback.Tests.Integration.TestTypes.Domain.TestEventOne, Silverback.Integration.Tests";
+            var typeName = "Silverback.Tests.Core.TestTypes.Messages.TestEventOne, Silverback.Core.Tests";
 
             var type = TypesCache.GetType(typeName);
 
