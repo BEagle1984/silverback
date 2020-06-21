@@ -8,7 +8,6 @@ using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories

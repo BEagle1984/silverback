@@ -3,12 +3,11 @@
 
 using System;
 using FluentAssertions;
-using Silverback.Messaging.Serialization;
-using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Serialization
+namespace Silverback.Tests.Core.Util
 {
     public class TypesCacheTests
     {
