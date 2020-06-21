@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Silverback.EventStore
 {
@@ -16,5 +17,9 @@ namespace Silverback.EventStore
 
         /// <inheritdoc cref="IEventEntity.SerializedEvent" />
         public string SerializedEvent { get; set; } = null!;
+
+        /// <inheritdoc cref="IEventEntity.ClrType" />
+        [MaxLength(500)]
+        public string? ClrType { get; set; }
     }
 }

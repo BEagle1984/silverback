@@ -4,9 +4,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using Silverback.Util;
 
-namespace Silverback.Messaging.Serialization
+namespace Silverback.Util
 {
     internal static class TypesCache
     {

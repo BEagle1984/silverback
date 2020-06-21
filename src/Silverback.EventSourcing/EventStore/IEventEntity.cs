@@ -24,5 +24,10 @@ namespace Silverback.EventStore
         ///     Gets or sets the serialized event.
         /// </summary>
         string SerializedEvent { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the assembly qualified name of the event class.
+        /// </summary>
+        string? ClrType { get; set; }
     }
 }

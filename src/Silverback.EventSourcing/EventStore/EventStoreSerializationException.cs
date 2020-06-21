@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Silverback.EventStore
 {
     /// <summary>
-    ///     The exception that is thrown by the <see cref="EventSerializer" /> when the event cannot be
+    ///     The exception that is thrown by the <see cref="NewtonsoftEventSerializer" /> when the event cannot be
     ///     serialized or deserialized. This exception is thrown only when a Silverback specific error occurs,
     ///     other exceptions related to reflection or the underlying serializer are not wrapped.
     /// </summary>

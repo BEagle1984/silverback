@@ -5,6 +5,7 @@ using System;
 using FluentAssertions;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Serialization

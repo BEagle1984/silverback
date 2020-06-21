@@ -1,12 +1,14 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Newtonsoft.Json;
 using Silverback.Domain;
 
 namespace Silverback.EventStore
 {
-    internal static class EventSerializer
+    [Obsolete("Replaced by new EventSerializer using System.Text.Json")]
+    internal static class NewtonsoftEventSerializer
     {
         private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
         {
@@ -16,9 +18,6 @@ namespace Silverback.EventStore
             DefaultValueHandling = DefaultValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto
         };
-
-        public static string Serialize(IEntityEvent @event) =>
-            JsonConvert.SerializeObject(@event, typeof(IEntityEvent), SerializerSettings);
 
         public static IEntityEvent Deserialize(string json)
         {

@@ -12,6 +12,7 @@ uid: releases
 * Enabled nullable reference types and decorated the entire code base
 * Documented the entire public API (see [API Documentation](~/api/Microsoft.Extensions.DependencyInjection.html))
 * Option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see `throwIfUnhandled` argument in the [`IPublisher`](xref:Silverback.Messaging.IPublisher) methods and [`ThrowIfUnhandled`](xref:Silverback.Messaging.IConsumerEndpoint#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled) property in the [`IConsumerEndpoint`](xref:Silverback.Messaging.IConsumerEndpoint))
+* Replaced Newtonsoft.Json with System.Text.Json (the Newtonsoft based serializers are still available for backward compatibility)
 
 ### Fixes
 

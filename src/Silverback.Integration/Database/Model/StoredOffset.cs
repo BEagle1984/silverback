@@ -19,7 +19,7 @@ namespace Silverback.Database.Model
         public string Key { get; set; } = null!;
 
         /// <summary>
-        ///     Gets or sets the CLR type of the stored offset.
+        ///     Gets or sets the assembly qualified name of the stored offset class.
         /// </summary>
         [MaxLength(300)]
         public string? ClrType { get; set; }

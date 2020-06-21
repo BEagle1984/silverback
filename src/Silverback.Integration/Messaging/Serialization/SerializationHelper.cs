@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Serialization
 {

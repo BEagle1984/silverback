@@ -71,10 +71,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             _dbContext.SaveChanges();
 
@@ -99,10 +98,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             _dbContext.SaveChanges();
 
@@ -155,10 +153,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             _dbContext.SaveChanges();
 
@@ -181,10 +178,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             _dbContext.SaveChanges();
 
@@ -207,10 +203,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             _dbContext.SaveChanges();
 
@@ -237,10 +232,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             _dbContext.SaveChanges();
 
@@ -267,10 +261,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             _dbContext.SaveChanges();
 
@@ -288,18 +281,16 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewAge\": 35" +
-                                      "}"
+                    SerializedEvent = "{\"NewAge\": 35}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests"
                 });
 
             _dbContext.SaveChanges();
@@ -320,19 +311,17 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}",
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests",
                     Timestamp = DateTime.Parse("2000-05-05", CultureInfo.InvariantCulture)
                 });
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Sergio\"" +
-                                      "}",
+                    SerializedEvent = "{\"NewName\": \"Sergio\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests",
                     Timestamp = DateTime.Parse("2000-03-01", CultureInfo.InvariantCulture)
                 });
 
@@ -344,6 +333,38 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             entity.Should().NotBeNull();
             entity!.Name.Should().Be("Silverback");
+        }
+
+        [Fact]
+        public void Find_EventsWithLegacySerialization_EventsApplied()
+        {
+            var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
+            eventStore.Events.Add(
+                new PersonEvent
+                {
+                    SerializedEvent = "{" +
+                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
+                                      "\"NewName\": \"Silverback\"" +
+                                      "}"
+                });
+            eventStore.Events.Add(
+                new PersonEvent
+                {
+                    SerializedEvent = "{" +
+                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests\"," +
+                                      "\"NewAge\": 35" +
+                                      "}"
+                });
+
+            _dbContext.SaveChanges();
+
+            var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
+
+            var entity = repo.Find(p => p.Id == 12);
+
+            entity.Should().NotBeNull();
+            entity!.Name.Should().Be("Silverback");
+            entity!.Age.Should().Be(35);
         }
 
         [Fact]
@@ -363,10 +384,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             _dbContext.SaveChanges();
 
@@ -379,6 +399,67 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
         [Fact]
         public async Task FindAsync_ExistingId_EventsApplied()
+        {
+            var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
+            eventStore.Events.Add(
+                new PersonEvent
+                {
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
+                });
+            eventStore.Events.Add(
+                new PersonEvent
+                {
+                    SerializedEvent = "{\"NewAge\": 35}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests"
+                });
+
+            _dbContext.SaveChanges();
+
+            var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
+
+            var entity = await repo.FindAsync(p => p.Id == 12);
+
+            entity.Should().NotBeNull();
+            entity!.Name.Should().Be("Silverback");
+            entity!.Age.Should().Be(35);
+        }
+
+        [Fact]
+        public async Task FindAsync_ExistingId_EventsAppliedInRightOrder()
+        {
+            var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
+            eventStore.Events.Add(
+                new PersonEvent
+                {
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests",
+                    Timestamp = DateTime.Parse("2000-05-05", CultureInfo.InvariantCulture)
+                });
+            eventStore.Events.Add(
+                new PersonEvent
+                {
+                    SerializedEvent = "{\"NewName\": \"Sergio\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests",
+                    Timestamp = DateTime.Parse("2000-03-01", CultureInfo.InvariantCulture)
+                });
+
+            _dbContext.SaveChanges();
+
+            var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
+
+            var entity = await repo.FindAsync(p => p.Id == 12);
+
+            entity.Should().NotBeNull();
+            entity!.Name.Should().Be("Silverback");
+        }
+
+        [Fact]
+        public async Task FindAsync_EventsWithLegacySerialization_EventsApplied()
         {
             var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
             eventStore.Events.Add(
@@ -410,39 +491,6 @@ namespace Silverback.Tests.EventSourcing.EventStore
         }
 
         [Fact]
-        public async Task FindAsync_ExistingId_EventsAppliedInRightOrder()
-        {
-            var eventStore = _dbContext.Persons.Add(new PersonEventStore { Id = 12 }).Entity;
-            eventStore.Events.Add(
-                new PersonEvent
-                {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}",
-                    Timestamp = DateTime.Parse("2000-05-05", CultureInfo.InvariantCulture)
-                });
-            eventStore.Events.Add(
-                new PersonEvent
-                {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Sergio\"" +
-                                      "}",
-                    Timestamp = DateTime.Parse("2000-03-01", CultureInfo.InvariantCulture)
-                });
-
-            _dbContext.SaveChanges();
-
-            var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
-
-            var entity = await repo.FindAsync(p => p.Id == 12);
-
-            entity.Should().NotBeNull();
-            entity!.Name.Should().Be("Silverback");
-        }
-
-        [Fact]
         public async Task FindAsync_NonExistingId_NullReturned()
         {
             var repo = new PersonDbEventStoreRepository(new EfCoreDbContext<TestDbContext>(_dbContext));
@@ -459,37 +507,33 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}",
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests",
                     Timestamp = DateTime.Parse("2000-05-05", CultureInfo.InvariantCulture)
                 });
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Sergio\"" +
-                                      "}",
+                    SerializedEvent = "{\"NewName\": \"Sergio\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests",
                     Timestamp = DateTime.Parse("2000-03-01", CultureInfo.InvariantCulture)
                 });
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewAge\": 16" +
-                                      "}",
+                    SerializedEvent = "{\"NewAge\": 16}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests",
                     Timestamp = DateTime.Parse("2000-02-01", CultureInfo.InvariantCulture)
                 });
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewAge\": 35" +
-                                      "}",
+                    SerializedEvent = "{\"NewAge\": 35}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests",
                     Timestamp = DateTime.Parse("2019-07-06", CultureInfo.InvariantCulture)
                 });
 
@@ -511,37 +555,33 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}",
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests",
                     Timestamp = DateTime.Parse("2000-05-05", CultureInfo.InvariantCulture)
                 });
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Sergio\"" +
-                                      "}",
+                    SerializedEvent = "{\"NewName\": \"Sergio\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests",
                     Timestamp = DateTime.Parse("2000-03-01", CultureInfo.InvariantCulture)
                 });
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewAge\": 16" +
-                                      "}",
+                    SerializedEvent = "{\"NewAge\": 16}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests",
                     Timestamp = DateTime.Parse("2000-02-01", CultureInfo.InvariantCulture)
                 });
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewAge\": 35" +
-                                      "}",
+                    SerializedEvent = "{\"NewAge\": 35}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.AgeChangedEvent, Silverback.EventSourcing.Tests",
                     Timestamp = DateTime.Parse("2019-07-06", CultureInfo.InvariantCulture)
                 });
 
@@ -565,10 +605,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             _dbContext.SaveChanges();
 
@@ -591,10 +630,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             eventStore.Events.Add(
                 new PersonEvent
                 {
-                    SerializedEvent = "{" +
-                                      "\"$type\": \"Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests\"," +
-                                      "\"NewName\": \"Silverback\"" +
-                                      "}"
+                    SerializedEvent = "{\"NewName\": \"Silverback\"}",
+                    ClrType =
+                        "Silverback.Tests.EventSourcing.TestTypes.EntityEvents.NameChangedEvent, Silverback.EventSourcing.Tests"
                 });
             _dbContext.SaveChanges();
 

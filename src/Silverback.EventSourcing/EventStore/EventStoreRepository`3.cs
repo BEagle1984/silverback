@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Silverback.Domain;
 using Silverback.Domain.Util;
@@ -240,7 +241,8 @@ namespace Silverback.EventStore
 
             return new TEventEntity
             {
-                SerializedEvent = EventSerializer.Serialize(entityEvent),
+                SerializedEvent = JsonSerializer.Serialize(entityEvent),
+                ClrType = entityEvent.GetType().AssemblyQualifiedName,
                 Timestamp = entityEvent.Timestamp,
                 Sequence = entityEvent.Sequence
             };
@@ -259,9 +261,23 @@ namespace Silverback.EventStore
         {
             Check.NotNull(eventEntity, nameof(eventEntity));
 
-            var entityEvent = EventSerializer.Deserialize(eventEntity.SerializedEvent);
+            IEntityEvent entityEvent;
+
+            if (eventEntity.ClrType != null)
+            {
+                var eventType = TypesCache.GetType(eventEntity.ClrType);
+                entityEvent = (IEntityEvent)JsonSerializer.Deserialize(eventEntity.SerializedEvent, eventType);
+            }
+            else
+            {
+#pragma warning disable 618
+                entityEvent = NewtonsoftEventSerializer.Deserialize(eventEntity.SerializedEvent);
+#pragma warning restore 618
+            }
+
             entityEvent.Sequence = eventEntity.Sequence;
             entityEvent.Timestamp = eventEntity.Timestamp;
+
             return entityEvent;
         }
 
