@@ -7,6 +7,7 @@ using BenchmarkDotNet.Attributes;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
+using JsonMessageSerializer = Silverback.Tests.Performance.LegacyImplementations.JsonMessageSerializer;
 
 namespace Silverback.Tests.Performance
 {
@@ -47,7 +48,7 @@ namespace Silverback.Tests.Performance
             public string? Summary { get; set; }
         }
 
-        [Benchmark]
+        [Benchmark()]
         public void Serialize()
         {
             for (int i = 0; i < 5; i++)

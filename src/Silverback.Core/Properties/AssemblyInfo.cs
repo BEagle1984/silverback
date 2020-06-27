@@ -32,3 +32,5 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Silverback.Integration.RabbitMQ.Tests")]
 
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.ConfigClassGenerator")]
+
+[assembly: InternalsVisibleTo("Silverback.Tests.Performance")]

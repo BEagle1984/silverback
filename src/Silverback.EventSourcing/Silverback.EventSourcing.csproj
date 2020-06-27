@@ -31,11 +31,16 @@ This package contains an implementation of an event store that perfectly integra
   </PropertyGroup>
 
   <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
       <PackageReference Include="System.Text.Json" Version="4.7.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Silverback.Integration\Serialization\PolymorphicJsonSerializer.cs">
+      <Link>Serialization\PolymorphicJsonSerializer.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

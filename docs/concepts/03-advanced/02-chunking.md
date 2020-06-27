@@ -8,7 +8,7 @@ The message brokers are usually very efficient at handling huge amount of relati
 
 ## Producer configuration
 
-The producer endpoint can be configured to split the message into chunks by specifying their maximum size (in byte).
+The producer endpoint can be configured to split the message into chunks by specifying their maximum size (in bytes).
 
 <figure>
 	<a href="~/images/diagrams/chunk-basic.png"><img src="~/images/diagrams/chunk-basic.png"></a>

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Silverback.Domain;
 using Silverback.Domain.Util;
 using Silverback.Messaging.Messages;
+using Silverback.Serialization;
 using Silverback.Util;
 
 namespace Silverback.EventStore
@@ -270,9 +271,7 @@ namespace Silverback.EventStore
             }
             else
             {
-#pragma warning disable 618
-                entityEvent = NewtonsoftEventSerializer.Deserialize(eventEntity.SerializedEvent);
-#pragma warning restore 618
+                entityEvent = (IEntityEvent)PolymorphicJsonSerializer.Deserialize(eventEntity.SerializedEvent);
             }
 
             entityEvent.Sequence = eventEntity.Sequence;
