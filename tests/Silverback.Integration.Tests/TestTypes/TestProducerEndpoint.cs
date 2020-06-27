@@ -11,6 +11,10 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public sealed class TestProducerEndpoint : ProducerEndpoint, IEquatable<TestProducerEndpoint>
     {
+        public TestProducerEndpoint()
+        {
+        }
+
         public TestProducerEndpoint(string name)
             : base(name)
         {

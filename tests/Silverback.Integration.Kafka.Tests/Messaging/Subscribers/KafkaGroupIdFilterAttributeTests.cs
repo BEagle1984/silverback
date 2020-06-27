@@ -68,7 +68,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
 
         private class SomeConsumerEndpoint : IConsumerEndpoint
         {
-            public string Name { get; } = string.Empty;
+            public string Name { get; set; } = string.Empty;
 
             public IMessageSerializer Serializer { get; } = new JsonMessageSerializer();
 

@@ -15,7 +15,7 @@ namespace Silverback.Tests.Performance.LegacyImplementations
     /// <typeparam name="TMessage">
     ///     The type of the messages to be serialized and/or deserialized.
     /// </typeparam>
-    public class JsonMessageSerializer<TMessage> : Tests.Performance.LegacyImplementations.JsonMessageSerializer
+    public class JsonMessageSerializer<TMessage> : JsonMessageSerializer
     {
         private readonly Type _type = typeof(TMessage);
 

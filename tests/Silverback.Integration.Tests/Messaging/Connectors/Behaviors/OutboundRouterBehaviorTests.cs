@@ -93,7 +93,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
-                queued.Count(x => x.Endpoint.Name == expectedEndpointName).Should().Be(1);
+                queued.Count(queuedMessage => queuedMessage.EndpointName == expectedEndpointName).Should().Be(1);
             }
 
             var notExpectedEndpointNames = _routingConfiguration
@@ -102,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             foreach (var notExpectedEndpointName in notExpectedEndpointNames)
             {
-                queued.Count(x => x.Endpoint.Name == notExpectedEndpointName).Should().Be(0);
+                queued.Count(queuedMessage => queuedMessage.EndpointName == notExpectedEndpointName).Should().Be(0);
             }
         }
 
@@ -242,9 +242,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             var queued = (await _outboundQueue.Dequeue(10)).ToArray();
             queued.Length.Should().Be(3);
-            queued[0].Endpoint.Should().BeOfType<TestProducerEndpoint>();
-            queued[1].Endpoint.Should().BeOfType<TestProducerEndpoint>();
-            queued[2].Endpoint.Should().BeOfType<TestOtherProducerEndpoint>();
+            queued[0].EndpointName.Should().Be("eventOne");
+            queued[1].EndpointName.Should().Be("eventThree");
+            queued[2].EndpointName.Should().Be("eventTwo");
         }
 
         [Fact]

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Messages
             Value = value ?? string.Empty;
         }
 
-        [JsonConstructor]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Used to deserialize")]
         private MessageHeader()
         {
         }

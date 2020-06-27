@@ -13,6 +13,14 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="Endpoint" /> class.
         /// </summary>
+        protected Endpoint()
+        {
+            Name = string.Empty;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Endpoint" /> class.
+        /// </summary>
         /// <param name="name">
         ///     The endpoint name.
         /// </param>
@@ -27,7 +35,7 @@ namespace Silverback.Messaging
         public static IMessageSerializer DefaultSerializer { get; } = JsonMessageSerializer.Default;
 
         /// <inheritdoc cref="IEndpoint.Name" />
-        public string Name { get; protected set; }
+        public string Name { get; set; }
 
         /// <inheritdoc cref="IEndpoint.Serializer" />
         public IMessageSerializer Serializer { get; set; } = DefaultSerializer;

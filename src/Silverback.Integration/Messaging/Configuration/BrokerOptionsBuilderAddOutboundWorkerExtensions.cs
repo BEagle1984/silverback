@@ -59,6 +59,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     serviceProvider => new OutboundQueueWorker(
                         serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                         serviceProvider.GetRequiredService<IBrokerCollection>(),
+                        serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
                         serviceProvider.GetRequiredService<ILogger<OutboundQueueWorker>>(),
                         enforceMessageOrder,
                         readPackageSize))

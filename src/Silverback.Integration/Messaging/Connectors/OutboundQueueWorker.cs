@@ -24,6 +24,8 @@ namespace Silverback.Messaging.Connectors
 
         private readonly IBrokerCollection _brokerCollection;
 
+        private readonly IOutboundRoutingConfiguration _routingConfiguration;
+
         private readonly ILogger<OutboundQueueWorker> _logger;
 
         private readonly int _readPackageSize;
@@ -39,12 +41,16 @@ namespace Silverback.Messaging.Connectors
         /// <param name="brokerCollection">
         ///     The collection containing the available brokers.
         /// </param>
+        /// <param name="routingConfiguration">
+        ///     The configured outbound routes.
+        /// </param>
         /// <param name="logger">
         ///     The <see cref="ILogger" />.
         /// </param>
         /// <param name="enforceMessageOrder">
         ///     Specifies whether the messages must be produced in the same order as they were added to the queue.
-        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be successfully
+        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be
+        ///     successfully
         ///     produced.
         /// </param>
         /// <param name="readPackageSize">
@@ -53,6 +59,7 @@ namespace Silverback.Messaging.Connectors
         public OutboundQueueWorker(
             IServiceScopeFactory serviceScopeFactory,
             IBrokerCollection brokerCollection,
+            IOutboundRoutingConfiguration routingConfiguration,
             ILogger<OutboundQueueWorker> logger,
             bool enforceMessageOrder,
             int readPackageSize)
@@ -62,6 +69,7 @@ namespace Silverback.Messaging.Connectors
             _logger = logger;
             _enforceMessageOrder = enforceMessageOrder;
             _readPackageSize = readPackageSize;
+            _routingConfiguration = routingConfiguration;
         }
 
         /// <inheritdoc cref="IOutboundQueueWorker.ProcessQueue" />
@@ -113,7 +121,7 @@ namespace Silverback.Messaging.Connectors
 
             var messages = (await queue.Dequeue(_readPackageSize)).ToList();
 
-            if (!messages.Any())
+            if (messages.Count == 0)
                 _logger.LogTrace(EventIds.OutboundQueueWorkerQueueEmpty, "The outbound queue is empty.");
 
             for (var i = 0; i < messages.Count; i++)
@@ -134,7 +142,8 @@ namespace Silverback.Messaging.Connectors
         {
             try
             {
-                await ProduceMessage(message.Content, message.Headers, message.Endpoint);
+                var endpoint = GetTargetEndpoint(message.MessageType, message.EndpointName);
+                await ProduceMessage(message.Content, message.Headers, endpoint);
 
                 await queue.Acknowledge(message);
             }
@@ -144,13 +153,41 @@ namespace Silverback.Messaging.Connectors
                     EventIds.OutboundQueueWorkerFailedToPublishMessage,
                     ex,
                     "Failed to publish queued message.",
-                    new OutboundEnvelope(message.Content, message.Headers, message.Endpoint));
+                    new OutboundEnvelope(message.Content, message.Headers, new LoggingEndpoint(message.EndpointName)));
 
                 await queue.Retry(message);
 
                 // Rethrow if message order has to be preserved, otherwise go ahead with next message in the queue
                 if (_enforceMessageOrder)
                     throw;
+            }
+        }
+
+        private IProducerEndpoint GetTargetEndpoint(Type? messageType, string endpointName)
+        {
+            var outboundRoutes = messageType != null
+                ? _routingConfiguration.GetRoutesForMessage(messageType)
+                : _routingConfiguration.Routes;
+
+            var targetEndpoint = outboundRoutes
+                .SelectMany(route => route.Router.Endpoints)
+                .FirstOrDefault(endpoint => endpoint.Name == endpointName);
+
+            if (targetEndpoint == null)
+            {
+                throw new InvalidOperationException(
+                    $"No endpoint with name '{endpointName}' could be found for a message " +
+                    $"of type '{messageType?.FullName}'.");
+            }
+
+            return targetEndpoint;
+        }
+
+        private class LoggingEndpoint : ProducerEndpoint
+        {
+            public LoggingEndpoint(string name)
+                : base(name)
+            {
             }
         }
     }

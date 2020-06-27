@@ -15,6 +15,13 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
+        public KafkaProducerEndpoint()
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
+        /// </summary>
         /// <param name="name">
         ///     The name of the topic.
         /// </param>

@@ -48,7 +48,7 @@ namespace Silverback.Tests.Performance
             public string? Summary { get; set; }
         }
 
-        [Benchmark()]
+        [Benchmark]
         public void Serialize()
         {
             for (int i = 0; i < 5; i++)

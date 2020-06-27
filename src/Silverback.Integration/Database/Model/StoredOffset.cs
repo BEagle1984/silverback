@@ -33,8 +33,12 @@ namespace Silverback.Database.Model
         /// <summary>
         ///     Gets or sets the serialized offset.
         /// </summary>
+        /// <remarks>
+        ///     This field is no longer used (replaced by ClrType and Value) and will be removed with the next major
+        ///     release.
+        /// </remarks>
         [MaxLength(500)]
-        [Obsolete("Now replaced by ClrType and Value.")]
+        [Obsolete("Replaced by ClrType and Value.")]
         public string? Offset { get; set; }
     }
 }

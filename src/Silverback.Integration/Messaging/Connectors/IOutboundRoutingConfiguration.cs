@@ -66,5 +66,16 @@ namespace Silverback.Messaging.Connectors
         ///     The outbound routes for the specified message.
         /// </returns>
         IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(object message);
+
+        /// <summary>
+        ///     Returns the outbound routes that apply to a message of the specified message.
+        /// </summary>
+        /// <param name="messageType">
+        ///     The type of the message to be routed.
+        /// </param>
+        /// <returns>
+        ///     The outbound routes for the specified message.
+        /// </returns>
+        IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(Type messageType);
     }
 }

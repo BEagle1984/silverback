@@ -21,6 +21,11 @@ namespace Silverback.Database.Model
         public int Id { get; set; }
 
         /// <summary>
+        ///     Gets or sets the assembly qualified name of the message class.
+        /// </summary>
+        public string? MessageType { get; set; }
+
+        /// <summary>
         ///     Gets or sets the message content (body).
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
@@ -30,12 +35,19 @@ namespace Silverback.Database.Model
         /// <summary>
         ///     Gets or sets the serialized message headers.
         /// </summary>
-        public string Headers { get; set; } = null!;
+        /// <remarks>
+        ///     This field is no longer used (replaced by SerializedHeaders) and will be removed
+        ///     with the next major release.
+        /// </remarks>
+        [Obsolete("Replaced by SerializedHeaders.")]
+        public string? Headers { get; set; } = null!;
 
         /// <summary>
-        ///     Gets or sets the serialized endpoint.
+        ///     Gets or sets the serialized message headers.
         /// </summary>
-        public string Endpoint { get; set; } = null!;
+        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public byte[]? SerializedHeaders { get; set; }
 
         /// <summary>
         ///     Gets or sets the endpoint name.

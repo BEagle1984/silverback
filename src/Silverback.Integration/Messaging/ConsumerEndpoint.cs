@@ -9,6 +9,13 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConsumerEndpoint" /> class.
         /// </summary>
+        protected ConsumerEndpoint()
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ConsumerEndpoint" /> class.
+        /// </summary>
         /// <param name="name">
         ///     The endpoint name.
         /// </param>

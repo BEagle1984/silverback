@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories
@@ -37,16 +36,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            if (envelope.RawMessage == null)
-            {
-                envelope.RawMessage =
-                    envelope.Endpoint.Serializer.Serialize(
-                        envelope.Message,
-                        envelope.Headers,
-                        new MessageSerializationContext(envelope.Endpoint));
-            }
-
-            Add(new QueuedMessage(envelope.RawMessage, envelope.Headers, envelope.Endpoint));
+            Add(new QueuedMessage(envelope.Message?.GetType(), envelope.RawMessage, envelope.Headers, envelope.Endpoint.Name));
 
             return Task.CompletedTask;
         }

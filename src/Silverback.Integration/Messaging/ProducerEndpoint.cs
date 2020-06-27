@@ -13,6 +13,13 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProducerEndpoint" /> class.
         /// </summary>
+        protected ProducerEndpoint()
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ProducerEndpoint" /> class.
+        /// </summary>
         /// <param name="name">
         ///     The endpoint name.
         /// </param>

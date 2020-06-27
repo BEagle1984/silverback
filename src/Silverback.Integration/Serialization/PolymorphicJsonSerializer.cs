@@ -1,10 +1,12 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Silverback.Util;
 
+// ReSharper disable once CheckNamespace
 namespace Silverback.Serialization
 {
     /// <summary>
@@ -12,7 +14,7 @@ namespace Silverback.Serialization
     ///     Newtonsoft.Json. This is used merely for backward compatibility with the serialized data stored in the
     ///     database.
     /// </summary>
-    internal class PolymorphicJsonSerializer
+    internal static class PolymorphicJsonSerializer
     {
         private const string TypePropertyName = "$type";
 
@@ -28,6 +30,7 @@ namespace Silverback.Serialization
             return JsonSerializer.Deserialize(json, type, options);
         }
 
+        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Used in Deserialize method")]
         private class TypeInformation
         {
             [JsonPropertyName(TypePropertyName)]

@@ -16,6 +16,13 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitProducerEndpoint" /> class.
         /// </summary>
+        protected RabbitProducerEndpoint()
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RabbitProducerEndpoint" /> class.
+        /// </summary>
         /// <param name="name">
         ///     The name of the queue or exchange.
         /// </param>
@@ -31,7 +38,8 @@ namespace Silverback.Messaging
 
         /// <summary>
         ///     Gets or sets the maximum amount of time to wait for the message produce to be acknowledge before
-        ///     considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment (default is a quite
+        ///     considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative
+        ///     acknowledgment (default is a quite
         ///     conservative 5 seconds).
         /// </summary>
         public TimeSpan? ConfirmationTimeout { get; set; } = TimeSpan.FromSeconds(5);

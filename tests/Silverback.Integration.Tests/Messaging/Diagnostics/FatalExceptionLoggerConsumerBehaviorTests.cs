@@ -20,7 +20,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public async Task Handle_ExceptionThrown_ExceptionLogged()
         {
-            var logger = Substitute.For<ILogger<FatalExceptionLoggerConsumerBehavior>>();
+            var logger = new LoggerSubstitute<FatalExceptionLoggerConsumerBehavior>();
             var rawEnvelope = new RawInboundEnvelope(
                 new byte[5],
                 null,
@@ -39,7 +39,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 // Ignored
             }
 
-            logger.ReceivedLog(LogLevel.Critical, typeof(InvalidCastException));
+            logger.Received(LogLevel.Critical, typeof(InvalidCastException));
         }
 
         [Fact]

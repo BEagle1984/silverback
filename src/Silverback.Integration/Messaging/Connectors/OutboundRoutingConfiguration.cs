@@ -30,6 +30,9 @@ namespace Silverback.Messaging.Connectors
         }
 
         public IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(object message) =>
-            _routes.Where(r => r.MessageType.IsInstanceOfType(message)).ToList();
+            GetRoutesForMessage(message.GetType());
+
+        public IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(Type messageType) =>
+            _routes.Where(r => r.MessageType.IsAssignableFrom(messageType)).ToList();
     }
 }

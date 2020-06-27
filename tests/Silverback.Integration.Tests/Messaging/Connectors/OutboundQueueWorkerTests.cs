@@ -49,8 +49,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
-            serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>()
-                .Add<IIntegrationMessage>(new StaticOutboundRouter(TestProducerEndpoint.GetDefault()));
+            var routingConfiguration = serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
+            routingConfiguration.Add<TestEventOne>(
+                new StaticOutboundRouter(new TestProducerEndpoint("topic1")));
+            routingConfiguration.Add<TestEventTwo>(
+                new StaticOutboundRouter(new TestProducerEndpoint("topic2")));
 
             _broker = (TestBroker)serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
@@ -58,6 +61,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _worker = new OutboundQueueWorker(
                 serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                 new BrokerCollection(new[] { _broker }),
+                routingConfiguration,
                 new NullLogger<OutboundQueueWorker>(),
                 true,
                 100); // TODO: Test order not enforced
@@ -65,7 +69,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _sampleOutboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "Test" },
                 null,
-                TestProducerEndpoint.GetDefault());
+                new TestProducerEndpoint("topic1"));
             _sampleOutboundEnvelope.RawMessage =
                 new JsonMessageSerializer().Serialize(
                     _sampleOutboundEnvelope.Message,
@@ -82,8 +86,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                     null,
                     new TestProducerEndpoint("topic1")));
             await _queue.Enqueue(
-                new OutboundEnvelope<TestEventOne>(
-                    new TestEventOne { Content = "Test" },
+                new OutboundEnvelope<TestEventTwo>(
+                    new TestEventTwo { Content = "Test" },
                     null,
                     new TestProducerEndpoint("topic2")));
             await _queue.Commit();

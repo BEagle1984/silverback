@@ -4,12 +4,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -59,15 +61,16 @@ namespace Silverback.Messaging.Connectors.Repositories
             .Select(
                 message => new DbQueuedMessage(
                     message.Id,
+                    GetMessageType(message),
                     message.Content,
-                    DefaultSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
-                    DefaultSerializer.Deserialize<IProducerEndpoint>(message.Endpoint)))
+                    DeserializeHeaders(message),
+                    message.EndpointName))
             .ToList();
 
         /// <inheritdoc cref="IOutboundQueueReader.Retry" />
         public Task Retry(QueuedMessage queuedMessage)
         {
-            // Nothing to do, the message is retried if not marked as produced
+            // Nothing to do, the message is retried if not acknowledged
             return Task.CompletedTask;
         }
 
@@ -89,5 +92,30 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         /// <inheritdoc cref="IOutboundQueueReader.GetLength" />
         public Task<int> GetLength() => DbSet.AsQueryable().CountAsync();
+
+        private static Type? GetMessageType(OutboundMessage message)
+        {
+            if (message.MessageType == null)
+                return null;
+
+            return TypesCache.GetType(message.MessageType);
+        }
+
+        private static IEnumerable<MessageHeader> DeserializeHeaders(OutboundMessage message)
+        {
+            if (message.SerializedHeaders != null)
+            {
+                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(message.SerializedHeaders);
+            }
+
+#pragma warning disable 618
+            if (message.Headers != null)
+            {
+                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers);
+            }
+#pragma warning restore 618
+
+            throw new InvalidOperationException("Both SerializedHeaders and Headers are null.");
+        }
     }
 }

@@ -15,6 +15,13 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitConsumerEndpoint" /> class.
         /// </summary>
+        protected RabbitConsumerEndpoint()
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RabbitConsumerEndpoint" /> class.
+        /// </summary>
         /// <param name="name">
         ///     The name of the queue or exchange.
         /// </param>

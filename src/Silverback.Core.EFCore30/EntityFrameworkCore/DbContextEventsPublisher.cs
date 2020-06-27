@@ -10,6 +10,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
+// ReSharper disable once CheckNamespace
 namespace Silverback.EntityFrameworkCore
 {
     /// <summary>

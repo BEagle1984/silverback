@@ -10,6 +10,10 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public sealed class TestConsumerEndpoint : ConsumerEndpoint, IEquatable<TestConsumerEndpoint>
     {
+        public TestConsumerEndpoint()
+        {
+        }
+
         public TestConsumerEndpoint(string name)
             : base(name)
         {

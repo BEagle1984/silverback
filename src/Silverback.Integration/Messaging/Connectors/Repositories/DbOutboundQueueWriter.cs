@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Silverback.Database;
 using Silverback.Database.Model;
@@ -43,8 +44,8 @@ namespace Silverback.Messaging.Connectors.Repositories
                                   envelope.Message,
                                   envelope.Headers,
                                   new MessageSerializationContext(envelope.Endpoint)),
-                    Headers = DefaultSerializer.Serialize((IEnumerable<MessageHeader>)envelope.Headers),
-                    Endpoint = DefaultSerializer.Serialize(envelope.Endpoint),
+                    SerializedHeaders =
+                        JsonSerializer.SerializeToUtf8Bytes((IEnumerable<MessageHeader>)envelope.Headers),
                     EndpointName = envelope.Endpoint.Name,
                     Created = DateTime.UtcNow
                 });
