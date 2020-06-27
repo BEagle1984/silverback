@@ -10,13 +10,12 @@ namespace Silverback.Messaging
     ///     Represents a message broker endpoint to connect to (such as a Kafka topic or RabbitMQ queue or
     ///     exchange).
     /// </summary>
-    /// <remarks>The types implementing this interface should declare a default parameterless constructor to allow proper serialization.</remarks>
     public interface IEndpoint
     {
         /// <summary>
-        ///     Gets or sets a string identifying the endpoint (the topic, queue or exchange name).
+        ///     Gets a string identifying the endpoint (the topic, queue or exchange name).
         /// </summary>
-        string Name { get; set; }
+        string Name { get; }
 
         /// <summary>
         ///     Gets the <see cref="IMessageSerializer" /> to be used to serialize or deserialize the messages being

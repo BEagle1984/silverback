@@ -10,10 +10,6 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public sealed class TestOtherProducerEndpoint : ProducerEndpoint, IEquatable<TestOtherProducerEndpoint>
     {
-        public TestOtherProducerEndpoint()
-        {
-        }
-
         public TestOtherProducerEndpoint(string name)
             : base(name)
         {

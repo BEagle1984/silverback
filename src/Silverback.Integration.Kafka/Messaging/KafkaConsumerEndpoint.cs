@@ -4,8 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Microsoft.Extensions.Primitives;
 using Silverback.Messaging.Configuration;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
@@ -17,17 +15,6 @@ namespace Silverback.Messaging
     /// </summary>
     public sealed class KafkaConsumerEndpoint : ConsumerEndpoint, IEquatable<KafkaConsumerEndpoint>
     {
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private string[]? _names;
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
-        /// </summary>
-        public KafkaConsumerEndpoint()
-        {
-            Names = Array.Empty<string>();
-        }
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
         /// </summary>
@@ -38,33 +25,17 @@ namespace Silverback.Messaging
             : base(string.Empty)
         {
             Names = names;
-        }
 
-        /// <inheritdoc cref="IEndpoint.Name" />
-        public new string Name
-        {
-            get => base.Name;
-            set { Names = new[] { value }; }
+            if (names == null)
+                return;
+
+            Name = names.Length > 1 ? "[" + string.Join(",", names) + "]" : names[0];
         }
 
         /// <summary>
-        ///     Gets or sets the names of the topics.
+        ///     Gets the names of the topics.
         /// </summary>
-        public IReadOnlyCollection<string> Names
-        {
-            get => _names ?? StringValues.Empty;
-            set
-            {
-                _names = value.ToArray();
-
-                if (_names == null || _names.Length == 0)
-                    base.Name = string.Empty;
-                else if (_names.Length == 1)
-                    base.Name = _names[0];
-                else
-                    base.Name = "[" + string.Join(",", _names) + "]";
-            }
-        }
+        public IReadOnlyCollection<string> Names { get; }
 
         /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
