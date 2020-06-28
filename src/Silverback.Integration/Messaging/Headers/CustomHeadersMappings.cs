@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Headers
 
             _mappings[defaultHeaderName] = customHeaderName;
 
-            _inverseMappings = _mappings.ToList().ToDictionary(pair => pair.Value, pair => pair.Key);
+            _inverseMappings = _mappings.ToDictionary(pair => pair.Value, pair => pair.Key);
 
             Count = _mappings.Count;
         }
