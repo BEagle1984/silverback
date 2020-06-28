@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
         private readonly DbOutboundQueueWriter _queueWriter;
 
-        private readonly IOutboundEnvelope _sampleOutboundEnvelope = new OutboundEnvelope(
+        private static readonly IOutboundEnvelope SampleOutboundEnvelope = new OutboundEnvelope(
             new TestEventOne { Content = "Test" },
             null,
             TestProducerEndpoint.GetDefault());
@@ -64,9 +64,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public void Enqueue_Message_TableStillEmpty()
         {
-            _queueWriter.Enqueue(_sampleOutboundEnvelope);
-            _queueWriter.Enqueue(_sampleOutboundEnvelope);
-            _queueWriter.Enqueue(_sampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
 
             _dbContext.OutboundMessages.Count().Should().Be(0);
         }
@@ -74,9 +74,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public void EnqueueCommitAndSaveChanges_Message_MessageAddedToQueue()
         {
-            _queueWriter.Enqueue(_sampleOutboundEnvelope);
-            _queueWriter.Enqueue(_sampleOutboundEnvelope);
-            _queueWriter.Enqueue(_sampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
             _queueWriter.Commit();
             _dbContext.SaveChanges();
 
@@ -86,9 +86,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public void EnqueueAndRollback_Message_TableStillEmpty()
         {
-            _queueWriter.Enqueue(_sampleOutboundEnvelope);
-            _queueWriter.Enqueue(_sampleOutboundEnvelope);
-            _queueWriter.Enqueue(_sampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
             _queueWriter.Rollback();
 
             _dbContext.OutboundMessages.Count().Should().Be(0);

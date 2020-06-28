@@ -28,13 +28,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         private readonly DbOutboundQueueReader _queueReader;
 
         // TestEventOne { Content = "Test" }
-        private readonly byte[] _sampleContent =
+        private static readonly byte[] SampleContent =
         {
             0x7B, 0x22, 0x43, 0x6F, 0x6E, 0x74, 0x65, 0x6E, 0x74, 0x22, 0x3A, 0x22, 0x54, 0x65, 0x73, 0x74, 0x22, 0x7D
         };
 
         // One=1, Two=2
-        private readonly byte[] _sampleHeaders =
+        private static readonly byte[] SampleHeaders =
         {
             0x5B, 0x7B, 0x22, 0x4E, 0x61, 0x6D, 0x65, 0x22, 0x3A, 0x22, 0x6F, 0x6E, 0x65, 0x22, 0x2C, 0x22, 0x56, 0x61,
             0x6C, 0x75, 0x65, 0x22, 0x3A, 0x22, 0x31, 0x22, 0x7D, 0x2C, 0x7B, 0x22, 0x4E, 0x61, 0x6D, 0x65, 0x22, 0x3A,
@@ -113,24 +113,24 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             _dbContext.OutboundMessages.Add(
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-20),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             _dbContext.OutboundMessages.Add(
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-60),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             await _dbContext.SaveChangesAsync();
@@ -148,8 +148,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             await _dbContext.SaveChangesAsync();
@@ -168,7 +168,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
-                    Content = _sampleContent,
+                    Content = SampleContent,
 #pragma warning disable 618
                     Headers = "[{\"Name\":\"one\",\"Value\":\"1\"},{\"Name\":\"two\",\"Value\":\"2\"}]",
 #pragma warning restore 618
@@ -190,24 +190,24 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             _dbContext.OutboundMessages.Add(
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-20),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             _dbContext.OutboundMessages.Add(
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-60),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             await _dbContext.SaveChangesAsync();
@@ -229,24 +229,24 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             _dbContext.OutboundMessages.Add(
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-20),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             _dbContext.OutboundMessages.Add(
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-60),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             await _dbContext.SaveChangesAsync();
@@ -268,24 +268,24 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             _dbContext.OutboundMessages.Add(
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-20),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             _dbContext.OutboundMessages.Add(
                 new OutboundMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-60),
-                    Content = _sampleContent,
-                    SerializedHeaders = _sampleHeaders,
+                    Content = SampleContent,
+                    SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
             await _dbContext.SaveChangesAsync();
