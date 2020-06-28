@@ -39,6 +39,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             DbSet.Add(
                 new OutboundMessage
                 {
+                    MessageType = envelope.Message?.GetType().AssemblyQualifiedName,
                     Content = envelope.RawMessage ??
                               envelope.Endpoint.Serializer.Serialize(
                                   envelope.Message,

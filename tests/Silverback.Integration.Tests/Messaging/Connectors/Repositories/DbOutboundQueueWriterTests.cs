@@ -30,7 +30,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
         private static readonly IOutboundEnvelope SampleOutboundEnvelope = new OutboundEnvelope(
             new TestEventOne { Content = "Test" },
-            null,
+            new[] { new MessageHeader("one", "1"), new MessageHeader("two", "2") },
             TestProducerEndpoint.GetDefault());
 
         public DbOutboundQueueWriterTests()
@@ -62,7 +62,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
-        public void Enqueue_Message_TableStillEmpty()
+        public void Enqueue_SomeMessages_TableStillEmpty()
         {
             _queueWriter.Enqueue(SampleOutboundEnvelope);
             _queueWriter.Enqueue(SampleOutboundEnvelope);
@@ -72,7 +72,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
-        public void EnqueueCommitAndSaveChanges_Message_MessageAddedToQueue()
+        public void EnqueueCommitAndSaveChanges_SomeMessages_MessagesAddedToQueue()
         {
             _queueWriter.Enqueue(SampleOutboundEnvelope);
             _queueWriter.Enqueue(SampleOutboundEnvelope);
@@ -84,7 +84,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         }
 
         [Fact]
-        public void EnqueueAndRollback_Message_TableStillEmpty()
+        public void EnqueueAndRollback_SomeMessages_TableStillEmpty()
         {
             _queueWriter.Enqueue(SampleOutboundEnvelope);
             _queueWriter.Enqueue(SampleOutboundEnvelope);
@@ -92,6 +92,22 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             _queueWriter.Rollback();
 
             _dbContext.OutboundMessages.Count().Should().Be(0);
+        }
+
+        [Fact]
+        public void EnqueueCommitAndSaveChanges_Message_MessageCorrectlyAddedToQueue()
+        {
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
+            _queueWriter.Enqueue(SampleOutboundEnvelope);
+            _queueWriter.Commit();
+            _dbContext.SaveChanges();
+
+            var outboundMessage = _dbContext.OutboundMessages.First();
+            outboundMessage.EndpointName.Should().Be("test");
+            outboundMessage.MessageType.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+            outboundMessage.Content.Should().NotBeNullOrEmpty();
+            outboundMessage.SerializedHeaders.Should().NotBeNullOrEmpty();
         }
 
         public async ValueTask DisposeAsync()

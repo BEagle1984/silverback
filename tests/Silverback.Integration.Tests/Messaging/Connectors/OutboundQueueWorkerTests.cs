@@ -50,10 +50,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
             var routingConfiguration = serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
-            routingConfiguration.Add<TestEventOne>(
-                new StaticOutboundRouter(new TestProducerEndpoint("topic1")));
-            routingConfiguration.Add<TestEventTwo>(
-                new StaticOutboundRouter(new TestProducerEndpoint("topic2")));
+            routingConfiguration.Add<TestEventOne>(new StaticOutboundRouter(new TestProducerEndpoint("topic1")));
+            routingConfiguration.Add<TestEventTwo>(new StaticOutboundRouter(new TestProducerEndpoint("topic2")));
+            routingConfiguration.Add<TestEventThree>(new StaticOutboundRouter(new TestProducerEndpoint("topic3a")));
+            routingConfiguration.Add<TestEventThree>(new StaticOutboundRouter(new TestProducerEndpoint("topic3b")));
 
             _broker = (TestBroker)serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
@@ -97,6 +97,28 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.ProducedMessages.Count.Should().Be(2);
             _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic1");
             _broker.ProducedMessages[1].Endpoint.Name.Should().Be("topic2");
+        }
+
+        [Fact]
+        public async Task ProcessQueue_SomeMessagesWithMultipleEndpoints_CorrectlyProduced()
+        {
+            await _queue.Enqueue(
+                new OutboundEnvelope<TestEventThree>(
+                    new TestEventThree { Content = "Test" },
+                    null,
+                    new TestProducerEndpoint("topic3a")));
+            await _queue.Enqueue(
+                new OutboundEnvelope<TestEventThree>(
+                    new TestEventThree { Content = "Test" },
+                    null,
+                    new TestProducerEndpoint("topic3b")));
+            await _queue.Commit();
+
+            await _worker.ProcessQueue(CancellationToken.None);
+
+            _broker.ProducedMessages.Count.Should().Be(2);
+            _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic3a");
+            _broker.ProducedMessages[1].Endpoint.Name.Should().Be("topic3b");
         }
 
         [Fact]
