@@ -2,8 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
@@ -21,19 +23,8 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///         An <see cref="IDbContext" /> is used to store the offsets into the database.
     ///     </para>
     /// </summary>
-    // TODO: Test maybe?
     public sealed class DbOffsetStore : RepositoryBase<StoredOffset>, IOffsetStore
     {
-        private static readonly JsonSerializerSettings SerializerSettings =
-            new JsonSerializerSettings
-            {
-                Formatting = Formatting.None,
-                DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto
-            };
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="DbOffsetStore" /> class.
         /// </summary>
@@ -97,28 +88,47 @@ namespace Silverback.Messaging.Connectors.Repositories
             if (storedOffsetEntity == null)
                 return null;
 
-            if (storedOffsetEntity.Value != null)
+            if (storedOffsetEntity.Value != null && storedOffsetEntity.ClrType != null)
             {
-                var offsetType = TypesCache.GetType(storedOffsetEntity.ClrType!);
-                var offset = (IComparableOffset)Activator.CreateInstance(
-                    offsetType,
-                    storedOffsetEntity.Key,
-                    storedOffsetEntity.Value);
-
-                return offset;
+                return InstantiateOffset(storedOffsetEntity.ClrType, storedOffsetEntity.Key, storedOffsetEntity.Value);
             }
 
 #pragma warning disable 618
             if (storedOffsetEntity.Offset != null)
             {
-                return JsonConvert.DeserializeObject<IComparableOffset>(storedOffsetEntity.Offset, SerializerSettings);
+                var legacyOffset = JsonSerializer.Deserialize<LegacyOffsetModel>(storedOffsetEntity.Offset);
+
+                if (legacyOffset.TypeName == null || legacyOffset.Value == null)
+                    throw new InvalidOperationException("Unable to deserialize legacy offset.");
+
+                return InstantiateOffset(legacyOffset.TypeName, storedOffsetEntity.Key, legacyOffset.Value);
             }
 #pragma warning restore 618
 
-            throw new InvalidOperationException("The offset cannot be deserialized. Both Value and Offset are null.");
+            throw new InvalidOperationException(
+                "The offset cannot be deserialized. Both ClrType/Value and Offset are null.");
+        }
+
+        private static IComparableOffset InstantiateOffset(string clrType, string key, string value)
+        {
+            var offsetType = TypesCache.GetType(clrType);
+            var offset = (IComparableOffset)Activator.CreateInstance(
+                offsetType,
+                key,
+                value);
+            return offset;
         }
 
         private static string GetKey(string offsetKey, IConsumerEndpoint endpoint) =>
             $"{endpoint.GetUniqueConsumerGroupName()}|{offsetKey}";
+
+        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Used in Deserialize method")]
+        private class LegacyOffsetModel
+        {
+            [JsonPropertyName("$type")]
+            public string? TypeName { get; set; }
+
+            public string? Value { get; set; }
+        }
     }
 }
