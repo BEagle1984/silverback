@@ -18,12 +18,12 @@ namespace Silverback.Tests.Performance.LegacyImplementations
     ///     type upon deserialization. This default serializer is ideal when the producer and the consumer are
     ///     both using Silverback.
     /// </summary>
-    public class JsonMessageSerializer : IMessageSerializer
+    public class NewtonsoftJsonMessageSerializer : IMessageSerializer
     {
         /// <summary>
-        ///     Gets the default static instance of <see cref="JsonMessageSerializer" />.
+        ///     Gets the default static instance of <see cref="NewtonsoftJsonMessageSerializer" />.
         /// </summary>
-        public static JsonMessageSerializer Default { get; } = new JsonMessageSerializer();
+        public static NewtonsoftJsonMessageSerializer Default { get; } = new NewtonsoftJsonMessageSerializer();
 
         /// <summary>
         ///     Gets or sets the message encoding. The default is UTF8.

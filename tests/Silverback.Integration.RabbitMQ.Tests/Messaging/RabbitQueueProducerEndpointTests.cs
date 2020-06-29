@@ -86,13 +86,13 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
         }
 
         [Fact]
-        public void Equals_SameSerializerSettings_TrueIsReturned()
+        public void Equals_SameSerializerOptions_TrueIsReturned()
         {
             var endpoint1 = new RabbitQueueProducerEndpoint("endpoint")
             {
                 Serializer = new JsonMessageSerializer
                 {
-                    Settings =
+                    Options =
                     {
                         MaxDepth = 100
                     }
@@ -103,7 +103,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
             {
                 Serializer = new JsonMessageSerializer
                 {
-                    Settings =
+                    Options =
                     {
                         MaxDepth = 100
                     }
@@ -114,13 +114,13 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
         }
 
         [Fact]
-        public void Equals_DifferentSerializerSettings_FalseIsReturned()
+        public void Equals_DifferentSerializerOptions_FalseIsReturned()
         {
             var endpoint1 = new RabbitQueueProducerEndpoint("endpoint")
             {
                 Serializer = new JsonMessageSerializer
                 {
-                    Settings =
+                    Options =
                     {
                         MaxDepth = 100
                     }
@@ -131,7 +131,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging
             {
                 Serializer = new JsonMessageSerializer
                 {
-                    Settings =
+                    Options =
                     {
                         MaxDepth = 8
                     }

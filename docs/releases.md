@@ -13,6 +13,7 @@ uid: releases
 * Documented the entire public API (see [API Documentation](~/api/Microsoft.Extensions.DependencyInjection.html))
 * Option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see `throwIfUnhandled` argument in the [`IPublisher`](xref:Silverback.Messaging.IPublisher) methods and [`ThrowIfUnhandled`](xref:Silverback.Messaging.IConsumerEndpoint#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled) property in the [`IConsumerEndpoint`](xref:Silverback.Messaging.IConsumerEndpoint))
 * Replaced Newtonsoft.Json with System.Text.Json to improve serialization and deserialization performance
+    * The `Settings` property has been renamed to `Options` in the default `JsonMessageSerializer`
 
 ### Fixes
 

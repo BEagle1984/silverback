@@ -1,7 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Newtonsoft.Json;
+using System;
+using System.Text.Json;
 
 namespace Silverback.Util
 {
@@ -24,14 +25,15 @@ namespace Silverback.Util
             ReferenceEquals(objA, objB) ||
             objA != null &&
             objB != null &&
-            Equals(GetJsonString(objA), GetJsonString(objB));
+            string.Equals(GetJsonString(objA), GetJsonString(objB), StringComparison.Ordinal);
 
         private static string GetJsonString(object obj) =>
-            JsonConvert.SerializeObject(
+            JsonSerializer.Serialize(
                 obj,
-                new JsonSerializerSettings
+                obj.GetType(),
+                new JsonSerializerOptions
                 {
-                    TypeNameHandling = TypeNameHandling.Auto
+                    MaxDepth = 1000
                 });
     }
 }

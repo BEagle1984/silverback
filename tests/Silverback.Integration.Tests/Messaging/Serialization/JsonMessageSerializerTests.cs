@@ -23,6 +23,19 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         };
 
         [Fact]
+        public void Serialize_WithDefaultSettings_CorrectlySerialized()
+        {
+            var message = new TestEventOne { Content = "the message" };
+            var headers = new MessageHeaderCollection();
+
+            var serializer = new JsonMessageSerializer();
+
+            var serialized = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
+
+            serialized.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
+        }
+
+        [Fact]
         public void SerializeDeserialize_Message_CorrectlyDeserialized()
         {
             var message = new TestEventOne { Content = "the message" };
@@ -242,7 +255,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         public void Deserialize_MessageWithIncompleteTypeHeader_Deserialized()
         {
             var serializer = new JsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
 
             var (deserializedObject, _) = serializer
                 .Deserialize(rawMessage, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -258,7 +271,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         public void Deserialize_MessageWithIncompleteTypeHeader_TypeReturned()
         {
             var serializer = new JsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
 
             var (_, type) = serializer
                 .Deserialize(rawMessage, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -270,7 +283,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         public async Task DeserializeAsync_MessageWithIncompleteTypeHeader_Deserialized()
         {
             var serializer = new JsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
 
             var (deserializedObject, _) = await serializer
                 .DeserializeAsync(rawMessage, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -286,7 +299,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         public async Task DeserializeAsync_MessageWithIncompleteTypeHeader_TypeReturned()
         {
             var serializer = new JsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
 
             var (_, type) = await serializer
                 .DeserializeAsync(rawMessage, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -298,7 +311,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         public void Deserialize_MissingTypeHeader_ExceptionThrown()
         {
             var serializer = new JsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
             Action act = () => serializer
@@ -311,7 +324,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         public void DeserializeAsync_MissingTypeHeader_ExceptionThrown()
         {
             var serializer = new JsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
             Action act = () => serializer
@@ -323,7 +336,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_BadTypeHeader_ExceptionThrown()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection
             {
                 {
@@ -343,7 +356,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void DeserializeAsync_BadTypeHeader_ExceptionThrown()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection
             {
                 {
@@ -362,7 +375,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_MissingTypeHeaderWithHardcodedType_Deserialized()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
@@ -378,7 +391,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_MissingTypeHeaderWithHardcodedType_TypeReturned()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
@@ -392,7 +405,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task DeserializeAsync_MissingTypeHeaderWithHardcodedType_Deserialized()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
@@ -408,7 +421,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task DeserializeAsync_MissingTypeHeaderWithHardcodedType_TypeReturned()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
@@ -422,7 +435,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_WrongTypeHeaderWithHardcodedType_Deserialized()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
@@ -438,7 +451,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_WrongTypeHeaderWithHardcodedType_TypeReturned()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
@@ -452,7 +465,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task DeserializeAsync_WrongTypeHeaderWithHardcodedType_Deserialized()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();
@@ -468,7 +481,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task DeserializeAsync_WrongTypeHeaderWithHardcodedType_TypeReturned()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{ 'Content': 'the message' }");
+            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
             var serializer = new JsonMessageSerializer<TestEventOne>();

@@ -15,11 +15,11 @@ namespace Silverback.Tests.Performance.LegacyImplementations
     /// <typeparam name="TMessage">
     ///     The type of the messages to be serialized and/or deserialized.
     /// </typeparam>
-    public class JsonMessageSerializer<TMessage> : JsonMessageSerializer
+    public class NewtonsoftJsonMessageSerializer<TMessage> : NewtonsoftJsonMessageSerializer
     {
         private readonly Type _type = typeof(TMessage);
 
-        /// <inheritdoc cref="Tests.Performance.LegacyImplementations.JsonMessageSerializer.Serialize" />
+        /// <inheritdoc cref="NewtonsoftJsonMessageSerializer.Serialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override byte[]? Serialize(
             object? message,
@@ -37,7 +37,7 @@ namespace Silverback.Tests.Performance.LegacyImplementations
             return GetSystemEncoding().GetBytes(jsonString);
         }
 
-        /// <inheritdoc cref="Tests.Performance.LegacyImplementations.JsonMessageSerializer.Deserialize" />
+        /// <inheritdoc cref="NewtonsoftJsonMessageSerializer.Deserialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public override (object?, Type) Deserialize(
             byte[]? message,

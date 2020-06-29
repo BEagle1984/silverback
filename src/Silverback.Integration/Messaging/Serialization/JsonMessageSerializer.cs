@@ -2,11 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -25,22 +23,9 @@ namespace Silverback.Messaging.Serialization
         public static JsonMessageSerializer Default { get; } = new JsonMessageSerializer();
 
         /// <summary>
-        ///     Gets or sets the message encoding. The default is UTF8.
+        ///     Gets or sets the options to be passed to the <see cref="JsonSerializer" />.
         /// </summary>
-        [DefaultValue("UTF8")]
-        public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
-
-        /// <summary>
-        ///     Gets or sets the settings to be applied to the Json.NET serializer.
-        /// </summary>
-        public JsonSerializerSettings Settings { get; set; } = new JsonSerializerSettings
-        {
-            Formatting = Formatting.None,
-            DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto
-        };
+        public JsonSerializerOptions Options { get; set; } = new JsonSerializerOptions();
 
         /// <inheritdoc cref="IMessageSerializer.Serialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
@@ -58,11 +43,10 @@ namespace Silverback.Messaging.Serialization
                 return bytes;
 
             var type = message.GetType();
-            var json = JsonConvert.SerializeObject(message, type, Settings);
 
             messageHeaders.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
-            return GetSystemEncoding().GetBytes(json);
+            return JsonSerializer.SerializeToUtf8Bytes(message, type, Options);
         }
 
         /// <inheritdoc cref="IMessageSerializer.Deserialize" />
@@ -79,9 +63,7 @@ namespace Silverback.Messaging.Serialization
             if (message == null || message.Length == 0)
                 return (null, type);
 
-            var jsonString = GetSystemEncoding().GetString(message);
-
-            var deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings) ??
+            var deserializedObject = JsonSerializer.Deserialize(message, type, Options) ??
                                      throw new MessageSerializerException("The deserialization returned null.");
 
             return (deserializedObject, type);
@@ -102,22 +84,5 @@ namespace Silverback.Messaging.Serialization
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             Task.FromResult(Deserialize(message, messageHeaders, context));
-
-        /// <summary>
-        ///     Maps the <see cref="MessageEncoding" /> to the <see cref="System.Text.Encoding" />.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="System.Text.Encoding" /> that matches the current <see cref="MessageEncoding" />.
-        /// </returns>
-        protected Encoding GetSystemEncoding() =>
-            Encoding switch
-            {
-                MessageEncoding.Default => System.Text.Encoding.Default,
-                MessageEncoding.ASCII => System.Text.Encoding.ASCII,
-                MessageEncoding.UTF8 => System.Text.Encoding.UTF8,
-                MessageEncoding.UTF32 => System.Text.Encoding.UTF32,
-                MessageEncoding.Unicode => System.Text.Encoding.Unicode,
-                _ => throw new InvalidOperationException("Unhandled encoding.")
-            };
     }
 }

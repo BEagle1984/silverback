@@ -1,19 +1,23 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Globalization;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Configs;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
-using JsonMessageSerializer = Silverback.Tests.Performance.LegacyImplementations.JsonMessageSerializer;
+using Silverback.Tests.Performance.LegacyImplementations;
+using Silverback.Tests.Performance.TestTypes;
 
 namespace Silverback.Tests.Performance
 {
+    [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
+    [CategoriesColumn]
     [MemoryDiagnoser]
     public class JsonMessageSerializerBenchmark
     {
+        private readonly NewtonsoftJsonMessageSerializer _newtonsoftSerializer = new NewtonsoftJsonMessageSerializer();
+
         private readonly JsonMessageSerializer _serializer = new JsonMessageSerializer();
 
         private readonly MessageHeaderCollection _messageHeaderCollection = new MessageHeaderCollection();
@@ -21,58 +25,44 @@ namespace Silverback.Tests.Performance
         private readonly MessageSerializationContext _messageSerializationContext =
             new MessageSerializationContext(new TestProducerEndpoint("Name"));
 
-        private readonly Forecasts _forecasts = new Forecasts
+        [Benchmark(Baseline = true, Description = "Newtonsoft based JsonMessageSerializer")]
+        [BenchmarkCategory("Serialize")]
+        public void SerializeUsingLegacySerializer()
         {
-            Monday = new Forecast
-            {
-                Date = DateTime.Parse("2020-01-06", CultureInfo.InvariantCulture),
-                TemperatureCelsius = 10,
-                Summary = "Cool",
-                WindSpeed = 8
-            },
-            Tuesday = new Forecast
-            {
-                Date = DateTime.Parse("2020-01-07", CultureInfo.InvariantCulture),
-                TemperatureCelsius = 11,
-                Summary = "Rainy",
-                WindSpeed = 10
-            }
-        };
-
-        private interface IForecast
-        {
-            public DateTimeOffset Date { get; set; }
-
-            public int TemperatureCelsius { get; set; }
-
-            public string? Summary { get; set; }
+            _newtonsoftSerializer.Serialize(
+                WeekWhetherForecastsEvent.Sample,
+                _messageHeaderCollection,
+                _messageSerializationContext);
         }
 
-        [Benchmark]
-        public void Serialize()
+        [Benchmark(Description = "New System.Text based JsonMessageSerializer")]
+        [BenchmarkCategory("Serialize")]
+        public void SerializeUsingNewSerializer()
         {
-            for (int i = 0; i < 5; i++)
-            {
-                _serializer.Serialize(_forecasts, _messageHeaderCollection, _messageSerializationContext);
-            }
+            _serializer.Serialize(
+                WeekWhetherForecastsEvent.Sample,
+                _messageHeaderCollection,
+                _messageSerializationContext);
         }
 
-        private class Forecast : IForecast
+        [Benchmark(Baseline = true, Description = "Newtonsoft based JsonMessageSerializer")]
+        [BenchmarkCategory("Deserialize")]
+        public void DeserializeUsingLegacySerializer()
         {
-            public DateTimeOffset Date { get; set; }
-
-            public int TemperatureCelsius { get; set; }
-
-            public string? Summary { get; set; }
-
-            public int WindSpeed { get; set; }
+            _newtonsoftSerializer.Serialize(
+                WeekWhetherForecastsEvent.Sample,
+                _messageHeaderCollection,
+                _messageSerializationContext);
         }
 
-        private class Forecasts
+        [Benchmark(Description = "New System.Text based JsonMessageSerializer")]
+        [BenchmarkCategory("Deserialize")]
+        public void DeserializeUsingNewSerializer()
         {
-            public IForecast? Monday { get; set; }
-
-            public object? Tuesday { get; set; }
+            _serializer.Serialize(
+                WeekWhetherForecastsEvent.Sample,
+                _messageHeaderCollection,
+                _messageSerializationContext);
         }
     }
 }

@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Serialization
@@ -31,9 +31,7 @@ namespace Silverback.Messaging.Serialization
             if (message is byte[] bytes)
                 return bytes;
 
-            var jsonString = JsonConvert.SerializeObject(message, _type, Settings);
-
-            return GetSystemEncoding().GetBytes(jsonString);
+            return JsonSerializer.SerializeToUtf8Bytes(message, _type, Options);
         }
 
         /// <inheritdoc cref="JsonMessageSerializer.Deserialize" />
@@ -46,9 +44,7 @@ namespace Silverback.Messaging.Serialization
             if (message == null || message.Length == 0)
                 return (null, _type);
 
-            var json = GetSystemEncoding().GetString(message);
-
-            var deserializedObject = JsonConvert.DeserializeObject(json, _type, Settings);
+            var deserializedObject = JsonSerializer.Deserialize(message, _type, Options);
             return (deserializedObject, _type);
         }
     }

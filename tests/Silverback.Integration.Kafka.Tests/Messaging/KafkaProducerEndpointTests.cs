@@ -99,7 +99,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Serializer = new JsonMessageSerializer
                 {
-                    Settings =
+                    Options =
                     {
                         MaxDepth = 100
                     }
@@ -110,7 +110,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Serializer = new JsonMessageSerializer
                 {
-                    Settings =
+                    Options =
                     {
                         MaxDepth = 100
                     }
@@ -127,7 +127,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Serializer = new JsonMessageSerializer
                 {
-                    Settings =
+                    Options =
                     {
                         MaxDepth = 100
                     }
@@ -138,7 +138,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             {
                 Serializer = new JsonMessageSerializer
                 {
-                    Settings =
+                    Options =
                     {
                         MaxDepth = 8
                     }

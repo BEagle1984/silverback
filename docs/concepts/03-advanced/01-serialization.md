@@ -8,7 +8,7 @@ Being flexible when serializing and deserializing the messages sent over the mes
 
 ## Default JSON serialization
 
-The default `JsonMessageSerializer` internally uses `Newtonsoft.Json` to serialize the messages as json. The messages are then transformed in a byte array using the UTF8 encoder.
+The default `JsonMessageSerializer` internally uses `System.Text.Json` to serialize the messages as JSON and encode them in UTF-8.
 
 A few headers are added to the message, in particular `x-message-type` is used by the `JsonMessageSerializer` to know the message type when deserializing. It also leverages the Newtonsoft's [automatic type handling](https://www.newtonsoft.com/json/help/html/SerializeTypeNameHandling.htm) to automatically resolve the actual type of the nested properties.
 
@@ -41,7 +41,7 @@ public class Startup
 ```
 
 > [!Note]
-> The `JsonMessageSerializer` can be also be tweaked modifying its `Settings` and `Encoding`.
+> The `JsonMessageSerializer` can be also be tweaked modifying its `Options`.
 
 ## Apache Avro
 

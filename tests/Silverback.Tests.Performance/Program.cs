@@ -9,7 +9,7 @@ namespace Silverback.Tests.Performance
     {
         public static void Main()
         {
-            BenchmarkRunner.Run(typeof(Program).Assembly);
+            BenchmarkRunner.Run(typeof(JsonMessageSerializerBenchmark));
         }
     }
 }
