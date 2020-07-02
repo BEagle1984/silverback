@@ -1,3 +1,7 @@
+---
+uid: kafka-consumer-groups
+---
+
 # Multiple Consumer Groups (in same process)
 
 In some cases you may want to consume multiple times the same topic, to perform independent tasks. You achieve this by attaching multiple consumers to the same topic, using a different consumer group id.

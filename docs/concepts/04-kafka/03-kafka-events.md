@@ -1,3 +1,7 @@
+---
+uid: kafka-events
+---
+
 # Kafka Events
 
 To let you catch the Kafka events (fired for example when the partions are assigned or revoked) they are mapped to some events that are published to the internal bus.
