@@ -14,6 +14,8 @@ uid: releases
 * Option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see `throwIfUnhandled` argument in the [`IPublisher`](xref:Silverback.Messaging.IPublisher) methods and [`ThrowIfUnhandled`](xref:Silverback.Messaging.IConsumerEndpoint#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled) property in the [`IConsumerEndpoint`](xref:Silverback.Messaging.IConsumerEndpoint))
 * Replaced Newtonsoft.Json with System.Text.Json to improve serialization and deserialization performance
     * The `Settings` property has been renamed to `Options` in the default `JsonMessageSerializer`
+* Upgrade to [Confluent.Kafka 1.4.4](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.4)
+* Upgrade to [RabbitMQ.Client 6.1.0](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.1.0)
 
 ### Fixes
 
@@ -58,12 +60,12 @@ uid: releases
 * Binary files support (see <xref:binary-files>)
 * The `IIntegrationMessage` is not required to have an `Id` property anymore (the `x-message-id` header will still be generated and if the property exists will continue to be automatically initialized)
 * `x-first-chunk-offset` header added by default (see <xref:headers>)
-* <span class="area-kafka" /> The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
-* <span class="area-kafka" /> Added support for [Apache Avro](https://avro.apache.org/) and schema registry <xref:serialization>)
-* <span class="area-kafka" /> Upgrade to [Confluent.Kafka 1.4.2](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.2)
-* <span class="area-rabbit" /> Added consumer `PrefetchSize` and `PrefetchCount` settings (see [Endpoint](configuration/endpoint))
-* <span class="area-rabbit" /> Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see [Endpoint](configuration/endpoint))
-* <span class="area-kafka" /> Upgrade to [RabbitMQ.Client 6.0.0](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.0.0)
+* The `KafkaStasticsEvent` JSON is now being deserialized and provided as object (in addition to the raw JSON)
+* Added support for [Apache Avro](https://avro.apache.org/) and schema registry (see <xref:serialization>)
+* Upgrade to [Confluent.Kafka 1.4.2](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.2)
+* Added consumer `PrefetchSize` and `PrefetchCount` settings (see <xref:endpoint>))
+* Added `AcknowledgeEach` to the `RabbitConsumerEndpoint` to define the number of message processed before sending the acknowledgment to the server (see <xref:endpoint>))
+* Upgrade to [RabbitMQ.Client 6.0.0](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.0.0)
 * Improved message type resolution performance and reliability in `JsonMessageSerializer`
 * `LogWithLevel` method added to `SkipMessageErrorPolicy` to specify the desired level for the "Message skipped" log entry (the default is now increased to `Error`)
 
