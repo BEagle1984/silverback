@@ -234,7 +234,7 @@ namespace Silverback.Messaging.Broker
                 _logger.LogError(
                     EventIds.RabbitConsumerErrorWhileSendingBasicNack,
                     ex,
-                    "Error occurred rolled back (basic.nack) the delivery tag {deliveryTag}.",
+                    "Error occurred rolling back (basic.nack) the delivery tag {deliveryTag}.",
                     deliveryTag);
 
                 throw;

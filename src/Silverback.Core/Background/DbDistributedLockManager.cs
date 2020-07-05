@@ -241,13 +241,13 @@ namespace Silverback.Background
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            var lockRecord = await dbSet.AsQueryable()
+            var lockEntity = await dbSet.AsQueryable()
                 .FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId);
 
-            if (lockRecord == null)
+            if (lockEntity == null)
                 return false;
 
-            lockRecord.Heartbeat = DateTime.UtcNow;
+            lockEntity.Heartbeat = DateTime.UtcNow;
 
             await dbContext.SaveChangesAsync();
 
@@ -269,13 +269,13 @@ namespace Silverback.Background
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
-            var lockRecord = await dbSet.AsQueryable()
+            var lockEntity = await dbSet.AsQueryable()
                 .FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId);
 
-            if (lockRecord == null)
+            if (lockEntity == null)
                 return;
 
-            dbSet.Remove(lockRecord);
+            dbSet.Remove(lockEntity);
 
             await dbContext.SaveChangesAsync();
         }
