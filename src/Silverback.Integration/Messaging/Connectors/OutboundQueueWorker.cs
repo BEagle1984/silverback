@@ -153,7 +153,7 @@ namespace Silverback.Messaging.Connectors
             }
             catch (Exception ex)
             {
-                _logger.LogError(
+                _logger.LogErrorWithMessageInfo(
                     EventIds.OutboundQueueWorkerFailedToPublishMessage,
                     ex,
                     "Failed to publish queued message.",

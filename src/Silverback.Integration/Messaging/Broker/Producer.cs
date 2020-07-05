@@ -130,7 +130,7 @@ namespace Silverback.Messaging.Broker
             else
             {
                 await finalAction(context);
-                _logger.LogInformation(EventIds.ProducerMessageProduced, "Message produced.", context.Envelope);
+                _logger.LogInformationWithMessageInfo(EventIds.ProducerMessageProduced, "Message produced.", context.Envelope);
             }
         }
     }

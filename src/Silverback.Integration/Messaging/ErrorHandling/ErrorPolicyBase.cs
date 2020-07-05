@@ -198,7 +198,7 @@ namespace Silverback.Messaging.ErrorHandling
                                   $"attempts ({failedAttempts}) exceeds the configured maximum attempts " +
                                   $"({MaxFailedAttemptsSetting}).";
 
-                _logger.LogTrace(EventIds.ErrorPolicyBaseSkipPolicyBecauseOfFailedAttempts, traceString, envelope);
+                _logger.LogTraceWithMessageInfo(EventIds.ErrorPolicyBaseSkipPolicyBecauseOfFailedAttempts, traceString, envelope);
 
                 return false;
             }
@@ -208,7 +208,7 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
                                   $"{exception.GetType().Name} is not in the list of handled exceptions.";
 
-                _logger.LogTrace(
+                _logger.LogTraceWithMessageInfo(
                     EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsNotInlcuded,
                     traceString,
                     envelope);
@@ -221,7 +221,7 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
                                   $"{exception.GetType().Name} is in the list of excluded exceptions.";
 
-                _logger.LogTrace(EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsExcluded, traceString, envelope);
+                _logger.LogTraceWithMessageInfo(EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsExcluded, traceString, envelope);
 
                 return false;
             }
@@ -231,7 +231,7 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
                                   "evaluated and returned false.";
 
-                _logger.LogTrace(EventIds.ErrorPolicyBaseSkipPolicyBecauseOfApplyRule, traceString, envelope);
+                _logger.LogTraceWithMessageInfo(EventIds.ErrorPolicyBaseSkipPolicyBecauseOfApplyRule, traceString, envelope);
 
                 return false;
             }

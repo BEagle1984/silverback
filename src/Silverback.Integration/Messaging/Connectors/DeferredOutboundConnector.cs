@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Connectors
         /// </returns>
         public async Task RelayMessage(IOutboundEnvelope envelope)
         {
-            _logger.LogDebug(
+            _logger.LogDebugWithMessageInfo(
                 EventIds.DeferredOutboundConnectorEnqueueMessage,
                 "Enqueuing outbound message for deferred produce.",
                 envelope);

@@ -14,15 +14,28 @@ namespace Silverback.Messaging.Messages
     ///     Adds some methods to the <see cref="ILogger" /> used to consistently enrich the log entry with the
     ///     information about the message(s) being consumed.
     /// </summary>
-    // TODO: Test
     public static class LoggerExtensions
     {
+        private const string InboundArgumentsTemplate = " (" +
+                                                        "Endpoint: {endpointName}, " +
+                                                        "FailedAttempts: {failedAttempts}, " +
+                                                        "Type: {messageType}, " +
+                                                        "Id: {messageId}, " +
+                                                        "Offset: {offset}, " +
+                                                        "BatchId: {batchId}, " +
+                                                        "BatchSize: {batchSize})";
+
+        private const string OutboundArgumentsTemplate = " (" +
+                                                         "Endpoint: {endpointName}, " +
+                                                         "Type: {messageType}, " +
+                                                         "Id: {messageId}, " +
+                                                         "Offset: {offset})";
+
+        private const string BatchPlaceholder = "<batch>";
+
         /// <summary>
-        ///     Writes the standard <i>
-        ///         "Processing inbound message"
-        ///     </i> or <i>
-        ///         "Processing the batch of # inbound messages"
-        ///     </i> log message.
+        ///     Writes the standard <i>"Processing inbound message"</i> or
+        ///     <i>"Processing the batch of # inbound messages"</i> log message.
         /// </summary>
         /// <param name="logger">
         ///     The <see cref="ILogger" /> to write to.
@@ -38,15 +51,12 @@ namespace Silverback.Messaging.Messages
                 ? $"Processing the batch of {envelopes.Count} inbound messages."
                 : "Processing inbound message.";
 
-            LogInformation(logger, EventIds.ProcessingInboundMessage, message, envelopes);
+            LogInformationWithMessageInfo(logger, EventIds.ProcessingInboundMessage, message, envelopes);
         }
 
         /// <summary>
-        ///     Writes the standard <i>
-        ///         "Error occurred processing the inbound message"
-        ///     </i> or <i>
-        ///         "Error occurred processing the batch of # inbound messages"
-        ///     </i> log message.
+        ///     Writes the standard <i>"Error occurred processing the inbound message"</i> or
+        ///     <i>"Error occurred processing the batch of # inbound messages"</i> log message.
         /// </summary>
         /// <param name="logger">
         ///     The <see cref="ILogger" /> to write to.
@@ -68,7 +78,7 @@ namespace Silverback.Messaging.Messages
                 ? $"Error occurred processing the batch of {envelopes.Count} inbound messages."
                 : "Error occurred processing the inbound message.";
 
-            LogWarning(logger, EventIds.ProcessingInboundMessageError, exception, message, envelopes);
+            LogWarningWithMessageInfo(logger, EventIds.ProcessingInboundMessageError, exception, message, envelopes);
         }
 
         /// <summary>
@@ -86,12 +96,12 @@ namespace Silverback.Messaging.Messages
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
-        public static void LogTrace(
+        public static void LogTraceWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
-            Log(logger, LogLevel.Trace, eventId, null, logMessage, new[] { envelope });
+            LogWithMessageInfo(logger, LogLevel.Trace, eventId, null, logMessage, new[] { envelope });
 
         /// <summary>
         ///     Writes a trace log message, enriching it with the information related to the provided message(s).
@@ -109,12 +119,12 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
         /// </param>
-        public static void LogTrace(
+        public static void LogTraceWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
-            Log(logger, LogLevel.Trace, eventId, null, logMessage, envelopes);
+            LogWithMessageInfo(logger, LogLevel.Trace, eventId, null, logMessage, envelopes);
 
         /// <summary>
         ///     Writes a debug log message, enriching it with the information related to the provided message.
@@ -131,12 +141,12 @@ namespace Silverback.Messaging.Messages
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
-        public static void LogDebug(
+        public static void LogDebugWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
-            Log(logger, LogLevel.Debug, eventId, null, logMessage, new[] { envelope });
+            LogWithMessageInfo(logger, LogLevel.Debug, eventId, null, logMessage, new[] { envelope });
 
         /// <summary>
         ///     Writes a debug log message, enriching it with the information related to the provided message(s).
@@ -154,12 +164,12 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
         /// </param>
-        public static void LogDebug(
+        public static void LogDebugWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
-            Log(logger, LogLevel.Debug, eventId, null, logMessage, envelopes);
+            LogWithMessageInfo(logger, LogLevel.Debug, eventId, null, logMessage, envelopes);
 
         /// <summary>
         ///     Writes an information log message, enriching it with the information related to the provided
@@ -177,12 +187,12 @@ namespace Silverback.Messaging.Messages
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
-        public static void LogInformation(
+        public static void LogInformationWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
-            Log(logger, LogLevel.Information, eventId, null, logMessage, new[] { envelope });
+            LogWithMessageInfo(logger, LogLevel.Information, eventId, null, logMessage, new[] { envelope });
 
         /// <summary>
         ///     Writes an information log message, enriching it with the information related to the provided
@@ -201,12 +211,12 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
         /// </param>
-        public static void LogInformation(
+        public static void LogInformationWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
-            Log(logger, LogLevel.Information, eventId, null, logMessage, envelopes);
+            LogWithMessageInfo(logger, LogLevel.Information, eventId, null, logMessage, envelopes);
 
         /// <summary>
         ///     Writes a warning log message, enriching it with the information related to the provided message.
@@ -223,12 +233,12 @@ namespace Silverback.Messaging.Messages
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
-        public static void LogWarning(
+        public static void LogWarningWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
-            Log(logger, LogLevel.Warning, eventId, null, logMessage, new[] { envelope });
+            LogWithMessageInfo(logger, LogLevel.Warning, eventId, null, logMessage, new[] { envelope });
 
         /// <summary>
         ///     Writes a warning log message, enriching it with the information related to the provided message(s).
@@ -246,12 +256,12 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
         /// </param>
-        public static void LogWarning(
+        public static void LogWarningWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
-            Log(logger, LogLevel.Warning, eventId, null, logMessage, envelopes);
+            LogWithMessageInfo(logger, LogLevel.Warning, eventId, null, logMessage, envelopes);
 
         /// <summary>
         ///     Writes a warning log message, enriching it with the information related to the provided message.
@@ -271,13 +281,13 @@ namespace Silverback.Messaging.Messages
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
-        public static void LogWarning(
+        public static void LogWarningWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
-            Log(logger, LogLevel.Warning, eventId, exception, logMessage, new[] { envelope });
+            LogWithMessageInfo(logger, LogLevel.Warning, eventId, exception, logMessage, new[] { envelope });
 
         /// <summary>
         ///     Writes a warning log message, enriching it with the information related to the provided message(s).
@@ -298,13 +308,13 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
         /// </param>
-        public static void LogWarning(
+        public static void LogWarningWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
-            Log(logger, LogLevel.Warning, eventId, exception, logMessage, envelopes);
+            LogWithMessageInfo(logger, LogLevel.Warning, eventId, exception, logMessage, envelopes);
 
         /// <summary>
         ///     Writes an error log message, enriching it with the information related to the provided message.
@@ -321,12 +331,12 @@ namespace Silverback.Messaging.Messages
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
-        public static void LogError(
+        public static void LogErrorWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
-            Log(logger, LogLevel.Error, eventId, null, logMessage, new[] { envelope });
+            LogWithMessageInfo(logger, LogLevel.Error, eventId, null, logMessage, new[] { envelope });
 
         /// <summary>
         ///     Writes an error log message, enriching it with the information related to the provided message(s).
@@ -344,12 +354,12 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
         /// </param>
-        public static void LogError(
+        public static void LogErrorWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
-            Log(logger, LogLevel.Error, eventId, null, logMessage, envelopes);
+            LogWithMessageInfo(logger, LogLevel.Error, eventId, null, logMessage, envelopes);
 
         /// <summary>
         ///     Writes an error log message, enriching it with the information related to the provided message.
@@ -369,13 +379,13 @@ namespace Silverback.Messaging.Messages
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
-        public static void LogError(
+        public static void LogErrorWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
-            Log(logger, LogLevel.Error, eventId, exception, logMessage, new[] { envelope });
+            LogWithMessageInfo(logger, LogLevel.Error, eventId, exception, logMessage, new[] { envelope });
 
         /// <summary>
         ///     Writes an error log message, enriching it with the information related to the provided message(s).
@@ -396,13 +406,13 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
         /// </param>
-        public static void LogError(
+        public static void LogErrorWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
-            Log(logger, LogLevel.Error, eventId, exception, logMessage, envelopes);
+            LogWithMessageInfo(logger, LogLevel.Error, eventId, exception, logMessage, envelopes);
 
         /// <summary>
         ///     Writes a critical log message, enriching it with the information related to the provided message.
@@ -419,15 +429,15 @@ namespace Silverback.Messaging.Messages
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
-        public static void LogCritical(
-            ILogger logger,
+        public static void LogCriticalWithMessageInfo(
+            this ILogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
-            Log(logger, LogLevel.Critical, eventId, null, logMessage, new[] { envelope });
+            LogWithMessageInfo(logger, LogLevel.Critical, eventId, null, logMessage, new[] { envelope });
 
         /// <summary>
-        ///     Writes a critical log message, enriching it with the information related to the provided message(s).
+        ///     Writes an critical log message, enriching it with the information related to the provided message(s).
         /// </summary>
         /// <param name="logger">
         ///     The <see cref="ILogger" /> to write to.
@@ -442,15 +452,15 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
         /// </param>
-        public static void LogCritical(
+        public static void LogCriticalWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
-            Log(logger, LogLevel.Critical, eventId, null, logMessage, envelopes);
+            LogWithMessageInfo(logger, LogLevel.Critical, eventId, null, logMessage, envelopes);
 
         /// <summary>
-        ///     Writes a critical log message, enriching it with the information related to the provided message.
+        ///     Writes an critical log message, enriching it with the information related to the provided message.
         /// </summary>
         /// <param name="logger">
         ///     The <see cref="ILogger" /> to write to.
@@ -467,13 +477,13 @@ namespace Silverback.Messaging.Messages
         /// <param name="envelope">
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
-        public static void LogCritical(
+        public static void LogCriticalWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
-            Log(logger, LogLevel.Critical, eventId, exception, logMessage, new[] { envelope });
+            LogWithMessageInfo(logger, LogLevel.Critical, eventId, exception, logMessage, new[] { envelope });
 
         /// <summary>
         ///     Writes a critical log message, enriching it with the information related to the provided message(s).
@@ -494,13 +504,13 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
         /// </param>
-        public static void LogCritical(
+        public static void LogCriticalWithMessageInfo(
             this ILogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
-            Log(logger, LogLevel.Critical, eventId, exception, logMessage, envelopes);
+            LogWithMessageInfo(logger, LogLevel.Critical, eventId, exception, logMessage, envelopes);
 
         /// <summary>
         ///     Writes a log message at the specified log level, enriching it with the information related to the
@@ -525,7 +535,7 @@ namespace Silverback.Messaging.Messages
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.
         /// </param>
-        public static void Log(
+        public static void LogWithMessageInfo(
             this ILogger logger,
             LogLevel logLevel,
             EventId eventId,
@@ -533,58 +543,81 @@ namespace Silverback.Messaging.Messages
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes)
         {
+            Check.NotNull(logger, nameof(logger));
+
+            if (!logger.IsEnabled(logLevel))
+                return;
+
             Check.NotEmpty(logMessage, nameof(logMessage));
             Check.NotEmpty(envelopes, nameof(envelopes));
 
-            IList<(string, string, string)> arguments = GetLogArguments(envelopes);
-
-            string argumentNames = string.Join(", ", arguments.Select(p => $"{p.Item1}: {{{p.Item2}}}"));
-            string enrichedLogMessage = $"{logMessage} ({argumentNames})";
-            object[] argumentValues = arguments.Select(p => p.Item3).Cast<object>().ToArray();
+            var arguments = GetLogArguments(envelopes, ref logMessage);
 
             if (exception != null)
-                logger.Log(logLevel, eventId, exception, enrichedLogMessage, argumentValues);
+                logger.Log(logLevel, eventId, exception, logMessage, arguments);
             else
-                logger.Log(logLevel, eventId, enrichedLogMessage, argumentValues);
+                logger.Log(logLevel, eventId, logMessage, arguments);
         }
 
-        private static IList<(string, string, string)> GetLogArguments(
-            IReadOnlyCollection<IRawBrokerEnvelope> envelopes)
+        private static object?[] GetLogArguments(
+            IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
+            ref string logMessage)
         {
-            var args = new List<(string, string, string?)>();
+            var firstEnvelope = envelopes.FirstOrDefault();
 
-            var firstMessage = envelopes.First();
+            if (firstEnvelope == null)
+                return Array.Empty<object>();
 
-            if (firstMessage is IRawInboundEnvelope inboundEnvelope &&
-                !string.IsNullOrEmpty(inboundEnvelope.ActualEndpointName))
+            return firstEnvelope is IRawInboundEnvelope inboundEnvelope
+                ? GetInboundLogArguments(inboundEnvelope, envelopes, ref logMessage)
+                : GetOutboundLogArguments(firstEnvelope, envelopes, ref logMessage);
+        }
+
+        private static object?[] GetInboundLogArguments(
+            IRawInboundEnvelope firstEnvelope,
+            IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
+            ref string logMessage)
+        {
+            logMessage += InboundArgumentsTemplate;
+
+            return new object?[]
             {
-                args.Add(("Endpoint", "endpointName", inboundEnvelope.ActualEndpointName));
-            }
-            else
+                firstEnvelope.ActualEndpointName,
+                firstEnvelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts),
+                envelopes.Count == 1
+                    ? firstEnvelope.Headers.GetValue(DefaultMessageHeaders.MessageType)
+                    : BatchPlaceholder,
+                envelopes.Count == 1
+                    ? firstEnvelope.Headers.GetValue(DefaultMessageHeaders.MessageId)
+                    : BatchPlaceholder,
+                envelopes.Count == 1
+                    ? firstEnvelope.Offset?.ToLogString()
+                    : BatchPlaceholder,
+                firstEnvelope.Headers.GetValue(DefaultMessageHeaders.BatchId),
+                firstEnvelope.Headers.GetValue(DefaultMessageHeaders.BatchSize)
+            };
+        }
+
+        private static object?[] GetOutboundLogArguments(
+            IRawBrokerEnvelope firstEnvelope,
+            IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
+            ref string logMessage)
+        {
+            logMessage += OutboundArgumentsTemplate;
+
+            return new object?[]
             {
-                args.Add(("Endpoint", "endpointName", firstMessage.Endpoint?.Name));
-            }
-
-            var failedAttempts = firstMessage.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts);
-            if (failedAttempts > 0)
-                args.Add(("FailedAttempts", "failedAttempts", failedAttempts.ToString()));
-
-            if (envelopes.Count == 1)
-            {
-                args.Add(("Type", "messageType", firstMessage.Headers.GetValue(DefaultMessageHeaders.MessageType)));
-                args.Add(("Id", "messageId", firstMessage.Headers.GetValue(DefaultMessageHeaders.MessageId)));
-
-                if (firstMessage.Offset != null)
-                    args.Add(("Offset", "offset", $"{firstMessage.Offset.ToLogString()}"));
-            }
-
-            args.Add(("BatchId", "batchId", firstMessage.Headers.GetValue(DefaultMessageHeaders.BatchId)));
-            args.Add(("BatchSize", "batchSize", firstMessage.Headers.GetValue(DefaultMessageHeaders.BatchSize)));
-
-            // Don't log empty values
-            args.RemoveAll(x => string.IsNullOrWhiteSpace(x.Item3));
-
-            return args!;
+                firstEnvelope.Endpoint?.Name,
+                envelopes.Count == 1
+                    ? firstEnvelope.Headers.GetValue(DefaultMessageHeaders.MessageType)
+                    : BatchPlaceholder,
+                envelopes.Count == 1
+                    ? firstEnvelope.Headers.GetValue(DefaultMessageHeaders.MessageId)
+                    : BatchPlaceholder,
+                envelopes.Count == 1
+                    ? firstEnvelope.Offset?.ToLogString()
+                    : BatchPlaceholder
+            };
         }
     }
 }

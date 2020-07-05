@@ -78,7 +78,7 @@ namespace Silverback.Messaging.ErrorHandling
                     return policy.HandleError(envelopes, exception);
             }
 
-            _logger.LogDebug(
+            _logger.LogDebugWithMessageInfo(
                 EventIds.ErrorPolicyChainStopConsumer,
                 "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.",
                 envelopes);

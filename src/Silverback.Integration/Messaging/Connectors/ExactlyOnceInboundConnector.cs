@@ -77,7 +77,7 @@ namespace Silverback.Messaging.Connectors
                     if (await MustProcess(envelope, serviceProvider))
                         return true;
 
-                    _logger.LogInformation(
+                    _logger.LogInformationWithMessageInfo(
                         EventIds.ExactlyOnceInboundConnectorMessageAlreadyProcessed,
                         "Message is being skipped since it was already processed.",
                         envelope);

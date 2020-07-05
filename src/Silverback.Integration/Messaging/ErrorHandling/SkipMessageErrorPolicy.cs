@@ -54,7 +54,7 @@ namespace Silverback.Messaging.ErrorHandling
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
-            _logger.Log(
+            _logger.LogWithMessageInfo(
                 _logLevel,
                 EventIds.SkipMessagePolicyMessageSkipped,
                 exception,

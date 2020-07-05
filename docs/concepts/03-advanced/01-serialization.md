@@ -12,7 +12,7 @@ The default `JsonMessageSerializer` internally uses `System.Text.Json` to serial
 
 A few headers are added to the message, in particular `x-message-type` is used by the `JsonMessageSerializer` to know the message type when deserializing. It also leverages the Newtonsoft's [automatic type handling](https://www.newtonsoft.com/json/help/html/SerializeTypeNameHandling.htm) to automatically resolve the actual type of the nested properties.
 
-The deserializer function provided by `JsonMessageSerializer` will obviously try to map the message to a type with the exact assembly qualified name found in the `x-message-type` header. It is therefore a good practice to share the message models among the services, maybe through nuget.
+The deserializer function provided by `JsonMessageSerializer` will obviously try to map the message to a type with the exact assembly qualified name found in the `x-message-type` header. It is therefore a good practice to share the message models among the services, maybe through a nuget package.
 
 This is the suggested serialization strategy when both producer and consumer are based on Silverback but may not be ideal for interoperability.
 

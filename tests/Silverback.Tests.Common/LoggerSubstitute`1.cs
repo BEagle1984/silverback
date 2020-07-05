@@ -12,9 +12,15 @@ namespace Silverback.Tests
     {
         private readonly List<ReceivedCall> _receivedCalls = new List<ReceivedCall>();
 
-        public void Received(LogLevel logLevel, Type? exceptionType)
+        public void Received(LogLevel logLevel, Type? exceptionType, string? message = null)
         {
-            if (!_receivedCalls.Any(call => call.LogLevel == logLevel && call.ExceptionType == exceptionType))
+            bool containsMatchingCall = _receivedCalls.Any(
+                call =>
+                    call.LogLevel == logLevel &&
+                    call.ExceptionType == exceptionType
+                    && (message == null || call.Message == message));
+
+            if (!containsMatchingCall)
                 throw new InvalidOperationException("No matching call received.");
         }
 
@@ -22,10 +28,10 @@ namespace Silverback.Tests
             LogLevel logLevel,
             EventId eventId,
             TState state,
-            Exception exception,
-            Func<TState, Exception, string> formatter)
+            Exception? exception,
+            Func<TState, Exception?, string> formatter)
         {
-            _receivedCalls.Add(new ReceivedCall(logLevel, exception?.GetType()));
+            _receivedCalls.Add(new ReceivedCall(logLevel, exception?.GetType(), formatter.Invoke(state, exception)));
         }
 
         public bool IsEnabled(LogLevel logLevel) => true;
@@ -37,15 +43,18 @@ namespace Silverback.Tests
 
         private class ReceivedCall
         {
-            public ReceivedCall(LogLevel logLevel, Type? exceptionType)
+            public ReceivedCall(LogLevel logLevel, Type? exceptionType, string message)
             {
                 LogLevel = logLevel;
                 ExceptionType = exceptionType;
+                Message = message;
             }
 
             public LogLevel LogLevel { get; }
 
             public Type? ExceptionType { get; }
+
+            public string Message { get; set; }
         }
     }
 }
