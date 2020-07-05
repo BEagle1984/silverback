@@ -164,17 +164,6 @@ namespace Silverback.Examples.Consumer.Configuration
                     }
                 })
             .AddInbound(
-                new KafkaConsumerEndpoint("silverback-examples-custom-serializer")
-                {
-                    Configuration = new KafkaConsumerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__custom-serializer",
-                        AutoOffsetReset = AutoOffsetReset.Earliest
-                    },
-                    Serializer = GetCustomSerializer()
-                })
-            .AddInbound(
                 new KafkaConsumerEndpoint("silverback-examples-avro")
                 {
                     Configuration = new KafkaConsumerConfig
@@ -225,17 +214,8 @@ namespace Silverback.Examples.Consumer.Configuration
                         GroupId = $"{_app.ConsumerGroupName}__legacy",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     },
-                    Serializer = new JsonMessageSerializer<LegacyMessage>
-                    {
-                        Encoding = MessageEncoding.ASCII
-                    }
+                    Serializer = new JsonMessageSerializer<LegacyMessage>()
                 });
-
-        private static IMessageSerializer GetCustomSerializer() =>
-            new JsonMessageSerializer
-            {
-                Encoding = MessageEncoding.Unicode
-            };
 
         private static IMessageSerializer GetAvroSerializer() =>
             new AvroMessageSerializer<AvroMessage>

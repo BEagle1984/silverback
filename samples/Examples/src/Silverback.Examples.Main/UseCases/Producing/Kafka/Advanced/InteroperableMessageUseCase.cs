@@ -68,7 +68,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
                 object? message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
-                Encoding.ASCII.GetBytes(
+                Encoding.UTF8.GetBytes(
                     JsonConvert.SerializeObject(message, _settings));
 
             [SuppressMessage("", "SA1011", Justification = "False positive")]
