@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
@@ -22,6 +23,9 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Basic
             Description = "A translation/mapping method is used to transform the messages to be published.";
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Subscriber")]
+        public IMessage OnSimpleEvent(SimpleEvent message) => new SimpleIntegrationEvent { Content = message.Content };
+
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddSilverback()
             .UseModel()
@@ -29,23 +33,26 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Basic
             .AddScopedSubscriber<TranslateUseCase>();
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092"
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-events")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(
+                new SimpleEvent
+                {
+                    Content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
+                });
         }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public IMessage OnSimpleEvent(SimpleEvent message) => new SimpleIntegrationEvent { Content = message.Content };
     }
 }

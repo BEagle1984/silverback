@@ -38,12 +38,12 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
                     }
                 });
 
-            await producer.ProduceAsync(
-                null,
-                new MessageHeader[]
-                {
-                    new MessageHeader("use-case", "empty-message"),
-                });
+            var headers = new MessageHeaderCollection
+            {
+                ["use-case"] = "empty-message"
+            };
+
+            await producer.ProduceAsync(null, headers);
         }
     }
 }

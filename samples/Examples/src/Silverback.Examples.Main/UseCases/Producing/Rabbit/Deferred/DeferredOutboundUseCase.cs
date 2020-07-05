@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,41 +31,48 @@ namespace Silverback.Examples.Main.UseCases.Producing.Rabbit.Deferred
             .AddSilverback()
             .UseModel()
             .UseDbContext<ExamplesDbContext>()
-            .WithConnectionToMessageBroker(options => options
-                .AddRabbit()
-                .AddDbOutboundConnector()
-                .AddDbOutboundWorker())
+            .WithConnectionToMessageBroker(
+                options => options
+                    .AddRabbit()
+                    .AddDbOutboundConnector()
+                    .AddDbOutboundWorker())
             .AddSingletonBehavior<CustomHeadersBehavior>();
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new RabbitExchangeProducerEndpoint("silverback-examples-events-fanout")
-                {
-                    Exchange = new RabbitExchangeConfig
-                    {
-                        IsDurable = true,
-                        IsAutoDeleteEnabled = false,
-                        ExchangeType = ExchangeType.Fanout
-                    },
-                    Connection = new RabbitConnectionConfig
-                    {
-                        HostName = "localhost",
-                        UserName = "guest",
-                        Password = "guest"
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new RabbitExchangeProducerEndpoint("silverback-examples-events-fanout")
+                        {
+                            Exchange = new RabbitExchangeConfig
+                            {
+                                IsDurable = true,
+                                IsAutoDeleteEnabled = false,
+                                ExchangeType = ExchangeType.Fanout
+                            },
+                            Connection = new RabbitConnectionConfig
+                            {
+                                HostName = "localhost",
+                                UserName = "guest",
+                                Password = "guest"
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent
-                { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(
+                new SimpleIntegrationEvent
+                {
+                    Content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
+                });
 
             var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
             await dbContext.SaveChangesAsync();
         }
 
+        [SuppressMessage("ReSharper", "CA1034", Justification = "Use case isolation")]
         public class CustomHeadersBehavior : IBehavior
         {
             public async Task<IReadOnlyCollection<object>> Handle(
@@ -72,7 +81,9 @@ namespace Silverback.Examples.Main.UseCases.Producing.Rabbit.Deferred
             {
                 foreach (var message in messages.OfType<IOutboundEnvelope>())
                 {
-                    message.Headers.Add("was-created", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                    message.Headers.Add(
+                        "was-created",
+                        DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture));
                 }
 
                 return await next(messages);

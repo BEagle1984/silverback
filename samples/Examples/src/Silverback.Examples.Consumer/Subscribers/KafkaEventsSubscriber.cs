@@ -10,7 +10,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.Consumer.Subscribers
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Subscriber")]
     public class KafkaEventsSubscriber : ISubscriber
     {
         private readonly ILogger<KafkaEventsSubscriber> _logger;
@@ -30,10 +30,11 @@ namespace Silverback.Examples.Consumer.Subscribers
         {
             // Always skip to the end of each partition
             message.Partitions = message.Partitions
-                .Select(topicPartitionOffset =>
-                    new TopicPartitionOffset(
-                        topicPartitionOffset.TopicPartition,
-                        Offset.End))
+                .Select(
+                    topicPartitionOffset =>
+                        new TopicPartitionOffset(
+                            topicPartitionOffset.TopicPartition,
+                            Offset.End))
                 .ToList();
         }
 

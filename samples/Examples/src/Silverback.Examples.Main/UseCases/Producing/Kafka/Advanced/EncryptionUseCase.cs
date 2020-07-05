@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common;
@@ -28,25 +29,28 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             .WithConnectionToMessageBroker(options => options.AddKafka());
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-encrypted")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092"
-                    },
-                    Encryption = new SymmetricEncryptionSettings
-                    {
-                        Key = Constants.AesEncryptionKey
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-encrypted")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            },
+                            Encryption = new SymmetricEncryptionSettings
+                            {
+                                Key = Constants.AesEncryptionKey
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent
-                { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(
+                new SimpleIntegrationEvent
+                    { Content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) });
         }
     }
 }

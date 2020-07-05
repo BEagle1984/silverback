@@ -6,9 +6,9 @@ using Silverback.Examples.Main.Menu;
 
 namespace Silverback.Examples.Main
 {
-    static class Program
+    public static class Program
     {
-        static void Main()
+        public static void Main()
         {
             Console.Clear();
             Console.CursorVisible = false;

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
@@ -29,36 +30,38 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Basic
             .WithConnectionToMessageBroker(options => options.AddKafka());
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<AvroMessage>(
-                    new KafkaProducerEndpoint("silverback-examples-avro")
-                    {
-                        Serializer = new AvroMessageSerializer<AvroMessage>
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<AvroMessage>(
+                        new KafkaProducerEndpoint("silverback-examples-avro")
                         {
-                            SchemaRegistryConfig = new SchemaRegistryConfig
+                            Serializer = new AvroMessageSerializer<AvroMessage>
                             {
-                                Url = "localhost:8081"
+                                SchemaRegistryConfig = new SchemaRegistryConfig
+                                {
+                                    Url = "localhost:8081"
+                                },
+                                AvroSerializerConfig = new AvroSerializerConfig
+                                {
+                                    AutoRegisterSchemas = true
+                                }
                             },
-                            AvroSerializerConfig = new AvroSerializerConfig
+                            Configuration = new KafkaProducerConfig
                             {
-                                AutoRegisterSchemas = true
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
                             }
-                        },
-                        Configuration = new KafkaProducerConfig
-                        {
-                            BootstrapServers = "PLAINTEXT://localhost:9092"
-                        }
-                    }));
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IPublisher>();
 
-            await publisher.PublishAsync(new AvroMessage
-            {
-                key = Guid.NewGuid().ToString("N"),
-                content = DateTime.Now.ToString("HH:mm:ss.fff")
-            });
+            await publisher.PublishAsync(
+                new AvroMessage
+                {
+                    key = Guid.NewGuid().ToString("N"),
+                    content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
+                });
         }
     }
 }

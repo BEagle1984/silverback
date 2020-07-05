@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Data;
@@ -26,30 +27,32 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             .AddSilverback()
             .UseModel()
             .UseDbContext<ExamplesDbContext>()
-            .WithConnectionToMessageBroker(options => options
-                .AddKafka()
-                .AddOutboundConnector()
-                .AddDbOutboundConnector()
-                .AddDbOutboundWorker());
+            .WithConnectionToMessageBroker(
+                options => options
+                    .AddKafka()
+                    .AddOutboundConnector()
+                    .AddDbOutboundConnector()
+                    .AddDbOutboundWorker());
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IntegrationEventA>(
-                    new KafkaProducerEndpoint("silverback-examples-events")
-                    {
-                        Configuration = new KafkaProducerConfig
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IntegrationEventA>(
+                        new KafkaProducerEndpoint("silverback-examples-events")
                         {
-                            BootstrapServers = "PLAINTEXT://localhost:9092"
-                        }
-                    })
-                .AddOutbound<IntegrationEventB, DeferredOutboundConnector>(
-                    new KafkaProducerEndpoint("silverback-examples-events")
-                    {
-                        Configuration = new KafkaProducerConfig
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        })
+                    .AddOutbound<IntegrationEventB, DeferredOutboundConnector>(
+                        new KafkaProducerEndpoint("silverback-examples-events")
                         {
-                            BootstrapServers = "PLAINTEXT://localhost:9092"
-                        }
-                    }));
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
@@ -57,10 +60,12 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             var publisherB = serviceProvider.GetService<IEventPublisher>();
             var dbContext = serviceProvider.GetRequiredService<ExamplesDbContext>();
 
-            await publisherA.PublishAsync(new IntegrationEventA
-                { Content = "A->" + DateTime.Now.ToString("HH:mm:ss.fff") });
-            await publisherB.PublishAsync(new IntegrationEventB
-                { Content = "B->" + DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisherA.PublishAsync(
+                new IntegrationEventA
+                    { Content = "A->" + DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) });
+            await publisherB.PublishAsync(
+                new IntegrationEventB
+                    { Content = "B->" + DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) });
 
             await dbContext.SaveChangesAsync();
         }

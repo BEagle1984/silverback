@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,19 +38,21 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var producer = broker.GetProducer(new KafkaProducerEndpoint("silverback-examples-legacy-messages")
-            {
-                Serializer = new LegacyMessageSerializer(),
-                Configuration = new KafkaProducerConfig
+            var producer = broker.GetProducer(
+                new KafkaProducerEndpoint("silverback-examples-legacy-messages")
                 {
-                    BootstrapServers = "PLAINTEXT://localhost:9092"
-                }
-            });
+                    Serializer = new LegacyMessageSerializer(),
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://localhost:9092"
+                    }
+                });
 
-            await producer.ProduceAsync(new LegacyMessage
-            {
-                Content = "LEGACY - " + DateTime.Now.ToString("HH:mm:ss.fff")
-            });
+            await producer.ProduceAsync(
+                new LegacyMessage
+                {
+                    Content = "LEGACY - " + DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
+                });
         }
 
         private class LegacyMessageSerializer : IMessageSerializer
@@ -68,8 +71,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
                 object? message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
-                Encoding.UTF8.GetBytes(
-                    JsonConvert.SerializeObject(message, _settings));
+                Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message, _settings));
 
             [SuppressMessage("", "SA1011", Justification = "False positive")]
             public (object?, Type) Deserialize(
@@ -77,13 +79,15 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context)
             {
-                var deserialized = message != null ? JsonConvert.DeserializeObject<LegacyMessage>(Encoding.ASCII.GetString(message)) : null;
+                var deserialized = message != null
+                    ? JsonConvert.DeserializeObject<LegacyMessage>(Encoding.ASCII.GetString(message))
+                    : null;
                 return (deserialized, typeof(LegacyMessage));
             }
 
             [SuppressMessage("", "SA1011", Justification = "False positive")]
             public Task<byte[]?> SerializeAsync(
-                object message,
+                object? message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
                 Task.FromResult(Serialize(message, messageHeaders, context));

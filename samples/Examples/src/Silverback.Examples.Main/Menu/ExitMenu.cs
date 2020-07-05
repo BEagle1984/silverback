@@ -6,6 +6,7 @@ namespace Silverback.Examples.Main.Menu
     public class ExitMenu : IBackMenu
     {
         public string Title => "Exit";
-        public string Description => null;
+
+        public string? Description => null;
     }
 }

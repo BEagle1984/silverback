@@ -16,15 +16,20 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Examples.Main.UseCases.Producing.Rabbit.Deferred
 {
-    public class OutboundWorkerUseCase : UseCase
+    public sealed class OutboundWorkerUseCase : UseCase, IDisposable
     {
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource? _cancellationTokenSource;
 
         public OutboundWorkerUseCase()
         {
             Title = "Start outbound worker";
             Description = "The outbound worker monitors the outbox table and publishes the messages to RabbitMQ.";
             ExecutionsCount = 1;
+        }
+
+        public void Dispose()
+        {
+            _cancellationTokenSource?.Dispose();
         }
 
         protected override void ConfigureServices(IServiceCollection services)
@@ -34,34 +39,37 @@ namespace Silverback.Examples.Main.UseCases.Producing.Rabbit.Deferred
                 .UseModel()
                 .UseDbContext<ExamplesDbContext>()
                 .AddDbDistributedLockManager()
-                .WithConnectionToMessageBroker(options => options
-                    .AddRabbit()
-                    .AddDbOutboundConnector()
-                    .AddDbOutboundWorker(
-                        new DistributedLockSettings(
-                            acquireRetryInterval: TimeSpan.FromSeconds(1),
-                            heartbeatTimeout: TimeSpan.FromSeconds(10),
-                            heartbeatInterval: TimeSpan.FromSeconds(1))));
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddRabbit()
+                        .AddDbOutboundConnector()
+                        .AddDbOutboundWorker(
+                            new DistributedLockSettings(
+                                acquireRetryInterval: TimeSpan.FromSeconds(1),
+                                heartbeatTimeout: TimeSpan.FromSeconds(10),
+                                heartbeatInterval: TimeSpan.FromSeconds(1))));
         }
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider)
         {
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new RabbitExchangeProducerEndpoint("silverback-examples-events-fanout")
-                {
-                    Exchange = new RabbitExchangeConfig
-                    {
-                        IsDurable = true,
-                        IsAutoDeleteEnabled = false,
-                        ExchangeType = ExchangeType.Fanout
-                    },
-                    Connection = new RabbitConnectionConfig
-                    {
-                        HostName = "localhost",
-                        UserName = "guest",
-                        Password = "guest"
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new RabbitExchangeProducerEndpoint("silverback-examples-events-fanout")
+                        {
+                            Exchange = new RabbitExchangeConfig
+                            {
+                                IsDurable = true,
+                                IsAutoDeleteEnabled = false,
+                                ExchangeType = ExchangeType.Fanout
+                            },
+                            Connection = new RabbitConnectionConfig
+                            {
+                                HostName = "localhost",
+                                UserName = "guest",
+                                Password = "guest"
+                            }
+                        }));
 
             _cancellationTokenSource = new CancellationTokenSource();
 

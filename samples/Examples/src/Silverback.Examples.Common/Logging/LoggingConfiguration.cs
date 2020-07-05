@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
@@ -11,6 +12,7 @@ namespace Silverback.Examples.Common.Logging
 {
     public static class LoggingConfiguration
     {
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Here for future use")]
         private const string VerboseOutputTemplate =
             "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}) {Message:lj} {Exception} {Properties}{NewLine}";
 

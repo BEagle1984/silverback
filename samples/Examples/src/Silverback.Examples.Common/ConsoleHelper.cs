@@ -12,7 +12,7 @@ namespace Silverback.Examples.Common
         public static void WriteSeparator(ConsoleColor? color = null)
         {
             Console.ForegroundColor = color ?? Constants.SecondaryColor;
-            Console.WriteLine("".PadRight(ConsoleWidth, '-'));
+            Console.WriteLine(string.Empty.PadRight(ConsoleWidth, '-'));
             ResetColor();
         }
 

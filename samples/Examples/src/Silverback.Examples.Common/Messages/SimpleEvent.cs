@@ -7,6 +7,6 @@ namespace Silverback.Examples.Common.Messages
 {
     public class SimpleEvent : IEvent
     {
-        public string Content { get; set; }
+        public string? Content { get; set; }
     }
 }

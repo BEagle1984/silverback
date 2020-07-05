@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
@@ -24,20 +25,22 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
         protected override void ConfigureServices(IServiceCollection services) => services
             .AddSilverback()
             .UseModel()
-            .WithConnectionToMessageBroker(options => options
-                .AddKafka()
-                .AddOutboundConnector());
+            .WithConnectionToMessageBroker(
+                options => options
+                    .AddKafka()
+                    .AddOutboundConnector());
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<SampleBatchProcessedEvent>(
-                    new KafkaProducerEndpoint("silverback-examples-batch")
-                    {
-                        Configuration = new KafkaProducerConfig
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<SampleBatchProcessedEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-batch")
                         {
-                            BootstrapServers = "PLAINTEXT://localhost:9092"
-                        }
-                    }));
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
@@ -45,10 +48,11 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
 
             for (int i = 0; i < 22; i++)
             {
-                await publisher.PublishAsync(new SampleBatchProcessedEvent
-                {
-                    Content = (i + 1) + " -" + DateTime.Now.ToString("HH:mm:ss.fff")
-                });
+                await publisher.PublishAsync(
+                    new SampleBatchProcessedEvent
+                    {
+                        Content = i + 1 + " -" + DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
+                    });
             }
         }
     }

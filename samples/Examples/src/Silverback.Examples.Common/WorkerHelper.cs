@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Silverback.Examples.Common
 {
-    public class WorkerHelper
+    public static class WorkerHelper
     {
         public static void LoopUntilCancelled()
         {
@@ -26,7 +26,7 @@ namespace Silverback.Examples.Common
                 }
             }
 
-            void OnCancelKeyPress(object _, ConsoleCancelEventArgs args)
+            void OnCancelKeyPress(object sender, ConsoleCancelEventArgs args)
             {
                 args.Cancel = true;
                 cancellationTokenSource.Cancel();

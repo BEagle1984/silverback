@@ -25,13 +25,33 @@ namespace Silverback.Examples.Common.Data
             _eventsPublisher = new DbContextEventsPublisher(publisher, this);
         }
 
-        public DbSet<OutboundMessage> OutboundMessages { get; set; }
-        public DbSet<InboundLogEntry> InboundMessages { get; set; }
-        public DbSet<StoredOffset> StoredOffsets { get; set; }
-        public DbSet<TemporaryMessageChunk> Chunks { get; set; }
-        public DbSet<Lock> Locks { get; set; }
+        public DbSet<OutboundMessage> OutboundMessages { get; set; } = null!;
 
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<InboundLogEntry> InboundMessages { get; set; } = null!;
+
+        public DbSet<StoredOffset> StoredOffsets { get; set; } = null!;
+
+        public DbSet<TemporaryMessageChunk> Chunks { get; set; } = null!;
+
+        public DbSet<Lock> Locks { get; set; } = null!;
+
+        public DbSet<Customer> Customers { get; set; } = null!;
+
+        public override int SaveChanges()
+            => SaveChanges(true);
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+            => _eventsPublisher.ExecuteSaveTransaction(() => base.SaveChanges(acceptAllChangesOnSuccess));
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+            => SaveChangesAsync(true, cancellationToken);
+
+        public override Task<int> SaveChangesAsync(
+            bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
+            => _eventsPublisher.ExecuteSaveTransactionAsync(
+                () =>
+                    base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,20 +69,5 @@ namespace Silverback.Examples.Common.Data
                 .ToTable("Messaging_MessageChunks")
                 .HasKey(t => new { t.MessageId, t.ChunkIndex });
         }
-
-        public override int SaveChanges()
-            => SaveChanges(true);
-
-        public override int SaveChanges(bool acceptAllChangesOnSuccess)
-            => _eventsPublisher.ExecuteSaveTransaction(() => base.SaveChanges(acceptAllChangesOnSuccess));
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-            => SaveChangesAsync(true, cancellationToken);
-
-        public override Task<int> SaveChangesAsync(
-            bool acceptAllChangesOnSuccess,
-            CancellationToken cancellationToken = default)
-            => _eventsPublisher.ExecuteSaveTransactionAsync(() =>
-                base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
     }
 }

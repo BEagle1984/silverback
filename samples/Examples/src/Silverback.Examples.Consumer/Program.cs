@@ -7,8 +7,8 @@ namespace Silverback.Examples.Consumer
 {
     public static class Program
     {
-        [SuppressMessage("ReSharper", "FunctionNeverReturns")]
-        static void Main()
+        [SuppressMessage("ReSharper", "FunctionNeverReturns", Justification = "Main method isn't supposed to return")]
+        private static void Main()
         {
             new ConsumerApp().Start();
         }

@@ -8,11 +8,11 @@ namespace Silverback.Examples.Main.Menu
         /// <summary>
         ///     Gets the title to be displayed in the menu.
         /// </summary>
-        public string Title { get; }
+        public string? Title { get; }
 
         /// <summary>
         ///     Gets the longer description to be displayed when the menu is selected.
         /// </summary>
-        public string Description { get; }
+        public string? Description { get; }
     }
 }

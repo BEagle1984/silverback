@@ -7,6 +7,6 @@ namespace Silverback.Examples.Common.Messages
 {
     public class LegacyMessage : IMessage
     {
-        public string Content { get; set; }
+        public string? Content { get; set; }
     }
 }

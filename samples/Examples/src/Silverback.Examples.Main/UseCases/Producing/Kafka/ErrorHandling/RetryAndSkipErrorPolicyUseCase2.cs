@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
@@ -30,21 +31,26 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
             .WithConnectionToMessageBroker(options => options.AddKafka());
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-error-events2")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092"
-                    },
-                    Serializer = new BuggySerializer()
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-error-events2")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            },
+                            Serializer = new BuggySerializer()
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new BadIntegrationEvent { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(new BadIntegrationEvent
+            {
+                Content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
+            });
         }
 
         private class BuggySerializer : IMessageSerializer
@@ -65,7 +71,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
 
             [SuppressMessage("", "SA1011", Justification = "False positive")]
             public Task<byte[]?> SerializeAsync(
-                object message,
+                object? message,
                 MessageHeaderCollection messageHeaders,
                 MessageSerializationContext context) =>
                 Task.FromResult(Serialize(message, messageHeaders, context));

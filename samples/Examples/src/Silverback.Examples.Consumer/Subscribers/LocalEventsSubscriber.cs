@@ -17,6 +17,6 @@ namespace Silverback.Examples.Consumer.Subscribers
         }
 
         public void OnMove(MessageMovedEvent message) =>
-            _logger.LogInformation($"Message(s) moved: {@message}", message);
+            _logger.LogInformation($"Message(s) moved: {message}", message);
     }
 }

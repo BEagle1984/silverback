@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Examples.Common;
 using Silverback.Examples.Main.UseCases;
@@ -12,9 +13,12 @@ namespace Silverback.Examples.Main.Menu
     public class MenuApp
     {
         private readonly MenuRenderer _renderer = new MenuRenderer();
+
         private readonly Stack<ICategory> _breadcrumbs = new Stack<ICategory>();
+
         private bool _exiting;
-        private IMenuItemInfo _preSelectedItem = null;
+
+        private IMenuItemInfo? _preSelectedItem;
 
         public MenuApp()
         {
@@ -32,15 +36,14 @@ namespace Silverback.Examples.Main.Menu
             }
         }
 
-        #region Navigation
-
+        [SuppressMessage("ReSharper", "SA1009", Justification = "False positive")]
         private IMenuItemInfo[] GetOptions()
         {
             IEnumerable<IMenuItemInfo> options =
                 _breadcrumbs
                     .Peek()
                     .Children
-                    .Select(type => (IMenuItemInfo) Activator.CreateInstance(type))
+                    .Select(type => (IMenuItemInfo)Activator.CreateInstance(type)!)
                     .ToList();
 
             options = _breadcrumbs.Peek() is RootCategory
@@ -50,9 +53,9 @@ namespace Silverback.Examples.Main.Menu
             return options.ToArray();
         }
 
-        private void OnOptionChosen(object sender, IMenuItemInfo option)
+        private void OnOptionChosen(object sender, MenuItemInfoEventArgs args)
         {
-            switch (option)
+            switch (args.MenuItemInfo)
             {
                 case ICategory category:
                     _breadcrumbs.Push(category);
@@ -66,7 +69,7 @@ namespace Silverback.Examples.Main.Menu
                     OnBack(sender, EventArgs.Empty);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new InvalidOperationException("Invalid menu item type.");
             }
         }
 
@@ -77,10 +80,6 @@ namespace Silverback.Examples.Main.Menu
             if (!_breadcrumbs.Any())
                 _exiting = true;
         }
-
-        #endregion
-
-        #region Run UseCase
 
         private void RunUseCase(IUseCase useCase)
         {
@@ -97,7 +96,5 @@ namespace Silverback.Examples.Main.Menu
 
         private void WriteUseCaseHeader(IMenuItemInfo useCase) =>
             _breadcrumbs.Prepend(useCase).WriteBreadcrumbs();
-
-        #endregion
     }
 }

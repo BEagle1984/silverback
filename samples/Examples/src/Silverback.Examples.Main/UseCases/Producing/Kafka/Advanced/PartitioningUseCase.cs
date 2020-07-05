@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
@@ -30,25 +31,36 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             .WithConnectionToMessageBroker(options => options.AddKafka());
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092"
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-events")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new PartitionedSimpleIntegrationEvent
-                { Key = "AAAAAAAAAA", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
-            await publisher.PublishAsync(new PartitionedSimpleIntegrationEvent
-                { Key = "zzzzzzzzzz", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
-            await publisher.PublishAsync(new PartitionedSimpleIntegrationEvent
-                { Key = "0000000000", Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(
+                new PartitionedSimpleIntegrationEvent
+                {
+                    Key = "AAAAAAAAAA", Content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
+                });
+            await publisher.PublishAsync(
+                new PartitionedSimpleIntegrationEvent
+                {
+                    Key = "zzzzzzzzzz", Content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
+                });
+            await publisher.PublishAsync(
+                new PartitionedSimpleIntegrationEvent
+                {
+                    Key = "0000000000", Content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
+                });
         }
     }
 }

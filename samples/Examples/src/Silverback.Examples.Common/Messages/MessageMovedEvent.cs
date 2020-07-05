@@ -3,7 +3,10 @@
 
 namespace Silverback.Examples.Common.Messages
 {
-    public class SampleBatchProcessedEvent : IntegrationEvent
+    public class MessageMovedEvent
     {
+        public string? Source { get; set; }
+
+        public string? Destination { get; set; }
     }
 }

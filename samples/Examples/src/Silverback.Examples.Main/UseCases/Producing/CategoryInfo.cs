@@ -3,13 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Silverback.Examples.Main.Menu;
 
 namespace Silverback.Examples.Main.UseCases.Producing
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class _CategoryInfo : ICategory
+    public class CategoryInfo : ICategory
     {
         public string Title => "Producing";
 
@@ -18,8 +16,8 @@ namespace Silverback.Examples.Main.UseCases.Producing
 
         public IEnumerable<Type> Children => new List<Type>
         {
-            typeof(Kafka._CategoryInfo),
-            typeof(Rabbit._CategoryInfo),
+            typeof(Kafka.CategoryInfo),
+            typeof(Rabbit.CategoryInfo),
         };
     }
 }

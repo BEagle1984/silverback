@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common.Data;
@@ -15,11 +14,11 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.Consumer.Subscribers
 {
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Subscriber")]
     public class SampleEventsSubscriber : ISubscriber
     {
         private readonly ExamplesDbContext _dbContext;
-        
+
         private readonly ILogger<SampleEventsSubscriber> _logger;
 
         public SampleEventsSubscriber(ILogger<SampleEventsSubscriber> logger, ExamplesDbContext dbContext)
@@ -38,12 +37,12 @@ namespace Silverback.Examples.Consumer.Subscribers
         }
 
         [Subscribe(Parallel = true)]
-        public void OnIntegrationEventBatchReceived(IEnumerable<IntegrationEvent> messages)
+        public void OnIntegrationEventBatchReceived(IReadOnlyCollection<IntegrationEvent> messages)
         {
-            if (messages.Count() <= 1)
+            if (messages.Count <= 1)
                 return;
 
-            _logger.LogInformation($"Received batch containing {messages.Count()} IntegrationEvent messages");
+            _logger.LogInformation($"Received batch containing {messages.Count} IntegrationEvent messages");
         }
 
         [Subscribe(Parallel = true)]
@@ -75,9 +74,12 @@ namespace Silverback.Examples.Consumer.Subscribers
             _logger.LogInformation("Received AvroMessage {@message}", message);
         }
 
-        private Task DoFail()
+        private static Task DoFail()
         {
-            throw new AggregateException(new Exception("Bad message!", new Exception("Inner reason...")));
+            throw new AggregateException(
+                new InvalidOperationException(
+                    "Bad message!",
+                    new InvalidOperationException("Inner reason...")));
         }
     }
 }

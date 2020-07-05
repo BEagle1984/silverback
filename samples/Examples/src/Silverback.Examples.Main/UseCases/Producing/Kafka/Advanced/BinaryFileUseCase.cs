@@ -25,24 +25,27 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             .WithConnectionToMessageBroker(options => options.AddKafka());
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("silverback-examples-binaries")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092"
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IBinaryFileMessage>(
+                        new KafkaProducerEndpoint("silverback-examples-binaries")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IPublisher>();
 
-            await publisher.PublishAsync(new BinaryFileMessage
-            {
-                Content = new byte[] { 0xBE, 0xA6, 0x13, 0x19, 0x84 },
-                ContentType = "application/awesome"
-            });
+            await publisher.PublishAsync(
+                new BinaryFileMessage
+                {
+                    Content = new byte[] { 0xBE, 0xA6, 0x13, 0x19, 0x84 },
+                    ContentType = "application/awesome"
+                });
         }
     }
 }

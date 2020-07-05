@@ -31,42 +31,47 @@ namespace Silverback.Examples.Main.UseCases.Producing.Rabbit.Basic
             .WithConnectionToMessageBroker(options => options.AddRabbit());
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new RabbitExchangeProducerEndpoint("silverback-examples-events-topic")
-                {
-                    Exchange = new RabbitExchangeConfig
-                    {
-                        IsDurable = true,
-                        IsAutoDeleteEnabled = false,
-                        ExchangeType = ExchangeType.Topic
-                    },
-                    Connection = new RabbitConnectionConfig
-                    {
-                        HostName = "localhost",
-                        UserName = "guest",
-                        Password = "guest"
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new RabbitExchangeProducerEndpoint("silverback-examples-events-topic")
+                        {
+                            Exchange = new RabbitExchangeConfig
+                            {
+                                IsDurable = true,
+                                IsAutoDeleteEnabled = false,
+                                ExchangeType = ExchangeType.Topic
+                            },
+                            Connection = new RabbitConnectionConfig
+                            {
+                                HostName = "localhost",
+                                UserName = "guest",
+                                Password = "guest"
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new RoutedSimpleIntegrationEvent
-            {
-                Key = "interesting.order.event",
-                Content = $"This is an interesting.order.event -> {DateTime.Now:HH:mm:ss.fff}"
-            });
-            await publisher.PublishAsync(new RoutedSimpleIntegrationEvent
-            {
-                Key = "interesting.basket.event",
-                Content = $"This is an interesting.basket.event -> {DateTime.Now:HH:mm:ss.fff}"
-            });
-            await publisher.PublishAsync(new RoutedSimpleIntegrationEvent
-            {
-                Key = "useless.basket.event",
-                Content = $"This is a useless.order.event -> {DateTime.Now:HH:mm:ss.fff}"
-            });
+            await publisher.PublishAsync(
+                new RoutedSimpleIntegrationEvent
+                {
+                    Key = "interesting.order.event",
+                    Content = $"This is an interesting.order.event -> {DateTime.Now:HH:mm:ss.fff}"
+                });
+            await publisher.PublishAsync(
+                new RoutedSimpleIntegrationEvent
+                {
+                    Key = "interesting.basket.event",
+                    Content = $"This is an interesting.basket.event -> {DateTime.Now:HH:mm:ss.fff}"
+                });
+            await publisher.PublishAsync(
+                new RoutedSimpleIntegrationEvent
+                {
+                    Key = "useless.basket.event",
+                    Content = $"This is a useless.order.event -> {DateTime.Now:HH:mm:ss.fff}"
+                });
 
             serviceProvider.GetRequiredService<ILogger<TopicPublishUseCase>>().LogInformation(
                 "Published 3 events with routing keys: 'interesting.order.event', 'interesting.basket.event'" +

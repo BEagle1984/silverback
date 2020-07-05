@@ -13,10 +13,12 @@ namespace Silverback.Examples.Common
     {
         public static IServiceCollection GetServiceCollection(string sqlServerConnectionString) =>
             new ServiceCollection()
-                .AddDbContext<ExamplesDbContext>(options => options
-                    .UseSqlServer(sqlServerConnectionString))
-                .AddLogging(l => l
-                    .SetMinimumLevel(LogLevel.Trace)
-                    .AddSerilog());
+                .AddDbContext<ExamplesDbContext>(
+                    options => options
+                        .UseSqlServer(sqlServerConnectionString))
+                .AddLogging(
+                    l => l
+                        .SetMinimumLevel(LogLevel.Trace)
+                        .AddSerilog());
     }
 }

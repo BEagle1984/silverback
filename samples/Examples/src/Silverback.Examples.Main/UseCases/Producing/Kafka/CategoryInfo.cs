@@ -3,13 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Silverback.Examples.Main.Menu;
 
 namespace Silverback.Examples.Main.UseCases.Producing.Kafka
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class _CategoryInfo : ICategory
+    public class CategoryInfo : ICategory
     {
         public string Title => "Producing to Apache Kafka";
 
@@ -18,11 +16,11 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka
 
         public IEnumerable<Type> Children => new List<Type>
         {
-            typeof(Basic._CategoryInfo),
-            typeof(Advanced._CategoryInfo),
-            typeof(ErrorHandling._CategoryInfo),
-            typeof(Deferred._CategoryInfo),
-            typeof(HealthCheck._CategoryInfo)
+            typeof(Basic.CategoryInfo),
+            typeof(Advanced.CategoryInfo),
+            typeof(ErrorHandling.CategoryInfo),
+            typeof(Deferred.CategoryInfo),
+            typeof(HealthCheck.CategoryInfo)
         };
     }
 }

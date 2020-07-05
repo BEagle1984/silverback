@@ -8,7 +8,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.Consumer.Subscribers
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Subscriber")]
     public class SilverbackEventsSubscriber : ISubscriber
     {
         private readonly ILogger<SilverbackEventsSubscriber> _logger;

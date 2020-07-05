@@ -3,13 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Silverback.Examples.Main.Menu;
 
 namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class _CategoryInfo : ICategory
+    public class CategoryInfo : ICategory
     {
         public string Title => "Error handling";
 

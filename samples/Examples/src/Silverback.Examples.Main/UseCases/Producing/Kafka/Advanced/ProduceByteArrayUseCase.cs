@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +37,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
                 JsonConvert.SerializeObject(
                     new SimpleIntegrationEvent
                     {
-                        Content = DateTime.Now.ToString("HH:mm:ss.fff")
+                        Content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
                     },
                     new JsonSerializerSettings
                     {
@@ -52,12 +53,12 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
                     }
                 });
 
-            await producer.ProduceAsync(
-                byteArray,
-                new MessageHeader[]
-                {
-                    new MessageHeader("use-case", "pre-serialized"),
-                });
+            var headers = new MessageHeaderCollection
+            {
+                ["use-case"] = "pre-serialized"
+            };
+
+            await producer.ProduceAsync(byteArray, headers);
         }
     }
 }

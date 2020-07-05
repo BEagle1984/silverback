@@ -15,10 +15,10 @@ namespace Silverback.Examples.Main.UseCases
     public abstract class UseCase : IUseCase
     {
         /// <inheritdoc cref="IMenuItemInfo" />
-        public string Title { get; protected set; }
+        public string? Title { get; protected set; }
 
         /// <inheritdoc cref="IMenuItemInfo" />
-        public string Description { get; protected set; }
+        public string? Description { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the number of times the <see cref="Execute" /> method has to be called in a loop.
@@ -50,15 +50,50 @@ namespace Silverback.Examples.Main.UseCases
             }
             finally
             {
-                ((IDisposable) serviceProvider)?.Dispose();
+                ((IDisposable)serviceProvider)?.Dispose();
             }
         }
 
-        private IServiceProvider BuildServiceProvider(IServiceCollection services) =>
-            services.BuildServiceProvider(new ServiceProviderOptions
-            {
-                ValidateScopes = true
-            });
+        /// <summary>
+        ///     <param>Registers the required services for DI.</param>
+        ///     <param>(Same to what is normally done in the Startup.cs.)</param>
+        /// </summary>
+        protected abstract void ConfigureServices(IServiceCollection services);
+
+        /// <summary>
+        ///     <param>Configures the Bus.</param>
+        ///     <param>(Same to what is normally done in the Startup.cs.)</param>
+        /// </summary>
+        protected abstract void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider);
+
+        /// <summary>
+        ///     Executes the necessary logic to demonstrate the use case.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        protected abstract Task Execute(IServiceProvider serviceProvider);
+
+        /// <summary>
+        ///     Invoked after the configuration and just before <see cref="Execute" />.
+        ///     Can be used for example to setup the use case data.
+        /// </summary>
+        protected virtual void PreExecute(IServiceProvider serviceProvider)
+        {
+        }
+
+        /// <summary>
+        ///     Invoked after all runs of the <see cref="Execute" /> method.
+        ///     Can be used to execute some cleanup work, if needed.
+        /// </summary>
+        protected virtual void PostExecute(IServiceProvider serviceProvider)
+        {
+        }
+
+        private static IServiceProvider BuildServiceProvider(IServiceCollection services) =>
+            services.BuildServiceProvider(
+                new ServiceProviderOptions
+                {
+                    ValidateScopes = true
+                });
 
         private void CreateScopeAndConfigure(IServiceProvider serviceProvider)
         {
@@ -82,39 +117,6 @@ namespace Silverback.Examples.Main.UseCases
         private void CreateScopeAndPostExecute(IServiceProvider serviceProvider)
         {
             PostExecute(serviceProvider);
-        }
-
-        /// <summary>
-        ///     <param>Registers the required services for DI.</param>
-        ///     <param>(Same to what is normally done in the Startup.cs.)</param>
-        /// </summary>
-        protected abstract void ConfigureServices(IServiceCollection services);
-
-        /// <summary>
-        ///     <param>Configures the Bus.</param>
-        ///     <param>(Same to what is normally done in the Startup.cs.)</param>
-        /// </summary>
-        protected abstract void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider);
-
-        /// <summary>
-        ///     Executes the necessary logic to demonstrate the use case.
-        /// </summary>
-        protected abstract Task Execute(IServiceProvider serviceProvider);
-
-        /// <summary>
-        ///     Invoked after the configuration and just before <see cref="Execute" />.
-        ///     Can be used for example to setup the use case data.
-        /// </summary>
-        protected virtual void PreExecute(IServiceProvider serviceProvider)
-        {
-        }
-
-        /// <summary>
-        ///     Invoked after all runs of the <see cref="Execute" /> method.
-        ///     Can be used to execute some cleanup work, if needed.
-        /// </summary>
-        protected virtual void PostExecute(IServiceProvider serviceProvider)
-        {
         }
     }
 }

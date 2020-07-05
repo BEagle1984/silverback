@@ -10,7 +10,7 @@ namespace Silverback.Examples.Common.Messages
     {
         [Header("x-string-header")]
         [JsonIgnore]
-        public string StringHeader { get; set; }
+        public string? StringHeader { get; set; }
 
         [Header("x-bool-header", PublishDefaultValue = true)]
         [JsonIgnore]

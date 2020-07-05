@@ -4,19 +4,21 @@
 using System;
 using System.Collections.Generic;
 using Silverback.Examples.Main.Menu;
+using Silverback.Examples.Main.UseCases.Producing.Kafka;
 
 namespace Silverback.Examples.Main.UseCases
 {
     public class RootCategory : ICategory
     {
-        public string Title => null;
-        public string Description => null;
+        public string? Title { get; } = null;
+
+        public string? Description { get; } = null;
 
         public IEnumerable<Type> Children => new List<Type>
         {
-            typeof(Producing.Kafka._CategoryInfo),
-            typeof(Producing.Rabbit._CategoryInfo),
-            typeof(Consuming._CategoryInfo)
+            typeof(CategoryInfo),
+            typeof(Producing.Rabbit.CategoryInfo),
+            typeof(Consuming.CategoryInfo)
         };
     }
 }

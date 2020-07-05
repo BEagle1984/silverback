@@ -30,21 +30,23 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider)
         {
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationMessage>(new KafkaProducerEndpoint("silverback-examples-multiple-groups")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092"
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationMessage>(
+                        new KafkaProducerEndpoint("silverback-examples-multiple-groups")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        }));
         }
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IPublisher>();
 
-            await publisher.PublishAsync(new MultipleGroupsMessage() { Content = "first" });
+            await publisher.PublishAsync(new MultipleGroupsMessage { Content = "first" });
             await publisher.PublishAsync(new MultipleGroupsMessage { Content = "second" });
             await publisher.PublishAsync(new MultipleGroupsMessage { Content = "third" });
         }

@@ -11,13 +11,14 @@ namespace Silverback.Examples.Main.Menu
 {
     public class MenuRenderer
     {
-        public event EventHandler<IMenuItemInfo> Chosen;
-        public event EventHandler Back;
+        public event EventHandler<MenuItemInfoEventArgs>? Chosen;
+
+        public event EventHandler? Back;
 
         public void ShowMenu(
             IReadOnlyCollection<IMenuItemInfo> breadcrumbs,
             IMenuItemInfo[] options,
-            IMenuItemInfo selectedItem = null)
+            IMenuItemInfo? selectedItem = null)
         {
             var selectedIndex = selectedItem != null
                 ? GetIndex(options, selectedItem)
@@ -34,19 +35,8 @@ namespace Silverback.Examples.Main.Menu
                 WriteSelectionDescription(options[selectedIndex]);
 
                 HandleInput(options, ref selectedIndex);
-            } while (selectedIndex != -1);
-        }
-
-        private int GetIndex(IMenuItemInfo[] options, IMenuItemInfo selectedItem)
-        {
-            var selectedOption = options.FirstOrDefault(item => item.GetType() == selectedItem.GetType());
-            return selectedOption != null ? Array.IndexOf(options, selectedOption) : 0;
-        }
-        
-        private int GetFirstCategoryOrUseCaseIndex(IMenuItemInfo[] options)
-        {
-            var firstItem = options.FirstOrDefault(item => !(item is IBackMenu));
-            return firstItem != null ? Array.IndexOf(options, firstItem) : 0;
+            }
+            while (selectedIndex != -1);
         }
 
         private static void WriteOptions(IMenuItemInfo[] options, int selectedIndex)
@@ -102,62 +92,7 @@ namespace Silverback.Examples.Main.Menu
                     Console.Write(">>  ");
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private void HandleInput(IMenuItemInfo[] options, ref int selected)
-        {
-            var key = Console.ReadKey(true).Key;
-
-            switch (key)
-            {
-                case ConsoleKey.UpArrow:
-                {
-                    if (selected <= 0)
-                        selected = options.GetUpperBound(0);
-                    else
-                        selected--;
-                    break;
-                }
-                case ConsoleKey.DownArrow:
-                {
-                    if (selected >= options.GetUpperBound(0))
-                        selected = 0;
-                    else
-                        selected++;
-                    break;
-                }
-                case ConsoleKey.Backspace:
-                case ConsoleKey.Escape:
-                {
-                    Back?.Invoke(this, EventArgs.Empty);
-                    selected = -1;
-                    break;
-                }
-                case ConsoleKey.Enter:
-                {
-                    Chosen?.Invoke(this, options[selected]);
-                    selected = -1;
-                    break;
-                }
-            }
-        }
-
-        private void WriteSelectionDescription(IMenuItemInfo option)
-        {
-            if (string.IsNullOrEmpty(option.Description))
-                return;
-
-            Console.WriteLine();
-            Console.ForegroundColor = Constants.SecondaryColor;
-            Console.WriteLine($"{option.Description}");
-
-            if (!(option is IBackMenu))
-            {
-                Console.WriteLine(option is IUseCase
-                    ? "(press ENTER to run the use case)"
-                    : "(press ENTER to explore the category)");
+                    throw new InvalidOperationException("Invalid menu item type.");
             }
         }
 
@@ -183,6 +118,66 @@ namespace Silverback.Examples.Main.Menu
         }
 
         private static string GetSilverbackVersion() =>
-            Assembly.Load("Silverback.Core").GetName().Version.ToString(3);
+            Assembly.Load("Silverback.Core").GetName().Version?.ToString(3) ?? "x.x.x";
+
+        private static int GetIndex(IMenuItemInfo[] options, IMenuItemInfo selectedItem)
+        {
+            var selectedOption = options.FirstOrDefault(item => item.GetType() == selectedItem.GetType());
+            return selectedOption != null ? Array.IndexOf(options, selectedOption) : 0;
+        }
+
+        private static int GetFirstCategoryOrUseCaseIndex(IMenuItemInfo[] options)
+        {
+            var firstItem = options.FirstOrDefault(item => !(item is IBackMenu));
+            return firstItem != null ? Array.IndexOf(options, firstItem) : 0;
+        }
+
+        private static void WriteSelectionDescription(IMenuItemInfo option)
+        {
+            if (string.IsNullOrEmpty(option.Description))
+                return;
+
+            Console.WriteLine();
+            Console.ForegroundColor = Constants.SecondaryColor;
+            Console.WriteLine($"{option.Description}");
+
+            if (!(option is IBackMenu))
+            {
+                Console.WriteLine(
+                    option is IUseCase
+                        ? "(press ENTER to run the use case)"
+                        : "(press ENTER to explore the category)");
+            }
+        }
+
+        private void HandleInput(IMenuItemInfo[] options, ref int selected)
+        {
+            var key = Console.ReadKey(true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.UpArrow:
+                    if (selected <= 0)
+                        selected = options.GetUpperBound(0);
+                    else
+                        selected--;
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (selected >= options.GetUpperBound(0))
+                        selected = 0;
+                    else
+                        selected++;
+                    break;
+                case ConsoleKey.Backspace:
+                case ConsoleKey.Escape:
+                    Back?.Invoke(this, EventArgs.Empty);
+                    selected = -1;
+                    break;
+                case ConsoleKey.Enter:
+                    Chosen?.Invoke(this, new MenuItemInfoEventArgs(options[selected]));
+                    selected = -1;
+                    break;
+            }
+        }
     }
 }

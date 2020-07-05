@@ -15,15 +15,20 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Deferred
 {
-    public class OutboundWorkerUseCase : UseCase
+    public sealed class OutboundWorkerUseCase : UseCase, IDisposable
     {
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource? _cancellationTokenSource;
 
         public OutboundWorkerUseCase()
         {
             Title = "Start outbound worker";
             Description = "The outbound worker monitors the outbox table and publishes the messages to Kafka.";
             ExecutionsCount = 1;
+        }
+
+        public void Dispose()
+        {
+            _cancellationTokenSource?.Dispose();
         }
 
         protected override void ConfigureServices(IServiceCollection services)
@@ -33,26 +38,29 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Deferred
                 .UseModel()
                 .UseDbContext<ExamplesDbContext>()
                 .AddDbDistributedLockManager()
-                .WithConnectionToMessageBroker(options => options
-                    .AddKafka()
-                    .AddDbOutboundConnector()
-                    .AddDbOutboundWorker(
-                        new DistributedLockSettings(
-                            acquireRetryInterval: TimeSpan.FromSeconds(1),
-                            heartbeatTimeout: TimeSpan.FromSeconds(10),
-                            heartbeatInterval: TimeSpan.FromSeconds(1))));
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddKafka()
+                        .AddDbOutboundConnector()
+                        .AddDbOutboundWorker(
+                            new DistributedLockSettings(
+                                acquireRetryInterval: TimeSpan.FromSeconds(1),
+                                heartbeatTimeout: TimeSpan.FromSeconds(10),
+                                heartbeatInterval: TimeSpan.FromSeconds(1))));
         }
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider)
         {
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092"
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-events")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        }));
 
             _cancellationTokenSource = new CancellationTokenSource();
 

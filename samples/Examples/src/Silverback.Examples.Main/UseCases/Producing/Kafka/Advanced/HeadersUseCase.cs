@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,31 +32,34 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             .AddSingletonBehavior<CustomHeadersBehavior>();
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092"
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-events")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new EventWithHeaders
-            {
-                Content = DateTime.Now.ToString("HH:mm:ss.fff"),
-                StringHeader = "hello!",
-                IntHeader = 42,
-                BoolHeader = false,
-            });
+            await publisher.PublishAsync(
+                new EventWithHeaders
+                {
+                    Content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture),
+                    StringHeader = "hello!",
+                    IntHeader = 42,
+                    BoolHeader = false,
+                });
         }
 
+        [SuppressMessage("ReSharper", "CA1034", Justification = "Use case isolation")]
         public class CustomHeadersBehavior : IBehavior
         {
-            [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
             public async Task<IReadOnlyCollection<object>> Handle(
                 IReadOnlyCollection<object> messages,
                 MessagesHandler next)

@@ -8,7 +8,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.Consumer.Subscribers
 {
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Subscriber")]
     public class BinaryFilesSubscriber : ISubscriber
     {
         private readonly ILogger<SampleEventsSubscriber> _logger;

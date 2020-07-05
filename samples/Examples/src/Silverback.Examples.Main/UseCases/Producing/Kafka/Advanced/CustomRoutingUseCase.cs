@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
@@ -31,8 +30,9 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             .AddScopedOutboundRouter<PrioritizedOutboundRouter>();
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<SimpleIntegrationEvent, PrioritizedOutboundRouter>());
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<SimpleIntegrationEvent, PrioritizedOutboundRouter>());
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {

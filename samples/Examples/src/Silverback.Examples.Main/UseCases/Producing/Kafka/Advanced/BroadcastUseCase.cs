@@ -27,38 +27,39 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             .WithConnectionToMessageBroker(options => options.AddKafka());
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(
-                    new KafkaProducerEndpoint("silverback-examples-events")
-                    {
-                        Configuration = new KafkaProducerConfig
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-events")
                         {
-                            BootstrapServers = "PLAINTEXT://localhost:9092"
-                        }
-                    },
-                    new KafkaProducerEndpoint("silverback-examples-events-2")
-                    {
-                        Configuration = new KafkaProducerConfig
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        },
+                        new KafkaProducerEndpoint("silverback-examples-events-2")
                         {
-                            BootstrapServers = "PLAINTEXT://localhost:9092"
-                        }
-                    })
-                .AddOutbound<SimpleIntegrationEvent>(
-                    new KafkaProducerEndpoint("silverback-examples-events-3")
-                    {
-                        Configuration = new KafkaProducerConfig
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        })
+                    .AddOutbound<SimpleIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-events-3")
                         {
-                            BootstrapServers = "PLAINTEXT://localhost:9092"
-                        }
-                    })
-            );
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092"
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent
-                { Content = Guid.NewGuid().ToString("N") });
+            await publisher.PublishAsync(
+                new SimpleIntegrationEvent
+                    { Content = Guid.NewGuid().ToString("N") });
         }
     }
 }

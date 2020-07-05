@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
@@ -26,29 +27,34 @@ namespace Silverback.Examples.Main.UseCases.Producing.Rabbit.Basic
             .WithConnectionToMessageBroker(options => options.AddRabbit());
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new RabbitQueueProducerEndpoint("silverback-examples-events-queue")
-                {
-                    Queue = new RabbitQueueConfig
-                    {
-                        IsDurable = true,
-                        IsExclusive = false,
-                        IsAutoDeleteEnabled = false
-                    },
-                    Connection = new RabbitConnectionConfig
-                    {
-                        HostName = "localhost",
-                        UserName = "guest",
-                        Password = "guest"
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new RabbitQueueProducerEndpoint("silverback-examples-events-queue")
+                        {
+                            Queue = new RabbitQueueConfig
+                            {
+                                IsDurable = true,
+                                IsExclusive = false,
+                                IsAutoDeleteEnabled = false
+                            },
+                            Connection = new RabbitConnectionConfig
+                            {
+                                HostName = "localhost",
+                                UserName = "guest",
+                                Password = "guest"
+                            }
+                        }));
 
         protected override async Task Execute(IServiceProvider serviceProvider)
         {
             var publisher = serviceProvider.GetService<IEventPublisher>();
 
-            await publisher.PublishAsync(new SimpleIntegrationEvent
-                { Content = DateTime.Now.ToString("HH:mm:ss.fff") });
+            await publisher.PublishAsync(
+                new SimpleIntegrationEvent
+                {
+                    Content = DateTime.Now.ToString("HH:mm:ss.fff", provider: CultureInfo.InvariantCulture)
+                });
         }
     }
 }
