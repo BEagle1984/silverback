@@ -16,16 +16,16 @@ namespace Silverback.Messaging.Connectors
         public bool PublishOutboundMessagesToInternalBus { get; set; }
 
         public IOutboundRoutingConfiguration Add<TMessage>(
-            IOutboundRouter router,
+            Func<IServiceProvider, IOutboundRouter> outboundRouterFactory,
             Type? outboundConnectorType = null) =>
-            Add(typeof(TMessage), router, outboundConnectorType);
+            Add(typeof(TMessage), outboundRouterFactory, outboundConnectorType);
 
         public IOutboundRoutingConfiguration Add(
             Type messageType,
-            IOutboundRouter router,
+            Func<IServiceProvider, IOutboundRouter> outboundRouterFactory,
             Type? outboundConnectorType = null)
         {
-            _routes.Add(new OutboundRoute(messageType, router, outboundConnectorType));
+            _routes.Add(new OutboundRoute(messageType, outboundRouterFactory, outboundConnectorType));
             return this;
         }
 

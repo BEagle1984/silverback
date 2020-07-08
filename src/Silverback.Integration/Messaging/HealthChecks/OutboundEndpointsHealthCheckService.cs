@@ -19,6 +19,8 @@ namespace Silverback.Messaging.HealthChecks
 
         private readonly IBrokerCollection _brokerCollection;
 
+        private readonly IServiceProvider _serviceProvider;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboundEndpointsHealthCheckService" /> class.
         /// </summary>
@@ -29,14 +31,19 @@ namespace Silverback.Messaging.HealthChecks
         /// <param name="brokerCollection">
         ///     The collection containing the available brokers.
         /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
+        /// </param>
         public OutboundEndpointsHealthCheckService(
             IOutboundRoutingConfiguration outboundRoutingConfiguration,
-            IBrokerCollection brokerCollection)
+            IBrokerCollection brokerCollection,
+            IServiceProvider serviceProvider)
         {
             _outboundRoutingConfiguration = Check.NotNull(
                 outboundRoutingConfiguration,
                 nameof(outboundRoutingConfiguration));
             _brokerCollection = Check.NotNull(brokerCollection, nameof(brokerCollection));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         }
 
         /// <inheritdoc cref="IOutboundEndpointsHealthCheckService.PingAllEndpoints" />
@@ -49,7 +56,7 @@ namespace Silverback.Messaging.HealthChecks
             var tasks =
                 _outboundRoutingConfiguration.Routes.SelectMany(
                     route =>
-                        route.Router.Endpoints.Select(PingEndpoint));
+                        route.GetOutboundRouter(_serviceProvider).Endpoints.Select(PingEndpoint));
 
             return await Task.WhenAll(tasks);
         }

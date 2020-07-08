@@ -45,6 +45,11 @@ uid: releases
 * `Silverback.Integration.Configuration` has been discontinued
 * The `Settings` property has been renamed to `Options` in the default `JsonMessageSerializer` (since the switch to System.Text.Json)
 
+## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)
+
+### What's new
+* Allow custom outbound routers to be registered as scoped or transient (instead of singleton only)
+
 ## [2.1.2](https://github.com/BEagle1984/silverback/releases/tag/v2.1.2)
 
 ### Fixes

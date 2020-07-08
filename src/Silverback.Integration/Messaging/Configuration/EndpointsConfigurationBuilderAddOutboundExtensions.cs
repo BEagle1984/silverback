@@ -363,10 +363,11 @@ namespace Silverback.Messaging.Configuration
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
 
-            var router = (IOutboundRouter)endpointsConfigurationBuilder.ServiceProvider.GetRequiredService(routerType);
-
             endpointsConfigurationBuilder.GetOutboundRoutingConfiguration()
-                .Add(messageType, router, outboundConnectorType);
+                .Add(
+                    messageType,
+                    serviceProvider => (IOutboundRouter)serviceProvider.GetRequiredService(routerType),
+                    outboundConnectorType);
 
             return endpointsConfigurationBuilder;
         }
@@ -400,7 +401,7 @@ namespace Silverback.Messaging.Configuration
             Check.NotNull(router, nameof(router));
 
             endpointsConfigurationBuilder.GetOutboundRoutingConfiguration()
-                .Add(messageType, router, outboundConnectorType);
+                .Add(messageType, _ => router, outboundConnectorType);
 
             return endpointsConfigurationBuilder;
         }

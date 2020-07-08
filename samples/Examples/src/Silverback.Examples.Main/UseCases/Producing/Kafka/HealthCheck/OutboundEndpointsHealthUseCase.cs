@@ -32,38 +32,43 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.HealthCheck
                 .AddSilverback()
                 .UseModel()
                 .UseDbContext<ExamplesDbContext>()
-                .WithConnectionToMessageBroker(options => options
-                    .AddKafka()
-                    .AddDbOutboundConnector());
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddKafka()
+                        .AddDbOutboundConnector());
         }
 
         protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider)
         {
-            configurator.Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092",
-                        MessageTimeoutMs = 1000
-                    }
-                })
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-events-2")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://localhost:9092",
-                        MessageTimeoutMs = 1000
-                    }
-                })
-                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("silverback-examples-failure")
-                {
-                    Configuration = new KafkaProducerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://somwhere:1000",
-                        MessageTimeoutMs = 1000
-                    }
-                }));
+            configurator.Connect(
+                endpoints => endpoints
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-events")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092",
+                                MessageTimeoutMs = 1000
+                            }
+                        })
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-events-2")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://localhost:9092",
+                                MessageTimeoutMs = 1000
+                            }
+                        })
+                    .AddOutbound<IIntegrationEvent>(
+                        new KafkaProducerEndpoint("silverback-examples-failure")
+                        {
+                            Configuration = new KafkaProducerConfig
+                            {
+                                BootstrapServers = "PLAINTEXT://somwhere:1000",
+                                MessageTimeoutMs = 1000
+                            }
+                        }));
         }
 
         protected override async Task Execute(IServiceProvider serviceProvider)
@@ -74,7 +79,8 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.HealthCheck
 
             var result = await new OutboundEndpointsHealthCheckService(
                 serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
-                serviceProvider.GetRequiredService<IBrokerCollection>()).PingAllEndpoints();
+                serviceProvider.GetRequiredService<IBrokerCollection>(),
+                serviceProvider).PingAllEndpoints();
 
             Console.ForegroundColor = Constants.PrimaryColor;
             Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));

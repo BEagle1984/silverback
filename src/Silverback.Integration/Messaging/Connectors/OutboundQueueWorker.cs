@@ -79,7 +79,7 @@ namespace Silverback.Messaging.Connectors
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                await ProcessQueue(scope.ServiceProvider.GetRequiredService<IOutboundQueueReader>(), stoppingToken);
+                await ProcessQueue(scope.ServiceProvider, stoppingToken);
             }
             catch (Exception ex)
             {
@@ -112,13 +112,14 @@ namespace Silverback.Messaging.Connectors
             IProducerEndpoint endpoint)
             => _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers);
 
-        private async Task ProcessQueue(IOutboundQueueReader queue, CancellationToken stoppingToken)
+        private async Task ProcessQueue(IServiceProvider serviceProvider, CancellationToken stoppingToken)
         {
             _logger.LogTrace(
                 EventIds.OutboundQueueWorkerReadingOutboundMessages,
                 "Reading outbound messages from queue (limit: {readPackageSize}).",
                 _readPackageSize);
 
+            var queue = serviceProvider.GetRequiredService<IOutboundQueueReader>();
             var messages = (await queue.Dequeue(_readPackageSize)).ToList();
 
             if (messages.Count == 0)
@@ -131,18 +132,21 @@ namespace Silverback.Messaging.Connectors
                     "Processing message {currentMessageIndex} of {totalMessages}.",
                     i + 1,
                     messages.Count);
-                await ProcessMessage(messages[i], queue);
+                await ProcessMessage(messages[i], queue, serviceProvider);
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
             }
         }
 
-        private async Task ProcessMessage(QueuedMessage message, IOutboundQueueReader queue)
+        private async Task ProcessMessage(
+            QueuedMessage message,
+            IOutboundQueueReader queue,
+            IServiceProvider serviceProvider)
         {
             try
             {
-                var endpoint = GetTargetEndpoint(message.MessageType, message.EndpointName);
+                var endpoint = GetTargetEndpoint(message.MessageType, message.EndpointName, serviceProvider);
                 await ProduceMessage(message.Content, message.Headers, endpoint);
 
                 await queue.Acknowledge(message);
@@ -163,14 +167,17 @@ namespace Silverback.Messaging.Connectors
             }
         }
 
-        private IProducerEndpoint GetTargetEndpoint(Type? messageType, string endpointName)
+        private IProducerEndpoint GetTargetEndpoint(
+            Type? messageType,
+            string endpointName,
+            IServiceProvider serviceProvider)
         {
             var outboundRoutes = messageType != null
                 ? _routingConfiguration.GetRoutesForMessage(messageType)
                 : _routingConfiguration.Routes;
 
             var targetEndpoint = outboundRoutes
-                .SelectMany(route => route.Router.Endpoints)
+                .SelectMany(route => route.GetOutboundRouter(serviceProvider).Endpoints)
                 .FirstOrDefault(endpoint => endpoint.Name == endpointName);
 
             if (targetEndpoint == null)

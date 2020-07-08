@@ -282,6 +282,3 @@ public class Startup
 }
 ```
 ***
-
-> [!Note]
-> The outbound routers can only be registered as singleton. If a scoped instance is needed you have to inject the `IServiceScopeFactory` (or `IServiceProvider`).
