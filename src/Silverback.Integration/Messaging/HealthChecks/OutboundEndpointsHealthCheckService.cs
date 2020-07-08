@@ -14,14 +14,17 @@ namespace Silverback.Messaging.HealthChecks
     {
         private readonly IOutboundRoutingConfiguration _outboundRoutingConfiguration;
         private readonly IBrokerCollection _brokerCollection;
+        private readonly IServiceProvider _serviceProvider;
 
         public OutboundEndpointsHealthCheckService(
             IOutboundRoutingConfiguration outboundRoutingConfiguration,
-            IBrokerCollection brokerCollection)
+            IBrokerCollection brokerCollection,
+            IServiceProvider serviceProvider)
         {
             _outboundRoutingConfiguration = outboundRoutingConfiguration ??
                                             throw new ArgumentNullException(nameof(outboundRoutingConfiguration));
             _brokerCollection = brokerCollection ?? throw new ArgumentNullException(nameof(brokerCollection));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public async Task<IEnumerable<EndpointCheckResult>> PingAllEndpoints()
@@ -30,7 +33,7 @@ namespace Silverback.Messaging.HealthChecks
                 return Enumerable.Empty<EndpointCheckResult>();
 
             var tasks = _outboundRoutingConfiguration.Routes
-                .SelectMany(route => route.Router.Endpoints
+                .SelectMany(route => route.GetOutboundRouter(_serviceProvider).Endpoints
                     .Select(async endpoint =>
                     {
                         try

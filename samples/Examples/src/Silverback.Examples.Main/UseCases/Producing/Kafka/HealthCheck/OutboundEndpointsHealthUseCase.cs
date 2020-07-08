@@ -74,7 +74,8 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.HealthCheck
 
             var result = await new OutboundEndpointsHealthCheckService(
                 serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
-                serviceProvider.GetRequiredService<IBrokerCollection>()).PingAllEndpoints();
+                serviceProvider.GetRequiredService<IBrokerCollection>(),
+                serviceProvider).PingAllEndpoints();
 
             Console.ForegroundColor = Constants.PrimaryColor;
             Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));

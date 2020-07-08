@@ -16,18 +16,15 @@ namespace Silverback.Messaging.Configuration
         private readonly IOutboundRoutingConfiguration _outboundRoutingConfiguration;
         private readonly IReadOnlyCollection<IInboundConnector> _inboundConnectors;
         private readonly ErrorPolicyBuilder _errorPolicyBuilder;
-        private readonly IServiceProvider _serviceProvider;
 
         public EndpointsConfigurationBuilder(
             IOutboundRoutingConfiguration outboundRoutingConfiguration,
             IEnumerable<IInboundConnector> inboundConnectors,
-            ErrorPolicyBuilder errorPolicyBuilder,
-            IServiceProvider serviceProvider)
+            ErrorPolicyBuilder errorPolicyBuilder)
         {
             _outboundRoutingConfiguration = outboundRoutingConfiguration;
             _inboundConnectors = inboundConnectors.ToList();
             _errorPolicyBuilder = errorPolicyBuilder;
-            _serviceProvider = serviceProvider;
         }
 
         public IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(IProducerEndpoint endpoint)
@@ -85,8 +82,9 @@ namespace Silverback.Messaging.Configuration
             Type routerType,
             Type outboundConnectorType)
         {
-            var router = (IOutboundRouter) _serviceProvider.GetRequiredService(routerType);
-            _outboundRoutingConfiguration.Add(messageType, router, outboundConnectorType);
+            _outboundRoutingConfiguration.Add(messageType,
+                serviceProvider => (IOutboundRouter) serviceProvider.GetRequiredService(routerType),
+                outboundConnectorType);
             return this;
         }
 
@@ -95,7 +93,7 @@ namespace Silverback.Messaging.Configuration
             IOutboundRouter router,
             Type outboundConnectorType)
         {
-            _outboundRoutingConfiguration.Add(messageType, router, outboundConnectorType);
+            _outboundRoutingConfiguration.Add(messageType, _ => router, outboundConnectorType);
             return this;
         }
 

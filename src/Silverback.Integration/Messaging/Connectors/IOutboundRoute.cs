@@ -16,13 +16,13 @@ namespace Silverback.Messaging.Connectors
         Type MessageType { get; }
 
         /// <summary>
-        ///     Gets the instance of <see cref="IOutboundRouter" /> to be used to determine the destination endpoint.
-        /// </summary>
-        IOutboundRouter Router { get; }
-
-        /// <summary>
         ///     Gets the type of the <see cref="IOutboundConnector" /> to be used when publishing these messages.
         /// </summary>
         Type OutboundConnectorType { get; }
+
+        /// <summary>
+        ///     Returns the instance of <see cref="IOutboundRouter" /> to be used to determine the destination endpoint.
+        /// </summary>
+        IOutboundRouter GetOutboundRouter(IServiceProvider serviceProvider);
     }
 }

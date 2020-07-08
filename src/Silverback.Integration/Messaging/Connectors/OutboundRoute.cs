@@ -8,17 +8,20 @@ namespace Silverback.Messaging.Connectors
     /// <inheritdoc cref="IOutboundRoute" />
     public class OutboundRoute : IOutboundRoute
     {
-        public OutboundRoute(Type messageType, IOutboundRouter router, Type outboundConnectorType)
+        private readonly Func<IServiceProvider, IOutboundRouter> _outboundRouterFactory;
+
+        public OutboundRoute(Type messageType, Func<IServiceProvider, IOutboundRouter> outboundRouterFactory, Type outboundConnectorType)
         {
             MessageType = messageType;
-            Router = router;
+            _outboundRouterFactory = outboundRouterFactory;
             OutboundConnectorType = outboundConnectorType;
         }
 
         public Type MessageType { get; }
 
-        public IOutboundRouter Router { get; }
-
         public Type OutboundConnectorType { get; }
+
+        public IOutboundRouter GetOutboundRouter(IServiceProvider serviceProvider) =>
+            _outboundRouterFactory.Invoke(serviceProvider);
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,20 +38,20 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             {
                 new OutboundRoute(
                     typeof(TestEventOne),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
                     typeof(OutboundConnector)),
                 new OutboundRoute(
                     typeof(TestEventTwo),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
                     typeof(OutboundConnector)),
                 new OutboundRoute(
                     typeof(TestEventThree),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
                     typeof(OutboundConnector))
             });
 
             var service = new OutboundEndpointsHealthCheckService(configuration,
-                new BrokerCollection(new[] { broker }));
+                new BrokerCollection(new[] { broker }), Substitute.For<IServiceProvider>());
 
             await service.PingAllEndpoints();
 
@@ -77,20 +78,20 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             {
                 new OutboundRoute(
                     typeof(TestEventOne),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
                     typeof(OutboundConnector)),
                 new OutboundRoute(
                     typeof(TestEventTwo),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
                     typeof(OutboundConnector)),
                 new OutboundRoute(
                     typeof(TestEventThree),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
                     typeof(OutboundConnector))
             });
 
             var service = new OutboundEndpointsHealthCheckService(configuration,
-                new BrokerCollection(new[] { broker }));
+                new BrokerCollection(new[] { broker }), Substitute.For<IServiceProvider>());
 
             var results = await service.PingAllEndpoints();
 
@@ -116,20 +117,20 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             {
                 new OutboundRoute(
                     typeof(TestEventOne),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
                     typeof(OutboundConnector)),
                 new OutboundRoute(
                     typeof(TestEventTwo),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
                     typeof(OutboundConnector)),
                 new OutboundRoute(
                     typeof(TestEventThree),
-                    new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
                     typeof(OutboundConnector))
             });
 
             var service = new OutboundEndpointsHealthCheckService(configuration,
-                new BrokerCollection(new[] { broker }));
+                new BrokerCollection(new[] { broker }), Substitute.For<IServiceProvider>());
 
             var results = (await service.PingAllEndpoints()).ToList();
 

@@ -300,7 +300,3 @@ public class Startup
 }
 {% endhighlight %}
 </figure>
-
-The outbound routers can only be registered as singleton. If a scoped instance is needed you have to inject the `IServiceScopeFactory` (or `IServiceProvider`).
-{: .notice--note}
-

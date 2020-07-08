@@ -169,6 +169,100 @@ namespace Microsoft.Extensions.DependencyInjection
 
         #endregion
 
+        #region AddTransientOutboundRouter
+
+        /// <summary>
+        ///     Adds a transient outbound router of the type specified in <paramref name="routerType" /> to the
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="routerType">The type of the outbound router to register and the implementation to use.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static ISilverbackBuilder AddTransientOutboundRouter(this ISilverbackBuilder builder, Type routerType)
+        {
+            builder.Services.AddTransientOutboundRouter(routerType);
+            return builder;
+        }
+
+        /// <summary>
+        ///     Adds a transient outbound router of the type specified in <typeparamref name="TRouter" /> to the
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TRouter">The type of the outbound router to add.</typeparam>
+        /// <param name="builder"></param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static ISilverbackBuilder AddTransientOutboundRouter<TRouter>(this ISilverbackBuilder builder)
+            where TRouter : class, IOutboundRouter
+        {
+            builder.Services.AddTransientOutboundRouter<TRouter>();
+            return builder;
+        }
+
+        /// <summary>
+        ///     Adds a transient outbound router with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="implementationFactory">The factory that creates the service.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static ISilverbackBuilder AddTransientOutboundRouter(
+            this ISilverbackBuilder builder,
+            Func<IServiceProvider, IOutboundRouter> implementationFactory)
+        {
+            builder.Services.AddTransientOutboundRouter(implementationFactory);
+            return builder;
+        }
+
+        #endregion
+
+        #region AddScopedOutboundRouter
+
+        /// <summary>
+        ///     Adds a scoped outbound router of the type specified in <paramref name="routerType" /> to the
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="routerType">The type of the outbound router to register and the implementation to use.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static ISilverbackBuilder AddScopedOutboundRouter(this ISilverbackBuilder builder, Type routerType)
+        {
+            builder.Services.AddScopedOutboundRouter(routerType);
+            return builder;
+        }
+
+        /// <summary>
+        ///     Adds a scoped outbound router of the type specified in <typeparamref name="TRouter" /> to the
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TRouter">The type of the outbound router to add.</typeparam>
+        /// <param name="builder"></param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static ISilverbackBuilder AddScopedOutboundRouter<TRouter>(this ISilverbackBuilder builder)
+            where TRouter : class, IOutboundRouter
+        {
+            builder.Services.AddScopedOutboundRouter<TRouter>();
+            return builder;
+        }
+
+        /// <summary>
+        ///     Adds a scoped outbound router with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="implementationFactory">The factory that creates the service.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static ISilverbackBuilder AddScopedOutboundRouter(
+            this ISilverbackBuilder builder,
+            Func<IServiceProvider, IOutboundRouter> implementationFactory)
+        {
+            builder.Services.AddScopedOutboundRouter(implementationFactory);
+            return builder;
+        }
+
+        #endregion
+
         #region AddSingletonOutboundRouter
 
         /// <summary>

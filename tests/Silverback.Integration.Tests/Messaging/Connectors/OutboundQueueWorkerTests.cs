@@ -46,7 +46,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
             serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>()
-                .Add<IIntegrationMessage>(new StaticOutboundRouter(TestProducerEndpoint.GetDefault()));
+                .Add<IIntegrationMessage>(_ => new StaticOutboundRouter(TestProducerEndpoint.GetDefault()));
 
             _broker = (TestBroker) serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();

@@ -4,6 +4,11 @@ permalink: /docs/releases
 toc: true
 ---
 
+## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)
+
+### What's new
+* Allow custom outbound routers to be registered as scoped or transient (instead of singleton only)
+
 ## [2.1.1](https://github.com/BEagle1984/silverback/releases/tag/v2.1.1)
 
 ### What's new

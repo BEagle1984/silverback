@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,9 @@ namespace Silverback.Messaging.Connectors.Behaviors
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IOutboundRoutingConfiguration _routing;
+
+        private readonly ConcurrentDictionary<IOutboundRoute, IOutboundRouter> _routers =
+            new ConcurrentDictionary<IOutboundRoute, IOutboundRouter>();
 
         public OutboundRouterBehavior(IServiceProvider serviceProvider)
         {
@@ -62,7 +66,8 @@ namespace Silverback.Messaging.Connectors.Behaviors
         private IEnumerable<IOutboundEnvelope> CreateOutboundEnvelope(object message, IOutboundRoute route)
         {
             var headers = new MessageHeaderCollection();
-            var endpoints = route.Router.GetDestinationEndpoints(message, headers);
+            var router = _routers.GetOrAdd(route, _ => route.GetOutboundRouter(_serviceProvider));
+            var endpoints = router.GetDestinationEndpoints(message, headers);
 
             foreach (var endpoint in endpoints)
             {

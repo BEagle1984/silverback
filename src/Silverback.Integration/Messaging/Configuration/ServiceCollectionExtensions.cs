@@ -70,7 +70,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonBrokerBehavior(this IServiceCollection services, Type behaviorType)
         {
-            if (behaviorType == null) throw new ArgumentNullException(nameof(behaviorType));
+            if (behaviorType == null)
+                throw new ArgumentNullException(nameof(behaviorType));
 
             services.AddSingleton(typeof(IBrokerBehavior), behaviorType);
 
@@ -106,7 +107,8 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             Func<IServiceProvider, IBrokerBehavior> implementationFactory)
         {
-            if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
+            if (implementationFactory == null)
+                throw new ArgumentNullException(nameof(implementationFactory));
 
             services.AddSingleton(typeof(IBrokerBehavior), implementationFactory);
 
@@ -128,9 +130,132 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             IBrokerBehavior implementationInstance)
         {
-            if (implementationInstance == null) throw new ArgumentNullException(nameof(implementationInstance));
+            if (implementationInstance == null)
+                throw new ArgumentNullException(nameof(implementationInstance));
 
             services.AddSingleton(typeof(IBrokerBehavior), implementationInstance);
+
+            return services;
+        }
+
+        #endregion
+
+        #region AddTransientOutboundRouter
+
+        /// <summary>
+        ///     Adds a transient outbound router of the type specified in <paramref name="routerType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
+        /// <param name="routerType">The type of the outbound router to register and the implementation to use.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static IServiceCollection AddTransientOutboundRouter(this IServiceCollection services, Type routerType)
+        {
+            if (routerType == null)
+                throw new ArgumentNullException(nameof(routerType));
+
+            services.AddTransient(routerType);
+
+            return services;
+        }
+
+        /// <summary>
+        ///     Adds a transient outbound router of the type specified in <typeparamref name="TRouter" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TRouter">The type of the outbound router to add.</typeparam>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static IServiceCollection AddTransientOutboundRouter<TRouter>(this IServiceCollection services)
+            where TRouter : class, IOutboundRouter =>
+            AddTransientOutboundRouter(services, typeof(TRouter));
+
+        /// <summary>
+        ///     Adds a transient outbound router with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
+        /// <param name="implementationFactory">The factory that creates the service.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static IServiceCollection AddTransientOutboundRouter(
+            this IServiceCollection services,
+            Func<IServiceProvider, IOutboundRouter> implementationFactory)
+        {
+            if (implementationFactory == null)
+                throw new ArgumentNullException(nameof(implementationFactory));
+
+            services.AddTransient(implementationFactory);
+
+            return services;
+        }
+
+        #endregion
+
+        #region AddScopedOutboundRouter
+
+        /// <summary>
+        ///     Adds a scoped outbound router of the type specified in <paramref name="routerType" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
+        /// <param name="routerType">The type of the outbound router to register and the implementation to use.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static IServiceCollection AddScopedOutboundRouter(this IServiceCollection services, Type routerType)
+        {
+            if (routerType == null)
+                throw new ArgumentNullException(nameof(routerType));
+
+            services.AddScoped(routerType);
+
+            return services;
+        }
+
+        /// <summary>
+        ///     Adds a scoped outbound router of the type specified in <typeparamref name="TRouter" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TRouter">The type of the outbound router to add.</typeparam>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static IServiceCollection AddScopedOutboundRouter<TRouter>(this IServiceCollection services)
+            where TRouter : class, IOutboundRouter =>
+            AddScopedOutboundRouter(services, typeof(TRouter));
+
+        /// <summary>
+        ///     Adds a scoped outbound router with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     specified <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="services">
+        ///     The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> to add the
+        ///     service to.
+        /// </param>
+        /// <param name="implementationFactory">The factory that creates the service.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static IServiceCollection AddScopedOutboundRouter(
+            this IServiceCollection services,
+            Func<IServiceProvider, IOutboundRouter> implementationFactory)
+        {
+            if (implementationFactory == null)
+                throw new ArgumentNullException(nameof(implementationFactory));
+
+            services.AddScoped(implementationFactory);
 
             return services;
         }
@@ -151,7 +276,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddSingletonOutboundRouter(this IServiceCollection services, Type routerType)
         {
-            if (routerType == null) throw new ArgumentNullException(nameof(routerType));
+            if (routerType == null)
+                throw new ArgumentNullException(nameof(routerType));
 
             services.AddSingleton(routerType);
 
@@ -187,7 +313,8 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             Func<IServiceProvider, IOutboundRouter> implementationFactory)
         {
-            if (implementationFactory == null) throw new ArgumentNullException(nameof(implementationFactory));
+            if (implementationFactory == null)
+                throw new ArgumentNullException(nameof(implementationFactory));
 
             services.AddSingleton(implementationFactory);
 
@@ -209,7 +336,8 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             IOutboundRouter implementationInstance)
         {
-            if (implementationInstance == null) throw new ArgumentNullException(nameof(implementationInstance));
+            if (implementationInstance == null)
+                throw new ArgumentNullException(nameof(implementationInstance));
 
             services.AddSingleton(implementationInstance);
 

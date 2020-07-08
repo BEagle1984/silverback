@@ -33,8 +33,7 @@ namespace Silverback.Messaging.Configuration
             var endpointsConfigurationBuilder = new EndpointsConfigurationBuilder(
                 configurator.ServiceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
                 configurator.ServiceProvider.GetRequiredService<IEnumerable<IInboundConnector>>(),
-                configurator.ServiceProvider.GetRequiredService<ErrorPolicyBuilder>(),
-                configurator.ServiceProvider);
+                configurator.ServiceProvider.GetRequiredService<ErrorPolicyBuilder>());
             endpointsConfigurationAction?.Invoke(endpointsConfigurationBuilder);
 
             configurator.ServiceProvider.GetServices<IEndpointsConfigurator>().ForEach(c =>
