@@ -16,6 +16,7 @@ uid: releases
 * Upgrade to [Confluent.Kafka 1.4.4](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.4)
 * Upgrade to [RabbitMQ.Client 6.1.0](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.1.0)
 * Add log levels configuration (see <xref:logging>)
+* Consumer status information and statistics (see <xref:message-broker#consumer-management-api>)
 
 ### Fixes
 

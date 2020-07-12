@@ -34,6 +34,12 @@ namespace Silverback.Messaging.Broker
         bool IsConnected { get; }
 
         /// <summary>
+        ///     Gets the <see cref="IConsumerStatusInfo" /> containing the status details and basic statistics of this
+        ///     consumer.
+        /// </summary>
+        IConsumerStatusInfo StatusInfo { get; }
+
+        /// <summary>
         ///     <param>
         ///         Confirms that the message at the specified offset has been successfully processed.
         ///     </param>

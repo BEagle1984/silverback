@@ -44,12 +44,14 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public async Task TestHandleMessage(
             object message,
-            MessageHeaderCollection headers,
+            MessageHeaderCollection? headers,
             IOffset? offset = null,
             IMessageSerializer? serializer = null)
         {
             if (serializer == null)
                 serializer = new JsonMessageSerializer();
+
+            headers ??= new MessageHeaderCollection();
 
             var buffer = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 

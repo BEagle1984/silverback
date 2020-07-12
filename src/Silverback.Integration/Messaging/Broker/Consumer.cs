@@ -23,6 +23,8 @@ namespace Silverback.Messaging.Broker
 
         private readonly ISilverbackLogger<Consumer> _logger;
 
+        private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
         /// </summary>
@@ -76,6 +78,9 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.Behaviors" />
         public IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
 
+        /// <inheritdoc cref="IConsumer.StatusInfo" />
+        public IConsumerStatusInfo StatusInfo => _statusInfo;
+
         /// <inheritdoc cref="IConsumer.IsConnected" />
         public bool IsConnected { get; private set; }
 
@@ -100,6 +105,7 @@ namespace Silverback.Messaging.Broker
             ConnectCore();
 
             IsConnected = true;
+            _statusInfo.SetConnected();
 
             _logger.LogDebug(
                 IntegrationEventIds.ConsumerConnected,
@@ -116,6 +122,7 @@ namespace Silverback.Messaging.Broker
             DisconnectCore();
 
             IsConnected = false;
+            _statusInfo.SetDisconnected();
 
             _logger.LogDebug(
                 IntegrationEventIds.ConsumerDisconnected,
@@ -165,7 +172,10 @@ namespace Silverback.Messaging.Broker
             byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
             string sourceEndpointName,
-            IOffset? offset) =>
+            IOffset? offset)
+        {
+            _statusInfo.RecordConsumedMessage(offset);
+
             await ExecutePipeline(
                     Behaviors,
                     new ConsumerPipelineContext(
@@ -176,6 +186,7 @@ namespace Silverback.Messaging.Broker
                         this),
                     _serviceProvider)
                 .ConfigureAwait(false);
+        }
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged

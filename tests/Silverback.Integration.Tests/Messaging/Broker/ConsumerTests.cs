@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -161,6 +162,95 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 
             envelopes.First().Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts).Should().Be(null);
             envelopes.Skip(1).First().Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts).Should().Be(3);
+        }
+
+        [Fact]
+        public void StatusInfo_BeforeConnect_StatusIsDisconnected()
+        {
+            var consumer = (TestConsumer)_broker.AddConsumer(TestConsumerEndpoint.GetDefault(), _ => { });
+
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Disconnected);
+        }
+
+        [Fact]
+        public void StatusInfo_AfterConnect_StatusIsConnected()
+        {
+            var consumer = (TestConsumer)_broker.AddConsumer(TestConsumerEndpoint.GetDefault(), _ => { });
+            _broker.Connect();
+
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
+        }
+
+        [Fact]
+        public void StatusInfo_AfterConnect_StatusHistoryRecorded()
+        {
+            var consumer = (TestConsumer)_broker.AddConsumer(TestConsumerEndpoint.GetDefault(), _ => { });
+            _broker.Connect();
+
+            consumer.StatusInfo.History.Count.Should().Be(1);
+            consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Connected);
+            consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void StatusInfo_AfterDisconnect_StatusIsDisconnected()
+        {
+            var consumer = (TestConsumer)_broker.AddConsumer(TestConsumerEndpoint.GetDefault(), _ => { });
+            _broker.Connect();
+            _broker.Disconnect();
+
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Disconnected);
+        }
+
+        [Fact]
+        public void StatusInfo_AfterDisconnect_StatusHistoryRecorded()
+        {
+            var consumer = (TestConsumer)_broker.AddConsumer(TestConsumerEndpoint.GetDefault(), _ => { });
+            _broker.Connect();
+            _broker.Disconnect();
+
+            consumer.StatusInfo.History.Count.Should().Be(2);
+            consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Disconnected);
+            consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task StatusInfo_AfterConsuming_StatusIsConsuming()
+        {
+            var consumer = (TestConsumer)_broker.AddConsumer(TestConsumerEndpoint.GetDefault(), _ => { });
+            _broker.Connect();
+
+            await consumer.TestHandleMessage(new TestEventOne());
+
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
+        }
+
+        [Fact]
+        public async Task StatusInfo_AfterConsuming_StatusHistoryRecorded()
+        {
+            var consumer = (TestConsumer)_broker.AddConsumer(TestConsumerEndpoint.GetDefault(), _ => { });
+            _broker.Connect();
+
+            await consumer.TestHandleMessage(new TestEventOne());
+            await consumer.TestHandleMessage(new TestEventOne());
+
+            consumer.StatusInfo.History.Count.Should().Be(2);
+            consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Consuming);
+            consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task StatusInfo_AfterConsuming_LastConsumedMessageTracked()
+        {
+            var consumer = (TestConsumer)_broker.AddConsumer(TestConsumerEndpoint.GetDefault(), _ => { });
+            _broker.Connect();
+
+            await consumer.TestHandleMessage(new TestEventOne(), null, new TestOffset("test", "1"));
+            await consumer.TestHandleMessage(new TestEventOne(), null, new TestOffset("test", "2"));
+
+            consumer.StatusInfo.ConsumedMessagesCount.Should().Be(2);
+            consumer.StatusInfo.LastConsumedMessageOffset.Should().BeEquivalentTo(new TestOffset("test", "2"));
+            consumer.StatusInfo.LastConsumedMessageTimestamp.Should().NotBeNull();
         }
     }
 }

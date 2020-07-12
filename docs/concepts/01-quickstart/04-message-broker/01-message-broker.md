@@ -302,3 +302,51 @@ public class Startup
     }
 }
 ```
+
+## Consumer management API
+
+The consumer exposes some information and statistics that can be used to programmatically check the consumer status (see <xref:Silverback.Messaging.Broker.IConsumer#Silverback_Messaging_Broker_IConsumer_StatusInfo>). A consumer can also be connected and disconnected at will.
+
+The following example shows a sample service that is used to monitor the total number of consumed message and restart the faulted consumers (the consumers get disconnected when an unhandled exception is thrown while processing the consumed message).
+
+```csharp
+public class ConsumerManagementService
+{
+    private readonly IBrokerCollection _brokers;
+
+    public ConsumerManagementService(IBrokerCollection brokers)
+    {
+        _brokers = brokers;
+    }
+
+    public int GetTotalConsumedMessages()
+    {
+        int totalCount = 0;
+
+        foreach (var broker in _brokers)
+        {
+            foreach (var consumer in broker.Consumers)
+            {
+                totalCount += consumer.StatusInfo.ConsumedMessagesCount;
+            }
+        }
+    }
+
+    public void RestartDisconnectedConsumers()
+    {
+        foreach (var broker in _brokers)
+        {
+            if (!broker.IsConnected)
+                continue;
+
+            foreach (var consumer in broker.Consumers)
+            {
+                if (consumer.StatusInfo.Status == ConsumerStatus.Disconnected)
+                {
+                    consumer.Connect();
+                }
+            }
+        }
+    }
+}
+```
