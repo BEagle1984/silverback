@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
@@ -37,6 +38,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<SubscribedMethodsLoader>()
                 .AddScoped<ArgumentsResolverService>()
                 .AddScoped<ReturnValueHandlerService>()
+                .AddSingleton(typeof(ISilverbackLogger<>), typeof(SilverbackLogger<>))
+                .AddSingleton<ILogLevelMapping, LogLevelMapping>()
 
                 // Note: resolvers and handlers will be evaluated in reverse order
                 .AddScoped<IArgumentResolver, ServiceProviderAdditionalArgumentResolver>()
