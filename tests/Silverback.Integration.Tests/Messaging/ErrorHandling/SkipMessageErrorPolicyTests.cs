@@ -5,8 +5,8 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -22,7 +22,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             _policy = new SkipMessageErrorPolicy(
                 Substitute.For<IServiceProvider>(),
-                new NullLogger<SkipMessageErrorPolicy>());
+                Substitute.For<ISilverbackLogger<SkipMessageErrorPolicy>>());
         }
 
         [Theory]

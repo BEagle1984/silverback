@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -16,12 +16,12 @@ namespace Silverback.Messaging.ErrorHandling
 {
     internal class ErrorPolicyHelper : IErrorPolicyHelper
     {
-        private readonly ILogger<ErrorPolicyHelper> _logger;
+        private readonly ISilverbackLogger<ErrorPolicyHelper> _logger;
 
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public ErrorPolicyHelper(
-            ILogger<ErrorPolicyHelper> logger,
+            ISilverbackLogger<ErrorPolicyHelper> logger,
             IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger;

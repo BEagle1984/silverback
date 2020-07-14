@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Broker
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
 
-        private readonly ILogger<Producer> _logger;
+        private readonly ISilverbackLogger<Producer> _logger;
 
         private readonly BlockingCollection<QueuedMessage> _queue = new BlockingCollection<QueuedMessage>();
 
@@ -47,14 +47,14 @@ namespace Silverback.Messaging.Broker
         ///     endpoint.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public RabbitProducer(
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
             IRabbitConnectionFactory connectionFactory,
-            ILogger<Producer> logger)
+            ISilverbackLogger<Producer> logger)
             : base(broker, endpoint, behaviors, logger)
         {
             _connectionFactory = connectionFactory;

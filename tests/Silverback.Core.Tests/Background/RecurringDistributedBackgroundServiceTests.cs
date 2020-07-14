@@ -8,9 +8,9 @@ using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Silverback.Background;
+using Silverback.Diagnostics;
 using Silverback.Tests.Core.TestTypes;
 using Silverback.Tests.Core.TestTypes.Database;
 using Xunit;
@@ -189,7 +189,7 @@ namespace Silverback.Tests.Core.Background
                         TimeSpan.FromSeconds(1),
                         TimeSpan.FromMilliseconds(100)),
                     lockManager,
-                    Substitute.For<ILogger<RecurringDistributedBackgroundService>>())
+                    Substitute.For<ISilverbackLogger<RecurringDistributedBackgroundService>>())
             {
                 _task = task;
             }

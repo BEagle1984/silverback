@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
@@ -45,7 +46,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public void Handle_ExceptionThrown_ExceptionRethrown()
         {
-            var logger = Substitute.For<ILogger<FatalExceptionLoggerConsumerBehavior>>();
+            var logger = Substitute.For<ISilverbackLogger<FatalExceptionLoggerConsumerBehavior>>();
             var rawEnvelope = new RawInboundEnvelope(
                 new byte[5],
                 null,

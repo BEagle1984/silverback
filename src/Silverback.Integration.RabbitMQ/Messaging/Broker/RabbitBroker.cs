@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Broker
@@ -14,8 +16,6 @@ namespace Silverback.Messaging.Broker
     public class RabbitBroker : Broker<RabbitProducerEndpoint, RabbitConsumerEndpoint>
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
-
-        private readonly ILoggerFactory _loggerFactory;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitBroker" /> class.
@@ -28,20 +28,15 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
         ///     endpoints.
         /// </param>
-        /// <param name="loggerFactory">
-        ///     The <see cref="ILoggerFactory" /> to be used to create the loggers.
-        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         public RabbitBroker(
             IEnumerable<IBrokerBehavior> behaviors,
             IRabbitConnectionFactory connectionFactory,
-            ILoggerFactory loggerFactory,
             IServiceProvider serviceProvider)
-            : base(behaviors, loggerFactory, serviceProvider)
+            : base(behaviors, serviceProvider)
         {
-            _loggerFactory = loggerFactory;
             _connectionFactory = connectionFactory;
         }
 
@@ -55,7 +50,7 @@ namespace Silverback.Messaging.Broker
                 endpoint,
                 behaviors,
                 _connectionFactory,
-                _loggerFactory.CreateLogger<RabbitProducer>());
+                serviceProvider.GetRequiredService<ISilverbackLogger<RabbitProducer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
@@ -70,7 +65,7 @@ namespace Silverback.Messaging.Broker
                 behaviors,
                 _connectionFactory,
                 serviceProvider,
-                _loggerFactory.CreateLogger<RabbitConsumer>());
+                serviceProvider.GetRequiredService<ISilverbackLogger<RabbitConsumer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.Dispose(bool)" />
         protected override void Dispose(bool disposing)

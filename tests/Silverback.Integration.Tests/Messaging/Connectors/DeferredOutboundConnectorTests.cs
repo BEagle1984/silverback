@@ -4,7 +4,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Connectors.Repositories.Model;
@@ -28,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public DeferredOutboundConnectorTests()
         {
             _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
-            _connector = new DeferredOutboundConnector(_queue, new NullLogger<DeferredOutboundConnector>());
+            _connector = new DeferredOutboundConnector(_queue, Substitute.For<ISilverbackLogger<DeferredOutboundConnector>>());
             _transactionManager = new DeferredOutboundConnectorTransactionManager(_queue);
         }
 

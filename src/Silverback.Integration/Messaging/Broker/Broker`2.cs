@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -35,7 +36,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly List<IBrokerBehavior> _behaviors;
 
-        private readonly ILogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -50,24 +51,19 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IEnumerable{T}" /> containing the <see cref="IBrokerBehavior" /> to be passed to the
         ///     producers and consumers.
         /// </param>
-        /// <param name="loggerFactory">
-        ///     The <see cref="ILoggerFactory" /> to be used to create the loggers.
-        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         protected Broker(
             IEnumerable<IBrokerBehavior> behaviors,
-            ILoggerFactory loggerFactory,
             IServiceProvider serviceProvider)
         {
             _producers = new ConcurrentDictionary<IEndpoint, IProducer>();
 
             _behaviors = behaviors?.ToList() ?? new List<IBrokerBehavior>();
 
-            LoggerFactory = Check.NotNull(loggerFactory, nameof(loggerFactory));
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-            _logger = loggerFactory.CreateLogger(GetType());
+            _logger = _serviceProvider.GetRequiredService<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>();
 
             ProducerEndpointType = typeof(TProducerEndpoint);
             ConsumerEndpointType = typeof(TConsumerEndpoint);
@@ -105,11 +101,6 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IBroker.IsConnected" />
         public bool IsConnected { get; private set; }
-
-        /// <summary>
-        ///     Gets the <see cref="ILoggerFactory" />.
-        /// </summary>
-        protected ILoggerFactory LoggerFactory { get; }
 
         /// <inheritdoc cref="IBroker.GetProducer" />
         public virtual IProducer GetProducer(IProducerEndpoint endpoint)

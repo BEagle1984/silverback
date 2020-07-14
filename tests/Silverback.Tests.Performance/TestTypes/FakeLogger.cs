@@ -3,10 +3,11 @@
 
 using System;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 
 namespace Silverback.Tests.Performance.TestTypes
 {
-    public class FakeLogger : ILogger
+    public class FakeLogger : ISilverbackLogger
     {
         public void Log<TState>(
             LogLevel logLevel,

@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -33,7 +32,7 @@ namespace Silverback.Messaging.Batch
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ILogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         private readonly List<IRawInboundEnvelope> _envelopes;
 
@@ -70,7 +69,7 @@ namespace Silverback.Messaging.Batch
                 _waitTimer.Elapsed += OnWaitTimerElapsed;
             }
 
-            _logger = serviceProvider.GetRequiredService<ILogger<MessageBatch>>();
+            _logger = serviceProvider.GetRequiredService<ISilverbackLogger<MessageBatch>>();
         }
 
         public int CurrentSize => _envelopes.Count;

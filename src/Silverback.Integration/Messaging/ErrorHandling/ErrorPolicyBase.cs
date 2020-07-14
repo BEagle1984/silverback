@@ -19,7 +19,7 @@ namespace Silverback.Messaging.ErrorHandling
     {
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ILogger<ErrorPolicyBase> _logger;
+        private readonly ISilverbackLogger<ErrorPolicyBase> _logger;
 
         private readonly List<Type> _excludedExceptions = new List<Type>();
 
@@ -34,11 +34,11 @@ namespace Silverback.Messaging.ErrorHandling
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected ErrorPolicyBase(
             IServiceProvider serviceProvider,
-            ILogger<ErrorPolicyBase> logger)
+            ISilverbackLogger<ErrorPolicyBase> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;

@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Broker
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
 
-        private readonly ILogger<RabbitConsumer> _logger;
+        private readonly ISilverbackLogger<RabbitConsumer> _logger;
 
         private readonly object _pendingOffsetLock = new object();
 
@@ -61,7 +61,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public RabbitConsumer(
             RabbitBroker broker,
@@ -70,7 +70,7 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
-            ILogger<RabbitConsumer> logger)
+            ISilverbackLogger<RabbitConsumer> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
         {
             _connectionFactory = connectionFactory;

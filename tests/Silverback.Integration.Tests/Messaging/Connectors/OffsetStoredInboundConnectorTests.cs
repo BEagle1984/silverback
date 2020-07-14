@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector = new OffsetStoredInboundConnector(
                 serviceProvider.GetRequiredService<IBrokerCollection>(),
                 serviceProvider,
-                serviceProvider.GetRequiredService<ILogger<OffsetStoredInboundConnector>>());
+                serviceProvider.GetRequiredService<ISilverbackLogger<OffsetStoredInboundConnector>>());
             _scopedServiceProvider = serviceProvider.CreateScope().ServiceProvider;
         }
 

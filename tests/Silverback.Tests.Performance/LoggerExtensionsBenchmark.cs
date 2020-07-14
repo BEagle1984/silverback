@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Performance.TestTypes;
@@ -65,7 +66,7 @@ namespace Silverback.Tests.Performance
                 new TestOffset("abc", "1"))
         };
 
-        private readonly ILogger _logger = new FakeLogger();
+        private readonly ISilverbackLogger _logger = new FakeLogger();
 
         [Benchmark]
         public void LogErrorSingleEnvelope()

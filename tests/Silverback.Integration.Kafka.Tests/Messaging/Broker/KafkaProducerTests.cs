@@ -4,8 +4,10 @@
 using System;
 using System.Linq;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -16,10 +18,17 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 {
     public sealed class KafkaProducerTests : IDisposable
     {
-        private readonly KafkaBroker _broker = new KafkaBroker(
-            Enumerable.Empty<IBrokerBehavior>(),
-            NullLoggerFactory.Instance,
-            Substitute.For<IServiceProvider>());
+        private readonly KafkaBroker _broker;
+
+        public KafkaProducerTests()
+        {
+            var services = new ServiceCollection()
+                .AddSingleton(Substitute.For<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>());
+
+            _broker = new KafkaBroker(
+                Enumerable.Empty<IBrokerBehavior>(),
+                services.BuildServiceProvider());
+        }
 
         [Fact]
         public void Produce_SomeMessage_EndpointConfigurationIsNotAltered()

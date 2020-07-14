@@ -5,9 +5,11 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using RabbitMQ.Client;
+using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -20,11 +22,21 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
     {
         private static readonly MessagesReceivedAsyncCallback VoidCallback = args => Task.CompletedTask;
 
-        private readonly RabbitBroker _broker = new RabbitBroker(
-            Enumerable.Empty<IBrokerBehavior>(),
-            Substitute.For<IRabbitConnectionFactory>(),
-            NullLoggerFactory.Instance,
-            Substitute.For<IServiceProvider>());
+        private readonly RabbitBroker _broker;
+
+        public RabbitBrokerTests()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection
+                .AddSingleton(Substitute.For<ISilverbackLogger<Broker<IProducerEndpoint,IConsumerEndpoint>>>())
+                .AddSingleton(Substitute.For<ISilverbackLogger<RabbitProducer>>())
+                .AddSingleton(Substitute.For<ISilverbackLogger<RabbitConsumer>>());
+
+            _broker = new RabbitBroker(
+                Enumerable.Empty<IBrokerBehavior>(),
+                Substitute.For<IRabbitConnectionFactory>(),
+                serviceCollection.BuildServiceProvider());
+        }
 
         [Fact]
         public void GetProducer_ExchangeEndpoint_ProducerIsReturned()

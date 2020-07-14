@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
@@ -27,12 +28,12 @@ namespace Silverback.Messaging.Connectors
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public LoggedInboundConnector(
             IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
-            ILogger<LoggedInboundConnector> logger)
+            ISilverbackLogger<LoggedInboundConnector> logger)
             : base(brokerCollection, serviceProvider, logger)
         {
         }

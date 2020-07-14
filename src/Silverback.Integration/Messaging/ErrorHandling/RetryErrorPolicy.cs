@@ -22,7 +22,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         private readonly TimeSpan _delayIncrement;
 
-        private readonly ILogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RetryErrorPolicy" /> class.
@@ -31,7 +31,7 @@ namespace Silverback.Messaging.ErrorHandling
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         /// <param name="initialDelay">
         ///     The optional delay to be applied to the first retry.
@@ -41,7 +41,7 @@ namespace Silverback.Messaging.ErrorHandling
         /// </param>
         public RetryErrorPolicy(
             IServiceProvider serviceProvider,
-            ILogger<RetryErrorPolicy> logger,
+            ISilverbackLogger<RetryErrorPolicy> logger,
             TimeSpan? initialDelay = null,
             TimeSpan? delayIncrement = null)
             : base(serviceProvider, logger)

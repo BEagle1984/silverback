@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 
@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.TestTypes
             MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
-            ILogger<TestOtherConsumer> logger)
+            ISilverbackLogger<TestOtherConsumer> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
         {
         }

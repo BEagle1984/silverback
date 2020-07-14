@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector = new LoggedInboundConnector(
                 _serviceProvider.GetRequiredService<IBrokerCollection>(),
                 _serviceProvider,
-                _serviceProvider.GetRequiredService<ILogger<LoggedInboundConnector>>());
+                _serviceProvider.GetRequiredService<ISilverbackLogger<LoggedInboundConnector>>());
         }
 
         [Fact]

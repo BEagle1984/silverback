@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
@@ -23,17 +25,13 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IEnumerable{T}" /> containing the <see cref="IBrokerBehavior" /> to be passed to the
         ///     producers and consumers.
         /// </param>
-        /// <param name="loggerFactory">
-        ///     The <see cref="ILoggerFactory" /> to be used to create the loggers.
-        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         public InMemoryBroker(
             IEnumerable<IBrokerBehavior> behaviors,
-            ILoggerFactory loggerFactory,
             IServiceProvider serviceProvider)
-            : base(behaviors, loggerFactory, serviceProvider)
+            : base(behaviors, serviceProvider)
         {
         }
 
@@ -49,7 +47,7 @@ namespace Silverback.Messaging.Broker
                 this,
                 endpoint,
                 behaviors,
-                LoggerFactory.CreateLogger<InMemoryProducer>());
+                serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryProducer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
@@ -69,7 +67,7 @@ namespace Silverback.Messaging.Broker
                     callback,
                     behaviors,
                     serviceProvider,
-                    LoggerFactory.CreateLogger<InMemoryConsumer>()));
+                    serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryConsumer>>()));
         }
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.Disconnect(IEnumerable{IConsumer})" />

@@ -3,8 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 
@@ -13,7 +14,7 @@ namespace Silverback.Tests.Integration.TestTypes
     public class TestBroker : Broker<TestProducerEndpoint, TestConsumerEndpoint>
     {
         public TestBroker(IServiceProvider serviceProvider, IEnumerable<IBrokerBehavior> behaviors)
-            : base(behaviors, NullLoggerFactory.Instance, serviceProvider)
+            : base(behaviors, serviceProvider)
         {
         }
 
@@ -36,6 +37,6 @@ namespace Silverback.Tests.Integration.TestTypes
                 callback,
                 behaviors,
                 serviceProvider,
-                LoggerFactory.CreateLogger<TestConsumer>());
+                serviceProvider.GetRequiredService<ISilverbackLogger<TestConsumer>>());
     }
 }
