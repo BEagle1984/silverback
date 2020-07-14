@@ -283,6 +283,7 @@ The `Silverback.Integration.HealthChecks` package contains some extensions for `
 Currently two checks exists:
 * `AddOutboundEndpointsCheck`: Adds an health check that sends a ping message to all the outbound endpoints.
 * `AddOutboundQueueCheck`: Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.
+* `AddConsumersCheck`: Adds an health check that verifies that all consumers are connected.
 
 The usage is very simple, you just need to configure the checks in the Startup.cs, as shown in the following example.
 
@@ -293,7 +294,8 @@ public class Startup
     {
         services.AddHealthChecks()
             .AddOutboundEndpointsCheck()
-            .AddOutboundQueueCheck();
+            .AddOutboundQueueCheck()
+            .AddConsumersCheck();
     }
 
     public void Configure(IApplicationBuilder app)

@@ -96,5 +96,45 @@ namespace Silverback.Messaging.HealthChecks
                     failureStatus,
                     tags));
         }
+
+        /// <summary>
+        ///     Adds an health check that verifies that all consumers are connected.
+        /// </summary>
+        /// <param name="builder">
+        ///     The <see cref="IHealthChecksBuilder" />.
+        /// </param>
+        /// <param name="name">
+        ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
+        /// </param>
+        /// <param name="failureStatus">
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check fails. Optional. If
+        ///     <c>null</c> then the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
+        /// </param>
+        /// <param name="tags">
+        ///     A list of tags that can be used to filter sets of health checks. Optional.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static IHealthChecksBuilder AddConsumersCheck(
+            this IHealthChecksBuilder builder,
+            string name = "Consumers",
+            HealthStatus? failureStatus = default,
+            IEnumerable<string>? tags = default)
+        {
+            Check.NotNull(builder, nameof(builder));
+
+            builder.Services.AddSingleton<IConsumersHealthCheckService, ConsumersHealthCheckService>();
+
+            static IHealthCheck ServiceFactory(IServiceProvider serviceProvider) =>
+                new ConsumersHealthCheck(serviceProvider.GetRequiredService<IConsumersHealthCheckService>());
+
+            return builder.Add(
+                new HealthCheckRegistration(
+                    name,
+                    ServiceFactory,
+                    failureStatus,
+                    tags));
+        }
     }
 }
