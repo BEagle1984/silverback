@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Broker
@@ -25,13 +26,13 @@ namespace Silverback.Messaging.Broker
         ///     The behaviors to be added to the pipeline.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected Producer(
             TBroker broker,
             TEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
-            ILogger<Producer> logger)
+            ISilverbackLogger<Producer> logger)
             : base(broker, endpoint, behaviors, logger)
         {
         }

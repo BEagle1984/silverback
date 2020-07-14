@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly KafkaEventsHandler _kafkaEventsHandler;
 
-        private readonly ILogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private IProducer<byte[]?, byte[]?>? _innerProducer;
@@ -52,14 +52,14 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public KafkaProducer(
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
             IServiceProvider serviceProvider,
-            ILogger<KafkaProducer> logger)
+            ISilverbackLogger<KafkaProducer> logger)
             : base(broker, endpoint, behaviors, logger)
         {
             _logger = logger;

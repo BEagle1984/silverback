@@ -22,7 +22,7 @@ namespace Silverback.Background
 
         private readonly DistributedLockSettings _distributedLockSettings;
 
-        private readonly ILogger<DistributedBackgroundService> _logger;
+        private readonly ISilverbackLogger<DistributedBackgroundService> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DistributedBackgroundService" /> class using the
@@ -32,11 +32,11 @@ namespace Silverback.Background
         ///     The <see cref="IDistributedLockManager" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected DistributedBackgroundService(
             IDistributedLockManager distributedLockManager,
-            ILogger<DistributedBackgroundService> logger)
+            ISilverbackLogger<DistributedBackgroundService> logger)
             : this(null, distributedLockManager, logger)
         {
         }
@@ -51,12 +51,12 @@ namespace Silverback.Background
         ///     The <see cref="IDistributedLockManager" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected DistributedBackgroundService(
             DistributedLockSettings? distributedLockSettings,
             IDistributedLockManager distributedLockManager,
-            ILogger<DistributedBackgroundService> logger)
+            ISilverbackLogger<DistributedBackgroundService> logger)
         {
             _distributedLockSettings = distributedLockSettings ?? new DistributedLockSettings();
 

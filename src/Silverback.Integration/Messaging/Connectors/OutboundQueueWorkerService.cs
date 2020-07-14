@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Background;
+using Silverback.Diagnostics;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -33,14 +34,14 @@ namespace Silverback.Messaging.Connectors
         ///     The <see cref="IDistributedLockManager" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public OutboundQueueWorkerService(
             TimeSpan interval,
             IOutboundQueueWorker outboundQueueWorker,
             DistributedLockSettings distributedLockSettings,
             IDistributedLockManager distributedLockManager,
-            ILogger<OutboundQueueWorkerService> logger)
+            ISilverbackLogger<OutboundQueueWorkerService> logger)
             : base(interval, distributedLockSettings, distributedLockManager, logger)
         {
             _outboundQueueWorker = outboundQueueWorker;

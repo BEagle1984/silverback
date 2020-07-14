@@ -5,8 +5,10 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -23,15 +25,16 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 
         public KafkaBrokerTests()
         {
-            var serviceProvider = Substitute.For<IServiceProvider>();
-
-            serviceProvider.GetService(typeof(KafkaEventsHandler))
-                .Returns(new KafkaEventsHandler(serviceProvider, new NullLogger<KafkaEventsHandler>()));
+            var services = new ServiceCollection()
+                .AddSingleton<KafkaEventsHandler>()
+                .AddSingleton(Substitute.For<ISilverbackLogger<KafkaConsumer>>())
+                .AddSingleton(Substitute.For<ISilverbackLogger<KafkaProducer>>())
+                .AddSingleton(Substitute.For<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>())
+                .AddSingleton<ISilverbackLogger<KafkaEventsHandler>>(new LoggerSubstitute<KafkaEventsHandler>());
 
             _broker = new KafkaBroker(
                 Enumerable.Empty<IBrokerBehavior>(),
-                NullLoggerFactory.Instance,
-                serviceProvider);
+                services.BuildServiceProvider());
         }
 
         [Fact]

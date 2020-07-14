@@ -5,7 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
@@ -62,7 +63,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                 new BrokerCollection(new[] { _broker }),
                 routingConfiguration,
-                new NullLogger<OutboundQueueWorker>(),
+                Substitute.For<ISilverbackLogger<OutboundQueueWorker>>(),
                 true,
                 100); // TODO: Test order not enforced
 

@@ -15,7 +15,7 @@ namespace Silverback.Messaging.LargeMessages
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        private readonly ILogger<ChunkStoreCleaner> _logger;
+        private readonly ISilverbackLogger<ChunkStoreCleaner> _logger;
 
         private readonly TimeSpan _retention;
 
@@ -29,12 +29,12 @@ namespace Silverback.Messaging.LargeMessages
         ///     The <see cref="IServiceScopeFactory" /> used to resolve the scoped types.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public ChunkStoreCleaner(
             TimeSpan retention,
             IServiceScopeFactory serviceScopeFactory,
-            ILogger<ChunkStoreCleaner> logger)
+            ISilverbackLogger<ChunkStoreCleaner> logger)
         {
             _retention = retention;
             _serviceScopeFactory = serviceScopeFactory;

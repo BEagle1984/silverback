@@ -5,10 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 
 namespace Silverback.Tests
 {
-    public class LoggerSubstitute<T> : ILogger<T>
+    public class LoggerSubstitute<T> : ISilverbackLogger<T>
     {
         private readonly List<ReceivedCall> _receivedCalls = new List<ReceivedCall>();
 

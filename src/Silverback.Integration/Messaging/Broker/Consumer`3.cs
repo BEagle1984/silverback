@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Broker
@@ -35,7 +36,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected Consumer(
             TBroker broker,
@@ -43,7 +44,7 @@ namespace Silverback.Messaging.Broker
             MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
-            ILogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
+            ISilverbackLogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
         {
         }

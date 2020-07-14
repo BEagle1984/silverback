@@ -3,7 +3,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -20,7 +21,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 broker,
                 endpoint,
                 behaviors,
-                new NullLogger<TestProducer>())
+                Substitute.For<ISilverbackLogger<TestProducer>>())
         {
             ProducedMessages = broker.ProducedMessages;
         }

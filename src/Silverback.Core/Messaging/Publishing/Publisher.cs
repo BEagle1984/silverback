@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Publishing
     /// <inheritdoc cref="IPublisher" />
     public class Publisher : IPublisher
     {
-        private readonly ILogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -34,9 +34,9 @@ namespace Silverback.Messaging.Publishing
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the subscribers.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
-        public Publisher(IServiceProvider serviceProvider, ILogger<Publisher> logger)
+        public Publisher(IServiceProvider serviceProvider, ISilverbackLogger<Publisher> logger)
         {
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
 

@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.ErrorHandling;
@@ -33,9 +32,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             services.AddNullLogger();
 
             _errorPolicyBuilder =
-                new ErrorPolicyBuilder(
-                    services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true }),
-                    NullLoggerFactory.Instance);
+                new ErrorPolicyBuilder(services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true }));
         }
 
         [Theory]

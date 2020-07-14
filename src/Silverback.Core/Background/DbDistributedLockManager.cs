@@ -23,7 +23,7 @@ namespace Silverback.Background
     {
         private static readonly IDistributedLockManager NullLockManager = new NullLockManager();
 
-        private readonly ILogger<DbDistributedLockManager> _logger;
+        private readonly ISilverbackLogger<DbDistributedLockManager> _logger;
 
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -34,11 +34,11 @@ namespace Silverback.Background
         ///     The <see cref="IServiceScopeFactory" /> used to resolve the scoped types.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public DbDistributedLockManager(
             IServiceScopeFactory serviceScopeFactory,
-            ILogger<DbDistributedLockManager> logger)
+            ISilverbackLogger<DbDistributedLockManager> logger)
         {
             _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
             _logger = Check.NotNull(logger, nameof(logger));

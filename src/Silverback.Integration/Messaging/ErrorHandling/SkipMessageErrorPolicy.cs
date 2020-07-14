@@ -15,7 +15,7 @@ namespace Silverback.Messaging.ErrorHandling
     /// </summary>
     public class SkipMessageErrorPolicy : ErrorPolicyBase
     {
-        private readonly ILogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         private LogLevel _logLevel = LogLevel.Error;
 
@@ -26,11 +26,11 @@ namespace Silverback.Messaging.ErrorHandling
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public SkipMessageErrorPolicy(
             IServiceProvider serviceProvider,
-            ILogger<SkipMessageErrorPolicy> logger)
+            ISilverbackLogger<SkipMessageErrorPolicy> logger)
             : base(serviceProvider, logger) =>
             _logger = logger;
 

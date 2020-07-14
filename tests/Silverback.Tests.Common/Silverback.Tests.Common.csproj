@@ -24,4 +24,8 @@
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj" />
+    </ItemGroup>
+
 </Project>

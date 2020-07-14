@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Background;
+using Silverback.Diagnostics;
 
 namespace Silverback.Messaging.LargeMessages
 {
@@ -34,14 +35,14 @@ namespace Silverback.Messaging.LargeMessages
         ///     The <see cref="IDistributedLockManager" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public ChunkStoreCleanerService(
             TimeSpan interval,
             IChunkStoreCleaner storeCleaner,
             DistributedLockSettings distributedLockSettings,
             IDistributedLockManager distributedLockManager,
-            ILogger<ChunkStoreCleanerService> logger)
+            ISilverbackLogger<ChunkStoreCleanerService> logger)
             : base(interval, distributedLockSettings, distributedLockManager, logger)
         {
             _storeCleaner = storeCleaner;

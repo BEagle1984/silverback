@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Connectors
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ILogger<InboundConnector> _logger;
+        private readonly ISilverbackLogger<InboundConnector> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="InboundConnector" /> class.
@@ -39,12 +39,12 @@ namespace Silverback.Messaging.Connectors
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public InboundConnector(
             IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
-            ILogger<InboundConnector> logger)
+            ISilverbackLogger<InboundConnector> logger)
         {
             _brokerCollection = Check.NotNull(brokerCollection, nameof(brokerCollection));
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));

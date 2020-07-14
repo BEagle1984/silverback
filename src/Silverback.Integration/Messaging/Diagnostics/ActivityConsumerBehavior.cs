@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Diagnostics
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
             try
             {
-                TryInitActivity(context, activity, serviceProvider.GetService<ILogger<ActivityConsumerBehavior>>());
+                TryInitActivity(context, activity, serviceProvider.GetService<ISilverbackLogger<ActivityConsumerBehavior>>());
 
                 await next(context, serviceProvider).ConfigureAwait(false);
             }
@@ -46,7 +46,7 @@ namespace Silverback.Messaging.Diagnostics
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private static void TryInitActivity(ConsumerPipelineContext context, Activity activity, ILogger? logger)
+        private static void TryInitActivity(ConsumerPipelineContext context, Activity activity, ISilverbackLogger? logger)
         {
             try
             {

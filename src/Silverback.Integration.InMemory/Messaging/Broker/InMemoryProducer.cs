@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -26,13 +27,13 @@ namespace Silverback.Messaging.Broker
         ///     The behaviors to be added to the pipeline.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public InMemoryProducer(
             InMemoryBroker broker,
             IProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
-            ILogger<Producer> logger)
+            ISilverbackLogger<Producer> logger)
             : base(broker, endpoint, behaviors, logger)
         {
         }

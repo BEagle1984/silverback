@@ -11,7 +11,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Adds some methods to the <see cref="ILogger" /> used to consistently enrich the log entry with the
+    ///     Adds some methods to the <see cref="ISilverbackLogger" /> used to consistently enrich the log entry with the
     ///     information about the message(s) being consumed.
     /// </summary>
     public static class LoggerExtensions
@@ -38,12 +38,12 @@ namespace Silverback.Messaging.Messages
         ///     <i>"Processing the batch of # inbound messages"</i> log message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the messages being processed.
         /// </param>
-        public static void LogProcessing(this ILogger logger, IReadOnlyCollection<IRawBrokerEnvelope> envelopes)
+        public static void LogProcessing(this ISilverbackLogger logger, IReadOnlyCollection<IRawBrokerEnvelope> envelopes)
         {
             Check.NotEmpty(envelopes, nameof(envelopes));
 
@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Messages
         ///     <i>"Error occurred processing the batch of # inbound messages"</i> log message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the messages being processed.
@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Messages
         ///     The exception to log.
         /// </param>
         public static void LogProcessingError(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
             Exception exception)
         {
@@ -85,7 +85,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes a trace log message, enriching it with the information related to the provided message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -97,7 +97,7 @@ namespace Silverback.Messaging.Messages
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
         public static void LogTraceWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
@@ -107,7 +107,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes a trace log message, enriching it with the information related to the provided message(s).
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -120,7 +120,7 @@ namespace Silverback.Messaging.Messages
         ///     log.
         /// </param>
         public static void LogTraceWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
@@ -130,7 +130,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes a debug log message, enriching it with the information related to the provided message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -142,7 +142,7 @@ namespace Silverback.Messaging.Messages
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
         public static void LogDebugWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
@@ -152,7 +152,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes a debug log message, enriching it with the information related to the provided message(s).
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -165,7 +165,7 @@ namespace Silverback.Messaging.Messages
         ///     log.
         /// </param>
         public static void LogDebugWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
@@ -176,7 +176,7 @@ namespace Silverback.Messaging.Messages
         ///     message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -188,7 +188,7 @@ namespace Silverback.Messaging.Messages
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
         public static void LogInformationWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
@@ -199,7 +199,7 @@ namespace Silverback.Messaging.Messages
         ///     message(s).
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -212,7 +212,7 @@ namespace Silverback.Messaging.Messages
         ///     log.
         /// </param>
         public static void LogInformationWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
@@ -222,7 +222,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes a warning log message, enriching it with the information related to the provided message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -234,7 +234,7 @@ namespace Silverback.Messaging.Messages
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
         public static void LogWarningWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
@@ -244,7 +244,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes a warning log message, enriching it with the information related to the provided message(s).
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -257,7 +257,7 @@ namespace Silverback.Messaging.Messages
         ///     log.
         /// </param>
         public static void LogWarningWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
@@ -267,7 +267,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes a warning log message, enriching it with the information related to the provided message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -282,7 +282,7 @@ namespace Silverback.Messaging.Messages
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
         public static void LogWarningWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
@@ -293,7 +293,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes a warning log message, enriching it with the information related to the provided message(s).
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -309,7 +309,7 @@ namespace Silverback.Messaging.Messages
         ///     log.
         /// </param>
         public static void LogWarningWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
@@ -320,7 +320,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes an error log message, enriching it with the information related to the provided message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -332,7 +332,7 @@ namespace Silverback.Messaging.Messages
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
         public static void LogErrorWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
@@ -342,7 +342,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes an error log message, enriching it with the information related to the provided message(s).
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -355,7 +355,7 @@ namespace Silverback.Messaging.Messages
         ///     log.
         /// </param>
         public static void LogErrorWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
@@ -365,7 +365,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes an error log message, enriching it with the information related to the provided message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -380,7 +380,7 @@ namespace Silverback.Messaging.Messages
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
         public static void LogErrorWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
@@ -391,7 +391,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes an error log message, enriching it with the information related to the provided message(s).
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -407,7 +407,7 @@ namespace Silverback.Messaging.Messages
         ///     log.
         /// </param>
         public static void LogErrorWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
@@ -418,7 +418,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes a critical log message, enriching it with the information related to the provided message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -430,7 +430,7 @@ namespace Silverback.Messaging.Messages
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
         public static void LogCriticalWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IRawBrokerEnvelope envelope) =>
@@ -440,7 +440,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes an critical log message, enriching it with the information related to the provided message(s).
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -453,7 +453,7 @@ namespace Silverback.Messaging.Messages
         ///     log.
         /// </param>
         public static void LogCriticalWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
@@ -463,7 +463,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes an critical log message, enriching it with the information related to the provided message.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -478,7 +478,7 @@ namespace Silverback.Messaging.Messages
         ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
         /// </param>
         public static void LogCriticalWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
@@ -489,7 +489,7 @@ namespace Silverback.Messaging.Messages
         ///     Writes a critical log message, enriching it with the information related to the provided message(s).
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="eventId">
         ///     The event id associated with the log.
@@ -505,7 +505,7 @@ namespace Silverback.Messaging.Messages
         ///     log.
         /// </param>
         public static void LogCriticalWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             EventId eventId,
             Exception exception,
             string logMessage,
@@ -517,7 +517,7 @@ namespace Silverback.Messaging.Messages
         ///     provided message(s).
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ILogger" /> to write to.
+        ///     The <see cref="ISilverbackLogger" /> to write to.
         /// </param>
         /// <param name="logLevel">
         ///     Entry will be written on this level.
@@ -536,7 +536,7 @@ namespace Silverback.Messaging.Messages
         ///     log.
         /// </param>
         public static void LogWithMessageInfo(
-            this ILogger logger,
+            this ISilverbackLogger logger,
             LogLevel logLevel,
             EventId eventId,
             Exception? exception,

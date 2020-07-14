@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 
@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.TestTypes
     public class TestErrorPolicy : ErrorPolicyBase
     {
         public TestErrorPolicy(IServiceProvider serviceProvider)
-            : base(serviceProvider, NullLoggerFactory.Instance.CreateLogger<TestErrorPolicy>())
+            : base(serviceProvider, Substitute.For<ISilverbackLogger<TestErrorPolicy>>())
         {
         }
 

@@ -18,7 +18,7 @@ namespace Silverback.Background
     {
         private readonly TimeSpan _interval;
 
-        private readonly ILogger<RecurringDistributedBackgroundService> _logger;
+        private readonly ISilverbackLogger<RecurringDistributedBackgroundService> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RecurringDistributedBackgroundService" /> class using
@@ -31,12 +31,12 @@ namespace Silverback.Background
         ///     The <see cref="IDistributedLockManager" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected RecurringDistributedBackgroundService(
             TimeSpan interval,
             IDistributedLockManager distributedLockManager,
-            ILogger<RecurringDistributedBackgroundService> logger)
+            ISilverbackLogger<RecurringDistributedBackgroundService> logger)
             : this(interval, null, distributedLockManager, logger)
         {
         }
@@ -54,13 +54,13 @@ namespace Silverback.Background
         ///     The <see cref="IDistributedLockManager" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected RecurringDistributedBackgroundService(
             TimeSpan interval,
             DistributedLockSettings? distributedLockSettings,
             IDistributedLockManager distributedLockManager,
-            ILogger<RecurringDistributedBackgroundService> logger)
+            ISilverbackLogger<RecurringDistributedBackgroundService> logger)
             : base(distributedLockSettings, distributedLockManager, logger)
         {
             _interval = interval;

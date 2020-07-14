@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ILogger<Consumer> _logger;
+        private readonly ISilverbackLogger<Consumer> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected Consumer(
             IBroker broker,
@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Broker
             MessagesReceivedAsyncCallback receivedCallback,
             IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
-            ILogger<Consumer> logger)
+            ISilverbackLogger<Consumer> logger)
         {
             Check.NotNull(broker, nameof(broker));
             Check.NotNull(endpoint, nameof(endpoint));

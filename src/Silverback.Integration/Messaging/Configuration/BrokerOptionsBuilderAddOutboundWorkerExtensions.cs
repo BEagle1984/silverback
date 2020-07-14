@@ -3,8 +3,8 @@
 
 using System;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Silverback.Background;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
@@ -60,7 +60,7 @@ namespace Microsoft.Extensions.DependencyInjection
                         serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                         serviceProvider.GetRequiredService<IBrokerCollection>(),
                         serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
-                        serviceProvider.GetRequiredService<ILogger<OutboundQueueWorker>>(),
+                        serviceProvider.GetRequiredService<ISilverbackLogger<OutboundQueueWorker>>(),
                         enforceMessageOrder,
                         readPackageSize))
                 .AddSingleton<IHostedService>(
@@ -69,7 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
                         serviceProvider.GetRequiredService<IOutboundQueueWorker>(),
                         distributedLockSettings,
                         serviceProvider.GetService<IDistributedLockManager>() ?? new NullLockManager(),
-                        serviceProvider.GetRequiredService<ILogger<OutboundQueueWorkerService>>()));
+                        serviceProvider.GetRequiredService<ISilverbackLogger<OutboundQueueWorkerService>>()));
 
             return brokerOptionsBuilder;
         }

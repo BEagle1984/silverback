@@ -3,8 +3,8 @@
 
 using System;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Silverback.Background;
+using Silverback.Diagnostics;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Util;
 
@@ -58,14 +58,14 @@ namespace Microsoft.Extensions.DependencyInjection
                     serviceProvider => new ChunkStoreCleaner(
                         retention ?? TimeSpan.FromDays(1),
                         serviceProvider.GetRequiredService<IServiceScopeFactory>(),
-                        serviceProvider.GetRequiredService<ILogger<ChunkStoreCleaner>>()))
+                        serviceProvider.GetRequiredService<ISilverbackLogger<ChunkStoreCleaner>>()))
                 .AddSingleton<IHostedService>(
                     serviceProvider => new ChunkStoreCleanerService(
                         cleanupInterval ?? TimeSpan.FromMinutes(10),
                         serviceProvider.GetRequiredService<ChunkStoreCleaner>(),
                         distributedLockSettings,
                         serviceProvider.GetService<IDistributedLockManager>() ?? new NullLockManager(),
-                        serviceProvider.GetRequiredService<ILogger<ChunkStoreCleanerService>>()));
+                        serviceProvider.GetRequiredService<ISilverbackLogger<ChunkStoreCleanerService>>()));
 
             return brokerOptionsBuilder;
         }

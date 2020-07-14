@@ -21,7 +21,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         private readonly IProducerEndpoint _endpoint;
 
-        private readonly ILogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         private Action<IOutboundEnvelope, Exception>? _transformationAction;
 
@@ -38,13 +38,13 @@ namespace Silverback.Messaging.ErrorHandling
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public MoveMessageErrorPolicy(
             IBrokerCollection brokerCollection,
             IProducerEndpoint endpoint,
             IServiceProvider serviceProvider,
-            ILogger<MoveMessageErrorPolicy> logger)
+            ISilverbackLogger<MoveMessageErrorPolicy> logger)
             : base(serviceProvider, logger)
         {
             Check.NotNull(brokerCollection, nameof(brokerCollection));

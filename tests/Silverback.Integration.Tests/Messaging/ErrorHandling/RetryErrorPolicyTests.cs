@@ -5,7 +5,6 @@ using System;
 using System.Globalization;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -30,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
-            _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider, NullLoggerFactory.Instance);
+            _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider);
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
             broker.Connect();

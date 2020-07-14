@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IProducer" />
     public abstract class Producer : IProducer
     {
-        private readonly ILogger<Producer> _logger;
+        private readonly ISilverbackLogger<Producer> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Producer" /> class.
@@ -31,13 +31,13 @@ namespace Silverback.Messaging.Broker
         ///     The behaviors to be added to the pipeline.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ILogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
-            ILogger<Producer> logger)
+            ISilverbackLogger<Producer> logger)
         {
             Behaviors = behaviors ?? Array.Empty<IProducerBehavior>();
             _logger = Check.NotNull(logger, nameof(logger));
