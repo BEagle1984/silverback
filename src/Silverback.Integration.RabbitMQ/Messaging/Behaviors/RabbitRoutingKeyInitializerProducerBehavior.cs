@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Behaviors
                     context.Envelope.Headers.AddOrReplace(RabbitMessageHeaders.RoutingKey, key);
             }
 
-            await next(context);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

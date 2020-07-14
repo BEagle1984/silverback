@@ -47,7 +47,7 @@ namespace Silverback.Messaging.HealthChecks
         {
             Check.NotNull(context, nameof(context));
 
-            if (await _service.CheckIsHealthy(MaxMessageAge))
+            if (await _service.CheckIsHealthy(MaxMessageAge).ConfigureAwait(false))
                 return new HealthCheckResult(HealthStatus.Healthy);
 
             string errorMessage = "The outbound queue exceeded the configured limits " +

@@ -10,7 +10,8 @@ using Silverback.Messaging.Subscribers;
 namespace Silverback.Messaging.Connectors
 {
     /// <summary>
-    ///     Manages the consumer transaction calling <c>Commit</c> or <c>Rollback</c> on the <see cref="IOutboundQueueWriter" /> when the database transaction is being completed.
+    ///     Manages the consumer transaction calling <c>Commit</c> or <c>Rollback</c> on the
+    ///     <see cref="IOutboundQueueWriter" /> when the database transaction is being completed.
     /// </summary>
     /// <remarks>
     ///     This isn't even necessary if using EF Core and the <see cref="DbOutboundQueueWriter" />, since it is
@@ -34,11 +35,13 @@ namespace Silverback.Messaging.Connectors
         [Subscribe]
         [SuppressMessage("", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        internal async Task OnTransactionCompleted(TransactionCompletedEvent message) => await _queueWriter.Commit();
+        internal async Task OnTransactionCompleted(TransactionCompletedEvent message) =>
+            await _queueWriter.Commit().ConfigureAwait(false);
 
         [Subscribe]
         [SuppressMessage("", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        internal async Task OnTransactionAborted(TransactionAbortedEvent message) => await _queueWriter.Rollback();
+        internal async Task OnTransactionAborted(TransactionAbortedEvent message) =>
+            await _queueWriter.Rollback().ConfigureAwait(false);
     }
 }

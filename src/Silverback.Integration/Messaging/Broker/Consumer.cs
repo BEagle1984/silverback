@@ -168,7 +168,8 @@ namespace Silverback.Messaging.Broker
                         new RawInboundEnvelope(message, headers, Endpoint, sourceEndpointName, offset)
                     },
                     this),
-                _serviceProvider);
+                _serviceProvider)
+            .ConfigureAwait(false);
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
@@ -213,12 +214,14 @@ namespace Silverback.Messaging.Broker
                             ExecutePipeline(
                                 behaviors.Skip(1).ToList(),
                                 nextContext,
-                                nextServiceProvider));
+                                nextServiceProvider))
+                    .ConfigureAwait(false);
             }
             else
             {
                 await _receivedCallback.Invoke(
-                    new MessagesReceivedCallbackArgs(context.Envelopes, serviceProvider, this));
+                    new MessagesReceivedCallbackArgs(context.Envelopes, serviceProvider, this))
+                    .ConfigureAwait(false);
             }
         }
     }

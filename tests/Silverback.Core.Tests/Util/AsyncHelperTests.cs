@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Util
 {
-    public class AsyncHelperTestslo
+    public class AsyncHelperTests
     {
         [Fact]
         public void RunSynchronously_VoidMethod_Executed()

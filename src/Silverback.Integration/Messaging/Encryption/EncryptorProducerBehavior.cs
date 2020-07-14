@@ -38,10 +38,11 @@ namespace Silverback.Messaging.Encryption
             {
                 context.Envelope.RawMessage = await _factory
                     .GetEncryptor(context.Envelope.Endpoint.Encryption)
-                    .TransformAsync(context.Envelope.RawMessage, context.Envelope.Headers);
+                    .TransformAsync(context.Envelope.RawMessage, context.Envelope.Headers)
+                    .ConfigureAwait(false);
             }
 
-            await next(context);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

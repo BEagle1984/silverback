@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Headers
 
             _mappings?.Apply(context.Envelope.Headers);
 
-            await next(context);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

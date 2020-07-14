@@ -49,14 +49,14 @@ namespace Silverback.Messaging.Connectors.Behaviors
         {
             Check.NotNull(next, nameof(next));
 
-            var routedMessages = await WrapAndRepublishRoutedMessages(messages);
+            var routedMessages = await WrapAndRepublishRoutedMessages(messages).ConfigureAwait(false);
 
             // The routed messages are discarded because they have been republished
             // as OutboundEnvelope and they will be normally subscribable
             // (if PublishOutboundMessagesToInternalBus is true).
             messages = messages.Where(m => !routedMessages.Contains(m)).ToList();
 
-            return await next(messages);
+            return await next(messages).ConfigureAwait(false);
         }
 
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
@@ -77,7 +77,8 @@ namespace Silverback.Messaging.Connectors.Behaviors
             {
                 await _serviceProvider
                     .GetRequiredService<IPublisher>()
-                    .PublishAsync(envelopesToRepublish);
+                    .PublishAsync(envelopesToRepublish)
+                    .ConfigureAwait(false);
             }
 
             return envelopesToRepublish.Select(m => m.Message).ToList()!;

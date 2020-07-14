@@ -34,7 +34,7 @@ namespace Silverback.Messaging.Headers
                         envelope.Message,
                         envelope.Headers));
 
-            await next(context, serviceProvider);
+            await next(context, serviceProvider).ConfigureAwait(false);
         }
     }
 }

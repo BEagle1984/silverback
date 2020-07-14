@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Connectors.Repositories
             Check.NotNull(offset, nameof(offset));
             Check.NotNull(endpoint, nameof(endpoint));
 
-            var storedOffsetEntity = await DbSet.FindAsync(GetKey(offset.Key, endpoint)) ??
+            var storedOffsetEntity = await DbSet.FindAsync(GetKey(offset.Key, endpoint)).ConfigureAwait(false) ??
                                      DbSet.Add(
                                          new StoredOffset
                                          {
@@ -61,7 +61,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         public async Task Commit()
         {
             // Call SaveChanges, in case it isn't called by a subscriber
-            await DbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="ITransactional.Rollback" />
@@ -77,8 +77,8 @@ namespace Silverback.Messaging.Connectors.Repositories
             Check.NotNull(offsetKey, nameof(offsetKey));
             Check.NotNull(endpoint, nameof(endpoint));
 
-            var storedOffsetEntity = await DbSet.FindAsync(GetKey(offsetKey, endpoint)) ??
-                                     await DbSet.FindAsync(offsetKey);
+            var storedOffsetEntity = await DbSet.FindAsync(GetKey(offsetKey, endpoint)).ConfigureAwait(false)
+                                     ?? await DbSet.FindAsync(offsetKey).ConfigureAwait(false);
 
             return DeserializeOffset(storedOffsetEntity);
         }

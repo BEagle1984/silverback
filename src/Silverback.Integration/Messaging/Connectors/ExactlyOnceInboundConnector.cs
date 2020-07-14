@@ -47,9 +47,9 @@ namespace Silverback.Messaging.Connectors
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             IServiceProvider serviceProvider)
         {
-            envelopes = (await EnsureExactlyOnce(envelopes, serviceProvider)).ToList();
+            envelopes = (await EnsureExactlyOnce(envelopes, serviceProvider).ConfigureAwait(false)).ToList();
 
-            await base.RelayMessages(consumer, envelopes, serviceProvider);
+            await base.RelayMessages(consumer, envelopes, serviceProvider).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Silverback.Messaging.Connectors
             await envelopes.WhereAsync(
                 async envelope =>
                 {
-                    if (await MustProcess(envelope, serviceProvider))
+                    if (await MustProcess(envelope, serviceProvider).ConfigureAwait(false))
                         return true;
 
                     _logger.LogInformationWithMessageInfo(
@@ -82,6 +82,7 @@ namespace Silverback.Messaging.Connectors
                         "Message is being skipped since it was already processed.",
                         envelope);
                     return false;
-                });
+                })
+                .ConfigureAwait(false);
     }
 }

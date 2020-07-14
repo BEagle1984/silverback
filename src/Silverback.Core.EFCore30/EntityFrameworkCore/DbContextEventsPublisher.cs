@@ -108,25 +108,25 @@ namespace Silverback.EntityFrameworkCore
 
         private async Task<int> ExecuteSaveTransaction(Func<Task<int>> saveChanges, bool executeAsync)
         {
-            await PublishEvent<TransactionStartedEvent>(executeAsync);
+            await PublishEvent<TransactionStartedEvent>(executeAsync).ConfigureAwait(false);
 
             var saved = false;
             try
             {
-                await PublishDomainEvents(executeAsync);
+                await PublishDomainEvents(executeAsync).ConfigureAwait(false);
 
-                int result = await saveChanges();
+                int result = await saveChanges().ConfigureAwait(false);
 
                 saved = true;
 
-                await PublishEvent<TransactionCompletedEvent>(executeAsync);
+                await PublishEvent<TransactionCompletedEvent>(executeAsync).ConfigureAwait(false);
 
                 return result;
             }
             catch (Exception)
             {
                 if (!saved)
-                    await PublishEvent<TransactionAbortedEvent>(executeAsync);
+                    await PublishEvent<TransactionAbortedEvent>(executeAsync).ConfigureAwait(false);
 
                 throw;
             }
@@ -140,7 +140,7 @@ namespace Silverback.EntityFrameworkCore
             while (events.Any())
             {
                 if (executeAsync)
-                    await _publisher.PublishAsync(events);
+                    await _publisher.PublishAsync(events).ConfigureAwait(false);
                 else
                     _publisher.Publish(events);
 
@@ -164,7 +164,7 @@ namespace Silverback.EntityFrameworkCore
             where TEvent : new()
         {
             if (executeAsync)
-                await _publisher.PublishAsync(new TEvent());
+                await _publisher.PublishAsync(new TEvent()).ConfigureAwait(false);
             else
                 _publisher.Publish(new TEvent());
         }

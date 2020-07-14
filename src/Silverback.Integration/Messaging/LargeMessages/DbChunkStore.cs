@@ -37,13 +37,14 @@ namespace Silverback.Messaging.LargeMessages
         /// <inheritdoc cref="IChunkStore.Store" />
         public async Task Store(string messageId, int chunkIndex, int chunksCount, byte[] content)
         {
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(false);
 
             try
             {
                 // TODO: Log?
                 if (await DbSet.AsQueryable().AnyAsync(
-                    chunk => chunk.MessageId == messageId && chunk.ChunkIndex == chunkIndex))
+                        chunk => chunk.MessageId == messageId && chunk.ChunkIndex == chunkIndex)
+                    .ConfigureAwait(false))
                 {
                     return;
                 }
@@ -67,12 +68,12 @@ namespace Silverback.Messaging.LargeMessages
         /// <inheritdoc cref="ITransactional.Commit" />
         public async Task Commit()
         {
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(false);
 
             try
             {
                 // Call SaveChanges, in case it isn't called by a subscriber
-                await DbContext.SaveChangesAsync();
+                await DbContext.SaveChangesAsync().ConfigureAwait(false);
             }
             finally
             {
@@ -100,7 +101,7 @@ namespace Silverback.Messaging.LargeMessages
         /// <inheritdoc cref="IChunkStore.Cleanup(string)" />
         public async Task Cleanup(string messageId)
         {
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(false);
 
             try
             {
@@ -114,7 +115,8 @@ namespace Silverback.Messaging.LargeMessages
                             .AsQueryable()
                             .Where(chunk => chunk.MessageId == messageId)
                             .Select(chunk => chunk.ChunkIndex)
-                            .ToListAsync())
+                            .ToListAsync()
+                            .ConfigureAwait(false))
                         .Select(
                             chunkId => new TemporaryMessageChunk
                                 { MessageId = messageId, ChunkIndex = chunkId })
@@ -136,7 +138,8 @@ namespace Silverback.Messaging.LargeMessages
                     .AsQueryable()
                     .Where(chunk => chunk.Received < threshold)
                     .Select(chunk => new { chunk.ChunkIndex, OriginalMessageId = chunk.MessageId })
-                    .ToListAsync())
+                    .ToListAsync()
+                    .ConfigureAwait(false))
                 .Select(
                     chunk => new TemporaryMessageChunk
                         { MessageId = chunk.OriginalMessageId, ChunkIndex = chunk.ChunkIndex })
@@ -144,7 +147,7 @@ namespace Silverback.Messaging.LargeMessages
 
             DbSet.RemoveRange(expiredEntities);
 
-            await DbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />

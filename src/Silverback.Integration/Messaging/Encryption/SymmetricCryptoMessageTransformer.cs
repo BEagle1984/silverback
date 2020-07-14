@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Encryption
                 return message;
 
             using var algorithm = CreateSymmetricAlgorithm();
-            return await Transform(message, algorithm);
+            return await Transform(message, algorithm).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -67,8 +67,8 @@ namespace Silverback.Messaging.Encryption
             await using var memoryStream = new MemoryStream();
             await using var cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Write);
 
-            await cryptoStream.WriteAsync(message, 0, message.Length);
-            await cryptoStream.FlushAsync();
+            await cryptoStream.WriteAsync(message, 0, message.Length).ConfigureAwait(false);
+            await cryptoStream.FlushAsync().ConfigureAwait(false);
             cryptoStream.Close();
 
             return memoryStream.ToArray();

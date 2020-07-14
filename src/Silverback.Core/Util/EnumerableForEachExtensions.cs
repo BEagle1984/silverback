@@ -22,7 +22,7 @@ namespace Silverback.Util
         {
             foreach (var element in source)
             {
-                await action(element);
+                await action(element).ConfigureAwait(false);
             }
         }
 
@@ -43,7 +43,7 @@ namespace Silverback.Util
             source.ParallelSelectAsync(
                 async s =>
                 {
-                    await action(s);
+                    await action(s).ConfigureAwait(false);
                     return 0;
                 },
                 maxDegreeOfParallelism);

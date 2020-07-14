@@ -86,7 +86,8 @@ namespace Silverback.Background
                 {
                     try
                     {
-                        Lock = await _distributedLockManager.Acquire(_distributedLockSettings, stoppingToken);
+                        Lock = await _distributedLockManager.Acquire(_distributedLockSettings, stoppingToken)
+                            .ConfigureAwait(false);
 
                         if (Lock != null)
                         {
@@ -96,7 +97,7 @@ namespace Silverback.Background
                                 GetType().FullName);
                         }
 
-                        await ExecuteLockedAsync(stoppingToken);
+                        await ExecuteLockedAsync(stoppingToken).ConfigureAwait(false);
                     }
                     catch (TaskCanceledException)
                     {
@@ -113,7 +114,7 @@ namespace Silverback.Background
                     finally
                     {
                         if (Lock != null)
-                            await Lock.Release();
+                            await Lock.Release().ConfigureAwait(false);
                     }
                 },
                 stoppingToken);

@@ -51,7 +51,8 @@ namespace Silverback.Messaging.LargeMessages
 
                 await scope.ServiceProvider
                     .GetRequiredService<IChunkStore>()
-                    .Cleanup(DateTime.UtcNow.Subtract(_retention));
+                    .Cleanup(DateTime.UtcNow.Subtract(_retention))
+                    .ConfigureAwait(false);
             }
             catch (Exception ex)
             {

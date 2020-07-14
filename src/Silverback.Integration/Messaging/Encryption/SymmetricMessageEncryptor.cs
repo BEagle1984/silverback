@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Encryption
         /// <inheritdoc cref="SymmetricCryptoMessageTransformer.Transform" />
         protected override async Task<byte[]> Transform(byte[] message, SymmetricAlgorithm algorithm)
         {
-            var encryptedMessage = await base.Transform(message, algorithm);
+            var encryptedMessage = await base.Transform(message, algorithm).ConfigureAwait(false);
 
             if (Settings.InitializationVector != null)
                 return encryptedMessage;

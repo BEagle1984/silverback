@@ -88,8 +88,8 @@ namespace Silverback.Messaging.Broker
                 async finalContext =>
                 {
                     ((RawOutboundEnvelope)finalContext.Envelope).Offset =
-                        await ProduceAsyncCore(finalContext.Envelope);
-                });
+                        await ProduceAsyncCore(finalContext.Envelope).ConfigureAwait(false);
+                }).ConfigureAwait(false);
 
         /// <summary>
         ///     Publishes the specified message and returns its offset.
@@ -125,11 +125,12 @@ namespace Silverback.Messaging.Broker
                     .Handle(
                         context,
                         nextContext =>
-                            ExecutePipeline(behaviors.Skip(1).ToList(), nextContext, finalAction));
+                            ExecutePipeline(behaviors.Skip(1).ToList(), nextContext, finalAction))
+                    .ConfigureAwait(false);
             }
             else
             {
-                await finalAction(context);
+                await finalAction(context).ConfigureAwait(false);
                 _logger.LogInformationWithMessageInfo(EventIds.ProducerMessageProduced, "Message produced.", context.Envelope);
             }
         }

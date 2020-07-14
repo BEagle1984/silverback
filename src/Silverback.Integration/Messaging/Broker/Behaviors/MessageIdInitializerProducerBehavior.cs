@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Broker.Behaviors
 
             MessageIdProvider.EnsureMessageIdIsInitialized(context.Envelope.Headers);
 
-            await next(context);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

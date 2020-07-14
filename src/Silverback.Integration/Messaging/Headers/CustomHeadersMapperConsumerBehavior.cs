@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Headers
                 context.Envelopes.ForEach(envelope => _mappings.Revert(envelope.Headers));
             }
 
-            await next(context, serviceProvider);
+            await next(context, serviceProvider).ConfigureAwait(false);
         }
     }
 }

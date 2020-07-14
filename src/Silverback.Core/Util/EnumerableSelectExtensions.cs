@@ -35,20 +35,20 @@ namespace Silverback.Util
             int? maxDegreeOfParallelism = null)
         {
             if (maxDegreeOfParallelism == null)
-                return await Task.WhenAll(source.ParallelSelect(selector));
+                return await Task.WhenAll(source.ParallelSelect(selector)).ConfigureAwait(false);
 
             if (maxDegreeOfParallelism == 1)
-                return await source.SelectAsync(selector);
+                return await source.SelectAsync(selector).ConfigureAwait(false);
 
             using var semaphore = new SemaphoreSlim(maxDegreeOfParallelism.Value);
 
             var tasks = source.ParallelSelect(
                 async s =>
                 {
-                    await semaphore.WaitAsync();
+                    await semaphore.WaitAsync().ConfigureAwait(false);
                     try
                     {
-                        return await selector(s);
+                        return await selector(s).ConfigureAwait(false);
                     }
                     finally
                     {
@@ -56,7 +56,7 @@ namespace Silverback.Util
                     }
                 });
 
-            return await Task.WhenAll(tasks);
+            return await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
         public static IEnumerable<TResult> Select<T, TResult>(
@@ -75,7 +75,8 @@ namespace Silverback.Util
             Func<T, Task<TResult>> selector)
         {
             var results = new List<TResult>();
-            await source.ForEachAsync(async s => results.Add(await selector(s)));
+            await source.ForEachAsync(async s => results.Add(await selector(s).ConfigureAwait(false)))
+                .ConfigureAwait(false);
             return results;
         }
 
@@ -94,7 +95,7 @@ namespace Silverback.Util
             this IEnumerable<T> source,
             Func<T, Task<IEnumerable<TResult>>> selector)
         {
-            var results = await SelectAsync(source, selector);
+            var results = await SelectAsync(source, selector).ConfigureAwait(false);
             return results.SelectMany(r => r);
         }
 
@@ -103,7 +104,7 @@ namespace Silverback.Util
             Func<T, Task<IEnumerable<TResult>>> selector,
             int? maxDegreeOfParallelism = null)
         {
-            var results = await ParallelSelectAsync(source, selector, maxDegreeOfParallelism);
+            var results = await ParallelSelectAsync(source, selector, maxDegreeOfParallelism).ConfigureAwait(false);
             return results.SelectMany(r => r);
         }
 
@@ -115,9 +116,9 @@ namespace Silverback.Util
             await source.ForEachAsync(
                 async s =>
                 {
-                    if (await predicate(s))
+                    if (await predicate(s).ConfigureAwait(false))
                         results.Add(s);
-                });
+                }).ConfigureAwait(false);
             return results;
         }
     }

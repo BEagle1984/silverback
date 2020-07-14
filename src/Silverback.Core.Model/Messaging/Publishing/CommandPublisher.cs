@@ -71,11 +71,15 @@ namespace Silverback.Messaging.Publishing
 
         /// <inheritdoc cref="ICommandPublisher.ExecuteAsync{TResult}(ICommand{TResult})" />
         public async Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage) =>
-            (await _publisher.PublishAsync<TResult>(commandMessage)).SingleOrDefault();
+            (await _publisher.PublishAsync<TResult>(commandMessage)
+                .ConfigureAwait(false))
+            .SingleOrDefault();
 
         /// <inheritdoc cref="ICommandPublisher.ExecuteAsync{TResult}(ICommand{TResult}, bool)" />
         public async Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage, bool throwIfUnhandled) =>
-            (await _publisher.PublishAsync<TResult>(commandMessage, throwIfUnhandled)).SingleOrDefault();
+            (await _publisher.PublishAsync<TResult>(commandMessage, throwIfUnhandled)
+                .ConfigureAwait(false))
+            .SingleOrDefault();
 
         /// <inheritdoc cref="ICommandPublisher.ExecuteAsync{TResult}(IEnumerable{ICommand{TResult}})" />
         public Task<IReadOnlyCollection<TResult>>

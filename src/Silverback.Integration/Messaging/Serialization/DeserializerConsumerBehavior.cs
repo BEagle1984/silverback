@@ -28,9 +28,9 @@ namespace Silverback.Messaging.Serialization
             Check.NotNull(serviceProvider, nameof(serviceProvider));
             Check.NotNull(next, nameof(next));
 
-            context.Envelopes = (await context.Envelopes.SelectAsync(Deserialize)).ToList();
+            context.Envelopes = (await context.Envelopes.SelectAsync(Deserialize).ConfigureAwait(false)).ToList();
 
-            await next(context, serviceProvider);
+            await next(context, serviceProvider).ConfigureAwait(false);
         }
 
         private static async Task<IRawInboundEnvelope> Deserialize(IRawInboundEnvelope envelope)
@@ -42,7 +42,8 @@ namespace Silverback.Messaging.Serialization
                 envelope.Endpoint.Serializer.DeserializeAsync(
                     envelope.RawMessage,
                     envelope.Headers,
-                    new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName));
+                    new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName))
+                    .ConfigureAwait(false);
 
             // Create typed message for easier specific subscription
             return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);

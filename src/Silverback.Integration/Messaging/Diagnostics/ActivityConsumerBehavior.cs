@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Diagnostics
             {
                 TryInitActivity(context, activity, serviceProvider.GetService<ILogger<ActivityConsumerBehavior>>());
 
-                await next(context, serviceProvider);
+                await next(context, serviceProvider).ConfigureAwait(false);
             }
             finally
             {

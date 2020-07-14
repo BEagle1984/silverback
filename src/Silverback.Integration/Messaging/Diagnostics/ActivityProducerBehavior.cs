@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Diagnostics
             {
                 activity.Start();
                 activity.SetMessageHeaders(context.Envelope.Headers);
-                await next(context);
+                await next(context).ConfigureAwait(false);
             }
             finally
             {

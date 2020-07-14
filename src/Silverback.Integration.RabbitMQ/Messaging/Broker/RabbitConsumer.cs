@@ -148,7 +148,8 @@ namespace Silverback.Messaging.Broker
                     deliverEventArgs.Body.ToArray(),
                     deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
                     Endpoint.Name,
-                    offset);
+                    offset)
+                    .ConfigureAwait(false);
             }
             catch (Exception)
             {

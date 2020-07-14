@@ -50,11 +50,12 @@ namespace Silverback.Messaging.ErrorHandling
                         messagesHandler,
                         rollbackHandler,
                         errorPolicy,
-                        attempt);
+                        attempt)
+                        .ConfigureAwait(false);
 
                     if (result.IsSuccessful || result.Action == ErrorAction.Skip)
                     {
-                        await commitHandler(context, scope.ServiceProvider);
+                        await commitHandler(context, scope.ServiceProvider).ConfigureAwait(false);
                         return;
                     }
 
@@ -67,7 +68,7 @@ namespace Silverback.Messaging.ErrorHandling
                 }
                 catch (Exception ex)
                 {
-                    await rollbackHandler(context, scope.ServiceProvider, ex);
+                    await rollbackHandler(context, scope.ServiceProvider, ex).ConfigureAwait(false);
 
                     throw;
                 }
@@ -110,7 +111,7 @@ namespace Silverback.Messaging.ErrorHandling
             {
                 _logger.LogProcessing(context.Envelopes);
 
-                await messagesHandler(context, serviceProvider);
+                await messagesHandler(context, serviceProvider).ConfigureAwait(false);
 
                 return MessageHandlerResult.Success;
             }
@@ -126,7 +127,7 @@ namespace Silverback.Messaging.ErrorHandling
                 if (!errorPolicy.CanHandle(context.Envelopes, ex))
                     throw;
 
-                var action = await errorPolicy.HandleError(context.Envelopes, ex);
+                var action = await errorPolicy.HandleError(context.Envelopes, ex).ConfigureAwait(false);
 
                 if (action == ErrorAction.StopConsuming)
                     throw;
@@ -135,7 +136,7 @@ namespace Silverback.Messaging.ErrorHandling
 
                 // Rollback database transactions only (ignore offsets)
                 context.CommitOffsets = new List<IOffset>();
-                await rollbackHandler(context, serviceProvider, ex);
+                await rollbackHandler(context, serviceProvider, ex).ConfigureAwait(false);
 
                 if (action == ErrorAction.Skip)
                 {

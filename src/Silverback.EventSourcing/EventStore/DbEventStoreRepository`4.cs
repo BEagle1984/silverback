@@ -101,7 +101,7 @@ namespace Silverback.EventStore
             Expression<Func<TEventStoreEntity, bool>> predicate,
             DateTime? snapshot = null)
         {
-            var eventStoreEntity = await EventStores.FirstOrDefaultAsync(predicate);
+            var eventStoreEntity = await EventStores.FirstOrDefaultAsync(predicate).ConfigureAwait(false);
 
             if (eventStoreEntity == null)
                 return null;
@@ -128,7 +128,7 @@ namespace Silverback.EventStore
             if (domainEntity.Id == null)
                 throw new InvalidOperationException("The domain entity Id property is null.");
 
-            return await _dbSet.FindAsync(domainEntity.Id);
+            return await _dbSet.FindAsync(domainEntity.Id).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="EventStoreRepository{TDomainEntity,TEventStoreEntity,TEventEntity}.AddEventStoreEntity" />

@@ -244,13 +244,14 @@ namespace Silverback.Messaging.ErrorHandling
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
-            ErrorAction result = await ApplyPolicy(envelopes, exception);
+            ErrorAction result = await ApplyPolicy(envelopes, exception).ConfigureAwait(false);
 
             if (MessageToPublishFactory != null)
             {
                 using var scope = _serviceProvider.CreateScope();
                 await scope.ServiceProvider.GetRequiredService<IPublisher>()
-                    .PublishAsync(MessageToPublishFactory.Invoke(envelopes));
+                    .PublishAsync(MessageToPublishFactory.Invoke(envelopes))
+                    .ConfigureAwait(false);
             }
 
             return result;

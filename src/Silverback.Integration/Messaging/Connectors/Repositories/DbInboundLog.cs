@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         public async Task Commit()
         {
             // Call SaveChanges, in case it isn't called by a subscriber
-            await DbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="ITransactional.Rollback" />

@@ -25,9 +25,10 @@ namespace Silverback.Messaging.Serialization
                 await context.Envelope.Endpoint.Serializer.SerializeAsync(
                     context.Envelope.Message,
                     context.Envelope.Headers,
-                    new MessageSerializationContext(context.Envelope.Endpoint));
+                    new MessageSerializationContext(context.Envelope.Endpoint))
+                    .ConfigureAwait(false);
 
-            await next(context);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

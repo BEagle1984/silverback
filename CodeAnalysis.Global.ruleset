@@ -726,7 +726,7 @@
         <Rule Id="CA1819" Action="Warning" />
         <Rule Id="CA1822" Action="Warning" />
         <Rule Id="CA1823" Action="Warning" />
-        <Rule Id="CA2007" Action="None" /> <!-- DoNotDirectlyAwaitATaskAnalyzer: This is only relevant for full framework ASP.NET MVC applications. -->
+        <Rule Id="CA2007" Action="Warning" />
         <Rule Id="CA2119" Action="Warning" />
         <Rule Id="CA2211" Action="Warning" />
         <Rule Id="CA2214" Action="Warning" />

@@ -44,11 +44,15 @@ namespace Silverback.Messaging.Publishing
 
         /// <inheritdoc cref="IQueryPublisher.ExecuteAsync{TResult}(IQuery{TResult})" />
         public async Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage) =>
-            (await _publisher.PublishAsync<TResult>(queryMessage)).SingleOrDefault();
+            (await _publisher.PublishAsync<TResult>(queryMessage)
+                .ConfigureAwait(false))
+            .SingleOrDefault();
 
         /// <inheritdoc cref="IQueryPublisher.ExecuteAsync{TResult}(IQuery{TResult}, bool)" />
         public async Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage, bool throwIfUnhandled) =>
-            (await _publisher.PublishAsync<TResult>(queryMessage, throwIfUnhandled)).SingleOrDefault();
+            (await _publisher.PublishAsync<TResult>(queryMessage, throwIfUnhandled)
+                .ConfigureAwait(false))
+            .SingleOrDefault();
 
         /// <inheritdoc cref="IQueryPublisher.ExecuteAsync{TResult}(IEnumerable{IQuery{TResult}})" />
         public Task<IReadOnlyCollection<TResult>> ExecuteAsync<TResult>(IEnumerable<IQuery<TResult>> queryMessages) =>

@@ -20,7 +20,7 @@ namespace Silverback.Util
         /// </returns>
         public static async Task<object?> GetReturnValue(this Task task)
         {
-            await task;
+            await task.ConfigureAwait(false);
 
             var resultProperty = task.GetType().GetProperty("Result");
 

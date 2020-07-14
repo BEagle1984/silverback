@@ -45,7 +45,7 @@ namespace Silverback.Database
         public TEntity? Find(params object[] keyValues) => _dbSet.Find(keyValues);
 
         /// <inheritdoc cref="IDbSet{TEntity}.FindAsync" />
-        public async Task<TEntity?> FindAsync(params object[] keyValues) => await _dbSet.FindAsync(keyValues);
+        public async Task<TEntity?> FindAsync(params object[] keyValues) => await _dbSet.FindAsync(keyValues).ConfigureAwait(false);
 
         /// <inheritdoc cref="IDbSet{TEntity}.AsQueryable" />
         public IQueryable<TEntity> AsQueryable() => _dbSet;

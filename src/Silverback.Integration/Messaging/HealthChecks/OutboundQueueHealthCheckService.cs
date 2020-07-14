@@ -29,10 +29,10 @@ namespace Silverback.Messaging.HealthChecks
         public async Task<bool> CheckIsHealthy(TimeSpan? maxAge = null, int? maxQueueLength = null)
         {
             if (maxQueueLength != null &&
-                await _queueReader.GetLength() > maxQueueLength)
+                await _queueReader.GetLength().ConfigureAwait(false) > maxQueueLength)
                 return false;
 
-            return await _queueReader.GetMaxAge() <= (maxAge ?? DefaultMaxAge);
+            return await _queueReader.GetMaxAge().ConfigureAwait(false) <= (maxAge ?? DefaultMaxAge);
         }
     }
 }

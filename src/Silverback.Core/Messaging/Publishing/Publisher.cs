@@ -101,7 +101,7 @@ namespace Silverback.Messaging.Publishing
         public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(
             object message,
             bool throwIfUnhandled) =>
-            await PublishAsync<TResult>(new[] { message }, throwIfUnhandled);
+            await PublishAsync<TResult>(new[] { message }, throwIfUnhandled).ConfigureAwait(false);
 
         /// <inheritdoc cref="IPublisher.PublishAsync(IEnumerable{object})" />
         public Task PublishAsync(IEnumerable<object> messages) => PublishAsync(messages, false);
@@ -118,7 +118,7 @@ namespace Silverback.Messaging.Publishing
         public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(
             IEnumerable<object> messages,
             bool throwIfUnhandled) =>
-            CastResults<TResult>(await Publish(messages, throwIfUnhandled, true)).ToList();
+            CastResults<TResult>(await Publish(messages, throwIfUnhandled, true).ConfigureAwait(false)).ToList();
 
         private static Task<IReadOnlyCollection<object>> ExecuteBehaviorsPipeline(
             IReadOnlyCollection<IBehavior> behaviors,
@@ -169,11 +169,9 @@ namespace Silverback.Messaging.Publishing
 
             Check.HasNoNulls(messagesList, nameof(messages));
 
-            messagesList = await ExecuteBehaviorsPipeline(
-                GetBehaviors(),
-                messagesList);
+            messagesList = await ExecuteBehaviorsPipeline(GetBehaviors(), messagesList).ConfigureAwait(false);
 
-            var results = await InvokeSubscribedMethods(messagesList, executeAsync);
+            var results = await InvokeSubscribedMethods(messagesList, executeAsync).ConfigureAwait(false);
 
             bool allMessagesHandled =
                 messagesList.All(
@@ -200,8 +198,8 @@ namespace Silverback.Messaging.Publishing
             bool executeAsync)
         {
             var methods = GetMethodsLoader().GetSubscribedMethods();
-            return (await InvokeExclusiveMethods(messages, methods, executeAsync))
-                .Union(await InvokeNonExclusiveMethods(messages, methods, executeAsync))
+            return (await InvokeExclusiveMethods(messages, methods, executeAsync).ConfigureAwait(false))
+                .Union(await InvokeNonExclusiveMethods(messages, methods, executeAsync).ConfigureAwait(false))
                 .ToList();
         }
 
@@ -213,7 +211,8 @@ namespace Silverback.Messaging.Publishing
                 .Where(method => method.IsExclusive)
                 .SelectAsync(
                     method =>
-                        GetMethodInvoker().Invoke(method, messages, executeAsync)))
+                        GetMethodInvoker().Invoke(method, messages, executeAsync))
+                .ConfigureAwait(false))
             .ToList();
 
         private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethods(
@@ -224,7 +223,8 @@ namespace Silverback.Messaging.Publishing
                 .Where(method => !method.IsExclusive)
                 .ParallelSelectAsync(
                     method =>
-                        GetMethodInvoker().Invoke(method, messages, executeAsync)))
+                        GetMethodInvoker().Invoke(method, messages, executeAsync))
+                .ConfigureAwait(false))
             .ToList();
 
         private IReadOnlyCollection<IBehavior> GetBehaviors() =>

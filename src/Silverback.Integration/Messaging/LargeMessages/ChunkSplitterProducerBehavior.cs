@@ -36,7 +36,7 @@ namespace Silverback.Messaging.LargeMessages
                     if (i > 0 && firstOffsetValue != null)
                         chunks[i].Headers.Add(DefaultMessageHeaders.FirstChunkOffset, firstOffsetValue);
 
-                    await next(new ProducerPipelineContext(chunks[i], context.Producer));
+                    await next(new ProducerPipelineContext(chunks[i], context.Producer)).ConfigureAwait(false);
 
                     if (i == 0)
                         firstOffsetValue = chunks[0].Offset?.Value;
@@ -44,7 +44,7 @@ namespace Silverback.Messaging.LargeMessages
             }
             else
             {
-                await next(context);
+                await next(context).ConfigureAwait(false);
             }
         }
 

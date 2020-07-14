@@ -45,9 +45,10 @@ namespace Silverback.Messaging.Connectors.Behaviors
                 .ForEachAsync(
                     outboundMessage => _outboundConnectors
                         .GetConnectorInstance(outboundMessage.OutboundConnectorType)
-                        .RelayMessage(outboundMessage));
+                        .RelayMessage(outboundMessage))
+                .ConfigureAwait(false);
 
-            return await next(messages);
+            return await next(messages).ConfigureAwait(false);
         }
     }
 }

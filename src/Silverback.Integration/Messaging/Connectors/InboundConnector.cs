@@ -129,7 +129,8 @@ namespace Silverback.Messaging.Connectors
             Check.NotNull(serviceProvider, nameof(serviceProvider));
 
             await serviceProvider.GetRequiredService<IPublisher>()
-                .PublishAsync(envelopes, consumer.Endpoint.ThrowIfUnhandled);
+                .PublishAsync(envelopes, consumer.Endpoint.ThrowIfUnhandled)
+                .ConfigureAwait(false);
         }
 
         private void ConfigureInboundProcessorBehavior(

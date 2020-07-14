@@ -51,13 +51,14 @@ namespace Silverback.Messaging.LargeMessages
                 pendingOffsets = _pendingOffsetsByConsumer.GetOrAdd(context.Consumer, _ => new List<IOffset>());
 
             context.Envelopes =
-                (await context.Envelopes.SelectAsync(envelope => AggregateIfNeeded(envelope, serviceProvider)))
+                (await context.Envelopes.SelectAsync(envelope => AggregateIfNeeded(envelope, serviceProvider))
+                    .ConfigureAwait(false))
                 .WhereNotNull()
                 .ToList();
 
             try
             {
-                await TryHandle(context, serviceProvider, next, chunkStore, pendingOffsets);
+                await TryHandle(context, serviceProvider, next, chunkStore, pendingOffsets).ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -75,7 +76,7 @@ namespace Silverback.Messaging.LargeMessages
             List<IOffset>? pendingOffsets)
         {
             if (context.Envelopes.Any())
-                await next(context, serviceProvider);
+                await next(context, serviceProvider).ConfigureAwait(false);
 
             if (chunkStore != null && chunkStore.HasNotPersistedChunks)
             {
@@ -121,12 +122,12 @@ namespace Silverback.Messaging.LargeMessages
             if (envelope.Headers.Contains(DefaultMessageHeaders.ChunksAggregated))
             {
                 // If this is a retry the cleanup wasn't committed the run before
-                await chunkAggregator.Cleanup(envelope);
+                await chunkAggregator.Cleanup(envelope).ConfigureAwait(false);
 
                 return envelope;
             }
 
-            var completeMessage = await chunkAggregator.AggregateIfComplete(envelope);
+            var completeMessage = await chunkAggregator.AggregateIfComplete(envelope).ConfigureAwait(false);
 
             if (completeMessage == null)
                 return null;

@@ -44,7 +44,8 @@ namespace Silverback.Messaging.Connectors.Repositories
             var oldestCreated = await DbSet.AsQueryable()
                 .OrderBy(m => m.Created)
                 .Select(m => m.Created)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
 
             if (oldestCreated == default)
                 return TimeSpan.Zero;
@@ -57,7 +58,8 @@ namespace Silverback.Messaging.Connectors.Repositories
             (await DbSet.AsQueryable()
                 .OrderBy(m => m.Id)
                 .Take(count)
-                .ToListAsync())
+                .ToListAsync()
+                .ConfigureAwait(false))
             .Select(
                 message => new DbQueuedMessage(
                     message.Id,
@@ -80,14 +82,14 @@ namespace Silverback.Messaging.Connectors.Repositories
             if (!(queuedMessage is DbQueuedMessage dbQueuedMessage))
                 throw new InvalidOperationException("A DbQueuedMessage is expected.");
 
-            var entity = await DbSet.FindAsync(dbQueuedMessage.Id);
+            var entity = await DbSet.FindAsync(dbQueuedMessage.Id).ConfigureAwait(false);
 
             if (entity == null)
                 return;
 
             DbSet.Remove(entity);
 
-            await DbContext.SaveChangesAsync();
+            await DbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IOutboundQueueReader.GetLength" />

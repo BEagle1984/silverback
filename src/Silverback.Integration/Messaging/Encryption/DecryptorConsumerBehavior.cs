@@ -41,9 +41,9 @@ namespace Silverback.Messaging.Encryption
             Check.NotNull(serviceProvider, nameof(serviceProvider));
             Check.NotNull(next, nameof(next));
 
-            context.Envelopes = (await context.Envelopes.SelectAsync(Decrypt)).ToList();
+            context.Envelopes = (await context.Envelopes.SelectAsync(Decrypt).ConfigureAwait(false)).ToList();
 
-            await next(context, serviceProvider);
+            await next(context, serviceProvider).ConfigureAwait(false);
         }
 
         private async Task<IRawInboundEnvelope> Decrypt(IRawInboundEnvelope envelope)
@@ -53,7 +53,8 @@ namespace Silverback.Messaging.Encryption
             {
                 envelope.RawMessage = await _factory
                     .GetDecryptor(envelope.Endpoint.Encryption)
-                    .TransformAsync(envelope.RawMessage, envelope.Headers);
+                    .TransformAsync(envelope.RawMessage, envelope.Headers)
+                    .ConfigureAwait(false);
 
                 envelope.Headers.Add(DefaultMessageHeaders.Decrypted, true);
             }

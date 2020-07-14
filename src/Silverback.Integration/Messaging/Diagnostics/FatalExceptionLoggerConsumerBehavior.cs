@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Diagnostics
 
             try
             {
-                await next(context, serviceProvider);
+                await next(context, serviceProvider).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

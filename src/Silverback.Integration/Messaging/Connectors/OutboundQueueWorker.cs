@@ -79,7 +79,7 @@ namespace Silverback.Messaging.Connectors
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                await ProcessQueue(scope.ServiceProvider, stoppingToken);
+                await ProcessQueue(scope.ServiceProvider, stoppingToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -120,7 +120,7 @@ namespace Silverback.Messaging.Connectors
                 _readPackageSize);
 
             var queue = serviceProvider.GetRequiredService<IOutboundQueueReader>();
-            var messages = (await queue.Dequeue(_readPackageSize)).ToList();
+            var messages = (await queue.Dequeue(_readPackageSize).ConfigureAwait(false)).ToList();
 
             if (messages.Count == 0)
                 _logger.LogTrace(EventIds.OutboundQueueWorkerQueueEmpty, "The outbound queue is empty.");
@@ -132,7 +132,7 @@ namespace Silverback.Messaging.Connectors
                     "Processing message {currentMessageIndex} of {totalMessages}.",
                     i + 1,
                     messages.Count);
-                await ProcessMessage(messages[i], queue, serviceProvider);
+                await ProcessMessage(messages[i], queue, serviceProvider).ConfigureAwait(false);
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
@@ -147,9 +147,9 @@ namespace Silverback.Messaging.Connectors
             try
             {
                 var endpoint = GetTargetEndpoint(message.MessageType, message.EndpointName, serviceProvider);
-                await ProduceMessage(message.Content, message.Headers, endpoint);
+                await ProduceMessage(message.Content, message.Headers, endpoint).ConfigureAwait(false);
 
-                await queue.Acknowledge(message);
+                await queue.Acknowledge(message).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -159,7 +159,7 @@ namespace Silverback.Messaging.Connectors
                     "Failed to publish queued message.",
                     new OutboundEnvelope(message.Content, message.Headers, new LoggingEndpoint(message.EndpointName)));
 
-                await queue.Retry(message);
+                await queue.Retry(message).ConfigureAwait(false);
 
                 // Rethrow if message order has to be preserved, otherwise go ahead with next message in the queue
                 if (_enforceMessageOrder)

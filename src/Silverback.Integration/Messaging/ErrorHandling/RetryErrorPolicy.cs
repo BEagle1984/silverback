@@ -56,7 +56,7 @@ namespace Silverback.Messaging.ErrorHandling
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)
         {
-            await ApplyDelay(envelopes);
+            await ApplyDelay(envelopes).ConfigureAwait(false);
 
             _logger.LogInformationWithMessageInfo(
                 EventIds.RetryErrorPolicyApplyPolicy,
@@ -80,7 +80,7 @@ namespace Silverback.Messaging.ErrorHandling
                 $"Waiting {delay} milliseconds before retrying to process the message(s).",
                 envelopes);
 
-            await Task.Delay(delay);
+            await Task.Delay(delay).ConfigureAwait(false);
         }
     }
 }

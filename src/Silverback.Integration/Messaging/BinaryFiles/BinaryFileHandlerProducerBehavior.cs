@@ -32,10 +32,11 @@ namespace Silverback.Messaging.BinaryFiles
                 context.Envelope.RawMessage = await _binaryFileMessageSerializer.SerializeAsync(
                     context.Envelope.Message,
                     context.Envelope.Headers,
-                    MessageSerializationContext.Empty);
+                    MessageSerializationContext.Empty)
+                    .ConfigureAwait(false);
             }
 
-            await next(context);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

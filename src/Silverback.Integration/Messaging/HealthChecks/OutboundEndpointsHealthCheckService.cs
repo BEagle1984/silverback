@@ -58,7 +58,7 @@ namespace Silverback.Messaging.HealthChecks
                     route =>
                         route.GetOutboundRouter(_serviceProvider).Endpoints.Select(PingEndpoint));
 
-            return await Task.WhenAll(tasks);
+            return await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
         [SuppressMessage("", "CA1031", Justification = "Exception reported in the result.")]
@@ -66,7 +66,7 @@ namespace Silverback.Messaging.HealthChecks
         {
             try
             {
-                await _brokerCollection.GetProducer(endpoint).ProduceAsync(PingMessage.New());
+                await _brokerCollection.GetProducer(endpoint).ProduceAsync(PingMessage.New()).ConfigureAwait(false);
                 return new EndpointCheckResult(endpoint.Name, true);
             }
             catch (Exception ex)

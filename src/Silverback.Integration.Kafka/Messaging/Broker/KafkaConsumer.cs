@@ -199,7 +199,7 @@ namespace Silverback.Messaging.Broker
             {
                 try
                 {
-                    await ReceiveMessage();
+                    await ReceiveMessage().ConfigureAwait(false);
                 }
                 catch (OperationCanceledException)
                 {
@@ -207,7 +207,7 @@ namespace Silverback.Messaging.Broker
                 }
                 catch (KafkaException ex)
                 {
-                    if (!await AutoRecoveryIfEnabled(ex))
+                    if (!await AutoRecoveryIfEnabled(ex).ConfigureAwait(false))
                         break;
                 }
                 catch (Exception)
@@ -258,7 +258,7 @@ namespace Silverback.Messaging.Broker
                 result.Partition,
                 result.Offset);
 
-            await OnMessageReceived(result.Message, result.TopicPartitionOffset);
+            await OnMessageReceived(result.Message, result.TopicPartitionOffset).ConfigureAwait(false);
         }
 
         private async Task OnMessageReceived(
@@ -272,7 +272,7 @@ namespace Silverback.Messaging.Broker
                     topicPartitionOffset.Topic.Equals(endpointName, StringComparison.OrdinalIgnoreCase)))
                 return;
 
-            await TryHandleMessage(message, topicPartitionOffset);
+            await TryHandleMessage(message, topicPartitionOffset).ConfigureAwait(false);
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
@@ -301,7 +301,8 @@ namespace Silverback.Messaging.Broker
                 message.Value,
                 headers,
                 tpo.Topic,
-                offset);
+                offset)
+                .ConfigureAwait(false);
         }
 
         private async Task<bool> AutoRecoveryIfEnabled(KafkaException ex)
@@ -314,7 +315,7 @@ namespace Silverback.Messaging.Broker
                     "KafkaException occurred. The consumer will try to recover. (topic(s): {topics})",
                     (object)Endpoint.Names);
 
-                await ResetInnerConsumer();
+                await ResetInnerConsumer().ConfigureAwait(false);
             }
             else
             {
@@ -352,7 +353,7 @@ namespace Silverback.Messaging.Broker
                         "Failed to recover from consumer exception. Will retry in {SecondsUntilRetry} seconds.",
                         RecoveryDelay.TotalSeconds);
 
-                    await Task.Delay(RecoveryDelay);
+                    await Task.Delay(RecoveryDelay).ConfigureAwait(false);
                 }
             }
         }
@@ -420,7 +421,7 @@ namespace Silverback.Messaging.Broker
             // exceptions when the process exits prematurely
             while (_isConsuming)
             {
-                await Task.Delay(100);
+                await Task.Delay(100).ConfigureAwait(false);
             }
 
             _cancellationTokenSource?.Dispose();

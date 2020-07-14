@@ -60,7 +60,9 @@ namespace Silverback.EventStore
         {
             Check.NotNull(domainEntity, nameof(domainEntity));
 
-            return StoreAndPublishEvents(domainEntity, await GetEventStoreEntityAsync(domainEntity, true));
+            return StoreAndPublishEvents(
+                domainEntity,
+                await GetEventStoreEntityAsync(domainEntity, true).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -93,7 +95,7 @@ namespace Silverback.EventStore
         /// </returns>
         public async Task<TEventStoreEntity> RemoveAsync(TDomainEntity domainEntity)
         {
-            var eventStoreEntity = await GetEventStoreEntityAsync(domainEntity, false);
+            var eventStoreEntity = await GetEventStoreEntityAsync(domainEntity, false).ConfigureAwait(false);
 
             RemoveCore(eventStoreEntity);
 
@@ -136,7 +138,7 @@ namespace Silverback.EventStore
             TDomainEntity domainEntity,
             bool addIfNotFound)
         {
-            var eventStore = await GetEventStoreEntityAsync(domainEntity);
+            var eventStore = await GetEventStoreEntityAsync(domainEntity).ConfigureAwait(false);
 
             return EnsureEventStoreEntityIsNotNull(eventStore, domainEntity, addIfNotFound);
         }
@@ -145,7 +147,8 @@ namespace Silverback.EventStore
         ///     Adds the new event store entity to the storage, without committing yet.
         /// </summary>
         /// <remarks>
-        ///     In EF Core this equals to adding the entity to the <c>DbSet</c> without calling <c>SaveChanges</c> (that will be called later by the framework).
+        ///     In EF Core this equals to adding the entity to the <c>DbSet</c> without calling <c>SaveChanges</c>
+        ///     (that will be called later by the framework).
         /// </remarks>
         /// <param name="eventStoreEntity">
         ///     The event store entity to be added.

@@ -52,7 +52,7 @@ namespace Silverback.Messaging.Connectors
                 EventIds.DeferredOutboundConnectorEnqueueMessage,
                 "Enqueuing outbound message for deferred produce.",
                 envelope);
-            await _queueWriter.Enqueue(envelope);
+            await _queueWriter.Enqueue(envelope).ConfigureAwait(false);
         }
     }
 }

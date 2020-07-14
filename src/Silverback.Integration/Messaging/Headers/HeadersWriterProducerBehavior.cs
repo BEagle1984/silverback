@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Headers
             HeaderAttributeHelper.GetHeaders(context.Envelope.Message)
                 .ForEach(header => context.Envelope.Headers.AddOrReplace(header.Name, header.Value));
 
-            await next(context);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

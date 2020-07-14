@@ -101,7 +101,7 @@ namespace Silverback.Messaging.Batch
                     _processingException);
             }
 
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(false);
 
             try
             {
@@ -118,11 +118,12 @@ namespace Silverback.Messaging.Batch
 
                     using var scope = _serviceProvider.CreateScope();
                     await scope.ServiceProvider.GetRequiredService<IPublisher>()
-                        .PublishAsync(new BatchStartedEvent(CurrentBatchId, _envelopes));
+                        .PublishAsync(new BatchStartedEvent(CurrentBatchId, _envelopes))
+                        .ConfigureAwait(false);
                 }
                 else if (_envelopes.Count == _settings.Size)
                 {
-                    await ProcessBatch();
+                    await ProcessBatch().ConfigureAwait(false);
                 }
             }
             finally
@@ -144,12 +145,12 @@ namespace Silverback.Messaging.Batch
             Task.Run(
                 async () =>
                 {
-                    await _semaphore.WaitAsync();
+                    await _semaphore.WaitAsync().ConfigureAwait(false);
 
                     try
                     {
                         if (_envelopes.Any())
-                            await ProcessBatch();
+                            await ProcessBatch().ConfigureAwait(false);
                     }
                     finally
                     {
@@ -169,7 +170,8 @@ namespace Silverback.Messaging.Batch
                     _errorPolicy,
                     ForwardMessages,
                     Commit,
-                    Rollback);
+                    Rollback)
+                    .ConfigureAwait(false);
 
                 _envelopes.Clear();
             }
@@ -191,24 +193,26 @@ namespace Silverback.Messaging.Batch
 
         private async Task ForwardMessages(ConsumerPipelineContext context, IServiceProvider serviceProvider)
         {
-            await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(
-                new BatchCompleteEvent(CurrentBatchId, context.Envelopes));
+            await serviceProvider.GetRequiredService<IPublisher>()
+                .PublishAsync(new BatchCompleteEvent(CurrentBatchId, context.Envelopes))
+                .ConfigureAwait(false);
 
             if (_messagesHandler == null)
                 throw new InvalidOperationException("No message handler has been provided.");
 
-            await _messagesHandler(context, serviceProvider);
+            await _messagesHandler(context, serviceProvider).ConfigureAwait(false);
         }
 
         private async Task Commit(ConsumerPipelineContext context, IServiceProvider serviceProvider)
         {
-            await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(
-                new BatchProcessedEvent(CurrentBatchId, context.Envelopes));
+            await serviceProvider.GetRequiredService<IPublisher>()
+                .PublishAsync(new BatchProcessedEvent(CurrentBatchId, context.Envelopes))
+                .ConfigureAwait(false);
 
             if (_commitHandler == null)
                 throw new InvalidOperationException("No commit handler has been provided.");
 
-            await _commitHandler(context, serviceProvider);
+            await _commitHandler(context, serviceProvider).ConfigureAwait(false);
         }
 
         private async Task Rollback(
@@ -216,13 +220,14 @@ namespace Silverback.Messaging.Batch
             IServiceProvider serviceProvider,
             Exception exception)
         {
-            await serviceProvider.GetRequiredService<IPublisher>().PublishAsync(
-                new BatchAbortedEvent(CurrentBatchId, context.Envelopes, exception));
+            await serviceProvider.GetRequiredService<IPublisher>()
+                .PublishAsync(new BatchAbortedEvent(CurrentBatchId, context.Envelopes, exception))
+                .ConfigureAwait(false);
 
             if (_rollbackHandler == null)
                 throw new InvalidOperationException("No rollback handler has been provided.");
 
-            await _rollbackHandler(context, serviceProvider, exception);
+            await _rollbackHandler(context, serviceProvider, exception).ConfigureAwait(false);
         }
     }
 }

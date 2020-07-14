@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
                 if (handler != null)
                 {
                     if (executeAsync)
-                        await handler.HandleAsync(returnValue);
+                        await handler.HandleAsync(returnValue).ConfigureAwait(false);
                     else
                         handler.Handle(returnValue);
                 }

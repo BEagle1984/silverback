@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Behaviors
                     context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, messageId);
             }
 
-            await next(context);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

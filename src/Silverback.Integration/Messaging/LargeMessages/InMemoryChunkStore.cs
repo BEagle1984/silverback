@@ -36,7 +36,7 @@ namespace Silverback.Messaging.LargeMessages
 
         /// <inheritdoc cref="IChunkStore.Store" />
         public async Task Store(string messageId, int chunkIndex, int chunksCount, byte[] content) =>
-            await Add(new InMemoryTemporaryMessageChunk(messageId, chunkIndex, content));
+            await Add(new InMemoryTemporaryMessageChunk(messageId, chunkIndex, content)).ConfigureAwait(false);
 
         /// <inheritdoc cref="IChunkStore.CountChunks" />
         public Task<int> CountChunks(string messageId) =>
@@ -93,14 +93,14 @@ namespace Silverback.Messaging.LargeMessages
                 _pendingCleanups.Clear();
             }
 
-            await base.Commit();
+            await base.Commit().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="ITransactional.Rollback" />
         public override async Task Rollback()
         {
             _pendingCleanups.Clear();
-            await base.Rollback();
+            await base.Rollback().ConfigureAwait(false);
         }
     }
 }

@@ -29,9 +29,9 @@ namespace Silverback.Messaging.BinaryFiles
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            context.Envelopes = (await context.Envelopes.SelectAsync(Handle)).ToList();
+            context.Envelopes = (await context.Envelopes.SelectAsync(Handle).ConfigureAwait(false)).ToList();
 
-            await next(context, serviceProvider);
+            await next(context, serviceProvider).ConfigureAwait(false);
         }
 
         private static async Task<IRawInboundEnvelope> Handle(IRawInboundEnvelope envelope)
@@ -46,7 +46,8 @@ namespace Silverback.Messaging.BinaryFiles
             var (deserializedObject, deserializedType) = await BinaryFileMessageSerializer.Default.DeserializeAsync(
                 envelope.RawMessage,
                 envelope.Headers,
-                MessageSerializationContext.Empty);
+                MessageSerializationContext.Empty)
+                .ConfigureAwait(false);
 
             // Create typed message for easier specific subscription
             return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);

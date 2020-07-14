@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Serialization
             object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
-            await SerializeAsync<TMessage>(message, MessageComponentType.Value, context);
+            await SerializeAsync<TMessage>(message, MessageComponentType.Value, context).ConfigureAwait(false);
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
@@ -62,7 +62,9 @@ namespace Silverback.Messaging.Serialization
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            var deserialized = await DeserializeAsync<TMessage>(message, MessageComponentType.Value, context);
+            var deserialized = await DeserializeAsync<TMessage>(message, MessageComponentType.Value, context)
+                .ConfigureAwait(false);
+
             var type = deserialized?.GetType() ?? typeof(TMessage);
 
             return (deserialized, type);
@@ -118,7 +120,8 @@ namespace Silverback.Messaging.Serialization
                     AvroSerializerConfig)
                 .SerializeAsync(
                     (TValue)message,
-                    GetConfluentSerializationContext(componentType, context));
+                    GetConfluentSerializationContext(componentType, context))
+                .ConfigureAwait(false);
         }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
@@ -140,7 +143,8 @@ namespace Silverback.Messaging.Serialization
             return await avroDeserializer.DeserializeAsync(
                 new ReadOnlyMemory<byte>(message),
                 false,
-                confluentSerializationContext);
+                confluentSerializationContext)
+                .ConfigureAwait(false);
         }
     }
 }

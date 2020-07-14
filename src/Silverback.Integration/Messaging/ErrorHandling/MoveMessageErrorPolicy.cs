@@ -85,7 +85,7 @@ namespace Silverback.Messaging.ErrorHandling
                 $"{envelopes.Count} message(s) will be  be moved to endpoint '{_endpoint.Name}'.",
                 envelopes);
 
-            await envelopes.ForEachAsync(envelope => PublishToNewEndpoint(envelope, exception));
+            await envelopes.ForEachAsync(envelope => PublishToNewEndpoint(envelope, exception)).ConfigureAwait(false);
 
             return ErrorAction.Skip;
         }
@@ -103,7 +103,7 @@ namespace Silverback.Messaging.ErrorHandling
 
             _transformationAction?.Invoke((OutboundEnvelope)outboundEnvelope, exception);
 
-            await _producer.ProduceAsync(outboundEnvelope);
+            await _producer.ProduceAsync(outboundEnvelope).ConfigureAwait(false);
         }
     }
 }

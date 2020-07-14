@@ -73,14 +73,14 @@ namespace Silverback.Background
             while (!stoppingToken.IsCancellationRequested)
             {
                 if (Lock != null)
-                    await Lock.Renew();
+                    await Lock.Renew().ConfigureAwait(false);
 
-                await ExecuteRecurringAsync(stoppingToken);
+                await ExecuteRecurringAsync(stoppingToken).ConfigureAwait(false);
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
 
-                await Sleep(stoppingToken);
+                await Sleep(stoppingToken).ConfigureAwait(false);
             }
 
             _logger.LogInformation(
@@ -113,7 +113,7 @@ namespace Silverback.Background
                 GetType().FullName,
                 _interval.TotalMilliseconds);
 
-            await Task.Delay(_interval, stoppingToken);
+            await Task.Delay(_interval, stoppingToken).ConfigureAwait(false);
         }
     }
 }

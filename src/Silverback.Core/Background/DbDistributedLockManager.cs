@@ -58,7 +58,7 @@ namespace Silverback.Background
             }
 
             if (settings is NullLockSettings)
-                return await NullLockManager.Acquire(settings, cancellationToken);
+                return await NullLockManager.Acquire(settings, cancellationToken).ConfigureAwait(false);
 
             _logger.LogInformation(
                 EventIds.DbDistributedLockManagerTryAcquireLock,
@@ -69,7 +69,7 @@ namespace Silverback.Background
             var stopwatch = Stopwatch.StartNew();
             while (settings.AcquireTimeout == null || stopwatch.Elapsed < settings.AcquireTimeout)
             {
-                if (await TryAcquireLock(settings))
+                if (await TryAcquireLock(settings).ConfigureAwait(false))
                 {
                     _logger.LogInformation(
                         EventIds.DbDistributedLockManagerAcquiredLock,
@@ -79,7 +79,7 @@ namespace Silverback.Background
                     return new DistributedLock(settings, this);
                 }
 
-                await Task.Delay(settings.AcquireRetryInterval, cancellationToken);
+                await Task.Delay(settings.AcquireRetryInterval, cancellationToken).ConfigureAwait(false);
 
                 if (cancellationToken.IsCancellationRequested)
                     break;
@@ -95,16 +95,17 @@ namespace Silverback.Background
             Check.NotNull(settings, nameof(settings));
 
             if (settings is NullLockSettings)
-                return await NullLockManager.CheckIsStillLocked(settings);
+                return await NullLockManager.CheckIsStillLocked(settings).ConfigureAwait(false);
 
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
                 return await CheckIsStillLocked(
-                    settings.ResourceName,
-                    settings.UniqueId,
-                    settings.HeartbeatTimeout,
-                    scope.ServiceProvider);
+                        settings.ResourceName,
+                        settings.UniqueId,
+                        settings.HeartbeatTimeout,
+                        scope.ServiceProvider)
+                    .ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -126,12 +127,13 @@ namespace Silverback.Background
             Check.NotNull(settings, nameof(settings));
 
             if (settings is NullLockSettings)
-                return await NullLockManager.SendHeartbeat(settings);
+                return await NullLockManager.SendHeartbeat(settings).ConfigureAwait(false);
 
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                return await SendHeartbeat(settings.ResourceName, settings.UniqueId, scope.ServiceProvider);
+                return await SendHeartbeat(settings.ResourceName, settings.UniqueId, scope.ServiceProvider)
+                    .ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -153,7 +155,7 @@ namespace Silverback.Background
             Check.NotNull(settings, nameof(settings));
 
             if (settings is NullLockSettings)
-                await NullLockManager.Release(settings);
+                await NullLockManager.Release(settings).ConfigureAwait(false);
 
             var tryCount = 1;
             while (tryCount <= 3)
@@ -161,7 +163,8 @@ namespace Silverback.Background
                 try
                 {
                     using var scope = _serviceScopeFactory.CreateScope();
-                    await Release(settings.ResourceName, settings.UniqueId, scope.ServiceProvider);
+                    await Release(settings.ResourceName, settings.UniqueId, scope.ServiceProvider)
+                        .ConfigureAwait(false);
 
                     _logger.LogInformation(
                         EventIds.DbDistributedLockManagerReleasedLock,
@@ -191,10 +194,12 @@ namespace Silverback.Background
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
             if (await dbSet.AsQueryable()
-                .AnyAsync(l => l.Name == settings.ResourceName && l.Heartbeat >= heartbeatThreshold))
+                .AnyAsync(l => l.Name == settings.ResourceName && l.Heartbeat >= heartbeatThreshold)
+                .ConfigureAwait(false))
                 return false;
 
-            return await WriteLock(settings.ResourceName, settings.UniqueId, heartbeatThreshold, dbSet, dbContext);
+            return await WriteLock(settings.ResourceName, settings.UniqueId, heartbeatThreshold, dbSet, dbContext)
+                .ConfigureAwait(false);
         }
 
         private static async Task<bool> WriteLock(
@@ -205,7 +210,9 @@ namespace Silverback.Background
             IDbContext dbContext)
         {
             var entity = await dbSet.AsQueryable().FirstOrDefaultAsync(e => e.Name == resourceName)
-                         ?? dbSet.Add(new Lock { Name = resourceName });
+                .ConfigureAwait(false);
+
+            entity ??= dbSet.Add(new Lock { Name = resourceName });
 
             // Check once more to ensure that no lock was created in the meanwhile
             if (entity.UniqueId != uniqueId && entity.Heartbeat >= heartbeatThreshold)
@@ -214,7 +221,7 @@ namespace Silverback.Background
             entity.UniqueId = uniqueId;
             entity.Heartbeat = entity.Created = DateTime.UtcNow;
 
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return true;
         }
@@ -231,7 +238,8 @@ namespace Silverback.Background
             return await dbSet.AsQueryable().AnyAsync(
                 l => l.Name == resourceName &&
                      l.UniqueId == uniqueId &&
-                     l.Heartbeat >= heartbeatThreshold);
+                     l.Heartbeat >= heartbeatThreshold)
+                .ConfigureAwait(false);
         }
 
         private static async Task<bool> SendHeartbeat(
@@ -242,14 +250,15 @@ namespace Silverback.Background
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
             var lockEntity = await dbSet.AsQueryable()
-                .FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId);
+                .FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId)
+                .ConfigureAwait(false);
 
             if (lockEntity == null)
                 return false;
 
             lockEntity.Heartbeat = DateTime.UtcNow;
 
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return true;
         }
@@ -270,14 +279,15 @@ namespace Silverback.Background
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
             var lockEntity = await dbSet.AsQueryable()
-                .FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId);
+                .FirstOrDefaultAsync(l => l.Name == resourceName && l.UniqueId == uniqueId)
+                .ConfigureAwait(false);
 
             if (lockEntity == null)
                 return;
 
             dbSet.Remove(lockEntity);
 
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
@@ -286,7 +296,7 @@ namespace Silverback.Background
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                return await AcquireLock(settings, scope.ServiceProvider);
+                return await AcquireLock(settings, scope.ServiceProvider).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

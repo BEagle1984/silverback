@@ -56,15 +56,15 @@ namespace Silverback.Background
             if (Status == DistributedLockStatus.Released)
                 throw new InvalidOperationException("This lock was explicitly released and cannot be renewed.");
 
-            await CheckIsStillLocked();
+            await CheckIsStillLocked().ConfigureAwait(false);
 
             if (Status == DistributedLockStatus.Acquired)
             {
-                await _lockManager.SendHeartbeat(_settings);
+                await _lockManager.SendHeartbeat(_settings).ConfigureAwait(false);
             }
             else
             {
-                await _lockManager.Acquire(_settings, cancellationToken);
+                await _lockManager.Acquire(_settings, cancellationToken).ConfigureAwait(false);
                 Status = DistributedLockStatus.Acquired;
             }
         }
@@ -78,7 +78,7 @@ namespace Silverback.Background
         public async Task Release()
         {
             Status = DistributedLockStatus.Released;
-            await _lockManager.Release(_settings);
+            await _lockManager.Release(_settings).ConfigureAwait(false);
         }
 
         private async Task CheckIsStillLocked()
@@ -86,7 +86,7 @@ namespace Silverback.Background
             if (Status != DistributedLockStatus.Acquired)
                 return;
 
-            if (!await _lockManager.CheckIsStillLocked(_settings))
+            if (!await _lockManager.CheckIsStillLocked(_settings).ConfigureAwait(false))
                 Status = DistributedLockStatus.Lost;
         }
 
@@ -99,15 +99,15 @@ namespace Silverback.Background
                 if (Status == DistributedLockStatus.Acquired)
                 {
                     failedHeartbeats =
-                        !await _lockManager.SendHeartbeat(_settings)
+                        !await _lockManager.SendHeartbeat(_settings).ConfigureAwait(false)
                             ? failedHeartbeats + 1
                             : 0;
 
                     if (failedHeartbeats >= _settings.FailedHeartbeatsThreshold)
-                        await CheckIsStillLocked();
+                        await CheckIsStillLocked().ConfigureAwait(false);
                 }
 
-                await Task.Delay(_settings.HeartbeatInterval);
+                await Task.Delay(_settings.HeartbeatInterval).ConfigureAwait(false);
             }
         }
     }

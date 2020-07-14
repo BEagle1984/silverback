@@ -26,11 +26,11 @@ namespace Silverback.Messaging.LargeMessages
         {
             var (messageId, chunkIndex, chunksCount) = ExtractHeadersValues(envelope);
 
-            var count = await _store.CountChunks(messageId);
+            var count = await _store.CountChunks(messageId).ConfigureAwait(false);
 
             if (count >= chunksCount - 1)
             {
-                var chunks = await _store.GetChunks(messageId);
+                var chunks = await _store.GetChunks(messageId).ConfigureAwait(false);
                 if (chunks.ContainsKey(chunkIndex))
                     return null;
 
@@ -38,12 +38,14 @@ namespace Silverback.Messaging.LargeMessages
 
                 var completeMessage = Join(chunks);
 
-                await _store.Cleanup(messageId);
+                await _store.Cleanup(messageId).ConfigureAwait(false);
 
                 return completeMessage;
             }
 
-            await _store.Store(messageId, chunkIndex, chunksCount, envelope.RawMessage ?? Array.Empty<byte>());
+            await _store.Store(messageId, chunkIndex, chunksCount, envelope.RawMessage ?? Array.Empty<byte>())
+                .ConfigureAwait(false);
+
             return null;
         }
 
@@ -54,7 +56,7 @@ namespace Silverback.Messaging.LargeMessages
             if (string.IsNullOrEmpty(messageId))
                 throw new InvalidOperationException("Message id header not found or invalid.");
 
-            await _store.Cleanup(messageId);
+            await _store.Cleanup(messageId).ConfigureAwait(false);
         }
 
         private static (string messageId, int chunkIndex, int chunksCount) ExtractHeadersValues(

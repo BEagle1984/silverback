@@ -42,12 +42,12 @@ namespace Silverback.Messaging.Connectors
         {
             var inboundLog = serviceProvider.GetRequiredService<IInboundLog>();
 
-            if (await inboundLog.Exists(envelope))
+            if (await inboundLog.Exists(envelope).ConfigureAwait(false))
                 return false;
 
             serviceProvider.GetRequiredService<ConsumerTransactionManager>().Enlist(inboundLog);
 
-            await inboundLog.Add(envelope);
+            await inboundLog.Add(envelope).ConfigureAwait(false);
             return true;
         }
     }

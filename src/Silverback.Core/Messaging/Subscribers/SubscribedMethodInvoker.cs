@@ -62,13 +62,18 @@ namespace Silverback.Messaging.Subscribers
                                     return Invoke(target, subscribedMethod, parameterValues, executeAsync);
                                 },
                                 subscribedMethod.IsParallel,
-                                subscribedMethod.MaxDegreeOfParallelism))
+                                subscribedMethod.MaxDegreeOfParallelism)
+                            .ConfigureAwait(false))
                         .ToList();
                     break;
                 case IEnumerableMessageArgumentResolver enumerableResolver:
                     parameterValues[0] = enumerableResolver.GetValue(messages, targetMessageType);
 
-                    returnValues = new[] { await Invoke(target, subscribedMethod, parameterValues, executeAsync) };
+                    returnValues = new[]
+                    {
+                        await Invoke(target, subscribedMethod, parameterValues, executeAsync)
+                            .ConfigureAwait(false)
+                    };
                     break;
                 default:
                     throw new SubscribedMethodInvocationException(
@@ -76,9 +81,11 @@ namespace Silverback.Messaging.Subscribers
                         "ISingleMessageArgumentResolver or IEnumerableMessageArgumentResolver.");
             }
 
-            return new MethodInvocationResult(
-                messages,
-                await _returnValueHandler.HandleReturnValues(returnValues, executeAsync));
+            var unhandledReturnValues =
+                await _returnValueHandler.HandleReturnValues(returnValues, executeAsync)
+                    .ConfigureAwait(false);
+
+            return new MethodInvocationResult(messages, unhandledReturnValues);
         }
 
         private static IReadOnlyCollection<object> UnwrapEnvelopesAndFilterMessages(

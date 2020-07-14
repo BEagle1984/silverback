@@ -53,13 +53,13 @@ namespace Silverback.Messaging.Connectors
 
             var offsetStore = serviceProvider.GetRequiredService<IOffsetStore>();
 
-            var latest = await offsetStore.GetLatestValue(envelope.Offset.Key, envelope.Endpoint);
+            var latest = await offsetStore.GetLatestValue(envelope.Offset.Key, envelope.Endpoint).ConfigureAwait(false);
             if (latest != null && latest.CompareTo(comparableOffset) >= 0)
                 return false;
 
             serviceProvider.GetRequiredService<ConsumerTransactionManager>().Enlist(offsetStore);
 
-            await offsetStore.Store(comparableOffset, envelope.Endpoint);
+            await offsetStore.Store(comparableOffset, envelope.Endpoint).ConfigureAwait(false);
             return true;
         }
     }
