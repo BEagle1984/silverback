@@ -11,6 +11,7 @@ namespace Silverback.Tests
     {
         public static IServiceCollection AddNullLogger(this IServiceCollection services) => services
             .AddSingleton<ILoggerFactory, NullLoggerFactory>()
-            .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
+            .AddSingleton(typeof(ILogger), s => s.GetRequiredService<ILoggerFactory>().CreateLogger("category"));
     }
 }
