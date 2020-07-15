@@ -2,10 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Silverback.Messaging.Configuration;
+using Silverback.Util;
 
-namespace Silverback.Messaging.Configuration
+namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
     /// Extension to configure the loglevels of Silverback.
@@ -20,10 +21,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns>The <see cref="ISilverbackBuilder"/>.</returns>
         public static ISilverbackBuilder WithLogLevels(this ISilverbackBuilder silverbackBuilder, Action<ILogLevelConfigurator> configure)
         {
-            if (configure is null)
-            {
-                throw new ArgumentNullException(nameof(configure));
-            }
+            Check.NotNull(configure, nameof(configure));
 
             var configurator = new LogLevelConfigurator();
             configure(configurator);
