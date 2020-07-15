@@ -39,6 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<ArgumentsResolverService>()
                 .AddScoped<ReturnValueHandlerService>()
                 .AddSingleton(typeof(ISilverbackLogger<>), typeof(SilverbackLogger<>))
+                .AddSingleton<ISilverbackLogger, SilverbackLogger>()
                 .AddSingleton<ILogLevelMapping, LogLevelMapping>()
 
                 // Note: resolvers and handlers will be evaluated in reverse order

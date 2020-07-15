@@ -7,12 +7,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Silverback.Diagnostics
 {
-    internal class SilverbackLogger<TCategoryName> : ISilverbackLogger<TCategoryName>
+
+    internal class SilverbackLogger : ISilverbackLogger
     {
-        private readonly ILogger<TCategoryName> _logger;
+        private readonly ILogger _logger;
         private readonly ILogLevelMapping _logLevelMapping;
 
-        public SilverbackLogger(ILogger<TCategoryName> logger, ILogLevelMapping logLevelMapping)
+        public SilverbackLogger(ILogger logger, ILogLevelMapping logLevelMapping)
         {
             _logger = logger;
             _logLevelMapping = logLevelMapping;
