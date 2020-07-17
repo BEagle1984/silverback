@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 
@@ -20,10 +21,22 @@ namespace Silverback.Messaging.Configuration
         ILogLevelConfigurator SetLogLevel(EventId eventId, LogLevel logLevel);
 
         /// <summary>
-        /// Build the <see cref="ILogLevelMapping"/> based on the current state
+        /// Configure a handler function that calculates a loglevel based on the exception
+        /// for the given event.
+        /// </summary>
+        /// <param name="eventId">The event id.</param>
+        /// <param name="logLevelFunc">
+        ///     The handler function that calculates the loglevel.
+        ///     It takes the logged exception and the default log level as parameters.
+        /// </param>
+        /// <returns>The current <see cref="ILogLevelConfigurator"/>.</returns>
+        ILogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception, LogLevel, LogLevel> logLevelFunc);
+
+        /// <summary>
+        /// Build the <see cref="ILogLevelDictionary"/> based on the current state
         /// of the configurator.
         /// </summary>
-        /// <returns>The <see cref="ILogLevelMapping"/>.</returns>
-        ILogLevelMapping Build();
+        /// <returns>The <see cref="ILogLevelDictionary"/>.</returns>
+        ILogLevelDictionary Build();
     }
 }
