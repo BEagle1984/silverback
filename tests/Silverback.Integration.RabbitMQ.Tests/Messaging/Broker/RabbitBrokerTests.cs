@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using RabbitMQ.Client;
 using Silverback.Diagnostics;
@@ -28,7 +27,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection
-                .AddSingleton(Substitute.For<ISilverbackLogger<Broker<IProducerEndpoint,IConsumerEndpoint>>>())
+                .AddSingleton(Substitute.For<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>())
                 .AddSingleton(Substitute.For<ISilverbackLogger<RabbitProducer>>())
                 .AddSingleton(Substitute.For<ISilverbackLogger<RabbitConsumer>>());
 
