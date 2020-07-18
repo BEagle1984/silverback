@@ -30,6 +30,8 @@
     href: 01-quickstart/06-testing.md
   - name: Event Sourcing
     href: 01-quickstart/07-event-sourcing.md
+  - name: Logging
+    href: 01-quickstart/08-logging.md
 - name: Broker Configuration
   items:
     - name: Endpoint

@@ -15,6 +15,7 @@ uid: releases
 * Replace Newtonsoft.Json with System.Text.Json to improve serialization and deserialization performance
 * Upgrade to [Confluent.Kafka 1.4.4](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.4)
 * Upgrade to [RabbitMQ.Client 6.1.0](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.1.0)
+* Add log levels configuration (see <xref:logging>)
 
 ### Fixes
 
@@ -44,6 +45,7 @@ uid: releases
 * Removed `PartitioningKeyMemberAttribute`, use `KafkaKeyMemberAttribute` instead
 * `Silverback.Integration.Configuration` has been discontinued
 * The `Settings` property has been renamed to `Options` in the default `JsonMessageSerializer` (since the switch to System.Text.Json)
+* Removed `LogWithLevel` method from `SkipMessageErrorPolicy`, use the new `WithLogLevels` configuration instead
 
 ## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)
 
