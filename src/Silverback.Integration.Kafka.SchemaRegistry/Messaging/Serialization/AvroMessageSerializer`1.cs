@@ -141,9 +141,9 @@ namespace Silverback.Messaging.Serialization
             var confluentSerializationContext = GetConfluentSerializationContext(componentType, context);
 
             return await avroDeserializer.DeserializeAsync(
-                new ReadOnlyMemory<byte>(message),
-                false,
-                confluentSerializationContext)
+                    new ReadOnlyMemory<byte>(message),
+                    false,
+                    confluentSerializationContext)
                 .ConfigureAwait(false);
         }
     }

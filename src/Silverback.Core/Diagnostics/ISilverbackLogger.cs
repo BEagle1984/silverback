@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace Silverback.Diagnostics
 {
     /// <summary>
-    /// Custom logger for Silverback.
+    ///     Custom logger for Silverback.
     /// </summary>
     public interface ISilverbackLogger : ILogger
     {

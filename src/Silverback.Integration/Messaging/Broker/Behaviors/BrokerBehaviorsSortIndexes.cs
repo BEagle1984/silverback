@@ -39,7 +39,8 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int MessageIdInitializer = 300;
 
             /// <summary>
-            ///     The <c>KafkaMessageKeyInitializerProducerBehavior</c>, <c>RabbitRoutingKeyInitializerProducerBehavior</c> or similar sort index.
+            ///     The <c>KafkaMessageKeyInitializerProducerBehavior</c>,
+            ///     <c>RabbitRoutingKeyInitializerProducerBehavior</c> or similar sort index.
             /// </summary>
             public const int BrokerKeyHeaderInitializer = 310;
 

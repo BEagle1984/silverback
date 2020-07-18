@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Silverback.Diagnostics
 {
     /// <summary>
-    /// Maps <see cref="EventId"/>s to the <see cref="LogLevel"/> that should be used for it.
+    ///     Maps <see cref="EventId" />s to the <see cref="LogLevel" /> that should be used for it.
     /// </summary>
     public interface ILogLevelDictionary : IReadOnlyDictionary<EventId, Func<Exception, LogLevel, LogLevel>>
     {

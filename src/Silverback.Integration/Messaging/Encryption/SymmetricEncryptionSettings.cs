@@ -46,7 +46,8 @@ namespace Silverback.Messaging.Encryption
         ///     <para>
         ///         <b>
         ///             Important:
-        ///         </b> If <c>null</c> no fixed IV is provided and the producer will automatically generate a random one for each
+        ///         </b> If <c>null</c> no fixed IV is provided and the producer will automatically generate a random
+        ///         one for each
         ///         message that will also be prepended to the actual encrypted message to be available to the
         ///         consumer.
         ///     </para>

@@ -12,16 +12,17 @@ namespace Silverback.Tests.Core.Messaging.Configuration
     public class SilverbackBuilderWithLogLevelsExtensionsTests
     {
         [Fact]
-        public void WithLogLevels_WithLogLevels_LogLevelMappingCorrectlyBuild()
+        public void WithLogLevels_WithLogLevels_LogLevelMappingCorrectlyBuilt()
         {
             var services = new ServiceCollection();
 
             services
                 .AddNullLogger()
                 .AddSilverback()
-                .WithLogLevels(c => c
-                    .SetLogLevel(EventIds.BrokerConnected, LogLevel.Information)
-                    .SetLogLevel(EventIds.BrokerConnecting, LogLevel.Warning));
+                .WithLogLevels(
+                    configurator => configurator
+                        .SetLogLevel(EventIds.BrokerConnected, LogLevel.Information)
+                        .SetLogLevel(EventIds.BrokerConnecting, LogLevel.Warning));
 
             var serviceProvider = services.BuildServiceProvider();
 

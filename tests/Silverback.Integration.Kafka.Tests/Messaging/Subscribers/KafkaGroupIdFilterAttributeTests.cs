@@ -68,11 +68,11 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
 
         private class SomeConsumerEndpoint : IConsumerEndpoint
         {
-            public string Name { get; set; } = string.Empty;
-
             public IMessageSerializer Serializer { get; } = new JsonMessageSerializer();
 
             public EncryptionSettings? Encryption { get; } = null;
+
+            public string Name { get; } = string.Empty;
 
             public bool ThrowIfUnhandled { get; set; }
 

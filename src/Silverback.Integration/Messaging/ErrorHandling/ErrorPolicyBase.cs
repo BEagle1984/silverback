@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -198,7 +197,10 @@ namespace Silverback.Messaging.ErrorHandling
                                   $"attempts ({failedAttempts}) exceeds the configured maximum attempts " +
                                   $"({MaxFailedAttemptsSetting}).";
 
-                _logger.LogTraceWithMessageInfo(EventIds.ErrorPolicyBaseSkipPolicyBecauseOfFailedAttempts, traceString, envelope);
+                _logger.LogTraceWithMessageInfo(
+                    EventIds.ErrorPolicyBaseSkipPolicyBecauseOfFailedAttempts,
+                    traceString,
+                    envelope);
 
                 return false;
             }
@@ -221,7 +223,10 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
                                   $"{exception.GetType().Name} is in the list of excluded exceptions.";
 
-                _logger.LogTraceWithMessageInfo(EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsExcluded, traceString, envelope);
+                _logger.LogTraceWithMessageInfo(
+                    EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsExcluded,
+                    traceString,
+                    envelope);
 
                 return false;
             }
@@ -231,7 +236,10 @@ namespace Silverback.Messaging.ErrorHandling
                 var traceString = $"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
                                   "evaluated and returned false.";
 
-                _logger.LogTraceWithMessageInfo(EventIds.ErrorPolicyBaseSkipPolicyBecauseOfApplyRule, traceString, envelope);
+                _logger.LogTraceWithMessageInfo(
+                    EventIds.ErrorPolicyBaseSkipPolicyBecauseOfApplyRule,
+                    traceString,
+                    envelope);
 
                 return false;
             }

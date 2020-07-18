@@ -14,15 +14,15 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
 
         /// <summary>
         ///     Gets or sets a value indicating whether the method can be executed concurrently to other methods
-        ///     handling the <b>
-        ///         same message
-        ///     </b>. The default value is <c>true</c> (the method will be executed sequentially to other subscribers).
+        ///     handling the <b>same message></b>. The default value is <c>true</c> (the method will be executed
+        ///     sequentially to other subscribers).
         /// </summary>
         public bool Exclusive { get; set; } = true;
 
         /// <summary>
         ///     Gets or sets a value indicating whether the method can be executed concurrently when multiple
-        ///     messages are fired at the same time (e.g. in a batch). The default value is <c>false</c> (the messages are processed sequentially).
+        ///     messages are fired at the same time (e.g. in a batch). The default value is <c>false</c> (the messages
+        ///     are processed sequentially).
         /// </summary>
         public bool Parallel { get; set; } = false;
 

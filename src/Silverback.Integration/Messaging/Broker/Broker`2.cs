@@ -63,7 +63,8 @@ namespace Silverback.Messaging.Broker
             _behaviors = behaviors?.ToList() ?? new List<IBrokerBehavior>();
 
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-            _logger = _serviceProvider.GetRequiredService<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>();
+            _logger = _serviceProvider
+                .GetRequiredService<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>();
 
             ProducerEndpointType = typeof(TProducerEndpoint);
             ConsumerEndpointType = typeof(TConsumerEndpoint);
@@ -284,7 +285,8 @@ namespace Silverback.Messaging.Broker
         ///     resources.
         /// </summary>
         /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
+        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
+        ///     finalizer.
         /// </param>
         protected virtual void Dispose(bool disposing)
         {

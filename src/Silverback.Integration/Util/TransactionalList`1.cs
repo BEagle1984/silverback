@@ -41,7 +41,8 @@ namespace Silverback.Util
         protected List<TransactionalListItem<T>> Items { get; }
 
         /// <summary>
-        ///     Gets the <see cref="List{T}" /> containing the pending items that will be persisted when <c>Commit</c> is called.
+        ///     Gets the <see cref="List{T}" /> containing the pending items that will be persisted when <c>Commit</c>
+        ///     is called.
         /// </summary>
         protected List<TransactionalListItem<T>> UncommittedItems { get; }
 

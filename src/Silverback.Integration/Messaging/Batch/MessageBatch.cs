@@ -108,7 +108,10 @@ namespace Silverback.Messaging.Batch
 
                 _envelopes.ForEach(
                     envelope =>
-                        _logger.LogInformationWithMessageInfo(EventIds.MessageBatchMessageAdded, "Message added to batch.", envelope));
+                        _logger.LogInformationWithMessageInfo(
+                            EventIds.MessageBatchMessageAdded,
+                            "Message added to batch.",
+                            envelope));
 
                 if (_envelopes.Count == 1)
                 {
@@ -165,11 +168,11 @@ namespace Silverback.Messaging.Batch
                 AddHeaders(_envelopes);
 
                 await _errorPolicyHelper.TryProcessAsync(
-                    new ConsumerPipelineContext(_envelopes, _consumer),
-                    _errorPolicy,
-                    ForwardMessages,
-                    Commit,
-                    Rollback)
+                        new ConsumerPipelineContext(_envelopes, _consumer),
+                        _errorPolicy,
+                        ForwardMessages,
+                        Commit,
+                        Rollback)
                     .ConfigureAwait(false);
 
                 _envelopes.Clear();

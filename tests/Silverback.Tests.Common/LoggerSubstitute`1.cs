@@ -55,7 +55,7 @@ namespace Silverback.Tests
 
             public Type? ExceptionType { get; }
 
-            public string Message { get; set; }
+            public string Message { get; }
         }
     }
 }

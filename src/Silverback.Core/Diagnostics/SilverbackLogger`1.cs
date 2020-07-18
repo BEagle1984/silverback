@@ -10,6 +10,7 @@ namespace Silverback.Diagnostics
     internal class SilverbackLogger<TCategoryName> : ISilverbackLogger<TCategoryName>
     {
         private readonly ILogger<TCategoryName> _logger;
+
         private readonly ILogLevelDictionary _logLevelDictionary;
 
         public SilverbackLogger(ILogger<TCategoryName> logger, ILogLevelDictionary loglevelDictionary)
@@ -22,7 +23,17 @@ namespace Silverback.Diagnostics
 
         public bool IsEnabled(LogLevel logLevel) => _logger.IsEnabled(logLevel);
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) =>
-            _logger.Log(_logLevelDictionary.GetValueOrDefault(eventId, (e, l) => logLevel)(exception, logLevel), eventId, state, exception, formatter);
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception exception,
+            Func<TState, Exception, string> formatter) =>
+            _logger.Log(
+                _logLevelDictionary.GetValueOrDefault(eventId, (e, l) => logLevel)(exception, logLevel),
+                eventId,
+                state,
+                exception,
+                formatter);
     }
 }

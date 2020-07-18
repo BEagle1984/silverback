@@ -213,9 +213,9 @@ namespace Silverback.Diagnostics
         /// <summary>
         ///     Gets ...
         /// </summary>
-        public static EventId DbDistributedLockManagerFailedToAquireLock { get; } = new EventId(
+        public static EventId DbDistributedLockManagerFailedToAcquireLock { get; } = new EventId(
             31,
-            Prefix + nameof(DbDistributedLockManagerFailedToAquireLock));
+            Prefix + nameof(DbDistributedLockManagerFailedToAcquireLock));
 
         /// <summary>
         ///     Gets ...

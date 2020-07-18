@@ -145,10 +145,10 @@ namespace Silverback.Messaging.Broker
                     return;
 
                 await HandleMessage(
-                    deliverEventArgs.Body.ToArray(),
-                    deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
-                    Endpoint.Name,
-                    offset)
+                        deliverEventArgs.Body.ToArray(),
+                        deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
+                        Endpoint.Name,
+                        offset)
                     .ConfigureAwait(false);
             }
             catch (Exception)

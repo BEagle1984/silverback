@@ -36,7 +36,12 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            Add(new QueuedMessage(envelope.Message?.GetType(), envelope.RawMessage, envelope.Headers, envelope.Endpoint.Name));
+            Add(
+                new QueuedMessage(
+                    envelope.Message?.GetType(),
+                    envelope.RawMessage,
+                    envelope.Headers,
+                    envelope.Endpoint.Name));
 
             return Task.CompletedTask;
         }

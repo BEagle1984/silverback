@@ -30,7 +30,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </param>
         /// <param name="enforceMessageOrder">
         ///     Specifies whether the messages must be produced in the same order as they were added to the queue.
-        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be successfully
+        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be
+        ///     successfully
         ///     produced.
         /// </param>
         /// <param name="readPackageSize">
@@ -88,7 +89,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The interval between each run (default is 500ms).
         /// </param>
         /// <param name="enforceMessageOrder">
-        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be successfully
+        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be
+        ///     successfully
         ///     produced.
         /// </param>
         /// <param name="readPackageSize">
@@ -133,7 +135,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The interval between each run (default is 500ms).
         /// </param>
         /// <param name="enforceMessageOrder">
-        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be successfully
+        ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be
+        ///     successfully
         ///     produced.
         /// </param>
         /// <param name="readPackageSize">

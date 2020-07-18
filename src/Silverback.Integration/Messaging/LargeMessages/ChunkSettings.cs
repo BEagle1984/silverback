@@ -8,7 +8,8 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging.LargeMessages
 {
     /// <summary>
-    ///     The chunking settings. To enable chunking just set the <c>Size</c> property to the desired (maximum) chunk size.
+    ///     The chunking settings. To enable chunking just set the <c>Size</c> property to the desired (maximum)
+    ///     chunk size.
     /// </summary>
     public sealed class ChunkSettings : IEquatable<ChunkSettings>, IValidatableEndpointSettings
     {

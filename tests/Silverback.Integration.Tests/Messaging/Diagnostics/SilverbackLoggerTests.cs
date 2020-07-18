@@ -18,9 +18,10 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             services
                 .AddSingleton(typeof(ILogger<>), typeof(LoggerSubstitute<>))
                 .AddSilverback()
-                .WithLogLevels(c => c
-                    .SetLogLevel(EventIds.BrokerConnected, LogLevel.Information)
-                    .SetLogLevel(EventIds.BrokerConnecting, (e, l) => LogLevel.Warning));
+                .WithLogLevels(
+                    c => c
+                        .SetLogLevel(EventIds.BrokerConnected, LogLevel.Information)
+                        .SetLogLevel(EventIds.BrokerConnecting, (e, l) => LogLevel.Warning));
 
             var serviceProvider = services.BuildServiceProvider();
 

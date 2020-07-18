@@ -66,7 +66,8 @@ namespace Silverback.EventStore
         ///     The predicate applied to get the desired event store.
         /// </param>
         /// <param name="snapshot">
-        ///     The optional snapshot datetime. When not <c>null</c> only the events registered until the specified datetime are applied, returning the entity in
+        ///     The optional snapshot datetime. When not <c>null</c> only the events registered until the specified
+        ///     datetime are applied, returning the entity in
         ///     its state back in that moment.
         /// </param>
         /// <returns>
@@ -90,7 +91,8 @@ namespace Silverback.EventStore
         ///     The predicate applied to get the desired event store.
         /// </param>
         /// <param name="snapshot">
-        ///     The optional snapshot datetime. When not <c>null</c> only the events registered until the specified datetime are applied, returning the entity in
+        ///     The optional snapshot datetime. When not <c>null</c> only the events registered until the specified
+        ///     datetime are applied, returning the entity in
         ///     its state back in that moment.
         /// </param>
         /// <returns>

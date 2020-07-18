@@ -95,11 +95,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             private async Task ProcessMessagesDirectly()
             {
                 await _errorPolicyHelper.TryProcessAsync(
-                    _context,
-                    _errorPolicy,
-                    ForwardMessages,
-                    Commit,
-                    Rollback)
+                        _context,
+                        _errorPolicy,
+                        ForwardMessages,
+                        Commit,
+                        Rollback)
                     .ConfigureAwait(false);
             }
 

@@ -298,10 +298,10 @@ namespace Silverback.Messaging.Broker
             }
 
             await HandleMessage(
-                message.Value,
-                headers,
-                tpo.Topic,
-                offset)
+                    message.Value,
+                    headers,
+                    tpo.Topic,
+                    offset)
                 .ConfigureAwait(false);
         }
 

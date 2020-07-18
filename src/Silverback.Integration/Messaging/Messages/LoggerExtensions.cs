@@ -11,7 +11,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Adds some methods to the <see cref="ISilverbackLogger" /> used to consistently enrich the log entry with the
+    ///     Adds some methods to the <see cref="ISilverbackLogger" /> used to consistently enrich the log entry
+    ///     with the
     ///     information about the message(s) being consumed.
     /// </summary>
     public static class LoggerExtensions
@@ -43,7 +44,9 @@ namespace Silverback.Messaging.Messages
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the messages being processed.
         /// </param>
-        public static void LogProcessing(this ISilverbackLogger logger, IReadOnlyCollection<IRawBrokerEnvelope> envelopes)
+        public static void LogProcessing(
+            this ISilverbackLogger logger,
+            IReadOnlyCollection<IRawBrokerEnvelope> envelopes)
         {
             Check.NotEmpty(envelopes, nameof(envelopes));
 

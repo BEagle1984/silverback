@@ -44,9 +44,9 @@ namespace Silverback.Messaging.BinaryFiles
                 return envelope;
 
             var (deserializedObject, deserializedType) = await BinaryFileMessageSerializer.Default.DeserializeAsync(
-                envelope.RawMessage,
-                envelope.Headers,
-                MessageSerializationContext.Empty)
+                    envelope.RawMessage,
+                    envelope.Headers,
+                    MessageSerializationContext.Empty)
                 .ConfigureAwait(false);
 
             // Create typed message for easier specific subscription

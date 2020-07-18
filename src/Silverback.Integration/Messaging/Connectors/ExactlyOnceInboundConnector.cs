@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -72,17 +71,17 @@ namespace Silverback.Messaging.Connectors
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             IServiceProvider serviceProvider) =>
             await envelopes.WhereAsync(
-                async envelope =>
-                {
-                    if (await MustProcess(envelope, serviceProvider).ConfigureAwait(false))
-                        return true;
+                    async envelope =>
+                    {
+                        if (await MustProcess(envelope, serviceProvider).ConfigureAwait(false))
+                            return true;
 
-                    _logger.LogInformationWithMessageInfo(
-                        EventIds.ExactlyOnceInboundConnectorMessageAlreadyProcessed,
-                        "Message is being skipped since it was already processed.",
-                        envelope);
-                    return false;
-                })
+                        _logger.LogInformationWithMessageInfo(
+                            EventIds.ExactlyOnceInboundConnectorMessageAlreadyProcessed,
+                            "Message is being skipped since it was already processed.",
+                            envelope);
+                        return false;
+                    })
                 .ConfigureAwait(false);
     }
 }

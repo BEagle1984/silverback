@@ -23,7 +23,8 @@ namespace Silverback.Messaging.Configuration
         public SslProtocols? AmqpUriSslProtocols { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the automatic connection recovery is enabled (default is <c>true</c>).
+        ///     Gets or sets a value indicating whether the automatic connection recovery is enabled (default is
+        ///     <c>true</c>).
         /// </summary>
         public bool? AutomaticRecoveryEnabled { get; set; }
 

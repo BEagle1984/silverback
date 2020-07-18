@@ -193,7 +193,8 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified name, casting it to the specified type.
         ///     </para>
         ///     <para>
-        ///         By default it will return <c>null</c> if no header with that name is found in the collection but this behavior can be changed
+        ///         By default it will return <c>null</c> if no header with that name is found in the collection but
+        ///         this behavior can be changed
         ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>true</c>.
         ///     </para>
         /// </summary>
@@ -258,7 +259,8 @@ namespace Silverback.Messaging.Messages
             this.AsEnumerable().GetValueOrDefault(name, targetType);
 
         /// <summary>
-        ///     Creates a new <see cref="MessageHeaderCollection"/> cloning all the headers in the current collection.
+        ///     Creates a new <see cref="MessageHeaderCollection" /> cloning all the headers in the current
+        ///     collection.
         /// </summary>
         /// <returns>
         ///     A clone of the current collection.

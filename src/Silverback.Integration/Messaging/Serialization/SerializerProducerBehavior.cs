@@ -23,9 +23,9 @@ namespace Silverback.Messaging.Serialization
 
             context.Envelope.RawMessage ??=
                 await context.Envelope.Endpoint.Serializer.SerializeAsync(
-                    context.Envelope.Message,
-                    context.Envelope.Headers,
-                    new MessageSerializationContext(context.Envelope.Endpoint))
+                        context.Envelope.Message,
+                        context.Envelope.Headers,
+                        new MessageSerializationContext(context.Envelope.Endpoint))
                     .ConfigureAwait(false);
 
             await next(context).ConfigureAwait(false);

@@ -53,8 +53,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             var routingConfiguration = serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
             routingConfiguration.Add<TestEventOne>(_ => new StaticOutboundRouter(new TestProducerEndpoint("topic1")));
             routingConfiguration.Add<TestEventTwo>(_ => new StaticOutboundRouter(new TestProducerEndpoint("topic2")));
-            routingConfiguration.Add<TestEventThree>(_ => new StaticOutboundRouter(new TestProducerEndpoint("topic3a")));
-            routingConfiguration.Add<TestEventThree>(_ => new StaticOutboundRouter(new TestProducerEndpoint("topic3b")));
+            routingConfiguration.Add<TestEventThree>(
+                _ => new StaticOutboundRouter(new TestProducerEndpoint("topic3a")));
+            routingConfiguration.Add<TestEventThree>(
+                _ => new StaticOutboundRouter(new TestProducerEndpoint("topic3b")));
 
             _broker = (TestBroker)serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();

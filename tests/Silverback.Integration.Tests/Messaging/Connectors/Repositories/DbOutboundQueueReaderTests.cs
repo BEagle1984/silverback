@@ -19,14 +19,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 {
     public class DbOutboundQueueReaderTests : IAsyncDisposable
     {
-        private readonly SqliteConnection _connection;
-
-        private readonly IServiceScope _scope;
-
-        private readonly TestDbContext _dbContext;
-
-        private readonly DbOutboundQueueReader _queueReader;
-
         // TestEventOne { Content = "Test" }
         private static readonly byte[] SampleContent =
         {
@@ -41,6 +33,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             0x22, 0x74, 0x77, 0x6F, 0x22, 0x2C, 0x22, 0x56, 0x61, 0x6C, 0x75, 0x65, 0x22, 0x3A, 0x22, 0x32, 0x22, 0x7D,
             0x5D
         };
+
+        private readonly SqliteConnection _connection;
+
+        private readonly IServiceScope _scope;
+
+        private readonly TestDbContext _dbContext;
+
+        private readonly DbOutboundQueueReader _queueReader;
 
         public DbOutboundQueueReaderTests()
         {

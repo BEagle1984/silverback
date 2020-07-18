@@ -237,12 +237,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         public async Task Handle_MultipleRoutesToMultipleBrokers_CorrectlyQueued()
         {
             _routingConfiguration
-                .Add<TestEventOne>(
-                    _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")))
-                .Add<TestEventTwo>(
-                    _ => new StaticOutboundRouter(new TestOtherProducerEndpoint("eventTwo")))
-                .Add<TestEventThree>(
-                    _ => new StaticOutboundRouter(new TestProducerEndpoint("eventThree")));
+                .Add<TestEventOne>(_ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")))
+                .Add<TestEventTwo>(_ => new StaticOutboundRouter(new TestOtherProducerEndpoint("eventTwo")))
+                .Add<TestEventThree>(_ => new StaticOutboundRouter(new TestProducerEndpoint("eventThree")));
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
             await _behavior.Handle(new[] { new TestEventThree(), }, Task.FromResult!);

@@ -32,7 +32,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             services.AddNullLogger();
 
             _errorPolicyBuilder =
-                new ErrorPolicyBuilder(services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true }));
+                new ErrorPolicyBuilder(
+                    services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true }));
         }
 
         [Theory]

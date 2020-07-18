@@ -12,7 +12,8 @@ namespace Silverback.Messaging.Messages
     ///     <see cref="KafkaStatistics" /> object.
     /// </summary>
     /// <remarks>
-    ///     You can enable statistics and set the statistics interval using the <c>StatisticsIntervalMs</c> configuration parameter (disabled by default).
+    ///     You can enable statistics and set the statistics interval using the <c>StatisticsIntervalMs</c>
+    ///     configuration parameter (disabled by default).
     /// </remarks>
     public class KafkaStatisticsEvent : IKafkaEvent
     {

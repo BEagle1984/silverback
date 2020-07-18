@@ -200,7 +200,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                     Key = "topic1|group1|topic1",
 #pragma warning disable 618
                     Offset = $"{{\"$type\":\"{typeof(TestOffset).AssemblyQualifiedName}\"," +
-                             $"\"Key\":\"topic1|group1\",\"Value\":\"42\"}}"
+                             "\"Key\":\"topic1|group1\",\"Value\":\"42\"}"
 #pragma warning restore 618
                 });
             await _dbContext.SaveChangesAsync();

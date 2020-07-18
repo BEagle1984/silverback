@@ -40,9 +40,9 @@ namespace Silverback.Messaging.Serialization
 
             var (deserializedObject, deserializedType) = await
                 envelope.Endpoint.Serializer.DeserializeAsync(
-                    envelope.RawMessage,
-                    envelope.Headers,
-                    new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName))
+                        envelope.RawMessage,
+                        envelope.Headers,
+                        new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName))
                     .ConfigureAwait(false);
 
             // Create typed message for easier specific subscription

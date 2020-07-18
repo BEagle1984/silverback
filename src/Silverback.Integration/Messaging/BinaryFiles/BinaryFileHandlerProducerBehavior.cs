@@ -30,9 +30,9 @@ namespace Silverback.Messaging.BinaryFiles
                 !(context.Envelope.Endpoint.Serializer is BinaryFileMessageSerializer))
             {
                 context.Envelope.RawMessage = await _binaryFileMessageSerializer.SerializeAsync(
-                    context.Envelope.Message,
-                    context.Envelope.Headers,
-                    MessageSerializationContext.Empty)
+                        context.Envelope.Message,
+                        context.Envelope.Headers,
+                        MessageSerializationContext.Empty)
                     .ConfigureAwait(false);
             }
 

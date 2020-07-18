@@ -45,12 +45,12 @@ namespace Silverback.Messaging.ErrorHandling
                 try
                 {
                     var result = await HandleMessages(
-                        context,
-                        scope.ServiceProvider,
-                        messagesHandler,
-                        rollbackHandler,
-                        errorPolicy,
-                        attempt)
+                            context,
+                            scope.ServiceProvider,
+                            messagesHandler,
+                            rollbackHandler,
+                            errorPolicy,
+                            attempt)
                         .ConfigureAwait(false);
 
                     if (result.IsSuccessful || result.Action == ErrorAction.Skip)

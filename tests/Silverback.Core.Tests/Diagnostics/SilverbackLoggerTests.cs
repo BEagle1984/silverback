@@ -61,7 +61,7 @@ namespace Silverback.Tests.Core.Diagnostics
                     EventIds.KafkaConsumerConsumingMessage,
                     (exception, originalLogLevel) =>
                     {
-                        if (exception is InvalidOperationException ex)
+                        if (exception is InvalidOperationException)
                         {
                             return LogLevel.Error;
                         }
@@ -73,7 +73,11 @@ namespace Silverback.Tests.Core.Diagnostics
             var internalLogger = new LoggerSubstitute<object>();
             var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
 
-            logger.Log(LogLevel.Information, EventIds.KafkaConsumerConsumingMessage, new InvalidOperationException(), "Log Message");
+            logger.Log(
+                LogLevel.Information,
+                EventIds.KafkaConsumerConsumingMessage,
+                new InvalidOperationException(),
+                "Log Message");
 
             internalLogger.Received(LogLevel.Error, typeof(InvalidOperationException), "Log Message");
         }
@@ -87,7 +91,7 @@ namespace Silverback.Tests.Core.Diagnostics
                     EventIds.KafkaConsumerConsumingMessage,
                     (exception, originalLogLevel) =>
                     {
-                        if (exception is InvalidOperationException ex)
+                        if (exception is InvalidOperationException)
                         {
                             return LogLevel.Error;
                         }
@@ -99,7 +103,11 @@ namespace Silverback.Tests.Core.Diagnostics
             var internalLogger = new LoggerSubstitute<object>();
             var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
 
-            logger.Log(LogLevel.Information, EventIds.KafkaConsumerConsumingMessage, new ArgumentException("param"), "Log Message");
+            logger.Log(
+                LogLevel.Information,
+                EventIds.KafkaConsumerConsumingMessage,
+                new ArgumentException("param"),
+                "Log Message");
 
             internalLogger.Received(LogLevel.Information, typeof(ArgumentException), "Log Message");
         }

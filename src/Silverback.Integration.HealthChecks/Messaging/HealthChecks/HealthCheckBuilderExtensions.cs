@@ -10,7 +10,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.HealthChecks
 {
     /// <summary>
-    ///     Adds methods such as <c>AddOutboundEndpointsCheck</c> and <c>AddOutboundQueueCheck</c> to the <see cref="IHealthChecksBuilder" />.
+    ///     Adds methods such as <c>AddOutboundEndpointsCheck</c> and <c>AddOutboundQueueCheck</c> to the
+    ///     <see cref="IHealthChecksBuilder" />.
     /// </summary>
     public static class HealthCheckBuilderExtensions
     {

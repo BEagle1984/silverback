@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         ///     Initializes a new instance of the <see cref="QueuedMessage" /> class.
         /// </summary>
         /// <param name="messageType">
-        ///    The type of the message.
+        ///     The type of the message.
         /// </param>
         /// <param name="content">
         ///     The message raw binary content (body).
@@ -43,11 +43,6 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         }
 
         /// <summary>
-        ///     Gets or sets the type of the message.
-        /// </summary>
-        public Type? MessageType { get; set; }
-
-        /// <summary>
         ///     Gets the message raw binary content (body).
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
@@ -63,5 +58,10 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         ///     Gets the name of the target endpoint.
         /// </summary>
         public string EndpointName { get; }
+
+        /// <summary>
+        ///     Gets or sets the type of the message.
+        /// </summary>
+        public Type? MessageType { get; set; }
     }
 }

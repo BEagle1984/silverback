@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         ///     The primary key of the database record.
         /// </param>
         /// <param name="messageType">
-        ///    The type of the message.
+        ///     The type of the message.
         /// </param>
         /// <param name="content">
         ///     The message raw binary content (body).
@@ -33,7 +33,12 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         ///     The name of the target endpoint.
         /// </param>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public DbQueuedMessage(int id, Type? messageType, byte[]? content, IEnumerable<MessageHeader> headers, string endpointName)
+        public DbQueuedMessage(
+            int id,
+            Type? messageType,
+            byte[]? content,
+            IEnumerable<MessageHeader> headers,
+            string endpointName)
             : base(messageType, content, headers, endpointName)
         {
             Id = id;

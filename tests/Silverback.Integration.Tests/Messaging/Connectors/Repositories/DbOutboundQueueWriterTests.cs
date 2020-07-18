@@ -20,6 +20,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 {
     public class DbOutboundQueueWriterTests : IAsyncDisposable
     {
+        private static readonly IOutboundEnvelope SampleOutboundEnvelope = new OutboundEnvelope(
+            new TestEventOne { Content = "Test" },
+            new[] { new MessageHeader("one", "1"), new MessageHeader("two", "2") },
+            TestProducerEndpoint.GetDefault());
+
         private readonly SqliteConnection _connection;
 
         private readonly IServiceScope _scope;
@@ -27,11 +32,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         private readonly TestDbContext _dbContext;
 
         private readonly DbOutboundQueueWriter _queueWriter;
-
-        private static readonly IOutboundEnvelope SampleOutboundEnvelope = new OutboundEnvelope(
-            new TestEventOne { Content = "Test" },
-            new[] { new MessageHeader("one", "1"), new MessageHeader("two", "2") },
-            TestProducerEndpoint.GetDefault());
 
         public DbOutboundQueueWriterTests()
         {

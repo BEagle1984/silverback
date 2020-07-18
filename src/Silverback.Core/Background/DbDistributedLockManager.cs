@@ -236,9 +236,9 @@ namespace Silverback.Background
             var (dbSet, _) = GetDbSet(serviceProvider);
 
             return await dbSet.AsQueryable().AnyAsync(
-                l => l.Name == resourceName &&
-                     l.UniqueId == uniqueId &&
-                     l.Heartbeat >= heartbeatThreshold)
+                    l => l.Name == resourceName &&
+                         l.UniqueId == uniqueId &&
+                         l.Heartbeat >= heartbeatThreshold)
                 .ConfigureAwait(false);
         }
 
@@ -301,7 +301,7 @@ namespace Silverback.Background
             catch (Exception ex)
             {
                 _logger.LogDebug(
-                    EventIds.DbDistributedLockManagerFailedToAquireLock,
+                    EventIds.DbDistributedLockManagerFailedToAcquireLock,
                     ex,
                     "Failed to acquire lock {lockName} ({lockUniqueId}). See inner exception for details.",
                     settings.ResourceName,

@@ -92,7 +92,8 @@ namespace Silverback.Messaging.Messages
         ///         Returns the value of the header with the specified name, casting it to the specified type.
         ///     </para>
         ///     <para>
-        ///         By default it will return <c>null</c> if no header with that name is found in the collection but this behavior can be changed
+        ///         By default it will return <c>null</c> if no header with that name is found in the collection but
+        ///         this behavior can be changed
         ///         setting the <paramref name="throwIfNotFound" /> parameter to <c>true</c>.
         ///     </para>
         /// </summary>
@@ -200,7 +201,10 @@ namespace Silverback.Messaging.Messages
         /// <returns>
         ///     The header value converted to the target type, or <c>null</c> if not found.
         /// </returns>
-        public static object? GetValueOrDefault(this IEnumerable<MessageHeader> headers, string name, Type targetType) =>
+        public static object? GetValueOrDefault(
+            this IEnumerable<MessageHeader> headers,
+            string name,
+            Type targetType) =>
             GetValue(headers, name, targetType) ?? targetType.GetDefaultValue();
     }
 }
