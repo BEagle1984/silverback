@@ -3,6 +3,8 @@
 
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Examples.Common.Data;
 using Silverback.Examples.Consumer.Behaviors;
 using Silverback.Examples.Consumer.Configuration;
@@ -40,6 +42,9 @@ namespace Silverback.Examples.Consumer
                     .AddInMemoryChunkStore()
                     .RegisterConfigurator<KafkaEndpointsConfigurator>()
                     .RegisterConfigurator<RabbitEndpointsConfigurator>())
+            .WithLogLevels(
+                configurator => configurator
+                    .SetLogLevel(IntegrationEventIds.MessageSkipped, LogLevel.Critical))
 
             // Subscribers
             .AddScopedSubscriber<SampleEventsSubscriber>()

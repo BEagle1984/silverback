@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry;
-using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Messages;
 using Silverback.Examples.Messages;
@@ -142,7 +141,7 @@ namespace Silverback.Examples.Consumer.Configuration
                 },
                 policy => policy.Chain(
                     policy.Retry().MaxFailedAttempts(2),
-                    policy.Skip().LogWithLevel(LogLevel.Critical)))
+                    policy.Skip()))
             .AddInbound(
                 new KafkaConsumerEndpoint("silverback-examples-error-events3")
                 {
