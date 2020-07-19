@@ -13,30 +13,40 @@ namespace Silverback.Messaging.Configuration
     public interface ILogLevelConfigurator
     {
         /// <summary>
-        ///     Configure the loglevel that should be used to log a certain event.
+        ///     Configure the log level that should be applied to the specified event.
         /// </summary>
-        /// <param name="eventId">The event id.</param>
-        /// <param name="logLevel">The loglevel to use.</param>
-        /// <returns>The current <see cref="ILogLevelConfigurator" />.</returns>
+        /// <param name="eventId">
+        ///     The event id.
+        /// </param>
+        /// <param name="logLevel">
+        ///     The log level to apply.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ILogLevelConfigurator" /> so that additional calls can be chained.
+        /// </returns>
         ILogLevelConfigurator SetLogLevel(EventId eventId, LogLevel logLevel);
 
         /// <summary>
-        ///     Configure a handler function that calculates a loglevel based on the exception
-        ///     for the given event.
+        ///     Configure a delegate that determines the log level that should be applied to the specified event.
         /// </summary>
-        /// <param name="eventId">The event id.</param>
-        /// <param name="logLevelFunc">
-        ///     The handler function that calculates the loglevel.
-        ///     It takes the logged exception and the default log level as parameters.
+        /// <param name="eventId">
+        ///     The event id.
         /// </param>
-        /// <returns>The current <see cref="ILogLevelConfigurator" />.</returns>
+        /// <param name="logLevelFunc">
+        ///     The function that returns the log level. It takes the logged exception and the default log level as
+        ///     parameters.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ILogLevelConfigurator" /> so that additional calls can be chained.
+        /// </returns>
         ILogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception, LogLevel, LogLevel> logLevelFunc);
 
         /// <summary>
-        ///     Build the <see cref="ILogLevelDictionary" /> based on the current state
-        ///     of the configurator.
+        ///     Builds the <see cref="ILogLevelDictionary" /> based on the current state of the configurator.
         /// </summary>
-        /// <returns>The <see cref="ILogLevelDictionary" />.</returns>
+        /// <returns>
+        ///     The <see cref="ILogLevelDictionary" />.
+        /// </returns>
         ILogLevelDictionary Build();
     }
 }

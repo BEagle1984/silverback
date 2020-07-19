@@ -17,7 +17,7 @@ namespace Silverback.Tests.Core.Diagnostics
             var internalLogger = new LoggerSubstitute<object>();
             var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
 
-            logger.Log(LogLevel.Information, EventIds.KafkaConsumerConsumingMessage, "Log Message");
+            logger.Log(LogLevel.Information, CoreEventIds.BackgroundServiceStarting, "Log Message");
 
             internalLogger.Received(LogLevel.Information, null, "Log Message");
         }
@@ -27,12 +27,12 @@ namespace Silverback.Tests.Core.Diagnostics
         {
             var logLevelDictionary = new LogLevelDictionary
             {
-                { EventIds.KafkaConsumerConsumingMessage, (e, l) => LogLevel.Error }
+                { CoreEventIds.BackgroundServiceStarting, (e, l) => LogLevel.Error }
             };
             var internalLogger = new LoggerSubstitute<object>();
             var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
 
-            logger.Log(LogLevel.Information, EventIds.KafkaConsumerConsumingMessage, "Log Message");
+            logger.Log(LogLevel.Information, CoreEventIds.BackgroundServiceStarting, "Log Message");
 
             internalLogger.Received(LogLevel.Error, null, "Log Message");
         }
@@ -42,12 +42,12 @@ namespace Silverback.Tests.Core.Diagnostics
         {
             var logLevelDictionary = new LogLevelDictionary
             {
-                { EventIds.KafkaConsumerConsumingMessage, (e, l) => LogLevel.Error }
+                { CoreEventIds.BackgroundServiceStarting, (e, l) => LogLevel.Error }
             };
             var internalLogger = new LoggerSubstitute<object>();
             var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
 
-            logger.Log(LogLevel.Information, EventIds.KafkaConsumerConsumingCanceled, "Log Message");
+            logger.Log(LogLevel.Information, CoreEventIds.BackgroundServiceLockAcquired, "Log Message");
 
             internalLogger.Received(LogLevel.Information, null, "Log Message");
         }
@@ -58,7 +58,7 @@ namespace Silverback.Tests.Core.Diagnostics
             var logLevelDictionary = new LogLevelDictionary
             {
                 {
-                    EventIds.KafkaConsumerConsumingMessage,
+                    CoreEventIds.BackgroundServiceStarting,
                     (exception, originalLogLevel) =>
                     {
                         if (exception is InvalidOperationException)
@@ -75,7 +75,7 @@ namespace Silverback.Tests.Core.Diagnostics
 
             logger.Log(
                 LogLevel.Information,
-                EventIds.KafkaConsumerConsumingMessage,
+                CoreEventIds.BackgroundServiceStarting,
                 new InvalidOperationException(),
                 "Log Message");
 
@@ -88,7 +88,7 @@ namespace Silverback.Tests.Core.Diagnostics
             var logLevelDictionary = new LogLevelDictionary
             {
                 {
-                    EventIds.KafkaConsumerConsumingMessage,
+                    CoreEventIds.BackgroundServiceStarting,
                     (exception, originalLogLevel) =>
                     {
                         if (exception is InvalidOperationException)
@@ -105,7 +105,7 @@ namespace Silverback.Tests.Core.Diagnostics
 
             logger.Log(
                 LogLevel.Information,
-                EventIds.KafkaConsumerConsumingMessage,
+                CoreEventIds.BackgroundServiceStarting,
                 new ArgumentException("param"),
                 "Log Message");
 

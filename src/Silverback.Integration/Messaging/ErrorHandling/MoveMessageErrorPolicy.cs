@@ -80,7 +80,7 @@ namespace Silverback.Messaging.ErrorHandling
             Check.NotNull(envelopes, nameof(envelopes));
 
             _logger.LogInformationWithMessageInfo(
-                EventIds.MoveMessageErrorPolicyMoveMessages,
+                IntegrationEventIds.MessageMoved,
                 $"{envelopes.Count} message(s) will be  be moved to endpoint '{_endpoint.Name}'.",
                 envelopes);
 

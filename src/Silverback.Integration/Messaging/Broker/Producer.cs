@@ -131,7 +131,7 @@ namespace Silverback.Messaging.Broker
             {
                 await finalAction(context).ConfigureAwait(false);
                 _logger.LogInformationWithMessageInfo(
-                    EventIds.ProducerMessageProduced,
+                    IntegrationEventIds.MessageProduced,
                     "Message produced.",
                     context.Envelope);
             }

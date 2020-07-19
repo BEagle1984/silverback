@@ -109,7 +109,7 @@ namespace Silverback.Messaging.Batch
                 _envelopes.ForEach(
                     envelope =>
                         _logger.LogInformationWithMessageInfo(
-                            EventIds.MessageBatchMessageAdded,
+                            IntegrationEventIds.MessageAddedToBatch,
                             "Message added to batch.",
                             envelope));
 

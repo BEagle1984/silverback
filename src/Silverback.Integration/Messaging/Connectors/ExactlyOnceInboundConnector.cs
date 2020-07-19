@@ -77,7 +77,7 @@ namespace Silverback.Messaging.Connectors
                             return true;
 
                         _logger.LogInformationWithMessageInfo(
-                            EventIds.ExactlyOnceInboundConnectorMessageAlreadyProcessed,
+                            IntegrationEventIds.MessageAlreadyProcessed,
                             "Message is being skipped since it was already processed.",
                             envelope);
                         return false;

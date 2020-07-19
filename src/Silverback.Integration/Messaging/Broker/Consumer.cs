@@ -101,7 +101,10 @@ namespace Silverback.Messaging.Broker
 
             IsConnected = true;
 
-            _logger.LogDebug(EventIds.ConsumerConnected, "Connected consumer to topic {topic}.", Endpoint.Name);
+            _logger.LogDebug(
+                IntegrationEventIds.ConsumerConnected,
+                "Connected consumer to endpoint {endpoint}.",
+                Endpoint.Name);
         }
 
         /// <inheritdoc cref="IConsumer.Disconnect" />
@@ -114,7 +117,10 @@ namespace Silverback.Messaging.Broker
 
             IsConnected = false;
 
-            _logger.LogDebug(EventIds.ConsumerDisconnected, "Disconnected consumer from topic {topic}.", Endpoint.Name);
+            _logger.LogDebug(
+                IntegrationEventIds.ConsumerDisconnected,
+                "Disconnected consumer from endpoint {endpoint}.",
+                Endpoint.Name);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -192,7 +198,7 @@ namespace Silverback.Messaging.Broker
             catch (Exception ex)
             {
                 _logger.LogWarning(
-                    EventIds.ConsumerErrorWhileDisposing,
+                    IntegrationEventIds.ConsumerDisposingError,
                     ex,
                     "Error occurred while disposing consumer from endpoint {endpoint}.",
                     Endpoint.Name);

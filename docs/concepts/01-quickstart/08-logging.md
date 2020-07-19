@@ -17,12 +17,11 @@ public class Startup
         services
             .AddSilverback()
             .WithLogLevels(configurator => configurator
-                .SetLogLevel(EventIds.SkipMessagePolicyMessageSkipped, LogLevel.Critical)
-                .SetLogLevel(EventIds.ProcessingInboundMessageError, LogLevel.Error));
+                .SetLogLevel(IntegrationEventIds.MessageSkipped, LogLevel.Critical)
+                .SetLogLevel(IntegrationEventIds.ErrorProcessingInboundMessage, LogLevel.Error));
     }
 }
 ```
 ***
 
-> [!Note]
-> The `EventIds` static class contains the constants for all events that are being logged by Silverback.
+Each package (that logs some events) has a static class exposing the `EventId` constants. See <xref:Silverback.Diagnostics.CoreEventIds>, <xref:Silverback.Diagnostics.IntegrationEventIds>, <xref:Silverback.Diagnostics.KafkaEventIds> and <xref:Silverback.Diagnostics.RabbitEventIds> for details about the events being logged and their default log level.

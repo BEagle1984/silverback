@@ -198,7 +198,7 @@ namespace Silverback.Messaging.ErrorHandling
                                   $"({MaxFailedAttemptsSetting}).";
 
                 _logger.LogTraceWithMessageInfo(
-                    EventIds.ErrorPolicyBaseSkipPolicyBecauseOfFailedAttempts,
+                    IntegrationEventIds.PolicyMaxFailedAttemptsExceeded,
                     traceString,
                     envelope);
 
@@ -211,7 +211,7 @@ namespace Silverback.Messaging.ErrorHandling
                                   $"{exception.GetType().Name} is not in the list of handled exceptions.";
 
                 _logger.LogTraceWithMessageInfo(
-                    EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsNotInlcuded,
+                    IntegrationEventIds.PolicyExceptionNotIncluded,
                     traceString,
                     envelope);
 
@@ -224,7 +224,7 @@ namespace Silverback.Messaging.ErrorHandling
                                   $"{exception.GetType().Name} is in the list of excluded exceptions.";
 
                 _logger.LogTraceWithMessageInfo(
-                    EventIds.ErrorPolicyBaseSkipPolicyBecauseExceptionIsExcluded,
+                    IntegrationEventIds.PolicyExceptionExcluded,
                     traceString,
                     envelope);
 
@@ -237,7 +237,7 @@ namespace Silverback.Messaging.ErrorHandling
                                   "evaluated and returned false.";
 
                 _logger.LogTraceWithMessageInfo(
-                    EventIds.ErrorPolicyBaseSkipPolicyBecauseOfApplyRule,
+                    IntegrationEventIds.PolicyApplyRuleReturnedFalse,
                     traceString,
                     envelope);
 

@@ -73,7 +73,7 @@ namespace Silverback.Background
             while (!stoppingToken.IsCancellationRequested)
             {
                 if (Lock != null)
-                    await Lock.Renew().ConfigureAwait(false);
+                    await Lock.Renew(stoppingToken).ConfigureAwait(false);
 
                 await ExecuteRecurringAsync(stoppingToken).ConfigureAwait(false);
 
@@ -84,7 +84,7 @@ namespace Silverback.Background
             }
 
             _logger.LogInformation(
-                EventIds.RecurringDistributedBackgroundServiceBackgroundServiceStopped,
+                CoreEventIds.RecurringBackgroundServiceStopped,
                 "Background service {BackgroundService} stopped.",
                 GetType().FullName);
         }
@@ -108,7 +108,7 @@ namespace Silverback.Background
                 return;
 
             _logger.LogDebug(
-                EventIds.RecurringDistributedBackgroundServiceBackgroundServiceSleeping,
+                CoreEventIds.RecurringDistributedBackgroundServiceBackgroundServiceSleeping,
                 "Background service {BackgroundService} sleeping for {sleepTimeInMilliseconds} milliseconds.",
                 GetType().FullName,
                 _interval.TotalMilliseconds);

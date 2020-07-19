@@ -76,7 +76,7 @@ namespace Silverback.Background
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation(
-                EventIds.DistributedBackgroundServiceStartingBackgroundService,
+                CoreEventIds.BackgroundServiceStarting,
                 "Starting background service {BackgroundService}...",
                 GetType().FullName);
 
@@ -92,7 +92,7 @@ namespace Silverback.Background
                         if (Lock != null)
                         {
                             _logger.LogInformation(
-                                EventIds.DistributedBackgroundServiceExecute,
+                                CoreEventIds.BackgroundServiceLockAcquired,
                                 "Lock acquired, executing background service {BackgroundService}.",
                                 GetType().FullName);
                         }
@@ -106,7 +106,7 @@ namespace Silverback.Background
                     catch (Exception ex)
                     {
                         _logger.LogError(
-                            EventIds.DistributedBackgroundServiceUnhandledException,
+                            CoreEventIds.BackgroundServiceException,
                             ex,
                             "Background service '{BackgroundService}' failed.",
                             GetType().FullName);

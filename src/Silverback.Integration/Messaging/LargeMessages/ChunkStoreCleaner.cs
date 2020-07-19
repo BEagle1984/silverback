@@ -56,7 +56,7 @@ namespace Silverback.Messaging.LargeMessages
             }
             catch (Exception ex)
             {
-                _logger.LogError(EventIds.ChunkStoreCleanerFailedToCleanup, "Failed to cleanup the chunk store.", ex);
+                _logger.LogError(IntegrationEventIds.ErrorCleaningChunkStore, "Failed to cleanup the chunk store.", ex);
             }
         }
     }

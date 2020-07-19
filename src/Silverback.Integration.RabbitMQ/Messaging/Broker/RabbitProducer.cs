@@ -121,7 +121,7 @@ namespace Silverback.Messaging.Broker
             catch (OperationCanceledException ex)
             {
                 _logger.LogTrace(
-                    EventIds.RabbitProducerQueueProcessingCanceled,
+                    RabbitEventIds.ProducerQueueProcessingCanceled,
                     ex,
                     "Producer queue processing was canceled.");
             }

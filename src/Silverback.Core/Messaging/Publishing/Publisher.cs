@@ -147,7 +147,7 @@ namespace Silverback.Messaging.Publishing
                 else
                 {
                     _logger.LogDebug(
-                        EventIds.PublisherDiscardingResult,
+                        CoreEventIds.SubscriberResultDiscarded,
                         "Discarding result of type {Type} because it doesn't match the expected return type {ExpectedType}.",
                         result?.GetType().FullName,
                         typeof(TResult).FullName);

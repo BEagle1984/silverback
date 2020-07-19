@@ -51,17 +51,13 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private void OnProducerStatistics(IProducer<byte[]?, byte[]?> producer, string statistics)
         {
-            _logger.LogDebug(
-                EventIds.KafkaEventsHandlerProducerStatisticsReceived,
-                $"Statistics: {statistics}");
+            _logger.LogDebug(KafkaEventIds.ProducerStatisticsReceived, $"Statistics: {statistics}");
             CreateScopeAndPublishEvent(new KafkaStatisticsEvent(statistics));
         }
 
         private void OnConsumerStatistics(IConsumer<byte[], byte[]> consumer, string statistics)
         {
-            _logger.LogDebug(
-                EventIds.KafkaEventsHandlerConsumerStatisticsReceived,
-                $"Statistics: {statistics}");
+            _logger.LogDebug(KafkaEventIds.ConsumerStatisticsReceived, $"Statistics: {statistics}");
             CreateScopeAndPublishEvent(new KafkaStatisticsEvent(statistics));
         }
 
@@ -73,7 +69,7 @@ namespace Silverback.Messaging.Broker
                 partition =>
                 {
                     _logger.LogInformation(
-                        EventIds.KafkaEventsHandlerPartitionsAssigned,
+                        KafkaEventIds.PartitionsAssigned,
                         "Assigned partition {topic} {partition}, member id: {memberId}",
                         partition.Topic,
                         partition.Partition,
@@ -89,7 +85,7 @@ namespace Silverback.Messaging.Broker
                 if (topicPartitionOffset.Offset != Offset.Unset)
                 {
                     _logger.LogDebug(
-                        EventIds.KafkaEventsHandlerPartitionOffsetReset,
+                        KafkaEventIds.PartitionOffsetReset,
                         "{topic} {partition} offset will be reset to {offset}.",
                         topicPartitionOffset.Topic,
                         topicPartitionOffset.Partition,
@@ -106,7 +102,7 @@ namespace Silverback.Messaging.Broker
                 partition =>
                 {
                     _logger.LogInformation(
-                        EventIds.KafkaEventsHandlerPartitionsRevoked,
+                        KafkaEventIds.PartitionsRevoked,
                         "Revoked partition {topic} {partition}, member id: {memberId}",
                         partition.Topic,
                         partition.Partition,
@@ -126,7 +122,7 @@ namespace Silverback.Messaging.Broker
                 if (offset.Error != null && offset.Error.Code != ErrorCode.NoError)
                 {
                     _logger.LogError(
-                        EventIds.KafkaEventsHandlerErrorWhileCommittingOffset,
+                        KafkaEventIds.KafkaEventsHandlerErrorWhileCommittingOffset,
                         "Error occurred committing the offset {topic} {partition} @{offset}: {errorCode} - {errorReason}",
                         offset.Topic,
                         offset.Partition,
@@ -137,7 +133,7 @@ namespace Silverback.Messaging.Broker
                 else
                 {
                     _logger.LogDebug(
-                        EventIds.KafkaEventsHandlerOffsetCommitted,
+                        KafkaEventIds.OffsetCommitted,
                         "Successfully committed offset {topic} {partition} @{offset}",
                         offset.Topic,
                         offset.Partition,
@@ -166,7 +162,7 @@ namespace Silverback.Messaging.Broker
             catch (Exception ex)
             {
                 _logger.LogError(
-                    EventIds.KafkaEventsHandlerUnhandledError,
+                    KafkaEventIds.KafkaErrorHandlerError,
                     ex,
                     "Error in KafkaErrorEvent subscriber.");
             }
@@ -176,7 +172,7 @@ namespace Silverback.Messaging.Broker
 
             _logger.Log(
                 error.IsFatal ? LogLevel.Critical : LogLevel.Error,
-                EventIds.KafkaEventsHandlerErrorInKafkaConsumer,
+                KafkaEventIds.ConsumerError,
                 "Error in Kafka consumer: {error} (topic(s): {topics})",
                 error,
                 ((KafkaConsumerEndpoint)consumer.Endpoint).Names);

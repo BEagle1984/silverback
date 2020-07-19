@@ -21,8 +21,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 .AddSilverback()
                 .WithLogLevels(
                     configurator => configurator
-                        .SetLogLevel(EventIds.BrokerConnected, LogLevel.Information)
-                        .SetLogLevel(EventIds.BrokerConnecting, LogLevel.Warning));
+                        .SetLogLevel(CoreEventIds.DistributedLockAcquired, LogLevel.Information)
+                        .SetLogLevel(CoreEventIds.FailedToAcquireDistributedLock, LogLevel.Warning));
 
             var serviceProvider = services.BuildServiceProvider();
 

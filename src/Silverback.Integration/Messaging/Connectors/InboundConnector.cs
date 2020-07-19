@@ -91,7 +91,7 @@ namespace Silverback.Messaging.Connectors
             Check.NotNull(settings, nameof(settings));
 
             _logger.LogTrace(
-                EventIds.InboundConnectorConnectingToInboundEndpoint,
+                IntegrationEventIds.InboundConnectorConnecting,
                 "Connecting to inbound endpoint '{endpointName}'...",
                 endpoint.Name);
 

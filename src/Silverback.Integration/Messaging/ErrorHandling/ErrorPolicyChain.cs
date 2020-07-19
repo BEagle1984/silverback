@@ -78,9 +78,10 @@ namespace Silverback.Messaging.ErrorHandling
             }
 
             _logger.LogDebugWithMessageInfo(
-                EventIds.ErrorPolicyChainStopConsumer,
+                IntegrationEventIds.PolicyChainCompleted,
                 "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.",
                 envelopes);
+
             return Task.FromResult(ErrorAction.StopConsuming);
         }
 

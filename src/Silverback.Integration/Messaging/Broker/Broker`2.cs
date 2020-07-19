@@ -116,10 +116,11 @@ namespace Silverback.Messaging.Broker
                 _ =>
                 {
                     _logger.LogInformation(
-                        EventIds.BrokerCreateProducer,
+                        IntegrationEventIds.CreatingNewProducer,
                         "Creating new producer for endpoint {endpointName}. (Total producers: {ProducerCount})",
                         endpoint.Name,
                         _producers.Count + 1);
+
                     return InstantiateProducer(
                         (TProducerEndpoint)endpoint,
                         GetBehaviors<IProducerBehavior>(),
@@ -153,7 +154,7 @@ namespace Silverback.Messaging.Broker
                 throw new InvalidOperationException(CannotCreateConsumerIfConnectedExceptionMessage);
 
             _logger.LogInformation(
-                EventIds.BrokerCreatingConsumer,
+                IntegrationEventIds.CreatingNewConsumer,
                 "Creating new consumer for endpoint {endpointName}.",
                 endpoint.Name);
 
@@ -177,12 +178,18 @@ namespace Silverback.Messaging.Broker
             if (_consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            _logger.LogDebug(EventIds.BrokerConnecting, "Connecting to message broker ({broker})...", GetType().Name);
+            _logger.LogDebug(
+                IntegrationEventIds.BrokerConnecting,
+                "Connecting to message broker ({broker})...",
+                GetType().Name);
 
             Connect(_consumers);
             IsConnected = true;
 
-            _logger.LogInformation(EventIds.BrokerConnected, "Connected to message broker ({broker})!", GetType().Name);
+            _logger.LogInformation(
+                IntegrationEventIds.BrokerConnected,
+                "Connected to message broker ({broker})!",
+                GetType().Name);
         }
 
         /// <inheritdoc cref="IBroker.Disconnect" />
@@ -195,7 +202,7 @@ namespace Silverback.Messaging.Broker
                 throw new ObjectDisposedException(GetType().FullName);
 
             _logger.LogDebug(
-                EventIds.BrokerDisconnecting,
+                IntegrationEventIds.BrokerDisconnecting,
                 "Disconnecting from message broker ({broker})...",
                 GetType().Name);
 
@@ -203,7 +210,7 @@ namespace Silverback.Messaging.Broker
             IsConnected = false;
 
             _logger.LogInformation(
-                EventIds.BrokerDisconnected,
+                IntegrationEventIds.BrokerDisconnected,
                 "Disconnected from message broker ({broker})!",
                 GetType().Name);
         }

@@ -203,7 +203,7 @@ namespace Silverback.Messaging.Broker
                 }
                 catch (OperationCanceledException)
                 {
-                    _logger.LogTrace(EventIds.KafkaConsumerConsumingCanceled, "Consuming canceled.");
+                    _logger.LogTrace(KafkaEventIds.ConsumingCanceled, "Consuming canceled.");
                 }
                 catch (KafkaException ex)
                 {
@@ -242,7 +242,7 @@ namespace Silverback.Messaging.Broker
             if (result.IsPartitionEOF)
             {
                 _logger.LogInformation(
-                    EventIds.KafkaConsumerEndOfPartition,
+                    KafkaEventIds.EndOfPartition,
                     "Partition EOF reached: {topic} {partition} @{offset}.",
                     result.Topic,
                     result.Partition,
@@ -252,7 +252,7 @@ namespace Silverback.Messaging.Broker
 
             _hasConsumedAtLeastOnce = true;
             _logger.LogDebug(
-                EventIds.KafkaConsumerConsumingMessage,
+                KafkaEventIds.ConsumingMessage,
                 "Consuming message: {topic} {partition} @{offset}.",
                 result.Topic,
                 result.Partition,
@@ -310,7 +310,7 @@ namespace Silverback.Messaging.Broker
             if (Endpoint.Configuration.EnableAutoRecovery)
             {
                 _logger.LogWarning(
-                    EventIds.KafkaConsumerKafkaException,
+                    KafkaEventIds.KafkaExceptionAutoRecovery,
                     ex,
                     "KafkaException occurred. The consumer will try to recover. (topic(s): {topics})",
                     (object)Endpoint.Names);
@@ -324,7 +324,7 @@ namespace Silverback.Messaging.Broker
                                             "(EnableAutoRecovery=true in the endpoint configuration). (topic(s): {topics})";
 
                 _logger.LogCritical(
-                    EventIds.KafkaConsumerNoReconnectFatalError,
+                    KafkaEventIds.KafkaExceptionNoAutoRecovery,
                     ex,
                     errorMessage,
                     (object)Endpoint.Names);
@@ -348,7 +348,7 @@ namespace Silverback.Messaging.Broker
                 catch (Exception ex)
                 {
                     _logger.LogCritical(
-                        EventIds.KafkaConsumerFailedToRecoverFromConsumerException,
+                        KafkaEventIds.ErrorRecoveringFromKafkaException,
                         ex,
                         "Failed to recover from consumer exception. Will retry in {SecondsUntilRetry} seconds.",
                         RecoveryDelay.TotalSeconds);

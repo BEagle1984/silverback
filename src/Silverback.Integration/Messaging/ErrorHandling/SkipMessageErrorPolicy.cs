@@ -39,7 +39,7 @@ namespace Silverback.Messaging.ErrorHandling
         {
             _logger.LogWithMessageInfo(
                 LogLevel.Error,
-                EventIds.SkipMessagePolicyMessageSkipped,
+                IntegrationEventIds.MessageSkipped,
                 exception,
                 "The message(s) will be skipped.",
                 envelopes);

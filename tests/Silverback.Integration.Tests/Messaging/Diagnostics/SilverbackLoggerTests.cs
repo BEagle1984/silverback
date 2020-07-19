@@ -10,29 +10,67 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 {
     public class SilverbackLoggerTests
     {
+        private readonly LoggerSubstitute<SilverbackLoggerTests>
+            _logger = new LoggerSubstitute<SilverbackLoggerTests>();
+
         [Fact]
-        public void SilverbackLogger_ConfiguredLogLevel_LogLevelChanged()
+        public void Log_WithDefaultLogLevel_MessageLogged()
         {
             var services = new ServiceCollection();
 
             services
-                .AddSingleton(typeof(ILogger<>), typeof(LoggerSubstitute<>))
-                .AddSilverback()
-                .WithLogLevels(
-                    c => c
-                        .SetLogLevel(EventIds.BrokerConnected, LogLevel.Information)
-                        .SetLogLevel(EventIds.BrokerConnecting, (e, l) => LogLevel.Warning));
+                .AddSingleton(typeof(ILogger<SilverbackLoggerTests>), _logger)
+                .AddSilverback();
 
             var serviceProvider = services.BuildServiceProvider();
 
-            var internalLogger = (LoggerSubstitute<object>)serviceProvider.GetRequiredService<ILogger<object>>();
-            var logger = serviceProvider.GetRequiredService<ISilverbackLogger<object>>();
+            var silverbackLogger = serviceProvider.GetRequiredService<ISilverbackLogger<SilverbackLoggerTests>>();
 
-            logger.Log(LogLevel.Error, EventIds.BrokerConnected, "Log Message 1");
-            logger.Log(LogLevel.Error, EventIds.BrokerConnecting, "Log Message 2");
+            silverbackLogger.Log(LogLevel.Information, CoreEventIds.DistributedLockAcquired, "Log Message 1");
 
-            internalLogger.Received(LogLevel.Information, null, "Log Message 1");
-            internalLogger.Received(LogLevel.Warning, null, "Log Message 2");
+            _logger.Received(LogLevel.Information, null, "Log Message 1");
+        }
+
+        [Fact]
+        public void Log_WithCustomLogLevel_LogLevelApplied()
+        {
+            var services = new ServiceCollection();
+
+            services
+                .AddSingleton(typeof(ILogger<SilverbackLoggerTests>), _logger)
+                .AddSilverback()
+                .WithLogLevels(
+                    configurator => configurator
+                        .SetLogLevel(CoreEventIds.DistributedLockAcquired, LogLevel.Trace));
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            var silverbackLogger = serviceProvider.GetRequiredService<ISilverbackLogger<SilverbackLoggerTests>>();
+
+            silverbackLogger.Log(LogLevel.Information, CoreEventIds.DistributedLockAcquired, "Log Message 1");
+
+            _logger.Received(LogLevel.Trace, null, "Log Message 1");
+        }
+
+        [Fact]
+        public void Log_WithCustomLogLevelFunction_LogLevelApplied()
+        {
+            var services = new ServiceCollection();
+
+            services
+                .AddSingleton(typeof(ILogger<SilverbackLoggerTests>), _logger)
+                .AddSilverback()
+                .WithLogLevels(
+                    configurator => configurator
+                        .SetLogLevel(CoreEventIds.DistributedLockAcquired, (_, __) => LogLevel.Warning));
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            var silverbackLogger = serviceProvider.GetRequiredService<ISilverbackLogger<SilverbackLoggerTests>>();
+
+            silverbackLogger.Log(LogLevel.Information, CoreEventIds.DistributedLockAcquired, "Log Message 1");
+
+            _logger.Received(LogLevel.Warning, null, "Log Message 1");
         }
     }
 }

@@ -147,7 +147,7 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private IProducer<byte[]?, byte[]?> CreateInnerProducer()
         {
-            _logger.LogDebug(EventIds.KafkaProducerCreatingProducer, "Creating Confluent.Kafka.Producer...");
+            _logger.LogDebug(KafkaEventIds.CreatingConfluentProducer, "Creating Confluent.Kafka.Producer...");
 
             var producerBuilder =
                 new ProducerBuilder<byte[]?, byte[]?>(Endpoint.Configuration.ConfluentConfig);
@@ -172,7 +172,7 @@ namespace Silverback.Messaging.Broker
                 case PersistenceStatus.PossiblyPersisted:
                 {
                     _logger.LogWarning(
-                        EventIds.KafkaProducerMessageTransmittedWithoutAcknowledgement,
+                        KafkaEventIds.ProduceNotAcknowledged,
                         "The message was transmitted to broker, but no acknowledgement was received.");
                     break;
                 }

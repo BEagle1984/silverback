@@ -58,7 +58,7 @@ namespace Silverback.Messaging.ErrorHandling
             await ApplyDelay(envelopes).ConfigureAwait(false);
 
             _logger.LogInformationWithMessageInfo(
-                EventIds.RetryErrorPolicyApplyPolicy,
+                IntegrationEventIds.RetryMessageProcessing,
                 "The message(s) will be processed again.",
                 envelopes);
 
@@ -75,7 +75,7 @@ namespace Silverback.Messaging.ErrorHandling
                 return;
 
             _logger.LogTraceWithMessageInfo(
-                EventIds.RetryErrorPolicyWaiting,
+                IntegrationEventIds.RetryDelayed,
                 $"Waiting {delay} milliseconds before retrying to process the message(s).",
                 envelopes);
 

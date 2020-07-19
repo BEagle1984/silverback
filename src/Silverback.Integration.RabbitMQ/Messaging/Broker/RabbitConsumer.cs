@@ -136,7 +136,7 @@ namespace Silverback.Messaging.Broker
                 var offset = new RabbitOffset(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
 
                 _logger.LogDebug(
-                    EventIds.RabbitConsumerConsumingMessage,
+                    RabbitEventIds.ConsumingMessage,
                     "Consuming message {offset} from endpoint {endpointName}.",
                     offset.Value,
                     Endpoint.Name);
@@ -200,14 +200,14 @@ namespace Silverback.Messaging.Broker
                 _channel.BasicAck(deliveryTag, true);
 
                 _logger.LogDebug(
-                    EventIds.RabbitConsumerSuccessfullyCommitted,
+                    RabbitEventIds.Commit,
                     "Successfully committed (basic.ack) the delivery tag {deliveryTag}.",
                     deliveryTag);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
-                    EventIds.RabbitConsumerErrorWhileCommitting,
+                    RabbitEventIds.CommitError,
                     ex,
                     "Error occurred committing (basic.ack) the delivery tag {deliveryTag}.",
                     deliveryTag);
@@ -226,14 +226,14 @@ namespace Silverback.Messaging.Broker
                 _channel.BasicNack(deliveryTag, true, true);
 
                 _logger.LogDebug(
-                    EventIds.RabbitConsumerSuccessfullySentBasicNack,
+                    RabbitEventIds.Rollback,
                     "Successfully rolled back (basic.nack) the delivery tag {deliveryTag}.",
                     deliveryTag);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
-                    EventIds.RabbitConsumerErrorWhileSendingBasicNack,
+                    RabbitEventIds.RollbackError,
                     ex,
                     "Error occurred rolling back (basic.nack) the delivery tag {deliveryTag}.",
                     deliveryTag);

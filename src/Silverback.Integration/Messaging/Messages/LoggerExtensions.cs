@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Messages
                 ? $"Processing the batch of {envelopes.Count} inbound messages."
                 : "Processing inbound message.";
 
-            LogInformationWithMessageInfo(logger, EventIds.ProcessingInboundMessage, message, envelopes);
+            LogInformationWithMessageInfo(logger, IntegrationEventIds.ProcessingInboundMessage, message, envelopes);
         }
 
         /// <summary>
@@ -81,7 +81,12 @@ namespace Silverback.Messaging.Messages
                 ? $"Error occurred processing the batch of {envelopes.Count} inbound messages."
                 : "Error occurred processing the inbound message.";
 
-            LogWarningWithMessageInfo(logger, EventIds.ProcessingInboundMessageError, exception, message, envelopes);
+            LogWarningWithMessageInfo(
+                logger,
+                IntegrationEventIds.ErrorProcessingInboundMessage,
+                exception,
+                message,
+                envelopes);
         }
 
         /// <summary>

@@ -84,9 +84,9 @@ namespace Silverback.Messaging.Connectors
             catch (Exception ex)
             {
                 _logger.LogError(
-                    EventIds.OutboundQueueWorkerErrorWhileProcessingQueue,
+                    IntegrationEventIds.ErrorProcessingOutboundQueue,
                     ex,
-                    "Error occurred processing the outbound queue. See inner exception for details.");
+                    "Error occurred processing the outbound queue.");
             }
         }
 
@@ -115,7 +115,7 @@ namespace Silverback.Messaging.Connectors
         private async Task ProcessQueue(IServiceProvider serviceProvider, CancellationToken stoppingToken)
         {
             _logger.LogTrace(
-                EventIds.OutboundQueueWorkerReadingOutboundMessages,
+                IntegrationEventIds.ReadingEnqueuedOutboundMessages,
                 "Reading outbound messages from queue (limit: {readPackageSize}).",
                 _readPackageSize);
 
@@ -123,12 +123,12 @@ namespace Silverback.Messaging.Connectors
             var messages = (await queue.Dequeue(_readPackageSize).ConfigureAwait(false)).ToList();
 
             if (messages.Count == 0)
-                _logger.LogTrace(EventIds.OutboundQueueWorkerQueueEmpty, "The outbound queue is empty.");
+                _logger.LogTrace(IntegrationEventIds.OutboundQueueEmpty, "The outbound queue is empty.");
 
             for (var i = 0; i < messages.Count; i++)
             {
                 _logger.LogDebug(
-                    EventIds.OutboundQueueWorkerProcessingMessage,
+                    IntegrationEventIds.ProcessingEnqueuedOutboundMessage,
                     "Processing message {currentMessageIndex} of {totalMessages}.",
                     i + 1,
                     messages.Count);
@@ -154,9 +154,9 @@ namespace Silverback.Messaging.Connectors
             catch (Exception ex)
             {
                 _logger.LogErrorWithMessageInfo(
-                    EventIds.OutboundQueueWorkerFailedToPublishMessage,
+                    IntegrationEventIds.ErrorProducingEnqueuedMessage,
                     ex,
-                    "Failed to publish queued message.",
+                    "Failed to produce the enqueued message.",
                     new OutboundEnvelope(message.Content, message.Headers, new LoggingEndpoint(message.EndpointName)));
 
                 await queue.Retry(message).ConfigureAwait(false);
