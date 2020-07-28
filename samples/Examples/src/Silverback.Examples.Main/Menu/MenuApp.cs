@@ -53,7 +53,7 @@ namespace Silverback.Examples.Main.Menu
             return options.ToArray();
         }
 
-        private void OnOptionChosen(object sender, MenuItemInfoEventArgs args)
+        private void OnOptionChosen(object? sender, MenuItemInfoEventArgs args)
         {
             switch (args.MenuItemInfo)
             {
@@ -73,7 +73,7 @@ namespace Silverback.Examples.Main.Menu
             }
         }
 
-        private void OnBack(object sender, EventArgs args)
+        private void OnBack(object? sender, EventArgs args)
         {
             _preSelectedItem = _breadcrumbs.Pop();
 

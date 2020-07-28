@@ -5,9 +5,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
 
-namespace Silverback.Tests.Performance.LegacyImplementations
+namespace Silverback.Messaging.Serialization
 {
     /// <summary>
     ///     Serializes and deserializes the messages of type <typeparamref name="TMessage" /> in JSON format.
@@ -15,7 +14,8 @@ namespace Silverback.Tests.Performance.LegacyImplementations
     /// <typeparam name="TMessage">
     ///     The type of the messages to be serialized and/or deserialized.
     /// </typeparam>
-    public class NewtonsoftJsonMessageSerializer<TMessage> : NewtonsoftJsonMessageSerializer
+    public sealed class NewtonsoftJsonMessageSerializer<TMessage>
+        : NewtonsoftJsonMessageSerializerBase, IEquatable<NewtonsoftJsonMessageSerializer<TMessage>>
     {
         private readonly Type _type = typeof(TMessage);
 
@@ -52,5 +52,27 @@ namespace Silverback.Tests.Performance.LegacyImplementations
             var deserializedObject = JsonConvert.DeserializeObject(json, _type, Settings);
             return (deserializedObject, _type);
         }
+
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+        public bool Equals(NewtonsoftJsonMessageSerializer<TMessage>? other) =>
+            NewtonsoftComparisonHelper.JsonEquals(this, other);
+
+        /// <inheritdoc cref="object.Equals(object)" />
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj))
+                return false;
+
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((NewtonsoftJsonMessageSerializer<TMessage>?)obj);
+        }
+
+        /// <inheritdoc cref="object.GetHashCode" />
+        public override int GetHashCode() => HashCode.Combine(1, typeof(TMessage).Name);
     }
 }

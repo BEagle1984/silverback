@@ -26,6 +26,7 @@ namespace Silverback.Examples.Consumer.Subscribers
                 message.Partitions.Count,
                 string.Join(", ", message.Partitions.Select(partition => partition.TopicPartition.ToString())));
 
+        [SuppressMessage("ReSharper", "CA1822", Justification = "Subscriber cannot be static")]
         public void OnPartitionsAssignedResetOffset(KafkaPartitionsAssignedEvent message)
         {
             // Always skip to the end of each partition

@@ -28,6 +28,8 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.SchemaRegistry")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.SchemaRegistry.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Integration.Newtonsoft")]
+[assembly: InternalsVisibleTo("Silverback.Integration.Newtonsoft.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.RabbitMQ")]
 [assembly: InternalsVisibleTo("Silverback.Integration.RabbitMQ.Tests")]
 

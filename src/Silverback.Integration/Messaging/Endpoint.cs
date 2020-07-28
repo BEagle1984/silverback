@@ -3,7 +3,6 @@
 
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
-using Silverback.Util;
 
 namespace Silverback.Messaging
 {
@@ -65,7 +64,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            return Name == other.Name && ComparisonHelper.JsonEquals(Serializer, other.Serializer);
+            return Name == other.Name && Equals(Serializer, other.Serializer);
         }
     }
 }

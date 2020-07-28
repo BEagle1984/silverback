@@ -171,7 +171,24 @@ namespace Silverback.Examples.Consumer.Configuration
                         GroupId = $"{_app.ConsumerGroupName}__avro",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     },
-                    Serializer = GetAvroSerializer()
+                    Serializer = new AvroMessageSerializer<AvroMessage>
+                    {
+                        SchemaRegistryConfig = new SchemaRegistryConfig
+                        {
+                            Url = "localhost:8081"
+                        }
+                    }
+                })
+            .AddInbound(
+                new KafkaConsumerEndpoint("silverback-examples-newtonsoft")
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://localhost:9092",
+                        GroupId = $"{_app.ConsumerGroupName}newtonsoft",
+                        AutoOffsetReset = AutoOffsetReset.Earliest
+                    },
+                    Serializer = new NewtonsoftJsonMessageSerializer()
                 })
             .AddInbound(
                 new KafkaConsumerEndpoint("silverback-examples-encrypted")
@@ -196,7 +213,13 @@ namespace Silverback.Examples.Consumer.Configuration
                         GroupId = $"{_app.ConsumerGroupName}__avro-encrypted",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     },
-                    Serializer = GetAvroSerializer(),
+                    Serializer = new AvroMessageSerializer<AvroMessage>
+                    {
+                        SchemaRegistryConfig = new SchemaRegistryConfig
+                        {
+                            Url = "localhost:8081"
+                        }
+                    },
                     Encryption = new SymmetricEncryptionSettings
                     {
                         Key = Constants.AesEncryptionKey
@@ -215,14 +238,5 @@ namespace Silverback.Examples.Consumer.Configuration
                     },
                     Serializer = new JsonMessageSerializer<LegacyMessage>()
                 });
-
-        private static IMessageSerializer GetAvroSerializer() =>
-            new AvroMessageSerializer<AvroMessage>
-            {
-                SchemaRegistryConfig = new SchemaRegistryConfig
-                {
-                    Url = "localhost:8081"
-                }
-            };
     }
 }

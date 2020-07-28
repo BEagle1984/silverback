@@ -93,6 +93,10 @@ EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tests.Performance", "tests\Silverback.Tests.Performance\Silverback.Tests.Performance.csproj", "{EF1AA5A3-B806-4259-BAE9-746452782B57}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Newtonsoft", "src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj", "{7E1B05E3-5F4C-401E-86AC-7553B0B34BA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Newtonsoft.Tests", "tests\Silverback.Integration.Newtonsoft.Tests\Silverback.Integration.Newtonsoft.Tests.csproj", "{AF919F36-871B-41BC-8093-54DAEB024296}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -203,6 +207,14 @@ Global
 		{EF1AA5A3-B806-4259-BAE9-746452782B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF1AA5A3-B806-4259-BAE9-746452782B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF1AA5A3-B806-4259-BAE9-746452782B57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E1B05E3-5F4C-401E-86AC-7553B0B34BA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E1B05E3-5F4C-401E-86AC-7553B0B34BA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E1B05E3-5F4C-401E-86AC-7553B0B34BA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E1B05E3-5F4C-401E-86AC-7553B0B34BA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF919F36-871B-41BC-8093-54DAEB024296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF919F36-871B-41BC-8093-54DAEB024296}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF919F36-871B-41BC-8093-54DAEB024296}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF919F36-871B-41BC-8093-54DAEB024296}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -225,6 +237,7 @@ Global
 		{AF991E12-F761-4D3D-82DC-BA204813C54E} = {C177137F-A084-4178-805F-890F0A175A56}
 		{65B73763-9024-43A1-BFAF-045863CAEE1A} = {C177137F-A084-4178-805F-890F0A175A56}
 		{EF1AA5A3-B806-4259-BAE9-746452782B57} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
+		{AF919F36-871B-41BC-8093-54DAEB024296} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}

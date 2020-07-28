@@ -8,11 +8,11 @@ Being flexible when serializing and deserializing the messages sent over the mes
 
 ## Default JSON serialization
 
-The default `JsonMessageSerializer` internally uses `System.Text.Json` to serialize the messages as JSON and encode them in UTF-8.
+The default [`JsonMessageSerializer`](xref:Silverback.Messaging.Serialization.JsonMessageSerializer) internally uses System.Text.Json to serialize the messages as JSON and encode them in UTF-8.
 
-A few headers are added to the message, in particular `x-message-type` is used by the `JsonMessageSerializer` to know the message type when deserializing. It also leverages the Newtonsoft's [automatic type handling](https://www.newtonsoft.com/json/help/html/SerializeTypeNameHandling.htm) to automatically resolve the actual type of the nested properties.
+A few headers are added to the message, in particular `x-message-type` is used by the [`JsonMessageSerializer`](xref:Silverback.Messaging.Serialization.JsonMessageSerializer) to know the message type when deserializing. It also leverages the Newtonsoft's [automatic type handling](https://www.newtonsoft.com/json/help/html/SerializeTypeNameHandling.htm) to automatically resolve the actual type of the nested properties.
 
-The deserializer function provided by `JsonMessageSerializer` will obviously try to map the message to a type with the exact assembly qualified name found in the `x-message-type` header. It is therefore a good practice to share the message models among the services, maybe through a nuget package.
+The deserializer function provided by [`JsonMessageSerializer`](xref:Silverback.Messaging.Serialization.JsonMessageSerializer) will obviously try to map the message to a type with the exact assembly qualified name found in the `x-message-type` header. It is therefore a good practice to share the message models among the services, maybe through a nuget package.
 
 This is the suggested serialization strategy when both producer and consumer are based on Silverback but may not be ideal for interoperability.
 
@@ -22,7 +22,7 @@ Have a look at the <xref:headers> section for an overview on the headers that ar
 
 If you are consuming a message coming from another system (not based on Silverback), chances are that the type name is not being delivered as header.
 
-In that case you can resort to the typed `JsonMessageSerializer<TMessage>`. This serializer works like the default one but the message type is hard-coded, instead of being expected in the header.
+In that case you can resort to the typed [`JsonMessageSerializer<TMessage>`](xref:Silverback.Messaging.Serialization.JsonMessageSerializer`1). This serializer works like the default one but the message type is hard-coded, instead of being expected in the header.
 
 ```csharp
 public class Startup
@@ -41,11 +41,15 @@ public class Startup
 ```
 
 > [!Note]
-> The `JsonMessageSerializer` can be also be tweaked modifying its `Options`.
+> The [`JsonMessageSerializer`](xref:Silverback.Messaging.Serialization.JsonMessageSerializer) can be also be tweaked modifying its `Options`.
+
+## Newtonsoft.Json
+
+In the releases previous to 3.0.0 the default [`JsonMessageSerializer`](xref:Silverback.Messaging.Serialization.JsonMessageSerializer) was based on Newtonsoft.Json instead of System.Text.Json. For backward compatibility reasons and since System.Text.Json may not support all use cases covered by Newtonsoft.Json, the old serializers have been renamed to [`NewtonsoftJsonMessageSerializer`](xref:Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer`1)/[`NewtonsoftJsonMessageSerializer<TMessage>`](xref:Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer`1) and moved into a dedicated NuGet package: Silverback.Integration.Newtonsoft.
 
 ## Apache Avro
 
-The `AvroSerializer` contained in the `Silverback.Integration.Kafka.SchemaRegistry` package can be used to connect with a schema registry and exchange messages in [Apache Avro](https://avro.apache.org/) format.
+The [`AvroMessageSerializer<TMessage>`](xref:Silverback.Messaging.Serialization.AvroMessageSerializer`1) contained in the Silverback.Integration.Kafka.SchemaRegistry package can be used to connect with a schema registry and exchange messages in [Apache Avro](https://avro.apache.org/) format.
 
 ```csharp
 public class Startup

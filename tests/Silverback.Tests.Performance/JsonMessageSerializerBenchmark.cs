@@ -6,7 +6,6 @@ using BenchmarkDotNet.Configs;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
-using Silverback.Tests.Performance.LegacyImplementations;
 using Silverback.Tests.Performance.TestTypes;
 
 namespace Silverback.Tests.Performance

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Examples.Common.Messages;
@@ -42,6 +43,8 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.Advanced
             await publisher.PublishAsync(new SimpleIntegrationEvent { Content = "URGENT" });
         }
 
+        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Instantiated by Silverback")]
+        [SuppressMessage("ReSharper", "CA1812", Justification = "Instantiated by Silverback")]
         private class PrioritizedOutboundRouter : OutboundRouter<SimpleIntegrationEvent>
         {
             private static readonly IProducerEndpoint NormalEndpoint =

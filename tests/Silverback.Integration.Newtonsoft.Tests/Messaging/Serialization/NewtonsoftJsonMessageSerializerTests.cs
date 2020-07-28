@@ -3,23 +3,23 @@
 
 using System;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
-using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Integration.Newtonsoft.TestTypes.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Serialization
+namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
 {
-    public class JsonMessageSerializerTests
+    public class NewtonsoftJsonMessageSerializerTests
     {
         private static readonly MessageHeaderCollection TestEventOneMessageTypeHeaders = new MessageHeaderCollection
         {
             {
                 "x-message-type",
-                "Silverback.Tests.Integration.TestTypes.Domain.TestEventOne, Silverback.Integration.Tests"
+                "Silverback.Tests.Integration.Newtonsoft.TestTypes.Domain.TestEventOne, Silverback.Integration.Newtonsoft.Tests"
             }
         };
 
@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             var message = new TestEventOne { Content = "the message" };
             var headers = new MessageHeaderCollection();
 
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var serialized = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
@@ -42,7 +42,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             var message = new TestEventOne { Content = "the message" };
             var headers = new MessageHeaderCollection();
 
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var serialized = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
@@ -61,7 +61,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             var message = new TestEventOne { Content = "the message" };
             var headers = new MessageHeaderCollection();
 
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var serialized = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
@@ -80,7 +80,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             var message = new TestEventOne { Content = "the message" };
             var headers = new MessageHeaderCollection();
 
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             serializer.Serialize(message, headers, MessageSerializationContext.Empty);
 
@@ -94,7 +94,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             var message = new TestEventOne { Content = "the message" };
             var headers = new MessageHeaderCollection();
 
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
@@ -107,7 +107,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         {
             var messageBytes = Encoding.UTF8.GetBytes("test");
 
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var serialized = serializer.Serialize(
                 messageBytes,
@@ -122,7 +122,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         {
             var messageBytes = Encoding.UTF8.GetBytes("test");
 
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var serialized = await serializer.SerializeAsync(
                 messageBytes,
@@ -135,7 +135,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Serialize_NullMessage_NullReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var serialized = serializer.Serialize(
                 null,
@@ -148,7 +148,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task SerializeAsync_NullMessage_NullReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var serialized = await serializer.SerializeAsync(
                 null,
@@ -161,7 +161,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_MessageWithIncompleteTypeHeader_Deserialized()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
             var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
 
             var (deserializedObject, _) = serializer
@@ -177,7 +177,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_MessageWithIncompleteTypeHeader_TypeReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
             var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
 
             var (_, type) = serializer
@@ -189,7 +189,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task DeserializeAsync_MessageWithIncompleteTypeHeader_Deserialized()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
             var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
 
             var (deserializedObject, _) = await serializer
@@ -205,7 +205,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task DeserializeAsync_MessageWithIncompleteTypeHeader_TypeReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
             var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
 
             var (_, type) = await serializer
@@ -217,7 +217,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_MissingTypeHeader_ExceptionThrown()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
             var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
@@ -230,7 +230,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void DeserializeAsync_MissingTypeHeader_ExceptionThrown()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
             var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
             var headers = new MessageHeaderCollection();
 
@@ -248,11 +248,11 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             {
                 {
                     "x-message-type",
-                    "Bad.TestEventOne, Silverback.Integration.Tests"
+                    "Bad.TestEventOne, Silverback.Integration.Newtonsoft.Tests"
                 }
             };
 
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             Action act = () => serializer
                 .Deserialize(rawMessage, headers, MessageSerializationContext.Empty);
@@ -268,10 +268,10 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             {
                 {
                     "x-message-type",
-                    "Bad.TestEventOne, Silverback.Integration.Tests"
+                    "Bad.TestEventOne, Silverback.Integration.Newtonsoft.Tests"
                 }
             };
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             Action act = () => serializer
                 .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
@@ -282,7 +282,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_NullMessage_NullObjectReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var (deserializedObject, _) = serializer
                 .Deserialize(null, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -293,7 +293,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_NullMessage_TypeReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var (_, type) = serializer
                 .Deserialize(null, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -304,7 +304,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task DeserializeAsync_NullMessage_NullObjectReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var (deserializedObject, _) = await serializer
                 .DeserializeAsync(null, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -315,7 +315,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task DeserializeAsync_NullMessage_TypeReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var (_, type) = await serializer
                 .DeserializeAsync(null, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -326,7 +326,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_EmptyArrayMessage_NullObjectReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var (deserializedObject, _) = serializer
                 .Deserialize(Array.Empty<byte>(), TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -337,7 +337,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Deserialize_EmptyArrayMessage_TypeReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var (_, type) = serializer
                 .Deserialize(Array.Empty<byte>(), TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -348,7 +348,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task DeserializeAsync_EmptyArrayMessage_NullObjectReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var (deserializedObject, _) = await serializer
                 .DeserializeAsync(
@@ -362,7 +362,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public async Task DeserializeAsync_EmptyArrayMessage_TypeReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             var (_, type) = await serializer
                 .DeserializeAsync(
@@ -376,7 +376,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Equals_SameInstance_TrueReturned()
         {
-            var serializer = new JsonMessageSerializer();
+            var serializer = new NewtonsoftJsonMessageSerializer();
 
             // ReSharper disable once EqualExpressionComparison
             var result = Equals(serializer, serializer);
@@ -387,21 +387,21 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Equals_SameSettings_TrueReturned()
         {
-            var serializer1 = new JsonMessageSerializer
+            var serializer1 = new NewtonsoftJsonMessageSerializer
             {
-                Options = new JsonSerializerOptions
+                Settings = new JsonSerializerSettings
                 {
-                    AllowTrailingCommas = true,
-                    DefaultBufferSize = 42
+                    MaxDepth = 42,
+                    NullValueHandling = NullValueHandling.Ignore
                 }
             };
 
-            var serializer2 = new JsonMessageSerializer
+            var serializer2 = new NewtonsoftJsonMessageSerializer
             {
-                Options = new JsonSerializerOptions
+                Settings = new JsonSerializerSettings
                 {
-                    AllowTrailingCommas = true,
-                    DefaultBufferSize = 42
+                    MaxDepth = 42,
+                    NullValueHandling = NullValueHandling.Ignore
                 }
             };
 
@@ -414,8 +414,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Equals_DefaultSettings_TrueReturned()
         {
-            var serializer1 = new JsonMessageSerializer();
-            var serializer2 = new JsonMessageSerializer();
+            var serializer1 = new NewtonsoftJsonMessageSerializer();
+            var serializer2 = new NewtonsoftJsonMessageSerializer();
 
             // ReSharper disable once EqualExpressionComparison
             var result = Equals(serializer1, serializer2);
@@ -426,20 +426,20 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         [Fact]
         public void Equals_DifferentSettings_FalseReturned()
         {
-            var serializer1 = new JsonMessageSerializer
+            var serializer1 = new NewtonsoftJsonMessageSerializer
             {
-                Options = new JsonSerializerOptions
+                Settings = new JsonSerializerSettings
                 {
-                    AllowTrailingCommas = true,
-                    DefaultBufferSize = 42
+                    MaxDepth = 42,
+                    NullValueHandling = NullValueHandling.Ignore
                 }
             };
 
-            var serializer2 = new JsonMessageSerializer
+            var serializer2 = new NewtonsoftJsonMessageSerializer
             {
-                Options = new JsonSerializerOptions
+                Settings = new JsonSerializerSettings
                 {
-                    AllowTrailingCommas = false
+                    NullValueHandling = NullValueHandling.Include
                 }
             };
 

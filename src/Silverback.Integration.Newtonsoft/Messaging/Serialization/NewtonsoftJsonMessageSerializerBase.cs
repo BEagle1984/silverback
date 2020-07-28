@@ -8,23 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
-using Silverback.Util;
 
-namespace Silverback.Tests.Performance.LegacyImplementations
+namespace Silverback.Messaging.Serialization
 {
     /// <summary>
-    ///     Serializes the messages in JSON format and relies on some added headers to determine the message
-    ///     type upon deserialization. This default serializer is ideal when the producer and the consumer are
-    ///     both using Silverback.
+    ///     The base class for <see cref="NewtonsoftJsonMessageSerializer" /> and
+    ///     <see cref="NewtonsoftJsonMessageSerializer{TMessage}" />.
     /// </summary>
-    public class NewtonsoftJsonMessageSerializer : IMessageSerializer
+    public abstract class NewtonsoftJsonMessageSerializerBase : IMessageSerializer
     {
-        /// <summary>
-        ///     Gets the default static instance of <see cref="NewtonsoftJsonMessageSerializer" />.
-        /// </summary>
-        public static NewtonsoftJsonMessageSerializer Default { get; } = new NewtonsoftJsonMessageSerializer();
-
         /// <summary>
         ///     Gets or sets the message encoding. The default is UTF8.
         /// </summary>
@@ -45,48 +37,17 @@ namespace Silverback.Tests.Performance.LegacyImplementations
 
         /// <inheritdoc cref="IMessageSerializer.Serialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public virtual byte[]? Serialize(
+        public abstract byte[]? Serialize(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
-        {
-            Check.NotNull(messageHeaders, nameof(messageHeaders));
-
-            if (message == null)
-                return null;
-
-            if (message is byte[] bytes)
-                return bytes;
-
-            var type = message.GetType();
-            var json = JsonConvert.SerializeObject(message, type, Settings);
-
-            messageHeaders.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
-
-            return GetSystemEncoding().GetBytes(json);
-        }
+            MessageSerializationContext context);
 
         /// <inheritdoc cref="IMessageSerializer.Deserialize" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public virtual (object?, Type) Deserialize(
+        public abstract (object?, Type) Deserialize(
             byte[]? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
-        {
-            Check.NotNull(messageHeaders, nameof(messageHeaders));
-
-            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders);
-
-            if (message == null || message.Length == 0)
-                return (null, type);
-
-            var jsonString = GetSystemEncoding().GetString(message);
-
-            var deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings) ??
-                                     throw new MessageSerializerException("The deserialization returned null.");
-
-            return (deserializedObject, type);
-        }
+            MessageSerializationContext context);
 
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]

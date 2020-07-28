@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
+        <RootNamespace>$(RootNamespace)</RootNamespace>
+        <Version>$(BaseVersion)</Version>
+        <Authors>$(Authors)</Authors>
+        <Company>$(Company)</Company>
+        <PackageLicenseExpression>$(License)</PackageLicenseExpression>
+        <Copyright>$(Copyright)</Copyright>
+        <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
+        <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
+        <RepositoryType>$(RepositoryType)</RepositoryType>
+        <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
+        <Description>$(Description)
+This package contains the legacy IMessageSerializer based on Newtonsoft.Json.</Description>
+        <PackageIconUrl>$(IconUrl)</PackageIconUrl>
+        <PackageTags>$(Tags)</PackageTags>
+        <LangVersion>$(LangVersion)</LangVersion>
+        <NoWarn>$(NoWarn)</NoWarn>
+        <PackageId>Silverback.Integration.Newtonsoft</PackageId>
+        <Product>Silverback.Integration.Newtonsoft</Product>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.Newtonsoft.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DocumentationFile>bin\Release\netstandard2.0\Silverback.Integration.Newtonsoft.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
+    </ItemGroup>
+
+</Project>

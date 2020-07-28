@@ -13,6 +13,7 @@ namespace Silverback.Examples.Common.Logging
     public static class LoggingConfiguration
     {
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Here for future use")]
+        [SuppressMessage("ReSharper", "CA1823", Justification = "Here for future use")]
         private const string VerboseOutputTemplate =
             "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}) {Message:lj} {Exception} {Properties}{NewLine}";
 

@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Serialization
 {
@@ -14,7 +15,8 @@ namespace Silverback.Messaging.Serialization
     /// <typeparam name="TMessage">
     ///     The type of the messages to be serialized and/or deserialized.
     /// </typeparam>
-    public class JsonMessageSerializer<TMessage> : JsonMessageSerializer
+    public sealed class JsonMessageSerializer<TMessage>
+        : JsonMessageSerializerBase, IEquatable<JsonMessageSerializer<TMessage>>
     {
         private readonly Type _type = typeof(TMessage);
 
@@ -47,5 +49,26 @@ namespace Silverback.Messaging.Serialization
             var deserializedObject = JsonSerializer.Deserialize(message, _type, Options);
             return (deserializedObject, _type);
         }
+
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+        public bool Equals(JsonMessageSerializer<TMessage>? other) => ComparisonHelper.JsonEquals(this, other);
+
+        /// <inheritdoc cref="object.Equals(object)" />
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj))
+                return false;
+
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((JsonMessageSerializer<TMessage>?)obj);
+        }
+
+        /// <inheritdoc cref="object.GetHashCode" />
+        public override int GetHashCode() => HashCode.Combine(1, typeof(TMessage).Name);
     }
 }
