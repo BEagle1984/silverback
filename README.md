@@ -59,6 +59,7 @@ Silverback is split into multiple nuget packages available on nuget.org.
 [Silverback.Integration.RabbitMQ][Nuget-Integration.RabbitMQ] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.RabbitMQ?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ)
 [Silverback.Integration.InMemory][Nuget-Integration.InMemory] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.InMemory?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.InMemory)
 [Silverback.Integration.HealthChecks][Nuget-Integration.HealthChecks] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.HealthChecks?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks)
+[Silverback.Integration.Newtonsoft][Nuget-Integration.Newtonsoft] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Newtonsoft?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft)
 
 ## Usage
 
@@ -83,3 +84,4 @@ This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle
 [Nuget-Integration.RabbitMQ]: https://www.nuget.org/packages/Silverback.Integration.RabbitMQ/
 [Nuget-Integration.InMemory]: https://www.nuget.org/packages/Silverback.Integration.InMemory/
 [Nuget-Integration.HealthChecks]: https://www.nuget.org/packages/Silverback.Integration.HealthChecks/
+[Nuget-Integration.Newtonsoft]: https://www.nuget.org/packages/Silverback.Integration.Newtonsoft/

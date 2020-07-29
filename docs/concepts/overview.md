@@ -85,6 +85,12 @@ Contains the extensions for `Microsoft.Extensions.Diagnostics.HealthChecks` to m
 
 [![NuGet](https://buildstats.info/nuget/Silverback.Integration.HealthChecks?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks)
 
+#### Silverback.Integration.Newtonsoft
+
+Contains the legacy implementations of `IMessageSerializer`, based on Newtonsoft.Json.
+
+[![NuGet](https://buildstats.info/nuget/Silverback.Integration.Newtonsoft?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft)
+
 ### Event Sourcing
 
 #### Silverback.EventSourcing
