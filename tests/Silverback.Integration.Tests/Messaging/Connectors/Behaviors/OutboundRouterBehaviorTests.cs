@@ -41,17 +41,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             var services = new ServiceCollection();
 
-            _outboundQueue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
             _testSubscriber = new TestSubscriber();
-
-            services.AddSingleton<IOutboundQueueWriter>(_outboundQueue);
 
             services.AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddBroker<TestBroker>()
                         .AddBroker<TestOtherBroker>()
-                        .AddDeferredOutboundConnector()
+                        .AddDeferredOutboundConnector<InMemoryOutboundQueue>()
                         .AddOutboundConnector());
 
             services.AddSingletonSubscriber(_testSubscriber);
@@ -66,6 +63,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 (OutboundRoutingConfiguration)_serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
             _broker = _serviceProvider.GetRequiredService<TestBroker>();
             _otherBroker = _serviceProvider.GetRequiredService<TestOtherBroker>();
+            _outboundQueue = (InMemoryOutboundQueue)_serviceProvider.GetRequiredService<IOutboundQueueWriter>();
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]

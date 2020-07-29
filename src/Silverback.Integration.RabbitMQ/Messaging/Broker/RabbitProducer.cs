@@ -78,11 +78,11 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Producer.ProduceCore" />
-        protected override IOffset? ProduceCore(IRawOutboundEnvelope envelope) =>
+        protected override IOffset? ProduceCore(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceAsyncCore(envelope));
 
         /// <inheritdoc cref="Producer.ProduceAsyncCore" />
-        protected override Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope)
+        protected override Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
         {
             var queuedMessage = new QueuedMessage(envelope);
 

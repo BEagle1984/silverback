@@ -31,16 +31,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             var services = new ServiceCollection();
 
-            _outboundQueue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
-
-            services.AddSingleton<IOutboundQueueWriter>(_outboundQueue);
-
             services.AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddBroker<TestBroker>()
                         .AddOutboundConnector()
-                        .AddDeferredOutboundConnector());
+                        .AddDeferredOutboundConnector<InMemoryOutboundQueue>());
 
             services.AddNullLogger();
 
@@ -49,6 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             _behavior = (OutboundProducerBehavior)serviceProvider.GetServices<IBehavior>()
                 .First(behavior => behavior is OutboundProducerBehavior);
             _broker = serviceProvider.GetRequiredService<TestBroker>();
+            _outboundQueue = (InMemoryOutboundQueue)serviceProvider.GetRequiredService<IOutboundQueueWriter>();
         }
 
         [Fact]

@@ -108,6 +108,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             brokerOptionsBuilder.AddDeferredOutboundConnector();
             brokerOptionsBuilder.SilverbackBuilder.Services.AddScoped<IOutboundQueueWriter, TQueueWriter>();
+            brokerOptionsBuilder.SilverbackBuilder.Services.AddScoped<OutboundQueueBroker>();
 
             return brokerOptionsBuilder;
         }

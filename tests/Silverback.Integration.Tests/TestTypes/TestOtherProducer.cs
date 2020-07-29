@@ -28,13 +28,13 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public List<ProducedMessage> ProducedMessages { get; }
 
-        protected override IOffset? ProduceCore(IRawOutboundEnvelope envelope)
+        protected override IOffset? ProduceCore(IOutboundEnvelope envelope)
         {
             ProducedMessages.Add(new ProducedMessage(envelope.RawMessage, envelope.Headers, Endpoint));
             return null;
         }
 
-        protected override Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope)
+        protected override Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
         {
             Produce(envelope.RawMessage, envelope.Headers);
             return Task.FromResult<IOffset?>(null);

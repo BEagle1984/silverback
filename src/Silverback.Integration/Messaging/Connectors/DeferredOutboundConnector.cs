@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
@@ -14,25 +15,25 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public class DeferredOutboundConnector : IOutboundConnector
     {
-        private readonly IOutboundQueueWriter _queueWriter;
+        private readonly OutboundQueueBroker _outboundQueueBroker;
 
         private readonly ISilverbackLogger _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DeferredOutboundConnector" /> class.
         /// </summary>
-        /// <param name="queueWriter">
-        ///     The <see cref="IOutboundQueueWriter" /> implementation to be used to enqueue the messages.
+        /// <param name="outboundQueueBroker">
+        ///     The <see cref="OutboundQueueProducer"/> to be used to enqueue the messages using the underlying <see cref="IOutboundQueueWriter"/>.
         /// </param>
         /// <param name="logger">
         ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public DeferredOutboundConnector(
-            IOutboundQueueWriter queueWriter,
+            OutboundQueueBroker outboundQueueBroker,
             ISilverbackLogger<DeferredOutboundConnector> logger)
         {
-            _queueWriter = queueWriter;
-            _logger = logger;
+            _outboundQueueBroker = Check.NotNull(outboundQueueBroker, nameof(outboundQueueBroker));
+            _logger = Check.NotNull(logger, nameof(logger));
         }
 
         /// <summary>
@@ -45,13 +46,16 @@ namespace Silverback.Messaging.Connectors
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public async Task RelayMessage(IOutboundEnvelope envelope)
+        public Task RelayMessage(IOutboundEnvelope envelope)
         {
+            Check.NotNull(envelope, nameof(envelope));
+
             _logger.LogDebugWithMessageInfo(
                 IntegrationEventIds.OutboundMessageEnqueued,
                 "Enqueuing outbound message for deferred produce.",
                 envelope);
-            await _queueWriter.Enqueue(envelope).ConfigureAwait(false);
+
+            return _outboundQueueBroker.GetProducer(envelope.Endpoint).ProduceAsync(envelope);
         }
     }
 }

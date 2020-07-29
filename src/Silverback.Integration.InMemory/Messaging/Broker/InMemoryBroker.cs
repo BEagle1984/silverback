@@ -11,7 +11,10 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}" />
+    /// <summary>
+    ///     An <see cref="IBroker" /> implementation that is used for testing purpose only. The messages are not
+    ///     transferred through a real message broker.
+    /// </summary>
     public class InMemoryBroker : Broker<IProducerEndpoint, IConsumerEndpoint>
     {
         private readonly ConcurrentDictionary<string, InMemoryTopic> _topics =

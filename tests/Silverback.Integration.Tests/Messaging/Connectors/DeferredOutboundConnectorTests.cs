@@ -1,11 +1,14 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Connectors.Repositories.Model;
@@ -28,9 +31,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
         public DeferredOutboundConnectorTests()
         {
+            var services = new ServiceCollection();
+            services.AddNullLogger().AddSilverback();
+            var serviceProvider = services.BuildServiceProvider();
+
             _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
+            var broker = new OutboundQueueBroker(_queue, Array.Empty<IBrokerBehavior>(), serviceProvider);
             _connector = new DeferredOutboundConnector(
-                _queue,
+                broker,
                 Substitute.For<ISilverbackLogger<DeferredOutboundConnector>>());
             _transactionManager = new DeferredOutboundConnectorTransactionManager(_queue);
         }

@@ -65,11 +65,10 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public async Task AddDeferredOutboundConnector_PublishMessages_MessagesQueued()
         {
             _services
-                .AddScoped<IOutboundQueueWriter, InMemoryOutboundQueue>()
                 .AddSilverback().WithConnectionToMessageBroker(
                     options => options
                         .AddBroker<TestBroker>()
-                        .AddDeferredOutboundConnector())
+                        .AddDeferredOutboundConnector<InMemoryOutboundQueue>())
                 .AddSingletonSubscriber(_testSubscriber);
 
             GetBusConfigurator().Connect(
@@ -90,11 +89,10 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public async Task AddDeferredOutboundConnector_Rollback_MessagesNotQueued()
         {
             _services
-                .AddScoped<IOutboundQueueWriter, InMemoryOutboundQueue>()
                 .AddSilverback().WithConnectionToMessageBroker(
                     options => options
                         .AddBroker<TestBroker>()
-                        .AddDeferredOutboundConnector())
+                        .AddDeferredOutboundConnector<InMemoryOutboundQueue>())
                 .AddSingletonSubscriber(_testSubscriber);
 
             GetBusConfigurator().Connect(

@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.0.0-beta.3](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.2)
+## [3.0.0-beta.4](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.4)
 
 ### What's new
 
@@ -20,6 +20,8 @@ uid: releases
 * Add basic consumers health check (see <xref:message-broker#health-monitoring>)
 
 ### Fixes
+
+* Fix DeferredOutboundConnector not publishing custom headers [[#102](https://github.com/BEagle1984/silverback/issues/102)]
 
 ### Breaking Changes
 

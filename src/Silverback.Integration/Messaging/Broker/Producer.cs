@@ -56,16 +56,19 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer.Behaviors" />
         public IReadOnlyCollection<IProducerBehavior> Behaviors { get; }
 
-        /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?)" />
-        public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
-            Produce(new OutboundEnvelope(message, headers, Endpoint));
+        /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?,bool)" />
+        public void Produce(
+            object? message,
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            bool disableBehaviors = false) =>
+            Produce(new OutboundEnvelope(message, headers, Endpoint), disableBehaviors);
 
-        /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
-        public void Produce(IOutboundEnvelope envelope) =>
+        /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,bool)" />
+        public void Produce(IOutboundEnvelope envelope, bool disableBehaviors = false) =>
             AsyncHelper.RunSynchronously(
                 () =>
                     ExecutePipeline(
-                        Behaviors,
+                        disableBehaviors ? Array.Empty<IProducerBehavior>() : Behaviors,
                         new ProducerPipelineContext(envelope, this),
                         finalContext =>
                         {
@@ -75,14 +78,17 @@ namespace Silverback.Messaging.Broker
                             return Task.CompletedTask;
                         }));
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
-        public Task ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
-            ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
+        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,bool)" />
+        public Task ProduceAsync(
+            object? message,
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            bool disableBehaviors = false) =>
+            ProduceAsync(new OutboundEnvelope(message, headers, Endpoint), disableBehaviors);
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
-        public async Task ProduceAsync(IOutboundEnvelope envelope) =>
+        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,bool)" />
+        public async Task ProduceAsync(IOutboundEnvelope envelope, bool disableBehaviors = false) =>
             await ExecutePipeline(
-                Behaviors,
+                disableBehaviors ? Array.Empty<IProducerBehavior>() : Behaviors,
                 new ProducerPipelineContext(envelope, this),
                 async finalContext =>
                 {
@@ -99,7 +105,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     The message offset.
         /// </returns>
-        protected abstract IOffset? ProduceCore(IRawOutboundEnvelope envelope);
+        protected abstract IOffset? ProduceCore(IOutboundEnvelope envelope);
 
         /// <summary>
         ///     Publishes the specified message and returns its offset.
@@ -111,7 +117,7 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the message
         ///     offset.
         /// </returns>
-        protected abstract Task<IOffset?> ProduceAsyncCore(IRawOutboundEnvelope envelope);
+        protected abstract Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope);
 
         private async Task ExecutePipeline(
             IReadOnlyCollection<IProducerBehavior> behaviors,

@@ -110,7 +110,9 @@ namespace Silverback.Messaging.Connectors
             byte[]? content,
             IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint)
-            => _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers);
+        {
+            return _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers, true);
+        }
 
         private async Task ProcessQueue(IServiceProvider serviceProvider, CancellationToken stoppingToken)
         {

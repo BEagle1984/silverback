@@ -19,6 +19,10 @@ namespace Silverback.Messaging.Messages
             : base(headers, endpoint, offset)
         {
             Message = message;
+
+            if (Message is byte[] rawMessage)
+                RawMessage = rawMessage;
+
             OutboundConnectorType = outboundConnectorType;
             AutoUnwrap = autoUnwrap;
         }
