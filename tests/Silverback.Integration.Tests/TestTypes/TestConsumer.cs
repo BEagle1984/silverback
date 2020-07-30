@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.TestTypes
             if (!IsConnected)
                 throw new InvalidOperationException("The consumer is not ready.");
 
-            await HandleMessage(rawMessage, headers, "test-topic", offset);
+            await HandleMessage(rawMessage, headers, "test-topic", offset, null);
         }
 
         protected override void ConnectCore()

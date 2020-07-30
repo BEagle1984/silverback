@@ -282,7 +282,11 @@ namespace Silverback.Messaging.Broker
                 throw new InvalidOperationException("The consumer is not connected.");
 
             _messagesSinceCommit++;
+
+            Dictionary<string, string> logData = new Dictionary<string, string>();
+
             KafkaOffset? offset = new KafkaOffset(tpo);
+            logData["offset"] = $"{offset.Partition}@{offset.Offset}";
 
             var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());
 
@@ -295,13 +299,16 @@ namespace Silverback.Messaging.Broker
 
                 headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, deserializedKafkaKey);
                 headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
+
+                logData["kafkaKey"] = deserializedKafkaKey;
             }
 
             await HandleMessage(
                     message.Value,
                     headers,
                     tpo.Topic,
-                    offset)
+                    offset,
+                    logData)
                 .ConfigureAwait(false);
         }
 

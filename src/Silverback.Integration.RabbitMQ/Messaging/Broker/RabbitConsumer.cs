@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -135,6 +136,12 @@ namespace Silverback.Messaging.Broker
             {
                 var offset = new RabbitOffset(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
 
+                Dictionary<string, string> logData = new Dictionary<string, string>
+                {
+                    ["deliveryTag"] = $"{offset.DeliveryTag.ToString(CultureInfo.InvariantCulture)}",
+                    ["routingKey"] = deliverEventArgs.RoutingKey
+                };
+
                 _logger.LogDebug(
                     RabbitEventIds.ConsumingMessage,
                     "Consuming message {offset} from endpoint {endpointName}.",
@@ -148,7 +155,8 @@ namespace Silverback.Messaging.Broker
                         deliverEventArgs.Body.ToArray(),
                         deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
                         Endpoint.Name,
-                        offset)
+                        offset,
+                        logData)
                     .ConfigureAwait(false);
             }
             catch (Exception)

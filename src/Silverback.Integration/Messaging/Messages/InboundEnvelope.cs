@@ -16,7 +16,8 @@ namespace Silverback.Messaging.Messages
                 envelope.Headers,
                 envelope.Offset,
                 envelope.Endpoint,
-                envelope.ActualEndpointName)
+                envelope.ActualEndpointName,
+                envelope.AdditionalLogData)
         {
         }
 
@@ -26,8 +27,9 @@ namespace Silverback.Messaging.Messages
             IEnumerable<MessageHeader>? headers,
             IOffset? offset,
             IConsumerEndpoint endpoint,
-            string actualEndpointName)
-            : base(rawMessage, headers, endpoint, actualEndpointName, offset)
+            string actualEndpointName,
+            IDictionary<string, string>? additionalLogData = null)
+            : base(rawMessage, headers, endpoint, actualEndpointName, offset, additionalLogData)
         {
         }
 

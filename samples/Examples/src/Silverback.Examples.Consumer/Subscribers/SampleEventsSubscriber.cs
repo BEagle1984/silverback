@@ -27,7 +27,7 @@ namespace Silverback.Examples.Consumer.Subscribers
             _dbContext = dbContext;
         }
 
-        [Subscribe(Parallel = true)]
+        [Subscribe]
         public async Task OnIntegrationEventReceived(IntegrationEvent message)
         {
             _logger.LogInformation("Received IntegrationEvent {@message}", message);

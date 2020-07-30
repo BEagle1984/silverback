@@ -32,15 +32,5 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
             offset.ConsumerTag.Should().Be("test-queue");
             offset.DeliveryTag.Should().Be(42);
         }
-
-        [Fact]
-        public void ToLogString_Offset_StringReturned()
-        {
-            var offset = new RabbitOffset("test-queue", 42);
-
-            var logString = offset.ToLogString();
-
-            logString.Should().Be("42");
-        }
     }
 }

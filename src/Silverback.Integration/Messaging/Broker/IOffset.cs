@@ -32,14 +32,5 @@ namespace Silverback.Messaging.Broker
         ///     Gets the offset value.
         /// </summary>
         string Value { get; }
-
-        /// <summary>
-        ///     Returns a string representation of the offset suitable for logging purpose.
-        /// </summary>
-        /// <returns>
-        ///     For an optimal readability of the logs this string should include the topic/queue subset (such as the
-        ///     partition in Kafka) but not the topic/queue name (that's already logged).
-        /// </returns>
-        string ToLogString();
     }
 }

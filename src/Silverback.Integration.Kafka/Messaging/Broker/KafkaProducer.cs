@@ -104,7 +104,10 @@ namespace Silverback.Messaging.Broker
                     CheckPersistenceStatus(deliveryResult);
                 }
 
-                return new KafkaOffset(deliveryResult.TopicPartitionOffset);
+                var offset = new KafkaOffset(deliveryResult.TopicPartitionOffset);
+                envelope.AdditionalLogData["offset"] = $"{offset.Partition}@{offset.Offset}";
+
+                return offset;
             }
             catch (KafkaException ex)
             {

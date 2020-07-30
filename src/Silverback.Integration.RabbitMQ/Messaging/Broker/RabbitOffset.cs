@@ -55,8 +55,5 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IOffset.Value" />
         public string Value { get; }
-
-        /// <inheritdoc cref="IOffset.ToLogString" />
-        public string ToLogString() => DeliveryTag.ToString(CultureInfo.InvariantCulture);
     }
 }

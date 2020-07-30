@@ -163,7 +163,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="offset">
         ///     The offset of the consumed message.
         /// </param>
-        /// a
+        /// <param name="additionalLogData">
+        ///     An optional dictionary containing the broker specific data to be logged when processing the consumed message.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -172,7 +174,8 @@ namespace Silverback.Messaging.Broker
             byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
             string sourceEndpointName,
-            IOffset? offset)
+            IOffset? offset,
+            IDictionary<string, string>? additionalLogData)
         {
             _statusInfo.RecordConsumedMessage(offset);
 
@@ -181,7 +184,7 @@ namespace Silverback.Messaging.Broker
                     new ConsumerPipelineContext(
                         new[]
                         {
-                            new RawInboundEnvelope(message, headers, Endpoint, sourceEndpointName, offset)
+                            new RawInboundEnvelope(message, headers, Endpoint, sourceEndpointName, offset, additionalLogData)
                         },
                         this),
                     _serviceProvider)

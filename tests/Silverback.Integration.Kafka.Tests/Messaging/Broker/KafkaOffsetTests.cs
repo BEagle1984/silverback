@@ -124,16 +124,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             result.Should().Be(expectedResult);
         }
 
-        [Fact]
-        public void ToLogString_Offset_StringReturned()
-        {
-            var offset = new KafkaOffset("test-topic", 2, 42);
-
-            var logString = offset.ToLogString();
-
-            logString.Should().Be("2@42");
-        }
-
         [Theory]
         [InlineData(10, 5, 1)]
         [InlineData(1, 3, -1)]

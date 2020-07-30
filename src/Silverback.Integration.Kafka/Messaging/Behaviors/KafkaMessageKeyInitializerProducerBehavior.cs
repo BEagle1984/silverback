@@ -29,13 +29,17 @@ namespace Silverback.Messaging.Behaviors
             if (key != null)
             {
                 context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, key);
+                context.Envelope.AdditionalLogData["kafkaKey"] = key;
             }
             else
             {
                 var messageId = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
 
                 if (messageId != null)
+                {
                     context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, messageId);
+                    context.Envelope.AdditionalLogData["kafkaKey"] = messageId;
+                }
             }
 
             await next(context).ConfigureAwait(false);

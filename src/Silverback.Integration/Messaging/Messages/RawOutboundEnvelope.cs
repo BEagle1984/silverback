@@ -13,8 +13,9 @@ namespace Silverback.Messaging.Messages
         public RawOutboundEnvelope(
             IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint,
-            IOffset? offset = null)
-            : this(null, headers, endpoint, offset)
+            IOffset? offset = null,
+            IDictionary<string, string>? additionalLogData = null)
+            : this(null, headers, endpoint, offset, additionalLogData)
         {
         }
 
@@ -23,8 +24,9 @@ namespace Silverback.Messaging.Messages
             byte[]? rawMessage,
             IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint,
-            IOffset? offset = null)
-            : base(rawMessage, headers, endpoint, offset)
+            IOffset? offset = null,
+            IDictionary<string, string>? additionalLogData = null)
+            : base(rawMessage, headers, endpoint, offset, additionalLogData)
         {
         }
 

@@ -16,9 +16,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj"/>
-        <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj"/>
-        <ProjectReference Include="..\Silverback.Integration.Tests\Silverback.Integration.Tests.csproj"/>
+        <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj" />
+        <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj" />
+        <ProjectReference Include="..\Silverback.Integration.Tests\Silverback.Integration.Tests.csproj" />
     </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -9,7 +10,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Messages
 {
-    public class LoggerExtensionsTests
+    public class SilverbackLoggerExtensionsTests
     {
         private static readonly IRawInboundEnvelope InboundEnvelope = new RawInboundEnvelope(
             Array.Empty<byte>(),
@@ -17,13 +18,53 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             {
                 new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
                 new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                new MessageHeader(DefaultMessageHeaders.MessageId, "1234"),
-                new MessageHeader(DefaultMessageHeaders.BatchId, "3"),
-                new MessageHeader(DefaultMessageHeaders.BatchSize, "10"),
+                new MessageHeader(DefaultMessageHeaders.MessageId, "1234")
             },
             new TestConsumerEndpoint("Test"),
             "TestActual",
-            new TestOffset("abc", "9"));
+            null,
+            new Dictionary<string, string>
+            {
+                ["offset-in"] = "9"
+            });
+
+        private static readonly IRawInboundEnvelope[] InboundBatch =
+        {
+            new RawInboundEnvelope(
+                Array.Empty<byte>(),
+                new MessageHeaderCollection
+                {
+                    new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "1234"),
+                    new MessageHeader(DefaultMessageHeaders.BatchId, "3"),
+                    new MessageHeader(DefaultMessageHeaders.BatchSize, "10")
+                },
+                new TestConsumerEndpoint("Test"),
+                "TestActual",
+                null,
+                new Dictionary<string, string>
+                {
+                    ["offset-in"] = "9"
+                }),
+            new RawInboundEnvelope(
+                Array.Empty<byte>(),
+                new MessageHeaderCollection
+                {
+                    new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
+                    new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "5678"),
+                    new MessageHeader(DefaultMessageHeaders.BatchId, "3"),
+                    new MessageHeader(DefaultMessageHeaders.BatchSize, "10")
+                },
+                new TestConsumerEndpoint("Test"),
+                "TestActual",
+                null,
+                new Dictionary<string, string>
+                {
+                    ["offset-in"] = "10"
+                })
+        };
 
         private static readonly IRawOutboundEnvelope OutboundEnvelope = new RawOutboundEnvelope(
             Array.Empty<byte>(),
@@ -33,10 +74,50 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new MessageHeader(DefaultMessageHeaders.MessageId, "1234")
             },
             new TestProducerEndpoint("Test"),
-            new TestOffset("abc", "9"));
+            null,
+            new Dictionary<string, string>
+            {
+                ["offset-out"] = "9"
+            });
 
-        private readonly LoggerSubstitute<LoggerExtensionsTests>
-            _logger = new LoggerSubstitute<LoggerExtensionsTests>();
+        private static readonly IRawOutboundEnvelope[] OutboundBatch =
+        {
+            new RawOutboundEnvelope(
+                Array.Empty<byte>(),
+                new MessageHeaderCollection
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "1234")
+                },
+                new TestProducerEndpoint("Test"),
+                null,
+                new Dictionary<string, string>
+                {
+                    ["offset-out"] = "9"
+                }),
+            new RawOutboundEnvelope(
+                Array.Empty<byte>(),
+                new MessageHeaderCollection
+                {
+                    new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                    new MessageHeader(DefaultMessageHeaders.MessageId, "5678")
+                },
+                new TestProducerEndpoint("Test"),
+                null,
+                new Dictionary<string, string>
+                {
+                    ["offset-out"] = "10"
+                })
+        };
+
+        private readonly LoggerSubstitute<SilverbackLoggerExtensionsTests>
+            _logger = new LoggerSubstitute<SilverbackLoggerExtensionsTests>();
+
+        public SilverbackLoggerExtensionsTests()
+        {
+            LogTemplates.ConfigureAdditionalData<TestConsumerEndpoint>("offset-in");
+            LogTemplates.ConfigureAdditionalData<TestProducerEndpoint>("offset-out");
+        }
 
         [Fact]
         public void LogProcessing_SingleInboundEnvelope_InformationLogged()
@@ -44,14 +125,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             _logger.LogProcessing(new[] { InboundEnvelope });
 
             const string expectedMessage =
-                "Processing inbound message. (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Processing inbound message. | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Information, null, expectedMessage);
         }
@@ -59,17 +138,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogProcessing_MultipleInboundEnvelopes_InformationLogged()
         {
-            _logger.LogProcessing(new[] { InboundEnvelope, InboundEnvelope });
+            _logger.LogProcessing(InboundBatch);
 
             const string expectedMessage =
-                "Processing the batch of 2 inbound messages. (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Processing the batch of 2 inbound messages. | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Information, null, expectedMessage);
         }
@@ -80,14 +156,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             _logger.LogProcessingError(new[] { InboundEnvelope }, new InvalidOperationException());
 
             const string expectedMessage =
-                "Error occurred processing the inbound message. (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Error occurred processing the inbound message. | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
         }
@@ -95,17 +169,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogProcessingError_MultipleInboundEnvelopes_WarningLogged()
         {
-            _logger.LogProcessingError(new[] { InboundEnvelope, InboundEnvelope }, new InvalidOperationException());
+            _logger.LogProcessingError(InboundBatch, new InvalidOperationException());
 
             const string expectedMessage =
-                "Error occurred processing the batch of 2 inbound messages. (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Error occurred processing the batch of 2 inbound messages. | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
         }
@@ -119,14 +190,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 InboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Trace, null, expectedMessage);
         }
@@ -137,17 +206,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             _logger.LogTraceWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Trace, null, expectedMessage);
         }
@@ -161,14 +227,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 InboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Debug, null, expectedMessage);
         }
@@ -179,17 +243,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             _logger.LogDebugWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Debug, null, expectedMessage);
         }
@@ -203,14 +264,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 InboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Information, null, expectedMessage);
         }
@@ -221,17 +280,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             _logger.LogInformationWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Information, null, expectedMessage);
         }
@@ -245,14 +301,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 InboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Warning, null, expectedMessage);
         }
@@ -267,14 +321,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 InboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
         }
@@ -285,17 +337,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             _logger.LogWarningWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Warning, null, expectedMessage);
         }
@@ -307,17 +356,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
         }
@@ -331,14 +377,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 InboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Error, null, expectedMessage);
         }
@@ -353,14 +397,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 InboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Error, typeof(InvalidOperationException), expectedMessage);
         }
@@ -371,17 +413,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             _logger.LogErrorWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Error, null, expectedMessage);
         }
@@ -393,17 +432,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Error, typeof(InvalidOperationException), expectedMessage);
         }
@@ -417,14 +453,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 InboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Critical, null, expectedMessage);
         }
@@ -439,14 +473,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 InboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Critical, typeof(InvalidOperationException), expectedMessage);
         }
@@ -457,17 +489,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             _logger.LogCriticalWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Critical, null, expectedMessage);
         }
@@ -479,17 +508,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Critical, typeof(InvalidOperationException), expectedMessage);
         }
@@ -503,11 +529,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 OutboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: Test, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9)";
+                "Log message | " +
+                "endpointName: Test, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-out: 9";
 
             _logger.Received(LogLevel.Critical, null, expectedMessage);
         }
@@ -522,11 +548,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 OutboundEnvelope);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: Test, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9)";
+                "Log message | " +
+                "endpointName: Test, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-out: 9";
 
             _logger.Received(LogLevel.Critical, typeof(InvalidOperationException), expectedMessage);
         }
@@ -537,14 +563,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             _logger.LogCriticalWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
-                new[] { OutboundEnvelope, OutboundEnvelope });
+                OutboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: Test, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>)";
+                "Log message | " +
+                "endpointName: Test";
 
             _logger.Received(LogLevel.Critical, null, expectedMessage);
         }
@@ -556,14 +579,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
-                new[] { OutboundEnvelope, OutboundEnvelope });
+                OutboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: Test, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>)";
+                "Log message | " +
+                "endpointName: Test";
 
             _logger.Received(LogLevel.Critical, typeof(InvalidOperationException), expectedMessage);
         }
@@ -579,14 +599,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new[] { InboundEnvelope });
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Warning, null, expectedMessage);
         }
@@ -602,14 +620,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new[] { InboundEnvelope });
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-in: 9";
 
             _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
         }
@@ -622,17 +638,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new EventId(42, "test"),
                 null,
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Warning, null, expectedMessage);
         }
@@ -645,17 +658,14 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
-                new[] { InboundEnvelope, InboundEnvelope });
+                InboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: TestActual, " +
-                "FailedAttempts: 1, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>, " +
-                "BatchId: 3, " +
-                "BatchSize: 10)";
+                "Log message | " +
+                "endpointName: TestActual, " +
+                "failedAttempts: 1, " +
+                "batchId: 3, " +
+                "batchSize: 10";
 
             _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
         }
@@ -671,11 +681,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new[] { OutboundEnvelope });
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: Test, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9)";
+                "Log message | " +
+                "endpointName: Test, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-out: 9";
 
             _logger.Received(LogLevel.Warning, null, expectedMessage);
         }
@@ -691,11 +701,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new[] { OutboundEnvelope });
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: Test, " +
-                "Type: Something.Xy, " +
-                "Id: 1234, " +
-                "Offset: 9)";
+                "Log message | " +
+                "endpointName: Test, " +
+                "messageType: Something.Xy, " +
+                "messageId: 1234, " +
+                "offset-out: 9";
 
             _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
         }
@@ -708,14 +718,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new EventId(42, "test"),
                 null,
                 "Log message",
-                new[] { OutboundEnvelope, OutboundEnvelope });
+                OutboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: Test, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>)";
+                "Log message | " +
+                "endpointName: Test";
 
             _logger.Received(LogLevel.Warning, null, expectedMessage);
         }
@@ -728,14 +735,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
-                new[] { OutboundEnvelope, OutboundEnvelope });
+                OutboundBatch);
 
             const string expectedMessage =
-                "Log message (" +
-                "Endpoint: Test, " +
-                "Type: <batch>, " +
-                "Id: <batch>, " +
-                "Offset: <batch>)";
+                "Log message | " +
+                "endpointName: Test";
 
             _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
         }

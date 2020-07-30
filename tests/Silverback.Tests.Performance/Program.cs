@@ -11,7 +11,7 @@ namespace Silverback.Tests.Performance
         {
             /* BenchmarkRunner.Run(typeof(JsonMessageSerializerBenchmark)); */
 
-            BenchmarkRunner.Run(typeof(LoggerExtensionsBenchmark));
+            BenchmarkRunner.Run(typeof(SilverbackLoggerExtensionsBenchmark));
         }
     }
 }

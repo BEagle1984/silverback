@@ -118,16 +118,6 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             result.Should().Be(expectedResult);
         }
 
-        [Fact]
-        public void ToLogString_Offset_StringReturned()
-        {
-            var offset = new InMemoryOffset("key", 42);
-
-            var logString = offset.ToLogString();
-
-            logString.Should().Be("42");
-        }
-
         [Theory]
         [InlineData(10, 5, 1)]
         [InlineData(1, 3, -1)]

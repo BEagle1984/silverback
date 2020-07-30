@@ -29,7 +29,10 @@ namespace Silverback.Messaging.Behaviors
                 var key = RoutingKeyHelper.GetRoutingKey(context.Envelope.Message);
 
                 if (key != null)
+                {
                     context.Envelope.Headers.AddOrReplace(RabbitMessageHeaders.RoutingKey, key);
+                    context.Envelope.AdditionalLogData["routingKey"] = key;
+                }
             }
 
             await next(context).ConfigureAwait(false);

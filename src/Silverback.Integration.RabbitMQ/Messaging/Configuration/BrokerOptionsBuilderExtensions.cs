@@ -1,7 +1,9 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Messages;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -21,7 +23,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static IBrokerOptionsBuilder AddRabbit(this IBrokerOptionsBuilder brokerOptionsBuilder) =>
-            brokerOptionsBuilder.AddBroker<RabbitBroker>();
+        public static IBrokerOptionsBuilder AddRabbit(this IBrokerOptionsBuilder brokerOptionsBuilder)
+        {
+            LogTemplates.ConfigureAdditionalData<RabbitQueueConsumerEndpoint>("deliveryTag");
+            LogTemplates.ConfigureAdditionalData<RabbitExchangeConsumerEndpoint>("deliveryTag", "routingKey");
+
+            LogTemplates.ConfigureAdditionalData<RabbitExchangeProducerEndpoint>("routingKey");
+
+            return brokerOptionsBuilder.AddBroker<RabbitBroker>();
+        }
     }
 }

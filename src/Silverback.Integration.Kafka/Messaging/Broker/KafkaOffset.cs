@@ -172,9 +172,6 @@ namespace Silverback.Messaging.Broker
         /// </param>
         public static bool operator !=(KafkaOffset left, KafkaOffset right) => !(left == right);
 
-        /// <inheritdoc cref="IOffset.ToLogString" />
-        public string ToLogString() => $"{Partition}@{Offset}";
-
         /// <summary>
         ///     Compares the current instance with another object of the same type and returns an integer that
         ///     indicates whether the current instance precedes, follows, or occurs in the same position in the sort

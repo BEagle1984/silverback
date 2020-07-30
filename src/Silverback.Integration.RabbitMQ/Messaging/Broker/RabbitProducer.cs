@@ -135,19 +135,23 @@ namespace Silverback.Messaging.Broker
             properties.Persistent = true; // TODO: Make it configurable?
             properties.Headers = envelope.Headers.ToDictionary(header => header.Name, header => (object?)header.Value);
 
+            string? routingKey;
+
             switch (Endpoint)
             {
                 case RabbitQueueProducerEndpoint queueEndpoint:
+                    routingKey = queueEndpoint.Name;
                     _channel.BasicPublish(
                         string.Empty,
-                        queueEndpoint.Name,
+                        routingKey,
                         properties,
                         envelope.RawMessage);
                     break;
                 case RabbitExchangeProducerEndpoint exchangeEndpoint:
+                    routingKey = GetRoutingKey(envelope.Headers);
                     _channel.BasicPublish(
                         exchangeEndpoint.Name,
-                        GetRoutingKey(envelope.Headers),
+                        routingKey,
                         properties,
                         envelope.RawMessage);
                     break;

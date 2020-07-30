@@ -12,28 +12,10 @@ namespace Silverback.Messaging.Messages
 {
     /// <summary>
     ///     Adds some methods to the <see cref="ISilverbackLogger" /> used to consistently enrich the log entry
-    ///     with the
-    ///     information about the message(s) being consumed.
+    ///     with the information about the message(s) being consumed.
     /// </summary>
-    public static class LoggerExtensions
+    public static class SilverbackLoggerExtensions
     {
-        private const string InboundArgumentsTemplate = " (" +
-                                                        "Endpoint: {endpointName}, " +
-                                                        "FailedAttempts: {failedAttempts}, " +
-                                                        "Type: {messageType}, " +
-                                                        "Id: {messageId}, " +
-                                                        "Offset: {offset}, " +
-                                                        "BatchId: {batchId}, " +
-                                                        "BatchSize: {batchSize})";
-
-        private const string OutboundArgumentsTemplate = " (" +
-                                                         "Endpoint: {endpointName}, " +
-                                                         "Type: {messageType}, " +
-                                                         "Id: {messageId}, " +
-                                                         "Offset: {offset})";
-
-        private const string BatchPlaceholder = "<batch>";
-
         /// <summary>
         ///     Writes the standard <i>"Processing inbound message"</i> or
         ///     <i>"Processing the batch of # inbound messages"</i> log message.
@@ -576,55 +558,79 @@ namespace Silverback.Messaging.Messages
             if (firstEnvelope == null)
                 return Array.Empty<object>();
 
-            return firstEnvelope is IRawInboundEnvelope inboundEnvelope
-                ? GetInboundLogArguments(inboundEnvelope, envelopes, ref logMessage)
-                : GetOutboundLogArguments(firstEnvelope, envelopes, ref logMessage);
+            if (firstEnvelope is IRawInboundEnvelope inboundEnvelope)
+            {
+                return envelopes.Count == 1 && !firstEnvelope.Headers.Contains(DefaultMessageHeaders.BatchId)
+                    ? GetInboundLogArguments(inboundEnvelope, ref logMessage)
+                    : GetInboundBatchLogArguments(inboundEnvelope, ref logMessage);
+            }
+            else
+            {
+                return envelopes.Count == 1
+                    ? GetOutboundLogArguments(firstEnvelope, ref logMessage)
+                    : GetOutboundBatchLogArguments(firstEnvelope, ref logMessage);
+            }
         }
 
-        private static object?[] GetInboundLogArguments(
-            IRawInboundEnvelope firstEnvelope,
-            IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
-            ref string logMessage)
+        private static object?[] GetInboundLogArguments(IRawInboundEnvelope envelope, ref string logMessage)
         {
-            logMessage += InboundArgumentsTemplate;
+            logMessage += LogTemplates.GetInboundMessageLogTemplate(envelope.Endpoint);
+
+            var arguments = new List<object?>
+            {
+                envelope.ActualEndpointName,
+                envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts),
+                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
+                envelope.Headers.GetValue(DefaultMessageHeaders.MessageId)
+            };
+
+            foreach (string key in LogTemplates.GetInboundMessageArguments(envelope.Endpoint))
+            {
+                arguments.Add(envelope.AdditionalLogData.TryGetValue(key, out string value) ? value : null);
+            }
+
+            return arguments.ToArray();
+        }
+
+        private static object?[] GetInboundBatchLogArguments(IRawInboundEnvelope envelope, ref string logMessage)
+        {
+            logMessage += LogTemplates.GetInboundBatchLogTemplate(envelope.Endpoint);
 
             return new object?[]
             {
-                firstEnvelope.ActualEndpointName,
-                firstEnvelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts),
-                envelopes.Count == 1
-                    ? firstEnvelope.Headers.GetValue(DefaultMessageHeaders.MessageType)
-                    : BatchPlaceholder,
-                envelopes.Count == 1
-                    ? firstEnvelope.Headers.GetValue(DefaultMessageHeaders.MessageId)
-                    : BatchPlaceholder,
-                envelopes.Count == 1
-                    ? firstEnvelope.Offset?.ToLogString()
-                    : BatchPlaceholder,
-                firstEnvelope.Headers.GetValue(DefaultMessageHeaders.BatchId),
-                firstEnvelope.Headers.GetValue(DefaultMessageHeaders.BatchSize)
+                envelope.ActualEndpointName,
+                envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts),
+                envelope.Headers.GetValue(DefaultMessageHeaders.BatchId),
+                envelope.Headers.GetValue(DefaultMessageHeaders.BatchSize)
             };
         }
 
-        private static object?[] GetOutboundLogArguments(
-            IRawBrokerEnvelope firstEnvelope,
-            IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
-            ref string logMessage)
+        private static object?[] GetOutboundLogArguments(IRawBrokerEnvelope envelope, ref string logMessage)
         {
-            logMessage += OutboundArgumentsTemplate;
+            logMessage += LogTemplates.GetOutboundMessageLogTemplate(envelope.Endpoint);
+
+            var arguments = new List<object?>
+            {
+                envelope.Endpoint?.Name,
+                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
+                envelope.Headers.GetValue(DefaultMessageHeaders.MessageId)
+            };
+
+            foreach (string key in LogTemplates.GetOutboundMessageArguments(envelope.Endpoint))
+            {
+                arguments.Add(envelope.AdditionalLogData.TryGetValue(key, out string value) ? value : null);
+            }
+
+            return arguments.ToArray();
+        }
+
+        private static object?[] GetOutboundBatchLogArguments(IRawBrokerEnvelope envelope, ref string logMessage)
+        {
+            logMessage += LogTemplates.GetOutboundBatchLogTemplate(envelope.Endpoint);
 
             return new object?[]
             {
-                firstEnvelope.Endpoint?.Name,
-                envelopes.Count == 1
-                    ? firstEnvelope.Headers.GetValue(DefaultMessageHeaders.MessageType)
-                    : BatchPlaceholder,
-                envelopes.Count == 1
-                    ? firstEnvelope.Headers.GetValue(DefaultMessageHeaders.MessageId)
-                    : BatchPlaceholder,
-                envelopes.Count == 1
-                    ? firstEnvelope.Offset?.ToLogString()
-                    : BatchPlaceholder
+                envelope.Endpoint?.Name
             };
         }
     }
