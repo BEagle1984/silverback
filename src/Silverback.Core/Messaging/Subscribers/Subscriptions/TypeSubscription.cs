@@ -11,7 +11,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Subscribers.Subscriptions
 {
     /// <summary>
-    ///     Represents a subscription based on a type (e.g. <see cref="ISubscriber" />).
+    ///     Represents a subscription based on a type (can also be a base class or an interface).
     /// </summary>
     internal class TypeSubscription : ISubscription
     {

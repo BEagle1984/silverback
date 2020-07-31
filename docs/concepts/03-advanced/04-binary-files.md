@@ -47,7 +47,7 @@ public class MyBinaryFileMessage : BinaryFileMessage
 You don't need to do anything special to consume a binary file, if all necessary headers are in place (ensured by Silverback, if it was used to produce the message). The message will be wrapped again in a `BinaryFileMessage` that can be subscribed like any other message.
 
 ```csharp
-public class FileConsumerService : ISubscriber
+public class FileConsumerService
 {
     public async Task OnFileReceived(IBinaryFileMessage message)
     {

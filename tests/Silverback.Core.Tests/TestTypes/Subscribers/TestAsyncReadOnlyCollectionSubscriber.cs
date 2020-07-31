@@ -8,7 +8,7 @@ using Silverback.Tests.Core.TestTypes.Messages;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    public class TestAsyncReadOnlyCollectionSubscriber : ISubscriber
+    public class TestAsyncReadOnlyCollectionSubscriber
     {
         public int ReceivedMessagesCount { get; private set; }
 

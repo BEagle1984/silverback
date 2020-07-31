@@ -16,5 +16,10 @@ namespace Silverback.Messaging.Configuration
         ///     <see cref="ISilverbackBuilder" />.
         /// </summary>
         IServiceCollection Services { get; }
+
+        /// <summary>
+        ///     Gets the <see cref="IBusOptions" /> that is being modified by this <see cref="ISilverbackBuilder" />.
+        /// </summary>
+        IBusOptions BusOptions { get; }
     }
 }

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.TestTypes.Behaviors;
 using Silverback.Tests.Core.TestTypes.Messages;
@@ -22,13 +21,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var serviceProvider = GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .AddTransientBehavior(typeof(ChangeTestEventOneContentBehavior)));
-
-            serviceProvider.GetRequiredService<IBusConfigurator>()
-                .Subscribe<TestEventOne>(m => messages.Add(m));
-
-            using var scope = serviceProvider.CreateScope();
-            serviceProvider = scope.ServiceProvider;
+                    .AddTransientBehavior(typeof(ChangeTestEventOneContentBehavior))
+                    .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -44,13 +38,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var serviceProvider = GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .AddTransientBehavior<ChangeTestEventOneContentBehavior>());
-
-            serviceProvider.GetRequiredService<IBusConfigurator>()
-                .Subscribe<TestEventOne>(m => messages.Add(m));
-
-            using var scope = serviceProvider.CreateScope();
-            serviceProvider = scope.ServiceProvider;
+                    .AddTransientBehavior<ChangeTestEventOneContentBehavior>()
+                    .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -66,13 +55,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var serviceProvider = GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .AddTransientBehavior(_ => new ChangeTestEventOneContentBehavior()));
-
-            serviceProvider.GetRequiredService<IBusConfigurator>()
-                .Subscribe<TestEventOne>(m => messages.Add(m));
-
-            using var scope = serviceProvider.CreateScope();
-            serviceProvider = scope.ServiceProvider;
+                    .AddTransientBehavior(_ => new ChangeTestEventOneContentBehavior())
+                    .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -88,13 +72,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var serviceProvider = GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .AddScopedBehavior(typeof(ChangeTestEventOneContentBehavior)));
-
-            serviceProvider.GetRequiredService<IBusConfigurator>()
-                .Subscribe<TestEventOne>(m => messages.Add(m));
-
-            using var scope = serviceProvider.CreateScope();
-            serviceProvider = scope.ServiceProvider;
+                    .AddScopedBehavior(typeof(ChangeTestEventOneContentBehavior))
+                    .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -110,13 +89,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var serviceProvider = GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .AddScopedBehavior<ChangeTestEventOneContentBehavior>());
-
-            serviceProvider.GetRequiredService<IBusConfigurator>()
-                .Subscribe<TestEventOne>(m => messages.Add(m));
-
-            using var scope = serviceProvider.CreateScope();
-            serviceProvider = scope.ServiceProvider;
+                    .AddScopedBehavior<ChangeTestEventOneContentBehavior>()
+                    .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -132,13 +106,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var serviceProvider = GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .AddScopedBehavior(_ => new ChangeTestEventOneContentBehavior()));
-
-            serviceProvider.GetRequiredService<IBusConfigurator>()
-                .Subscribe<TestEventOne>(m => messages.Add(m));
-
-            using var scope = serviceProvider.CreateScope();
-            serviceProvider = scope.ServiceProvider;
+                    .AddScopedBehavior(_ => new ChangeTestEventOneContentBehavior())
+                    .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -154,13 +123,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var serviceProvider = GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .AddSingletonBehavior(typeof(ChangeTestEventOneContentBehavior)));
-
-            serviceProvider.GetRequiredService<IBusConfigurator>()
-                .Subscribe<TestEventOne>(m => messages.Add(m));
-
-            using var scope = serviceProvider.CreateScope();
-            serviceProvider = scope.ServiceProvider;
+                    .AddSingletonBehavior(typeof(ChangeTestEventOneContentBehavior))
+                    .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -176,13 +140,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var serviceProvider = GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .AddSingletonBehavior<ChangeTestEventOneContentBehavior>());
-
-            serviceProvider.GetRequiredService<IBusConfigurator>()
-                .Subscribe<TestEventOne>(m => messages.Add(m));
-
-            using var scope = serviceProvider.CreateScope();
-            serviceProvider = scope.ServiceProvider;
+                    .AddSingletonBehavior<ChangeTestEventOneContentBehavior>()
+                    .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -198,13 +157,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var serviceProvider = GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .AddSingletonBehavior(_ => new ChangeTestEventOneContentBehavior()));
-
-            serviceProvider.GetRequiredService<IBusConfigurator>()
-                .Subscribe<TestEventOne>(m => messages.Add(m));
-
-            using var scope = serviceProvider.CreateScope();
-            serviceProvider = scope.ServiceProvider;
+                    .AddSingletonBehavior(_ => new ChangeTestEventOneContentBehavior())
+                    .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -220,13 +174,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var serviceProvider = GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .AddSingletonBehavior(new ChangeTestEventOneContentBehavior()));
-
-            serviceProvider.GetRequiredService<IBusConfigurator>()
-                .Subscribe<TestEventOne>(m => messages.Add(m));
-
-            using var scope = serviceProvider.CreateScope();
-            serviceProvider = scope.ServiceProvider;
+                    .AddSingletonBehavior(new ChangeTestEventOneContentBehavior())
+                    .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -242,7 +191,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             configAction(services);
 
-            return services.BuildServiceProvider();
+            return services.BuildServiceProvider().CreateScope().ServiceProvider;
         }
     }
 }

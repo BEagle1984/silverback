@@ -49,7 +49,7 @@ By default Silverback would call every matching subscriber method for each messa
 ## Using the attribute
 
 ```csharp
-public class MySubscriber : ISubscriber
+public class MySubscriber
 {
     [KafkaGroupIdFilter("group1")]
     private void PerformTask1(MyEvent @event) => ...
@@ -62,7 +62,7 @@ public class MySubscriber : ISubscriber
 ## Subscribing to the IInboundEnvelope
 
 ```csharp
-public class MySubscriber : ISubscriber
+public class MySubscriber
 {
     public void OnMessageReceived(IInboundEnvelope<MyEvent> envelope)
     {

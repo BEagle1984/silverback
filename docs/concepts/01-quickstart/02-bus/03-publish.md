@@ -1,5 +1,5 @@
 ---
-uid: publishing
+uid: publish
 ---
 
 # Publishing

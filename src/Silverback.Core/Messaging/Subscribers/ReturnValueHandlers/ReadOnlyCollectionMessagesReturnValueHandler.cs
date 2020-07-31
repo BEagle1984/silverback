@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
     // TODO: Test
     public class ReadOnlyCollectionMessagesReturnValueHandler : IReturnValueHandler
     {
-        private readonly BusOptions _busOptions;
+        private readonly IBusOptions _busOptions;
 
         private readonly IPublisher _publisher;
 
@@ -26,9 +26,9 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         ///     The <see cref="IPublisher" /> to be used to publish the messages.
         /// </param>
         /// <param name="busOptions">
-        ///     The <see cref="BusOptions" /> that specify which message types have to be handled.
+        ///     The <see cref="IBusOptions" /> that specify which message types have to be handled.
         /// </param>
-        public ReadOnlyCollectionMessagesReturnValueHandler(IPublisher publisher, BusOptions busOptions)
+        public ReadOnlyCollectionMessagesReturnValueHandler(IPublisher publisher, IBusOptions busOptions)
         {
             _publisher = publisher;
             _busOptions = busOptions;

@@ -5,18 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Publishing
+namespace Silverback.Messaging.Subscribers
 {
     internal class SubscribedMethodsLoader
     {
-        private readonly BusOptions _options;
+        private readonly IBusOptions _options;
 
         private readonly IServiceProvider _serviceProvider;
 
-        public SubscribedMethodsLoader(BusOptions options, IServiceProvider serviceProvider)
+        public SubscribedMethodsLoader(IBusOptions options, IServiceProvider serviceProvider)
         {
             _options = Check.NotNull(options, nameof(options));
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));

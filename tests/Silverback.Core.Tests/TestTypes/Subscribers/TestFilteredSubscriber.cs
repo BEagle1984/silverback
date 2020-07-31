@@ -4,12 +4,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Core.TestTypes.Messages;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    public class TestFilteredSubscriber : ISubscriber
+    public class TestFilteredSubscriber
     {
         public int ReceivedMessagesCount { get; private set; }
 

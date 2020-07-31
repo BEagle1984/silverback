@@ -292,7 +292,8 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddHealthChecks()
+        services
+            .AddHealthChecks()
             .AddOutboundEndpointsCheck()
             .AddOutboundQueueCheck()
             .AddConsumersCheck();

@@ -7,7 +7,7 @@ using System.Reactive.Subjects;
 namespace Silverback.Messaging.Subscribers
 {
     /// <inheritdoc cref="IMessageObservable{TMessage}" />
-    public class MessageObservable : IMessageObservable<object>, ISubscriber
+    public class MessageObservable : IMessageObservable<object>
     {
         private readonly ISubject<object> _subject = new Subject<object>();
 

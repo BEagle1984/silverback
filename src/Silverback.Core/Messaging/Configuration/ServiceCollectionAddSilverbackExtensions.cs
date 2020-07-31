@@ -7,6 +7,7 @@ using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -30,28 +31,40 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static ISilverbackBuilder AddSilverback(this IServiceCollection services)
         {
-            services
-                .AddSingleton<BusOptions>()
-                .AddSingleton<IBusConfigurator, BusConfigurator>()
-                .AddScoped<IPublisher, Publisher>()
-                .AddScoped<SubscribedMethodInvoker>()
-                .AddScoped<SubscribedMethodsLoader>()
-                .AddScoped<ArgumentsResolverService>()
-                .AddScoped<ReturnValueHandlerService>()
-                .AddSingleton(typeof(ISilverbackLogger<>), typeof(SilverbackLogger<>))
-                .AddSingleton<ISilverbackLogger, SilverbackLogger>()
-                .AddSingleton<ILogLevelDictionary, LogLevelDictionary>()
-
-                // Note: resolvers and handlers will be evaluated in reverse order
-                .AddScoped<IArgumentResolver, ServiceProviderAdditionalArgumentResolver>()
-                .AddSingleton<IArgumentResolver, SingleMessageArgumentResolver>()
-                .AddSingleton<IArgumentResolver, EnumerableMessageArgumentResolver>()
-                .AddSingleton<IArgumentResolver, ReadOnlyCollectionMessageArgumentResolver>()
-                .AddScoped<IReturnValueHandler, SingleMessageReturnValueHandler>()
-                .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
-                .AddScoped<IReturnValueHandler, ReadOnlyCollectionMessagesReturnValueHandler>();
+            if (!services.ContainsAny<IBusOptions>())
+            {
+                services
+                    .AddSingleton<IBusOptions>(new BusOptions())
+                    .AddScoped<IPublisher, Publisher>()
+                    .AddScoped<SubscribedMethodInvoker>()
+                    .AddScoped<SubscribedMethodsLoader>()
+                    .AddLogger()
+                    .AddArgumentResolvers()
+                    .AddReturnValueHandlers()
+                    .AddHostedService<SubscribedMethodsLoaderService>();
+            }
 
             return new SilverbackBuilder(services);
         }
+
+        private static IServiceCollection AddLogger(this IServiceCollection services) => services
+            .AddSingleton(typeof(ISilverbackLogger<>), typeof(SilverbackLogger<>))
+            .AddSingleton<ISilverbackLogger, SilverbackLogger>()
+            .AddSingleton<ILogLevelDictionary, LogLevelDictionary>();
+
+        // Note: resolvers and handlers will be evaluated in reverse order
+        private static IServiceCollection AddArgumentResolvers(this IServiceCollection services) => services
+            .AddScoped<ArgumentsResolverService>()
+            .AddScoped<IArgumentResolver, ServiceProviderAdditionalArgumentResolver>()
+            .AddSingleton<IArgumentResolver, SingleMessageArgumentResolver>()
+            .AddSingleton<IArgumentResolver, EnumerableMessageArgumentResolver>()
+            .AddSingleton<IArgumentResolver, ReadOnlyCollectionMessageArgumentResolver>();
+
+        // Note: resolvers and handlers will be evaluated in reverse order
+        private static IServiceCollection AddReturnValueHandlers(this IServiceCollection services) => services
+            .AddScoped<ReturnValueHandlerService>()
+            .AddScoped<IReturnValueHandler, SingleMessageReturnValueHandler>()
+            .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
+            .AddScoped<IReturnValueHandler, ReadOnlyCollectionMessagesReturnValueHandler>();
     }
 }

@@ -13,7 +13,7 @@ namespace Silverback.Tests.Core.Util
     public class ServiceCollectionExtensionsTests
     {
         [Fact]
-        public void ContainsAny_AlreadyAddedType_TrueIsReturned()
+        public void ContainsAny_AlreadyAddedType_TrueReturned()
         {
             var services = new ServiceCollection();
             services.AddSingleton<IBehavior, TestBehavior>();
@@ -24,7 +24,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void ContainsAnyGeneric_AlreadyAddedType_TrueIsReturned()
+        public void ContainsAnyGeneric_AlreadyAddedType_TrueReturned()
         {
             var services = new ServiceCollection();
             services.AddSingleton<IBehavior, TestBehavior>();
@@ -35,7 +35,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void ContainsAny_NotAddedType_FalseIsReturned()
+        public void ContainsAny_NotAddedType_FalseReturned()
         {
             var services = new ServiceCollection();
             services.AddSingleton<TestBehavior>();
@@ -46,7 +46,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void ContainsAnyGeneric_NotAddedType_FalseIsReturned()
+        public void ContainsAnyGeneric_NotAddedType_FalseReturned()
         {
             var services = new ServiceCollection();
             services.AddSingleton<TestBehavior>();
@@ -54,6 +54,70 @@ namespace Silverback.Tests.Core.Util
             var result = services.ContainsAny<TestSortedBehavior>();
 
             result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void GetSingletonServiceInstance_ExistingType_InstanceReturned()
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton<IBehavior>(new TestBehavior());
+
+            var result = services.GetSingletonServiceInstance(typeof(IBehavior));
+
+            result.Should().BeOfType<TestBehavior>();
+        }
+
+        [Fact]
+        public void GetSingletonServiceInstanceGeneric_ExistingType_InstanceReturned()
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton<IBehavior>(new TestBehavior());
+
+            var result = services.GetSingletonServiceInstance<IBehavior>();
+
+            result.Should().BeOfType<TestBehavior>();
+        }
+
+        [Fact]
+        public void GetSingletonServiceInstance_NotSingletonType_NullReturned()
+        {
+            var services = new ServiceCollection();
+            services.AddTransient<IBehavior, TestBehavior>();
+
+            var result = services.GetSingletonServiceInstance(typeof(IBehavior));
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetSingletonServiceInstanceGeneric_NotSingletonType_NullReturned()
+        {
+            var services = new ServiceCollection();
+            services.AddTransient<IBehavior, TestBehavior>();
+
+            var result = services.GetSingletonServiceInstance<IBehavior>();
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetSingletonServiceInstance_NotAddedType_NullReturned()
+        {
+            var services = new ServiceCollection();
+
+            var result = services.GetSingletonServiceInstance(typeof(IBehavior));
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetSingletonServiceInstanceGeneric_NotAddedType_NullReturned()
+        {
+            var services = new ServiceCollection();
+
+            var result = services.GetSingletonServiceInstance<IBehavior>();
+
+            result.Should().BeNull();
         }
     }
 }

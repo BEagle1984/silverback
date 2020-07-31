@@ -9,7 +9,7 @@ Subscribing to the `IInboundEnvelope` works exactly the same as subscribing to a
 ```csharp
 using Silverback.Messaging.Subscribers;
 
-public class SubscribingService : ISubscriber
+public class SubscribingService
 {
     public async Task OnWrappedMessageReceived(IInboundEnvelope<SampleMessage> envelope)
     {

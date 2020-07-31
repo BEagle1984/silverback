@@ -9,7 +9,7 @@ using Silverback.Tests.Core.TestTypes.Messages;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    public class TestAsyncEnumerableSubscriber : ISubscriber
+    public class TestAsyncEnumerableSubscriber
     {
         public int ReceivedMessagesCount { get; private set; }
 

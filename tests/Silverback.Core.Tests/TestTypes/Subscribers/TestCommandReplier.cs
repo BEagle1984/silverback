@@ -11,7 +11,7 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    public class TestCommandReplier : ISubscriber
+    public class TestCommandReplier
     {
         public int ReceivedMessagesCount { get; private set; }
 

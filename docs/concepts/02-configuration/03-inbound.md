@@ -282,7 +282,7 @@ The usage should be similar to the following examples.
 
 # [Example 1](#tab/batch-example1)
 ```csharp
-public class InventoryService : ISubscriber
+public class InventoryService
 {
     private DbContext _db;
 
@@ -323,7 +323,7 @@ public class InventoryService : ISubscriber
 ```
 # [Startup](#tab/batch-example2)
 ```csharp
-public class InventoryService : ISubscriber
+public class InventoryService
 {
     private DbContext _db;
 

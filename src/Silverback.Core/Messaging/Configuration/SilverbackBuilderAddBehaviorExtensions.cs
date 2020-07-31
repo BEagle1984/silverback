@@ -34,8 +34,9 @@ namespace Microsoft.Extensions.DependencyInjection
             Type behaviorType)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+            Check.NotNull(behaviorType, nameof(behaviorType));
 
-            silverbackBuilder.Services.AddTransientBehavior(behaviorType);
+            silverbackBuilder.Services.AddTransient(typeof(IBehavior), behaviorType);
             return silverbackBuilder;
         }
 
@@ -54,13 +55,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static ISilverbackBuilder AddTransientBehavior<TBehavior>(this ISilverbackBuilder silverbackBuilder)
-            where TBehavior : class, IBehavior
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-
-            silverbackBuilder.Services.AddTransientBehavior<TBehavior>();
-            return silverbackBuilder;
-        }
+            where TBehavior : class, IBehavior =>
+            AddTransientBehavior(silverbackBuilder, typeof(TBehavior));
 
         /// <summary>
         ///     Adds a scoped behavior with a factory specified in <paramref name="implementationFactory" /> to the
@@ -81,8 +77,9 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-            silverbackBuilder.Services.AddTransientBehavior(implementationFactory);
+            silverbackBuilder.Services.AddTransient(typeof(IBehavior), implementationFactory);
             return silverbackBuilder;
         }
 
@@ -103,8 +100,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddScopedBehavior(this ISilverbackBuilder silverbackBuilder, Type behaviorType)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+            Check.NotNull(behaviorType, nameof(behaviorType));
 
-            silverbackBuilder.Services.AddScopedBehavior(behaviorType);
+            silverbackBuilder.Services.AddScoped(typeof(IBehavior), behaviorType);
             return silverbackBuilder;
         }
 
@@ -123,13 +121,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static ISilverbackBuilder AddScopedBehavior<TBehavior>(this ISilverbackBuilder silverbackBuilder)
-            where TBehavior : class, IBehavior
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-
-            silverbackBuilder.Services.AddScopedBehavior<TBehavior>();
-            return silverbackBuilder;
-        }
+            where TBehavior : class, IBehavior =>
+            AddScopedBehavior(silverbackBuilder, typeof(TBehavior));
 
         /// <summary>
         ///     Adds a scoped behavior with a factory specified in <paramref name="implementationFactory" /> to the
@@ -150,8 +143,9 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-            silverbackBuilder.Services.AddScopedBehavior(implementationFactory);
+            silverbackBuilder.Services.AddScoped(typeof(IBehavior), implementationFactory);
             return silverbackBuilder;
         }
 
@@ -174,8 +168,9 @@ namespace Microsoft.Extensions.DependencyInjection
             Type behaviorType)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+            Check.NotNull(behaviorType, nameof(behaviorType));
 
-            silverbackBuilder.Services.AddSingletonBehavior(behaviorType);
+            silverbackBuilder.Services.AddSingleton(typeof(IBehavior), behaviorType);
             return silverbackBuilder;
         }
 
@@ -194,13 +189,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static ISilverbackBuilder AddSingletonBehavior<TBehavior>(this ISilverbackBuilder silverbackBuilder)
-            where TBehavior : class, IBehavior
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-
-            silverbackBuilder.Services.AddSingletonBehavior<TBehavior>();
-            return silverbackBuilder;
-        }
+            where TBehavior : class, IBehavior =>
+            AddSingletonBehavior(silverbackBuilder, typeof(TBehavior));
 
         /// <summary>
         ///     Adds a singleton behavior with a factory specified in <paramref name="implementationFactory" /> to
@@ -221,8 +211,9 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceProvider, IBehavior> implementationFactory)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+            Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-            silverbackBuilder.Services.AddSingletonBehavior(implementationFactory);
+            silverbackBuilder.Services.AddSingleton(typeof(IBehavior), implementationFactory);
             return silverbackBuilder;
         }
 
@@ -245,8 +236,9 @@ namespace Microsoft.Extensions.DependencyInjection
             IBehavior implementationInstance)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+            Check.NotNull(implementationInstance, nameof(implementationInstance));
 
-            silverbackBuilder.Services.AddSingletonBehavior(implementationInstance);
+            silverbackBuilder.Services.AddSingleton(typeof(IBehavior), implementationInstance);
             return silverbackBuilder;
         }
     }

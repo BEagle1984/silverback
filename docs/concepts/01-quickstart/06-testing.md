@@ -146,7 +146,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
         // Internal events are directly emitted to the bus.
         // Events for which an endpoint is configured are emitted as IOutboundEnvelope<T> to the bus.
         IList<IOutboundEnvelope<Person>> externalEvents = new List<IOutboundEnvelope<Person>>();
-        scope.ServiceProvider.GetRequiredService<BusConfigurator>()
+        scope.ServiceProvider.GetRequiredService<IBusConfigurator>()
             .Subscribe<IOutboundEnvelope<MappedPerson>>(e => externalEvents.Add(e));
 
         // Calling this producer is like there would be an "incoming" record.

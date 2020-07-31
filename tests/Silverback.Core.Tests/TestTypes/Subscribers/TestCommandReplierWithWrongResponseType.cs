@@ -8,7 +8,7 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    public class TestCommandReplierWithWrongResponseType : ISubscriber
+    public class TestCommandReplierWithWrongResponseType
     {
         public int ReceivedMessagesCount { get; private set; }
 

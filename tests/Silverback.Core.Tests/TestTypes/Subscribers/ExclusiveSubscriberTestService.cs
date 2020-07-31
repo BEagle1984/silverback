@@ -7,7 +7,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    public class ExclusiveSubscriberTestService : ISubscriber
+    public class ExclusiveSubscriberTestService
     {
         public ParallelTestingUtil Parallel { get; } = new ParallelTestingUtil();
 

@@ -11,7 +11,7 @@ using Silverback.Tests.Core.Model.TestTypes.Messages;
 
 namespace Silverback.Tests.Core.Model.TestTypes.Subscribers
 {
-    public class QueriesHandler : ISubscriber
+    public class QueriesHandler
     {
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]

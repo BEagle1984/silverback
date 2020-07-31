@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
     {
         private readonly IPublisher _publisher;
 
-        private readonly BusOptions _busOptions;
+        private readonly IBusOptions _busOptions;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="SingleMessageReturnValueHandler" /> class.
@@ -25,9 +25,9 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         ///     The <see cref="IPublisher" /> to be used to publish the messages.
         /// </param>
         /// <param name="busOptions">
-        ///     The <see cref="BusOptions" /> that specify which message types have to be handled.
+        ///     The <see cref="IBusOptions" /> that specify which message types have to be handled.
         /// </param>
-        public SingleMessageReturnValueHandler(IPublisher publisher, BusOptions busOptions)
+        public SingleMessageReturnValueHandler(IPublisher publisher, IBusOptions busOptions)
         {
             _publisher = publisher;
             _busOptions = busOptions;

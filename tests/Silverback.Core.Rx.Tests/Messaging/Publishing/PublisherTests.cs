@@ -8,7 +8,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Core.Rx.TestTypes.Messages;
 using Silverback.Tests.Core.Rx.TestTypes.Messages.Base;
 using Xunit;
@@ -22,8 +21,8 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             int count = 0;
             var publisher = GetPublisher(
-                config => config
-                    .Subscribe((IObservable<object> _) => count++));
+                builder => builder
+                    .AddDelegateSubscriber((IObservable<object> _) => count++));
 
             publisher.Publish(new TestCommandOne());
             publisher.Publish(new TestCommandTwo());
@@ -36,8 +35,8 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             int count = 0;
             var publisher = GetPublisher(
-                config => config
-                    .Subscribe((IObservable<object> _) => count++));
+                builder => builder
+                    .AddDelegateSubscriber((IObservable<object> _) => count++));
 
             await publisher.PublishAsync(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandTwo());
@@ -51,8 +50,8 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             int batchesCount = 0;
             int messagesCount = 0;
             var publisher = GetPublisher(
-                config => config
-                    .Subscribe(
+                builder => builder
+                    .AddDelegateSubscriber(
                         (IObservable<ICommand> observable) =>
                         {
                             batchesCount++;
@@ -72,8 +71,8 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             int batchesCount = 0;
             int messagesCount = 0;
             var publisher = GetPublisher(
-                config => config
-                    .Subscribe(
+                builder => builder
+                    .AddDelegateSubscriber(
                         (IObservable<ICommand> observable) =>
                         {
                             batchesCount++;
@@ -100,33 +99,29 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             int count = 0;
             var publisher = GetPublisher(
-                config =>
-                    config
-                        .Subscribe(
+                builder =>
+                    builder
+                        .AddDelegateSubscriber(
                             (TestCommandOne msg) =>
                                 new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
-                        .Subscribe((TestCommandTwo _) => count++));
+                        .AddDelegateSubscriber((TestCommandTwo _) => count++));
 
             publisher.Publish(new TestCommandOne());
 
             count.Should().Be(2);
         }
 
-        private static IPublisher GetPublisher(Action<IBusConfigurator> configAction, params ISubscriber[] subscribers)
+        private static IPublisher GetPublisher(Action<ISilverbackBuilder> buildAction)
         {
             var services = new ServiceCollection();
-            services.AddSilverback().AsObservable();
 
             services.AddNullLogger();
 
-            foreach (var sub in subscribers)
-            {
-                services.AddScoped(_ => sub);
-            }
+            var builder = services.AddSilverback().AsObservable();
+
+            buildAction(builder);
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-
-            configAction?.Invoke(serviceProvider.GetRequiredService<IBusConfigurator>());
 
             return serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IPublisher>();
         }

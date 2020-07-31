@@ -6,7 +6,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
-    public abstract class GenericSubscriber<TMessage> : ISubscriber
+    public abstract class GenericSubscriber<TMessage>
     {
         public int ReceivedMessagesCount { get; private set; }
 

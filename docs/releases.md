@@ -8,11 +8,16 @@ uid: releases
 
 ### What's new
 
-* Improve code quality (enanche CI pipeline to use Roslyn analyzers and integrate [SonarCloud](https://sonarcloud.io/dashboard?id=silverback))
+* Simplify subscribers registration and get rid of the `ISubscriber` interface (see <xref:subscribe>)
+* Simplify configuration and reduce boiler plate (see <xref:subscribe> and <xref:message-broker>)
+* Connect brokers and handle graceful shutdown automatically (see <xref:message-broker>)
+* Scan subscribers automatically at startup to reduce cost of first message
+* Add `IServiceCollection.ConfigureSilverback` extension method to conveniently split the configuration code (see <xref:enabling-silverback>)
+* Improve code quality (enhance CI pipeline to use Roslyn analyzers and integrate [SonarCloud](https://sonarcloud.io/dashboard?id=silverback))
 * Enable nullable reference types and adjust all API
 * Document the entire public API (see [API Documentation](~/api/Microsoft.Extensions.DependencyInjection.html))
 * Add option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see `throwIfUnhandled` argument in the [`IPublisher`](xref:Silverback.Messaging.Publishing.IPublisher) methods and [`ThrowIfUnhandled`](xref:Silverback.Messaging.IConsumerEndpoint#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled) property in the [`IConsumerEndpoint`](xref:Silverback.Messaging.IConsumerEndpoint))
-* Replace Newtonsoft.Json with System.Text.Json to improve serialization and deserialization performance (the old serializers have been moved into Silverback.Integration.Newtonsoft package, see <xref:serialization>d)
+* Replace Newtonsoft.Json with System.Text.Json to improve serialization and deserialization performance (the old serializers have been moved into the Silverback.Integration.Newtonsoft package, see <xref:serialization>d)
 * Upgrade to [Confluent.Kafka 1.4.4](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.4.4)
 * Upgrade to [RabbitMQ.Client 6.1.0](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.1.0)
 * Add log levels configuration (see <xref:logging>)
@@ -21,11 +26,17 @@ uid: releases
 
 ### Fixes
 
-* Fix DeferredOutboundConnector not publishing custom headers [[#102](https://github.com/BEagle1984/silverback/issues/102)]
+* Fix `DeferredOutboundConnector` not publishing custom headers [[#102](https://github.com/BEagle1984/silverback/issues/102)]
 
 ### Breaking Changes
 
-* `BusConfigurator` replaced with `IBusConfigurator` interface
+* Removed `ISubscriber` interface
+* Removed `BusConfigurator` (moved all the configuration into `IServiceCollection` and `ISilverbackBuilder` extension methods)
+    * Replaced `BusConfigurator.Connect` with `IBrokerOptionsBuilder.AddInboundEnpoint`, `IBrokerOptionsBuilder.AddOutboundEndpoint` and `IEndpointConfigurator` (see <xref:message-broker>)
+    * Replaced `BusConfigurator.Subscribe` methods with `ISilverbackBuilder.AddDelegateSubscriber` or `IServiceCollection.AddDelegateSubscriber` (see <xref:subscribe>)
+    * Replaced `BusConfigurator.HandleMessagesOfType` methods with `ISilverbackBuilder.HandleMessagesOfType` (see <xref:subscribe>)
+    * `BusConfigurator.ScanSubscribers` is not needed anymore since it gets called automatically at startup (from an `IHostedService`)
+* Removed `IServiceCollection.Add*Subscriber`, `IServiceCollection.Add*Behavior`, `IServiceCollection.Add*BrokerBehavior`, `IServiceCollection.Add*EndpointsConfigurator`, `IServiceCollection.Add*OutboundRouter` extension methods, use `IServiceCollection.ConfigureSilverback` instead (see <xref:enabling-silverback>)
 * `ErrorPolicyBuilder` replaced with `IErrorPolicyBuilder` interface
 * The visibility of some types has been changed to internal to favor a cleaner and clearer API where the public types are well documented and their backward compatibility is valued
 * Removed `Silverback` prefix from exceptions name
