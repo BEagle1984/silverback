@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c>AddEndpointsConfigurator</c> method to the <see cref="ISilverbackBuilder" />.
+    ///     Adds the <c>AddEndpointsConfigurator</c> methods to the <see cref="ISilverbackBuilder" />.
     /// </summary>
     public static class SilverbackBuilderAddEndpointsConfiguratorExtensions
     {
@@ -32,7 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddEndpointsConfigurator<TConfigurator>();
+            silverbackBuilder.Services.AddScoped<IEndpointsConfigurator, TConfigurator>();
 
             return silverbackBuilder;
         }
@@ -56,7 +56,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddEndpointsConfigurator(configuratorType);
+            silverbackBuilder.Services.AddScoped(typeof(IEndpointsConfigurator), configuratorType);
 
             return silverbackBuilder;
         }
@@ -80,7 +80,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddEndpointsConfigurator(implementationFactory);
+            silverbackBuilder.Services.AddScoped(implementationFactory);
 
             return silverbackBuilder;
         }

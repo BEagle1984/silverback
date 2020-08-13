@@ -34,7 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddSingletonBrokerBehavior(behaviorType);
+            silverbackBuilder.Services.AddSingleton(typeof(IBrokerBehavior), behaviorType);
 
             return silverbackBuilder;
         }
@@ -55,14 +55,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static ISilverbackBuilder AddSingletonBrokerBehavior<TBehavior>(
             this ISilverbackBuilder silverbackBuilder)
-            where TBehavior : class, IBrokerBehavior
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-
-            silverbackBuilder.Services.AddSingletonBrokerBehavior<TBehavior>();
-
-            return silverbackBuilder;
-        }
+            where TBehavior : class, IBrokerBehavior =>
+            AddSingletonBrokerBehavior(silverbackBuilder, typeof(TBehavior));
 
         /// <summary>
         ///     Adds a singleton behavior with a factory specified in <paramref name="implementationFactory" /> to
@@ -84,7 +78,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddSingletonBrokerBehavior(implementationFactory);
+            silverbackBuilder.Services.AddSingleton(typeof(IBrokerBehavior), implementationFactory);
 
             return silverbackBuilder;
         }
@@ -109,7 +103,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddSingletonBrokerBehavior(implementationInstance);
+            silverbackBuilder.Services.AddSingleton(typeof(IBrokerBehavior), implementationInstance);
 
             return silverbackBuilder;
         }

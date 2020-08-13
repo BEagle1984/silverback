@@ -43,5 +43,7 @@ namespace Silverback.Messaging.Broker
             _consumers.Add(consumer);
             return consumer;
         }
+
+        public void ResetOffset() => NextOffset = 0;
     }
 }

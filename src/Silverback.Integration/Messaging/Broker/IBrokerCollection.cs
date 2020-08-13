@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker
     ///     Holds a reference to all the registered <see cref="IBroker" /> implementations and is able to
     ///     resolve the right instance according to the <see cref="IEndpoint" /> type.
     /// </summary>
-    public interface IBrokerCollection : IReadOnlyCollection<IBroker>
+    public interface IBrokerCollection : IReadOnlyList<IBroker>
     {
         /// <summary>
         ///     Returns an <see cref="IProducer" /> to be used to produce to the specified endpoint.

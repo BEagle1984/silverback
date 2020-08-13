@@ -141,7 +141,18 @@ namespace Silverback.Diagnostics
         /// <remarks>
         ///     Default log level: Debug.
         /// </remarks>
-        public static EventId RecurringDistributedBackgroundServiceBackgroundServiceSleeping { get; } =
-            new EventId(52, Prefix + nameof(RecurringDistributedBackgroundServiceBackgroundServiceSleeping));
+        public static EventId RecurringDistributedBackgroundServiceSleeping { get; } =
+            new EventId(52, Prefix + nameof(RecurringDistributedBackgroundServiceSleeping));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when an exception is thrown during an
+        ///     execution of the
+        ///     <see cref="RecurringDistributedBackgroundService" />.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Debug.
+        /// </remarks>
+        public static EventId RecurringDistributedBackgroundServiceException { get; } =
+            new EventId(53, Prefix + nameof(RecurringDistributedBackgroundServiceException));
     }
 }

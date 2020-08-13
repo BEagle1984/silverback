@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Silverback.Tests.Core.TestTypes
+namespace Silverback.Tests
 {
     public static class AsyncTestingUtil
     {
@@ -23,10 +23,22 @@ namespace Silverback.Tests.Core.TestTypes
 
         public static async Task WaitAsync(Func<bool> breakCondition, int timeoutInMilliseconds = 2000)
         {
-            const int sleep = 10;
+            const int sleep = 100;
             for (int i = 0; i < timeoutInMilliseconds; i = i + sleep)
             {
                 if (breakCondition())
+                    break;
+
+                await Task.Delay(sleep);
+            }
+        }
+
+        public static async Task WaitAsync(Func<Task<bool>> breakCondition, int timeoutInMilliseconds = 2000)
+        {
+            const int sleep = 100;
+            for (int i = 0; i < timeoutInMilliseconds; i = i + sleep)
+            {
+                if (await breakCondition())
                     break;
 
                 await Task.Delay(sleep);

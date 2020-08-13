@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IBrokerCollection" />
     public class BrokerCollection : IBrokerCollection
     {
-        private readonly IReadOnlyCollection<IBroker> _brokers;
+        private readonly IReadOnlyList<IBroker> _brokers;
 
         private readonly ConcurrentDictionary<Type, IBroker> _consumerEndpointTypeMap;
 
@@ -40,10 +40,11 @@ namespace Silverback.Messaging.Broker
                     broker => broker));
         }
 
-        /// <summary>
-        ///     Gets the number of brokers in the collection.
-        /// </summary>
+        /// <inheritdoc cref="IReadOnlyCollection{T}.Count" />
         public int Count => _brokers.Count;
+
+        /// <inheritdoc cref="IReadOnlyList{T}.this" />
+        public IBroker this[int index] => _brokers[index];
 
         /// <inheritdoc cref="IBrokerCollection.GetProducer" />
         public IProducer GetProducer(IProducerEndpoint endpoint)

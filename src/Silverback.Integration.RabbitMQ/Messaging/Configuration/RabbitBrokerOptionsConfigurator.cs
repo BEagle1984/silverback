@@ -19,9 +19,10 @@ namespace Silverback.Messaging.Configuration
         {
             Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
-            brokerOptionsBuilder.SilverbackBuilder.Services
-                .AddSingleton<IRabbitConnectionFactory, RabbitConnectionFactory>()
-                .AddSingletonBrokerBehavior<RabbitRoutingKeyInitializerProducerBehavior>();
+            brokerOptionsBuilder.SilverbackBuilder
+                .AddSingletonBrokerBehavior<RabbitRoutingKeyInitializerProducerBehavior>()
+                .Services
+                .AddSingleton<IRabbitConnectionFactory, RabbitConnectionFactory>();
 
             brokerOptionsBuilder.LogTemplates
                 .ConfigureAdditionalData<RabbitQueueConsumerEndpoint>("deliveryTag")

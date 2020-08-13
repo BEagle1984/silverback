@@ -16,7 +16,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.Subscriptions;
-using Silverback.Tests.Core.TestTypes;
 using Silverback.Tests.Core.TestTypes.Behaviors;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
@@ -1306,8 +1305,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var resolved = 0;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 builder => builder
+                    .AddSilverback()
                     .AddScopedSubscriber(
                         _ =>
                         {
@@ -1349,8 +1349,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var resolved = 0;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 builder => builder
+                    .AddSilverback()
                     .AddScopedSubscriber(
                         _ =>
                         {
@@ -1590,19 +1591,14 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     buildAction?.Invoke(builder);
                 });
 
-        private static IPublisher GetPublisher(Action<ISilverbackBuilder> buildAction) =>
-            GetServiceProvider(buildAction).GetRequiredService<IPublisher>();
-
-        private static IServiceProvider GetServiceProvider(Action<ISilverbackBuilder> buildAction)
+        private static IPublisher GetPublisher(Action<ISilverbackBuilder> buildAction)
         {
-            var services = new ServiceCollection();
-            var builder = services.AddSilverback();
-
-            services.AddNullLogger();
-
-            buildAction(builder);
-
-            return services.BuildServiceProvider();
+            return ServiceProviderHelper.GetServiceProvider(
+                services =>
+                {
+                    var builder = services.AddSilverback();
+                    buildAction(builder);
+                }).GetRequiredService<IPublisher>();
         }
     }
 }

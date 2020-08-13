@@ -19,9 +19,10 @@ namespace Silverback.Messaging.Configuration
         {
             Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
-            brokerOptionsBuilder.SilverbackBuilder.Services
-                .AddSingleton<KafkaEventsHandler>()
-                .AddSingletonBrokerBehavior<KafkaMessageKeyInitializerProducerBehavior>();
+            brokerOptionsBuilder.SilverbackBuilder
+                .AddSingletonBrokerBehavior<KafkaMessageKeyInitializerProducerBehavior>()
+                .Services
+                .AddSingleton<KafkaEventsHandler>();
 
             brokerOptionsBuilder.LogTemplates
                 .ConfigureAdditionalData<KafkaConsumerEndpoint>("offset", "kafkaKey")

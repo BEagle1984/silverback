@@ -32,9 +32,9 @@ public class Startup
         services
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
-                .AddKafka()
-                .RegisterConfigurator<OrdersEndpointsConfigurator>()
-                .RegisterConfigurator<ProductsEndpointsConfigurator>())
+                .AddKafka())
+            .AddEndpointsConfigurator<OrdersEndpointsConfigurator>()
+            .AddEndpointsConfigurator<ProductsEndpointsConfigurator>()
             .AddScopedSubscriber<OrderEventsSubscriber>()
             .AddScopedSubscriber<ProductEventsSubscriber>();
     }

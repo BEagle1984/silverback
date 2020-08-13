@@ -3,11 +3,10 @@
 
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class SilverbackEventsSubscriber : ISubscriber
+    public class SilverbackEventsSubscriber
     {
         public List<ISilverbackEvent> ReceivedEvents { get; } = new List<ISilverbackEvent>();
 

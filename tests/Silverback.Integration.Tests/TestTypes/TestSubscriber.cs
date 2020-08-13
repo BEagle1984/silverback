@@ -10,7 +10,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestSubscriber : ISubscriber
+    public class TestSubscriber
     {
         public List<IMessage> ReceivedMessages { get; } = new List<IMessage>();
 

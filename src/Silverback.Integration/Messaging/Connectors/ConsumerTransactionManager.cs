@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Connectors
     /// <summary>
     ///     Manages the consumer transaction propagating the commit or rollback to all enlisted services.
     /// </summary>
-    public class ConsumerTransactionManager : ISubscriber
+    public class ConsumerTransactionManager
     {
         private readonly List<ITransactional> _transactionalServices = new List<ITransactional>();
 

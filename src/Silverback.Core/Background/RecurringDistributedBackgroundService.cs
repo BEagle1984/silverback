@@ -20,6 +20,10 @@ namespace Silverback.Background
 
         private readonly ISilverbackLogger<RecurringDistributedBackgroundService> _logger;
 
+        private bool _enabled = true;
+
+        private CancellationTokenSource? _resumeTokenSource;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="RecurringDistributedBackgroundService" /> class using
         ///     the default settings for the lock mechanism.
@@ -67,6 +71,24 @@ namespace Silverback.Background
             _logger = logger;
         }
 
+        /// <summary>
+        ///     Pauses the execution of the recurring task.
+        /// </summary>
+        public void Pause()
+        {
+            _resumeTokenSource = new CancellationTokenSource();
+            _enabled = false;
+        }
+
+        /// <summary>
+        ///     Resumes the execution of the previously paused recurring task.
+        /// </summary>
+        public void Resume()
+        {
+            _resumeTokenSource!.Cancel();
+            _enabled = true;
+        }
+
         /// <inheritdoc cref="DistributedBackgroundService.ExecuteLockedAsync" />
         protected override async Task ExecuteLockedAsync(CancellationToken stoppingToken)
         {
@@ -75,12 +97,30 @@ namespace Silverback.Background
                 if (Lock != null)
                     await Lock.Renew(stoppingToken).ConfigureAwait(false);
 
-                await ExecuteRecurringAsync(stoppingToken).ConfigureAwait(false);
+                if (_enabled)
+                {
+                    try
+                    {
+                        await ExecuteRecurringAsync(stoppingToken).ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogInformation(
+                            CoreEventIds.RecurringDistributedBackgroundServiceException,
+                            ex,
+                            "Background service {BackgroundService} recurring execution failed.",
+                            GetType().FullName);
+                        throw;
+                    }
+                }
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
 
-                await Sleep(stoppingToken).ConfigureAwait(false);
+                if (_enabled)
+                    await Sleep(stoppingToken).ConfigureAwait(false);
+                else
+                    await Sleep(_resumeTokenSource!.Token).ConfigureAwait(false);
             }
 
             _logger.LogInformation(
@@ -108,12 +148,19 @@ namespace Silverback.Background
                 return;
 
             _logger.LogDebug(
-                CoreEventIds.RecurringDistributedBackgroundServiceBackgroundServiceSleeping,
+                CoreEventIds.RecurringDistributedBackgroundServiceSleeping,
                 "Background service {BackgroundService} sleeping for {sleepTimeInMilliseconds} milliseconds.",
                 GetType().FullName,
                 _interval.TotalMilliseconds);
 
-            await Task.Delay(_interval, stoppingToken).ConfigureAwait(false);
+            try
+            {
+                await Task.Delay(_interval, stoppingToken).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException)
+            {
+                // Ignored
+            }
         }
     }
 }

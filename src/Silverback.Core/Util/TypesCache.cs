@@ -29,7 +29,7 @@ namespace Silverback.Util
             }
             catch
             {
-                // Ignore
+                // Ignored
             }
 
             type ??= Type.GetType(CleanAssemblyQualifiedName(typeName), true);

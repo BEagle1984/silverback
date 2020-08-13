@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using Microsoft.Extensions.Hosting;
 using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -43,57 +44,67 @@ namespace Microsoft.Extensions.DependencyInjection
 
             if (!brokerOptionsBuilder.SilverbackBuilder.Services.ContainsAny<IBroker>())
             {
-                // Pipeline - Activity
+                // Configuration IHostedService
                 brokerOptionsBuilder.SilverbackBuilder.Services
+                    .AddSingleton<IHostedService, BrokerConnectorService>()
+                    .AddSingleton<EndpointsConfiguratorsInvoker>();
+
+                // Pipeline - Activity
+                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<ActivityProducerBehavior>()
                     .AddSingletonBrokerBehavior<ActivityConsumerBehavior>();
 
                 // Pipeline - Exception Logger
-                brokerOptionsBuilder.SilverbackBuilder.Services
+                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>();
 
                 // Pipeline - Serialization
-                brokerOptionsBuilder.SilverbackBuilder.Services
+                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<SerializerProducerBehavior>()
                     .AddSingletonBrokerBehavior<DeserializerConsumerBehavior>();
 
                 // Pipeline - Encryption
-                brokerOptionsBuilder.SilverbackBuilder.Services
+                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<EncryptorProducerBehavior>()
                     .AddSingletonBrokerBehavior<DecryptorConsumerBehavior>();
 
                 // Pipeline - Headers
-                brokerOptionsBuilder.SilverbackBuilder.Services
+                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<HeadersWriterProducerBehavior>()
                     .AddSingletonBrokerBehavior<HeadersReaderConsumerBehavior>()
-                    .AddSingleton<IMessageTransformerFactory, MessageTransformerFactory>()
+                    .Services
+                    .AddSingleton<IMessageTransformerFactory, MessageTransformerFactory>();
+                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<CustomHeadersMapperProducerBehavior>()
                     .AddSingletonBrokerBehavior<CustomHeadersMapperConsumerBehavior>()
+                    .Services
                     .AddSingleton<ICustomHeadersMappings, CustomHeadersMappings>();
 
                 // Pipeline - Chunking
-                brokerOptionsBuilder.SilverbackBuilder.Services
+                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<ChunkSplitterProducerBehavior>()
                     .AddSingletonBrokerBehavior(
                         serviceProvider =>
                             serviceProvider.GetRequiredService<ChunkAggregatorConsumerBehavior>())
                     .AddSingletonSubscriber<ChunkAggregatorConsumerBehavior>()
+                    .Services
                     .AddScoped<ChunkAggregator>();
 
                 // Pipeline - Binary File
-                brokerOptionsBuilder.SilverbackBuilder.Services
+                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<BinaryFileHandlerProducerBehavior>()
                     .AddSingletonBrokerBehavior<BinaryFileHandlerConsumerBehavior>();
 
                 // Pipeline - Message Id Initializer
-                brokerOptionsBuilder.SilverbackBuilder.Services
+                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>();
 
                 // Pipeline - Inbound Processor
-                brokerOptionsBuilder.SilverbackBuilder.Services
+                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<InboundProcessorConsumerBehaviorFactory>()
-                    .AddSingleton<IErrorPolicyBuilder, ErrorPolicyBuilder>()
-                    .AddScopedSubscriber<ConsumerTransactionManager>();
+                    .AddScopedSubscriber<ConsumerTransactionManager>()
+                    .Services
+                    .AddSingleton<IErrorPolicyBuilder, ErrorPolicyBuilder>();
 
                 // Support - Transactional Lists
                 brokerOptionsBuilder.SilverbackBuilder.Services

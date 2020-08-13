@@ -31,6 +31,9 @@ namespace Silverback.Messaging.Configuration
 
             if (!SilverbackBuilder.Services.ContainsAny<IOutboundConnector>())
                 this.AddOutboundConnector();
+
+            if (!SilverbackBuilder.Services.ContainsAny<BrokerConnectionOptions>())
+                this.WithConnectionOptions(new BrokerConnectionOptions());
         }
     }
 }

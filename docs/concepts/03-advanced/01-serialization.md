@@ -25,17 +25,15 @@ If you are consuming a message coming from another system (not based on Silverba
 In that case you can resort to the typed [`JsonMessageSerializer<TMessage>`](xref:Silverback.Messaging.Serialization.JsonMessageSerializer`1). This serializer works like the default one but the message type is hard-coded, instead of being expected in the header.
 
 ```csharp
-public class Startup
+public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("order-events")
-                    {
-                        Serializer = new JsonMessageSerializer<OrderEvent>
-                    }));
+        builder.AddInbound(
+            new KafkaConsumerEndpoint("order-events")
+            {
+                Serializer = new JsonMessageSerializer<OrderEvent>
+            });
     }
 }
 ```
@@ -52,27 +50,25 @@ In the releases previous to 3.0.0 the default [`JsonMessageSerializer`](xref:Sil
 The [`AvroMessageSerializer<TMessage>`](xref:Silverback.Messaging.Serialization.AvroMessageSerializer`1) contained in the Silverback.Integration.Kafka.SchemaRegistry package can be used to connect with a schema registry and exchange messages in [Apache Avro](https://avro.apache.org/) format.
 
 ```csharp
-public class Startup
+public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddOutbound<OrderEvent>(
-                    new KafkaConsumerEndpoint("order-events")
+        builder.AddOutbound<OrderEvent>(
+            new KafkaConsumerEndpoint("order-events")
+            {
+                Serializer = new AvroMessageSerializer<OrderEvent>
+                {
+                    SchemaRegistryConfig = new SchemaRegistryConfig
                     {
-                        Serializer = new AvroMessageSerializer<OrderEvent>
-                        {
-                            SchemaRegistryConfig = new SchemaRegistryConfig
-                            {
-                                Url = "schema-registry:8081"
-                            },
-                            AvroSerializerConfig = new AvroSerializerConfig
-                            {
-                                AutoRegisterSchemas = true
-                            }
-                        },
-                    }));
+                        Url = "schema-registry:8081"
+                    },
+                    AvroSerializerConfig = new AvroSerializerConfig
+                    {
+                        AutoRegisterSchemas = true
+                    }
+                },
+            });
     }
 }
 ```

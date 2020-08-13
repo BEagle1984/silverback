@@ -4,21 +4,19 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -28,62 +26,14 @@ using Xunit;
 namespace Silverback.Tests.Integration.E2E.Connectors
 {
     [Trait("Category", "E2E")]
-    public class DeferredOutboundConnectorTests : IAsyncDisposable
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Connection scoped to test method")]
+    public class DeferredOutboundConnectorTests : E2ETestFixture
     {
         private static readonly byte[] AesEncryptionKey =
         {
             0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e,
             0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c
         };
-
-        private readonly SqliteConnection _connection;
-
-        private readonly ServiceProvider _serviceProvider;
-
-        private readonly IBusConfigurator _configurator;
-
-        private readonly SpyBrokerBehavior _spyBehavior;
-
-        private readonly OutboundInboundSubscriber _subscriber;
-
-        public DeferredOutboundConnectorTests()
-        {
-            _connection = new SqliteConnection("DataSource=:memory:");
-            _connection.Open();
-
-            var services = new ServiceCollection();
-
-            services
-                .AddNullLogger()
-                .AddDbContext<TestDbContext>(
-                    options => options
-                        .UseSqlite(_connection))
-                .AddSilverback()
-                .UseModel()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddInMemoryBroker()
-                        .AddInMemoryChunkStore()
-                        .AddDbOutboundConnector()
-                        .AddDbOutboundWorker())
-                .AddDbDistributedLockManager()
-                .UseDbContext<TestDbContext>()
-                .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                .AddSingletonSubscriber<OutboundInboundSubscriber>();
-
-            _serviceProvider = services.BuildServiceProvider(
-                new ServiceProviderOptions
-                {
-                    ValidateScopes = true
-                });
-
-            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
-            _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
-            _subscriber = _serviceProvider.GetRequiredService<OutboundInboundSubscriber>();
-
-            using var scope = _serviceProvider.CreateScope();
-            scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
-        }
 
         [Fact]
         public async Task OutboundMessages_QueuedAndPublishedByOutboundWorker()
@@ -93,25 +43,47 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                 Content = "Hello E2E!"
             };
 
-            _configurator.Connect(
-                endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
+            await using var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
 
-            using var scope = _serviceProvider.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddDbContext<TestDbContext>(
+                            options => options
+                                .UseSqlite(connection))
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddInMemoryBroker()
+                                .AddDbOutboundConnector()
+                                .AddDbOutboundWorker(TimeSpan.FromMilliseconds(100)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                        .UseDbContext<TestDbContext>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
 
+            using (var scope = Host.ServiceProvider.CreateScope())
+            {
+                await scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreatedAsync();
+            }
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
             await publisher.PublishAsync(message);
             await publisher.PublishAsync(message);
-            await scope.ServiceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
+            await serviceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
 
-            _subscriber.OutboundEnvelopes.Count.Should().Be(3);
-            _subscriber.InboundEnvelopes.Should().BeEmpty();
+            Subscriber.OutboundEnvelopes.Count.Should().Be(3);
+            Subscriber.InboundEnvelopes.Should().BeEmpty();
 
-            await _serviceProvider.GetRequiredService<IOutboundQueueWorker>().ProcessQueue(CancellationToken.None);
+            await AsyncTestingUtil.WaitAsync(() => Subscriber.InboundEnvelopes.Count >= 3);
 
-            _subscriber.InboundEnvelopes.Count.Should().Be(3);
+            Subscriber.InboundEnvelopes.Count.Should().Be(3);
         }
 
         [Fact]
@@ -124,23 +96,46 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                 CustomHeader2 = true
             };
 
-            _configurator.Connect(
-                endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
+            await using var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
 
-            using var scope = _serviceProvider.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddDbContext<TestDbContext>(
+                            options => options
+                                .UseSqlite(connection))
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddInMemoryBroker()
+                                .AddDbOutboundConnector()
+                                .AddDbOutboundWorker(TimeSpan.FromMilliseconds(100)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                        .UseDbContext<TestDbContext>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            using (var scope = Host.ServiceProvider.CreateScope())
+            {
+                await scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreatedAsync();
+            }
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(message);
-            await scope.ServiceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
+            await serviceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
 
-            _subscriber.InboundEnvelopes.Should().BeEmpty();
+            Subscriber.InboundEnvelopes.Should().BeEmpty();
 
-            await _serviceProvider.GetRequiredService<IOutboundQueueWorker>().ProcessQueue(CancellationToken.None);
+            await AsyncTestingUtil.WaitAsync(() => Subscriber.InboundEnvelopes.Count > 0);
 
-            _subscriber.InboundEnvelopes.Count.Should().Be(1);
-            var inboundEnvelope = _subscriber.InboundEnvelopes[0];
+            Subscriber.InboundEnvelopes.Count.Should().Be(1);
+            var inboundEnvelope = Subscriber.InboundEnvelopes[0];
             inboundEnvelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header", "hi!"));
             inboundEnvelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header2", true));
         }
@@ -158,38 +153,65 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            _configurator.Connect(
-                endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e")
-                        {
-                            Chunk = new ChunkSettings
-                            {
-                                Size = 10
-                            }
-                        })
-                    .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
+            await using var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
 
-            using var scope = _serviceProvider.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddDbContext<TestDbContext>(
+                            options => options
+                                .UseSqlite(connection))
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddInMemoryBroker()
+                                .AddInMemoryChunkStore()
+                                .AddDbOutboundConnector()
+                                .AddDbOutboundWorker(TimeSpan.FromMilliseconds(100)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(
+                                    new KafkaProducerEndpoint("test-e2e")
+                                    {
+                                        Chunk = new ChunkSettings
+                                        {
+                                            Size = 10
+                                        }
+                                    })
+                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                        .UseDbContext<TestDbContext>()
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                .Run();
 
+            using (var scope = Host.ServiceProvider.CreateScope())
+            {
+                await scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreatedAsync();
+            }
+
+            Host.PauseBackgroundServices();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
-            await scope.ServiceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
+            await serviceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
 
-            _spyBehavior.OutboundEnvelopes.Count.Should().Be(3);
-            _spyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
+            SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
+            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
                 .BeEquivalentTo(rawMessage);
-            _spyBehavior.OutboundEnvelopes.ForEach(
+            SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.RawMessage.Should().NotBeNull();
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
                 });
-            _spyBehavior.InboundEnvelopes.Should().BeEmpty();
+            SpyBehavior.InboundEnvelopes.Should().BeEmpty();
 
-            await _serviceProvider.GetRequiredService<IOutboundQueueWorker>().ProcessQueue(CancellationToken.None);
-            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            _spyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+            Host.ResumeBackgroundServices();
+            await AsyncTestingUtil.WaitAsync(() => SpyBehavior.InboundEnvelopes.Count > 0, 10000);
+
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
 
         [Fact]
@@ -205,50 +227,64 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            _configurator.Connect(
-                endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e")
-                        {
-                            Encryption = new SymmetricEncryptionSettings
-                            {
-                                Key = AesEncryptionKey
-                            }
-                        })
-                    .AddInbound(
-                        new KafkaConsumerEndpoint("test-e2e")
-                        {
-                            Encryption = new SymmetricEncryptionSettings
-                            {
-                                Key = AesEncryptionKey
-                            }
-                        }));
+            await using var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
 
-            using var scope = _serviceProvider.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddDbContext<TestDbContext>(
+                            options => options
+                                .UseSqlite(connection))
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddInMemoryBroker()
+                                .AddDbOutboundConnector()
+                                .AddDbOutboundWorker(TimeSpan.FromMilliseconds(100)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(
+                                    new KafkaProducerEndpoint("test-e2e")
+                                    {
+                                        Encryption = new SymmetricEncryptionSettings
+                                        {
+                                            Key = AesEncryptionKey
+                                        }
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        Encryption = new SymmetricEncryptionSettings
+                                        {
+                                            Key = AesEncryptionKey
+                                        }
+                                    }))
+                        .UseDbContext<TestDbContext>()
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                .Run();
 
+            using (var scope = Host.ServiceProvider.CreateScope())
+            {
+                await scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreatedAsync();
+            }
+
+            Host.PauseBackgroundServices();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
-            await scope.ServiceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
+            await serviceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
 
-            _spyBehavior.OutboundEnvelopes.Count.Should().Be(1);
-            _spyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage);
-            _spyBehavior.InboundEnvelopes.Should().BeEmpty();
+            SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage);
+            SpyBehavior.InboundEnvelopes.Should().BeEmpty();
 
-            await _serviceProvider.GetRequiredService<IOutboundQueueWorker>().ProcessQueue(CancellationToken.None);
+            Host.ResumeBackgroundServices();
+            await AsyncTestingUtil.WaitAsync(() => SpyBehavior.InboundEnvelopes.Count > 0);
 
-            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            _spyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            if (_connection == null)
-                return;
-
-            _connection.Close();
-            await _connection.DisposeAsync();
-
-            await _serviceProvider.DisposeAsync();
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -35,6 +36,8 @@ namespace Silverback.Messaging.Broker
             "The broker is already connected. Disconnect it to get a new consumer.";
 
         private readonly List<IBrokerBehavior> _behaviors;
+
+        private readonly EndpointsConfiguratorsInvoker _endpointsConfiguratorsInvoker;
 
         private readonly ISilverbackIntegrationLogger _logger;
 
@@ -63,8 +66,9 @@ namespace Silverback.Messaging.Broker
             _behaviors = behaviors?.ToList() ?? new List<IBrokerBehavior>();
 
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _endpointsConfiguratorsInvoker = _serviceProvider.GetRequiredService<EndpointsConfiguratorsInvoker>();
             _logger = _serviceProvider
-                .GetRequiredService<ISilverbackIntegrationLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>();
+                .GetRequiredService<ISilverbackIntegrationLogger<Broker<IProducerEndpoint, TConsumerEndpoint>>>();
 
             ProducerEndpointType = typeof(TProducerEndpoint);
             ConsumerEndpointType = typeof(TConsumerEndpoint);
@@ -177,6 +181,8 @@ namespace Silverback.Messaging.Broker
 
             if (_consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);
+
+            _endpointsConfiguratorsInvoker.Invoke();
 
             _logger.LogDebug(
                 IntegrationEventIds.BrokerConnecting,
@@ -305,6 +311,7 @@ namespace Silverback.Messaging.Broker
             _consumers?.OfType<IDisposable>().ForEach(o => o.Dispose());
             _consumers = null;
 
+            // ReSharper disable once SuspiciousTypeConversion.Global
             _producers?.Values.OfType<IDisposable>().ForEach(o => o.Dispose());
             _producers = null;
         }

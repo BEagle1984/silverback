@@ -7,7 +7,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Integration.TestTypes;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Publishing
@@ -18,33 +17,15 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
     /// </summary>
     public class PublisherTests
     {
-        private readonly IServiceProvider _serviceProvider;
-
-        private readonly IServiceProvider _scopedServiceProvider;
-
-        public PublisherTests()
-        {
-            var services = new ServiceCollection();
-
-            services
-                .AddNullLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddBroker<TestBroker>());
-
-            _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-            _scopedServiceProvider = _serviceProvider.CreateScope().ServiceProvider;
-        }
-
         [Fact]
         public void Publish_HandlersReturnValue_ResultsReturned()
         {
-            _serviceProvider.GetService<IBusConfigurator>()
-                .Subscribe<object>(_ => "response")
-                .Subscribe<object>(_ => "response2");
+            var publisher = GetPublisher(
+                builder => builder
+                    .AddDelegateSubscriber<object>(_ => "response")
+                    .AddDelegateSubscriber<object>(_ => "response2"));
 
-            var results = _scopedServiceProvider.GetService<IPublisher>().Publish<string>("test");
+            var results = publisher.Publish<string>("test");
 
             results.Should().Equal("response", "response2");
         }
@@ -52,13 +33,29 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
         [Fact]
         public async Task PublishAsync_HandlersReturnValue_ResultsReturned()
         {
-            _serviceProvider.GetService<IBusConfigurator>()
-                .Subscribe<object>(_ => "response")
-                .Subscribe<object>(_ => "response2");
+            var publisher = GetPublisher(
+                builder => builder
+                    .AddDelegateSubscriber<object>(_ => "response")
+                    .AddDelegateSubscriber<object>(_ => "response2"));
 
-            var results = await _scopedServiceProvider.GetService<IPublisher>().PublishAsync<string>("test");
+            var results = await publisher.PublishAsync<string>("test");
 
             results.Should().Equal("response", "response2");
+        }
+
+        private static IPublisher GetPublisher(Action<ISilverbackBuilder> buildAction)
+        {
+            var services = new ServiceCollection();
+
+            services.AddNullLogger();
+
+            var builder = services.AddSilverback();
+
+            buildAction(builder);
+
+            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+
+            return serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IPublisher>();
         }
     }
 }

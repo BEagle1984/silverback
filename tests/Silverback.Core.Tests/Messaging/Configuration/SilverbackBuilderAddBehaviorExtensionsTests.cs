@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +17,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         public void AddTransientBehavior_Type_BehaviorProperlyRegistered()
         {
             var messages = new List<TestEventOne>();
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddTransientBehavior(typeof(ChangeTestEventOneContentBehavior))
@@ -35,7 +34,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         public void AddTransientBehaviorWithGenericArguments_Type_BehaviorProperlyRegistered()
         {
             var messages = new List<TestEventOne>();
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddTransientBehavior<ChangeTestEventOneContentBehavior>()
@@ -52,7 +51,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         public void AddTransientBehavior_Factory_BehaviorProperlyRegistered()
         {
             var messages = new List<TestEventOne>();
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddTransientBehavior(_ => new ChangeTestEventOneContentBehavior())
@@ -69,7 +68,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         public void AddScopedBehavior_Type_BehaviorProperlyRegistered()
         {
             var messages = new List<TestEventOne>();
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddScopedBehavior(typeof(ChangeTestEventOneContentBehavior))
@@ -86,7 +85,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         public void AddScopedBehaviorWithGenericArguments_Type_BehaviorProperlyRegistered()
         {
             var messages = new List<TestEventOne>();
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddScopedBehavior<ChangeTestEventOneContentBehavior>()
@@ -103,7 +102,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         public void AddScopedBehavior_Factory_BehaviorProperlyRegistered()
         {
             var messages = new List<TestEventOne>();
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddScopedBehavior(_ => new ChangeTestEventOneContentBehavior())
@@ -120,7 +119,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         public void AddSingletonBehavior_Type_BehaviorProperlyRegistered()
         {
             var messages = new List<TestEventOne>();
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonBehavior(typeof(ChangeTestEventOneContentBehavior))
@@ -137,7 +136,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         public void AddSingletonBehaviorWithGenericArguments_Type_BehaviorProperlyRegistered()
         {
             var messages = new List<TestEventOne>();
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonBehavior<ChangeTestEventOneContentBehavior>()
@@ -154,7 +153,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         public void AddSingletonBehavior_Factory_BehaviorProperlyRegistered()
         {
             var messages = new List<TestEventOne>();
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonBehavior(_ => new ChangeTestEventOneContentBehavior())
@@ -171,7 +170,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         public void AddSingletonBehavior_Instance_BehaviorProperlyRegistered()
         {
             var messages = new List<TestEventOne>();
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonBehavior(new ChangeTestEventOneContentBehavior())
@@ -182,16 +181,6 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             publisher.Publish(new TestEventOne());
 
             messages.ForEach(m => m.Message.Should().Be("behavior"));
-        }
-
-        private static IServiceProvider GetServiceProvider(Action<IServiceCollection> configAction)
-        {
-            var services = new ServiceCollection()
-                .AddNullLogger();
-
-            configAction(services);
-
-            return services.BuildServiceProvider().CreateScope().ServiceProvider;
         }
     }
 }

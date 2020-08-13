@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -11,12 +12,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -26,51 +27,9 @@ using Xunit;
 namespace Silverback.Tests.Integration.E2E.Chunking
 {
     [Trait("Category", "E2E")]
-    public class DbChunkStoreTests : IAsyncDisposable
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Connection scoped to test method")]
+    public class DbChunkStoreTests : E2ETestFixture
     {
-        private readonly SqliteConnection _connection;
-
-        private readonly ServiceProvider _serviceProvider;
-
-        private readonly IBusConfigurator _configurator;
-
-        private readonly SpyBrokerBehavior _spyBehavior;
-
-        public DbChunkStoreTests()
-        {
-            _connection = new SqliteConnection("DataSource=:memory:");
-            _connection.Open();
-
-            var services = new ServiceCollection();
-
-            services
-                .AddNullLogger()
-                .AddDbContext<TestDbContext>(
-                    options => options
-                        .UseSqlite(_connection))
-                .AddSilverback()
-                .UseModel()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddInMemoryBroker()
-                        .AddDbChunkStore(TimeSpan.FromMilliseconds(250)))
-                .UseDbContext<TestDbContext>()
-                .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                .AddSingletonSubscriber<OutboundInboundSubscriber>();
-
-            _serviceProvider = services.BuildServiceProvider(
-                new ServiceProviderOptions
-                {
-                    ValidateScopes = true
-                });
-
-            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
-            _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
-
-            using var scope = _serviceProvider.CreateScope();
-            scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
-        }
-
         [Fact]
         public async Task Chunking_ChunkedAndAggregatedCorrectly()
         {
@@ -83,34 +42,55 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            _configurator.Connect(
-                endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e")
-                        {
-                            Chunk = new ChunkSettings
-                            {
-                                Size = 10
-                            }
-                        })
-                    .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
+            await using var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
 
-            using var scope = _serviceProvider.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddDbContext<TestDbContext>(
+                            options => options
+                                .UseSqlite(connection))
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddInMemoryBroker()
+                                .AddDbChunkStore())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(
+                                    new KafkaProducerEndpoint("test-e2e")
+                                    {
+                                        Chunk = new ChunkSettings
+                                        {
+                                            Size = 10
+                                        }
+                                    })
+                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                        .UseDbContext<TestDbContext>()
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                .Run();
 
+            using (var scope = Host.ServiceProvider.CreateScope())
+            {
+                await scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreatedAsync();
+            }
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            _spyBehavior.OutboundEnvelopes.Count.Should().Be(3);
-            _spyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
+            SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
+            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
                 .BeEquivalentTo(rawMessage);
-            _spyBehavior.OutboundEnvelopes.ForEach(
+            SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.RawMessage.Should().NotBeNull();
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
                 });
-            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            _spyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
 
         [Fact]
@@ -124,15 +104,36 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            var broker = _configurator.Connect(
-                endpoints => endpoints
-                    .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
+            await using var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
 
-            ((InMemoryConsumer)broker.Consumers[0]).CommitCalled +=
-                (_, args) => committedOffsets.AddRange(args.Offsets);
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddDbContext<TestDbContext>(
+                            options => options
+                                .UseSqlite(connection))
+                        .AddSilverback()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddInMemoryBroker()
+                                .AddDbChunkStore())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                        .UseDbContext<TestDbContext>())
+                .Run();
+
+            using (var scope = Host.ServiceProvider.CreateScope())
+            {
+                await scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreatedAsync();
+            }
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var consumer = (InMemoryConsumer)broker.Consumers[0];
+            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
-
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
@@ -160,15 +161,36 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            var broker = _configurator.Connect(
-                endpoints => endpoints
-                    .AddInbound(new KafkaConsumerEndpoint("test-e2e"))).First();
+            await using var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
 
-            ((InMemoryConsumer)broker.Consumers[0]).CommitCalled +=
-                (_, args) => committedOffsets.AddRange(args.Offsets);
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddDbContext<TestDbContext>(
+                            options => options
+                                .UseSqlite(connection))
+                        .AddSilverback()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddInMemoryBroker()
+                                .AddDbChunkStore(TimeSpan.FromMilliseconds(300), TimeSpan.FromMilliseconds(50)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                        .UseDbContext<TestDbContext>())
+                .Run();
+
+            using (var scope = Host.ServiceProvider.CreateScope())
+            {
+                await scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreatedAsync();
+            }
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var consumer = (InMemoryConsumer)broker.Consumers[0];
+            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
-
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
@@ -176,13 +198,15 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 rawMessage.Skip(10).Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 1, 3));
 
-            using (var scope = _serviceProvider.CreateScope())
+            await Task.Delay(100);
+
+            using (var scope = Host.ServiceProvider.CreateScope())
             {
                 var chunkStore = scope.ServiceProvider.GetRequiredService<IChunkStore>();
                 (await chunkStore.CountChunks("123")).Should().Be(2);
-            }
 
-            await Task.Delay(250);
+                await AsyncTestingUtil.WaitAsync(async () => await chunkStore.CountChunks("123") == 0, 500);
+            }
 
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -191,24 +215,12 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 rawMessage.Skip(10).Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("456", 1, 3));
 
-            await _serviceProvider.GetRequiredService<ChunkStoreCleaner>().Cleanup();
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = Host.ServiceProvider.CreateScope())
             {
                 var chunkStore = scope.ServiceProvider.GetRequiredService<IChunkStore>();
                 (await chunkStore.CountChunks("123")).Should().Be(0);
                 (await chunkStore.CountChunks("456")).Should().Be(2);
             }
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            if (_connection == null)
-                return;
-
-            _connection.Close();
-            await _connection.DisposeAsync();
-
-            await _serviceProvider.DisposeAsync();
         }
     }
 }

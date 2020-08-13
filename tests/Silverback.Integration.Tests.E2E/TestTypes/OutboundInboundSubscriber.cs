@@ -4,11 +4,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes
 {
-    public class OutboundInboundSubscriber : ISubscriber
+    public class OutboundInboundSubscriber
     {
         private readonly List<IOutboundEnvelope> _outboundEnvelopes = new List<IOutboundEnvelope>();
 

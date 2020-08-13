@@ -31,12 +31,13 @@ uid: releases
 ### Breaking Changes
 
 * Removed `ISubscriber` interface
-* Removed `BusConfigurator` (moved all the configuration into `IServiceCollection` and `ISilverbackBuilder` extension methods)
-    * Replaced `BusConfigurator.Connect` with `IBrokerOptionsBuilder.AddInboundEnpoint`, `IBrokerOptionsBuilder.AddOutboundEndpoint` and `IEndpointConfigurator` (see <xref:message-broker>)
+* Removed `BusConfigurator` (moved all the configuration into the `ISilverbackBuilder` extension methods)
+    * Replaced `BusConfigurator.Connect` with `IBroker.ConfigureEnpoints`/`IBrokerCollection.ConfigureEnpoints`/`IEndpointConfigurator` (see <xref:message-broker>)
     * Replaced `BusConfigurator.Subscribe` methods with `ISilverbackBuilder.AddDelegateSubscriber` or `IServiceCollection.AddDelegateSubscriber` (see <xref:subscribe>)
     * Replaced `BusConfigurator.HandleMessagesOfType` methods with `ISilverbackBuilder.HandleMessagesOfType` (see <xref:subscribe>)
     * `BusConfigurator.ScanSubscribers` is not needed anymore since it gets called automatically at startup (from an `IHostedService`)
-* Removed `IServiceCollection.Add*Subscriber`, `IServiceCollection.Add*Behavior`, `IServiceCollection.Add*BrokerBehavior`, `IServiceCollection.Add*EndpointsConfigurator`, `IServiceCollection.Add*OutboundRouter` extension methods, use `IServiceCollection.ConfigureSilverback` instead (see <xref:enabling-silverback>)
+* Removed `IServiceCollection.Add*Subscriber`, `IServiceCollection.Add*Behavior`, `IServiceCollection.Add*BrokerBehavior`, `IServiceCollection.AddEndpointsConfigurator`, `IServiceCollection.Add*OutboundRouter` extension methods, use the same methods on the `ISilverbackBuilder` (using `IServiceCollection.ConfigureSilverback` to get an instance if the `ISilverbackBuilder` if necessary, as shown in  <xref:enabling-silverback>)
+* Removed `IBrokerOptionsBuilder.Add*BrokerBehavior`, `IBrokerOptionsBuilder.RegisterConfigurator`, `IBrokerOptionsBuilder.Add*OutboundRouter` extension methods, use the same methods on the `ISilverbackBuilder` (using `IServiceCollection.ConfigureSilverback` to get an instance if the `ISilverbackBuilder` if necessary, as shown in  <xref:enabling-silverback>)
 * `ErrorPolicyBuilder` replaced with `IErrorPolicyBuilder` interface
 * The visibility of some types has been changed to internal to favor a cleaner and clearer API where the public types are well documented and their backward compatibility is valued
 * Removed `Silverback` prefix from exceptions name

@@ -59,17 +59,15 @@ public class FileConsumerService
 If the message wasn't produced by Silverback chances are that the message type header is not there. In that case you need to explicitly configure the `BinaryFileMessageSerializer` in the inbound endpoint.
 
 ```csharp
-public class Startup
+public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("basket-events")
-                    {
-                        Serializer = BinaryFileMessageSerializer.Default
-                    }));
+        builder.AddInbound(
+            new KafkaConsumerEndpoint("basket-events")
+            {
+                Serializer = BinaryFileMessageSerializer.Default
+            });
     }
 }
 ```
@@ -84,19 +82,17 @@ public class MyBinaryFileMessage : BinaryFileMessage
     public Guid UserId { get; set; }
 }
 ```
-# [Startup](#tab/custommodel-startup)
+# [EndpointsConfigurator](#tab/custommodel-configurator)
 ```csharp
-public class Startup
+public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("basket-events")
-                    {
-                        Serializer = new BinaryFileMessageSerializer<MyBinaryFileMessage>()
-                    }));
+        builder.AddInbound(
+            new KafkaConsumerEndpoint("basket-events")
+            {
+                Serializer = new BinaryFileMessageSerializer<MyBinaryFileMessage>()
+            });
     }
 }
 ```

@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Background;
 using Silverback.Diagnostics;
-using Silverback.Tests.Core.TestTypes;
 using Silverback.Tests.Core.TestTypes.Database;
 using Xunit;
 
@@ -153,14 +152,48 @@ namespace Silverback.Tests.Core.Background
                 _serviceProvider.GetRequiredService<DbDistributedLockManager>());
             await service.StartAsync(CancellationToken.None);
 
-            await Task.Delay(100);
+            await AsyncTestingUtil.WaitAsync(() => executions > 1);
+
+            executions.Should().BeGreaterThan(0);
 
             await service.StopAsync(CancellationToken.None);
             var executionsBeforeStop = executions;
 
-            await Task.Delay(200);
+            await Task.Delay(500);
 
             executions.Should().Be(executionsBeforeStop);
+        }
+
+        [Fact]
+        public async Task PauseAndResume_SimpleTask_ExecutionPausedAndResumed()
+        {
+            int executions = 0;
+
+            var service = new TestRecurringDistributedBackgroundService(
+                _ =>
+                {
+                    executions++;
+                    return Task.CompletedTask;
+                },
+                _serviceProvider.GetRequiredService<DbDistributedLockManager>());
+            await service.StartAsync(CancellationToken.None);
+
+            await AsyncTestingUtil.WaitAsync(() => executions > 1);
+
+            executions.Should().BeGreaterThan(0);
+
+            service.Pause();
+            var executionsBeforeStop = executions;
+
+            await Task.Delay(500);
+
+            executions.Should().Be(executionsBeforeStop);
+
+            service.Resume();
+
+            await AsyncTestingUtil.WaitAsync(() => executions > executionsBeforeStop);
+
+            executions.Should().BeGreaterThan(executionsBeforeStop);
         }
 
         public async ValueTask DisposeAsync()

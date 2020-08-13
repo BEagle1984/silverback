@@ -37,6 +37,12 @@ namespace Silverback.Messaging.Broker
         {
         }
 
+        /// <summary>
+        ///     Resets the offset of all topics. The offset for the next messages will restart from 0. This can be
+        ///     used to simulate the case when the very same messages are consumed once again.
+        /// </summary>
+        public void ResetOffsets() => _topics.Values.ForEach(topic => topic.ResetOffset());
+
         internal InMemoryTopic GetTopic(string name) =>
             _topics.GetOrAdd(name, _ => new InMemoryTopic(name));
 
@@ -70,14 +76,6 @@ namespace Silverback.Messaging.Broker
                     behaviors,
                     serviceProvider,
                     serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<InMemoryConsumer>>()));
-        }
-
-        /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.Disconnect(IEnumerable{IConsumer})" />
-        protected override void Disconnect(IEnumerable<IConsumer> consumers)
-        {
-            base.Disconnect(consumers);
-
-            _topics.Clear();
         }
     }
 }

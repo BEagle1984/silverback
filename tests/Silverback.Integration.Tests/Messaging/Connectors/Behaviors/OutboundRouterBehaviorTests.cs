@@ -47,9 +47,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                         .AddBroker<TestBroker>()
                         .AddBroker<TestOtherBroker>()
                         .AddDeferredOutboundConnector<InMemoryOutboundQueue>()
-                        .AddOutboundConnector());
-
-            services.AddSingletonSubscriber(_testSubscriber);
+                        .AddOutboundConnector())
+                .AddSingletonSubscriber(_testSubscriber);
 
             services.AddNullLogger();
 

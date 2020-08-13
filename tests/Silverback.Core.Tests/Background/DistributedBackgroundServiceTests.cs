@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Background;
 using Silverback.Diagnostics;
-using Silverback.Tests.Core.TestTypes;
 using Silverback.Tests.Core.TestTypes.Database;
 using Xunit;
 

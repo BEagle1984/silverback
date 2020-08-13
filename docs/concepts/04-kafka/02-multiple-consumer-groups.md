@@ -6,10 +6,11 @@ uid: kafka-consumer-groups
 
 In some cases you may want to consume multiple times the same topic, to perform independent tasks. You achieve this by attaching multiple consumers to the same topic, using a different consumer group id.
 
+# [Startup](#tab/startup)
 ```csharp
 public class Startup
 {
-    public void ConfigureServices(IServiceCollection services)
+    protected override void ConfigureServices(IServiceCollection services)
     {
         services
             .AddSilverback()
@@ -18,31 +19,37 @@ public class Startup
                 .AddInboundConnector()
                 .AddOutboundConnector());
     }
-
-    public void Configure(IBusConfigurator busConfigurator)
-    {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("document-events")
-                    {
-                        Configuration = new KafkaConsumerConfig
-                        {
-                            BootstrapServers = "PLAINTEXT://kafka:9092",
-                            GroupId = "group1"
-                        }
-                    })
-                .AddInbound(
-                    new KafkaConsumerEndpoint("document-events")
-                    {
-                        Configuration = new KafkaConsumerConfig
-                        {
-                            BootstrapServers = "PLAINTEXT://kafka:9092",
-                            GroupId = "group2"
-                        }
-                    }));
 }
 ```
+# [EndpointsConfigurator](#tab/configurator)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder)
+    {
+        builder
+            .AddInbound(
+                new KafkaConsumerEndpoint("document-events")
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                        GroupId = "group1"
+                    }
+                })
+            .AddInbound(
+                new KafkaConsumerEndpoint("document-events")
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                        GroupId = "group2"
+                    }
+                });
+    }
+}
+```
+***
 
 By default Silverback would call every matching subscriber method for each message, regardless of the consumer group and you basically have two choices to work around this: using the `KafkaGroupIdFilterAttribute` or manually inspecting the `IInboundEnvelope`.
 

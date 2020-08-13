@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Connectors.Repositories.Model;
@@ -31,11 +32,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
 
         public DeferredOutboundConnectorTests()
         {
-            var services = new ServiceCollection();
-            services.AddNullLogger()
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
-                .AddSilverback();
-            var serviceProvider = services.BuildServiceProvider();
+            var serviceProvider =
+                new ServiceCollection()
+                    .AddNullLogger()
+                    .AddSingleton<EndpointsConfiguratorsInvoker>()
+                    .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
+                    .AddSilverback()
+                    .Services.BuildServiceProvider();
 
             _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
             var broker = new OutboundQueueBroker(_queue, Array.Empty<IBrokerBehavior>(), serviceProvider);

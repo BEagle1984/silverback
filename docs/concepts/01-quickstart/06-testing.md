@@ -30,6 +30,9 @@ public class InMemoryBrokerTests
             // Register the InMemoryBroker instead of
             // the real broker (e.g. KafkaBroker)
             .WithInMemoryBroker()
+            // Configure inbound and outbound endpoints
+            .AddEndpoints(endpoints => endpoints
+                .AddInbound(new KafkaConsumerEndpoint("test-topic")))
             // Register the subscriber under test
             .AddScopedSubscriber<MySubscriber>();
 
@@ -43,11 +46,8 @@ public class InMemoryBrokerTests
     {
         // Arrange
 
-        // Configure the Bus
-        _serviceProvider.GetRequiredService<BusConfigurator>()
-            // Configure inbound and outbound endpoints
-            .Connect(endpoints => endpoints
-                .AddInbound(new KafkaConsumerEndpoint("test-topic"));
+        // Connect the broker
+        _serviceProvider.GetRequiredService<IBroker>().Connect();
 
         // Create a producer to push to test-topic
         var producer = _serviceProvider

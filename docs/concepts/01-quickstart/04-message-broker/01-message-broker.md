@@ -13,15 +13,15 @@ The following example is very simple and there are of course many more configura
 The basic concepts:
 * `WithConnectionToMessageBroker` registers the services necessary to connect to a message broker
 * `AddKafka`, `AddRabbit`, `AddInMemoryBroker`, etc. register the message broker implementation(s)
+* `AddEndpointsConfigurator` is used to outsource the endpoints configuration into a separate class implementing the `IEndpointsConfigurator` interface (of course multiple configurators can be registered)
 * `AddInbound` is used to automatically relay the incoming messages to the internal bus and they can therefore be subscribed as seen in the previous chapters
 * `AddOutbound` works the other way around and subscribes to the internal bus to forward the integration messages to the message broker
-* `Connect` automatically creates and starts all the consumers.
 
 ### Basic configuration
 
-The following sample demonstrates how to setup some inbound and outbound endpoints against the built-in message brokers.
+The following sample demonstrates how to setup some inbound and outbound endpoints against the built-in message brokers (Apache Kafka or RabbitMQ).
 
-# [Apache Kafka](#tab/kafka)
+# [Apache Kafka - Startup](#tab/kafka-startup)
 ```csharp
 public class Startup
 {
@@ -30,14 +30,18 @@ public class Startup
         services
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
-                .AddKafka()
-                .AddInboundConnector()
-                .AddOutboundConnector());
+                .AddKafka())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
-
-    public void Configure(IBusConfigurator busConfigurator)
+}
+```
+# [Apache Kafka - EndpointsConfigurator](#tab/kafka-configurator)
+```csharp
+private class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator.Connect(endpoints => endpoints
+        builder
             .AddInbound(
                 new KafkaConsumerEndpoint("basket-events")
                 {
@@ -63,11 +67,11 @@ public class Startup
                     {
                         BootstrapServers = "PLAINTEXT://kafka:9092"
                     }
-                }));
+                });
     }
 }
 ```
-# [RabbitMQ](#tab/rabbit)
+# [RabbitMQ - Startup](#tab/rabbit-startup)
 ```csharp
 public class Startup
 {
@@ -76,14 +80,18 @@ public class Startup
         services
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
-                .AddRabbit()
-                .AddInboundConnector()
-                .AddOutboundConnector());
+                .AddRabbit())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
-
-    public void Configure(IBusConfigurator busConfigurator)
+}
+```
+# [RabbitMQ - EndpointsConfigurator](#tab/rabbit-configurator)
+```csharp
+private class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator.Connect(endpoints => endpoints
+        builder
             .AddInbound(
                 new RabbitExchangeConsumerEndpoint("basket-events")
                 {
@@ -145,15 +153,21 @@ public class Startup
                         IsAutoDeleteEnabled = false,
                         ExchangeType = ExchangeType.Fanout
                     }
-                }));
+                });
     }
 }
 ```
 ***
 
-### Multiple brokers
+> [!Tip]
+> All `IEndpointsConfigurator` implementations are registered as scoped services. Multiple implementations can be registerd to split the configuration and of course depenencies (such as `IOption` or a `DbContext`) can be injected to load the configuration variables.
 
-It is possible to use multiple message brokers together in the same application. The following sample demonstrates how to consume from both Apache Kafka and RabbitMQ.
+> [!Important]
+> Starting from version 3.0.0 the broker(s) will be connected and all consumers started automatically at startup, unless explicitely disabled (see the [Connection modes](#connection-modes) chapter for details).
+
+### Inline endpoints configuration
+
+The preferred and suggested way to configure the message broker endpoints is using the `IEndpointsConfiguration` but you can use `AddEndpoints` to specify them inline.
 
 ```csharp
 public class Startup
@@ -163,80 +177,54 @@ public class Startup
         services
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
-                .AddKafka()
-                .AddRabbit()
-                .AddInboundConnector());
+                .AddKafka())
+            .AddEndpoints(builder => builder
+                .AddInbound(
+                    new KafkaConsumerEndpoint("kafka-events")
+                    {
+                        ...
+                    }));
     }
+}
 
-    public void Configure(IBusConfigurator busConfigurator)
+A third option would be to use `ConfigureEndpoints` on the `IBroker`/`IBrokerCollection` directly but that approach should be used only if the automatic connection is disabled (see the [Connection modes](#connection-modes) chapter for details).
+
+### Multiple brokers
+
+It is possible to use multiple message broker implementation together in the same application. The following sample demonstrates how to consume from both Apache Kafka and RabbitMQ.
+
+# [Startup](#tab/multiple-startup)
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
     {
-        busConfigurator.Connect(endpoints => endpoints
-            .AddInbound(
-                new RabbitExchangeConsumerEndpoint("rabbit-events")
-                {
-                    ...
-                })
-            .AddInbound(
-                new KafkaConsumerEndpoint("kafka-events")
-                {
-                    ...
-                }));
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddRabbit())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
 }
 ```
-
-## Using IEndpointsConfigurator
-
-The endpoints configuration can be split into multiple types implementing the `IEndpointsConfigurator` interface and the configurators can be registered using either the `RegisterConfigurator` or `AddEndpointsConfigurator` methods.
-
-# [Endpoint Configurator](#tab/configurator)
+# [EndpointsConfigurator](#tab/multiple-kafka-configurator)
 ```csharp
-private class MyFeatureConfigurator : IEndpointsConfigurator
+private class MyEndpointsConfigurator : IEndpointsConfigurator
 {
     public void Configure(IEndpointsConfigurationBuilder builder)
     {
         builder
-            .AddOutbound<IMyFeatureEvents>(
-                new KafkaProducerEndpoint("my-feature-events")
-                {
-                    ...
-                }
-            )
             .AddInbound(
-                new KafkaConsumerEndpoint("my-feature-commands")
+                new KafkaConsumerEndpoint("kafka-events")
                 {
                     ...
-                }
-            );
-    }
-}
-```
-# [Startup (Option 1)](#tab/configurator-startup1)
-```csharp
-public class Startup
-{
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services
-            .AddSilverback()
-            .WithConnectionToMessageBroker(options => options
-                .AddKafka()
-                .RegisterConfigurator<MyFeatureConfigurator>());
-    }
-}
-```
-# [Startup (Option 2)](#tab/configurator-startup2)
-```csharp
-public class Startup
-{
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services
-            .AddSilverback()
-            .WithConnectionToMessageBroker(options => options
-                .AddKafka());
-
-        services.AddEndpointsConfigurator<MyFeatureConfigurator>());
+                })
+            .AddInbound(
+                new RabbitExchangeConsumerEndpoint("rabbit-events")
+                {
+                    ...
+                });
     }
 }
 ```
@@ -244,7 +232,7 @@ public class Startup
 
 ### Using assembly scanning
 
-You can of course use the assembly scanning capabilities of your  Dependency Injection framework (e.g. [Autofac](https://autofac.org/)) to register all the `IEndpointsConfigurator`.
+You can of course use the assembly scanning capabilities of your Dependency Injection framework (e.g. [Autofac](https://autofac.org/)) to register all the `IEndpointsConfigurator`.
 
 Here an example using Autofac:
 
@@ -260,21 +248,81 @@ public class EndpointsConfiguratorsModule : Module
 }
 ```
 
-## Graceful shutdown
+## Connection modes
 
-It is important to properly close the consumers using the `Disconnect` method before exiting. The offsets have to be committed and the broker has to be notified (it will then proceed to reassign the partitions as needed).
+You may not want to connect your broker immediately. In the following example is shown how to postpone the automatic connection after the application startup.
 
 ```csharp
 public class Startup
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void ConfigureServices(IServiceCollection services)
     {
-        var brokers = busConfigurator.Connect(...);
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .WithConnectionOptions(new BrokerConnectionOptions
+                {
+                    Mode = BrokerConnectionMode.AfterStartup,
+                    RetryInterval = TimeSpan.FromMinutes(5)
 
-        appLifetime.ApplicationStopping.Register(() => brokers.Disconnect());
+                }))
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
 }
 ```
+
+But it's also possible to completely disable the automatic connection and manually perform it.
+
+# [Startup](#tab/noautoconnect-startup)
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .WithConnectionOptions(new BrokerConnectionOptions
+                {
+                    Mode = BrokerConnectionMode.Manual
+                }))
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
+    }
+}
+```
+# [Service](#tab/noautoconnect-service)
+```csharp
+public class BrokerConnectionService
+{
+    private readonly IBroker _broker;
+
+    public BrokerConnectionService(IBroker broker)
+    {
+        _broker = broker;
+    }
+
+    public void Connect()
+    {
+        broker.Connect();
+    }
+}
+```
+***
+
+> [!Tip]
+> See the <xref:Silverback.Messaging.Configuration.BrokerConnectionOptions> documentation for details about the different options.
+
+> [!Note]
+> Use `IBrokerCollection` instead of `IBroker` when multiple broker implementations are used.
+
+> [!Important]
+If your application is not running using an `IHost` (`GenericHost` or `WebHost`, like in a normal ASP.NET Core application) you always need to manually connect it as shown in the second example above.
+
+## Graceful shutdown
+
+It is important to properly close the consumers using the `Disconnect` method before exiting. The offsets have to be committed and the broker has to be notified (it will then proceed to reassign the partitions as needed). Starting from version 3.0.0 this is done automatically (if your application is running using an `IHost` (`GenericHost` or `WebHost`, like in a normal ASP.NET Core application)).
 
 ## Health Monitoring
 

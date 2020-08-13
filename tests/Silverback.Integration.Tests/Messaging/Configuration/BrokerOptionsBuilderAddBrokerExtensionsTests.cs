@@ -4,6 +4,7 @@
 using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Tests.Integration.TestTypes;
@@ -41,6 +42,38 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             registeredBehaviors.Should()
                 .Contain(behavior => behavior.GetType() == typeof(FatalExceptionLoggerConsumerBehavior));
+        }
+
+        [Fact]
+        public void AddBroker_BrokerRegisteredForDI()
+        {
+            var serviceProvider = new ServiceCollection()
+                .AddNullLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>())
+                .Services.BuildServiceProvider();
+
+            serviceProvider.GetService<IBroker>().Should().NotBeNull();
+            serviceProvider.GetService<IBroker>().Should().BeOfType<TestBroker>();
+        }
+
+        [Fact]
+        public void AddBroker_BrokerOptionsConfiguratorInvoked()
+        {
+            var serviceProvider = new ServiceCollection()
+                .AddNullLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>())
+                .Services.BuildServiceProvider();
+
+            var registeredBehaviors = serviceProvider.GetServices<IBrokerBehavior>().ToList();
+
+            registeredBehaviors.Should()
+                .Contain(x => x.GetType() == typeof(EmptyBehavior));
         }
     }
 }

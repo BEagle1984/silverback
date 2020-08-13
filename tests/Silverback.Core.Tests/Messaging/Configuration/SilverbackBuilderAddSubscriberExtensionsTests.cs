@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Publishing;
@@ -16,7 +15,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddTransientSubscriber_Type_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddTransientSubscriber(typeof(TestSubscriber)));
@@ -32,7 +31,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddTransientSubscriberWithGenericArguments_Type_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddTransientSubscriber<TestSubscriber>());
@@ -51,7 +50,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddTransientSubscriber_TypeAndFactory_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddTransientSubscriber(typeof(TestSubscriber), _ => new TestSubscriber()));
@@ -70,7 +69,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddTransientSubscriberWithGenericArguments_TypeAndFactory_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddTransientSubscriber(_ => new TestSubscriber()));
@@ -89,7 +88,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddScopedSubscriber_Type_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddScopedSubscriber(typeof(TestSubscriber)));
@@ -108,7 +107,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddScopedSubscriberWithGenericArguments_Type_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddScopedSubscriber<TestSubscriber>());
@@ -127,7 +126,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddScopedSubscriber_TypeAndFactory_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddScopedSubscriber(typeof(TestSubscriber), _ => new TestSubscriber()));
@@ -146,7 +145,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddScopedSubscriberWithGenericArguments_TypeAndFactory_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddScopedSubscriber(_ => new TestSubscriber()));
@@ -165,7 +164,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddSingletonSubscriber_Type_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonSubscriber(typeof(TestSubscriber)));
@@ -184,7 +183,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddSingletonSubscriberWithGenericArguments_Type_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonSubscriber<TestSubscriber>());
@@ -203,7 +202,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddSingletonSubscriber_TypeAndFactory_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonSubscriber(typeof(TestSubscriber), _ => new TestSubscriber()));
@@ -222,7 +221,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddSingletonSubscriberWithGenericArguments_TypeAndFactory_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonSubscriber(_ => new TestSubscriber()));
@@ -241,7 +240,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddSingletonSubscriber_TypeAndInstance_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonSubscriber(typeof(TestSubscriber), new TestSubscriber()));
@@ -260,7 +259,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddSingletonSubscriberWithGenericArguments_TypeAndInstance_SubscriberProperlyRegistered()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonSubscriber(new TestSubscriber()));
@@ -279,7 +278,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         [Fact]
         public void AddScopedSubscriber_TypeWithAnnotatedMethodsOnly_MessagesReceived()
         {
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSingletonSubscriber<TestSubscriber>(autoSubscribeAllPublicMethods: false));
@@ -298,7 +297,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var testService1 = new TestServiceOne();
             var testService2 = new TestServiceTwo();
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddSubscribers<IService>()
@@ -314,16 +313,6 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             testService1.ReceivedMessagesCount.Should().BeGreaterThan(0);
             testService2.ReceivedMessagesCount.Should().BeGreaterThan(0);
-        }
-
-        private static IServiceProvider GetServiceProvider(Action<IServiceCollection> configAction)
-        {
-            var services = new ServiceCollection()
-                .AddNullLogger();
-
-            configAction(services);
-
-            return services.BuildServiceProvider().CreateScope().ServiceProvider;
         }
     }
 }

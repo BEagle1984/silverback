@@ -7,7 +7,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class SomeUnhandledMessageSubscriber : ISubscriber
+    public class SomeUnhandledMessageSubscriber
     {
         public List<SomeUnhandledMessage> ReceivedMessages { get; } = new List<SomeUnhandledMessage>();
 

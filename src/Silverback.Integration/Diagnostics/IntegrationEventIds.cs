@@ -103,6 +103,16 @@ namespace Silverback.Diagnostics
             new EventId(Offset + 16, Prefix + nameof(CreatingNewProducer));
 
         /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when an exception is thrown when connecting
+        ///     to the message broker.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Error.
+        /// </remarks>
+        public static EventId BrokerConnectionError { get; } =
+            new EventId(Offset + 17, Prefix + nameof(BrokerConnecting));
+
+        /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the consumer is connected to the
         ///     endpoint and will start consuming.
         /// </summary>

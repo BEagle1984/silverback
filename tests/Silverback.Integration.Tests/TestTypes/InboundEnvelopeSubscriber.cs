@@ -8,7 +8,7 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class InboundEnvelopeSubscriber : ISubscriber
+    public class InboundEnvelopeSubscriber
     {
         public List<IInboundEnvelope<object>> ReceivedEnvelopes { get; } = new List<IInboundEnvelope<object>>();
 

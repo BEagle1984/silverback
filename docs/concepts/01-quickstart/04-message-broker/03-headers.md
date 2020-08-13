@@ -88,18 +88,19 @@ Header Key | Constant
 `content-type` | `DefaultMessageHeaders.ContentType`
 `x-kafka-message-key` | `KafkaMessageHeaders.KafkaKey`
 
-The default header names can be overridden using the `WithCustomHeaderName` method.
+The default header names can be overridden using the `WithCustomHeaderName` configuration method.
 
 ```csharp
 public class Startup
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void ConfigureServices(IServiceCollection services)
     {
-        busConfigurator.Connect(endpoints => endpoints
-            .AddInbound(...)
-            .AddOutbound<...>(...)
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>()
             .WithCustomHeaderName(DefaultMessageHeaders.ChunkId, "x-ch-id")
             .WithCustomHeaderName(DefaultMessageHeaders.ChunksCount, "x-ch-cnt"));
     }
 }
-```

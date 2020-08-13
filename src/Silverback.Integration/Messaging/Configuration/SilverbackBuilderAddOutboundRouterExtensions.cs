@@ -34,7 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddTransientOutboundRouter(routerType);
+            silverbackBuilder.Services.AddTransient(routerType);
 
             return silverbackBuilder;
         }
@@ -54,14 +54,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static ISilverbackBuilder AddTransientOutboundRouter<TRouter>(this ISilverbackBuilder silverbackBuilder)
-            where TRouter : class, IOutboundRouter
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-
-            silverbackBuilder.Services.AddTransientOutboundRouter<TRouter>();
-
-            return silverbackBuilder;
-        }
+            where TRouter : class, IOutboundRouter =>
+            AddTransientOutboundRouter(silverbackBuilder, typeof(TRouter));
 
         /// <summary>
         ///     Adds a transient outbound router with a factory specified in
@@ -84,7 +78,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddTransientOutboundRouter(implementationFactory);
+            silverbackBuilder.Services.AddTransient(implementationFactory);
 
             return silverbackBuilder;
         }
@@ -109,7 +103,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddScopedOutboundRouter(routerType);
+            silverbackBuilder.Services.AddScoped(routerType);
 
             return silverbackBuilder;
         }
@@ -129,14 +123,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static ISilverbackBuilder AddScopedOutboundRouter<TRouter>(this ISilverbackBuilder silverbackBuilder)
-            where TRouter : class, IOutboundRouter
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-
-            silverbackBuilder.Services.AddScopedOutboundRouter<TRouter>();
-
-            return silverbackBuilder;
-        }
+            where TRouter : class, IOutboundRouter =>
+            AddScopedOutboundRouter(silverbackBuilder, typeof(TRouter));
 
         /// <summary>
         ///     Adds a scoped outbound router with a factory specified in
@@ -159,7 +147,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddScopedOutboundRouter(implementationFactory);
+            silverbackBuilder.Services.AddScoped(implementationFactory);
 
             return silverbackBuilder;
         }
@@ -184,7 +172,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddSingletonOutboundRouter(routerType);
+            silverbackBuilder.Services.AddSingleton(routerType);
 
             return silverbackBuilder;
         }
@@ -204,14 +192,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static ISilverbackBuilder AddSingletonOutboundRouter<TRouter>(this ISilverbackBuilder silverbackBuilder)
-            where TRouter : class, IOutboundRouter
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-
-            silverbackBuilder.Services.AddSingletonOutboundRouter<TRouter>();
-
-            return silverbackBuilder;
-        }
+            where TRouter : class, IOutboundRouter =>
+            AddSingletonOutboundRouter(silverbackBuilder, typeof(TRouter));
 
         /// <summary>
         ///     Adds a singleton outbound router with a factory specified in
@@ -234,7 +216,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddSingletonOutboundRouter(implementationFactory);
+            silverbackBuilder.Services.AddSingleton(implementationFactory);
 
             return silverbackBuilder;
         }
@@ -260,7 +242,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services.AddSingletonOutboundRouter(implementationInstance);
+            silverbackBuilder.Services.AddSingleton(implementationInstance);
 
             return silverbackBuilder;
         }

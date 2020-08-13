@@ -22,6 +22,7 @@ The basic `InboundConnector` is very simple and just forwards the consumed messa
     <figcaption>The messages are consumed directly.</figcaption>
 </figure>
 
+# [Startup](#tab/basic-startup)
 ```csharp
 public class Startup
 {
@@ -30,22 +31,27 @@ public class Startup
         services
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
-                .AddKafka()
-                .AddInboundConnector());
-    }
-
-    public void Configure(IBusConfigurator busConfigurator)
-    {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("basket-events")
-                    {
-                        ...
-                    }));
+                .AddKafka())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
 }
 ```
+# [EndpointsConfigurator](#tab/basic-configurator)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder)
+    {
+        builder
+            .AddInbound(
+                new KafkaConsumerEndpoint("basket-events")
+                {
+                    ...
+                }));
+    }
+}
+```
+***
 
 ### Exactly-once processing
 
@@ -63,7 +69,7 @@ The `DbOffsetStoredInboundConnector` will store the offset of the latest process
 > [!Note]
 > The `Silverback.EntityFrameworkCore` package is also required and the `DbContext` must include a `DbSet<StoredOffset>`. See also the <xref:dbcontext>.
 
-```csharp %}
+```csharp
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
@@ -73,7 +79,8 @@ public class Startup
             .UseDbContext<MyDbContext>()
             .WithConnectionToMessageBroker(options => options
                 .AddKafka()
-                .AddDbOffsetStoredInboundConnector());
+                .AddDbOffsetStoredInboundConnector())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
 }
 ```
@@ -100,7 +107,8 @@ public class Startup
             .UseDbContext<MyDbContext>()
             .WithConnectionToMessageBroker(options => options
                 .AddKafka()
-                .AddDbLoggedInboundConnector());
+                .AddDbLoggedInboundConnector())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
 }
 ```
@@ -119,7 +127,8 @@ public class Startup
             .WithConnectionToMessageBroker(options => options
                 .AddKafka()
                 .AddLoggedInboundConnector<SomeCustomInboundLog>()
-                .AddOffsetStoredInboundConnector<SomeCustomOffsetStore>());
+                .AddOffsetStoredInboundConnector<SomeCustomOffsetStore>())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
 }
 ```
@@ -136,24 +145,22 @@ Policy | Description
 `Chain` | Combine different policies, for example to move the message to a dead letter after some retries.
 
 ```csharp
-public class Startup
+public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("some-events")
+        builder.AddInbound(
+            new KafkaConsumerEndpoint("some-events")
+            {
+                ...
+            },
+            policy => policy.Chain(
+                policy.Retry().MaxFailedAttempts(3),
+                policy.Move(new KafkaProducerEndpoint("bad-messages")
                     {
                         ...
-                    },
-                    policy => policy.Chain(
-                        policy.Retry().MaxFailedAttempts(3),
-                        policy.Move(new KafkaProducerEndpoint("bad-messages")
-                            {
-                                ...
-                            }
-                        ))));
+                    }
+                )));
     }
 }
 ```
@@ -191,27 +198,25 @@ policy.Move(new KafkaProducerEndpoint("same-endpoint") { ... })
 
 Messages can be published when a policy is applied, in order to execute custom code.
 
-# [Startup](#tab/eventhandler-startup)
+# [EndpointsConfigurator](#tab/eventhandler-configurator)
 ```csharp
-public class Startup
+public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("some-events")
-                    {
-                        ...
-                    },
-                    policy => policy.Chain(
-                        policy
-                            .Retry(TimeSpan.FromMilliseconds(500))
-                            .MaxFailedAttempts(3),
-                        policy
-                            .Skip()
-                            .Publish(msg => new ProcessingFailedEvent(msg))
-                    )));
+        builder.AddInbound(
+            new KafkaConsumerEndpoint("some-events")
+            {
+                ...
+            },
+            policy => policy.Chain(
+                policy
+                    .Retry(TimeSpan.FromMilliseconds(500))
+                    .MaxFailedAttempts(3),
+                policy
+                    .Skip()
+                    .Publish(msg => new ProcessingFailedEvent(msg))
+            ));
     }
 }
 ```
@@ -240,28 +245,25 @@ Property | Description
 :-- | :--
 `Batch.Size` | The number of messages to be processed in batch. The default is 1.
 `Batch.MaxWaitTime` | The maximum amount of time to wait for the batch to be filled. After this time the batch will be processed even if the desired Size is not reached. Set it to `TimeSpan.MaxValue` to disable this feature. The default is `TimeSpan.MaxValue`.
-`Batch.MaxDegreeOfParallelism` | The maximum number of parallel threads used to process the messages in the batch. The default is 1.
 
 ```csharp
-public class Startup
+public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("basket-events")
-                    {
-                        ...
-                    },
-                    settings: new InboundConnectorSettings
-                    {
-                        Batch = new Messaging.Batch.BatchSettings
-                        {
-                            Size = 5,
-                            MaxWaitTime = TimeSpan.FromSeconds(5)
-                        }
-                    }));
+        builder.AddInbound(
+            new KafkaConsumerEndpoint("basket-events")
+            {
+                ...
+            },
+            settings: new InboundConnectorSettings
+            {
+                Batch = new Messaging.Batch.BatchSettings
+                {
+                    Size = 5,
+                    MaxWaitTime = TimeSpan.FromSeconds(5)
+                }
+            }));
     }
 }
 ```
@@ -366,21 +368,19 @@ public class InventoryService
 Multiple consumers can be created for the same endpoint to consume in parallel in multiple threads (you need multiple partitions in Kafka).
 
 ```csharp
-public class Startup
+public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddInbound(
-                    new KafkaConsumerEndpoint("basket-events")
-                    {
-                        ...
-                    },
-                    settings: new InboundConnectorSettings
-                    {
-                        Consumers: 2
-                    }));
+        builder.AddInbound(
+            new KafkaConsumerEndpoint("basket-events")
+            {
+                ...
+            },
+            settings: new InboundConnectorSettings
+            {
+                Consumers: 2
+            }));
     }
 }
 ```

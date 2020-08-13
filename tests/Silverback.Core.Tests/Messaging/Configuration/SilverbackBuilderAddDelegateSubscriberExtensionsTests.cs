@@ -24,7 +24,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             void Receive(TestEventOne message) => received++;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((ReceiveTestEventOneDelegate)Receive));
@@ -44,7 +44,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             void Receive(TestEventOne message) => received++;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<TestEventOne>)Receive));
@@ -68,7 +68,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 return Task.CompletedTask;
             }
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, Task>)Receive));
@@ -89,7 +89,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             static TestEventTwo ReceiveOne(TestEventOne message) => new TestEventTwo();
             void ReceiveTwo(TestEventTwo message) => received++;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, object>)ReceiveOne)
@@ -112,7 +112,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             void ReceiveTwo(TestEventTwo message) => received++;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, IEnumerable<object>>)ReceiveOne)
@@ -135,7 +135,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             void ReceiveTwo(TestEventTwo message) => received++;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, IReadOnlyCollection<object>>)ReceiveOne)
@@ -156,7 +156,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             static Task<TestEventTwo> ReceiveOne(TestEventOne message) => Task.FromResult(new TestEventTwo());
             void ReceiveTwo(TestEventTwo message) => received++;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, object>)ReceiveOne)
@@ -176,7 +176,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             void Receive(IEnumerable<TestEventOne> messages) => received += messages.Count();
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<IEnumerable<TestEventOne>>)Receive));
@@ -196,7 +196,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             void Receive(IReadOnlyCollection<TestEventOne> messages) => received += messages.Count;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<IReadOnlyCollection<TestEventOne>>)Receive));
@@ -220,7 +220,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 return Task.CompletedTask;
             }
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, Task>)Receive));
@@ -241,7 +241,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             static TestEventTwo ReceiveOne(IEnumerable<TestEventOne> messages) => new TestEventTwo();
             void ReceiveTwo(TestEventTwo message) => received++;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, object>)ReceiveOne)
@@ -264,7 +264,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             void ReceiveTwo(TestEventTwo message) => received++;
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, Task<object>>)ReceiveOne)
@@ -288,7 +288,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 provider.Should().NotBeNull();
             }
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<TestEventOne, IServiceProvider>)Receive));
@@ -311,7 +311,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 provider.Should().NotBeNull();
             }
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<IEnumerable<TestEventOne>, IServiceProvider>)Receive));
@@ -335,7 +335,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 return Task.CompletedTask;
             }
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, IServiceProvider, Task>)Receive));
@@ -358,7 +358,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 return new TestEventTwo();
             }
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, IServiceProvider, TestEventTwo>)Receive));
@@ -382,7 +382,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 return Task.FromResult(new TestEventTwo());
             }
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, IServiceProvider, Task<TestEventTwo>>)Receive));
@@ -406,7 +406,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 return Task.CompletedTask;
             }
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, IServiceProvider, Task>)Receive));
@@ -430,7 +430,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 return new TestEventTwo();
             }
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, IServiceProvider, TestEventTwo>)Receive));
@@ -454,7 +454,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 return Task.FromResult(new TestEventTwo());
             }
 
-            var serviceProvider = GetServiceProvider(
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .AddDelegateSubscriber(
@@ -464,16 +464,6 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             publisher.Publish(new TestEventOne());
 
             received.Should().BeGreaterThan(0);
-        }
-
-        private static IServiceProvider GetServiceProvider(Action<IServiceCollection> configAction)
-        {
-            var services = new ServiceCollection()
-                .AddNullLogger();
-
-            configAction(services);
-
-            return services.BuildServiceProvider().CreateScope().ServiceProvider;
         }
     }
 }

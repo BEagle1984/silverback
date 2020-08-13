@@ -9,6 +9,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Configuration;
 using Silverback.Tests.Integration.TestTypes;
 using Xunit;
 
@@ -38,6 +39,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             string expectedProducerType)
         {
             var serviceProvider = new ServiceCollection()
+                .AddSingleton<EndpointsConfiguratorsInvoker>()
                 .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
                 .BuildServiceProvider();
 
@@ -63,6 +65,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             string expectedConsumerType)
         {
             var serviceProvider = new ServiceCollection()
+                .AddSingleton<EndpointsConfiguratorsInvoker>()
                 .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
                 .BuildServiceProvider();
 
@@ -78,6 +81,35 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 
             consumer.Should().NotBeNull();
             consumer.GetType().Name.Should().BeEquivalentTo(expectedConsumerType);
+        }
+
+        [Fact]
+        public void ConnectAndDisconnect_WithMultipleBrokers_AllBrokersConnectedAndDisconnected()
+        {
+            var serviceProvider = new ServiceCollection()
+                .AddSingleton<EndpointsConfiguratorsInvoker>()
+                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
+                .BuildServiceProvider();
+
+            var brokerCollection = new BrokerCollection(
+                new IBroker[]
+                {
+                    new TestBroker(serviceProvider, Enumerable.Empty<IBrokerBehavior>()),
+                    new TestOtherBroker(serviceProvider, Enumerable.Empty<IBrokerBehavior>())
+                });
+
+            brokerCollection[0].IsConnected.Should().BeFalse();
+            brokerCollection[1].IsConnected.Should().BeFalse();
+
+            brokerCollection.Connect();
+
+            brokerCollection[0].IsConnected.Should().BeTrue();
+            brokerCollection[1].IsConnected.Should().BeTrue();
+
+            brokerCollection.Disconnect();
+
+            brokerCollection[0].IsConnected.Should().BeFalse();
+            brokerCollection[1].IsConnected.Should().BeFalse();
         }
     }
 }

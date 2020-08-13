@@ -27,6 +27,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection
+                .AddSingleton<EndpointsConfiguratorsInvoker>()
                 .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>));
 
             _broker = new RabbitBroker(

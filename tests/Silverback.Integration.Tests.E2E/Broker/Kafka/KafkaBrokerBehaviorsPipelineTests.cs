@@ -1,16 +1,15 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
@@ -19,40 +18,8 @@ using Xunit;
 namespace Silverback.Tests.Integration.E2E.Broker.Kafka
 {
     [Trait("Category", "E2E")]
-    public class KafkaBrokerBehaviorsPipelineTests
+    public class KafkaBrokerBehaviorsPipelineTests : E2ETestFixture
     {
-        private readonly ServiceProvider _serviceProvider;
-
-        private readonly IBusConfigurator _configurator;
-
-        private readonly SpyBrokerBehavior _spyBehavior;
-
-        public KafkaBrokerBehaviorsPipelineTests()
-        {
-            var services = new ServiceCollection();
-
-            services
-                .AddNullLogger()
-                .AddSilverback()
-                .UseModel()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
-                        .AddInMemoryChunkStore())
-                .AddSingletonBrokerBehavior<SpyBrokerBehavior>();
-
-            services.OverrideWithInMemoryBroker();
-
-            _serviceProvider = services.BuildServiceProvider(
-                new ServiceProviderOptions
-                {
-                    ValidateScopes = true
-                });
-
-            _configurator = _serviceProvider.GetRequiredService<IBusConfigurator>();
-            _spyBehavior = _serviceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
-        }
-
         [Fact]
         public async Task DefaultSettings_KafkaKeyAlwaysSet()
         {
@@ -61,18 +28,28 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                 Content = "Hello E2E!"
             };
 
-            _configurator.Connect(
-                endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
+                                .AddInMemoryChunkStore())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .Services.OverrideWithInMemoryBroker())
+                .Run();
 
-            using var scope = _serviceProvider.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
-
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            _spyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey]
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey]
                 .Should().NotBeNullOrEmpty();
         }
 
@@ -84,19 +61,29 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                 Content = "Hello E2E!"
             };
 
-            _configurator.Connect(
-                endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
+                                .AddInMemoryChunkStore())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .Services.OverrideWithInMemoryBroker())
+                .Run();
 
-            using var scope = _serviceProvider.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
-
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            var inboundMessageId = _spyBehavior.InboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageId];
-            var inboundKafkaKey = _spyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey];
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            var inboundMessageId = SpyBehavior.InboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageId];
+            var inboundKafkaKey = SpyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey];
             inboundKafkaKey.Should().Be(inboundMessageId);
         }
 
@@ -109,18 +96,28 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                 Content = "Hello E2E!"
             };
 
-            _configurator.Connect(
-                endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
-                    .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
+                                .AddInMemoryChunkStore())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .Services.OverrideWithInMemoryBroker())
+                .Run();
 
-            using var scope = _serviceProvider.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
-
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            _spyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey].Should().Be("my-key");
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey].Should().Be("my-key");
         }
 
         [Fact]
@@ -132,25 +129,35 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                 Content = "Hello E2E!"
             };
 
-            _configurator.Connect(
-                endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("test-e2e")
-                        {
-                            Chunk = new ChunkSettings
-                            {
-                                Size = 10
-                            }
-                        })
-                    .AddInbound(new KafkaConsumerEndpoint("test-e2e")));
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
+                                .AddInMemoryChunkStore())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(
+                                    new KafkaProducerEndpoint("test-e2e")
+                                    {
+                                        Chunk = new ChunkSettings
+                                        {
+                                            Size = 10
+                                        }
+                                    })
+                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .Services.OverrideWithInMemoryBroker())
+                .Run();
 
-            using var scope = _serviceProvider.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
-
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            _spyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            _spyBehavior.InboundEnvelopes.ForEach(
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.ForEach(
                 envelope =>
                     envelope.Headers[KafkaMessageHeaders.KafkaMessageKey].Should().Be("my-key"));
         }

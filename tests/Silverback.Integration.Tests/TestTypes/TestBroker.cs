@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
@@ -18,6 +19,19 @@ namespace Silverback.Tests.Integration.TestTypes
         }
 
         public List<ProducedMessage> ProducedMessages { get; } = new List<ProducedMessage>();
+
+        public bool SimulateConnectIssues { get; set; }
+
+        protected override void Connect(IEnumerable<IConsumer> consumers)
+        {
+            if (SimulateConnectIssues)
+            {
+                SimulateConnectIssues = false;
+                throw new IOException("Simulated exception.");
+            }
+
+            base.Connect(consumers);
+        }
 
         protected override IProducer InstantiateProducer(
             TestProducerEndpoint endpoint,

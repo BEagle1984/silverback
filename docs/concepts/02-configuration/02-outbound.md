@@ -19,6 +19,7 @@ The basic `OutboundConnector` is very simple and relays the messages synchronous
     <figcaption>Messages 1, 2 and 3 are directly produced to the message broker.</figcaption>
 </figure>
 
+# [Startup](#tab/basic-startup)
 ```csharp
 public class Startup
 {
@@ -27,22 +28,27 @@ public class Startup
         services
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
-                .AddKafka()
-                .AddOutboundConnector());
-    }
-
-    public void Configure(IBusConfigurator busConfigurator)
-    {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(
-                    new KafkaProducerEndpoint("basket-events")
-                    {
-                        ...
-                    }));
+                .AddKafka())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
 }
 ```
+# [EndpointsConfigurator](#tab/basic-configurator)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder)
+    {
+        builder
+            .AddOutbound<IIntegrationEvent>(
+                new KafkaProducerEndpoint("basket-events")
+                {
+                    ...
+                }));
+    }
+}
+```
+***
 
 ### Deferred
 
@@ -88,13 +94,16 @@ public class Startup
 
             .WithConnectionToMessageBroker(options => options
                 .AddKafka()
+    
                 // Use a deferred outbound connector
                 .AddDbOutboundConnector()
 
                 // Add the IHostedService processing the outbound queue
                 // (overloads are available to specify custom interval,
                 // lock timeout, etc.)
-                .AddDbOutboundWorker();
+                .AddDbOutboundWorker())
+
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
 }
 ```
@@ -111,11 +120,11 @@ public class Startup
         services
             .AddSilverback()
             .AddDbDistributedLockManager()
-
             .WithConnectionToMessageBroker(options => options
                 .AddKafka()
                 .AddOutboundConnector<SomeCustomQueueWriter>()
-                .AddOutboundWorker<SomeCustomQueueReader>();
+                .AddOutboundWorker<SomeCustomQueueReader>())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
     }
 }
 ```
@@ -127,13 +136,15 @@ The published messages that are routed to an outbound endpoint cannot be subscri
 ```csharp
 public class Startup
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void ConfigureServices(IServiceCollection services)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationEvent>(...)
-                .PublishOutboundMessagesToInternalBus()
-            );
+        services
+            .AddSilverback()
+            .AddDbDistributedLockManager()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>()
+            .PublishOutboundMessagesToInternalBus();
     }
 }
 ```
@@ -151,44 +162,43 @@ An outbound route can point to multiple endpoints resulting in every message bei
 </figure>
 
 ```csharp
-public class Startup
+public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddOutbound<IIntegrationCommand>(
-                    new KafkaProducerEndpoint("topic-1")
-                    {
-                        ...
-                    },
-                    new KafkaProducerEndpoint("topic-2")
-                    {
-                        ...
-                    }));
+        builder
+            .AddOutbound<IIntegrationCommand>(
+                new KafkaProducerEndpoint("topic-1")
+                {
+                    ...
+                },
+                new KafkaProducerEndpoint("topic-2")
+                {
+                    ...
+                }));
     }
 }
 ```
 
-A message will also be routed to all outbound endpoint mapped to a type that matches the message type. In the example below an `OrderCreatedMessage` (that inherits from `OrderMessage`) would be sent to both endpoints.
+A message will also be routed to all outbound endpoint mapped to a type compatible with the message type. In the example below an `OrderCreatedMessage` (that inherits from `OrderMessage`) would be sent to both endpoints.
 
 ```csharp
-public class Startup
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public void Configure(IBusConfigurator busConfigurator)
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddOutbound<OrderMessage>(
-                    new KafkaProducerEndpoint("topic-1")
-                    {
-                        ...
-                    })
-                .AddOutbound<OrderCreatedMessage>(
-                    new KafkaProducerEndpoint("topic-1")
-                    {
-                        ...
-                    }));
+        builder
+            .AddOutbound<OrderMessage>(
+                new KafkaProducerEndpoint("topic-1")
+                {
+                    ...
+                })
+            .AddOutbound<OrderCreatedMessage>(
+                new KafkaProducerEndpoint("topic-1")
+                {
+                    ...
+                }));
     }
 }
 ```
@@ -269,15 +279,20 @@ public class Startup
     {
         services
             .AddSilverback()
-            .WithConnectionToMessageBroker(options => options.AddKafka())
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>()
             .AddSingletonOutboundRouter<PrioritizedRouter>();
     }
-
-    public void Configure(IBusConfigurator busConfigurator)
+}
+```
+# [EndpointsConfigurator](#tab/router-configurator)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder)
     {
-        busConfigurator
-            .Connect(endpoints => endpoints
-                .AddOutbound<IPrioritizedCommand, PrioritizedRouter>());
+        builder.AddOutbound<IPrioritizedCommand, PrioritizedRouter>();
     }
 }
 ```

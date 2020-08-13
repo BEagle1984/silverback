@@ -121,9 +121,9 @@ public class Startup
     {
         services
             .AddSilverback()
-            .WithConnectionToKafka(options => options
-                .AddSingletonBrokerBehavior<CustomHeadersBehavior>()
-            );
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka())
+            .AddSingletonBrokerBehavior<CustomHeadersBehavior>();
     }
 }
 ```
@@ -174,9 +174,9 @@ public class Startup
     {
         services
             .AddSilverback()
-            .WithConnectionToKafka(options => options
-                .AddSingletonBrokerBehavior<LogHeadersBehavior>()
-            );
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka())
+            .AddSingletonBrokerBehavior<LogHeadersBehavior>();
     }
 }
 ```

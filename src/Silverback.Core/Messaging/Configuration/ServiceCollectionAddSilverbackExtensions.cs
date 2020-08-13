@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
@@ -41,7 +42,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddLogger()
                     .AddArgumentResolvers()
                     .AddReturnValueHandlers()
-                    .AddHostedService<SubscribedMethodsLoaderService>();
+                    .AddSingleton<IHostedService, SubscribedMethodsLoaderService>();
             }
 
             return new SilverbackBuilder(services);

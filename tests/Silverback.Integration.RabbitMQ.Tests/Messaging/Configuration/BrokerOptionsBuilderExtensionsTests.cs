@@ -17,11 +17,13 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Configuration
             var servicesGeneric = new ServiceCollection();
             var servicesSpecific = new ServiceCollection();
 
-            new SilverbackBuilder(servicesGeneric)
+            servicesGeneric
+                .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options =>
                         options.AddBroker<RabbitBroker>());
-            new SilverbackBuilder(servicesSpecific)
+            servicesSpecific
+                .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options =>
                         options.AddRabbit());

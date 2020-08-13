@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Subscribers
     /// <summary>
     ///     Resolves all the subscribers and build the types cache to boost the first publish performance.
     /// </summary>
-    public class SubscribedMethodsLoaderService : IHostedService
+    public class SubscribedMethodsLoaderService : BackgroundService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -24,16 +24,13 @@ namespace Silverback.Messaging.Subscribers
             _serviceScopeFactory = serviceScopeFactory;
         }
 
-        /// <inheritdoc cref="IHostedService.StartAsync" />
-        public Task StartAsync(CancellationToken cancellationToken)
+        /// <inheritdoc cref="BackgroundService.ExecuteAsync" />
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             using var scope = _serviceScopeFactory.CreateScope();
             scope.ServiceProvider.GetRequiredService<SubscribedMethodsLoader>().GetSubscribedMethods();
 
             return Task.CompletedTask;
         }
-
-        /// <inheritdoc cref="IHostedService.StopAsync" />
-        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     }
 }

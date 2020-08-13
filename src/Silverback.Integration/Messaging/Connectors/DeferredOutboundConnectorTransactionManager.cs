@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Connectors
     ///     This isn't even necessary if using EF Core and the <see cref="DbOutboundQueueWriter" />, since it is
     ///     already implicitly taking part in the save changes transaction.
     /// </remarks>
-    public class DeferredOutboundConnectorTransactionManager : ISubscriber
+    public class DeferredOutboundConnectorTransactionManager
     {
         private readonly IOutboundQueueWriter _queueWriter;
 

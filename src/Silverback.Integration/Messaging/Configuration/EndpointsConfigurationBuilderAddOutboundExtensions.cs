@@ -406,27 +406,6 @@ namespace Silverback.Messaging.Configuration
             return endpointsConfigurationBuilder;
         }
 
-        /// <summary>
-        ///     Enables the legacy behavior where the messages to be routed through an outbound connector are also
-        ///     being published to the internal bus, to be locally subscribed. This is now disabled by default.
-        /// </summary>
-        /// <param name="endpointsConfigurationBuilder">
-        ///     The <see cref="IEndpointsConfigurationBuilder" />.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IEndpointsConfigurationBuilder PublishOutboundMessagesToInternalBus(
-            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder)
-        {
-            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
-
-            endpointsConfigurationBuilder.GetOutboundRoutingConfiguration()
-                .PublishOutboundMessagesToInternalBus = true;
-
-            return endpointsConfigurationBuilder;
-        }
-
         private static IOutboundRoutingConfiguration GetOutboundRoutingConfiguration(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder) =>
             endpointsConfigurationBuilder.ServiceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
