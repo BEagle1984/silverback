@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Broker
         public InMemoryProducer(
             InMemoryBroker broker,
             IProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             ISilverbackIntegrationLogger<Producer> logger)
             : base(broker, endpoint, behaviors, logger)
         {

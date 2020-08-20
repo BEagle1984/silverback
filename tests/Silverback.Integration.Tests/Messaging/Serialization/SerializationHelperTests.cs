@@ -42,7 +42,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var type = SerializationHelper.GetTypeFromHeaders<object>(headers);
 
-            type.Should().Be(typeof(TestEventOne));
+            type.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
         }
 
         [Fact]

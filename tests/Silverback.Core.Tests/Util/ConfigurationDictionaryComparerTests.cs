@@ -135,7 +135,7 @@ namespace Silverback.Tests.Core.Util
         [SuppressMessage("ReSharper", "ExpressionIsAlwaysNull", Justification = "Test")]
         public void Equals_NullDictionaryVsEmptyDictionary_TrueIsReturned()
         {
-            Dictionary<string, string>? dictionaryX = new Dictionary<string, string>();
+            Dictionary<string, string> dictionaryX = new Dictionary<string, string>();
             Dictionary<string, string>? dictionaryY = null;
 
             var result = new ConfigurationDictionaryComparer<string, string>().Equals(dictionaryX, dictionaryY);

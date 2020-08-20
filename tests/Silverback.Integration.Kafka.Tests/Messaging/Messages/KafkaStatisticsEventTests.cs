@@ -3,7 +3,6 @@
 
 using FluentAssertions;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Messages.Statistics;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
@@ -273,7 +272,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             // Consumer Group fields
             statisticsEvent.Statistics.ConsumerGroup.Should().NotBeNull();
 
-            var consumerGroup = statisticsEvent.Statistics.ConsumerGroup ?? new ConsumerGroupStatistics();
+            var consumerGroup = statisticsEvent.Statistics.ConsumerGroup;
             consumerGroup.State.Should().Be("up");
             consumerGroup.StateAge.Should().Be(34005);
             consumerGroup.JoinState.Should().Be("started");
@@ -285,7 +284,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             // EOS fields
             statisticsEvent.Statistics.ExactlyOnceSemantics.Should().NotBeNull();
 
-            var eos = statisticsEvent.Statistics.ExactlyOnceSemantics ?? new ExactlyOnceSemanticsStatistics();
+            var eos = statisticsEvent.Statistics.ExactlyOnceSemantics;
             eos.IdempState.Should().Be("Assigned");
             eos.IdempStateAge.Should().Be(12345);
             eos.TxnState.Should().Be("InTransaction");

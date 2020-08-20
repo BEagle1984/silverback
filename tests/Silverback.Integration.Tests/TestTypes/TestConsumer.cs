@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.TestTypes
             TestBroker broker,
             TestConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<TestConsumer> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)

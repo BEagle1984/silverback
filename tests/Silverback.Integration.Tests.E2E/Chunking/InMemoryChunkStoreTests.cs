@@ -93,16 +93,18 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             var committedOffsets = new List<IOffset>();
 
             var message1 = new TestEventOne { Content = "Hello E2E!" };
-            byte[]? rawMessage1 = await Endpoint.DefaultSerializer.SerializeAsync(
-                message1,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+            byte[] rawMessage1 = await Endpoint.DefaultSerializer.SerializeAsync(
+                                     message1,
+                                     new MessageHeaderCollection(),
+                                     MessageSerializationContext.Empty) ??
+                                 throw new InvalidOperationException("Serializer returned null");
 
             var message2 = new TestEventOne { Content = "Hello E2E!" };
-            byte[]? rawMessage2 = await Endpoint.DefaultSerializer.SerializeAsync(
-                message2,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+            byte[] rawMessage2 = await Endpoint.DefaultSerializer.SerializeAsync(
+                                      message2,
+                                      new MessageHeaderCollection(),
+                                      MessageSerializationContext.Empty) ??
+                                  throw new InvalidOperationException("Serializer returned null");
 
             var serviceProvider = Host.ConfigureServices(
                     services => services
@@ -171,16 +173,18 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             /* Note: This is expected to work just because of the OffsetStoredInboundConnector */
 
             var message1 = new TestEventOne { Content = "Hello E2E!" };
-            byte[]? rawMessage1 = await Endpoint.DefaultSerializer.SerializeAsync(
-                message1,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+            byte[] rawMessage1 = await Endpoint.DefaultSerializer.SerializeAsync(
+                                     message1,
+                                     new MessageHeaderCollection(),
+                                     MessageSerializationContext.Empty) ??
+                                 throw new InvalidOperationException("Serializer returned null");
 
             var message2 = new TestEventOne { Content = "Hello E2E!" };
-            byte[]? rawMessage2 = await Endpoint.DefaultSerializer.SerializeAsync(
-                message2,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+            byte[] rawMessage2 = await Endpoint.DefaultSerializer.SerializeAsync(
+                                      message2,
+                                      new MessageHeaderCollection(),
+                                      MessageSerializationContext.Empty) ??
+                                  throw new InvalidOperationException("Serializer returned null");
 
             await using var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
@@ -264,10 +268,11 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             var committedOffsets = new List<IOffset>();
 
             var message = new TestEventOne { Content = "Hello E2E!" };
-            byte[]? rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+            byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty) ??
+                                throw new InvalidOperationException("Serializer returned null");
 
             var serviceProvider = Host.ConfigureServices(
                     services => services
@@ -277,7 +282,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                         .WithConnectionToMessageBroker(
                             options => options
                                 .AddInMemoryBroker()
-                                .AddInMemoryChunkStore(TimeSpan.FromMilliseconds(300), TimeSpan.FromMilliseconds(50))
+                                .AddInMemoryChunkStore(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(50))
                                 .AddInboundConnector())
                         .AddEndpoints(
                             endpoints => endpoints

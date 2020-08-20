@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Broker
             IBroker broker,
             IConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback receivedCallback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Consumer> logger)
         {
@@ -76,7 +76,7 @@ namespace Silverback.Messaging.Broker
         public IConsumerEndpoint Endpoint { get; }
 
         /// <inheritdoc cref="IConsumer.Behaviors" />
-        public IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
+        public IReadOnlyList<IConsumerBehavior> Behaviors { get; }
 
         /// <inheritdoc cref="IConsumer.StatusInfo" />
         public IConsumerStatusInfo StatusInfo => _statusInfo;
@@ -220,13 +220,13 @@ namespace Silverback.Messaging.Broker
         }
 
         private async Task ExecutePipeline(
-            IReadOnlyCollection<IConsumerBehavior> behaviors,
+            IReadOnlyList<IConsumerBehavior> behaviors,
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider)
         {
-            if (behaviors != null && behaviors.Any())
+            if (behaviors.Count > 0)
             {
-                await behaviors.First()
+                await behaviors[0]
                     .Handle(
                         context,
                         serviceProvider,

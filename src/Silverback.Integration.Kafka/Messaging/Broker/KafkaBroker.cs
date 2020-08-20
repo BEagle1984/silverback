@@ -34,7 +34,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
         protected override IProducer InstantiateProducer(
             KafkaProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             IServiceProvider serviceProvider) =>
             new KafkaProducer(
                 this,
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Broker
         protected override IConsumer InstantiateConsumer(
             KafkaConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider) =>
             new KafkaConsumer(
                 this,

@@ -247,7 +247,7 @@ namespace Silverback.Messaging.Broker
         /// </returns>
         protected abstract IProducer InstantiateProducer(
             TProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             IServiceProvider serviceProvider);
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace Silverback.Messaging.Broker
         protected abstract IConsumer InstantiateConsumer(
             TConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider);
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace Silverback.Messaging.Broker
             _producers = null;
         }
 
-        private IReadOnlyCollection<TBehavior> GetBehaviors<TBehavior>()
+        private IReadOnlyList<TBehavior> GetBehaviors<TBehavior>()
             where TBehavior : IBrokerBehavior =>
             GetBehaviorsEnumerable<TBehavior>()
                 .SortBySortIndex()

@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Broker
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<RabbitConsumer> logger)

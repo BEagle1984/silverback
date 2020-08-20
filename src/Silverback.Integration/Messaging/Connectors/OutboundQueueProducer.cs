@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Connectors
             IOutboundQueueWriter queueWriter,
             OutboundQueueBroker broker,
             IProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             ISilverbackIntegrationLogger<Producer> logger)
             : base(broker, endpoint, behaviors, logger)
         {
@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Connectors
         }
 
         /// <inheritdoc cref="Producer.ProduceCore" />
-        protected override IOffset? ProduceCore(IOutboundEnvelope envelope)
+        protected override IOffset ProduceCore(IOutboundEnvelope envelope)
         {
             throw new InvalidOperationException("Only asynchronous operations are supported.");
         }

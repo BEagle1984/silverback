@@ -4,7 +4,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration

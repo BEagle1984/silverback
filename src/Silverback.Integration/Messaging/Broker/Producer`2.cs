@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Broker
         protected Producer(
             TBroker broker,
             TEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             ISilverbackIntegrationLogger<Producer> logger)
             : base(broker, endpoint, behaviors, logger)
         {

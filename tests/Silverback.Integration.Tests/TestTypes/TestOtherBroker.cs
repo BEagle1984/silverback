@@ -21,14 +21,14 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override IProducer InstantiateProducer(
             TestOtherProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             IServiceProvider serviceProvider) =>
             new TestOtherProducer(this, endpoint, behaviors);
 
         protected override IConsumer InstantiateConsumer(
             TestOtherConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider) =>
             new TestOtherConsumer(
                 this,

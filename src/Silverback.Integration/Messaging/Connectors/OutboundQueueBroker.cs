@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Connectors
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
         protected override IProducer InstantiateProducer(
             IProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             IServiceProvider serviceProvider) =>
             new OutboundQueueProducer(
                 _queueWriter,
@@ -56,7 +56,7 @@ namespace Silverback.Messaging.Connectors
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider) =>
             throw new InvalidOperationException(
                 "This IBroker implementation is used to write to outbound queue. " +

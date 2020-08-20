@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
         protected override IProducer InstantiateProducer(
             IProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             IServiceProvider serviceProvider) =>
             new InMemoryProducer(
                 this,
@@ -61,7 +61,7 @@ namespace Silverback.Messaging.Broker
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider)
         {
             Check.NotNull(endpoint, nameof(endpoint));

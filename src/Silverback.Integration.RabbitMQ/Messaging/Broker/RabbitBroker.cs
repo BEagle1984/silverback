@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
         protected override IProducer InstantiateProducer(
             RabbitProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             IServiceProvider serviceProvider) =>
             new RabbitProducer(
                 this,
@@ -55,7 +55,7 @@ namespace Silverback.Messaging.Broker
         protected override IConsumer InstantiateConsumer(
             RabbitConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider) =>
             new RabbitConsumer(
                 this,

@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Publishing
 
         private readonly IServiceProvider _serviceProvider;
 
-        private IReadOnlyCollection<IBehavior>? _behaviors;
+        private IReadOnlyList<IBehavior>? _behaviors;
 
         private SubscribedMethodInvoker? _methodInvoker;
 
@@ -121,12 +121,12 @@ namespace Silverback.Messaging.Publishing
             CastResults<TResult>(await Publish(messages, throwIfUnhandled, true).ConfigureAwait(false)).ToList();
 
         private static Task<IReadOnlyCollection<object>> ExecuteBehaviorsPipeline(
-            IReadOnlyCollection<IBehavior> behaviors,
+            IReadOnlyList<IBehavior> behaviors,
             IReadOnlyCollection<object> messages)
         {
-            if (behaviors != null && behaviors.Any())
+            if (behaviors.Count > 0)
             {
-                return behaviors.First().Handle(
+                return behaviors[0].Handle(
                     messages,
                     nextMessages => ExecuteBehaviorsPipeline(
                         behaviors.Skip(1).ToList(),
@@ -227,7 +227,7 @@ namespace Silverback.Messaging.Publishing
                 .ConfigureAwait(false))
             .ToList();
 
-        private IReadOnlyCollection<IBehavior> GetBehaviors() =>
+        private IReadOnlyList<IBehavior> GetBehaviors() =>
             _behaviors ??= _serviceProvider.GetServices<IBehavior>().SortBySortIndex().ToList();
 
         private SubscribedMethodInvoker GetMethodInvoker() =>

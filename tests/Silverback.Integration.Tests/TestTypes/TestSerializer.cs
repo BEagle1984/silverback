@@ -16,6 +16,7 @@ namespace Silverback.Tests.Integration.TestTypes
         public int FailCount { get; private set; }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("ReSharper", "ReturnTypeCanBeNotNullable", Justification = "Contract")]
         public byte[]? Serialize(
             object? message,
             MessageHeaderCollection messageHeaders,

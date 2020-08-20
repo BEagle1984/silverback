@@ -78,7 +78,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingletonBrokerBehavior<CustomHeadersMapperProducerBehavior>()
                     .AddSingletonBrokerBehavior<CustomHeadersMapperConsumerBehavior>()
                     .Services
-                    .AddSingleton<ICustomHeadersMappings, CustomHeadersMappings>();
+                    .AddSingleton<ICustomHeadersMappings>(new CustomHeadersMappings());
 
                 // Pipeline - Chunking
                 brokerOptionsBuilder.SilverbackBuilder

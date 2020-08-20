@@ -52,7 +52,7 @@ namespace Silverback.Messaging.Broker
         public RabbitProducer(
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             IRabbitConnectionFactory connectionFactory,
             ISilverbackIntegrationLogger<Producer> logger)
             : base(broker, endpoint, behaviors, logger)

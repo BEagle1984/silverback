@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -461,10 +462,11 @@ namespace Silverback.Tests.Integration.E2E.Broker
             {
                 Content = "Hello E2E!"
             };
-            byte[]? rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+            byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty) ??
+                                throw new InvalidOperationException("Serializer returned null");
 
             var serviceProvider = Host.ConfigureServices(
                     services => services

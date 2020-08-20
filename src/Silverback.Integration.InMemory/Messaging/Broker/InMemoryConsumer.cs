@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Broker
             InMemoryBroker broker,
             IConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback receivedCallback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<InMemoryConsumer> logger)
             : base(broker, endpoint, receivedCallback, behaviors, serviceProvider, logger)

@@ -99,10 +99,11 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             var committedOffsets = new List<IOffset>();
 
             var message = new TestEventOne { Content = "Hello E2E!" };
-            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+            byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty) ??
+                                throw new InvalidOperationException("Serializer returned null");
 
             await using var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
@@ -156,10 +157,11 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             var committedOffsets = new List<IOffset>();
 
             var message = new TestEventOne { Content = "Hello E2E!" };
-            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+            byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty) ??
+                                throw new InvalidOperationException("Serializer returned null");
 
             await using var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
@@ -174,7 +176,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                         .WithConnectionToMessageBroker(
                             options => options
                                 .AddInMemoryBroker()
-                                .AddDbChunkStore(TimeSpan.FromMilliseconds(300), TimeSpan.FromMilliseconds(50)))
+                                .AddDbChunkStore(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(50)))
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))

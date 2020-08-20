@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Broker
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
-            IReadOnlyCollection<IProducerBehavior>? behaviors,
+            IReadOnlyList<IProducerBehavior>? behaviors,
             ISilverbackIntegrationLogger<Producer> logger)
         {
             Behaviors = behaviors ?? Array.Empty<IProducerBehavior>();
@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Broker
         public IProducerEndpoint Endpoint { get; }
 
         /// <inheritdoc cref="IProducer.Behaviors" />
-        public IReadOnlyCollection<IProducerBehavior> Behaviors { get; }
+        public IReadOnlyList<IProducerBehavior> Behaviors { get; }
 
         /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?,bool)" />
         public void Produce(
@@ -120,13 +120,13 @@ namespace Silverback.Messaging.Broker
         protected abstract Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope);
 
         private async Task ExecutePipeline(
-            IReadOnlyCollection<IProducerBehavior> behaviors,
+            IReadOnlyList<IProducerBehavior> behaviors,
             ProducerPipelineContext context,
             ProducerBehaviorHandler finalAction)
         {
-            if (behaviors != null && behaviors.Any())
+            if (behaviors.Count > 0)
             {
-                await behaviors.First()
+                await behaviors[0]
                     .Handle(
                         context,
                         nextContext =>

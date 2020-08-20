@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Gets the collection of <see cref="IProducerBehavior" /> configured for this <see cref="IProducer" />.
         /// </summary>
-        IReadOnlyCollection<IProducerBehavior> Behaviors { get; }
+        IReadOnlyList<IProducerBehavior> Behaviors { get; }
 
         /// <summary>
         ///     Publishes the specified message.

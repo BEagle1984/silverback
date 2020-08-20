@@ -66,7 +66,7 @@ namespace Silverback.Messaging.Broker
             KafkaBroker broker,
             KafkaConsumerEndpoint endpoint,
             MessagesReceivedAsyncCallback callback,
-            IReadOnlyCollection<IConsumerBehavior>? behaviors,
+            IReadOnlyList<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<KafkaConsumer> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)

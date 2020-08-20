@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Gets the collection of <see cref="IConsumerBehavior" /> configured for this <see cref="IConsumer" />.
         /// </summary>
-        IReadOnlyCollection<IConsumerBehavior> Behaviors { get; }
+        IReadOnlyList<IConsumerBehavior> Behaviors { get; }
 
         /// <summary>
         ///     Gets a value indicating whether this consumer is connected to the message broker and ready to consume
