@@ -27,7 +27,7 @@ namespace Silverback.Tests.Core.Diagnostics
         {
             var logLevelDictionary = new LogLevelDictionary
             {
-                { CoreEventIds.BackgroundServiceStarting, (e, l) => LogLevel.Error }
+                { CoreEventIds.BackgroundServiceStarting, (e, l, m) => LogLevel.Error }
             };
             var internalLogger = new LoggerSubstitute<object>();
             var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
@@ -42,7 +42,7 @@ namespace Silverback.Tests.Core.Diagnostics
         {
             var logLevelDictionary = new LogLevelDictionary
             {
-                { CoreEventIds.BackgroundServiceStarting, (e, l) => LogLevel.Error }
+                { CoreEventIds.BackgroundServiceStarting, (e, l, m) => LogLevel.Error }
             };
             var internalLogger = new LoggerSubstitute<object>();
             var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Core.Diagnostics
             {
                 {
                     CoreEventIds.BackgroundServiceStarting,
-                    (exception, originalLogLevel) =>
+                    (exception, originalLogLevel, message) =>
                     {
                         if (exception is InvalidOperationException)
                         {
@@ -89,7 +89,7 @@ namespace Silverback.Tests.Core.Diagnostics
             {
                 {
                     CoreEventIds.BackgroundServiceStarting,
-                    (exception, originalLogLevel) =>
+                    (exception, originalLogLevel, message) =>
                     {
                         if (exception is InvalidOperationException)
                         {
@@ -110,6 +110,37 @@ namespace Silverback.Tests.Core.Diagnostics
                 "Log Message");
 
             internalLogger.Received(LogLevel.Information, typeof(ArgumentException), "Log Message");
+        }
+
+        [Fact]
+        public void Log_ConfiguredMessageBasedLogLevelMapping_LogLevelChanged()
+        {
+            var logLevelDictionary = new LogLevelDictionary
+            {
+                {
+                    CoreEventIds.BackgroundServiceStarting,
+                    (exception, originalLogLevel, message) =>
+                    {
+                        if (message.Value == "TestMessage 10")
+                        {
+                            return LogLevel.Error;
+                        }
+
+                        return originalLogLevel;
+                    }
+                }
+            };
+            var internalLogger = new LoggerSubstitute<object>();
+            var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
+
+            logger.Log(
+                LogLevel.Information,
+                CoreEventIds.BackgroundServiceStarting,
+                new ArgumentException("param"),
+                "TestMessage {Value}",
+                10);
+
+            internalLogger.Received(LogLevel.Error, typeof(ArgumentException), "TestMessage 10");
         }
     }
 }
