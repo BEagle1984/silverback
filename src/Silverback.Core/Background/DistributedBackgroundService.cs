@@ -81,7 +81,7 @@ namespace Silverback.Background
                 GetType().FullName);
 
             // Run another task to avoid deadlocks
-            return Task.Run(
+            return Task.Factory.StartNew(
                 async () =>
                 {
                     try
@@ -117,7 +117,9 @@ namespace Silverback.Background
                             await Lock.Release().ConfigureAwait(false);
                     }
                 },
-                stoppingToken);
+                stoppingToken,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
         }
 
         /// <summary>

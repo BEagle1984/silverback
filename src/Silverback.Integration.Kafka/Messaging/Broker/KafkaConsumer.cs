@@ -87,7 +87,11 @@ namespace Silverback.Messaging.Broker
 
             InitInnerConsumer();
 
-            Task.Run(Consume);
+            Task.Factory.StartNew(
+                Consume,
+                CancellationToken.None,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
         }
 
         /// <inheritdoc cref="Consumer.DisconnectCore" />
@@ -191,8 +195,7 @@ namespace Silverback.Messaging.Broker
             if (_cancellationTokenSource == null)
             {
                 throw new InvalidOperationException(
-                    "The cancellation token is null, probably because the underlying " +
-                    "consumer is not initialized.");
+                    "The cancellation token is null, probably because the consumer is not properly connected.");
             }
 
             while (!_cancellationTokenSource.IsCancellationRequested)

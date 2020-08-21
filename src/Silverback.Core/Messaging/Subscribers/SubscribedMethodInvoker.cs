@@ -151,7 +151,7 @@ namespace Silverback.Messaging.Subscribers
         private static Task<object?> InvokeAsync(object target, SubscribedMethod method, object?[] parameters)
         {
             if (!method.MethodInfo.ReturnsTask())
-                return Task.Run(() => (object?)method.MethodInfo.Invoke(target, parameters));
+                return Task.FromResult((object?)method.MethodInfo.Invoke(target, parameters));
 
             var result = method.MethodInfo.Invoke(target, parameters);
             return ((Task)result).GetReturnValue();

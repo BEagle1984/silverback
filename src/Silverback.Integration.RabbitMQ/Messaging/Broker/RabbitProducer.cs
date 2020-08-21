@@ -60,7 +60,11 @@ namespace Silverback.Messaging.Broker
             _connectionFactory = connectionFactory;
             _logger = logger;
 
-            Task.Run(() => ProcessQueue(_cancellationTokenSource.Token));
+            Task.Factory.StartNew(
+                () => ProcessQueue(_cancellationTokenSource.Token),
+                CancellationToken.None,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />

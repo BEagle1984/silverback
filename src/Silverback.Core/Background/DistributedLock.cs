@@ -34,7 +34,11 @@ namespace Silverback.Background
 
             Status = DistributedLockStatus.Acquired;
 
-            Task.Run(SendHeartbeats);
+            Task.Factory.StartNew(
+                SendHeartbeats,
+                CancellationToken.None,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
         }
 
         /// <summary>
