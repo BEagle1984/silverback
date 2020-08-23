@@ -12,7 +12,7 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestSubscriber
     {
-        public List<IMessage> ReceivedMessages { get; } = new List<IMessage>();
+        public IList<IMessage> ReceivedMessages { get; } = new List<IMessage>();
 
         public int MustFailCount { get; set; }
 

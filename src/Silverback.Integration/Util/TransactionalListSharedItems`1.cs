@@ -17,6 +17,6 @@ namespace Silverback.Util
         /// <summary>
         ///     Gets the underlying <see cref="List{T}" /> containing the persisted items.
         /// </summary>
-        public List<TransactionalListItem<T>> Items { get; } = new List<TransactionalListItem<T>>();
+        public IList<TransactionalListItem<T>> Items { get; } = new List<TransactionalListItem<T>>();
     }
 }

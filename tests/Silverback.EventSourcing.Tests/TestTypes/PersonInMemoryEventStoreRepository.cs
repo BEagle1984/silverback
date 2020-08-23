@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Util;
 
 namespace Silverback.Tests.EventSourcing.TestTypes
 {
@@ -22,7 +23,7 @@ namespace Silverback.Tests.EventSourcing.TestTypes
 
         public PersonInMemoryEventStoreRepository(IEnumerable<PersonEventStore> eventStoreEntities)
         {
-            EventStores.AddRange(eventStoreEntities);
+            eventStoreEntities.ForEach(personEventStore => EventStores.Add(personEventStore));
         }
 
         public Person GetById(int id) => GetDomainEntity(EventStores.FirstOrDefault(x => x.Id == id));

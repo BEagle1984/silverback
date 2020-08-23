@@ -172,7 +172,7 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
             _builder!.AppendLine("    }");
 
             if (_generateNamespace)
-                _builder!.Append("}");
+                _builder!.Append('}');
         }
 
         private string GetPropertyTypeString(Type propertyType)

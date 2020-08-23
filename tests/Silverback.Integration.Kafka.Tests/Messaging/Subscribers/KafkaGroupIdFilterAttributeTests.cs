@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
@@ -70,7 +71,11 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
         {
             public IMessageSerializer Serializer { get; } = new JsonMessageSerializer();
 
-            public EncryptionSettings? Encryption { get; } = null;
+            [SuppressMessage(
+                "ReSharper",
+                "UnassignedGetOnlyAutoProperty",
+                Justification = "Unused in this implementation, but declared in interface.")]
+            public EncryptionSettings? Encryption { get; }
 
             public string Name { get; } = string.Empty;
 

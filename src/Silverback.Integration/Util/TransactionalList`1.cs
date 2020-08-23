@@ -38,13 +38,13 @@ namespace Silverback.Util
         ///     Gets the underlying <see cref="List{T}" /> containing the persisted items, wrapped into a
         ///     <see cref="TransactionalListItem{T}" />.
         /// </summary>
-        protected List<TransactionalListItem<T>> Items { get; }
+        protected IList<TransactionalListItem<T>> Items { get; }
 
         /// <summary>
         ///     Gets the <see cref="List{T}" /> containing the pending items that will be persisted when <c>Commit</c>
         ///     is called.
         /// </summary>
-        protected List<TransactionalListItem<T>> UncommittedItems { get; }
+        protected IList<TransactionalListItem<T>> UncommittedItems { get; }
 
         /// <summary>
         ///     Called to commit the pending changes.
@@ -58,7 +58,7 @@ namespace Silverback.Util
             {
                 lock (Items)
                 {
-                    Items.AddRange(UncommittedItems);
+                    ((List<TransactionalListItem<T>>)Items).AddRange(UncommittedItems);
                 }
 
                 UncommittedItems.Clear();
@@ -115,7 +115,8 @@ namespace Silverback.Util
         {
             lock (Items)
             {
-                Items.RemoveAll(storedItem => storedItem.Item.Equals(item));
+                ((List<TransactionalListItem<T>>)Items)
+                    .RemoveAll(storedItem => storedItem.Item.Equals(item));
             }
 
             return Task.CompletedTask;

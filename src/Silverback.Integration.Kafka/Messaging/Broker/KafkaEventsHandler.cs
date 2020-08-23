@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Broker
     // TODO: Test
     internal class KafkaEventsHandler
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceProvider? _serviceProvider;
 
         private readonly ISilverbackIntegrationLogger<KafkaEventsHandler> _logger;
 
@@ -42,6 +42,7 @@ namespace Silverback.Messaging.Broker
                 .SetOffsetsCommittedHandler(OnOffsetsCommitted)
                 .SetErrorHandler((_, error) => OnConsumerError(ownerConsumer, error));
 
+        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public void CreateScopeAndPublishEvent(IMessage message)
         {
             using var scope = _serviceProvider?.CreateScope();

@@ -59,6 +59,6 @@ namespace Silverback.Messaging.Broker.Behaviors
             "",
             "CA2227",
             Justification = "Has to be writable to handle commits and rollbacks correctly (see usages)")]
-        public List<IOffset>? CommitOffsets { get; set; }
+        public IList<IOffset>? CommitOffsets { get; set; }
     }
 }

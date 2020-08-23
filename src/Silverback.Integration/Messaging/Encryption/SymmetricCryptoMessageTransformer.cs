@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
@@ -67,7 +68,7 @@ namespace Silverback.Messaging.Encryption
             await using var memoryStream = new MemoryStream();
             await using var cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Write);
 
-            await cryptoStream.WriteAsync(message, 0, message.Length).ConfigureAwait(false);
+            await cryptoStream.WriteAsync(message.AsMemory(0, message.Length)).ConfigureAwait(false);
             await cryptoStream.FlushAsync().ConfigureAwait(false);
             cryptoStream.Close();
 

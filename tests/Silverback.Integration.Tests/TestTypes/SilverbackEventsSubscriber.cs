@@ -8,7 +8,7 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class SilverbackEventsSubscriber
     {
-        public List<ISilverbackEvent> ReceivedEvents { get; } = new List<ISilverbackEvent>();
+        public IList<ISilverbackEvent> ReceivedEvents { get; } = new List<ISilverbackEvent>();
 
         public void OnMessageReceived(object message)
         {

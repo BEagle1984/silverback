@@ -30,6 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Action<ILogLevelConfigurator> logLevelsConfigurationAction)
         {
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(logLevelsConfigurationAction, nameof(logLevelsConfigurationAction));
 
             var configurator = new LogLevelConfigurator();

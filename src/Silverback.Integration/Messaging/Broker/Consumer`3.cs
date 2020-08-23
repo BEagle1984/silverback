@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
@@ -11,6 +12,7 @@ using Silverback.Messaging.Broker.Behaviors;
 namespace Silverback.Messaging.Broker
 {
     /// <inheritdoc cref="Consumer" />
+    [SuppressMessage("", "CA1005", Justification = Justifications.NoWayToReduceTypeParameters)]
     public abstract class Consumer<TBroker, TEndpoint, TOffset> : Consumer
         where TBroker : IBroker
         where TEndpoint : IConsumerEndpoint

@@ -10,7 +10,7 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class InboundEnvelopeSubscriber
     {
-        public List<IInboundEnvelope<object>> ReceivedEnvelopes { get; } = new List<IInboundEnvelope<object>>();
+        public IList<IInboundEnvelope<object>> ReceivedEnvelopes { get; } = new List<IInboundEnvelope<object>>();
 
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]

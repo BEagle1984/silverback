@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +33,11 @@ namespace Silverback.Messaging.LargeMessages
         }
 
         /// <inheritdoc cref="IChunkStore.HasNotPersistedChunks" />
-        public bool HasNotPersistedChunks { get; } = false;
+        [SuppressMessage(
+            "ReSharper",
+            "UnassignedGetOnlyAutoProperty",
+            Justification = "Unused in this implementation, but declared in interface.")]
+        public bool HasNotPersistedChunks { get; }
 
         /// <inheritdoc cref="IChunkStore.Store" />
         public async Task Store(string messageId, int chunkIndex, int chunksCount, byte[] content)

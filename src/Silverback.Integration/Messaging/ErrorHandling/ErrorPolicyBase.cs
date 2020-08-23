@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -248,6 +249,7 @@ namespace Silverback.Messaging.ErrorHandling
         }
 
         /// <inheritdoc cref="IErrorPolicy.HandleError" />
+        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public async Task<ErrorAction> HandleError(
             IReadOnlyCollection<IRawInboundEnvelope> envelopes,
             Exception exception)

@@ -176,7 +176,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                         .WithConnectionToMessageBroker(
                             options => options
                                 .AddInMemoryBroker()
-                                .AddDbChunkStore(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(50)))
+                                .AddDbChunkStore(TimeSpan.FromMilliseconds(1000), TimeSpan.FromMilliseconds(50)))
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
@@ -207,7 +207,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 var chunkStore = scope.ServiceProvider.GetRequiredService<IChunkStore>();
                 (await chunkStore.CountChunks("123")).Should().Be(2);
 
-                await AsyncTestingUtil.WaitAsync(async () => await chunkStore.CountChunks("123") == 0, 500);
+                await AsyncTestingUtil.WaitAsync(async () => await chunkStore.CountChunks("123") == 0, 1000);
             }
 
             await producer.ProduceAsync(

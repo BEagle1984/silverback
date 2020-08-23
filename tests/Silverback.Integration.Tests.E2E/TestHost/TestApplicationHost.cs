@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -11,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Testing framework")]
     public sealed class TestApplicationHost : IDisposable
     {
         private readonly List<Action<IServiceCollection>>

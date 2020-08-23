@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace Silverback.EventStore
     /// <typeparam name="TEventEntity">
     ///     The base type of the events that will be associated to the event store entity.
     /// </typeparam>
+    [SuppressMessage("", "CA1005", Justification = Justifications.NoWayToReduceTypeParameters)]
     public abstract class DbEventStoreRepository<TDomainEntity, TKey, TEventStoreEntity, TEventEntity>
         : EventStoreRepository<TDomainEntity, TEventStoreEntity, TEventEntity>
         where TDomainEntity : class, IEventSourcingDomainEntity<TKey>

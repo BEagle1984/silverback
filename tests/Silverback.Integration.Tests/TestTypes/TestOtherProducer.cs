@@ -26,7 +26,7 @@ namespace Silverback.Tests.Integration.TestTypes
             ProducedMessages = broker.ProducedMessages;
         }
 
-        public List<ProducedMessage> ProducedMessages { get; }
+        public IList<ProducedMessage> ProducedMessages { get; }
 
         protected override IOffset? ProduceCore(IOutboundEnvelope envelope)
         {

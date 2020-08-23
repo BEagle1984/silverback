@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        public List<ProducedMessage> ProducedMessages { get; } = new List<ProducedMessage>();
+        public IList<ProducedMessage> ProducedMessages { get; } = new List<ProducedMessage>();
 
         protected override IProducer InstantiateProducer(
             TestOtherProducerEndpoint endpoint,

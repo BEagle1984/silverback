@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
         ///     messages are fired at the same time (e.g. in a batch). The default value is <c>false</c> (the messages
         ///     are processed sequentially).
         /// </summary>
-        public bool Parallel { get; set; } = false;
+        public bool Parallel { get; set; }
 
         /// <summary>
         ///     Gets or sets the maximum number of messages that are processed concurrently. Used only together with

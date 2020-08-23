@@ -152,6 +152,7 @@ namespace Silverback.Messaging.Broker
             Subscribe();
         }
 
+        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         private void DisposeInnerConsumer()
         {
             if (_innerConsumer == null)

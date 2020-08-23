@@ -15,11 +15,11 @@ namespace Silverback
             "[]?, []!, ()? and ()! are recognized as wrongly spaced (bug in the analyzer, " +
             "fixed with StyleCop.Analyzers 1.2.0)";
 
+        public const string NewUsingSyntaxFalsePositive =
+            "The new using syntax is not properly analyzed after upgrading to FxCopAnalyzers 3.3.0.";
+
         public const string ExceptionLogged =
             "The exception is logged, it is not swallowed";
-
-        public const string MutableProperties =
-            "Using the object hashcode since the properties are actually mutable";
 
         public const string CanExposeByteArray =
             "It doesn't really cause any issue and it would feel unnatural to expose a collection instead of " +
@@ -34,5 +34,8 @@ namespace Silverback
         public const string Settings =
             "Setting classes expose a setter for their properties but it's safe to assume that their value will not be " +
             "modified after the application has been started";
+
+        public const string NoWayToReduceTypeParameters =
+            "All type parameters are needed and there's unfortunately no clean way to reduce their number. ";
     }
 }

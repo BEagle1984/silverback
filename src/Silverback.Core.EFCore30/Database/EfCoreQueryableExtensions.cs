@@ -368,7 +368,7 @@ namespace Silverback.Database
             EntityFrameworkQueryableExtensions.Load(source);
 
         public Task LoadAsync<TSource>(IQueryable<TSource> source, CancellationToken cancellationToken = default) =>
-            EntityFrameworkQueryableExtensions.LoadAsync(source);
+            EntityFrameworkQueryableExtensions.LoadAsync(source, cancellationToken);
 
         public Task<Dictionary<TKey, TSource>> ToDictionaryAsync<TSource, TKey>(
             IQueryable<TSource> source,

@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Batch;
@@ -112,8 +112,8 @@ namespace Silverback.Messaging.Broker.Behaviors
                     .PublishAsync(new ConsumingCompletedEvent(context))
                     .ConfigureAwait(false);
 
-                if (context.CommitOffsets != null && context.CommitOffsets.Any())
-                    await _context.Consumer.Commit(context.CommitOffsets).ConfigureAwait(false);
+                if (context.CommitOffsets != null && context.CommitOffsets.Count > 0)
+                    await _context.Consumer.Commit((List<IOffset>)context.CommitOffsets).ConfigureAwait(false);
             }
 
             private async Task Rollback(
@@ -125,8 +125,8 @@ namespace Silverback.Messaging.Broker.Behaviors
                     .PublishAsync(new ConsumingAbortedEvent(context, exception))
                     .ConfigureAwait(false);
 
-                if (context.CommitOffsets != null && context.CommitOffsets.Any())
-                    await _context.Consumer.Rollback(context.CommitOffsets).ConfigureAwait(false);
+                if (context.CommitOffsets != null && context.CommitOffsets.Count > 0)
+                    await _context.Consumer.Rollback((List<IOffset>)context.CommitOffsets).ConfigureAwait(false);
             }
         }
     }

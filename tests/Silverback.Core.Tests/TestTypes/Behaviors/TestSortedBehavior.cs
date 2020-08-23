@@ -10,9 +10,9 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
 {
     public class TestSortedBehavior : IBehavior, ISorted
     {
-        private readonly List<string> _calls;
+        private readonly IList<string> _calls;
 
-        public TestSortedBehavior(int sortIndex, List<string> calls)
+        public TestSortedBehavior(int sortIndex, IList<string> calls)
         {
             _calls = calls;
             SortIndex = sortIndex;

@@ -69,7 +69,8 @@ namespace Silverback.Messaging.LargeMessages
         {
             lock (Items)
             {
-                Items.RemoveAll(item => item.InsertDate < threshold);
+                ((List<TransactionalListItem<InMemoryTemporaryMessageChunk>>)Items)
+                    .RemoveAll(item => item.InsertDate < threshold);
             }
 
             return Task.CompletedTask;
@@ -82,12 +83,14 @@ namespace Silverback.Messaging.LargeMessages
             {
                 lock (UncommittedItems)
                 {
-                    UncommittedItems.RemoveAll(item => _pendingCleanups.Contains(item.Item.MessageId));
+                    ((List<TransactionalListItem<InMemoryTemporaryMessageChunk>>)UncommittedItems)
+                        .RemoveAll(item => _pendingCleanups.Contains(item.Item.MessageId));
                 }
 
                 lock (Items)
                 {
-                    Items.RemoveAll(item => _pendingCleanups.Contains(item.Item.MessageId));
+                    ((List<TransactionalListItem<InMemoryTemporaryMessageChunk>>)Items)
+                        .RemoveAll(item => _pendingCleanups.Contains(item.Item.MessageId));
                 }
 
                 _pendingCleanups.Clear();
