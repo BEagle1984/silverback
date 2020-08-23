@@ -153,6 +153,7 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private void DisposeInnerConsumer()
         {
             if (_innerConsumer == null)
@@ -166,8 +167,9 @@ namespace Silverback.Messaging.Broker
                 Task.Run(
                         () =>
                         {
-                            _innerConsumer.Close();
-                            _innerConsumer.Dispose();
+                            _innerConsumer?.Close();
+                            _innerConsumer?.Dispose();
+                            _innerConsumer = null;
                         },
                         timeoutCancellationTokenSource.Token)
                     .Wait(timeoutCancellationTokenSource.Token);
@@ -175,6 +177,14 @@ namespace Silverback.Messaging.Broker
             catch (OperationCanceledException)
             {
                 // Ignored
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(
+                    KafkaEventIds.ConsumerDisconnectError,
+                    ex,
+                    "Error disconnecting consumer. (topic(s): {topics})",
+                    (object)Endpoint.Names);
             }
 
             _innerConsumer = null;
@@ -436,6 +446,7 @@ namespace Silverback.Messaging.Broker
             }
 
             _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
         }
     }
 }

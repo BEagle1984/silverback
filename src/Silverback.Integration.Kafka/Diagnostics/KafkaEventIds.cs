@@ -184,5 +184,15 @@ namespace Silverback.Diagnostics
         /// </remarks>
         public static EventId ProducerStatisticsReceived { get; } =
             new EventId(Offset + 39, Prefix + nameof(ProducerStatisticsReceived));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when an exception is thrown disconnecting
+        ///     the consumer.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Warning.
+        /// </remarks>
+        public static EventId ConsumerDisconnectError { get; } =
+            new EventId(Offset + 50, Prefix + nameof(ConsumerDisconnectError));
     }
 }

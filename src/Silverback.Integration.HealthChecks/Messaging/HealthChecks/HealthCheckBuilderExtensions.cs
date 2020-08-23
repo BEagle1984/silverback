@@ -3,11 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Silverback.Messaging.HealthChecks;
 using Silverback.Util;
 
-namespace Silverback.Messaging.HealthChecks
+// ReSharper disable once CheckNamespace
+namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
     ///     Adds methods such as <c>AddOutboundEndpointsCheck</c> and <c>AddOutboundQueueCheck</c> to the

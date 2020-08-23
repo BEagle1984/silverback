@@ -4,12 +4,12 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.Consumer.Subscribers
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Subscriber")]
     [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Subscriber")]
-    public class SilverbackEventsSubscriber : ISubscriber
+    public class SilverbackEventsSubscriber
     {
         private readonly ILogger<SilverbackEventsSubscriber> _logger;
 

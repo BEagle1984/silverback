@@ -2,9 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry;
+using Microsoft.Extensions.Options;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Messages;
 using Silverback.Examples.Messages;
@@ -17,13 +19,14 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Examples.Consumer.Configuration
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Called by Silverback")]
     public class KafkaEndpointsConfigurator : IEndpointsConfigurator
     {
-        private readonly ConsumerApp _app;
+        private readonly string _consumerGroupName;
 
-        public KafkaEndpointsConfigurator(ConsumerApp app)
+        public KafkaEndpointsConfigurator(IOptions<ConsumerGroupConfiguration> options)
         {
-            _app = app;
+            _consumerGroupName = options.Value.ConsumerGroupName;
         }
 
         public void Configure(IEndpointsConfigurationBuilder builder) => builder
@@ -39,7 +42,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__main",
+                        GroupId = $"{_consumerGroupName}__main",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     }
                 })
@@ -49,7 +52,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__group-1",
+                        GroupId = $"{_consumerGroupName}__group-1",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     }
                 })
@@ -59,7 +62,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__group-2",
+                        GroupId = $"{_consumerGroupName}__group-2",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     }
                 })
@@ -69,7 +72,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__batch",
+                        GroupId = $"{_consumerGroupName}__batch",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     }
                 },
@@ -88,7 +91,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__error",
+                        GroupId = $"{_consumerGroupName}__error",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     }
                 },
@@ -136,7 +139,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__error2"
+                        GroupId = $"{_consumerGroupName}__error2"
                     }
                 },
                 policy => policy.Chain(
@@ -148,7 +151,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = _app.ConsumerGroupName,
+                        GroupId = _consumerGroupName,
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     }
                 },
@@ -159,7 +162,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__unhandled"
+                        GroupId = $"{_consumerGroupName}__unhandled"
                     }
                 })
             .AddInbound(
@@ -168,7 +171,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__avro",
+                        GroupId = $"{_consumerGroupName}__avro",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     },
                     Serializer = new AvroMessageSerializer<AvroMessage>
@@ -185,7 +188,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}newtonsoft",
+                        GroupId = $"{_consumerGroupName}newtonsoft",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     },
                     Serializer = new NewtonsoftJsonMessageSerializer()
@@ -196,7 +199,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__encrypted",
+                        GroupId = $"{_consumerGroupName}__encrypted",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     },
                     Encryption = new SymmetricEncryptionSettings
@@ -210,7 +213,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__avro-encrypted",
+                        GroupId = $"{_consumerGroupName}__avro-encrypted",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     },
                     Serializer = new AvroMessageSerializer<AvroMessage>
@@ -233,7 +236,7 @@ namespace Silverback.Examples.Consumer.Configuration
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://localhost:9092",
-                        GroupId = $"{_app.ConsumerGroupName}__legacy",
+                        GroupId = $"{_consumerGroupName}__legacy",
                         AutoOffsetReset = AutoOffsetReset.Earliest
                     },
                     Serializer = new JsonMessageSerializer<LegacyMessage>()

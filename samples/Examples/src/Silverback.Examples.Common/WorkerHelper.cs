@@ -9,7 +9,7 @@ namespace Silverback.Examples.Common
 {
     public static class WorkerHelper
     {
-        public static void LoopUntilCancelled()
+        public static async Task LoopUntilCanceled()
         {
             var cancellationTokenSource = new CancellationTokenSource();
 
@@ -19,7 +19,7 @@ namespace Silverback.Examples.Common
             {
                 try
                 {
-                    Task.Delay(5000, cancellationTokenSource.Token);
+                    await Task.Delay(5000, cancellationTokenSource.Token);
                 }
                 catch (TaskCanceledException)
                 {

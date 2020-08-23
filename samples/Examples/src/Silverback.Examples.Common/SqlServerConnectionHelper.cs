@@ -11,9 +11,9 @@ namespace Silverback.Examples.Common
             @"Data Source=.,1433;Initial Catalog=Silverback.Examples.{0};User ID=sa;Password=mssql2017.;";
 
         public static string GetProducerConnectionString() =>
-            string.Format(CultureInfo.InvariantCulture, ConnectionString, "Main");
+            string.Format(CultureInfo.InvariantCulture, ConnectionString, "Producer");
 
-        public static string GetConsumerConnectionString(string dbNameSuffix) =>
-            string.Format(CultureInfo.InvariantCulture, ConnectionString, dbNameSuffix);
+        public static string GetConsumerConnectionString() =>
+            string.Format(CultureInfo.InvariantCulture, ConnectionString, "Consumer");
     }
 }

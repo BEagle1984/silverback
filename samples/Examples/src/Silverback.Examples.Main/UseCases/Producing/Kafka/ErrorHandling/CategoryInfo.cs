@@ -21,7 +21,7 @@ namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
             typeof(RetryErrorPolicyUseCase),
             typeof(RetryAndMoveErrorPolicyUseCase),
             typeof(RetryAndSkipErrorPolicyUseCase),
-            typeof(RetryAndSkipErrorPolicyUseCase2),
+            typeof(RetryAndSkipErrorPolicy2UseCase),
             typeof(UnhandledErrorUseCase)
         };
     }

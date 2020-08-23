@@ -1,6 +1,8 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
@@ -8,13 +10,14 @@ using Silverback.Messaging.Connectors;
 
 namespace Silverback.Examples.Consumer.Configuration
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Called by Silverback")]
     public class RabbitEndpointsConfigurator : IEndpointsConfigurator
     {
-        private readonly ConsumerApp _app;
+        private readonly string _consumerGroupName;
 
-        public RabbitEndpointsConfigurator(ConsumerApp app)
+        public RabbitEndpointsConfigurator(IOptions<ConsumerGroupConfiguration> options)
         {
-            _app = app;
+            _consumerGroupName = options.Value.ConsumerGroupName;
         }
 
         public void Configure(IEndpointsConfigurationBuilder builder) => builder
@@ -34,7 +37,7 @@ namespace Silverback.Examples.Consumer.Configuration
                 new RabbitExchangeConsumerEndpoint("silverback-examples-events-fanout")
                 {
                     Connection = GetConnectionConfig(),
-                    QueueName = $"{_app.ConsumerGroupName}.silverback-examples-events-fanout",
+                    QueueName = $"{_consumerGroupName}.silverback-examples-events-fanout",
                     Queue = new RabbitQueueConfig
                     {
                         IsDurable = true,
@@ -52,7 +55,7 @@ namespace Silverback.Examples.Consumer.Configuration
                 new RabbitExchangeConsumerEndpoint("silverback-examples-events-topic")
                 {
                     Connection = GetConnectionConfig(),
-                    QueueName = $"{_app.ConsumerGroupName}.silverback-examples-events-topic",
+                    QueueName = $"{_consumerGroupName}.silverback-examples-events-topic",
                     RoutingKey = "interesting.*.event",
                     Queue = new RabbitQueueConfig
                     {

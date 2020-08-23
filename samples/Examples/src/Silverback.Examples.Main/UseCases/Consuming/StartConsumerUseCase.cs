@@ -5,9 +5,9 @@ using Silverback.Examples.Consumer;
 
 namespace Silverback.Examples.Main.UseCases.Consuming
 {
-    public class StartConsumerUserCase : ExternalUseCase
+    public class StartConsumerUseCase : ExternalUseCase
     {
-        public StartConsumerUserCase()
+        public StartConsumerUseCase()
         {
             Title = "Start consumer application";
             Description = "Start the Silverback.Examples.Consumer app to consume " +
@@ -17,7 +17,7 @@ namespace Silverback.Examples.Main.UseCases.Consuming
 
         public override void Run()
         {
-            new ConsumerApp().Start();
+            new ConsumerApp().Run().Wait();
         }
     }
 }

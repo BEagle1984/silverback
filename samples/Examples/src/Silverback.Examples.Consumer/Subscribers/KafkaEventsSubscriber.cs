@@ -6,12 +6,12 @@ using System.Linq;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.Consumer.Subscribers
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Subscriber")]
     [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Subscriber")]
-    public class KafkaEventsSubscriber : ISubscriber
+    public class KafkaEventsSubscriber
     {
         private readonly ILogger<KafkaEventsSubscriber> _logger;
 

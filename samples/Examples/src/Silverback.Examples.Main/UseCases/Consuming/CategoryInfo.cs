@@ -16,7 +16,7 @@ namespace Silverback.Examples.Main.UseCases.Consuming
 
         public IEnumerable<Type> Children => new List<Type>
         {
-            typeof(StartConsumerUserCase)
+            typeof(StartConsumerUseCase)
         };
     }
 }

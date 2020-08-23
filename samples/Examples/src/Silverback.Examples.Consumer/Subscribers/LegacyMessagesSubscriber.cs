@@ -8,8 +8,9 @@ using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.Consumer.Subscribers
 {
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Subscriber")]
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Subscriber")]
-    public class LegacyMessagesSubscriber : ISubscriber
+    public class LegacyMessagesSubscriber
     {
         private readonly ILogger<LegacyMessagesSubscriber> _logger;
 

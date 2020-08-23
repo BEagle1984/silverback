@@ -3,21 +3,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Examples.Main.Menu;
-using Silverback.Examples.Main.UseCases.Producing.Kafka;
 
 namespace Silverback.Examples.Main.UseCases
 {
     public class RootCategory : ICategory
     {
-        public string? Title { get; } = null;
+        [SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty", Justification = "Null is the correct value.")]
+        public string? Title { get; }
 
-        public string? Description { get; } = null;
+        [SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty", Justification = "Null is the correct value.")]
+        public string? Description { get; }
 
         public IEnumerable<Type> Children => new List<Type>
         {
-            typeof(CategoryInfo),
-            typeof(Producing.Rabbit.CategoryInfo),
+            typeof(Producing.CategoryInfo),
             typeof(Consuming.CategoryInfo)
         };
     }

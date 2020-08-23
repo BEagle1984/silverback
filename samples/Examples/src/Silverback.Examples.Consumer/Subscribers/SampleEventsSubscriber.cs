@@ -15,7 +15,8 @@ using Silverback.Messaging.Subscribers;
 namespace Silverback.Examples.Consumer.Subscribers
 {
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Subscriber")]
-    public class SampleEventsSubscriber : ISubscriber
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Subscriber")]
+    public class SampleEventsSubscriber
     {
         private readonly ExamplesDbContext _dbContext;
 

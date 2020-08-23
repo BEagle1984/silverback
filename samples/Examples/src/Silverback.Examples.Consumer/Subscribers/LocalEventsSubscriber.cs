@@ -1,13 +1,15 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Silverback.Examples.Common.Messages;
-using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Examples.Consumer.Subscribers
 {
-    public class LocalEventsSubscriber : ISubscriber
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Subscriber")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Subscriber")]
+    public class LocalEventsSubscriber
     {
         private readonly ILogger<LocalEventsSubscriber> _logger;
 

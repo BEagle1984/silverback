@@ -9,7 +9,8 @@ using Silverback.Messaging.Subscribers;
 namespace Silverback.Examples.Consumer.Subscribers
 {
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Subscriber")]
-    public class MultipleGroupsSubscriber : ISubscriber
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Subscriber")]
+    public class MultipleGroupsSubscriber
     {
         private readonly ILogger<MultipleGroupsSubscriber> _logger;
 

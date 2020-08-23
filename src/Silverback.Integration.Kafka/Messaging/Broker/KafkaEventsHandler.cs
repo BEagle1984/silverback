@@ -45,10 +45,17 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public void CreateScopeAndPublishEvent(IMessage message)
         {
-            using var scope = _serviceProvider?.CreateScope();
-            var publisher = scope?.ServiceProvider.GetRequiredService<IPublisher>();
+            try
+            {
+                using var scope = _serviceProvider?.CreateScope();
+                var publisher = scope?.ServiceProvider.GetRequiredService<IPublisher>();
 
-            publisher?.Publish(message);
+                publisher?.Publish(message);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Ignore the ObjectDisposedException that may be thrown when disconnecting
+            }
         }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]

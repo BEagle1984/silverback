@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Examples.Common.Logging;
 using Silverback.Examples.Main.Menu;
 
 namespace Silverback.Examples.Main
@@ -10,6 +11,8 @@ namespace Silverback.Examples.Main
     {
         public static void Main()
         {
+            LoggingConfiguration.Setup();
+
             Console.Clear();
             Console.CursorVisible = false;
 

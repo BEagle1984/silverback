@@ -3,59 +3,46 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Examples.Common.Messages;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Examples.Main.UseCases.Producing.Kafka.ErrorHandling
 {
-    public class RetryAndSkipErrorPolicyUseCase2 : UseCase
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Invoked by test framework")]
+    [SuppressMessage("", "CA1822", Justification = "Startup contract")]
+    public class RetryAndSkipErrorPolicy2UseCaseStartup
     {
-        public RetryAndSkipErrorPolicyUseCase2()
+        public void ConfigureServices(IServiceCollection services)
         {
-            Title = "Simulate a deserialization error (Retry + Skip)";
-            Description = "The consumer will retry to process the message (x2) and " +
-                          "finally skip it.";
-            ExecutionsCount = 1;
+            services
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddKafka())
+                .AddEndpoints(
+                    endpoints => endpoints
+                        .AddOutbound<IIntegrationEvent>(
+                            new KafkaProducerEndpoint("silverback-examples-error-events2")
+                            {
+                                Configuration = new KafkaProducerConfig
+                                {
+                                    BootstrapServers = "PLAINTEXT://localhost:9092"
+                                },
+                                Serializer = new BuggySerializer()
+                            }));
         }
 
-        protected override void ConfigureServices(IServiceCollection services) => services
-            .AddSilverback()
-            .UseModel()
-            .WithConnectionToMessageBroker(options => options.AddKafka());
-
-        protected override void Configure(IBusConfigurator configurator, IServiceProvider serviceProvider) =>
-            configurator.Connect(
-                endpoints => endpoints
-                    .AddOutbound<IIntegrationEvent>(
-                        new KafkaProducerEndpoint("silverback-examples-error-events2")
-                        {
-                            Configuration = new KafkaProducerConfig
-                            {
-                                BootstrapServers = "PLAINTEXT://localhost:9092"
-                            },
-                            Serializer = new BuggySerializer()
-                        }));
-
-        protected override async Task Execute(IServiceProvider serviceProvider)
+        public void Configure()
         {
-            var publisher = serviceProvider.GetService<IEventPublisher>();
-
-            await publisher.PublishAsync(new BadIntegrationEvent
-            {
-                Content = DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
-            });
         }
 
         private class BuggySerializer : IMessageSerializer
         {
             [SuppressMessage("", "SA1011", Justification = "False positive")]
+            [SuppressMessage("ReSharper", "ReturnTypeCanBeNotNullable", Justification = "Interface contract")]
             public byte[]? Serialize(
                 object? message,
                 MessageHeaderCollection messageHeaders,
