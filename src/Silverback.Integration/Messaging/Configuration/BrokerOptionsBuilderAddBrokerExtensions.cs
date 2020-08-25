@@ -3,7 +3,6 @@
 
 using System;
 using System.Linq;
-using Silverback.Diagnostics;
 using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;

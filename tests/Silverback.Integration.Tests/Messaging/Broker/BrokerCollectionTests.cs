@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;

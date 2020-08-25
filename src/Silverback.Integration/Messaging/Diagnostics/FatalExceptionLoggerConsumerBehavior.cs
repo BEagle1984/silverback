@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Diagnostics

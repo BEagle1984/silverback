@@ -285,7 +285,7 @@ namespace Silverback.Messaging.Broker
 
             Dictionary<string, string> logData = new Dictionary<string, string>();
 
-            KafkaOffset? offset = new KafkaOffset(tpo);
+            var offset = new KafkaOffset(tpo);
             logData["offset"] = $"{offset.Partition}@{offset.Offset}";
 
             var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());

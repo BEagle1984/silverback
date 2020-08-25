@@ -100,7 +100,7 @@ namespace Silverback.Messaging.ErrorHandling
                     ? new OutboundEnvelope(deserializedEnvelope.Message, deserializedEnvelope.Headers, _endpoint)
                     : new OutboundEnvelope(envelope.RawMessage, envelope.Headers, _endpoint);
 
-            _transformationAction?.Invoke((OutboundEnvelope)outboundEnvelope, exception);
+            _transformationAction?.Invoke(outboundEnvelope, exception);
 
             await _producer.ProduceAsync(outboundEnvelope).ConfigureAwait(false);
         }
