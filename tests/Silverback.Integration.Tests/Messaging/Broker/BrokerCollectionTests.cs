@@ -39,7 +39,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             string expectedProducerType)
         {
             var serviceProvider = new ServiceCollection()
-                .AddSingleton(Substitute.For<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>())
+                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
                 .BuildServiceProvider();
 
             var brokerCollection = new BrokerCollection(
@@ -64,9 +64,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             string expectedConsumerType)
         {
             var serviceProvider = new ServiceCollection()
-                .AddSingleton(Substitute.For<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>())
-                .AddSingleton(Substitute.For<ISilverbackLogger<TestConsumer>>())
-                .AddSingleton(Substitute.For<ISilverbackLogger<TestOtherConsumer>>())
+                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
                 .BuildServiceProvider();
 
             var brokerCollection = new BrokerCollection(

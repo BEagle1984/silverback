@@ -16,7 +16,7 @@ namespace Silverback.Messaging.ErrorHandling
     /// </summary>
     public class ErrorPolicyChain : ErrorPolicyBase
     {
-        private readonly ISilverbackLogger<ErrorPolicyChain> _logger;
+        private readonly ISilverbackIntegrationLogger<ErrorPolicyChain> _logger;
 
         private readonly IReadOnlyCollection<ErrorPolicyBase> _policies;
 
@@ -27,14 +27,14 @@ namespace Silverback.Messaging.ErrorHandling
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         /// <param name="policies">
         ///     The policies to be chained.
         /// </param>
         public ErrorPolicyChain(
             IServiceProvider serviceProvider,
-            ISilverbackLogger<ErrorPolicyChain> logger,
+            ISilverbackIntegrationLogger<ErrorPolicyChain> logger,
             params ErrorPolicyBase[] policies)
             : this(policies.AsEnumerable(), serviceProvider, logger)
         {
@@ -50,12 +50,12 @@ namespace Silverback.Messaging.ErrorHandling
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         public ErrorPolicyChain(
             IEnumerable<ErrorPolicyBase> policies,
             IServiceProvider serviceProvider,
-            ISilverbackLogger<ErrorPolicyChain> logger)
+            ISilverbackIntegrationLogger<ErrorPolicyChain> logger)
             : base(serviceProvider, logger)
         {
             _logger = logger;

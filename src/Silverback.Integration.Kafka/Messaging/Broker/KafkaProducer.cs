@@ -52,14 +52,14 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         public KafkaProducer(
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
             IServiceProvider serviceProvider,
-            ISilverbackLogger<KafkaProducer> logger)
+            ISilverbackIntegrationLogger<KafkaProducer> logger)
             : base(broker, endpoint, behaviors, logger)
         {
             _logger = logger;

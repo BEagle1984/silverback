@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Batch
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ISilverbackLogger _logger;
+        private readonly ISilverbackIntegrationLogger _logger;
 
         private readonly List<IRawInboundEnvelope> _envelopes;
 
@@ -69,7 +69,7 @@ namespace Silverback.Messaging.Batch
                 _waitTimer.Elapsed += OnWaitTimerElapsed;
             }
 
-            _logger = serviceProvider.GetRequiredService<ISilverbackLogger<MessageBatch>>();
+            _logger = serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<MessageBatch>>();
         }
 
         public int CurrentSize => _envelopes.Count;

@@ -65,7 +65,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                 new BrokerCollection(new[] { _broker }),
                 routingConfiguration,
-                Substitute.For<ISilverbackLogger<OutboundQueueWorker>>(),
+                Substitute.For<ISilverbackIntegrationLogger<OutboundQueueWorker>>(),
                 true,
                 100); // TODO: Test order not enforced
 

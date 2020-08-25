@@ -26,10 +26,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         {
             var services = new ServiceCollection()
                 .AddSingleton<KafkaEventsHandler>()
-                .AddSingleton(Substitute.For<ISilverbackLogger<KafkaConsumer>>())
-                .AddSingleton(Substitute.For<ISilverbackLogger<KafkaProducer>>())
-                .AddSingleton(Substitute.For<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>())
-                .AddSingleton<ISilverbackLogger<KafkaEventsHandler>>(new LoggerSubstitute<KafkaEventsHandler>());
+                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>));
 
             _broker = new KafkaBroker(
                 Enumerable.Empty<IBrokerBehavior>(),

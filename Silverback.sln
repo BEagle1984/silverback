@@ -97,6 +97,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Newt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Newtonsoft.Tests", "tests\Silverback.Integration.Newtonsoft.Tests\Silverback.Integration.Newtonsoft.Tests.csproj", "{AF919F36-871B-41BC-8093-54DAEB024296}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tests.Common.Integration", "tests\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj", "{00BA530D-20C8-4F42-9296-186766B9EC5C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -215,6 +217,10 @@ Global
 		{AF919F36-871B-41BC-8093-54DAEB024296}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF919F36-871B-41BC-8093-54DAEB024296}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF919F36-871B-41BC-8093-54DAEB024296}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00BA530D-20C8-4F42-9296-186766B9EC5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00BA530D-20C8-4F42-9296-186766B9EC5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00BA530D-20C8-4F42-9296-186766B9EC5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00BA530D-20C8-4F42-9296-186766B9EC5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -238,6 +244,7 @@ Global
 		{65B73763-9024-43A1-BFAF-045863CAEE1A} = {C177137F-A084-4178-805F-890F0A175A56}
 		{EF1AA5A3-B806-4259-BAE9-746452782B57} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{AF919F36-871B-41BC-8093-54DAEB024296} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
+		{00BA530D-20C8-4F42-9296-186766B9EC5C} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}

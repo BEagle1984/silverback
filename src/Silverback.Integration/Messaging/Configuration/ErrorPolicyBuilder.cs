@@ -21,26 +21,26 @@ namespace Silverback.Messaging.Configuration
         public ErrorPolicyChain Chain(params ErrorPolicyBase[] policies) =>
             new ErrorPolicyChain(
                 _serviceProvider,
-                _serviceProvider.GetRequiredService<ISilverbackLogger<ErrorPolicyChain>>(),
+                _serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<ErrorPolicyChain>>(),
                 policies);
 
         public RetryErrorPolicy Retry(TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null) =>
             new RetryErrorPolicy(
                 _serviceProvider,
-                _serviceProvider.GetRequiredService<ISilverbackLogger<RetryErrorPolicy>>(),
+                _serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<RetryErrorPolicy>>(),
                 initialDelay,
                 delayIncrement);
 
         public SkipMessageErrorPolicy Skip() =>
             new SkipMessageErrorPolicy(
                 _serviceProvider,
-                _serviceProvider.GetRequiredService<ISilverbackLogger<SkipMessageErrorPolicy>>());
+                _serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<SkipMessageErrorPolicy>>());
 
         public MoveMessageErrorPolicy Move(IProducerEndpoint endpoint) =>
             new MoveMessageErrorPolicy(
                 _serviceProvider.GetRequiredService<IBrokerCollection>(),
                 endpoint,
                 _serviceProvider,
-                _serviceProvider.GetRequiredService<ISilverbackLogger<MoveMessageErrorPolicy>>());
+                _serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<MoveMessageErrorPolicy>>());
     }
 }

@@ -22,6 +22,10 @@ namespace Silverback.Messaging.Configuration
             brokerOptionsBuilder.SilverbackBuilder.Services
                 .AddSingleton<KafkaEventsHandler>()
                 .AddSingletonBrokerBehavior<KafkaMessageKeyInitializerProducerBehavior>();
+
+            brokerOptionsBuilder.LogTemplates
+                .ConfigureAdditionalData<KafkaConsumerEndpoint>("offset", "kafkaKey")
+                .ConfigureAdditionalData<KafkaProducerEndpoint>("offset", "kafkaKey");
         }
     }
 }

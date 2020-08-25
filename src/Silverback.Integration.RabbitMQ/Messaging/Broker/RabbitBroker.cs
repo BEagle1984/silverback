@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Broker
                 endpoint,
                 behaviors,
                 _connectionFactory,
-                serviceProvider.GetRequiredService<ISilverbackLogger<RabbitProducer>>());
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<RabbitProducer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
@@ -64,7 +64,7 @@ namespace Silverback.Messaging.Broker
                 behaviors,
                 _connectionFactory,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackLogger<RabbitConsumer>>());
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<RabbitConsumer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.Dispose(bool)" />
         protected override void Dispose(bool disposing)

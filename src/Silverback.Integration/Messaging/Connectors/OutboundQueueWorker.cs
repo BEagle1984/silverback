@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Connectors
 
         private readonly IOutboundRoutingConfiguration _routingConfiguration;
 
-        private readonly ISilverbackLogger<OutboundQueueWorker> _logger;
+        private readonly ISilverbackIntegrationLogger<OutboundQueueWorker> _logger;
 
         private readonly int _readPackageSize;
 
@@ -45,7 +45,7 @@ namespace Silverback.Messaging.Connectors
         ///     The configured outbound routes.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         /// <param name="enforceMessageOrder">
         ///     Specifies whether the messages must be produced in the same order as they were added to the queue.
@@ -60,7 +60,7 @@ namespace Silverback.Messaging.Connectors
             IServiceScopeFactory serviceScopeFactory,
             IBrokerCollection brokerCollection,
             IOutboundRoutingConfiguration routingConfiguration,
-            ISilverbackLogger<OutboundQueueWorker> logger,
+            ISilverbackIntegrationLogger<OutboundQueueWorker> logger,
             bool enforceMessageOrder,
             int readPackageSize)
         {

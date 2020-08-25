@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ISilverbackLogger<Consumer> _logger;
+        private readonly ISilverbackIntegrationLogger<Consumer> _logger;
 
         private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
 
@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         protected Consumer(
             IBroker broker,
@@ -52,7 +52,7 @@ namespace Silverback.Messaging.Broker
             MessagesReceivedAsyncCallback receivedCallback,
             IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
-            ISilverbackLogger<Consumer> logger)
+            ISilverbackIntegrationLogger<Consumer> logger)
         {
             Check.NotNull(broker, nameof(broker));
             Check.NotNull(endpoint, nameof(endpoint));

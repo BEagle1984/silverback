@@ -36,6 +36,6 @@ namespace Silverback.Tests.Integration.TestTypes
                 callback,
                 behaviors,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackLogger<TestOtherConsumer>>());
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TestOtherConsumer>>());
     }
 }

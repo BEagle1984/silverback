@@ -16,13 +16,13 @@ namespace Silverback.Messaging.Diagnostics
     /// </summary>
     public class FatalExceptionLoggerConsumerBehavior : IConsumerBehavior
     {
-        private readonly ISilverbackLogger<FatalExceptionLoggerConsumerBehavior> _logger;
+        private readonly ISilverbackIntegrationLogger<FatalExceptionLoggerConsumerBehavior> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="FatalExceptionLoggerConsumerBehavior" /> class.
         /// </summary>
-        /// <param name="logger">The <see cref="ISilverbackLogger" />.</param>
-        public FatalExceptionLoggerConsumerBehavior(ISilverbackLogger<FatalExceptionLoggerConsumerBehavior> logger)
+        /// <param name="logger">The <see cref="ISilverbackIntegrationLogger" />.</param>
+        public FatalExceptionLoggerConsumerBehavior(ISilverbackIntegrationLogger<FatalExceptionLoggerConsumerBehavior> logger)
         {
             _logger = logger;
         }

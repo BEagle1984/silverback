@@ -7,32 +7,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Silverback.Diagnostics
 {
-    internal class SilverbackLogger<TCategoryName> : ISilverbackLogger<TCategoryName>
+    internal class SilverbackLogger<TCategoryName> : SilverbackLogger, ISilverbackLogger<TCategoryName>
     {
-        private readonly ILogger<TCategoryName> _logger;
-
-        private readonly ILogLevelDictionary _logLevelDictionary;
-
         public SilverbackLogger(ILogger<TCategoryName> logger, ILogLevelDictionary loglevelDictionary)
+            : base(logger, loglevelDictionary)
         {
-            _logger = logger;
-            _logLevelDictionary = loglevelDictionary;
-        }
-
-        public IDisposable BeginScope<TState>(TState state) => _logger.BeginScope(state);
-
-        public bool IsEnabled(LogLevel logLevel) => _logger.IsEnabled(logLevel);
-
-        public void Log<TState>(
-            LogLevel logLevel,
-            EventId eventId,
-            TState state,
-            Exception exception,
-            Func<TState, Exception, string> formatter)
-        {
-            Func<Exception, LogLevel, Lazy<string>, LogLevel> logLevelFunc = _logLevelDictionary.GetValueOrDefault(eventId, (e, l, m) => logLevel);
-            LogLevel logLevelToUse = logLevelFunc(exception, logLevel, new Lazy<string>(() => formatter(state, exception)));
-            _logger.Log(logLevelToUse, eventId, state, exception, formatter);
         }
     }
 }

@@ -22,6 +22,10 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         public async Task Handle_ExceptionThrown_ExceptionLogged()
         {
             var logger = new LoggerSubstitute<FatalExceptionLoggerConsumerBehavior>();
+            var integrationLogger = new SilverbackIntegrationLogger<FatalExceptionLoggerConsumerBehavior>(
+                logger,
+                new LogTemplates());
+
             var rawEnvelope = new RawInboundEnvelope(
                 new byte[5],
                 null,
@@ -30,7 +34,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             try
             {
-                await new FatalExceptionLoggerConsumerBehavior(logger).Handle(
+                await new FatalExceptionLoggerConsumerBehavior(integrationLogger).Handle(
                     new ConsumerPipelineContext(new[] { rawEnvelope }, Substitute.For<IConsumer>()),
                     Substitute.For<IServiceProvider>(),
                     (_, __) => throw new InvalidCastException());
@@ -46,7 +50,9 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public void Handle_ExceptionThrown_ExceptionRethrown()
         {
-            var logger = Substitute.For<ISilverbackLogger<FatalExceptionLoggerConsumerBehavior>>();
+            var logger = new SilverbackIntegrationLogger<FatalExceptionLoggerConsumerBehavior>(
+                new LoggerSubstitute<FatalExceptionLoggerConsumerBehavior>(),
+                new LogTemplates());
             var rawEnvelope = new RawInboundEnvelope(
                 new byte[5],
                 null,

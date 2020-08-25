@@ -1,17 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
-        <RootNamespace>Silverback.Tests.Integration.RabbitMQ</RootNamespace>
+        <RootNamespace>Silverback.Tests</RootNamespace>
+        <LangVersion>$(LangVersion)</LangVersion>
         </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="5.10.3" />
         <PackageReference Include="coverlet.msbuild" Version="2.9.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="FluentAssertions" Version="5.10.3" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
         <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
         <PackageReference Include="NSubstitute" Version="4.2.2" />
@@ -23,8 +25,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Silverback.Integration.RabbitMQ\Silverback.Integration.RabbitMQ.csproj" />
-        <ProjectReference Include="..\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj" />
+      <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj" />
+      <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
     </ItemGroup>
 
 </Project>

@@ -32,14 +32,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         public DeferredOutboundConnectorTests()
         {
             var services = new ServiceCollection();
-            services.AddNullLogger().AddSilverback();
+            services.AddNullLogger()
+                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
+                .AddSilverback();
             var serviceProvider = services.BuildServiceProvider();
 
             _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
             var broker = new OutboundQueueBroker(_queue, Array.Empty<IBrokerBehavior>(), serviceProvider);
             _connector = new DeferredOutboundConnector(
                 broker,
-                Substitute.For<ISilverbackLogger<DeferredOutboundConnector>>());
+                Substitute.For<ISilverbackIntegrationLogger<DeferredOutboundConnector>>());
             _transactionManager = new DeferredOutboundConnectorTransactionManager(_queue);
         }
 

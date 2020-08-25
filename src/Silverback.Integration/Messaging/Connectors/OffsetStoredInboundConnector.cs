@@ -28,12 +28,12 @@ namespace Silverback.Messaging.Connectors
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         public OffsetStoredInboundConnector(
             IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
-            ISilverbackLogger<OffsetStoredInboundConnector> logger)
+            ISilverbackIntegrationLogger<OffsetStoredInboundConnector> logger)
             : base(brokerCollection, serviceProvider, logger)
         {
         }

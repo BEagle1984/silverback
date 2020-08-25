@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -22,7 +21,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         public KafkaProducerTests()
         {
             var services = new ServiceCollection()
-                .AddSingleton(Substitute.For<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>());
+                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>));
 
             _broker = new KafkaBroker(
                 Enumerable.Empty<IBrokerBehavior>(),

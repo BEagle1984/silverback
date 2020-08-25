@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Silverback.Util;
 
 namespace Silverback.Diagnostics
 {
@@ -15,6 +16,9 @@ namespace Silverback.Diagnostics
 
         public SilverbackLogger(ILogger logger, ILogLevelDictionary logLevelDictionary)
         {
+            Check.NotNull(logger, nameof(logger));
+            Check.NotNull(logLevelDictionary, nameof(logLevelDictionary));
+
             _logger = logger;
             _logLevelDictionary = logLevelDictionary;
         }

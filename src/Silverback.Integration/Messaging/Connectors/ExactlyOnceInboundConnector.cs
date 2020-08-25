@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Connectors
     /// </summary>
     public abstract class ExactlyOnceInboundConnector : InboundConnector
     {
-        private readonly ISilverbackLogger _logger;
+        private readonly ISilverbackIntegrationLogger _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExactlyOnceInboundConnector" /> class.
@@ -29,12 +29,12 @@ namespace Silverback.Messaging.Connectors
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         protected ExactlyOnceInboundConnector(
             IBrokerCollection brokerCollection,
             IServiceProvider serviceProvider,
-            ISilverbackLogger<ExactlyOnceInboundConnector> logger)
+            ISilverbackIntegrationLogger<ExactlyOnceInboundConnector> logger)
             : base(brokerCollection, serviceProvider, logger)
         {
             _logger = logger;

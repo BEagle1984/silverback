@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Broker
                 endpoint,
                 behaviors,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackLogger<KafkaProducer>>());
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<KafkaProducer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
@@ -55,6 +55,6 @@ namespace Silverback.Messaging.Broker
                 callback,
                 behaviors,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackLogger<KafkaConsumer>>());
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<KafkaConsumer>>());
     }
 }

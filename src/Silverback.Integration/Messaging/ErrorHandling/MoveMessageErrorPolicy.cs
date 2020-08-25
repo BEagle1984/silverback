@@ -20,7 +20,7 @@ namespace Silverback.Messaging.ErrorHandling
 
         private readonly IProducerEndpoint _endpoint;
 
-        private readonly ISilverbackLogger _logger;
+        private readonly ISilverbackIntegrationLogger _logger;
 
         private Action<IOutboundEnvelope, Exception>? _transformationAction;
 
@@ -37,13 +37,13 @@ namespace Silverback.Messaging.ErrorHandling
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         public MoveMessageErrorPolicy(
             IBrokerCollection brokerCollection,
             IProducerEndpoint endpoint,
             IServiceProvider serviceProvider,
-            ISilverbackLogger<MoveMessageErrorPolicy> logger)
+            ISilverbackIntegrationLogger<MoveMessageErrorPolicy> logger)
             : base(serviceProvider, logger)
         {
             Check.NotNull(brokerCollection, nameof(brokerCollection));
@@ -95,7 +95,7 @@ namespace Silverback.Messaging.ErrorHandling
                 DefaultMessageHeaders.SourceEndpoint,
                 envelope.Endpoint?.Name ?? string.Empty);
 
-            IOutboundEnvelope? outboundEnvelope =
+            var outboundEnvelope =
                 envelope is IInboundEnvelope deserializedEnvelope
                     ? new OutboundEnvelope(deserializedEnvelope.Message, deserializedEnvelope.Headers, _endpoint)
                     : new OutboundEnvelope(envelope.RawMessage, envelope.Headers, _endpoint);

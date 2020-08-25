@@ -18,9 +18,11 @@ namespace Silverback.Messaging.Broker
     {
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ISilverbackLogger<KafkaEventsHandler> _logger;
+        private readonly ISilverbackIntegrationLogger<KafkaEventsHandler> _logger;
 
-        public KafkaEventsHandler(IServiceProvider serviceProvider, ISilverbackLogger<KafkaEventsHandler> logger)
+        public KafkaEventsHandler(
+            IServiceProvider serviceProvider,
+            ISilverbackIntegrationLogger<KafkaEventsHandler> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;

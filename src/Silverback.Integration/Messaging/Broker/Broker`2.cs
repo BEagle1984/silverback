@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly List<IBrokerBehavior> _behaviors;
 
-        private readonly ISilverbackLogger _logger;
+        private readonly ISilverbackIntegrationLogger _logger;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -64,7 +64,7 @@ namespace Silverback.Messaging.Broker
 
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _logger = _serviceProvider
-                .GetRequiredService<ISilverbackLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>();
+                .GetRequiredService<ISilverbackIntegrationLogger<Broker<IProducerEndpoint, IConsumerEndpoint>>>();
 
             ProducerEndpointType = typeof(TProducerEndpoint);
             ConsumerEndpointType = typeof(TConsumerEndpoint);

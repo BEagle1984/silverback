@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector = new OffsetStoredInboundConnector(
                 serviceProvider.GetRequiredService<IBrokerCollection>(),
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackLogger<OffsetStoredInboundConnector>>());
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<OffsetStoredInboundConnector>>());
             _scopedServiceProvider = serviceProvider.CreateScope().ServiceProvider;
         }
 

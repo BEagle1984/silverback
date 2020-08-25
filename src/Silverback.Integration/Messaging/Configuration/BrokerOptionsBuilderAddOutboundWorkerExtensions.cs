@@ -61,7 +61,7 @@ namespace Microsoft.Extensions.DependencyInjection
                         serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                         serviceProvider.GetRequiredService<IBrokerCollection>(),
                         serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
-                        serviceProvider.GetRequiredService<ISilverbackLogger<OutboundQueueWorker>>(),
+                        serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<OutboundQueueWorker>>(),
                         enforceMessageOrder,
                         readPackageSize))
                 .AddSingleton<IHostedService>(

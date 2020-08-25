@@ -4,13 +4,14 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Messages
+namespace Silverback.Tests.Integration.Diagnostics
 {
-    public class SilverbackLoggerExtensionsTests
+    public class SilverbackIntegrationLoggerTests
     {
         private static readonly IRawInboundEnvelope InboundEnvelope = new RawInboundEnvelope(
             Array.Empty<byte>(),
@@ -110,19 +111,26 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 })
         };
 
-        private readonly LoggerSubstitute<SilverbackLoggerExtensionsTests>
-            _logger = new LoggerSubstitute<SilverbackLoggerExtensionsTests>();
+        private readonly LoggerSubstitute<SilverbackIntegrationLoggerTests> _logger;
 
-        public SilverbackLoggerExtensionsTests()
+        private readonly ISilverbackIntegrationLogger<SilverbackIntegrationLoggerTests> _integrationLogger;
+
+        public SilverbackIntegrationLoggerTests()
         {
-            LogTemplates.ConfigureAdditionalData<TestConsumerEndpoint>("offset-in");
-            LogTemplates.ConfigureAdditionalData<TestProducerEndpoint>("offset-out");
+            _logger = new LoggerSubstitute<SilverbackIntegrationLoggerTests>();
+
+            _integrationLogger =
+                new SilverbackIntegrationLogger<SilverbackIntegrationLoggerTests>(
+                    _logger,
+                    new LogTemplates()
+                        .ConfigureAdditionalData<TestConsumerEndpoint>("offset-in")
+                        .ConfigureAdditionalData<TestProducerEndpoint>("offset-out"));
         }
 
         [Fact]
         public void LogProcessing_SingleInboundEnvelope_InformationLogged()
         {
-            _logger.LogProcessing(new[] { InboundEnvelope });
+            _integrationLogger.LogProcessing(new[] { InboundEnvelope });
 
             const string expectedMessage =
                 "Processing inbound message. | " +
@@ -138,7 +146,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogProcessing_MultipleInboundEnvelopes_InformationLogged()
         {
-            _logger.LogProcessing(InboundBatch);
+            _integrationLogger.LogProcessing(InboundBatch);
 
             const string expectedMessage =
                 "Processing the batch of 2 inbound messages. | " +
@@ -153,7 +161,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogProcessingError_SingleInboundEnvelope_WarningLogged()
         {
-            _logger.LogProcessingError(new[] { InboundEnvelope }, new InvalidOperationException());
+            _integrationLogger.LogProcessingError(new[] { InboundEnvelope }, new InvalidOperationException());
 
             const string expectedMessage =
                 "Error occurred processing the inbound message. | " +
@@ -169,7 +177,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogProcessingError_MultipleInboundEnvelopes_WarningLogged()
         {
-            _logger.LogProcessingError(InboundBatch, new InvalidOperationException());
+            _integrationLogger.LogProcessingError(InboundBatch, new InvalidOperationException());
 
             const string expectedMessage =
                 "Error occurred processing the batch of 2 inbound messages. | " +
@@ -184,7 +192,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogTraceWithMessageInfo_InboundEnvelope_TraceLogged()
         {
-            _logger.LogTraceWithMessageInfo(
+            _integrationLogger.LogTraceWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundEnvelope);
@@ -203,7 +211,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogTraceWithMessageInfo_InboundEnvelopesCollection_TraceLogged()
         {
-            _logger.LogTraceWithMessageInfo(
+            _integrationLogger.LogTraceWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundBatch);
@@ -221,7 +229,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogDebugWithMessageInfo_InboundEnvelope_DebugLogged()
         {
-            _logger.LogDebugWithMessageInfo(
+            _integrationLogger.LogDebugWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundEnvelope);
@@ -240,7 +248,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogDebugWithMessageInfo_InboundEnvelopesCollection_DebugLogged()
         {
-            _logger.LogDebugWithMessageInfo(
+            _integrationLogger.LogDebugWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundBatch);
@@ -258,7 +266,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogInformationWithMessageInfo_InboundEnvelope_InformationLogged()
         {
-            _logger.LogInformationWithMessageInfo(
+            _integrationLogger.LogInformationWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundEnvelope);
@@ -277,7 +285,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogInformationWithMessageInfo_InboundEnvelopesCollection_InformationLogged()
         {
-            _logger.LogInformationWithMessageInfo(
+            _integrationLogger.LogInformationWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundBatch);
@@ -295,7 +303,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWarningWithMessageInfo_InboundEnvelope_WarningLogged()
         {
-            _logger.LogWarningWithMessageInfo(
+            _integrationLogger.LogWarningWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundEnvelope);
@@ -314,7 +322,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWarningWithMessageInfo_InboundEnvelopeAndException_WarningLogged()
         {
-            _logger.LogWarningWithMessageInfo(
+            _integrationLogger.LogWarningWithMessageInfo(
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
@@ -334,7 +342,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWarningWithMessageInfo_InboundEnvelopesCollection_WarningLogged()
         {
-            _logger.LogWarningWithMessageInfo(
+            _integrationLogger.LogWarningWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundBatch);
@@ -352,7 +360,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWarningWithMessageInfo_InboundEnvelopesCollectionAndException_WarningLogged()
         {
-            _logger.LogWarningWithMessageInfo(
+            _integrationLogger.LogWarningWithMessageInfo(
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
@@ -371,7 +379,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogErrorWithMessageInfo_InboundEnvelope_ErrorLogged()
         {
-            _logger.LogErrorWithMessageInfo(
+            _integrationLogger.LogErrorWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundEnvelope);
@@ -390,7 +398,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogErrorWithMessageInfo_InboundEnvelopeAndException_ErrorLogged()
         {
-            _logger.LogErrorWithMessageInfo(
+            _integrationLogger.LogErrorWithMessageInfo(
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
@@ -410,7 +418,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogErrorWithMessageInfo_InboundEnvelopesCollection_ErrorLogged()
         {
-            _logger.LogErrorWithMessageInfo(
+            _integrationLogger.LogErrorWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundBatch);
@@ -428,7 +436,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogErrorWithMessageInfo_InboundEnvelopesCollectionAndException_ErrorLogged()
         {
-            _logger.LogErrorWithMessageInfo(
+            _integrationLogger.LogErrorWithMessageInfo(
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
@@ -447,7 +455,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogCriticalWithMessageInfo_InboundEnvelope_CriticalLogged()
         {
-            _logger.LogCriticalWithMessageInfo(
+            _integrationLogger.LogCriticalWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundEnvelope);
@@ -466,7 +474,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogCriticalWithMessageInfo_InboundEnvelopeAndException_CriticalLogged()
         {
-            _logger.LogCriticalWithMessageInfo(
+            _integrationLogger.LogCriticalWithMessageInfo(
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
@@ -486,7 +494,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogCriticalWithMessageInfo_InboundEnvelopesCollection_CriticalLogged()
         {
-            _logger.LogCriticalWithMessageInfo(
+            _integrationLogger.LogCriticalWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 InboundBatch);
@@ -504,7 +512,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogCriticalWithMessageInfo_InboundEnvelopesCollectionAndException_CriticalLogged()
         {
-            _logger.LogCriticalWithMessageInfo(
+            _integrationLogger.LogCriticalWithMessageInfo(
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
@@ -523,7 +531,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogCriticalWithMessageInfo_OutboundEnvelope_CriticalLogged()
         {
-            _logger.LogCriticalWithMessageInfo(
+            _integrationLogger.LogCriticalWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 OutboundEnvelope);
@@ -541,7 +549,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogCriticalWithMessageInfo_OutboundEnvelopeAndException_CriticalLogged()
         {
-            _logger.LogCriticalWithMessageInfo(
+            _integrationLogger.LogCriticalWithMessageInfo(
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
@@ -560,7 +568,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogCriticalWithMessageInfo_OutboundEnvelopesCollection_CriticalLogged()
         {
-            _logger.LogCriticalWithMessageInfo(
+            _integrationLogger.LogCriticalWithMessageInfo(
                 new EventId(42, "test"),
                 "Log message",
                 OutboundBatch);
@@ -575,7 +583,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogCriticalWithMessageInfo_OutboundEnvelopesCollectionAndException_CriticalLogged()
         {
-            _logger.LogCriticalWithMessageInfo(
+            _integrationLogger.LogCriticalWithMessageInfo(
                 new EventId(42, "test"),
                 new InvalidOperationException(),
                 "Log message",
@@ -591,7 +599,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWithMessageInfo_SingleInboundEnvelopeWithWarningLevel_WarningLogged()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Warning,
                 new EventId(42, "test"),
                 null,
@@ -612,7 +620,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWithMessageInfo_SingleInboundEnvelopeAndExceptionWithWarningLevel_WarningLogged()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Warning,
                 new EventId(42, "test"),
                 new InvalidOperationException(),
@@ -633,7 +641,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWithMessageInfo_MultipleInboundEnvelopesWithWarningLevel_WarningLogged()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Warning,
                 new EventId(42, "test"),
                 null,
@@ -653,7 +661,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWithMessageInfo_MultipleInboundEnvelopesAndExceptionWithWarningLevel_WarningLogged()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Warning,
                 new EventId(42, "test"),
                 new InvalidOperationException(),
@@ -673,7 +681,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWithMessageInfo_SingleOutboundEnvelopeWithWarningLevel_WarningLogged()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Warning,
                 new EventId(42, "test"),
                 null,
@@ -693,7 +701,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWithMessageInfo_SingleOutboundEnvelopeAndExceptionWithWarningLevel_WarningLogged()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Warning,
                 new EventId(42, "test"),
                 new InvalidOperationException(),
@@ -713,7 +721,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWithMessageInfo_MultipleOutboundEnvelopesWithWarningLevel_WarningLogged()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Warning,
                 new EventId(42, "test"),
                 null,
@@ -730,7 +738,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
         [Fact]
         public void LogWithMessageInfo_MultipleOutboundEnvelopesAndExceptionWithWarningLevel_WarningLogged()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Warning,
                 new EventId(42, "test"),
                 new InvalidOperationException(),

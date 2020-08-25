@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Util;
@@ -34,7 +35,10 @@ namespace Microsoft.Extensions.DependencyInjection
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services
-                .AddSingleton<IBrokerCollection, BrokerCollection>();
+                .AddSingleton<IBrokerCollection, BrokerCollection>()
+                .AddSingleton<ILogTemplates>(new LogTemplates())
+                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(SilverbackIntegrationLogger<>))
+                .AddSingleton<ISilverbackIntegrationLogger, SilverbackIntegrationLogger>();
 
             var options = new BrokerOptionsBuilder(silverbackBuilder);
             optionsAction?.Invoke(options);

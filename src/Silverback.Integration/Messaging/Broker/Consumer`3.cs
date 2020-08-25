@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         protected Consumer(
             TBroker broker,
@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Broker
             MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
-            ISilverbackLogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
+            ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
         {
         }

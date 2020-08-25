@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Broker
 
         private static readonly TimeSpan CloseTimeout = TimeSpan.FromSeconds(30); // TODO: Should be configurable
 
-        private readonly ISilverbackLogger<KafkaConsumer> _logger;
+        private readonly ISilverbackIntegrationLogger<KafkaConsumer> _logger;
 
         private readonly KafkaEventsHandler _kafkaEventsHandler;
 
@@ -60,7 +60,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         public KafkaConsumer(
             KafkaBroker broker,
@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Broker
             MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
-            ISilverbackLogger<KafkaConsumer> logger)
+            ISilverbackIntegrationLogger<KafkaConsumer> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
         {
             IServiceProvider serviceProvider1 = Check.NotNull(serviceProvider, nameof(serviceProvider));

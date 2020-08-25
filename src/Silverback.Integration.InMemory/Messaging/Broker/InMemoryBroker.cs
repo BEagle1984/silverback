@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Broker
                 this,
                 endpoint,
                 behaviors,
-                serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryProducer>>());
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<InMemoryProducer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
@@ -69,7 +69,7 @@ namespace Silverback.Messaging.Broker
                     callback,
                     behaviors,
                     serviceProvider,
-                    serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryConsumer>>()));
+                    serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<InMemoryConsumer>>()));
         }
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.Disconnect(IEnumerable{IConsumer})" />

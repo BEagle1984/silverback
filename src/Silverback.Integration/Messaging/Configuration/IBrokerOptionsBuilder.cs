@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration;
 
 // ReSharper disable once CheckNamespace
@@ -17,5 +18,10 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     <see cref="IServiceCollection" />).
         /// </summary>
         ISilverbackBuilder SilverbackBuilder { get; }
+
+        /// <summary>
+        ///     Gets the <see cref="ILogTemplates"/>.
+        /// </summary>
+        ILogTemplates LogTemplates { get; }
     }
 }

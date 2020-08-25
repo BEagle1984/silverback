@@ -1,9 +1,12 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -23,12 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static IBrokerOptionsBuilder AddKafka(this IBrokerOptionsBuilder brokerOptionsBuilder)
-        {
-            LogTemplates.ConfigureAdditionalData<KafkaConsumerEndpoint>("offset", "kafkaKey");
-            LogTemplates.ConfigureAdditionalData<KafkaProducerEndpoint>("offset", "kafkaKey");
-
-            return brokerOptionsBuilder.AddBroker<KafkaBroker>();
-        }
+        public static IBrokerOptionsBuilder AddKafka(this IBrokerOptionsBuilder brokerOptionsBuilder) =>
+            brokerOptionsBuilder.AddBroker<KafkaBroker>();
     }
 }

@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _connector = new LoggedInboundConnector(
                 _serviceProvider.GetRequiredService<IBrokerCollection>(),
                 _serviceProvider,
-                _serviceProvider.GetRequiredService<ISilverbackLogger<LoggedInboundConnector>>());
+                _serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<LoggedInboundConnector>>());
         }
 
         [Fact]

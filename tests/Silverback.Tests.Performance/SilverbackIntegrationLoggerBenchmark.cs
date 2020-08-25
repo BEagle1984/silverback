@@ -52,7 +52,7 @@ namespace Silverback.Tests.Performance
     // | LogErrorMultipleEnvelopes |   906.357 ns | 18.0801 ns | 24.1365 ns | 0.2470 |     - |     - |     776 B |
     // |           LogInfoDisabled |     7.857 ns |  0.1349 ns |  0.1196 ns |      - |     - |     - |         - |
     [MemoryDiagnoser]
-    public class SilverbackLoggerExtensionsBenchmark
+    public class SilverbackIntegrationLoggerBenchmark
     {
         private static readonly List<IRawBrokerEnvelope> SingleEnvelope = new List<IRawBrokerEnvelope>
         {
@@ -114,17 +114,19 @@ namespace Silverback.Tests.Performance
                 })
         };
 
-        private readonly ISilverbackLogger _logger = new FakeLogger();
+        private readonly ISilverbackIntegrationLogger _integrationLogger;
 
-        public SilverbackLoggerExtensionsBenchmark()
+        public SilverbackIntegrationLoggerBenchmark()
         {
-            LogTemplates.ConfigureAdditionalData<TestConsumerEndpoint>("offset");
+            _integrationLogger = new SilverbackIntegrationLogger(
+                new FakeLogger(),
+                new LogTemplates().ConfigureAdditionalData<TestConsumerEndpoint>("offset"));
         }
 
         [Benchmark]
         public void LogErrorSingleEnvelope()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Error,
                 new EventId(1, "Something"),
                 null,
@@ -135,7 +137,7 @@ namespace Silverback.Tests.Performance
         [Benchmark]
         public void LogErrorMultipleEnvelopes()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Error,
                 new EventId(1, "Something"),
                 null,
@@ -146,7 +148,7 @@ namespace Silverback.Tests.Performance
         [Benchmark]
         public void LogInfoDisabled()
         {
-            _logger.LogWithMessageInfo(
+            _integrationLogger.LogWithMessageInfo(
                 LogLevel.Information,
                 new EventId(1, "Something"),
                 null,

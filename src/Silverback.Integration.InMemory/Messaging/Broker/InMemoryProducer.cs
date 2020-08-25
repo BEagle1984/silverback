@@ -26,13 +26,13 @@ namespace Silverback.Messaging.Broker
         ///     The behaviors to be added to the pipeline.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         public InMemoryProducer(
             InMemoryBroker broker,
             IProducerEndpoint endpoint,
             IReadOnlyCollection<IProducerBehavior>? behaviors,
-            ISilverbackLogger<Producer> logger)
+            ISilverbackIntegrationLogger<Producer> logger)
             : base(broker, endpoint, behaviors, logger)
         {
         }

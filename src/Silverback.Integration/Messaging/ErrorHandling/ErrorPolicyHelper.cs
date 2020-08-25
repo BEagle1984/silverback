@@ -16,12 +16,12 @@ namespace Silverback.Messaging.ErrorHandling
 {
     internal class ErrorPolicyHelper : IErrorPolicyHelper
     {
-        private readonly ISilverbackLogger<ErrorPolicyHelper> _logger;
+        private readonly ISilverbackIntegrationLogger<ErrorPolicyHelper> _logger;
 
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public ErrorPolicyHelper(
-            ISilverbackLogger<ErrorPolicyHelper> logger,
+            ISilverbackIntegrationLogger<ErrorPolicyHelper> logger,
             IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger;

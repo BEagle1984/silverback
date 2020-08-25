@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Connectors
                 this,
                 endpoint,
                 behaviors,
-                serviceProvider.GetRequiredService<ISilverbackLogger<OutboundQueueProducer>>());
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<OutboundQueueProducer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(

@@ -34,7 +34,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         public InMemoryConsumer(
             InMemoryBroker broker,
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Broker
             MessagesReceivedAsyncCallback receivedCallback,
             IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
-            ISilverbackLogger<InMemoryConsumer> logger)
+            ISilverbackIntegrationLogger<InMemoryConsumer> logger)
             : base(broker, endpoint, receivedCallback, behaviors, serviceProvider, logger)
         {
         }

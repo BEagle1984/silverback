@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Connectors
     {
         private readonly OutboundQueueBroker _outboundQueueBroker;
 
-        private readonly ISilverbackLogger _logger;
+        private readonly ISilverbackIntegrationLogger _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DeferredOutboundConnector" /> class.
@@ -26,11 +26,11 @@ namespace Silverback.Messaging.Connectors
         ///     The <see cref="OutboundQueueProducer"/> to be used to enqueue the messages using the underlying <see cref="IOutboundQueueWriter"/>.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         public DeferredOutboundConnector(
             OutboundQueueBroker outboundQueueBroker,
-            ISilverbackLogger<DeferredOutboundConnector> logger)
+            ISilverbackIntegrationLogger<DeferredOutboundConnector> logger)
         {
             _outboundQueueBroker = Check.NotNull(outboundQueueBroker, nameof(outboundQueueBroker));
             _logger = Check.NotNull(logger, nameof(logger));

@@ -21,7 +21,7 @@ namespace Silverback.Tests.Integration.TestTypes
             MessagesReceivedAsyncCallback callback,
             IReadOnlyCollection<IConsumerBehavior>? behaviors,
             IServiceProvider serviceProvider,
-            ISilverbackLogger<TestConsumer> logger)
+            ISilverbackIntegrationLogger<TestConsumer> logger)
             : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
         {
         }

@@ -22,7 +22,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             _policy = new SkipMessageErrorPolicy(
                 Substitute.For<IServiceProvider>(),
-                Substitute.For<ISilverbackLogger<SkipMessageErrorPolicy>>());
+                Substitute.For<ISilverbackIntegrationLogger<SkipMessageErrorPolicy>>());
         }
 
         [Theory]
