@@ -89,10 +89,10 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IBrokerCollection.Connect" />
-        public void Connect() => _brokers.ForEach(broker => broker.Connect());
+        public void Connect() => _brokers.ParallelForEach(broker => broker.Connect(), 2);
 
         /// <inheritdoc cref="IBrokerCollection.Disconnect" />
-        public void Disconnect() => _brokers.ForEach(broker => broker.Disconnect());
+        public void Disconnect() => _brokers.ParallelForEach(broker => broker.Disconnect(), 2);
 
         /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
         public IEnumerator<IBroker> GetEnumerator() => _brokers.GetEnumerator();

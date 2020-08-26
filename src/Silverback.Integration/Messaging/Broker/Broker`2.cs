@@ -35,6 +35,10 @@ namespace Silverback.Messaging.Broker
         private const string CannotCreateConsumerIfConnectedExceptionMessage =
             "The broker is already connected. Disconnect it to get a new consumer.";
 
+        private const int MaxConnectParallelism = 2;
+
+        private const int MaxDisconnectParallelism = 4;
+
         private readonly List<IBrokerBehavior> _behaviors;
 
         private readonly EndpointsConfiguratorsInvoker _endpointsConfiguratorsInvoker;
@@ -282,7 +286,7 @@ namespace Silverback.Messaging.Broker
         ///     The consumers to be started.
         /// </param>
         protected virtual void Connect(IEnumerable<IConsumer> consumers) =>
-            consumers.ForEach(consumer => consumer.Connect());
+            consumers.ParallelForEach(consumer => consumer.Connect(), MaxConnectParallelism);
 
         /// <summary>
         ///     Disconnects all the consumers and stops consuming.
@@ -291,7 +295,7 @@ namespace Silverback.Messaging.Broker
         ///     The consumers to be stopped.
         /// </param>
         protected virtual void Disconnect(IEnumerable<IConsumer> consumers) =>
-            consumers.ForEach(consumer => consumer.Disconnect());
+            consumers.ParallelForEach(consumer => consumer.Disconnect(), MaxDisconnectParallelism);
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
