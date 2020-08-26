@@ -54,7 +54,7 @@ Here is the list of the default headers that may be sent.
 
 Header Key | Description
 :-- | :--
-`x-message-id` | The [message identifier](xref:xref:message-id).
+`x-message-id` | The [message identifier](xref:message-id).
 `x-message-type` | The assembly qualified name of the message type. Used by the default `JsonMessageSerializer`.
 `x-failed-attempts` | If an exception if thrown the failed attempts will be incremented and stored as header. This is necessary for the [error policies](xref:inbound#error-handling) to work.
 `x-source-endpoint` | This will be set by the `Move` error policy and will contain the name of the endpoint the failed message is being moved from.

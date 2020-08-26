@@ -1,5 +1,5 @@
 ---
-uid: subscribing
+uid: subscribe
 ---
 
 # Subscribing

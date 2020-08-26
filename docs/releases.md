@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.0.0-beta.4](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.4)
+## [3.0.0-beta.6](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.6)
 
 ### What's new
 
@@ -179,7 +179,7 @@ These aren't real breaking changes but some methods have been marked as deprecat
 * Add automatic recovers from fatal errors in `KafkaConsumer` (can be disabled via Endpoint configuration)
 * Support .Net Core 3.0 and Entity Framework Core 3.0
 * Refactor packages (EF binding logic is now in a single package, versioned after the related EF version)
-* Improve configuration API (see for example [Using the Bus](quickstart/bus) and <xref:behaviors>)
+* Improve configuration API
 * Improve and optimize performance (including [#37](https://github.com/BEagle1984/silverback/issues/37))
 * Improve database locks mechanism (used also to run the `OutboundQueueWorker`)
 
@@ -193,7 +193,7 @@ These aren't real breaking changes but some methods have been marked as deprecat
 * By default the messages published via `IPublisher` that are routed to an outbound endpoint are not sent through to the internal bus and cannot therfore be subscribed locally, within the same process (see <xref:outbound>)
 * Some changes in `IInboundMessage` and `IOutboundMessage` interfaces
 * Changes to the schema of the outbox table (`Silverback.Messaging.Connectors.Model.OutboundMessage`)
-* The configuration fluent API changed quite a bit, refer to the current documentation (e.g. [Using the Bus](quickstart/bus) and <xref:message-broker>)
+* The configuration fluent API changed quite a bit, refer to the current documentation
 
 > [!Important]
 > `WithConnectionTo<KafkaBroker>` has to be replaced with `WithConnectionToKafka` in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see <xref:kafka-message-key>)
