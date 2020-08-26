@@ -31,45 +31,41 @@ namespace Silverback.Diagnostics
         private const string OutboundBatchArgumentsTemplate = " | " +
                                                               "endpointName: {endpointName}";
 
-        private static readonly Dictionary<Type, string> InboundLogMessageByEndpointType =
-            new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _inboundLogMessageByEndpointType = new Dictionary<Type, string>();
 
-        private static readonly Dictionary<Type, string> OutboundLogMessageByEndpointType =
-            new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _outboundLogMessageByEndpointType = new Dictionary<Type, string>();
 
-        private static readonly Dictionary<Type, string[]> InboundArgumentsByEndpointType =
-            new Dictionary<Type, string[]>();
+        private readonly Dictionary<Type, string[]> _inboundArgumentsByEndpointType = new Dictionary<Type, string[]>();
 
-        private static readonly Dictionary<Type, string[]> OutboundArgumentsByEndpointType =
-            new Dictionary<Type, string[]>();
+        private readonly Dictionary<Type, string[]> _outboundArgumentsByEndpointType = new Dictionary<Type, string[]>();
 
         public ILogTemplates ConfigureAdditionalData<TEndpoint>(params string[] additionalData)
         {
             var appendString = ", " + string.Join(", ", additionalData.Select(key => $"{key}: {{{key}}}"));
 
-            InboundArgumentsByEndpointType[typeof(TEndpoint)] = additionalData;
-            OutboundArgumentsByEndpointType[typeof(TEndpoint)] = additionalData;
+            _inboundArgumentsByEndpointType[typeof(TEndpoint)] = additionalData;
+            _outboundArgumentsByEndpointType[typeof(TEndpoint)] = additionalData;
 
-            InboundLogMessageByEndpointType[typeof(TEndpoint)] = InboundArgumentsTemplate + appendString;
-            OutboundLogMessageByEndpointType[typeof(TEndpoint)] = OutboundArgumentsTemplate + appendString;
+            _inboundLogMessageByEndpointType[typeof(TEndpoint)] = InboundArgumentsTemplate + appendString;
+            _outboundLogMessageByEndpointType[typeof(TEndpoint)] = OutboundArgumentsTemplate + appendString;
 
             return this;
         }
 
         public string GetInboundMessageLogTemplate(IEndpoint? endpoint) =>
-            GetMessageLogTemplate(endpoint, InboundLogMessageByEndpointType, InboundArgumentsTemplate);
+            GetMessageLogTemplate(endpoint, _inboundLogMessageByEndpointType, InboundArgumentsTemplate);
 
         public string[] GetInboundMessageArguments(IEndpoint? endpoint) =>
-            GetMessageArguments(endpoint, InboundArgumentsByEndpointType);
+            GetMessageArguments(endpoint, _inboundArgumentsByEndpointType);
 
         [SuppressMessage("", "CA1801", Justification = "Parameter here for consistency.")]
         public string GetInboundBatchLogTemplate(IEndpoint? endpoint) => InboundBatchArgumentsTemplate;
 
         public string GetOutboundMessageLogTemplate(IEndpoint? endpoint) =>
-            GetMessageLogTemplate(endpoint, OutboundLogMessageByEndpointType, OutboundArgumentsTemplate);
+            GetMessageLogTemplate(endpoint, _outboundLogMessageByEndpointType, OutboundArgumentsTemplate);
 
         public string[] GetOutboundMessageArguments(IEndpoint? endpoint) =>
-            GetMessageArguments(endpoint, OutboundArgumentsByEndpointType);
+            GetMessageArguments(endpoint, _outboundArgumentsByEndpointType);
 
         [SuppressMessage("", "CA1801", Justification = "Parameter here for consistency.")]
         public string GetOutboundBatchLogTemplate(IEndpoint? endpoint) => OutboundBatchArgumentsTemplate;
