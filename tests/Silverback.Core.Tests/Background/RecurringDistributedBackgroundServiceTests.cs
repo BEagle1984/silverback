@@ -157,6 +157,7 @@ namespace Silverback.Tests.Core.Background
             executions.Should().BeGreaterThan(0);
 
             await service.StopAsync(CancellationToken.None);
+            await Task.Delay(50);
             var executionsBeforeStop = executions;
 
             await Task.Delay(500);
@@ -183,6 +184,7 @@ namespace Silverback.Tests.Core.Background
             executions.Should().BeGreaterThan(0);
 
             service.Pause();
+            await Task.Delay(50);
             var executionsBeforeStop = executions;
 
             await Task.Delay(500);
