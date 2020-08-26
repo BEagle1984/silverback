@@ -3,7 +3,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Examples.Common.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;

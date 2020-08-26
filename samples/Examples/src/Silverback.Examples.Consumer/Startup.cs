@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Examples.Common;
 using Silverback.Examples.Common.Data;
-using Silverback.Examples.Common.Logging;
 using Silverback.Examples.Consumer.Behaviors;
 using Silverback.Examples.Consumer.Configuration;
 using Silverback.Examples.Consumer.HostedServices;

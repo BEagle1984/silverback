@@ -57,6 +57,7 @@ namespace Silverback.Examples.Common.TestHost
 
         public void Dispose()
         {
+            _applicationFactory?.Server?.Host?.StopAsync();
             _applicationFactory?.Dispose();
             _applicationFactory = null;
         }
