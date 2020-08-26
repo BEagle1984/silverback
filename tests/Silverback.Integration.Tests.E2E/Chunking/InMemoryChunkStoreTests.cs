@@ -101,10 +101,10 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             var message2 = new TestEventOne { Content = "Hello E2E!" };
             byte[] rawMessage2 = await Endpoint.DefaultSerializer.SerializeAsync(
-                                      message2,
-                                      new MessageHeaderCollection(),
-                                      MessageSerializationContext.Empty) ??
-                                  throw new InvalidOperationException("Serializer returned null");
+                                     message2,
+                                     new MessageHeaderCollection(),
+                                     MessageSerializationContext.Empty) ??
+                                 throw new InvalidOperationException("Serializer returned null");
 
             var serviceProvider = Host.ConfigureServices(
                     services => services
@@ -181,10 +181,10 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             var message2 = new TestEventOne { Content = "Hello E2E!" };
             byte[] rawMessage2 = await Endpoint.DefaultSerializer.SerializeAsync(
-                                      message2,
-                                      new MessageHeaderCollection(),
-                                      MessageSerializationContext.Empty) ??
-                                  throw new InvalidOperationException("Serializer returned null");
+                                     message2,
+                                     new MessageHeaderCollection(),
+                                     MessageSerializationContext.Empty) ??
+                                 throw new InvalidOperationException("Serializer returned null");
 
             await using var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
@@ -262,11 +262,8 @@ namespace Silverback.Tests.Integration.E2E.Chunking
         }
 
         [Fact]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task IncompleteMessages_CleanupAfterDefinedTimeout()
         {
-            var committedOffsets = new List<IOffset>();
-
             var message = new TestEventOne { Content = "Hello E2E!" };
             byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
                                     message,
@@ -282,7 +279,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                         .WithConnectionToMessageBroker(
                             options => options
                                 .AddInMemoryBroker()
-                                .AddInMemoryChunkStore(TimeSpan.FromMilliseconds(1000), TimeSpan.FromMilliseconds(50))
+                                .AddInMemoryChunkStore(TimeSpan.FromMilliseconds(2000), TimeSpan.FromMilliseconds(50))
                                 .AddInboundConnector())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -291,9 +288,6 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 .Run();
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var consumer = (InMemoryConsumer)broker.Consumers[0];
-            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
-
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -309,7 +303,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 var chunkStore = scope.ServiceProvider.GetRequiredService<IChunkStore>();
                 (await chunkStore.CountChunks("123")).Should().Be(2);
 
-                await AsyncTestingUtil.WaitAsync(async () => await chunkStore.CountChunks("123") == 0, 1000);
+                await AsyncTestingUtil.WaitAsync(async () => await chunkStore.CountChunks("123") == 0, 2500);
             }
 
             await producer.ProduceAsync(

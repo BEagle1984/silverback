@@ -154,8 +154,6 @@ namespace Silverback.Tests.Integration.E2E.Chunking
         [Fact]
         public async Task IncompleteMessages_CleanupAfterDefinedTimeout()
         {
-            var committedOffsets = new List<IOffset>();
-
             var message = new TestEventOne { Content = "Hello E2E!" };
             byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
                                     message,
@@ -176,7 +174,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                         .WithConnectionToMessageBroker(
                             options => options
                                 .AddInMemoryBroker()
-                                .AddDbChunkStore(TimeSpan.FromMilliseconds(1000), TimeSpan.FromMilliseconds(50)))
+                                .AddDbChunkStore(TimeSpan.FromMilliseconds(2000), TimeSpan.FromMilliseconds(50)))
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
@@ -189,9 +187,6 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             }
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var consumer = (InMemoryConsumer)broker.Consumers[0];
-            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
-
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -207,7 +202,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                 var chunkStore = scope.ServiceProvider.GetRequiredService<IChunkStore>();
                 (await chunkStore.CountChunks("123")).Should().Be(2);
 
-                await AsyncTestingUtil.WaitAsync(async () => await chunkStore.CountChunks("123") == 0, 1000);
+                await AsyncTestingUtil.WaitAsync(async () => await chunkStore.CountChunks("123") == 0, 2500);
             }
 
             await producer.ProduceAsync(
