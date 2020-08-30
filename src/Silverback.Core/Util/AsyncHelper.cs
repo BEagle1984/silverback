@@ -26,13 +26,13 @@ namespace Silverback.Util
 
         public static TResult RunSynchronously<TResult>(Func<Task<TResult>> func)
         {
-            var cultureUi = CultureInfo.CurrentUICulture;
             var culture = CultureInfo.CurrentCulture;
+            var uiCulture = CultureInfo.CurrentUICulture;
 
             Task<TResult> ExecuteTask()
             {
                 Thread.CurrentThread.CurrentCulture = culture;
-                Thread.CurrentThread.CurrentUICulture = cultureUi;
+                Thread.CurrentThread.CurrentUICulture = uiCulture;
                 return func();
             }
 
@@ -41,18 +41,21 @@ namespace Silverback.Util
                     CancellationToken.None,
                     TaskCreationOptions.None,
                     TaskScheduler.Default)
-                .Unwrap().GetAwaiter().GetResult();
+                .Unwrap()
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
         }
 
         public static void RunSynchronously(Func<Task> func)
         {
-            var cultureUi = CultureInfo.CurrentUICulture;
             var culture = CultureInfo.CurrentCulture;
+            var uiCulture = CultureInfo.CurrentUICulture;
 
             Task ExecuteTask()
             {
                 Thread.CurrentThread.CurrentCulture = culture;
-                Thread.CurrentThread.CurrentUICulture = cultureUi;
+                Thread.CurrentThread.CurrentUICulture = uiCulture;
                 return func();
             }
 
@@ -61,7 +64,10 @@ namespace Silverback.Util
                     CancellationToken.None,
                     TaskCreationOptions.None,
                     TaskScheduler.Default)
-                .Unwrap().GetAwaiter().GetResult();
+                .Unwrap()
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
         }
     }
 }

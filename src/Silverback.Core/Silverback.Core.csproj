@@ -39,6 +39,7 @@ This core package provides a very simple in-memory message bus.</Description>
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+    <PackageReference Include="System.Threading.Channels" Version="4.7.1" />
   </ItemGroup>
 
 </Project>
