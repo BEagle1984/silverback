@@ -1,7 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Connectors;
+using System;
+using Silverback.Messaging.Inbound.ExactlyOnce;
 
 namespace Silverback.Messaging.Broker
 {
@@ -14,14 +15,14 @@ namespace Silverback.Messaging.Broker
     ///     </para>
     ///     <para>
     ///         The <see cref="IComparableOffset" /> interface should be implemented whenever possible to allow
-    ///         the exactly-one delivery using the <see cref="OffsetStoredInboundConnector" />.
+    ///         the exactly-one delivery using the <see cref="OffsetStoreExactlyOnceStrategy" />.
     ///     </para>
     /// </summary>
     /// <remarks>
     ///     The classes implementing this interface should also implement a public constructor accepting key and
     ///     value as string arguments.
     /// </remarks>
-    public interface IOffset
+    public interface IOffset : IEquatable<IOffset>
     {
         /// <summary>
         ///     Gets the unique key of the queue, topic or partition this offset belongs to.

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -18,31 +19,35 @@ namespace Silverback.Messaging.Behaviors
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
 
-        /// <inheritdoc cref="IProducerBehavior.Handle" />
-        public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            string? key = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
+            string key = GetKafkaKey(context);
 
-            if (key != null)
-            {
-                context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, key);
-                context.Envelope.AdditionalLogData["kafkaKey"] = key;
-            }
-            else
-            {
-                var messageId = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
-
-                if (messageId != null)
-                {
-                    context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, messageId);
-                    context.Envelope.AdditionalLogData["kafkaKey"] = messageId;
-                }
-            }
+            context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, key);
+            context.Envelope.AdditionalLogData["kafkaKey"] = key;
 
             await next(context).ConfigureAwait(false);
+        }
+
+        private static string GetKafkaKey(ProducerPipelineContext context)
+        {
+            string? kafkaKeyHeaderValue = context.Envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey);
+            if (kafkaKeyHeaderValue != null)
+                return kafkaKeyHeaderValue;
+
+            string? keyFromMessage = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
+            if (keyFromMessage != null)
+                return keyFromMessage;
+
+            var messageIdHeaderValue = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
+            if (messageIdHeaderValue != null)
+                return messageIdHeaderValue;
+
+            return Guid.NewGuid().ToString();
         }
     }
 }

@@ -39,8 +39,11 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to produce to.
         /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="connectionFactory">
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
@@ -52,10 +55,11 @@ namespace Silverback.Messaging.Broker
         public RabbitProducer(
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IRabbitConnectionFactory connectionFactory,
+            IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Producer> logger)
-            : base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;
@@ -83,10 +87,10 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="Producer.ProduceCore" />
         protected override IOffset? ProduceCore(IOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsyncCore(envelope));
+            AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
 
-        /// <inheritdoc cref="Producer.ProduceAsyncCore" />
-        protected override Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
+        /// <inheritdoc cref="Producer.ProduceCoreAsync" />
+        protected override Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             var queuedMessage = new QueuedMessage(envelope);
 
@@ -149,7 +153,7 @@ namespace Silverback.Messaging.Broker
                         string.Empty,
                         routingKey,
                         properties,
-                        envelope.RawMessage);
+                        envelope.RawMessage.ReadAll());
                     break;
                 case RabbitExchangeProducerEndpoint exchangeEndpoint:
                     routingKey = GetRoutingKey(envelope.Headers);
@@ -157,7 +161,7 @@ namespace Silverback.Messaging.Broker
                         exchangeEndpoint.Name,
                         routingKey,
                         properties,
-                        envelope.RawMessage);
+                        envelope.RawMessage.ReadAll());
                     break;
                 default:
                     throw new ArgumentException("Unhandled endpoint type.");
@@ -173,7 +177,7 @@ namespace Silverback.Messaging.Broker
 
             while (!_queue.IsCompleted)
             {
-                Task.Delay(100).Wait();
+                AsyncHelper.RunSynchronously(() => Task.Delay(100));
             }
         }
 

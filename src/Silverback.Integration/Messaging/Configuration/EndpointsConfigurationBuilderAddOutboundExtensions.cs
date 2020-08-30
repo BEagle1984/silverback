@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
@@ -14,93 +14,6 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public static class EndpointsConfigurationBuilderAddOutboundExtensions
     {
-        /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
-        /// </summary>
-        /// <param name="endpointsConfigurationBuilder">
-        ///     The <see cref="IEndpointsConfigurationBuilder" />.
-        /// </param>
-        /// <param name="endpoint">
-        ///     The endpoint (topic).
-        /// </param>
-        /// <typeparam name="TMessage">
-        ///     The type of the messages to be published to this endpoint.
-        /// </typeparam>
-        /// <typeparam name="TConnector">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used.
-        /// </typeparam>
-        /// <returns>
-        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(
-            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            IProducerEndpoint endpoint)
-            where TConnector : IOutboundConnector
-        {
-            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
-            Check.NotNull(endpoint, nameof(endpoint));
-
-            return endpointsConfigurationBuilder.AddOutbound<TMessage, TConnector>(new[] { endpoint });
-        }
-
-        /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
-        /// </summary>
-        /// <param name="endpointsConfigurationBuilder">
-        ///     The <see cref="IEndpointsConfigurationBuilder" />.
-        /// </param>
-        /// <param name="endpoints">
-        ///     The endpoints (topics).
-        /// </param>
-        /// <typeparam name="TMessage">
-        ///     The type of the messages to be published to this endpoint.
-        /// </typeparam>
-        /// <typeparam name="TConnector">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used.
-        /// </typeparam>
-        /// <returns>
-        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(
-            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            params IProducerEndpoint[] endpoints)
-            where TConnector : IOutboundConnector
-        {
-            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
-            Check.NotNull(endpoints, nameof(endpoints));
-
-            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), endpoints, typeof(TConnector));
-        }
-
-        /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
-        /// </summary>
-        /// <param name="endpointsConfigurationBuilder">
-        ///     The <see cref="IEndpointsConfigurationBuilder" />.
-        /// </param>
-        /// <param name="endpoints">
-        ///     The endpoints (topics).
-        /// </param>
-        /// <typeparam name="TMessage">
-        ///     The type of the messages to be published to this endpoint.
-        /// </typeparam>
-        /// <typeparam name="TConnector">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used.
-        /// </typeparam>
-        /// <returns>
-        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(
-            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            IEnumerable<IProducerEndpoint> endpoints)
-            where TConnector : IOutboundConnector
-        {
-            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
-            Check.NotNull(endpoints, nameof(endpoints));
-
-            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), endpoints, typeof(TConnector));
-        }
-
         /// <summary>
         ///     Adds and outbound endpoint for the specified message type.
         /// </summary>
@@ -132,45 +45,9 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoint">
-        ///     The endpoint (topic).
-        /// </param>
-        /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used. If not specified, the default one will
-        ///     be used.
-        /// </param>
-        /// <typeparam name="TMessage">
-        ///     The type of the messages to be published to this endpoint.
-        /// </typeparam>
-        /// <returns>
-        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            IProducerEndpoint endpoint,
-            Type? outboundConnectorType = null)
-        {
-            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
-            Check.NotNull(endpoint, nameof(endpoint));
-
-            return endpointsConfigurationBuilder.AddOutbound<TMessage>(
-                new[] { endpoint },
-                outboundConnectorType);
-        }
-
-        /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
-        /// </summary>
-        /// <param name="endpointsConfigurationBuilder">
-        ///     The <see cref="IEndpointsConfigurationBuilder" />.
-        /// </param>
         /// <param name="endpoints">
         ///     The endpoints (topics).
         /// </param>
-        /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used. If not specified, the default one will
-        ///     be used.
-        /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be published to this endpoint.
         /// </typeparam>
@@ -179,13 +56,12 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static IEndpointsConfigurationBuilder AddOutbound<TMessage>(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            IEnumerable<IProducerEndpoint> endpoints,
-            Type? outboundConnectorType = null)
+            IEnumerable<IProducerEndpoint> endpoints)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(endpoints, nameof(endpoints));
 
-            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), endpoints, outboundConnectorType);
+            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), endpoints);
         }
 
         /// <summary>
@@ -200,55 +76,20 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpoints">
         ///     The endpoints (topics).
         /// </param>
-        /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used. If not specified, the default one will
-        ///     be used.
-        /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IEndpointsConfigurationBuilder AddOutbound(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
             Type messageType,
-            IEnumerable<IProducerEndpoint> endpoints,
-            Type? outboundConnectorType = null)
+            IEnumerable<IProducerEndpoint> endpoints)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(endpoints, nameof(endpoints));
 
             return endpointsConfigurationBuilder.AddOutbound(
                 messageType,
-                new StaticOutboundRouter(endpoints),
-                outboundConnectorType);
-        }
-
-        /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
-        /// </summary>
-        /// <typeparam name="TMessage">
-        ///     The type of the messages to be published to this endpoint.
-        /// </typeparam>
-        /// <typeparam name="TRouter">
-        ///     The type of the <see cref="IOutboundRouter{TMessage}" /> to be used to determine the destination
-        ///     endpoint.
-        /// </typeparam>
-        /// <typeparam name="TConnector">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used.
-        /// </typeparam>
-        /// <param name="endpointsConfigurationBuilder">
-        ///     The <see cref="IEndpointsConfigurationBuilder" />.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IEndpointsConfigurationBuilder AddOutbound<TMessage, TRouter, TConnector>(
-            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder)
-            where TRouter : IOutboundRouter<TMessage>
-            where TConnector : IOutboundConnector
-        {
-            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
-
-            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), typeof(TRouter), typeof(TConnector));
+                new StaticOutboundRouter(endpoints));
         }
 
         /// <summary>
@@ -273,36 +114,7 @@ namespace Silverback.Messaging.Configuration
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
 
-            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), typeof(TRouter), null);
-        }
-
-        /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
-        /// </summary>
-        /// <param name="endpointsConfigurationBuilder">
-        ///     The <see cref="IEndpointsConfigurationBuilder" />.
-        /// </param>
-        /// <param name="router">
-        ///     The <see cref="IOutboundRouter{TMessage}" /> to be used to determine the destination endpoint.
-        /// </param>
-        /// <typeparam name="TMessage">
-        ///     The type of the messages to be published to this endpoint.
-        /// </typeparam>
-        /// <typeparam name="TConnector">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used.
-        /// </typeparam>
-        /// <returns>
-        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IEndpointsConfigurationBuilder AddOutbound<TMessage, TConnector>(
-            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            IOutboundRouter<TMessage> router)
-            where TConnector : IOutboundConnector
-        {
-            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
-            Check.NotNull(router, nameof(router));
-
-            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), router, typeof(TConnector));
+            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), typeof(TRouter));
         }
 
         /// <summary>
@@ -316,23 +128,18 @@ namespace Silverback.Messaging.Configuration
         /// </param>
         /// <param name="router">
         ///     The <see cref="IOutboundRouter{TMessage}" /> to be used to determine the destination endpoint.
-        /// </param>
-        /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used. If not specified, the default one will
-        ///     be used.
         /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IEndpointsConfigurationBuilder AddOutbound<TMessage>(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            IOutboundRouter<TMessage> router,
-            Type? outboundConnectorType = null)
+            IOutboundRouter<TMessage> router)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(router, nameof(router));
 
-            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), router, outboundConnectorType);
+            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), router);
         }
 
         /// <summary>
@@ -348,26 +155,19 @@ namespace Silverback.Messaging.Configuration
         ///     The type of the <see cref="IOutboundRouter{TMessage}" /> to be used to determine the destination
         ///     endpoint.
         /// </param>
-        /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used. If not specified, the default one will
-        ///     be used.
-        /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IEndpointsConfigurationBuilder AddOutbound(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
             Type messageType,
-            Type routerType,
-            Type? outboundConnectorType)
+            Type routerType)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
 
-            endpointsConfigurationBuilder.GetOutboundRoutingConfiguration()
-                .Add(
-                    messageType,
-                    serviceProvider => (IOutboundRouter)serviceProvider.GetRequiredService(routerType),
-                    outboundConnectorType);
+            endpointsConfigurationBuilder.GetOutboundRoutingConfiguration().Add(
+                messageType,
+                serviceProvider => (IOutboundRouter)serviceProvider.GetRequiredService(routerType));
 
             return endpointsConfigurationBuilder;
         }
@@ -384,24 +184,19 @@ namespace Silverback.Messaging.Configuration
         /// <param name="router">
         ///     The <see cref="IOutboundRouter{TMessage}" /> to be used to determine the destination endpoint.
         /// </param>
-        /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used. If not specified, the default one will
-        ///     be used.
-        /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IEndpointsConfigurationBuilder AddOutbound(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
             Type messageType,
-            IOutboundRouter router,
-            Type? outboundConnectorType)
+            IOutboundRouter router)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(router, nameof(router));
 
             endpointsConfigurationBuilder.GetOutboundRoutingConfiguration()
-                .Add(messageType, _ => router, outboundConnectorType);
+                .Add(messageType, _ => router);
 
             return endpointsConfigurationBuilder;
         }

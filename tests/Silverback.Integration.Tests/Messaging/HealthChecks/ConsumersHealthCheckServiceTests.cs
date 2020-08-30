@@ -8,6 +8,7 @@ using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.HealthChecks;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.HealthChecks
@@ -39,7 +40,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
 
             var brokerCollection = new BrokerCollection(new[] { broker1, broker2 });
 
-            var result = await new ConsumersHealthCheckService(brokerCollection).CheckConsumersConnected();
+            var result = await new ConsumersHealthCheckService(brokerCollection).CheckConsumersConnectedAsync();
 
             result.Should().BeTrue();
         }
@@ -71,7 +72,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
 
             var brokerCollection = new BrokerCollection(new[] { broker1, broker2 });
 
-            var result = await new ConsumersHealthCheckService(brokerCollection).CheckConsumersConnected();
+            var result = await new ConsumersHealthCheckService(brokerCollection).CheckConsumersConnectedAsync();
 
             result.Should().BeFalse();
         }
@@ -86,7 +87,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
 
             var brokerCollection = new BrokerCollection(new[] { broker1 });
 
-            var result = await new ConsumersHealthCheckService(brokerCollection).CheckConsumersConnected();
+            var result = await new ConsumersHealthCheckService(brokerCollection).CheckConsumersConnectedAsync();
 
             result.Should().BeTrue();
         }

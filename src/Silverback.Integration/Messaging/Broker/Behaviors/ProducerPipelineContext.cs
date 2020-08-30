@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker.Behaviors
@@ -19,10 +20,14 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <param name="producer">
         ///     The <see cref="IProducer" /> that triggered this pipeline.
         /// </param>
-        public ProducerPipelineContext(IOutboundEnvelope envelope, IProducer producer)
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider"/> to be used to resolve the required services.
+        /// </param>
+        public ProducerPipelineContext(IOutboundEnvelope envelope, IProducer producer, IServiceProvider serviceProvider)
         {
             Envelope = envelope;
             Producer = producer;
+            ServiceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -34,5 +39,10 @@ namespace Silverback.Messaging.Broker.Behaviors
         ///     Gets or sets the envelope containing the message to be produced.
         /// </summary>
         public IOutboundEnvelope Envelope { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the <see cref="IServiceProvider"/> to be used to resolve the required services.
+        /// </summary>
+        public IServiceProvider ServiceProvider { get; set; }
     }
 }

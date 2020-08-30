@@ -108,7 +108,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                     .AddScopedBehavior(_ => new ChangeTestEventOneContentBehavior())
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            using var serviceScope = serviceProvider.CreateScope();
+            var publisher = serviceScope.ServiceProvider.GetRequiredService<IPublisher>();
 
             publisher.Publish(new TestEventOne());
 

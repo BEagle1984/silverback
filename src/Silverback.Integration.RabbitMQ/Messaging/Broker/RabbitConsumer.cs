@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -48,11 +49,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="callback">
-        ///     The delegate to be invoked when a message is received.
-        /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
         /// </param>
         /// <param name="connectionFactory">
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
@@ -67,12 +65,11 @@ namespace Silverback.Messaging.Broker
         public RabbitConsumer(
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<RabbitConsumer> logger)
-            : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider,  serviceProvider, logger)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;
@@ -87,7 +84,7 @@ namespace Silverback.Messaging.Broker
             (_channel, _queueName) = _connectionFactory.GetChannel(Endpoint);
 
             _consumer = new AsyncEventingBasicConsumer(_channel);
-            _consumer.Received += TryHandleMessage;
+            _consumer.Received += TryHandleMessageAsync;
 
             _consumerTag = _channel.BasicConsume(
                 _queueName,
@@ -95,13 +92,27 @@ namespace Silverback.Messaging.Broker
                 _consumer);
         }
 
-        /// <inheritdoc cref="Consumer.DisconnectCore" />
-        protected override void DisconnectCore()
+        /// <inheritdoc cref="Consumer.StopConsuming" />
+        protected override void StopConsuming()
         {
             if (_consumer == null)
                 return;
 
             _disconnecting = true;
+        }
+
+        /// <param name="cancellationToken"></param>
+        /// <inheritdoc cref="Consumer.WaitUntilConsumingStopped" />
+        protected override void WaitUntilConsumingStopped(CancellationToken cancellationToken)
+        {
+            // TODO: How to handle this?
+        }
+
+        /// <inheritdoc cref="Consumer.DisconnectCore" />
+        protected override void DisconnectCore()
+        {
+            if (_consumer == null)
+                return;
 
             CommitPendingOffset();
 
@@ -115,22 +126,22 @@ namespace Silverback.Messaging.Broker
             _disconnecting = false;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.CommitCore" />
-        protected override Task CommitCore(IReadOnlyCollection<RabbitOffset> offsets)
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.CommitCoreAsync" />
+        protected override Task CommitCoreAsync(IReadOnlyCollection<RabbitOffset> offsets)
         {
             CommitOrStoreOffset(offsets.OrderBy(offset => offset.DeliveryTag).Last());
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.RollbackCore" />
-        protected override Task RollbackCore(IReadOnlyCollection<RabbitOffset> offsets)
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.RollbackCoreAsync" />
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<RabbitOffset> offsets)
         {
             BasicNack(offsets.Max(offset => offset.DeliveryTag));
             return Task.CompletedTask;
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task TryHandleMessage(object sender, BasicDeliverEventArgs deliverEventArgs)
+        private async Task TryHandleMessageAsync(object sender, BasicDeliverEventArgs deliverEventArgs)
         {
             try
             {
@@ -151,7 +162,7 @@ namespace Silverback.Messaging.Broker
                 if (_disconnecting)
                     return;
 
-                await HandleMessage(
+                await HandleMessageAsync(
                         deliverEventArgs.Body.ToArray(),
                         deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
                         Endpoint.Name,

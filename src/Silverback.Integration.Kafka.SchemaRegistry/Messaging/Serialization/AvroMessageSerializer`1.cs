@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry;
@@ -31,38 +32,26 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         public AvroSerializerConfig AvroSerializerConfig { get; set; } = new AvroSerializerConfig();
 
-        /// <inheritdoc cref="IMessageSerializer.Serialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public byte[]? Serialize(
-            object? message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            AsyncHelper.RunSynchronously(() => SerializeAsync(message, messageHeaders, context));
-
-        /// <inheritdoc cref="IMessageSerializer.Deserialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public (object?, Type) Deserialize(
-            byte[]? message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            AsyncHelper.RunSynchronously(() => DeserializeAsync(message, messageHeaders, context));
-
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task<byte[]?> SerializeAsync(
+        public async ValueTask<Stream?> SerializeAsync(
             object? message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            await SerializeAsync<TMessage>(message, MessageComponentType.Value, context).ConfigureAwait(false);
-
-        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task<(object?, Type)> DeserializeAsync(
-            byte[]? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            var deserialized = await DeserializeAsync<TMessage>(message, MessageComponentType.Value, context)
+            var buffer = await SerializeAsync<TMessage>(message, MessageComponentType.Value, context)
+                .ConfigureAwait(false);
+
+            return buffer == null ? null : new MemoryStream(buffer);
+        }
+
+        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
+        public async ValueTask<(object?, Type)> DeserializeAsync(
+            Stream? messageStream,
+            MessageHeaderCollection messageHeaders,
+            MessageSerializationContext context)
+        {
+            var buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
+            var deserialized = await DeserializeAsync<TMessage>(buffer, MessageComponentType.Value, context)
                 .ConfigureAwait(false);
 
             var type = deserialized?.GetType() ?? typeof(TMessage);
@@ -104,7 +93,7 @@ namespace Silverback.Messaging.Serialization
             new SerializationContext(componentType, context.ActualEndpointName);
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private async Task<byte[]?> SerializeAsync<TValue>(
+        private async ValueTask<byte[]?> SerializeAsync<TValue>(
             object? message,
             MessageComponentType componentType,
             MessageSerializationContext context)
@@ -112,8 +101,11 @@ namespace Silverback.Messaging.Serialization
             if (message == null)
                 return null;
 
-            if (message is byte[] bytes)
-                return bytes;
+            if (message is Stream inputStream)
+                return await inputStream.ReadAllAsync().ConfigureAwait(false);
+
+            if (message is byte[] inputBytes)
+                return inputBytes;
 
             return await new AvroSerializer<TValue>(
                     SchemaRegistryClientFactory.GetClient(SchemaRegistryConfig),
@@ -131,7 +123,7 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context)
             where TValue : class
         {
-            if (message == null || message.Length == 0)
+            if (message == null)
                 return null;
 
             var avroDeserializer = new AvroDeserializer<TValue>(

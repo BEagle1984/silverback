@@ -2,8 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
@@ -12,13 +14,14 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class MoveMessageErrorPolicyTests
     {
-        private readonly IErrorPolicyBuilder _errorPolicyBuilder;
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly IBroker _broker;
 
@@ -26,58 +29,64 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var services = new ServiceCollection();
 
-            services.AddNullLogger();
+            services
+                .AddNullLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
 
-            services.AddSilverback().WithConnectionToMessageBroker(
-                options => options
-                    .AddBroker<TestBroker>());
+            _serviceProvider = services.BuildServiceProvider();
 
-            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-
-            _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider);
-
-            _broker = serviceProvider.GetRequiredService<IBroker>();
+            _broker = _serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
         }
 
-        [Fact]
-        public void HandleError_InboundMessage_MessageMoved()
+        [Fact(Skip = "Not yet implemented")]
+        public void CanHandle_SingleMessage_TrueReturned()
         {
-            var policy = _errorPolicyBuilder.Move(TestProducerEndpoint.GetDefault());
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public void CanHandle_Sequence_FalseReturned()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public async Task HandleError_InboundMessage_MessageMoved()
+        {
+            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
-                new byte[1],
+                new MemoryStream(),
                 null,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name)
             {
                 Message = "hey oh!"
             };
 
-            policy.HandleError(
-                new[]
-                {
-                    envelope
-                },
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
                 new InvalidOperationException("test"));
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
 
-            producer.ProducedMessages.Count.Should().Be(1);
+            producer.ProducedMessages.Should().HaveCount(1);
         }
 
         [Fact]
-        public void HandleError_InboundMessage_MessagePreserved()
+        public async Task HandleError_InboundMessage_MessagePreserved()
         {
-            var policy = _errorPolicyBuilder.Move(TestProducerEndpoint.GetDefault());
+            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
 
             var message = new TestEventOne { Content = "hey oh!" };
             var headers = new MessageHeaderCollection();
-            var rawContent = TestConsumerEndpoint.GetDefault().Serializer
-                .Serialize(message, headers, MessageSerializationContext.Empty);
+            var rawContent = await TestConsumerEndpoint.GetDefault().Serializer
+                .SerializeAsync(message, headers, MessageSerializationContext.Empty);
             var envelope = new InboundEnvelope(
                 rawContent,
                 headers,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name)
             {
@@ -88,13 +97,16 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     { "key2", "value2" }
                 }
             };
-            policy.HandleError(new[] { envelope }, new InvalidOperationException("test"));
+
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+                new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
 
             var producedMessage = producer.ProducedMessages.Last();
             var (deserializedMessage, _) =
-                producedMessage.Endpoint.Serializer.Deserialize(
+                await producedMessage.Endpoint.Serializer.DeserializeAsync(
                     producedMessage.Message,
                     producedMessage.Headers,
                     MessageSerializationContext.Empty);
@@ -102,14 +114,14 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
-        public void HandleError_NotDeserializedInboundMessage_MessagePreserved()
+        public async Task HandleError_NotDeserializedInboundMessage_MessagePreserved()
         {
-            var policy = _errorPolicyBuilder.Move(TestProducerEndpoint.GetDefault());
+            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
 
             var envelope = new InboundEnvelope(
-                Encoding.UTF8.GetBytes("hey oh!"),
+                new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name)
             {
@@ -121,23 +133,25 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 }
             };
 
-            policy.HandleError(new[] { envelope }, new InvalidOperationException("test"));
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+                new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
             var producedMessage = producer.ProducedMessages.Last();
 
-            producedMessage.Message.Should().Equal(producedMessage.Message);
+            producedMessage.Message.Should().BeEquivalentTo(producedMessage.Message);
         }
 
         [Fact]
-        public void HandleError_InboundMessage_HeadersPreserved()
+        public async Task HandleError_InboundMessage_HeadersPreserved()
         {
-            var policy = _errorPolicyBuilder.Move(TestProducerEndpoint.GetDefault());
+            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
 
             var envelope = new InboundEnvelope(
-                Encoding.UTF8.GetBytes("hey oh!"),
+                new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name)
             {
@@ -148,7 +162,9 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     { "key2", "value2" }
                 }
             };
-            policy.HandleError(new[] { envelope }, new InvalidOperationException("test"));
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+                new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
 
@@ -156,30 +172,33 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
-        public void Transform_InboundMessage_MessageTranslated()
+        public async Task HandleError_WithTransform_MessageTranslated()
         {
-            var policy = _errorPolicyBuilder.Move(TestProducerEndpoint.GetDefault())
-                .Transform((envelope, ex) => { envelope.Message = new TestEventTwo(); });
+            var policy = ErrorPolicy
+                .Move(TestProducerEndpoint.GetDefault())
+                .Transform((originalEnvelope, ex) => { originalEnvelope.Message = new TestEventTwo(); })
+                .Build(_serviceProvider);
 
-            byte[] rawMessage = Encoding.UTF8.GetBytes("hey oh!");
+            var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("hey oh!"));
+
             var headers = new[]
             {
                 new MessageHeader(DefaultMessageHeaders.MessageType, typeof(string).AssemblyQualifiedName)
             };
-            var rawInboundEnvelopes = new[]
-            {
-                new InboundEnvelope(
-                    rawMessage,
-                    headers,
-                    null,
-                    TestConsumerEndpoint.GetDefault(),
-                    TestConsumerEndpoint.GetDefault().Name),
-            };
 
-            policy.HandleError(rawInboundEnvelopes, new InvalidOperationException("test"));
+            var envelope = new InboundEnvelope(
+                rawMessage,
+                headers,
+                new TestOffset(),
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
+
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+                new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
-            var (producedMessage, _) = producer.Endpoint.Serializer.Deserialize(
+            var (producedMessage, _) = await producer.Endpoint.Serializer.DeserializeAsync(
                 producer.ProducedMessages[0].Message,
                 producer.ProducedMessages[0].Headers,
                 MessageSerializationContext.Empty);
@@ -187,34 +206,39 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
-        public void Transform_InboundMessage_HeadersProperlyModified()
+        public async Task Transform_SingleMessage_HeadersProperlyModified()
         {
-            var policy = _errorPolicyBuilder.Move(TestProducerEndpoint.GetDefault())
-                .Transform((outboundEnvelope, ex) => { outboundEnvelope.Headers.Add("error", ex.GetType().Name); });
+            var policy = ErrorPolicy
+                .Move(TestProducerEndpoint.GetDefault())
+                .Transform((outboundEnvelope, ex) => { outboundEnvelope.Headers.Add("error", ex.GetType().Name); })
+                .Build(_serviceProvider);
 
             var envelope = new InboundEnvelope(
-                Encoding.UTF8.GetBytes("hey oh!"),
+                new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
             envelope.Headers.Add("key", "value");
-            policy.HandleError(new[] { envelope }, new InvalidOperationException("test"));
+
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+                new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
             var newHeaders = producer.ProducedMessages[0].Headers;
-            newHeaders.Count.Should().Be(6); // message-id, message-type, key, traceid, error, source-endpoint
+            newHeaders.Should().HaveCount(6); // message-id, message-type, key, traceid, error, source-endpoint
         }
 
         [Fact]
-        public void HandleError_InboundMessage_SourceEndpointHeaderIsSet()
+        public async Task HandleError_SingleMessage_SourceEndpointHeaderIsSet()
         {
-            var policy = _errorPolicyBuilder.Move(TestProducerEndpoint.GetDefault());
+            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
 
-            var message = new InboundEnvelope(
-                Encoding.UTF8.GetBytes("hey oh!"),
+            var envelope = new InboundEnvelope(
+                new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
-                null,
+                new TestOffset(),
                 new TestConsumerEndpoint("source-endpoint"),
                 "source-endpoint")
             {
@@ -225,7 +249,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     { "key2", "value2" }
                 }
             };
-            policy.HandleError(new[] { message }, new InvalidOperationException("test"));
+
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+                new InvalidOperationException("test"));
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
 
@@ -235,6 +262,24 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new MessageHeader(
                         DefaultMessageHeaders.SourceEndpoint,
                         "source-endpoint"));
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task HandleError_Whatever_TrueReturned()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task HandleError_SingleMessage_OffsetCommitted()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task HandleError_SingleMessage_TransactionAborted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

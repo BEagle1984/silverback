@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Broker.Behaviors
@@ -18,19 +17,12 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <param name="context">
         ///     The context that is passed along the behaviors pipeline.
         /// </param>
-        /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services in the current
-        ///     pipeline.
-        /// </param>
         /// <param name="next">
         ///     The next behavior in the pipeline.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Handle(
-            ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
-            ConsumerBehaviorHandler next);
+        Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next);
     }
 }

@@ -1,38 +1,50 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Util;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes
 {
+    // TODO: Move to Silverback.Integration.Testing
     public class SpyBrokerBehavior : IProducerBehavior, IConsumerBehavior
     {
-        public IList<IOutboundEnvelope> OutboundEnvelopes { get; } = new List<IOutboundEnvelope>();
+        private readonly List<IOutboundEnvelope> _outboundEnvelopes = new List<IOutboundEnvelope>();
 
-        public IList<IInboundEnvelope> InboundEnvelopes { get; } = new List<IInboundEnvelope>();
+        private readonly List<IInboundEnvelope> _inboundEnvelopes = new List<IInboundEnvelope>();
 
-        public int SortIndex { get; } = int.MaxValue;
+        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock on writes only")]
+        public IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes => _outboundEnvelopes.ToList();
 
-        public Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock on writes only")]
+        public IReadOnlyList<IInboundEnvelope> InboundEnvelopes => _inboundEnvelopes.ToList();
+
+        public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Consumer.Publisher - 1;
+
+        public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            OutboundEnvelopes.Add(context.Envelope);
+            lock (_outboundEnvelopes)
+            {
+                _outboundEnvelopes.Add(context.Envelope);
+            }
 
             return next(context);
         }
 
-        public Task Handle(
+        public Task HandleAsync(
             ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
-            context.Envelopes.ForEach(envelope => InboundEnvelopes.Add((IInboundEnvelope)envelope));
+            lock (_inboundEnvelopes)
+            {
+                _inboundEnvelopes.Add((IInboundEnvelope)context.Envelope);
+            }
 
-            return next(context, serviceProvider);
+            return next(context);
         }
     }
 }

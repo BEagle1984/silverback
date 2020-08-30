@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -9,6 +10,7 @@ using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.Newtonsoft.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
@@ -24,35 +26,16 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
         };
 
         [Fact]
-        public void Serialize_WithDefaultSettings_CorrectlySerialized()
+        public async Task SerializeAsync_WithDefaultSettings_CorrectlySerialized()
         {
             var message = new TestEventOne { Content = "the message" };
             var headers = new MessageHeaderCollection();
 
             var serializer = new NewtonsoftJsonMessageSerializer();
 
-            var serialized = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
+            var serialized = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            serialized.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
-        }
-
-        [Fact]
-        public void SerializeDeserialize_Message_CorrectlyDeserialized()
-        {
-            var message = new TestEventOne { Content = "the message" };
-            var headers = new MessageHeaderCollection();
-
-            var serializer = new NewtonsoftJsonMessageSerializer();
-
-            var serialized = serializer.Serialize(message, headers, MessageSerializationContext.Empty);
-
-            var (deserialized, _) = serializer
-                .Deserialize(serialized, headers, MessageSerializationContext.Empty);
-
-            var message2 = deserialized as TestEventOne;
-
-            message2.Should().NotBeNull();
-            message2.Should().BeEquivalentTo(message);
+            serialized.ReadAll().Should().BeEquivalentTo(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
         }
 
         [Fact]
@@ -75,20 +58,6 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
         }
 
         [Fact]
-        public void Serialize_Message_TypeHeaderAdded()
-        {
-            var message = new TestEventOne { Content = "the message" };
-            var headers = new MessageHeaderCollection();
-
-            var serializer = new NewtonsoftJsonMessageSerializer();
-
-            serializer.Serialize(message, headers, MessageSerializationContext.Empty);
-
-            headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-message-type", typeof(TestEventOne).AssemblyQualifiedName));
-        }
-
-        [Fact]
         public async Task SerializeAsync_Message_TypeHeaderAdded()
         {
             var message = new TestEventOne { Content = "the message" };
@@ -103,21 +72,6 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
         }
 
         [Fact]
-        public void Serialize_ByteArray_ReturnedUnmodified()
-        {
-            var messageBytes = Encoding.UTF8.GetBytes("test");
-
-            var serializer = new NewtonsoftJsonMessageSerializer();
-
-            var serialized = serializer.Serialize(
-                messageBytes,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
-
-            serialized.Should().BeSameAs(messageBytes);
-        }
-
-        [Fact]
         public async Task SerializeAsync_ByteArray_ReturnedUnmodified()
         {
             var messageBytes = Encoding.UTF8.GetBytes("test");
@@ -129,20 +83,22 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            serialized.Should().BeSameAs(messageBytes);
+            serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
         }
 
         [Fact]
-        public void Serialize_NullMessage_NullReturned()
+        public async Task SerializeAsync_Stream_ReturnedUnmodified()
         {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes("test"));
+
             var serializer = new NewtonsoftJsonMessageSerializer();
 
-            var serialized = serializer.Serialize(
-                null,
+            var serialized = await serializer.SerializeAsync(
+                stream,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            serialized.Should().BeNull();
+            serialized.Should().BeSameAs(stream);
         }
 
         [Fact]
@@ -159,38 +115,10 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
         }
 
         [Fact]
-        public void Deserialize_MessageWithIncompleteTypeHeader_Deserialized()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
-
-            var (deserializedObject, _) = serializer
-                .Deserialize(rawMessage, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
-
-            var message = deserializedObject as TestEventOne;
-
-            message.Should().NotBeNull();
-            message.Should().BeOfType<TestEventOne>();
-            message.As<TestEventOne>().Content.Should().Be("the message");
-        }
-
-        [Fact]
-        public void Deserialize_MessageWithIncompleteTypeHeader_TypeReturned()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
-
-            var (_, type) = serializer
-                .Deserialize(rawMessage, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
-
-            type.Should().Be(typeof(TestEventOne));
-        }
-
-        [Fact]
         public async Task DeserializeAsync_MessageWithIncompleteTypeHeader_Deserialized()
         {
             var serializer = new NewtonsoftJsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
+            var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
 
             var (deserializedObject, _) = await serializer
                 .DeserializeAsync(rawMessage, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -206,7 +134,7 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
         public async Task DeserializeAsync_MessageWithIncompleteTypeHeader_TypeReturned()
         {
             var serializer = new NewtonsoftJsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
+            var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
 
             var (_, type) = await serializer
                 .DeserializeAsync(rawMessage, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
@@ -215,55 +143,22 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
         }
 
         [Fact]
-        public void Deserialize_MissingTypeHeader_ExceptionThrown()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
-            var headers = new MessageHeaderCollection();
-
-            Action act = () => serializer
-                .Deserialize(rawMessage, headers, MessageSerializationContext.Empty);
-
-            act.Should().Throw<MessageSerializerException>();
-        }
-
-        [Fact]
         public void DeserializeAsync_MissingTypeHeader_ExceptionThrown()
         {
             var serializer = new NewtonsoftJsonMessageSerializer();
-            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
+            var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
             var headers = new MessageHeaderCollection();
 
-            Action act = () => serializer
+            Func<Task> act = async () => await serializer
                 .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
 
             act.Should().Throw<MessageSerializerException>();
-        }
-
-        [Fact]
-        public void Deserialize_BadTypeHeader_ExceptionThrown()
-        {
-            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
-            var headers = new MessageHeaderCollection
-            {
-                {
-                    "x-message-type",
-                    "Bad.TestEventOne, Silverback.Integration.Newtonsoft.Tests"
-                }
-            };
-
-            var serializer = new NewtonsoftJsonMessageSerializer();
-
-            Action act = () => serializer
-                .Deserialize(rawMessage, headers, MessageSerializationContext.Empty);
-
-            act.Should().Throw<TypeLoadException>();
         }
 
         [Fact]
         public void DeserializeAsync_BadTypeHeader_ExceptionThrown()
         {
-            var rawMessage = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
+            var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
             var headers = new MessageHeaderCollection
             {
                 {
@@ -273,32 +168,10 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
             };
             var serializer = new NewtonsoftJsonMessageSerializer();
 
-            Action act = () => serializer
+            Func<Task> act = async () => await serializer
                 .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
 
             act.Should().Throw<TypeLoadException>();
-        }
-
-        [Fact]
-        public void Deserialize_NullMessage_NullObjectReturned()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer();
-
-            var (deserializedObject, _) = serializer
-                .Deserialize(null, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
-
-            deserializedObject.Should().BeNull();
-        }
-
-        [Fact]
-        public void Deserialize_NullMessage_TypeReturned()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer();
-
-            var (_, type) = serializer
-                .Deserialize(null, TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
-
-            type.Should().Be(typeof(TestEventOne));
         }
 
         [Fact]
@@ -324,35 +197,13 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
         }
 
         [Fact]
-        public void Deserialize_EmptyArrayMessage_NullObjectReturned()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer();
-
-            var (deserializedObject, _) = serializer
-                .Deserialize(Array.Empty<byte>(), TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
-
-            deserializedObject.Should().BeNull();
-        }
-
-        [Fact]
-        public void Deserialize_EmptyArrayMessage_TypeReturned()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer();
-
-            var (_, type) = serializer
-                .Deserialize(Array.Empty<byte>(), TestEventOneMessageTypeHeaders, MessageSerializationContext.Empty);
-
-            type.Should().Be(typeof(TestEventOne));
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_EmptyArrayMessage_NullObjectReturned()
+        public async Task DeserializeAsync_EmptyStream_NullObjectReturned()
         {
             var serializer = new NewtonsoftJsonMessageSerializer();
 
             var (deserializedObject, _) = await serializer
                 .DeserializeAsync(
-                    Array.Empty<byte>(),
+                    new MemoryStream(),
                     TestEventOneMessageTypeHeaders,
                     MessageSerializationContext.Empty);
 
@@ -360,13 +211,13 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
         }
 
         [Fact]
-        public async Task DeserializeAsync_EmptyArrayMessage_TypeReturned()
+        public async Task DeserializeAsync_EmptyStream_TypeReturned()
         {
             var serializer = new NewtonsoftJsonMessageSerializer();
 
             var (_, type) = await serializer
                 .DeserializeAsync(
-                    Array.Empty<byte>(),
+                    new MemoryStream(),
                     TestEventOneMessageTypeHeaders,
                     MessageSerializationContext.Empty);
 

@@ -2,14 +2,18 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -17,13 +21,20 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IConsumer" />
     public abstract class Consumer : IConsumer, IDisposable
     {
-        private readonly MessagesReceivedAsyncCallback _receivedCallback;
+        private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
 
         private readonly IServiceProvider _serviceProvider;
 
         private readonly ISilverbackIntegrationLogger<Consumer> _logger;
 
         private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
+
+        private readonly ConcurrentDictionary<IOffset, int> _failedAttemptsDictionary =
+            new ConcurrentDictionary<IOffset, int>();
+
+        private ISequenceStore? _sequenceStore; // TODO: Should be per partition
+
+        private static readonly TimeSpan ConsumerStopWaitTimeout = TimeSpan.FromMinutes(1);
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -34,11 +45,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="receivedCallback">
-        ///     The delegate to be invoked when a message is received.
-        /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
@@ -49,20 +57,14 @@ namespace Silverback.Messaging.Broker
         protected Consumer(
             IBroker broker,
             IConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback receivedCallback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Consumer> logger)
         {
-            Check.NotNull(broker, nameof(broker));
-            Check.NotNull(endpoint, nameof(endpoint));
-
-            Behaviors = behaviors ?? Array.Empty<IConsumerBehavior>();
-
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
 
-            _receivedCallback = Check.NotNull(receivedCallback, nameof(receivedCallback));
+            _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _logger = Check.NotNull(logger, nameof(logger));
 
@@ -75,26 +77,23 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.Endpoint" />
         public IConsumerEndpoint Endpoint { get; }
 
-        /// <inheritdoc cref="IConsumer.Behaviors" />
-        public IReadOnlyList<IConsumerBehavior> Behaviors { get; }
-
         /// <inheritdoc cref="IConsumer.StatusInfo" />
         public IConsumerStatusInfo StatusInfo => _statusInfo;
 
         /// <inheritdoc cref="IConsumer.IsConnected" />
         public bool IsConnected { get; private set; }
 
-        /// <inheritdoc cref="IConsumer.Commit(IOffset)" />
-        public Task Commit(IOffset offset) => Commit(new[] { offset });
+        /// <inheritdoc cref="IConsumer.CommitAsync(IOffset)" />
+        public Task CommitAsync(IOffset offset) => CommitAsync(new[] { offset });
 
-        /// <inheritdoc cref="IConsumer.Commit(IReadOnlyCollection{IOffset})" />
-        public abstract Task Commit(IReadOnlyCollection<IOffset> offsets);
+        /// <inheritdoc cref="IConsumer.CommitAsync(IReadOnlyCollection{IOffset})" />
+        public abstract Task CommitAsync(IReadOnlyCollection<IOffset> offsets);
 
-        /// <inheritdoc cref="IConsumer.Rollback(IOffset)" />
-        public Task Rollback(IOffset offset) => Rollback(new[] { offset });
+        /// <inheritdoc cref="IConsumer.RollbackAsync(IOffset)" />
+        public Task RollbackAsync(IOffset offset) => RollbackAsync(new[] { offset });
 
-        /// <inheritdoc cref="IConsumer.Rollback(IReadOnlyCollection{IOffset})" />
-        public abstract Task Rollback(IReadOnlyCollection<IOffset> offsets);
+        /// <inheritdoc cref="IConsumer.RollbackAsync(IReadOnlyCollection{IOffset})" />
+        public abstract Task RollbackAsync(IReadOnlyCollection<IOffset> offsets);
 
         /// <inheritdoc cref="IConsumer.Connect" />
         public void Connect()
@@ -102,9 +101,15 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 return;
 
+            _sequenceStore = _serviceProvider.GetRequiredService<ISequenceStore>();
+
             ConnectCore();
 
+            if (IsConnected)
+                throw new InvalidOperationException("Already connected.");
+
             IsConnected = true;
+
             _statusInfo.SetConnected();
 
             _logger.LogDebug(
@@ -119,7 +124,37 @@ namespace Silverback.Messaging.Broker
             if (!IsConnected)
                 return;
 
+            StopConsuming();
+
+            if (_sequenceStore != null)
+            {
+                // ReSharper disable once AccessToDisposedClosure
+                AsyncHelper.RunSynchronously(
+                    () => _sequenceStore.ToList()
+                        .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted)));
+            }
+
+            using (var cancellationTokenSource = new CancellationTokenSource(ConsumerStopWaitTimeout))
+            {
+                _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Waiting until consumer stops...");
+
+                try
+                {
+                    WaitUntilConsumingStopped(cancellationTokenSource.Token);
+                    _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Consumer stopped.");
+                }
+                catch (OperationCanceledException)
+                {
+                    _logger.LogError(
+                        IntegrationEventIds.LowLevelTracing,
+                        "The timeout elapsed before the consumer stopped.");
+                }
+            }
+
             DisconnectCore();
+
+            _sequenceStore?.Dispose();
+            _sequenceStore = null;
 
             IsConnected = false;
             _statusInfo.SetDisconnected();
@@ -128,6 +163,30 @@ namespace Silverback.Messaging.Broker
                 IntegrationEventIds.ConsumerDisconnected,
                 "Disconnected consumer from endpoint {endpoint}.",
                 Endpoint.Name);
+        }
+
+        /// <inheritdoc cref="IConsumer.Disconnect" />
+        public virtual ISequenceStore GetSequenceStore(IOffset offset) =>
+            _sequenceStore ?? throw new InvalidOperationException("The sequence store is not initialized.");
+
+        /// <inheritdoc cref="IConsumer.IncrementFailedAttempts" />
+        public int IncrementFailedAttempts(IRawInboundEnvelope envelope)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+
+            return _failedAttemptsDictionary.AddOrUpdate(
+                envelope.Offset,
+                _ => envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) + 1,
+                (_, count) => count + 1);
+        }
+
+        /// <inheritdoc cref="IConsumer.ClearFailedAttempts" />
+        // TODO: Call it!
+        public void ClearFailedAttempts(IRawInboundEnvelope envelope)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+
+            _failedAttemptsDictionary.Remove(envelope.Offset, out _);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -143,13 +202,25 @@ namespace Silverback.Messaging.Broker
         protected abstract void ConnectCore();
 
         /// <summary>
-        ///     Disconnects and stops consuming.
+        ///     Stops the consumer.
+        /// </summary>
+        protected abstract void StopConsuming();
+
+        /// <summary>
+        ///     Waits until the consuming is stopped.
+        /// </summary>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+        /// </param>
+        protected abstract void WaitUntilConsumingStopped(CancellationToken cancellationToken);
+
+        /// <summary>
+        ///     Disconnects the consumer from the message broker.
         /// </summary>
         protected abstract void DisconnectCore();
 
         /// <summary>
-        ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline and
-        ///     finally invoking the callback method.
+        ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline.
         /// </summary>
         /// <param name="message">
         ///     The body of the consumed message.
@@ -164,31 +235,38 @@ namespace Silverback.Messaging.Broker
         ///     The offset of the consumed message.
         /// </param>
         /// <param name="additionalLogData">
-        ///     An optional dictionary containing the broker specific data to be logged when processing the consumed message.
+        ///     An optional dictionary containing the broker specific data to be logged when processing the consumed
+        ///     message.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        protected virtual async Task HandleMessage(
+        [SuppressMessage("", "CA2000", Justification = "Context is disposed by the TransactionHandler")]
+        protected virtual async Task HandleMessageAsync(
             byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
             string sourceEndpointName,
-            IOffset? offset,
+            IOffset offset,
             IDictionary<string, string>? additionalLogData)
         {
+            var envelope = new RawInboundEnvelope(
+                message,
+                headers,
+                Endpoint,
+                sourceEndpointName,
+                offset,
+                additionalLogData);
+
             _statusInfo.RecordConsumedMessage(offset);
 
-            await ExecutePipeline(
-                    Behaviors,
-                    new ConsumerPipelineContext(
-                        new[]
-                        {
-                            new RawInboundEnvelope(message, headers, Endpoint, sourceEndpointName, offset, additionalLogData)
-                        },
-                        this),
-                    _serviceProvider)
-                .ConfigureAwait(false);
+            var consumerPipelineContext = new ConsumerPipelineContext(
+                envelope,
+                this,
+                GetSequenceStore(offset),
+                _serviceProvider);
+
+            await ExecutePipelineAsync(consumerPipelineContext).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -219,30 +297,15 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private async Task ExecutePipeline(
-            IReadOnlyList<IConsumerBehavior> behaviors,
-            ConsumerPipelineContext context,
-            IServiceProvider serviceProvider)
+        private async Task ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)
         {
-            if (behaviors.Count > 0)
-            {
-                await behaviors[0]
-                    .Handle(
-                        context,
-                        serviceProvider,
-                        (nextContext, nextServiceProvider) =>
-                            ExecutePipeline(
-                                behaviors.Skip(1).ToList(),
-                                nextContext,
-                                nextServiceProvider))
-                    .ConfigureAwait(false);
-            }
-            else
-            {
-                await _receivedCallback.Invoke(
-                        new MessagesReceivedCallbackArgs(context.Envelopes, serviceProvider, this))
-                    .ConfigureAwait(false);
-            }
+            if (_behaviors.Count == 0 || stepIndex >= _behaviors.Count)
+                return;
+
+            await _behaviors[stepIndex].HandleAsync(
+                    context,
+                    nextContext => ExecutePipelineAsync(nextContext, stepIndex + 1))
+                .ConfigureAwait(false);
         }
     }
 }

@@ -56,7 +56,7 @@ namespace Silverback.Util
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public virtual Task Commit()
+        public virtual Task CommitAsync()
         {
             lock (UncommittedItems)
             {
@@ -77,7 +77,7 @@ namespace Silverback.Util
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public virtual Task Rollback()
+        public virtual Task RollbackAsync()
         {
             lock (UncommittedItems)
             {
@@ -99,7 +99,7 @@ namespace Silverback.Util
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected Task AddOrReplace(TKey key, TValue value)
+        protected Task AddOrReplaceAsync(TKey key, TValue value)
         {
             lock (UncommittedItems)
             {
@@ -118,7 +118,7 @@ namespace Silverback.Util
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected Task Remove(TKey key)
+        protected Task RemoveAsync(TKey key)
         {
             lock (Items)
             {

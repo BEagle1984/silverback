@@ -32,7 +32,11 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         }
 
         /// <inheritdoc cref="IEnumerableMessageArgumentResolver.GetValue" />
-        public object GetValue(IReadOnlyCollection<object> messages, Type targetMessageType) =>
-            messages.ToObservable().OfType(targetMessageType);
+        public object GetValue(IReadOnlyCollection<object> messages, Type targetMessageType)
+        {
+            Check.NotNull(messages, nameof(messages));
+
+            return messages.ToObservable().OfType(targetMessageType);
+        }
     }
 }

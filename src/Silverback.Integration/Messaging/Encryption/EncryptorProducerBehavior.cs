@@ -12,34 +12,33 @@ namespace Silverback.Messaging.Encryption
     /// </summary>
     public class EncryptorProducerBehavior : IProducerBehavior
     {
-        private readonly IMessageTransformerFactory _factory;
+        private readonly ISilverbackCryptoStreamFactory _streamFactory;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="EncryptorProducerBehavior" /> class.
         /// </summary>
-        /// <param name="factory">
-        ///     The <see cref="IMessageTransformerFactory" />.
+        /// <param name="streamFactory">
+        ///     The <see cref="ISilverbackCryptoStreamFactory" />.
         /// </param>
-        public EncryptorProducerBehavior(IMessageTransformerFactory factory)
+        public EncryptorProducerBehavior(ISilverbackCryptoStreamFactory streamFactory)
         {
-            _factory = factory;
+            _streamFactory = streamFactory;
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Encryptor;
 
-        /// <inheritdoc cref="IProducerBehavior.Handle" />
-        public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            if (context.Envelope.Endpoint.Encryption != null)
+            if (context.Envelope.Endpoint.Encryption != null && context.Envelope.RawMessage != null)
             {
-                context.Envelope.RawMessage = await _factory
-                    .GetEncryptor(context.Envelope.Endpoint.Encryption)
-                    .TransformAsync(context.Envelope.RawMessage, context.Envelope.Headers)
-                    .ConfigureAwait(false);
+                context.Envelope.RawMessage = _streamFactory.GetEncryptStream(
+                    context.Envelope.RawMessage,
+                    context.Envelope.Endpoint.Encryption);
             }
 
             await next(context).ConfigureAwait(false);

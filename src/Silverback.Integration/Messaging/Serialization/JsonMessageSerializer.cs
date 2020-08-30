@@ -3,7 +3,9 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -21,9 +23,10 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         public static JsonMessageSerializer Default { get; } = new JsonMessageSerializer();
 
-        /// <inheritdoc cref="IMessageSerializer.Serialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public override byte[]? Serialize(
+        /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
+        [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
+        public override ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
@@ -31,33 +34,41 @@ namespace Silverback.Messaging.Serialization
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
             if (message == null)
-                return null;
+                return ValueTaskFactory.FromResult<Stream?>(null);
 
-            if (message is byte[] bytes)
-                return bytes;
+            if (message is Stream inputStream)
+                return ValueTaskFactory.FromResult<Stream?>(inputStream);
+
+            if (message is byte[] inputBytes)
+                return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
 
             var type = message.GetType();
 
             messageHeaders.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
-            return JsonSerializer.SerializeToUtf8Bytes(message, type, Options);
+            var bytes = JsonSerializer.SerializeToUtf8Bytes(message, type, Options);
+            return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(bytes));
         }
 
-        /// <inheritdoc cref="IMessageSerializer.Deserialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public override (object?, Type) Deserialize(
-            byte[]? message,
+        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
+        public override async ValueTask<(object?, Type)> DeserializeAsync(
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
-            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders);
+            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders) ??
+                       throw new InvalidOperationException("Message type is null.");
 
-            if (message == null || message.Length == 0)
+            if (messageStream == null)
                 return (null, type);
 
-            var deserializedObject = JsonSerializer.Deserialize(message, type, Options) ??
+            if (messageStream.CanSeek && messageStream.Length == 0)
+                return (null, type);
+
+            var deserializedObject = await JsonSerializer.DeserializeAsync(messageStream, type, Options)
+                                         .ConfigureAwait(false) ??
                                      throw new MessageSerializerException("The deserialization returned null.");
 
             return (deserializedObject, type);

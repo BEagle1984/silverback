@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
                 }
             };
 
-            var type = SerializationHelper.GetTypeFromHeaders<object>(headers);
+            var type = SerializationHelper.GetTypeFromHeaders(headers);
 
             type.Should().Be(typeof(TestEventOne));
         }
@@ -40,9 +40,10 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
                 }
             };
 
-            var type = SerializationHelper.GetTypeFromHeaders<object>(headers);
+            var type = SerializationHelper.GetTypeFromHeaders(headers);
 
-            type.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+            type.Should().NotBeNull();
+            type!.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
         }
 
         [Fact]
@@ -56,9 +57,25 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
                 }
             };
 
-            Action act = () => SerializationHelper.GetTypeFromHeaders<object>(headers);
+            Action act = () => SerializationHelper.GetTypeFromHeaders(headers);
 
             act.Should().Throw<TypeLoadException>();
+        }
+
+        [Fact]
+        public void GetTypeFromHeader_NonExistingTypeWithNoThrow_NullReturned()
+        {
+            var headers = new MessageHeaderCollection
+            {
+                {
+                    "x-message-type",
+                    "Baaaad.Event, Silverback.Integration.Tests"
+                }
+            };
+
+            var type = SerializationHelper.GetTypeFromHeaders(headers, false);
+
+            type.Should().BeNull();
         }
 
         [Fact]
@@ -72,19 +89,25 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
                 }
             };
 
-            var type = SerializationHelper.GetTypeFromHeaders<object>(headers);
+            var type = SerializationHelper.GetTypeFromHeaders(headers);
 
             type.Should().Be(typeof(TestEventOne));
         }
 
         [Fact]
-        public void GetTypeFromHeader_NoHeader_DefaultTypeReturned()
+        public void GetTypeFromHeader_NoHeader_ExceptionThrown()
         {
-            var headers = new MessageHeaderCollection();
+            Action act = () => SerializationHelper.GetTypeFromHeaders(new MessageHeaderCollection());
 
-            var type = SerializationHelper.GetTypeFromHeaders<TestEventThree>(headers);
+            act.Should().Throw<MessageSerializerException>();
+        }
 
-            type.Should().Be(typeof(TestEventThree));
+        [Fact]
+        public void GetTypeFromHeader_NoHeaderWithNoThrow_NullReturned()
+        {
+            var type = SerializationHelper.GetTypeFromHeaders(new MessageHeaderCollection(), false);
+
+            type.Should().BeNull();
         }
     }
 }

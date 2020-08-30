@@ -45,7 +45,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             _dbContext.SaveChanges();
 
             _dbContext.Persons.Count().Should().Be(1);
-            _dbContext.Persons.First().Events.Count.Should().Be(2);
+            _dbContext.Persons.First().Events.Should().HaveCount(2);
         }
 
         [Fact]
@@ -61,7 +61,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             await _dbContext.SaveChangesAsync();
 
             _dbContext.Persons.Count().Should().Be(1);
-            _dbContext.Persons.First().Events.Count.Should().Be(2);
+            _dbContext.Persons.First().Events.Should().HaveCount(2);
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             _dbContext.SaveChanges();
 
             _dbContext.Persons.Count().Should().Be(1);
-            _dbContext.Persons.First().Events.Count.Should().Be(3);
+            _dbContext.Persons.First().Events.Should().HaveCount(3);
         }
 
         [Fact]
@@ -115,7 +115,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             await _dbContext.SaveChangesAsync();
 
             _dbContext.Persons.Count().Should().Be(1);
-            _dbContext.Persons.First().Events.Count.Should().Be(3);
+            _dbContext.Persons.First().Events.Should().HaveCount(3);
         }
 
         [Fact]

@@ -1,12 +1,13 @@
 ﻿$repositoryLocation = "."
 [bool]$global:clearCache = $FALSE
+[bool]$global:warnAsError = $TRUE
 $global:buildConfiguration = "Release"
 
 function Check-Location()
 {
     [string]$currentLocation = Get-Location
 
-    if (-Not (Test-Path "./Update.ps1"))
+    if (-Not(Test-Path "./Update.ps1"))
     {
         Write-Host "This script is supposed to run in the /nuget folder of the main Silverback repository!" -ForegroundColor Red
         Exit
@@ -15,16 +16,20 @@ function Check-Location()
 
 function Check-Args([string[]]$argsArray)
 {
-    For ($i=0; $i -le $argsArray.Length; $i++) {
+    For ($i = 0; $i -le $argsArray.Length; $i++) {
         $arg = $argsArray[$i]
 
         if ($arg -eq "--configuration" -Or $arg -eq "-c")
         {
-           $global:buildConfiguration = $argsArray[$i + 1]
+            $global:buildConfiguration = $argsArray[$i + 1]
         }
         elseif ($arg -eq "--clear-cache" -Or $arg -eq "-l")
         {
-           $global:clearCache = $TRUE
+            $global:clearCache = $TRUE
+        }
+        elseif ($arg -eq "--no-warnaserror" -Or $arg -eq "-w")
+        {
+            $global:warnAsError = $FALSE
         }
     }
 }
@@ -36,15 +41,26 @@ function Pack-All()
         Write-Host "Packing $sourceProjectName ($global:buildConfiguration)...`n" -ForegroundColor Yellow
 
         $projectFilePath = "../src/$sourceProjectName/$sourceProjectName.csproj"
-        
+
         Backup-ProjectFile $projectFilePath
         Remove-ProjectReferences $projectFilePath
-        
+
         Write-Host "Building..."
-        dotnet build -c $global:buildConfiguration $projectFilePath --no-incremental --nologo -v q -warnaserror
+
+        if ($global:warnAsError -eq $TRUE)
+        {
+            dotnet build -c $global:buildConfiguration $projectFilePath --no-incremental --nologo -v q -warnaserror
+        }
+        else
+        {
+            dotnet build -c $global:buildConfiguration $projectFilePath --no-incremental --nologo -v q
+        }
+
         Write-Host ""
         Write-Host "Packing..."
+
         dotnet pack -c $global:buildConfiguration $projectFilePath -o . --no-build --nologo -v q
+
         Write-Host ""
 
         Restore-ProjectFile $projectFilePath
@@ -53,7 +69,7 @@ function Pack-All()
     }
 }
 
-function Get-SourceProjectNames() 
+function Get-SourceProjectNames()
 {
     return Get-ChildItem -Path ../src -Directory | Select-Object -ExpandProperty Name
 }
@@ -63,7 +79,7 @@ function Remove-ProjectReferences([string]$projectFilePath)
     Remove-ProjectReference $projectFilePath "Silverback.Core" "Silverback.Core" '$(BaseVersion)'
     Remove-ProjectReference $projectFilePath "Silverback.Integration" "Silverback.Integration" '$(BaseVersion)'
     Remove-ProjectReference $projectFilePath "Silverback.Integration.Kafka" "Silverback.Integration.Kafka" '$(BaseVersion)'
-    
+
     Test-ProjectReferenceReplaced $projectFilePath
 }
 
@@ -79,10 +95,10 @@ function Remove-ProjectReference([string] $projectFilePath, [string]$projectToRe
 function Test-ProjectReferenceReplaced([string]$projectFilePath)
 {
     $result = Select-String -Path $projectFilePath -Pattern ".csproj"
-    
+
     if ($result -ne $null)
     {
-        Restore-ProjectFile $projectFilePath 
+        Restore-ProjectFile $projectFilePath
         throw "The file $projectFilePath still contains one or more references to another .csproj file."
     }
 }
@@ -107,8 +123,8 @@ function Delete-All()
     Write-Host "Deleting everything in target folder..." -ForegroundColor Yellow -NoNewline
 
     Get-ChildItem -exclude Update.ps1 |
-    Remove-Item -Force -Recurse |
-    Out-Null
+            Remove-Item -Force -Recurse |
+            Out-Null
 
     Write-Host "OK" -ForegroundColor Green
 
@@ -118,8 +134,8 @@ function Delete-All()
 function Show-Summary()
 {
     Write-Host "Available packages:`n" -ForegroundColor Yellow
-    
-    $hashtable = @{}
+
+    $hashtable = @{ }
 
     $files = Get-ChildItem $repositoryLocation -Recurse -Filter *.nupkg
 
@@ -139,12 +155,12 @@ function Show-Summary()
         {
             $key = "Silverback.Core.EntityFrameworkCore"
         }
-        
+
         Write-Host "[" -NoNewline
-        Write-Host "$($hashtable[$key].major).$($hashtable[$key].minor).$($hashtable[$key].patch)$($hashtable[$key].suffix)" -NoNewline -ForegroundColor Green
-        Write-Host "] $($key)"
+        Write-Host "$( $hashtable[$key].major ).$( $hashtable[$key].minor ).$( $hashtable[$key].patch )$( $hashtable[$key].suffix )" -NoNewline -ForegroundColor Green
+        Write-Host "] $( $key )"
     }
-    
+
     Write-Separator
 }
 
@@ -199,26 +215,26 @@ function Add-Version([string]$path, [hashtable]$hashtable)
                 {
                     $name += "."
                 }
-    
+
                 $name += $token
             }
         }
     }
 
-    if ($hashtable.ContainsKey($name))
+    if ( $hashtable.ContainsKey($name))
     {
         $previousVersion = $hashtable[$name]
 
-        if ($previousVersion.major -gt $major -Or 
-            ($previousVersion.major -eq $major -And $previousVersion.minor -gt $minor) -Or
-            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -gt $patch) -Or 
-            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -eq $patch -And $suffix -ne "" -And ($previousVersion.suffix -eq "" -Or $previousVersion.suffix -gt $suffix)))
+        if ($previousVersion.major -gt $major -Or
+                ($previousVersion.major -eq $major -And $previousVersion.minor -gt $minor) -Or
+                ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -gt $patch) -Or
+                ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -eq $patch -And $suffix -ne "" -And ($previousVersion.suffix -eq "" -Or $previousVersion.suffix -gt $suffix)))
         {
             return
         }
     }
 
-    $hashtable[$name] = @{ 
+    $hashtable[$name] = @{
         major = $major
         minor = $minor
         patch = $patch
@@ -256,5 +272,5 @@ Show-Summary
 
 $stopwatch.Stop()
 
-Write-Host "Elapsed time $($stopwatch.Elapsed), finished at $((get-date).ToString("T"))"
-Write-Host "" 
+Write-Host "Elapsed time $( $stopwatch.Elapsed ), finished at $((get-date).ToString("T") )"
+Write-Host ""

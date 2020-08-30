@@ -33,7 +33,7 @@ namespace Silverback.Messaging.HealthChecks
         {
             Check.NotNull(context, nameof(context));
 
-            if (await _service.CheckConsumersConnected().ConfigureAwait(false))
+            if (await _service.CheckConsumersConnectedAsync().ConfigureAwait(false))
                 return new HealthCheckResult(HealthStatus.Healthy);
 
             string errorMessage = "One or more consumers are not connected.";

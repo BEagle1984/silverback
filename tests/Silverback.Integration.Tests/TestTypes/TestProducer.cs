@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NSubstitute;
@@ -8,6 +9,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Tests.Types;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
@@ -16,11 +18,13 @@ namespace Silverback.Tests.Integration.TestTypes
         public TestProducer(
             TestBroker broker,
             TestProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors)
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
+            IServiceProvider serviceProvider)
             : base(
                 broker,
                 endpoint,
-                behaviors,
+                behaviorsProvider,
+                serviceProvider,
                 Substitute.For<ISilverbackIntegrationLogger<TestProducer>>())
         {
             ProducedMessages = broker.ProducedMessages;
@@ -34,7 +38,7 @@ namespace Silverback.Tests.Integration.TestTypes
             return null;
         }
 
-        protected override Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
+        protected override Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Produce(envelope.RawMessage, envelope.Headers);
             return Task.FromResult<IOffset?>(null);

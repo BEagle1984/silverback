@@ -6,7 +6,10 @@ using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
-using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Inbound;
+using Silverback.Messaging.Inbound.ExactlyOnce;
+using Silverback.Messaging.Inbound.Transaction;
+using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Broker.Behaviors
@@ -18,6 +21,8 @@ namespace Silverback.Messaging.Broker.Behaviors
     [SuppressMessage("", "CA1034", Justification = Justifications.AllowedForConstants)]
     public static class BrokerBehaviorsSortIndexes
     {
+        // TODO: Review comments and indexes
+
         /// <summary>
         ///     Contains the sort index constants of the producer behaviors added by Silverback.Integration.
         /// </summary>
@@ -60,9 +65,9 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int Encryptor = 950;
 
             /// <summary>
-            ///     The <see cref="ChunkSplitterProducerBehavior" /> sort index.
+            ///     The <see cref="SequencerProducerBehavior" /> sort index.
             /// </summary>
-            public const int ChunkSplitter = 1000;
+            public const int Sequencer = 1000;
 
             /// <summary>
             ///     The <see cref="CustomHeadersMapperProducerBehavior" /> sort index.
@@ -88,37 +93,52 @@ namespace Silverback.Messaging.Broker.Behaviors
             /// <summary>
             ///     The <see cref="CustomHeadersMapperConsumerBehavior" /> sort index.
             /// </summary>
-            public const int CustomHeadersMapper = 150;
+            public const int CustomHeadersMapper = 120;
 
             /// <summary>
-            ///     The <see cref="InboundProcessorConsumerBehavior" /> sort index.
+            ///     The <see cref="TransactionHandlerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int InboundProcessor = 200;
+            public const int TransactionHandler = 250;
 
             /// <summary>
-            ///     The <see cref="ChunkAggregatorConsumerBehavior" /> sort index.
+            ///     The <see cref="RawSequencerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int ChunkAggregator = 300;
+            public const int RawSequencer = 260;
+
+            /// <summary>
+            ///     The <see cref="ExactlyOnceGuardConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int ExactlyOnceGuard = 350;
 
             /// <summary>
             ///     The <see cref="DecryptorConsumerBehavior" /> sort index.
             /// </summary>
-            public const int Decryptor = 400;
+            public const int Decryptor = 550;
 
             /// <summary>
             ///     The <see cref="BinaryFileHandlerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int BinaryFileHandler = 500;
+            public const int BinaryFileHandler = 600;
 
             /// <summary>
             ///     The <see cref="DeserializerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int Deserializer = 600;
+            public const int Deserializer = 700;
 
             /// <summary>
             ///     The <see cref="HeadersReaderConsumerBehavior" /> sort index.
             /// </summary>
-            public const int HeadersReader = 700;
+            public const int HeadersReader = 800;
+
+            /// <summary>
+            ///     The <see cref="SequencerConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int Sequencer = 900;
+
+            /// <summary>
+            ///     The <see cref="PublisherConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int Publisher = 2100;
         }
     }
 }

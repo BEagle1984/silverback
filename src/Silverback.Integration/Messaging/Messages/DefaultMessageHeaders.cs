@@ -37,17 +37,22 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     The message chunk index, used when chunking is enabled.
         /// </summary>
-        public const string ChunkIndex = "x-chunk-id";
+        public const string ChunkIndex = "x-chunk-index";
 
         /// <summary>
         ///     The total number of chunks the message was split into, used when chunking is enabled.
         /// </summary>
-        public const string ChunksCount = "x-chunks-count";
+        public const string ChunksCount = "x-chunk-count";
+
+        /// <summary>
+        ///     A boolean value indicating whether the message is the last one of a chunks sequence.
+        /// </summary>
+        public const string IsLastChunk = "x-chunk-last";
 
         /// <summary>
         ///     The <see cref="IOffset" /> value of the first chunk of the same message.
         /// </summary>
-        public const string FirstChunkOffset = "x-first-chunk-offset";
+        public const string FirstChunkOffset = "x-chunk-first-offset";
 
         /// <summary>
         ///     The unique id assigned to the messages batch, used mostly for tracing, when batch processing is

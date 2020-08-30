@@ -2,46 +2,27 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Tests
 {
     public static class AsyncTestingUtil
     {
-        public static void Wait(Func<bool> breakCondition, int timeoutInMilliseconds = 2000)
+        private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(50);
+
+        public static Task WaitAsync(Func<bool> breakCondition, TimeSpan? timeout = null) =>
+            WaitAsync(() => Task.FromResult(breakCondition()), timeout);
+
+        public static async Task WaitAsync(Func<Task<bool>> breakCondition, TimeSpan? timeout = null)
         {
-            const int sleep = 10;
-            for (int i = 0; i < timeoutInMilliseconds; i += sleep)
-            {
-                if (breakCondition())
-                    break;
+            timeout ??= TimeSpan.FromSeconds(2);
 
-                Thread.Sleep(10);
-            }
-        }
-
-        public static async Task WaitAsync(Func<bool> breakCondition, int timeoutInMilliseconds = 2000)
-        {
-            const int sleep = 100;
-            for (int i = 0; i < timeoutInMilliseconds; i = i + sleep)
-            {
-                if (breakCondition())
-                    break;
-
-                await Task.Delay(sleep);
-            }
-        }
-
-        public static async Task WaitAsync(Func<Task<bool>> breakCondition, int timeoutInMilliseconds = 2000)
-        {
-            const int sleep = 100;
-            for (int i = 0; i < timeoutInMilliseconds; i = i + sleep)
+            for (double i = 0; i < timeout.Value.TotalMilliseconds; i += Interval.TotalMilliseconds)
             {
                 if (await breakCondition())
                     break;
 
-                await Task.Delay(sleep);
+                await Task.Delay(Interval);
             }
         }
     }

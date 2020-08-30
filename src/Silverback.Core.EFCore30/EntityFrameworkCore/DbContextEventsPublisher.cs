@@ -85,7 +85,7 @@ namespace Silverback.EntityFrameworkCore
         {
             Check.NotNull(saveChanges, nameof(saveChanges));
 
-            return ExecuteSaveTransaction(() => Task.FromResult(saveChanges()), false).Result;
+            return ExecuteSaveTransactionAsync(() => Task.FromResult(saveChanges()), false).Result;
         }
 
         /// <summary>
@@ -96,43 +96,43 @@ namespace Silverback.EntityFrameworkCore
         ///     The delegate to the original <c>SaveChangesAsync</c> method.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the number
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the number
         ///     of entities saved to the database.
         /// </returns>
         public Task<int> ExecuteSaveTransactionAsync(Func<Task<int>> saveChangesAsync)
         {
             Check.NotNull(saveChangesAsync, nameof(saveChangesAsync));
 
-            return ExecuteSaveTransaction(saveChangesAsync, true);
+            return ExecuteSaveTransactionAsync(saveChangesAsync, true);
         }
 
-        private async Task<int> ExecuteSaveTransaction(Func<Task<int>> saveChanges, bool executeAsync)
+        private async Task<int> ExecuteSaveTransactionAsync(Func<Task<int>> saveChanges, bool executeAsync)
         {
-            await PublishEvent<TransactionStartedEvent>(executeAsync).ConfigureAwait(false);
+            await PublishEventAsync<TransactionStartedEvent>(executeAsync).ConfigureAwait(false);
 
             var saved = false;
             try
             {
-                await PublishDomainEvents(executeAsync).ConfigureAwait(false);
+                await PublishDomainEventsAsync(executeAsync).ConfigureAwait(false);
 
                 int result = await saveChanges().ConfigureAwait(false);
 
                 saved = true;
 
-                await PublishEvent<TransactionCompletedEvent>(executeAsync).ConfigureAwait(false);
+                await PublishEventAsync<TransactionCompletedEvent>(executeAsync).ConfigureAwait(false);
 
                 return result;
             }
             catch
             {
                 if (!saved)
-                    await PublishEvent<TransactionAbortedEvent>(executeAsync).ConfigureAwait(false);
+                    await PublishEventAsync<TransactionAbortedEvent>(executeAsync).ConfigureAwait(false);
 
                 throw;
             }
         }
 
-        private async Task PublishDomainEvents(bool executeAsync)
+        private async Task PublishDomainEventsAsync(bool executeAsync)
         {
             var events = GetDomainEvents();
 
@@ -160,7 +160,7 @@ namespace Silverback.EntityFrameworkCore
                     return selected ?? Enumerable.Empty<object>();
                 }).ToList();
 
-        private async Task PublishEvent<TEvent>(bool executeAsync)
+        private async Task PublishEventAsync<TEvent>(bool executeAsync)
             where TEvent : new()
         {
             if (executeAsync)

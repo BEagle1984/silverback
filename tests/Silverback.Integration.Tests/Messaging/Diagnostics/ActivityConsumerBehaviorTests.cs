@@ -10,7 +10,8 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.Integration.TestTypes;
+using Silverback.Messaging.Sequences;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics
@@ -23,7 +24,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         }
 
         [Fact]
-        public async Task Handle_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
+        public async Task HandleAsync_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
         {
             var rawEnvelope = new RawInboundEnvelope(
                 new byte[5],
@@ -32,16 +33,21 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                     { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
+                TestConsumerEndpoint.GetDefault().Name,
+                new TestOffset());
 
             var entered = false;
-            await new ActivityConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { rawEnvelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (_, __) =>
+            await new ActivityConsumerBehavior().HandleAsync(
+                new ConsumerPipelineContext(
+                    rawEnvelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
+                    Substitute.For<IServiceProvider>()),
+                _ =>
                 {
                     Activity.Current.Should().NotBeNull();
-                    Activity.Current.ParentId.Should().Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
+                    Activity.Current.ParentId.Should()
+                        .Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
                     Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
 
                     entered = true;
@@ -53,7 +59,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         }
 
         [Fact]
-        public void Handle_WithoutActivityHeaders_NewActivityIsStarted()
+        public void HandleAsync_WithoutActivityHeaders_NewActivityIsStarted()
         {
             var rawEnvelope = new RawInboundEnvelope(
                 new byte[5],
@@ -62,13 +68,17 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                     { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
                 },
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
+                TestConsumerEndpoint.GetDefault().Name,
+                new TestOffset());
 
             var entered = false;
-            new ActivityConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { rawEnvelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (_, __) =>
+            new ActivityConsumerBehavior().HandleAsync(
+                new ConsumerPipelineContext(
+                    rawEnvelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
+                    Substitute.For<IServiceProvider>()),
+                _ =>
                 {
                     Activity.Current.Should().NotBeNull();
                     Activity.Current.Id.Should().NotBeNullOrEmpty();

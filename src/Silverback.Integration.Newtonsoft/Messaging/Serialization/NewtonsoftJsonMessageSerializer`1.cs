@@ -3,8 +3,11 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Serialization
 {
@@ -19,37 +22,41 @@ namespace Silverback.Messaging.Serialization
     {
         private readonly Type _type = typeof(TMessage);
 
-        /// <inheritdoc cref="NewtonsoftJsonMessageSerializer.Serialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public override byte[]? Serialize(
+        /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
+        [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
+        public override ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
             if (message == null)
-                return null;
+                return ValueTaskFactory.FromResult<Stream?>(null);
 
-            if (message is byte[] bytes)
-                return bytes;
+            if (message is Stream inputStream)
+                return ValueTaskFactory.FromResult<Stream?>(inputStream);
+
+            if (message is byte[] inputBytes)
+                return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
 
             var jsonString = JsonConvert.SerializeObject(message, _type, Settings);
 
-            return GetSystemEncoding().GetBytes(jsonString);
+            return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(GetSystemEncoding().GetBytes(jsonString)));
         }
 
-        /// <inheritdoc cref="NewtonsoftJsonMessageSerializer.Deserialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public override (object?, Type) Deserialize(
-            byte[]? message,
+        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
+        public override async ValueTask<(object?, Type)> DeserializeAsync(
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (message == null || message.Length == 0)
+            if (messageStream == null)
                 return (null, _type);
 
-            var json = GetSystemEncoding().GetString(message);
+            var buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
+            var jsonString = GetSystemEncoding().GetString(buffer!);
 
-            var deserializedObject = JsonConvert.DeserializeObject(json, _type, Settings);
+            var deserializedObject = JsonConvert.DeserializeObject(jsonString, _type, Settings);
             return (deserializedObject, _type);
         }
 

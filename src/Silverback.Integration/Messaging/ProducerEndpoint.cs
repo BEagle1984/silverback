@@ -1,7 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Outbound;
+using Silverback.Messaging.Sequences.Chunking;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
@@ -22,15 +23,24 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
+        ///     Gets or sets the strategy to be used to produce the messages. If no strategy is specified, the
+        ///     messages will be sent to the message broker directly.
+        /// </summary>
+        public IProduceStrategy Strategy { get; set; } = Configuration.ProduceStrategy.Default();
+
+        /// <summary>
         ///     Gets or sets the message chunking settings. This option can be used to split large messages into
         ///     smaller chunks.
         /// </summary>
-        public ChunkSettings Chunk { get; set; } = new ChunkSettings();
+        public ChunkSettings? Chunk { get; set; }
 
         /// <inheritdoc cref="Endpoint.Validate" />
         public override void Validate()
         {
             base.Validate();
+
+            if (Strategy == null)
+                throw new EndpointConfigurationException("Strategy cannot be null.");
 
             Chunk?.Validate();
         }

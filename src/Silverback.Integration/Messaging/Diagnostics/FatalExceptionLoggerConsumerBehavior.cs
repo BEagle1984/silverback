@@ -29,19 +29,17 @@ namespace Silverback.Messaging.Diagnostics
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.FatalExceptionLogger;
 
-        /// <inheritdoc cref="IConsumerBehavior.Handle" />
-        public async Task Handle(
+        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+        public async Task HandleAsync(
             ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
             Check.NotNull(next, nameof(next));
 
             try
             {
-                await next(context, serviceProvider).ConfigureAwait(false);
+                await next(context).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -49,7 +47,7 @@ namespace Silverback.Messaging.Diagnostics
                     IntegrationEventIds.ConsumerFatalError,
                     ex,
                     "Fatal error occurred consuming the message. The consumer will be stopped.",
-                    context.Envelopes);
+                    context);
 
                 throw;
             }

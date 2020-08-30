@@ -27,7 +27,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Configuration
                     options =>
                         options.AddRabbit());
 
-            servicesGeneric.Count.Should().Be(servicesSpecific.Count);
+            servicesGeneric.Should().HaveCount(servicesSpecific.Count);
         }
     }
 }

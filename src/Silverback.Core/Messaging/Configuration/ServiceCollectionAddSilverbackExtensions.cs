@@ -38,6 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingleton<IBusOptions>(new BusOptions())
                     .AddScoped<IPublisher, Publisher>()
                     .AddScoped<IStreamPublisher, StreamPublisher>()
+                    .AddScoped<IBehaviorsProvider, BehaviorsProvider>()
                     .AddScoped<SubscribedMethodInvoker>()
                     .AddScoped<SubscribedMethodsLoader>()
                     .AddLogger()
@@ -51,7 +52,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddLogger(this IServiceCollection services) => services
             .AddSingleton(typeof(ISilverbackLogger<>), typeof(SilverbackLogger<>))
-            .AddSingleton<ISilverbackLogger, SilverbackLogger>()
             .AddSingleton<ILogLevelDictionary, LogLevelDictionary>();
 
         // Note: resolvers and handlers will be evaluated in reverse order

@@ -12,8 +12,7 @@ namespace Silverback.Messaging.HealthChecks
     public interface IOutboundQueueHealthCheckService
     {
         /// <summary>
-        ///     Checks the age of the messages stored in the outbound queue (outbox table) and optionally the queue
-        ///     size.
+        ///     Checks the age of the messages stored in the transactional outbox and optionally the queue length.
         /// </summary>
         /// <param name="maxAge">
         ///     The maximum message age, the check will fail when a message exceeds this age (default is 30
@@ -23,9 +22,9 @@ namespace Silverback.Messaging.HealthChecks
         ///     The maximum amount of messages in the queue (default is null, meaning unrestricted).
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a boolean
-        ///     value indicating whether the check is successful.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
+        ///     boolean value indicating whether the check is successful.
         /// </returns>
-        Task<bool> CheckIsHealthy(TimeSpan? maxAge = null, int? maxQueueLength = null);
+        Task<bool> CheckIsHealthyAsync(TimeSpan? maxAge = null, int? maxQueueLength = null);
     }
 }

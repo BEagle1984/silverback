@@ -22,7 +22,14 @@ namespace Silverback.Tests
                     && (message == null || call.Message == message));
 
             if (!containsMatchingCall)
-                throw new InvalidOperationException("No matching call received.");
+            {
+                var receivedCallsDump = string.Join(
+                    ", ",
+                    _receivedCalls.Select(
+                        call =>
+                            $"[{call.LogLevel}] {call.Message}, {call.ExceptionType?.Name} "));
+                throw new InvalidOperationException($"No matching call received. Received calls: {receivedCallsDump}");
+            }
         }
 
         public void Log<TState>(

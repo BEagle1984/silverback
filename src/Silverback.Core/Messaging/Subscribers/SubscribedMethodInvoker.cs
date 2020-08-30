@@ -27,12 +27,15 @@ namespace Silverback.Messaging.Subscribers
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         }
 
-        public async Task<MethodInvocationResult> Invoke(
+        public async Task<MethodInvocationResult> InvokeAsync(
             SubscribedMethod subscribedMethod,
             IReadOnlyCollection<object> messages,
             bool executeAsync)
         {
             messages = ApplyFilters(subscribedMethod.Filters, messages);
+
+            if (messages.Count == 0)
+                return new MethodInvocationResult(messages);
 
             var arguments = GetArgumentValuesArray(subscribedMethod);
 
@@ -41,25 +44,25 @@ namespace Silverback.Messaging.Subscribers
             switch (subscribedMethod.MessageArgumentResolver)
             {
                 case ISingleMessageArgumentResolver singleResolver:
-                    (messages, returnValues) = await InvokeForEachMessage(
+                    (messages, returnValues) = await InvokeForEachMessageAsync(
                         messages,
                         subscribedMethod,
-                        executeAsync,
                         arguments,
-                        singleResolver).ConfigureAwait(false);
+                        singleResolver,
+                        executeAsync).ConfigureAwait(false);
                     break;
                 case IEnumerableMessageArgumentResolver enumerableResolver:
-                    (messages, returnValues) = await InvokeWithCollection(
+                    (messages, returnValues) = await InvokeWithCollectionAsync(
                         messages,
                         subscribedMethod,
-                        executeAsync,
                         arguments,
-                        enumerableResolver).ConfigureAwait(false);
+                        enumerableResolver,
+                        executeAsync).ConfigureAwait(false);
                     break;
                 case IStreamEnumerableMessageArgumentResolver streamEnumerableResolver:
                     (messages, returnValues) = InvokeWithStreamEnumerable(
-                        subscribedMethod,
                         messages,
+                        subscribedMethod,
                         arguments,
                         streamEnumerableResolver);
 
@@ -67,15 +70,15 @@ namespace Silverback.Messaging.Subscribers
                 default:
                     throw new SubscribedMethodInvocationException(
                         $"The message argument resolver ({subscribedMethod.MessageArgumentResolver}) " +
-                        $"must implement either ISingleMessageArgumentResolver, IEnumerableMessageArgumentResolver " +
-                        $"or IStreamEnumerableMessageArgumentResolver.");
+                        "must implement either ISingleMessageArgumentResolver, IEnumerableMessageArgumentResolver " +
+                        "or IStreamEnumerableMessageArgumentResolver.");
             }
 
             if (returnValues == null)
                 return new MethodInvocationResult(messages);
 
             var unhandledReturnValues =
-                await _returnValueHandler.HandleReturnValues(returnValues, executeAsync)
+                await _returnValueHandler.HandleReturnValuesAsync(returnValues, executeAsync)
                     .ConfigureAwait(false);
 
             return new MethodInvocationResult(messages, unhandledReturnValues);
@@ -91,172 +94,6 @@ namespace Silverback.Messaging.Subscribers
             return messages.Where(message => filters.All(filter => filter.MustProcess(message))).ToList();
         }
 
-        private async Task<(IReadOnlyCollection<object> messages, IReadOnlyCollection<object?>? returnValues)>
-            InvokeForEachMessage(
-                IReadOnlyCollection<object> messages,
-                SubscribedMethod subscribedMethod,
-                bool executeAsync,
-                object?[] arguments,
-                ISingleMessageArgumentResolver singleResolver)
-        {
-            messages = FilterMessagesAndUnwrapEnvelopes(messages, subscribedMethod.MessageType).ToArray();
-
-            if (messages.Count == 0)
-                return (messages, null);
-
-            var target = subscribedMethod.ResolveTargetType(_serviceProvider);
-
-            var returnValues = await messages
-                .SelectAsync(
-                    message =>
-                    {
-                        arguments[0] = singleResolver.GetValue(message);
-                        return Invoke(target, subscribedMethod.MethodInfo, arguments, executeAsync);
-                    },
-                    subscribedMethod.IsParallel,
-                    subscribedMethod.MaxDegreeOfParallelism)
-                .ConfigureAwait(false);
-
-            return (messages, returnValues.ToList());
-        }
-
-        private async Task<(IReadOnlyCollection<object> messages, IReadOnlyCollection<object?>? returnValues)>
-            InvokeWithCollection(
-                IReadOnlyCollection<object> messages,
-                SubscribedMethod subscribedMethod,
-                bool executeAsync,
-                object?[] arguments,
-                IEnumerableMessageArgumentResolver enumerableResolver)
-        {
-            messages = FilterMessagesAndUnwrapEnvelopes(messages, subscribedMethod.MessageType).ToArray();
-
-            if (messages.Count == 0)
-                return (messages, null);
-
-            var target = subscribedMethod.ResolveTargetType(_serviceProvider);
-
-            arguments[0] = enumerableResolver.GetValue(messages, subscribedMethod.MessageType);
-
-            var returnValue = await Invoke(target, subscribedMethod.MethodInfo, arguments, executeAsync)
-                .ConfigureAwait(false);
-
-            return (messages, new[] { returnValue });
-        }
-
-        private (IReadOnlyCollection<object> messages, IReadOnlyCollection<object?>? returnValues)
-            InvokeWithStreamEnumerable(
-                SubscribedMethod subscribedMethod,
-                IReadOnlyCollection<object> messages,
-                object?[] arguments,
-                IStreamEnumerableMessageArgumentResolver streamEnumerableResolver)
-        {
-            messages = messages
-                .OfType<IMessageStreamProvider>()
-                .Where(
-                    stream =>
-                    {
-                        if (subscribedMethod.MessageArgumentType.IsInstanceOfType(stream))
-                            return true;
-
-                        // There is no way to properly match the message types in the case of a stream of IEnvelope
-                        // and a subscriber that is not handling a stream of envelopes. The envelopes can contain any
-                        // type of message (object? Message) and will automatically be unwrapped, filtered and properly
-                        // routed by the MessageStreamEnumerable.
-                        if (typeof(IEnvelope).IsAssignableFrom(stream.MessageType) &&
-                            !typeof(IMessageStreamEnumerable<IEnvelope>).IsAssignableFrom(subscribedMethod.MessageType))
-                            return true;
-
-                        if (stream.MessageType.IsAssignableFrom(subscribedMethod.MessageType))
-                            return true;
-
-                        return false;
-                    })
-                .ToArray();
-
-            if (messages.Count == 0)
-                return (messages, null);
-
-            var target = subscribedMethod.ResolveTargetType(_serviceProvider);
-
-            var resultTasks = messages
-                .Select(
-                    message =>
-                    {
-                        arguments[0] = streamEnumerableResolver.GetValue(message, subscribedMethod.MessageType);
-                        return InvokeWithoutBlockingAsync(target, subscribedMethod.MethodInfo, arguments);
-                    });
-
-            return (messages, resultTasks.ToArray());
-        }
-
-        private static IEnumerable<object> FilterMessagesAndUnwrapEnvelopes(
-            IEnumerable<object> messages,
-            Type targetMessageType)
-        {
-            foreach (var message in messages)
-            {
-                if (message is IEnvelope envelope)
-                {
-                    var filtered = FilterAndUnwrapEnvelope(targetMessageType, envelope);
-
-                    if (filtered != null)
-                        yield return filtered;
-                }
-                else
-                {
-                    if (targetMessageType.IsInstanceOfType(message))
-                        yield return message;
-                }
-            }
-        }
-
-        private static object? FilterAndUnwrapEnvelope(Type targetMessageType, IEnvelope envelope)
-        {
-            if (typeof(IEnvelope).IsAssignableFrom(targetMessageType))
-            {
-                if (targetMessageType.IsInstanceOfType(envelope))
-                    return envelope;
-            }
-            else if (envelope.AutoUnwrap && targetMessageType.IsInstanceOfType(envelope.Message))
-            {
-                return envelope.Message!;
-            }
-
-            return null;
-        }
-
-        private static Task<object?> Invoke(
-            object target,
-            MethodInfo methodInfo,
-            object?[] parameters,
-            bool executeAsync) =>
-            executeAsync
-                ? InvokeAsync(target, methodInfo, parameters)
-                : Task.FromResult(InvokeSync(target, methodInfo, parameters));
-
-        private static object? InvokeSync(object target, MethodInfo methodInfo, object?[] parameters) =>
-            methodInfo.ReturnsTask()
-                ? AsyncHelper.RunSynchronously(
-                    () =>
-                    {
-                        var result = (Task)methodInfo.Invoke(target, parameters);
-                        return result.GetReturnValue();
-                    })
-                : methodInfo.Invoke(target, parameters);
-
-        private static Task<object?> InvokeAsync(object target, MethodInfo methodInfo, object?[] parameters) =>
-            methodInfo.ReturnsTask()
-                ? ((Task)methodInfo.Invoke(target, parameters)).GetReturnValue()
-                : Task.FromResult((object?)methodInfo.Invoke(target, parameters));
-
-        private static Task InvokeWithoutBlockingAsync(
-            object target,
-            MethodInfo methodInfo,
-            object?[] parameters) =>
-            methodInfo.ReturnsTask()
-                ? (Task)methodInfo.Invoke(target, parameters)
-                : Task.Run(() => (object?)methodInfo.Invoke(target, parameters));
-
         private object?[] GetArgumentValuesArray(SubscribedMethod method)
         {
             var values = new object?[method.Parameters.Count];
@@ -270,5 +107,168 @@ namespace Silverback.Messaging.Subscribers
 
             return values;
         }
+
+        private async Task<(IReadOnlyCollection<object> messages, IReadOnlyCollection<object?>? returnValues)>
+            InvokeForEachMessageAsync(
+                IReadOnlyCollection<object> messages,
+                SubscribedMethod subscribedMethod,
+                object?[] arguments,
+                ISingleMessageArgumentResolver singleResolver,
+                bool executeAsync)
+        {
+            messages = FilterMessagesAndUnwrapEnvelopes(messages, subscribedMethod).ToList();
+
+            if (messages.Count == 0)
+                return (messages, null);
+
+            var target = subscribedMethod.ResolveTargetType(_serviceProvider);
+
+            var returnValues = await messages
+                .SelectAsync(
+                    message =>
+                    {
+                        arguments[0] = singleResolver.GetValue(message);
+                        return InvokeAsync(target, subscribedMethod.MethodInfo, arguments, executeAsync);
+                    },
+                    subscribedMethod.IsParallel,
+                    subscribedMethod.MaxDegreeOfParallelism)
+                .ConfigureAwait(false);
+
+            return (messages, returnValues.ToList());
+        }
+
+        private async Task<(IReadOnlyCollection<object> messages, IReadOnlyCollection<object?>? returnValues)>
+            InvokeWithCollectionAsync(
+                IReadOnlyCollection<object> messages,
+                SubscribedMethod subscribedMethod,
+                object?[] arguments,
+                IEnumerableMessageArgumentResolver enumerableResolver,
+                bool executeAsync)
+        {
+            if (messages.Count == 1 && messages.AsReadOnlyList()[0] is IMessageStreamProvider streamProvider &&
+                streamProvider.AllowSubscribeAsEnumerable &&
+                enumerableResolver is IStreamEnumerableMessageArgumentResolver resolverFromStreamProvider)
+            {
+                return InvokeWithStreamEnumerable(
+                    messages,
+                    subscribedMethod,
+                    arguments,
+                    resolverFromStreamProvider);
+            }
+
+            messages = FilterMessagesAndUnwrapEnvelopes(messages, subscribedMethod).ToList();
+
+            if (messages.Count == 0)
+                return (messages, null);
+
+            var target = subscribedMethod.ResolveTargetType(_serviceProvider);
+
+            arguments[0] = enumerableResolver.GetValue(messages, subscribedMethod.MessageType);
+
+            var returnValue = await InvokeAsync(target, subscribedMethod.MethodInfo, arguments, executeAsync)
+                .ConfigureAwait(false);
+
+            return (messages, new[] { returnValue });
+        }
+
+        private (IReadOnlyCollection<object> messages, IReadOnlyCollection<object?>? returnValues)
+            InvokeWithStreamEnumerable(
+                IReadOnlyCollection<object> messages,
+                SubscribedMethod subscribedMethod,
+                object?[] arguments,
+                IStreamEnumerableMessageArgumentResolver streamEnumerableResolver)
+        {
+            var streamProviders = FilterMessageStreamEnumerableMessages(messages, subscribedMethod).ToArray();
+
+            if (streamProviders.Length == 0)
+                return (streamProviders, null);
+
+            var target = subscribedMethod.ResolveTargetType(_serviceProvider);
+
+            var resultTasks = streamProviders
+                .Select(
+                    streamProvider =>
+                    {
+                        arguments[0] = streamEnumerableResolver.GetValue(streamProvider, subscribedMethod.MessageType);
+                        return InvokeWithoutBlockingAsync(target, subscribedMethod.MethodInfo, arguments);
+                    });
+
+            return (messages, resultTasks.ToArray());
+        }
+
+        private static IEnumerable<object> FilterMessagesAndUnwrapEnvelopes(
+            IEnumerable<object> messages,
+            SubscribedMethod subscribedMethod)
+        {
+            foreach (var message in messages)
+            {
+                if (message is IEnvelope envelope && envelope.AutoUnwrap &&
+                    subscribedMethod.MessageType.IsInstanceOfType(envelope.Message))
+                {
+                    yield return envelope.Message!;
+                }
+                else if (subscribedMethod.MessageType.IsInstanceOfType(message))
+                {
+                    yield return message;
+                }
+            }
+        }
+
+        private static IEnumerable<IMessageStreamProvider> FilterMessageStreamEnumerableMessages(
+            IEnumerable<object> messages,
+            SubscribedMethod subscribedMethod)
+        {
+            foreach (var message in messages)
+            {
+                if (message is IMessageStreamProvider streamProvider)
+                {
+                    if (subscribedMethod.MessageArgumentType.IsInstanceOfType(message))
+                        yield return streamProvider;
+
+                    // There is no way to properly match the message types in the case of a stream of IEnvelope
+                    // and a subscriber that is not handling a stream of envelopes. The envelopes can contain any
+                    // type of message (object? Message) and will automatically be unwrapped, filtered and properly
+                    // routed by the MessageStreamEnumerable.
+                    if (typeof(IEnvelope).IsAssignableFrom(streamProvider.MessageType) &&
+                        !typeof(IEnvelope).IsAssignableFrom(subscribedMethod.MessageType))
+                        yield return streamProvider;
+
+                    if (streamProvider.MessageType.IsAssignableFrom(subscribedMethod.MessageType))
+                        yield return streamProvider;
+                }
+            }
+        }
+
+        private static Task<object?> InvokeAsync(
+            object target,
+            MethodInfo methodInfo,
+            object?[] parameters,
+            bool executeAsync) =>
+            executeAsync
+                ? InvokeAsync(target, methodInfo, parameters)
+                : Task.FromResult(InvokeSync(target, methodInfo, parameters));
+
+        private static Task<object?> InvokeAsync(object target, MethodInfo methodInfo, object?[] parameters) =>
+            methodInfo.ReturnsTask()
+                ? ((Task)methodInfo.Invoke(target, parameters)).GetReturnValueAsync()
+                : Task.FromResult((object?)methodInfo.Invoke(target, parameters));
+
+        private static object? InvokeSync(object target, MethodInfo methodInfo, object?[] parameters) =>
+            methodInfo.ReturnsTask()
+                ? AsyncHelper.RunSynchronously(
+                    () =>
+                    {
+                        var result = (Task)methodInfo.Invoke(target, parameters);
+                        return result.GetReturnValueAsync();
+                    })
+                : methodInfo.Invoke(target, parameters);
+
+        private static Task InvokeWithoutBlockingAsync(
+            object target,
+            MethodInfo methodInfo,
+            object?[] parameters) =>
+            methodInfo.ReturnsTask()
+                ? (Task)methodInfo.Invoke(target, parameters)
+                : Task.Run(() => (object?)methodInfo.Invoke(target, parameters));
     }
 }

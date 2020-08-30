@@ -8,9 +8,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
     /// <summary>
-    ///     Resolves the parameters declared as <see cref="IMessageStreamEnumerable{TMessage}" /> where <c>T</c>
-    ///     is compatible with
-    ///     the type of the message being published.
+    ///     Resolves the parameters declared as <see cref="IMessageStreamEnumerable{TMessage}" /> where
+    ///     <c>TMessage</c> is compatible with the type of the message being published.
     /// </summary>
     public class StreamEnumerableMessageArgumentResolver : IStreamEnumerableMessageArgumentResolver
     {
@@ -32,11 +31,11 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         }
 
         /// <inheritdoc cref="IStreamEnumerableMessageArgumentResolver.GetValue" />
-        public object GetValue(object message, Type targetMessageType)
+        public object GetValue(IMessageStreamProvider streamProvider, Type targetMessageType)
         {
-            Check.NotNull(message, nameof(message));
+            Check.NotNull(streamProvider, nameof(streamProvider));
 
-            return ((IMessageStreamProvider)message).CreateStream(targetMessageType);
+            return streamProvider.CreateStream(targetMessageType);
         }
     }
 }

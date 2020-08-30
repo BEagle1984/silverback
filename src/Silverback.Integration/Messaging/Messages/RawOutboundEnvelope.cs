@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
@@ -19,17 +19,19 @@ namespace Silverback.Messaging.Messages
         {
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public RawOutboundEnvelope(
-            byte[]? rawMessage,
+            Stream? rawMessage,
             IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint,
             IOffset? offset = null,
             IDictionary<string, string>? additionalLogData = null)
-            : base(rawMessage, headers, endpoint, offset, additionalLogData)
+            : base(rawMessage, headers, endpoint, additionalLogData)
         {
+            Offset = offset;
         }
 
         public new IProducerEndpoint Endpoint => (IProducerEndpoint)base.Endpoint;
+
+        public IOffset? Offset { get; internal set; }
     }
 }

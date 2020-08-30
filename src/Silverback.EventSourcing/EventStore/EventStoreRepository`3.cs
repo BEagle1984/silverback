@@ -55,8 +55,8 @@ namespace Silverback.EventStore
         ///     The domain entity to be stored.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the event
-        ///     store entity that was persisted.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     event store entity that was persisted.
         /// </returns>
         public async Task<TEventStoreEntity> StoreAsync(TDomainEntity domainEntity)
         {
@@ -92,8 +92,8 @@ namespace Silverback.EventStore
         ///     The domain entity to be removed.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the event
-        ///     store entity that was removed.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     event store entity that was removed.
         /// </returns>
         public async Task<TEventStoreEntity> RemoveAsync(TDomainEntity domainEntity)
         {
@@ -133,8 +133,8 @@ namespace Silverback.EventStore
         ///     Specifies whether the entity must be created when not found.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the event
-        ///     store entity.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     event store entity.
         /// </returns>
         protected virtual async Task<TEventStoreEntity> GetEventStoreEntityAsync(
             TDomainEntity domainEntity,
@@ -175,8 +175,8 @@ namespace Silverback.EventStore
         ///     The domain entity.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the event
-        ///     store entity.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     event store entity.
         /// </returns>
         protected abstract Task<TEventStoreEntity?> GetEventStoreEntityAsync(TDomainEntity domainEntity);
 

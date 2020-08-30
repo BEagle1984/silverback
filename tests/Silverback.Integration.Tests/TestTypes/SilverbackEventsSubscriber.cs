@@ -10,9 +10,9 @@ namespace Silverback.Tests.Integration.TestTypes
     {
         public IList<ISilverbackEvent> ReceivedEvents { get; } = new List<ISilverbackEvent>();
 
-        public void OnMessageReceived(object message)
+        public void OnMessageReceived(ISilverbackEvent message)
         {
-            ReceivedEvents.Add((ISilverbackEvent)message);
+            ReceivedEvents.Add(message);
         }
     }
 }

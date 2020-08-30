@@ -30,7 +30,7 @@ namespace Silverback.Tests.Core.Util
 
             var type = TypesCache.GetType(typeName);
 
-            type.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+            type!.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
         }
 
         [Fact]
@@ -41,6 +41,16 @@ namespace Silverback.Tests.Core.Util
             Action act = () => TypesCache.GetType(typeName);
 
             act.Should().Throw<TypeLoadException>();
+        }
+
+        [Fact]
+        public void GetType_NonExistingTypeWithNoThrow_NullReturned()
+        {
+            var typeName = "Baaaad.Event, Silverback.Core.Tests";
+
+            var type = TypesCache.GetType(typeName, false);
+
+            type.Should().BeNull();
         }
 
         [Fact]

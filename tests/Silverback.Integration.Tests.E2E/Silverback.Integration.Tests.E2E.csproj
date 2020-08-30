@@ -13,6 +13,7 @@
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.7" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.7" />
@@ -27,11 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Silverback.Core.Rx\Silverback.Core.Rx.csproj" />
     <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Core.Model\Silverback.Core.Model.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Core.EFCore30\Silverback.Core.EFCore30.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Integration.InMemory\Silverback.Integration.InMemory.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,5 +41,9 @@
       <Link>xunit.runner.json</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Old" />
   </ItemGroup>
 </Project>

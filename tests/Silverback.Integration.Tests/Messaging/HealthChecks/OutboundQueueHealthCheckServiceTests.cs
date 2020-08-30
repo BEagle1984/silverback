@@ -5,8 +5,8 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.HealthChecks;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.HealthChecks
@@ -16,11 +16,11 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         [Fact]
         public async Task CheckIsHealthy_WithoutMaxLength_LengthIsNotChecked()
         {
-            var queue = Substitute.For<IOutboundQueueReader>();
-            queue.GetLength().Returns(100);
+            var queue = Substitute.For<IOutboxReader>();
+            queue.GetLengthAsync().Returns(100);
             var service = new OutboundQueueHealthCheckService(queue);
 
-            var result = await service.CheckIsHealthy();
+            var result = await service.CheckIsHealthyAsync();
 
             result.Should().BeTrue();
         }
@@ -30,11 +30,11 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         [InlineData(101, false)]
         public async Task CheckIsHealthy_WithMaxLength_LengthIsNotChecked(int currentLength, bool expected)
         {
-            var queue = Substitute.For<IOutboundQueueReader>();
-            queue.GetLength().Returns(currentLength);
+            var queue = Substitute.For<IOutboxReader>();
+            queue.GetLengthAsync().Returns(currentLength);
             var service = new OutboundQueueHealthCheckService(queue);
 
-            var result = await service.CheckIsHealthy(maxQueueLength: 100);
+            var result = await service.CheckIsHealthyAsync(maxQueueLength: 100);
 
             result.Should().Be(expected);
         }
@@ -44,12 +44,12 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         [InlineData(31, false)]
         public async Task CheckIsHealthy_WithDefaultMaxAge_MaxAgeIsChecked(int currentMaxAgeInSeconds, bool expected)
         {
-            var queue = Substitute.For<IOutboundQueueReader>();
-            queue.GetLength().Returns(10);
-            queue.GetMaxAge().Returns(TimeSpan.FromSeconds(currentMaxAgeInSeconds));
+            var queue = Substitute.For<IOutboxReader>();
+            queue.GetLengthAsync().Returns(10);
+            queue.GetMaxAgeAsync().Returns(TimeSpan.FromSeconds(currentMaxAgeInSeconds));
             var service = new OutboundQueueHealthCheckService(queue);
 
-            var result = await service.CheckIsHealthy();
+            var result = await service.CheckIsHealthyAsync();
 
             result.Should().Be(expected);
         }
@@ -59,12 +59,12 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         [InlineData(121, false)]
         public async Task CheckIsHealthy_WithCustomMaxAge_MaxAgeIsChecked(int currentMaxAgeInSeconds, bool expected)
         {
-            var queue = Substitute.For<IOutboundQueueReader>();
-            queue.GetLength().Returns(10);
-            queue.GetMaxAge().Returns(TimeSpan.FromSeconds(currentMaxAgeInSeconds));
+            var queue = Substitute.For<IOutboxReader>();
+            queue.GetLengthAsync().Returns(10);
+            queue.GetMaxAgeAsync().Returns(TimeSpan.FromSeconds(currentMaxAgeInSeconds));
             var service = new OutboundQueueHealthCheckService(queue);
 
-            var result = await service.CheckIsHealthy(TimeSpan.FromMinutes(2));
+            var result = await service.CheckIsHealthyAsync(TimeSpan.FromMinutes(2));
 
             result.Should().Be(expected);
         }

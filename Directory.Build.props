@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup Label="Package information">
-    <BaseVersionSuffix>-beta.7</BaseVersionSuffix>
+    <BaseVersionSuffix>-beta.streaming.4</BaseVersionSuffix>
     <BaseVersion>3.0.0$(BaseVersionSuffix)</BaseVersion>
     <DatabasePackagesRevision>1</DatabasePackagesRevision>
     <DatabasePackagesVersionSuffix>-ignored</DatabasePackagesVersionSuffix>
@@ -9,7 +9,7 @@
   <PropertyGroup Label="Build">
     <NetStandardTargetVersion>netstandard2.1</NetStandardTargetVersion>
     <NetCoreTargetVersion>netcoreapp3.1</NetCoreTargetVersion>
-    <LangVersion>8</LangVersion>
+    <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Nullable>enable</Nullable>
   </PropertyGroup>

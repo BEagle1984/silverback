@@ -6,7 +6,6 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Core.TestTypes.Messages.Base
 {
-    [SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
     [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used by the Publisher")]
     public interface IQuery<out TResult> : IMessage
     {

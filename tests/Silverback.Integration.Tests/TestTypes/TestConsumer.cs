@@ -4,12 +4,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.Types;
+using Silverback.Util;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
@@ -18,11 +22,14 @@ namespace Silverback.Tests.Integration.TestTypes
         public TestConsumer(
             TestBroker broker,
             TestConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
-            IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<TestConsumer> logger)
-            : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            IServiceProvider serviceProvider)
+            : base(
+                broker,
+                endpoint,
+                behaviorsProvider,
+                serviceProvider,
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TestConsumer>>())
         {
         }
 
@@ -53,7 +60,8 @@ namespace Silverback.Tests.Integration.TestTypes
 
             headers ??= new MessageHeaderCollection();
 
-            var buffer = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
+            var stream = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
+            var buffer = await stream.ReadAllAsync();
 
             await TestHandleMessage(buffer, headers, offset);
         }
@@ -67,10 +75,23 @@ namespace Silverback.Tests.Integration.TestTypes
             if (!IsConnected)
                 throw new InvalidOperationException("The consumer is not ready.");
 
-            await HandleMessage(rawMessage, headers, "test-topic", offset, null);
+            await HandleMessageAsync(
+                rawMessage,
+                headers,
+                "test-topic",
+                offset ?? new TestOffset(),
+                null);
         }
 
         protected override void ConnectCore()
+        {
+        }
+
+        protected override void StopConsuming()
+        {
+        }
+
+        protected override void WaitUntilConsumingStopped(CancellationToken cancellationToken)
         {
         }
 
@@ -78,13 +99,13 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        protected override Task CommitCore(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> offsets)
         {
             AcknowledgeCount += offsets.Count;
             return Task.CompletedTask;
         }
 
-        protected override Task RollbackCore(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> offsets)
         {
             // Nothing to do
             return Task.CompletedTask;

@@ -26,7 +26,6 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = services.BuildServiceProvider();
 
-            serviceProvider.GetRequiredService<ISilverbackLogger>().Should().NotBeNull();
             serviceProvider.GetRequiredService<ISilverbackLogger<object>>().Should().NotBeNull();
         }
     }

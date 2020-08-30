@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Silverback.Messaging.Publishing
@@ -31,6 +32,31 @@ namespace Silverback.Messaging.Publishing
         public UnhandledMessageException(string message)
             : base(message)
         {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="UnhandledMessageException" /> class with the
+        ///     specified message.
+        /// </summary>
+        /// <param name="unhandledMessage">
+        ///     The message that wasn't handled.
+        /// </param>
+        public UnhandledMessageException(object unhandledMessage)
+            : this(new[] { unhandledMessage })
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="UnhandledMessageException" /> class with the
+        ///     specified message.
+        /// </summary>
+        /// <param name="unhandledMessages">
+        ///     The messages that weren't handled.
+        /// </param>
+        public UnhandledMessageException(IReadOnlyCollection<object> unhandledMessages)
+            : base(GetErrorMessage(unhandledMessages))
+        {
+            UnhandledMessages = unhandledMessages;
         }
 
         /// <summary>
@@ -85,5 +111,11 @@ namespace Silverback.Messaging.Publishing
         ///     Gets the messages that weren't handled.
         /// </summary>
         public IReadOnlyCollection<object>? UnhandledMessages { get; }
+
+        private static string GetErrorMessage(IReadOnlyCollection<object> unhandledMessages) =>
+            unhandledMessages.Count == 1
+                ? $"No subscriber could be found to handle the message of type {unhandledMessages.First().GetType().FullName}."
+                : "No subscriber could be found to handle some of the published messages " +
+                  $"({string.Join(", ", unhandledMessages.Select(message => message.GetType().FullName).Distinct())}).";
     }
 }

@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
             _returnValueHandlers = returnValueHandlers.Reverse().ToList();
         }
 
-        public async Task<IReadOnlyCollection<object>> HandleReturnValues(
+        public async Task<IReadOnlyCollection<object>> HandleReturnValuesAsync(
             IReadOnlyCollection<object?> returnValues,
             bool executeAsync)
         {

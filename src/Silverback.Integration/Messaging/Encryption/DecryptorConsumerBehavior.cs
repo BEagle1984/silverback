@@ -1,8 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -15,51 +13,40 @@ namespace Silverback.Messaging.Encryption
     /// </summary>
     public class DecryptorConsumerBehavior : IConsumerBehavior
     {
-        private readonly IMessageTransformerFactory _factory;
+        private readonly ISilverbackCryptoStreamFactory _streamFactory;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DecryptorConsumerBehavior" /> class.
         /// </summary>
-        /// <param name="factory">
-        ///     The <see cref="IMessageTransformerFactory" />.
+        /// <param name="streamFactory">
+        ///     The <see cref="ISilverbackCryptoStreamFactory" />.
         /// </param>
-        public DecryptorConsumerBehavior(IMessageTransformerFactory factory)
+        public DecryptorConsumerBehavior(ISilverbackCryptoStreamFactory streamFactory)
         {
-            _factory = factory;
+            _streamFactory = streamFactory;
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Decryptor;
 
-        /// <inheritdoc cref="IConsumerBehavior.Handle" />
-        public async Task Handle(
+        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+        public async Task HandleAsync(
             ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
             Check.NotNull(next, nameof(next));
 
-            context.Envelopes = (await context.Envelopes.SelectAsync(Decrypt).ConfigureAwait(false)).ToList();
-
-            await next(context, serviceProvider).ConfigureAwait(false);
-        }
-
-        private async Task<IRawInboundEnvelope> Decrypt(IRawInboundEnvelope envelope)
-        {
-            if (envelope.Endpoint.Encryption != null &&
-                !envelope.Headers.Contains(DefaultMessageHeaders.Decrypted))
+            if (context.Envelope.Endpoint.Encryption != null &&
+                !context.Envelope.Headers.Contains(DefaultMessageHeaders.Decrypted) &&
+                context.Envelope.RawMessage != null)
             {
-                envelope.RawMessage = await _factory
-                    .GetDecryptor(envelope.Endpoint.Encryption)
-                    .TransformAsync(envelope.RawMessage, envelope.Headers)
-                    .ConfigureAwait(false);
-
-                envelope.Headers.Add(DefaultMessageHeaders.Decrypted, true);
+                context.Envelope.RawMessage = _streamFactory.GetDecryptStream(
+                    context.Envelope.RawMessage,
+                    context.Envelope.Endpoint.Encryption);
             }
 
-            return envelope;
+            await next(context).ConfigureAwait(false);
         }
     }
 }

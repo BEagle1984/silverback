@@ -15,12 +15,13 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer;
 
-        /// <inheritdoc cref="IProducerBehavior.Handle" />
-        public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
+            // TODO: Could avoid? Or make it optional (for interop with legacy versions)?
             MessageIdProvider.EnsureMessageIdIsInitialized(context.Envelope.Headers);
 
             await next(context).ConfigureAwait(false);

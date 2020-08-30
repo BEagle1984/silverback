@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Core.TestTypes.Messages;
+using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Tests.Core.TestTypes.Subscribers;
 using Xunit;
 
@@ -28,6 +29,20 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             messages.OfType<TestEnvelope>().Count().Should().Be(1);
             messages.OfType<TestCommandOne>().Count().Should().Be(1);
+        }
+
+        // This test simulates the case where the IRawInboundEnvelope isn't really an IEnvelope
+        [Fact]
+        public void Publish_Envelope_CastedEnvelopeReceived()
+        {
+            var messages = new List<object>();
+            var publisher = PublisherTestsHelper.GetPublisher(
+                builder => builder
+                    .AddDelegateSubscriber((ITestRawEnvelope envelope) => messages.Add(envelope)));
+
+            publisher.Publish(new TestEnvelope(new TestCommandOne()));
+
+            messages.OfType<TestEnvelope>().Count().Should().Be(1);
         }
 
         [Fact]
@@ -51,7 +66,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var messages = new List<object>();
             var publisher = PublisherTestsHelper.GetPublisher(
                 builder => builder
-                    .AddDelegateSubscriber((object message) => messages.Add(message))
+                    .AddDelegateSubscriber((ICommand message) => messages.Add(message))
                     .AddDelegateSubscriber((IEnvelope envelope) => messages.Add(envelope)));
 
             publisher.Publish(new TestEnvelope(new TestCommandOne(), false));
@@ -66,7 +81,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var messages = new List<object>();
             var publisher = PublisherTestsHelper.GetPublisher(
                 builder => builder
-                    .AddDelegateSubscriber((object message) => messages.Add(message))
+                    .AddDelegateSubscriber((ICommand message) => messages.Add(message))
                     .AddDelegateSubscriber((IEnvelope envelope) => messages.Add(envelope)));
 
             await publisher.PublishAsync(new TestEnvelope(new TestCommandOne(), false));

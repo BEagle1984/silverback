@@ -38,12 +38,12 @@ namespace Silverback.Diagnostics
         string[] GetInboundMessageArguments(IEndpoint? endpoint);
 
         /// <summary>
-        ///     Gets the message template to be appended to the logs related to a batch of messages consumed from the
-        ///     specified endpoint.
+        ///     Gets the message template to be appended to the logs related to a message consumed from the specified
+        ///     endpoint, when the message is also part of a sequence.
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <returns>The message template.</returns>
-        string GetInboundBatchLogTemplate(IEndpoint? endpoint);
+        string GetInboundSequenceLogTemplate(IEndpoint? endpoint);
 
         /// <summary>
         ///     Gets the message template to be appended to the logs related to a message produced to the specified
@@ -59,13 +59,5 @@ namespace Silverback.Diagnostics
         /// <param name="endpoint">The endpoint.</param>
         /// <returns>The expected arguments.</returns>
         string[] GetOutboundMessageArguments(IEndpoint? endpoint);
-
-        /// <summary>
-        ///     Gets the message template to be appended to the logs related to a batch of messages produced to the
-        ///     specified endpoint.
-        /// </summary>
-        /// <param name="endpoint">The endpoint.</param>
-        /// <returns>The message template.</returns>
-        string GetOutboundBatchLogTemplate(IEndpoint? endpoint);
     }
 }

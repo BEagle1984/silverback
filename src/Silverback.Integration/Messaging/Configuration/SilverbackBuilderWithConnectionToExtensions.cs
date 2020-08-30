@@ -5,6 +5,7 @@ using System;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
@@ -34,15 +35,30 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
-            silverbackBuilder.Services
-                .AddSingleton<IBrokerCollection, BrokerCollection>()
-                .AddSingleton<ILogTemplates>(new LogTemplates())
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(SilverbackIntegrationLogger<>))
-                .AddSingleton<ISilverbackIntegrationLogger, SilverbackIntegrationLogger>();
+            // Outbound Routing
+            silverbackBuilder
+                .AddScopedBehavior<OutboundRouterBehavior>()
+                .AddScopedBehavior<ProduceBehavior>()
+                .Services
+                .AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
 
-            var options = new BrokerOptionsBuilder(silverbackBuilder);
-            optionsAction?.Invoke(options);
-            options.CompleteWithDefaults();
+            // Broker Collection
+            silverbackBuilder.Services
+                .AddSingleton<IBrokerCollection, BrokerCollection>();
+
+            // Logging
+            silverbackBuilder.Services
+                .AddSingleton<ILogTemplates>(new LogTemplates())
+                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(SilverbackIntegrationLogger<>));
+
+            // Transactional Lists
+            silverbackBuilder.Services
+                .AddSingleton(typeof(TransactionalListSharedItems<>))
+                .AddSingleton(typeof(TransactionalDictionarySharedItems<,>));
+
+            var optionsBuilder = new BrokerOptionsBuilder(silverbackBuilder);
+            optionsAction?.Invoke(optionsBuilder);
+            optionsBuilder.CompleteWithDefaults();
 
             return silverbackBuilder;
         }
