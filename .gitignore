@@ -361,3 +361,6 @@ healthchecksdb
 
 *.csproj.original
 *.csproj.modified
+
+# Visual Studio Code
+/.vscode/
