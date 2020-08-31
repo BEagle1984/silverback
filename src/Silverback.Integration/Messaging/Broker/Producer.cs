@@ -38,7 +38,8 @@ namespace Silverback.Messaging.Broker
             IReadOnlyList<IProducerBehavior>? behaviors,
             ISilverbackIntegrationLogger<Producer> logger)
         {
-            Behaviors = behaviors ?? Array.Empty<IProducerBehavior>();
+            // Reverse the behaviors order since they will be put in a Stack<T>
+            Behaviors = behaviors?.SortBySortIndex().Reverse().ToArray() ?? Array.Empty<IProducerBehavior>();
             _logger = Check.NotNull(logger, nameof(logger));
 
             Broker = Check.NotNull(broker, nameof(broker));
@@ -68,7 +69,7 @@ namespace Silverback.Messaging.Broker
             AsyncHelper.RunSynchronously(
                 () =>
                     ExecutePipeline(
-                        disableBehaviors ? Array.Empty<IProducerBehavior>() : Behaviors,
+                        disableBehaviors ? null : new Stack<IProducerBehavior>(Behaviors),
                         new ProducerPipelineContext(envelope, this),
                         finalContext =>
                         {
@@ -88,7 +89,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,bool)" />
         public async Task ProduceAsync(IOutboundEnvelope envelope, bool disableBehaviors = false) =>
             await ExecutePipeline(
-                disableBehaviors ? Array.Empty<IProducerBehavior>() : Behaviors,
+                disableBehaviors ? null : new Stack<IProducerBehavior>(Behaviors),
                 new ProducerPipelineContext(envelope, this),
                 async finalContext =>
                 {
@@ -120,22 +121,23 @@ namespace Silverback.Messaging.Broker
         protected abstract Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope);
 
         private async Task ExecutePipeline(
-            IReadOnlyList<IProducerBehavior> behaviors,
+            Stack<IProducerBehavior>? behaviors,
             ProducerPipelineContext context,
             ProducerBehaviorHandler finalAction)
         {
-            if (behaviors.Count > 0)
+            if (behaviors != null && behaviors.TryPop(out var nextBehavior))
             {
-                await behaviors[0]
+                await nextBehavior
                     .Handle(
                         context,
                         nextContext =>
-                            ExecutePipeline(behaviors.Skip(1).ToList(), nextContext, finalAction))
+                            ExecutePipeline(behaviors, nextContext, finalAction))
                     .ConfigureAwait(false);
             }
             else
             {
                 await finalAction(context).ConfigureAwait(false);
+
                 _logger.LogInformationWithMessageInfo(
                     IntegrationEventIds.MessageProduced,
                     "Message produced.",

@@ -19,10 +19,6 @@ namespace Silverback.Messaging.ErrorHandling
         /// <param name="context">
         ///     The context that is passed along the behaviors pipeline.
         /// </param>
-        /// <param name="errorPolicy">
-        ///     The error policy to be applied. If no policy is provided the consumer will be stopped whenever an
-        ///     exception is thrown by the message handler delegete.
-        /// </param>
         /// <param name="messagesHandler">
         ///     The delegate to be invoked to process the message.
         /// </param>
@@ -39,7 +35,6 @@ namespace Silverback.Messaging.ErrorHandling
         /// </returns>
         Task TryProcessAsync(
             ConsumerPipelineContext context,
-            IErrorPolicy? errorPolicy,
             ConsumerBehaviorHandler messagesHandler,
             ConsumerBehaviorHandler commitHandler,
             ConsumerBehaviorErrorHandler rollbackHandler);

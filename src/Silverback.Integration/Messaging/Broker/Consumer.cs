@@ -4,11 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -17,13 +17,15 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IConsumer" />
     public abstract class Consumer : IConsumer, IDisposable
     {
-        private readonly MessagesReceivedAsyncCallback _receivedCallback;
+        private readonly IBrokerBehaviorsProvider _behaviorsProvider;
 
         private readonly IServiceProvider _serviceProvider;
 
         private readonly ISilverbackIntegrationLogger<Consumer> _logger;
 
         private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
+
+        private readonly IErrorPolicy? _errorPolicy;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -34,11 +36,12 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="receivedCallback">
-        ///     The delegate to be invoked when a message is received.
+        /// <param name="errorPolicy">
+        ///     The <see cref="IErrorPolicy" /> to be applied when an exception is thrown processing the consumed
+        ///     message.
         /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
@@ -49,20 +52,16 @@ namespace Silverback.Messaging.Broker
         protected Consumer(
             IBroker broker,
             IConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback receivedCallback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
+            IErrorPolicy? errorPolicy,
+            IBrokerBehaviorsProvider behaviorsProvider,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Consumer> logger)
         {
-            Check.NotNull(broker, nameof(broker));
-            Check.NotNull(endpoint, nameof(endpoint));
-
-            Behaviors = behaviors ?? Array.Empty<IConsumerBehavior>();
-
+            _errorPolicy = errorPolicy;
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
 
-            _receivedCallback = Check.NotNull(receivedCallback, nameof(receivedCallback));
+            _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _logger = Check.NotNull(logger, nameof(logger));
 
@@ -74,9 +73,6 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IConsumer.Endpoint" />
         public IConsumerEndpoint Endpoint { get; }
-
-        /// <inheritdoc cref="IConsumer.Behaviors" />
-        public IReadOnlyList<IConsumerBehavior> Behaviors { get; }
 
         /// <inheritdoc cref="IConsumer.StatusInfo" />
         public IConsumerStatusInfo StatusInfo => _statusInfo;
@@ -164,7 +160,8 @@ namespace Silverback.Messaging.Broker
         ///     The offset of the consumed message.
         /// </param>
         /// <param name="additionalLogData">
-        ///     An optional dictionary containing the broker specific data to be logged when processing the consumed message.
+        ///     An optional dictionary containing the broker specific data to be logged when processing the consumed
+        ///     message.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -180,13 +177,17 @@ namespace Silverback.Messaging.Broker
             _statusInfo.RecordConsumedMessage(offset);
 
             await ExecutePipeline(
-                    Behaviors,
+                    _behaviorsProvider.CreateConsumerStack(),
                     new ConsumerPipelineContext(
-                        new[]
-                        {
-                            new RawInboundEnvelope(message, headers, Endpoint, sourceEndpointName, offset, additionalLogData)
-                        },
-                        this),
+                        new RawInboundEnvelope(
+                            message,
+                            headers,
+                            Endpoint,
+                            sourceEndpointName,
+                            offset,
+                            additionalLogData),
+                        this,
+                        _errorPolicy),
                     _serviceProvider)
                 .ConfigureAwait(false);
         }
@@ -219,30 +220,21 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private async Task ExecutePipeline(
-            IReadOnlyList<IConsumerBehavior> behaviors,
+        private static async Task ExecutePipeline(
+            Stack<IConsumerBehavior> behaviors,
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider)
         {
-            if (behaviors.Count > 0)
-            {
-                await behaviors[0]
-                    .Handle(
-                        context,
-                        serviceProvider,
-                        (nextContext, nextServiceProvider) =>
-                            ExecutePipeline(
-                                behaviors.Skip(1).ToList(),
-                                nextContext,
-                                nextServiceProvider))
-                    .ConfigureAwait(false);
-            }
-            else
-            {
-                await _receivedCallback.Invoke(
-                        new MessagesReceivedCallbackArgs(context.Envelopes, serviceProvider, this))
-                    .ConfigureAwait(false);
-            }
+            if (behaviors.Count == 0)
+                return;
+
+            var nextBehavior = behaviors.Pop();
+
+            await nextBehavior.Handle(
+                    context,
+                    serviceProvider,
+                    (nextContext, nextServiceProvider) => ExecutePipeline(behaviors, nextContext, nextServiceProvider))
+                .ConfigureAwait(false);
         }
     }
 }

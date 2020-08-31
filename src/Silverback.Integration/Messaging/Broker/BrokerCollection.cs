@@ -60,22 +60,8 @@ namespace Silverback.Messaging.Broker
                 .GetProducer(endpoint);
         }
 
-        /// <inheritdoc cref="IBrokerCollection.AddConsumer(IConsumerEndpoint,MessagesReceivedCallback)" />
-        public IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback)
-        {
-            Check.NotNull(callback, nameof(callback));
-
-            return AddConsumer(
-                endpoint,
-                args =>
-                {
-                    callback(args);
-                    return Task.CompletedTask;
-                });
-        }
-
-        /// <inheritdoc cref="IBrokerCollection.AddConsumer(IConsumerEndpoint,MessagesReceivedAsyncCallback)" />
-        public IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback)
+        /// <inheritdoc cref="IBrokerCollection.AddConsumer" />
+        public IConsumer AddConsumer(IConsumerEndpoint endpoint)
         {
             Check.NotNull(endpoint, nameof(endpoint));
 
@@ -85,7 +71,7 @@ namespace Silverback.Messaging.Broker
                     broker => broker.ConsumerEndpointType,
                     endpointType,
                     _consumerEndpointTypeMap)
-                .AddConsumer(endpoint, callback);
+                .AddConsumer(endpoint);
         }
 
         /// <inheritdoc cref="IBrokerCollection.Connect" />

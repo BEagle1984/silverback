@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Publishing
 
         private readonly IServiceProvider _serviceProvider;
 
-        private IReadOnlyList<IBehavior>? _behaviors;
+        private readonly IBehaviorsProvider _behaviorsProvider;
 
         private SubscribedMethodInvoker? _methodInvoker;
 
@@ -30,17 +30,23 @@ namespace Silverback.Messaging.Publishing
         /// <summary>
         ///     Initializes a new instance of the <see cref="Publisher" /> class.
         /// </summary>
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBehaviorsProvider" />.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the subscribers.
         /// </param>
         /// <param name="logger">
         ///     The <see cref="ISilverbackLogger" />.
         /// </param>
-        public Publisher(IServiceProvider serviceProvider, ISilverbackLogger<Publisher> logger)
+        public Publisher(
+            IBehaviorsProvider behaviorsProvider,
+            IServiceProvider serviceProvider,
+            ISilverbackLogger<Publisher> logger)
         {
+            _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-
-            _logger = logger;
+            _logger = Check.NotNull(logger, nameof(logger));
         }
 
         /// <inheritdoc cref="IPublisher.Publish(object)" />
@@ -121,16 +127,15 @@ namespace Silverback.Messaging.Publishing
             CastResults<TResult>(await Publish(messages, throwIfUnhandled, true).ConfigureAwait(false)).ToList();
 
         private static Task<IReadOnlyCollection<object>> ExecuteBehaviorsPipeline(
-            IReadOnlyList<IBehavior> behaviors,
+            Stack<IBehavior> behaviors,
             IReadOnlyCollection<object> messages)
         {
-            if (behaviors.Count > 0)
+            if (behaviors.TryPop(out var nextBehavior))
             {
-                return behaviors[0].Handle(
+                return nextBehavior.Handle(
                     messages,
-                    nextMessages => ExecuteBehaviorsPipeline(
-                        behaviors.Skip(1).ToList(),
-                        nextMessages));
+                    nextMessages =>
+                        ExecuteBehaviorsPipeline(behaviors, nextMessages));
             }
 
             return Task.FromResult(messages);
@@ -169,7 +174,8 @@ namespace Silverback.Messaging.Publishing
 
             Check.HasNoNulls(messagesList, nameof(messages));
 
-            messagesList = await ExecuteBehaviorsPipeline(GetBehaviors(), messagesList).ConfigureAwait(false);
+            messagesList = await ExecuteBehaviorsPipeline(_behaviorsProvider.CreateStack(), messagesList)
+                .ConfigureAwait(false);
 
             var results = await InvokeSubscribedMethods(messagesList, executeAsync).ConfigureAwait(false);
 
@@ -226,9 +232,6 @@ namespace Silverback.Messaging.Publishing
                         GetMethodInvoker().Invoke(method, messages, executeAsync))
                 .ConfigureAwait(false))
             .ToList();
-
-        private IReadOnlyList<IBehavior> GetBehaviors() =>
-            _behaviors ??= _serviceProvider.GetServices<IBehavior>().SortBySortIndex().ToList();
 
         private SubscribedMethodInvoker GetMethodInvoker() =>
             _methodInvoker ??= _serviceProvider.GetRequiredService<SubscribedMethodInvoker>();

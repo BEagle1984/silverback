@@ -26,5 +26,7 @@ namespace Silverback.Messaging.Broker.Behaviors
 
         /// <inheritdoc cref="IBrokerBehaviorFactory{TBehavior}.Create" />
         public IConsumerBehavior Create() => new InboundProcessorConsumerBehavior(_errorPolicyHelper);
+
+        // TODO: Check if still needed
     }
 }

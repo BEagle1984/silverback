@@ -35,7 +35,7 @@ namespace Silverback.Messaging.ErrorHandling
             ConsumerBehaviorHandler commitHandler,
             ConsumerBehaviorErrorHandler rollbackHandler)
         {
-            var attempt = GetAttemptNumber(context.Envelopes);
+            var attempt = GetAttemptNumber(context.);
             var offsets = context.CommitOffsets;
 
             while (true)

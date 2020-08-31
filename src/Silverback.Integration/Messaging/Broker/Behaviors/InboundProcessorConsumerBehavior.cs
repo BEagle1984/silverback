@@ -35,73 +35,40 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.InboundProcessor;
 
-        internal MessageBatch? Batch { get; set; }
-
-        internal IErrorPolicy? ErrorPolicy { get; set; }
-
         /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
             IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next) =>
-            await new InboundProcessor(Batch!, ErrorPolicy!, _errorPolicyHelper, context, next)
-                .ProcessEnvelopes()
+            await new InboundProcessor(_errorPolicyHelper, context, next)
+                .ProcessMessages()
                 .ConfigureAwait(false);
 
         private class InboundProcessor
         {
-            private readonly MessageBatch _batch;
-
             private readonly ConsumerPipelineContext _context;
-
-            private readonly IErrorPolicy _errorPolicy;
 
             private readonly IErrorPolicyHelper _errorPolicyHelper;
 
             private readonly ConsumerBehaviorHandler _next;
 
             public InboundProcessor(
-                MessageBatch batch,
-                IErrorPolicy errorPolicy,
                 IErrorPolicyHelper errorPolicyHelper,
                 ConsumerPipelineContext context,
                 ConsumerBehaviorHandler next)
             {
-                _batch = batch;
-                _errorPolicy = errorPolicy;
                 _errorPolicyHelper = errorPolicyHelper;
                 _context = context;
                 _next = next;
             }
 
-            public async Task ProcessEnvelopes()
-            {
-                if (_batch != null)
-                    await ProcessMessagesInBatch().ConfigureAwait(false);
-                else
-                    await ProcessMessagesDirectly().ConfigureAwait(false);
-            }
-
-            private async Task ProcessMessagesInBatch()
-            {
-                _batch.BindOnce(
-                    ForwardMessages,
-                    Commit,
-                    Rollback);
-
-                await _batch.AddMessages(_context.Envelopes).ConfigureAwait(false);
-            }
-
-            private async Task ProcessMessagesDirectly()
-            {
-                await _errorPolicyHelper.TryProcessAsync(
+            public Task ProcessMessages() =>
+                _errorPolicyHelper.TryProcessAsync(
                         _context,
-                        _errorPolicy,
                         ForwardMessages,
                         Commit,
                         Rollback)
                     .ConfigureAwait(false);
-            }
 
             private Task ForwardMessages(ConsumerPipelineContext context, IServiceProvider serviceProvider) =>
                 _next(context, serviceProvider);

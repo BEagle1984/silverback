@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.ErrorHandling;
 
 namespace Silverback.Messaging.Broker
 {
@@ -27,11 +28,12 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="callback">
-        ///     The delegate to be invoked when a message is received.
+        /// <param name="errorPolicy">
+        ///     The <see cref="IErrorPolicy" /> to be applied when an exception is thrown processing the consumed
+        ///     message.
         /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
@@ -42,11 +44,11 @@ namespace Silverback.Messaging.Broker
         protected Consumer(
             TBroker broker,
             TEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
+            IErrorPolicy? errorPolicy,
+            IBrokerBehaviorsProvider behaviorsProvider,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
-            : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
+            : base(broker, endpoint, errorPolicy, behaviorsProvider, serviceProvider, logger)
         {
         }
 
