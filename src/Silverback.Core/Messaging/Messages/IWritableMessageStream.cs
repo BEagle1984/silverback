@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,8 +10,13 @@ namespace Silverback.Messaging.Messages
     /// <summary>
     ///     Declares the PushAsync method, used to push to the linked streams.
     /// </summary>
-    internal interface IPushableStream
+    internal interface IWritableMessageStream
     {
+        /// <summary>
+        ///     Gets the (base) type of the messages being streamed.
+        /// </summary>
+        Type MessageType { get; }
+
         /// <summary>
         ///     Add the specified message to the stream.
         /// </summary>
