@@ -42,15 +42,16 @@ namespace Silverback.Messaging.Broker
                 .SetOffsetsCommittedHandler(OnOffsetsCommitted)
                 .SetErrorHandler((_, error) => OnConsumerError(ownerConsumer, error));
 
-        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public void CreateScopeAndPublishEvent(IMessage message)
         {
             try
             {
-                using var scope = _serviceProvider?.CreateScope();
-                var publisher = scope?.ServiceProvider.GetRequiredService<IPublisher>();
+                using (var scope = _serviceProvider?.CreateScope())
+                {
+                    var publisher = scope?.ServiceProvider.GetRequiredService<IPublisher>();
 
-                publisher?.Publish(message);
+                    publisher?.Publish(message);
+                }
             }
             catch (ObjectDisposedException)
             {

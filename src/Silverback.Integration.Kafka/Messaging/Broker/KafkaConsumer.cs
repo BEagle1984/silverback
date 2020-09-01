@@ -152,14 +152,13 @@ namespace Silverback.Messaging.Broker
             Subscribe();
         }
 
-        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private void DisposeInnerConsumer()
         {
             if (_innerConsumer == null)
                 return;
 
-            using var timeoutCancellationTokenSource = new CancellationTokenSource(CloseTimeout);
+            var timeoutCancellationTokenSource = new CancellationTokenSource(CloseTimeout);
 
             try
             {
@@ -185,6 +184,10 @@ namespace Silverback.Messaging.Broker
                     ex,
                     "Error disconnecting consumer. (topic(s): {topics})",
                     (object)Endpoint.Names);
+            }
+            finally
+            {
+                timeoutCancellationTokenSource.Dispose();
             }
 
             _innerConsumer = null;

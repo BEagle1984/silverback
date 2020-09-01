@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -90,7 +89,6 @@ namespace Silverback.Messaging.Batch
             _rollbackHandler = Check.NotNull(rollbackHandler, nameof(rollbackHandler));
         }
 
-        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public async Task AddMessages(IReadOnlyCollection<IRawInboundEnvelope> envelopes)
         {
             // TODO: Check this!
@@ -120,10 +118,12 @@ namespace Silverback.Messaging.Batch
                     CurrentBatchId = Guid.NewGuid();
                     _waitTimer?.Start();
 
-                    using var scope = _serviceProvider.CreateScope();
-                    await scope.ServiceProvider.GetRequiredService<IPublisher>()
-                        .PublishAsync(new BatchStartedEvent(CurrentBatchId, _envelopes))
-                        .ConfigureAwait(false);
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        await scope.ServiceProvider.GetRequiredService<IPublisher>()
+                            .PublishAsync(new BatchStartedEvent(CurrentBatchId, _envelopes))
+                            .ConfigureAwait(false);
+                    }
                 }
                 else if (_envelopes.Count == _settings.Size)
                 {
