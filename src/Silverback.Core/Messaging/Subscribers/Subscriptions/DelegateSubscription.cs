@@ -26,7 +26,9 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 options?.MaxDegreeOfParallelism);
         }
 
-        public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
-            new[] { _method };
+        public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider)
+        {
+            return new[] { _method.EnsureInitialized(serviceProvider) };
+        }
     }
 }

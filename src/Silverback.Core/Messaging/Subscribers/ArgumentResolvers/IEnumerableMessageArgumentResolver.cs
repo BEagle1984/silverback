@@ -7,8 +7,8 @@ using System.Collections.Generic;
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
     /// <summary>
-    ///     These resolvers are used to handle the messages collection parameter ( <see cref="IEnumerable{T}" />
-    ///     , <see cref="IObservable{T}" />, etc.).
+    ///     These resolvers are used to handle the messages collection parameter (<see cref="IEnumerable{T}" />,
+    ///     <see cref="IObservable{T}" />, etc.).
     /// </summary>
     public interface IEnumerableMessageArgumentResolver : IMessageArgumentResolver
     {

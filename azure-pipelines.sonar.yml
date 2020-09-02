@@ -4,7 +4,7 @@ trigger:
   - master
   - develop
   - feature/*
-  
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -51,7 +51,7 @@ steps:
     displayName: 'Test (dotnet test)'
   - task: SonarCloudAnalyze@1
     condition: succeededOrFailed()
-    displayName: 'Run code analysis on SonarCloud' 
+    displayName: 'Run code analysis on SonarCloud'
   - task: SonarCloudPublish@1
     condition: succeededOrFailed()
     displayName: 'Publish quality gate result on SonarCloud'

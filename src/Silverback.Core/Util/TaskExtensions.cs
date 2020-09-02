@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Util
@@ -25,6 +27,41 @@ namespace Silverback.Util
             var resultProperty = task.GetType().GetProperty("Result");
 
             return resultProperty?.GetValue(task);
+        }
+
+        /// <summary>
+        ///     Cancels the specified <see cref="CancellationTokenSource"/> if an exception is thrown.
+        /// </summary>
+        /// <param name="task">
+        ///     The <see cref="Task" /> to be awaited.
+        /// </param>
+        /// <param name="cancellationTokenSource">
+        ///    The <see cref="CancellationTokenSource"/>.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        public static async Task<T> CancelOnException<T>(
+            this Task<T> task,
+            CancellationTokenSource cancellationTokenSource)
+        {
+            try
+            {
+                return await task.ConfigureAwait(false);
+            }
+            catch
+            {
+                try
+                {
+                    cancellationTokenSource.Cancel();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Ignore
+                }
+
+                throw;
+            }
         }
     }
 }

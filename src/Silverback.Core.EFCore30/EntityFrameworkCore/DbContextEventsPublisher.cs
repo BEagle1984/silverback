@@ -123,7 +123,7 @@ namespace Silverback.EntityFrameworkCore
 
                 return result;
             }
-            catch (Exception)
+            catch
             {
                 if (!saved)
                     await PublishEvent<TransactionAbortedEvent>(executeAsync).ConfigureAwait(false);

@@ -8,40 +8,28 @@ using System.Reflection;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
-    /// <summary>
-    ///     Calls the registered <see cref="IArgumentResolver" />'s.
-    /// </summary>
-    internal class ArgumentsResolverService
+    internal class ArgumentsResolversRepository
     {
         private readonly IEnumerable<IArgumentResolver> _argumentResolvers;
 
-        public ArgumentsResolverService(IEnumerable<IArgumentResolver> argumentResolvers)
+        public ArgumentsResolversRepository(IEnumerable<IArgumentResolver> argumentResolvers)
         {
             // Revert the resolvers order, to give priority to the ones added after the
             // default ones.
             _argumentResolvers = argumentResolvers.Reverse();
         }
 
-        public (IMessageArgumentResolver resolver, Type messageType) GetMessageArgumentResolver(
-            SubscribedMethod methodInfo)
+        public (IMessageArgumentResolver resolver, Type messageArgumentType, Type messageType) GetMessageArgumentResolver(SubscribedMethod method)
         {
-            IMessageArgumentResolver resolver = GetMessageArgumentResolver(
-                methodInfo.Parameters[0],
-                methodInfo.MethodInfo);
+            var parameterInfo = method.Parameters[0];
+            var resolver = GetMessageArgumentResolver(parameterInfo, method.MethodInfo);
 
-            return (resolver, resolver.GetMessageType(methodInfo.Parameters[0].ParameterType));
+            return (resolver, parameterInfo.ParameterType, resolver.GetMessageType(parameterInfo.ParameterType));
         }
 
-        public IEnumerable<object?> GetAdditionalParameterValues(SubscribedMethod methodInfo)
-        {
-            for (int i = 1; i < methodInfo.Parameters.Count; i++)
-            {
-                var parameterInfo = methodInfo.Parameters[i];
-
-                yield return GetAdditionalArgumentResolver(parameterInfo, methodInfo.MethodInfo)
-                    .GetValue(parameterInfo.ParameterType);
-            }
-        }
+        public IEnumerable<IAdditionalArgumentResolver> GetAdditionalArgumentsResolvers(SubscribedMethod method) =>
+            method.Parameters.Skip(1).Select(
+                parameterInfo => GetAdditionalArgumentResolver(parameterInfo, method.MethodInfo));
 
         private IMessageArgumentResolver GetMessageArgumentResolver(
             ParameterInfo parameterInfo,
@@ -63,7 +51,9 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             if (resolver == null)
             {
                 var errorMessage = $"No resolver could be found for argument '{parameterInfo.Name}' " +
-                                   $"of type {parameterInfo.ParameterType.FullName}.";
+                                   $"of type {parameterInfo.ParameterType.FullName}. " +
+                                   $"Please note that the message (or the enumerable, collection or stream) must " +
+                                   $"always be the first argument of the subscribing method.";
 
                 throw new SubscribedMethodInvocationException(methodInfo, errorMessage);
             }

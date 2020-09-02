@@ -17,9 +17,12 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         /// <param name="parameterType">
         ///     The type of the parameter to be resolved.
         /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the necessary services.
+        /// </param>
         /// <returns>
         ///     A value to be forwarded to the subscribed method.
         /// </returns>
-        object? GetValue(Type parameterType);
+        object? GetValue(Type parameterType, IServiceProvider serviceProvider);
     }
 }

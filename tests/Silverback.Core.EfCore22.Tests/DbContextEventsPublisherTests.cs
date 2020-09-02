@@ -146,7 +146,7 @@ namespace Silverback.Tests.Core.EFCore22
             {
                 await _dbContext.SaveChangesAsync();
             }
-            catch (Exception)
+            catch
             {
                 // ignored
             }
