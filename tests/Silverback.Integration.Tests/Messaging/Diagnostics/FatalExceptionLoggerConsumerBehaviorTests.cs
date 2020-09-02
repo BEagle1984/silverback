@@ -39,7 +39,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                     Substitute.For<IServiceProvider>(),
                     (_, __) => throw new InvalidCastException());
             }
-            catch (Exception)
+            catch
             {
                 // Ignored
             }

@@ -55,11 +55,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
         // Note: resolvers and handlers will be evaluated in reverse order
         private static IServiceCollection AddArgumentResolvers(this IServiceCollection services) => services
-            .AddScoped<ArgumentsResolverService>()
-            .AddScoped<IArgumentResolver, ServiceProviderAdditionalArgumentResolver>()
+            .AddSingleton<ArgumentsResolversRepository>()
+            .AddSingleton<IArgumentResolver, DefaultAdditionalArgumentResolver>()
             .AddSingleton<IArgumentResolver, SingleMessageArgumentResolver>()
             .AddSingleton<IArgumentResolver, EnumerableMessageArgumentResolver>()
-            .AddSingleton<IArgumentResolver, ReadOnlyCollectionMessageArgumentResolver>();
+            .AddSingleton<IArgumentResolver, ReadOnlyCollectionMessageArgumentResolver>()
+            .AddSingleton<IArgumentResolver, StreamEnumerableMessageArgumentResolver>();
 
         // Note: resolvers and handlers will be evaluated in reverse order
         private static IServiceCollection AddReturnValueHandlers(this IServiceCollection services) => services

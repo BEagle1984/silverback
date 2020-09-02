@@ -60,7 +60,7 @@ namespace Silverback.Messaging.LargeMessages
             {
                 await TryHandle(context, serviceProvider, next, chunkStore, pendingOffsets).ConfigureAwait(false);
             }
-            catch (Exception)
+            catch
             {
                 HandleOffsetRollback(context, pendingOffsets);
 

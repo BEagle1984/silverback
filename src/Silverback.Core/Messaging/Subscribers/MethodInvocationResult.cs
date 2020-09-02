@@ -10,10 +10,10 @@ namespace Silverback.Messaging.Subscribers
     {
         public MethodInvocationResult(
             IReadOnlyCollection<object> handledMessages,
-            IReadOnlyCollection<object?> returnValues)
+            IReadOnlyCollection<object?>? returnValues = null)
         {
             HandledMessages = handledMessages;
-            ReturnValues = returnValues;
+            ReturnValues = returnValues ?? Array.Empty<object>();
         }
 
         public static MethodInvocationResult Empty { get; } =

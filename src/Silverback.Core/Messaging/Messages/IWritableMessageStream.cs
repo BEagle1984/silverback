@@ -36,5 +36,29 @@ namespace Silverback.Messaging.Messages
         ///     enumerator loop.
         /// </summary>
         void Complete();
+
+        /// <summary>
+        ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of a different message type that is
+        ///     linked with this instance and will be pushed with the same messages.
+        /// </summary>
+        /// <param name="messageType">
+        ///     The type of the messages being streamed to the linked stream.
+        /// </param>
+        /// <returns>
+        ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
+        /// </returns>
+        IMessageStreamEnumerable<object> CreateLinkedStream(Type messageType);
+
+        /// <summary>
+        ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of a different message type that is
+        ///     linked with this instance and will be pushed with the same messages.
+        /// </summary>
+        /// <typeparam name="TMessageLinked">
+        ///     The type of the messages being streamed to the linked stream.
+        /// </typeparam>
+        /// <returns>
+        ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
+        /// </returns>
+        IMessageStreamEnumerable<TMessageLinked> CreateLinkedStream<TMessageLinked>();
     }
 }

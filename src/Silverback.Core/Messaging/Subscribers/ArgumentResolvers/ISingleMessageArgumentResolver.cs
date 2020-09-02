@@ -4,7 +4,8 @@
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
     /// <summary>
-    ///     These resolvers are used to handle the single message parameter (non collection, non enumerable).
+    ///     These resolvers are used to handle the single message parameter (the pure message, not wrapped in any
+    ///     enumerable or collection).
     /// </summary>
     public interface ISingleMessageArgumentResolver : IMessageArgumentResolver
     {

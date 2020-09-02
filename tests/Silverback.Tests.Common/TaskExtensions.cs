@@ -1,9 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Threading.Tasks;
-
-namespace Silverback.Tests
+// ReSharper disable once CheckNamespace
+namespace System.Threading.Tasks
 {
     public static class TaskExtensions
     {

@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Subscribers
 
         public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods() =>
             _options.Subscriptions
-                .SelectMany(s => s.GetSubscribedMethods(_serviceProvider))
+                .SelectMany(subscription => subscription.GetSubscribedMethods(_serviceProvider))
                 .ToList();
     }
 }

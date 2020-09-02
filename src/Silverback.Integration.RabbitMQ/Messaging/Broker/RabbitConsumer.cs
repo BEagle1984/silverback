@@ -159,7 +159,7 @@ namespace Silverback.Messaging.Broker
                         logData)
                     .ConfigureAwait(false);
             }
-            catch (Exception)
+            catch
             {
                 /* Logged by the FatalExceptionLoggerConsumerBehavior */
 

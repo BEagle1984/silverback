@@ -227,7 +227,7 @@ namespace Silverback.Messaging.Broker
                     if (!await AutoRecoveryIfEnabled(ex).ConfigureAwait(false))
                         break;
                 }
-                catch (Exception)
+                catch
                 {
                     /* Logged by the FatalExceptionLoggerConsumerBehavior */
 

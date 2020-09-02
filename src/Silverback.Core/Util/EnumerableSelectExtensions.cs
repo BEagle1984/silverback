@@ -23,7 +23,7 @@ namespace Silverback.Util
             Parallel.ForEach(
                 source,
                 new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism ?? -1 },
-                s => values.Add(selector(s)));
+                value => values.Add(selector(value)));
             return values;
         }
 
@@ -44,12 +44,12 @@ namespace Silverback.Util
             using var semaphore = new SemaphoreSlim(maxDegreeOfParallelism.Value);
 
             var tasks = source.ParallelSelect(
-                async s =>
+                async value =>
                 {
                     await semaphore.WaitAsync().ConfigureAwait(false);
                     try
                     {
-                        return await selector(s).ConfigureAwait(false);
+                        return await selector(value).ConfigureAwait(false);
                     }
                     finally
                     {

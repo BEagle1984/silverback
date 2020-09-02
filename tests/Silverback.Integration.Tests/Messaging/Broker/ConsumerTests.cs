@@ -95,7 +95,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             {
                 await consumer.TestHandleMessage(new TestEventOne());
             }
-            catch (Exception)
+            catch
             {
                 // ignored
             }
@@ -106,7 +106,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             {
                 await consumer.TestHandleMessage(new TestEventOne());
             }
-            catch (Exception)
+            catch
             {
                 // ignored
             }

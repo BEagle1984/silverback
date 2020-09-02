@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -162,7 +164,11 @@ namespace Silverback.Messaging.Publishing
         {
             Check.NotNull(messages, nameof(messages));
 
-            IReadOnlyCollection<object> messagesList = messages.ToList(); // TODO: Avoid cloning?
+            // Treat the IMessageStreamEnumerable as a single message and avoid enumerating it
+            if (messages is IMessageStreamEnumerable<object>)
+                messages = new[] { messages };
+
+            IReadOnlyCollection<object> messagesList = messages.AsReadOnlyCollection();
 
             if (!messagesList.Any())
                 return Array.Empty<object>();
@@ -215,17 +221,28 @@ namespace Silverback.Messaging.Publishing
                 .ConfigureAwait(false))
             .ToList();
 
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "CancellationTokenSource ")]
         private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethods(
             IReadOnlyCollection<object> messages,
             IReadOnlyCollection<SubscribedMethod> methods,
-            bool executeAsync) =>
-            (await methods
-                .Where(method => !method.IsExclusive)
-                .ParallelSelectAsync(
-                    method =>
-                        GetMethodInvoker().Invoke(method, messages, executeAsync))
-                .ConfigureAwait(false))
-            .ToList();
+            bool executeAsync)
+        {
+            using (CancellationTokenSource cancellationTokenSource = new CancellationTokenSource())
+            {
+                var tasks = methods
+                    .Where(method => !method.IsExclusive)
+                    .Select(
+                        method =>
+                            Task.Run(
+                                async () => await GetMethodInvoker()
+                                    .Invoke(method, messages, executeAsync)
+                                    .CancelOnException(cancellationTokenSource)
+                                    .ConfigureAwait(false),
+                                cancellationTokenSource.Token));
+
+                return await Task.WhenAll(tasks).ConfigureAwait(false);
+            }
+        }
 
         private IReadOnlyList<IBehavior> GetBehaviors() =>
             _behaviors ??= _serviceProvider.GetServices<IBehavior>().SortBySortIndex().ToList();

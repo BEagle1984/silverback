@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
         public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
             _subscribedMethods ??= serviceProvider
                 .GetServices(SubscribedType)
-                .SelectMany(GetSubscribedMethods)
+                .SelectMany(subscriber => GetSubscribedMethods(subscriber, serviceProvider))
                 .ToList();
 
         private static SubscribedMethod GetSubscribedMethod(Type targetType, MethodInfo methodInfo)
@@ -45,12 +45,12 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 subscribeAttribute?.MaxDegreeOfParallelism);
         }
 
-        private IEnumerable<SubscribedMethod> GetSubscribedMethods(object subscriber)
+        private IEnumerable<SubscribedMethod> GetSubscribedMethods(object subscriber, IServiceProvider serviceProvider)
         {
             var targetType = subscriber.GetType();
 
             return GetMethods(targetType)
-                .Select(methodInfo => GetSubscribedMethod(targetType, methodInfo))
+                .Select(methodInfo => GetSubscribedMethod(targetType, methodInfo).EnsureInitialized(serviceProvider))
                 .ToList();
         }
 
