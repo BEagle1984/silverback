@@ -22,8 +22,6 @@ namespace Silverback.Background
 
         private bool _enabled = true;
 
-        private CancellationTokenSource? _resumeTokenSource;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="RecurringDistributedBackgroundService" /> class using
         ///     the default settings for the lock mechanism.
@@ -74,20 +72,12 @@ namespace Silverback.Background
         /// <summary>
         ///     Pauses the execution of the recurring task.
         /// </summary>
-        public void Pause()
-        {
-            _resumeTokenSource = new CancellationTokenSource();
-            _enabled = false;
-        }
+        public void Pause() => _enabled = false;
 
         /// <summary>
         ///     Resumes the execution of the previously paused recurring task.
         /// </summary>
-        public void Resume()
-        {
-            _resumeTokenSource!.Cancel();
-            _enabled = true;
-        }
+        public void Resume() => _enabled = true;
 
         /// <inheritdoc cref="DistributedBackgroundService.ExecuteLockedAsync" />
         protected override async Task ExecuteLockedAsync(CancellationToken stoppingToken)
@@ -118,9 +108,9 @@ namespace Silverback.Background
                     break;
 
                 if (_enabled)
-                    await Sleep(stoppingToken).ConfigureAwait(false);
+                    await Sleep(_interval, stoppingToken).ConfigureAwait(false);
                 else
-                    await Sleep(_resumeTokenSource!.Token).ConfigureAwait(false);
+                    await Sleep(TimeSpan.FromMilliseconds(100), stoppingToken).ConfigureAwait(false);
             }
 
             _logger.LogInformation(
@@ -142,9 +132,9 @@ namespace Silverback.Background
         /// </returns>
         protected abstract Task ExecuteRecurringAsync(CancellationToken stoppingToken);
 
-        private async Task Sleep(CancellationToken stoppingToken)
+        private async Task Sleep(TimeSpan delay, CancellationToken stoppingToken)
         {
-            if (_interval <= TimeSpan.Zero)
+            if (delay <= TimeSpan.Zero)
                 return;
 
             _logger.LogDebug(
@@ -155,9 +145,9 @@ namespace Silverback.Background
 
             try
             {
-                await Task.Delay(_interval, stoppingToken).ConfigureAwait(false);
+                await Task.Delay(delay, stoppingToken).ConfigureAwait(false);
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
                 // Ignored
             }

@@ -5,7 +5,7 @@
     <RootNamespace>Silverback.Tests.EventSourcing</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
     </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
@@ -29,4 +29,10 @@
     <ProjectReference Include="..\..\src\Silverback.EventSourcing\Silverback.EventSourcing.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\xunit.runner.json">
+      <Link>xunit.runner.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

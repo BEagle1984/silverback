@@ -29,4 +29,10 @@
     <ProjectReference Include="..\..\src\Silverback.Core.Model\Silverback.Core.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\xunit.runner.json">
+      <Link>xunit.runner.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

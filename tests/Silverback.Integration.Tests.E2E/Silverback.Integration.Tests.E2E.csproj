@@ -34,4 +34,10 @@
     <ProjectReference Include="..\..\src\Silverback.Integration.InMemory\Silverback.Integration.InMemory.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\xunit.runner.json">
+      <Link>xunit.runner.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
