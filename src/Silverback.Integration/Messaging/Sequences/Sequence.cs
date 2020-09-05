@@ -77,12 +77,20 @@ namespace Silverback.Messaging.Streaming
         }
     }
 
-    internal  class RawInboundEnvelopeStreamEnumerable : MessageStreamEnumerable<IRawInboundEnvelope>
+    internal class RawInboundEnvelopeStreamEnumerable : MessageStreamEnumerable<IRawInboundEnvelope>
     {
-        /// <summary>
-        ///     Gets the offset of each message in the sequence.
-        /// </summary>
-        IReadOnlyList<IOffset> Offsets { get; }
+        public RawInboundEnvelopeStreamEnumerable(int bufferCapacity = 1) : base(bufferCapacity)
+        {
+        }
+
+        protected override IMessageStreamEnumerable<TMessageLinked> CreateLinkedStreamCore<TMessageLinked>(int bufferCapacity) => new RawInboundEnvelopeStreamEnumerable(bufferCapacity);
+    }
+
+    internal class RawInboundEnvelopeSequenceStramEnumerable : RawInboundEnvelopeStreamEnumerable
+    {
+     public RawInboundEnvelopeSequenceStramEnumerable(int bufferCapacity = 1) : base(bufferCapacity)
+        {
+        }
     }
 
     public class Sequence
