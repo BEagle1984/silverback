@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         public object GetValue(object message, Type targetMessageType)
         {
             if (message is IMessageStreamEnumerable<object>)
-                return ((IWritableMessageStream)message).CreateLinkedStream(targetMessageType);
+                return ((IMessageStreamEnumerable)message).CreateLinkedStream(targetMessageType);
 
             throw new NotImplementedException("TODO: Push message to stream?");
         }

@@ -3,8 +3,10 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -16,21 +18,27 @@ namespace Silverback.Messaging.Messages
 {
     /// <inheritdoc cref="IMessageStreamEnumerable{TMessage}" />
     internal class MessageStreamEnumerable<TMessage>
-        : IMessageStreamEnumerable<TMessage>, IDisposable, IWritableMessageStream
+        : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
     {
         private readonly object _initializationSyncLock = new object();
 
         private readonly int _bufferCapacity;
 
-        private Channel<TMessage>? _channel;
+        private readonly IMessageStreamEnumerable? _ownerStream;
 
-        private List<IWritableMessageStream>? _linkedStreams;
+        private Channel<PushedMessage>? _channel;
+
+        private List<IMessageStreamEnumerable>? _linkedStreams;
+
+        private ConcurrentDictionary<int, int>? _linkedStreamsByMessage;
 
         private int _enumeratorsCount;
 
+        private int _messagesCount;
+
         // ReSharper disable once RedundantDefaultMemberInitializer (problem with nullable)
         [AllowNull]
-        private TMessage _current = default;
+        private PushedMessage _current = default;
 
         private MethodInfo? _genericCreateLinkedStreamMethodInfo;
 
@@ -38,7 +46,7 @@ namespace Silverback.Messaging.Messages
         ///     Initializes a new instance of the <see cref="MessageStreamEnumerable{TMessage}" /> class.
         /// </summary>
         /// <param name="bufferCapacity">
-        ///     The maximum number of messages that will be stored before blocking the <see cref="PushAsync" />
+        ///     The maximum number of messages that will be stored before blocking the <c>PushAsync</c>
         ///     operations.
         /// </param>
         public MessageStreamEnumerable(int bufferCapacity = 1)
@@ -47,10 +55,20 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <summary>
-        ///     Gets or sets the callback function to be invoked when the enumerable has been completed, meaning no
-        ///     more messages will be pushed.
+        ///     Initializes a new instance of the <see cref="MessageStreamEnumerable{TMessage}" /> class.
         /// </summary>
-        public Func<Task>? PushCompletedCallback { get; set; }
+        /// <param name="ownerStream">
+        ///     The owner of the linked stream.
+        /// </param>
+        /// <param name="bufferCapacity">
+        ///     The maximum number of messages that will be stored before blocking the <c>PushAsync</c>
+        ///     operations.
+        /// </param>
+        protected MessageStreamEnumerable(IMessageStreamEnumerable ownerStream, int bufferCapacity = 1)
+            : this(bufferCapacity)
+        {
+            _ownerStream = ownerStream;
+        }
 
         /// <summary>
         ///     Gets or sets the callback function to be invoked when a message is pulled and successfully processed.
@@ -61,55 +79,93 @@ namespace Silverback.Messaging.Messages
         public Func<TMessage, Task>? ProcessedCallback { get; set; }
 
         /// <summary>
+        ///     Gets or sets the callback function to be invoked when the enumerable has been completed, meaning no
+        ///     more messages will be pushed.
+        /// </summary>
+        public Func<Task>? PushCompletedCallback { get; set; }
+
+        /// <summary>
         ///     Gets or sets the callback function to be invoked when the enumerable has been completed and all
         ///     messages have been pulled.
         /// </summary>
         public Func<Task>? EnumerationCompletedCallback { get; set; }
 
-        /// <inheritdoc cref="IWritableMessageStream.MessageType" />
-        Type IWritableMessageStream.MessageType => typeof(TMessage);
+        /// <inheritdoc cref="IMessageStreamEnumerable.MessageType" />
+        public Type MessageType => typeof(TMessage);
 
-        /// <summary>
-        ///     Add the specified message to the stream.
-        /// </summary>
-        /// <param name="message">
-        ///     The message to be added.
-        /// </param>
-        /// <param name="cancellationToken">
-        ///     A <see cref="CancellationToken" /> used to cancel the write operation.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="ValueTask" /> representing the asynchronous operation.
-        /// </returns>
-        public async ValueTask PushAsync(TMessage message, CancellationToken cancellationToken = default)
+        /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(object,System.Threading.CancellationToken)" />
+        public async Task PushAsync(object message, CancellationToken cancellationToken = default)
         {
-            Check.NotNull<object>(message, nameof(message));
+            Check.NotNull(message, nameof(message));
+
+            if (!(message is TMessage typedMessage))
+            {
+                throw new ArgumentException(
+                    $"Expected a message of type {typeof(TMessage).FullName} but received a message of type {message.GetType().FullName}.",
+                    nameof(message));
+            }
+
+            var messageId = Interlocked.Increment(ref _messagesCount);
 
             if (_linkedStreams == null)
             {
+                var pushedMessage = new PushedMessage(messageId, message, message);
                 await EnsureChannelIsInitialized()
-                    .Writer.WriteAsync(message, cancellationToken)
+                    .Writer.WriteAsync(pushedMessage, cancellationToken)
                     .ConfigureAwait(false);
             }
             else
             {
-                await _linkedStreams.ParallelForEachAsync(
-                        linkedStream => PushIfCompatibleType(linkedStream, message, cancellationToken))
+                // ReSharper disable once InconsistentlySynchronizedField
+                var results = await _linkedStreams.ParallelSelectAsync(
+                        linkedStream => PushIfCompatibleType(linkedStream, messageId, typedMessage, cancellationToken))
                     .ConfigureAwait(false);
+
+                var count = results.Count(result => result);
+
+                if (count == 0 && ProcessedCallback != null)
+                {
+                    await ProcessedCallback.Invoke(typedMessage).ConfigureAwait(false);
+                }
+                else if (count > 1)
+                {
+                    // ReSharper disable once InconsistentlySynchronizedField
+                    if (!_linkedStreamsByMessage!.TryAdd(messageId, count))
+                        throw new InvalidOperationException("The same message was already pushed to this stream.");
+                }
             }
+        }
+
+        /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(PushedMessage,System.Threading.CancellationToken)" />
+        public async Task PushAsync(PushedMessage pushedMessage, CancellationToken cancellationToken = default)
+        {
+            Check.NotNull(pushedMessage, nameof(pushedMessage));
+
+            if (_linkedStreams != null || _ownerStream == null)
+                throw new InvalidOperationException("Cannot relay a PushedMessage to a stream that is not linked.");
+
+            await EnsureChannelIsInitialized()
+                .Writer.WriteAsync(pushedMessage, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
         ///     Marks the stream as complete, meaning no more messages will be pushed.
         /// </summary>
-        public void Complete()
+        public async Task CompleteAsync()
         {
             if (_linkedStreams == null)
+            {
                 EnsureChannelIsInitialized().Writer.Complete();
+            }
             else
-                _linkedStreams?.ParallelForEach(linkedStream => linkedStream.Complete());
+            {
+                // ReSharper disable once InconsistentlySynchronizedField
+                await _linkedStreams.ParallelForEachAsync(stream => stream.CompleteAsync()).ConfigureAwait(false);
+            }
 
-            PushCompletedCallback?.Invoke();
+            if (PushCompletedCallback != null)
+                await PushCompletedCallback.Invoke().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
@@ -120,7 +176,7 @@ namespace Silverback.Messaging.Messages
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
             EnumerateExclusively(() => GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken));
 
-        /// <inheritdoc cref="IWritableMessageStream.CreateLinkedStream" />
+        /// <inheritdoc cref="IMessageStreamEnumerable.CreateLinkedStream" />
         public IMessageStreamEnumerable<object> CreateLinkedStream(Type messageType)
         {
             _genericCreateLinkedStreamMethodInfo ??= GetType().GetMethod(
@@ -135,9 +191,12 @@ namespace Silverback.Messaging.Messages
             return (IMessageStreamEnumerable<object>)linkedStream;
         }
 
-        /// <inheritdoc cref="IWritableMessageStream.CreateLinkedStream{TMessageLinked}" />
+        /// <inheritdoc cref="IMessageStreamEnumerable.CreateLinkedStream{TMessageLinked}" />
         public IMessageStreamEnumerable<TMessageLinked> CreateLinkedStream<TMessageLinked>()
         {
+            if (_ownerStream != null)
+                throw new InvalidOperationException("Cannot create a linked stream from a linked stream.");
+
             lock (_initializationSyncLock)
             {
                 if (_channel != null)
@@ -149,16 +208,59 @@ namespace Silverback.Messaging.Messages
 
                 var newStream = CreateLinkedStreamCore<TMessageLinked>(_bufferCapacity);
 
-                _linkedStreams ??= new List<IWritableMessageStream>();
-                _linkedStreams.Add((IWritableMessageStream)newStream);
+                _linkedStreams ??= new List<IMessageStreamEnumerable>();
+                _linkedStreams.Add((IMessageStreamEnumerable)newStream);
+
+                _linkedStreamsByMessage ??= new ConcurrentDictionary<int, int>();
 
                 return newStream;
             }
         }
 
-        /// <inheritdoc cref="IWritableMessageStream.PushAsync" />
-        ValueTask IWritableMessageStream.PushAsync(object message, CancellationToken cancellationToken) =>
-            PushAsync((TMessage)message, cancellationToken);
+        public Task NotifyLinkedStreamProcessed(PushedMessage pushedMessage)
+        {
+            if (ProcessedCallback == null)
+                return Task.CompletedTask;
+
+            var messageId = pushedMessage.Id;
+
+            // ReSharper disable once InconsistentlySynchronizedField
+            if (_linkedStreamsByMessage != null && _linkedStreamsByMessage.ContainsKey(messageId))
+            {
+                lock (_linkedStreamsByMessage)
+                {
+                    if (!_linkedStreamsByMessage.TryGetValue(messageId, out var count))
+                        return Task.CompletedTask;
+
+                    var isSuccess = count == 1
+                        ? _linkedStreamsByMessage.TryRemove(messageId, out var _)
+                        : _linkedStreamsByMessage.TryUpdate(messageId, count - 1, count);
+
+                    if (!isSuccess)
+                        throw new InvalidOperationException("The dictionary was modified.");
+
+                    if (count > 1)
+                        return Task.CompletedTask;
+                }
+            }
+
+            return ProcessedCallback.Invoke((TMessage)pushedMessage.OriginalMessage);
+        }
+
+        public async Task NotifyLinkedStreamEnumerationCompleted(IMessageStreamEnumerable linkedStream)
+        {
+            int linkedStreamsCount;
+
+            lock (_linkedStreams!)
+            {
+                _linkedStreams.Remove(linkedStream);
+
+                linkedStreamsCount = _linkedStreams.Count;
+            }
+
+            if (linkedStreamsCount == 0 && EnumerationCompletedCallback != null)
+                await EnumerationCompletedCallback.Invoke().ConfigureAwait(false);
+        }
 
         /// <inheritdoc cref="IEnumerable.GetEnumerator" />
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -175,7 +277,7 @@ namespace Silverback.Messaging.Messages
         ///     linked with this instance and will be pushed with the same messages.
         /// </summary>
         /// <param name="bufferCapacity">
-        ///     The maximum number of messages that will be stored before blocking the <see cref="PushAsync" />
+        ///     The maximum number of messages that will be stored before blocking the <c>PushAsync</c>
         ///     operations.
         /// </param>
         /// <typeparam name="TMessageLinked">
@@ -186,7 +288,7 @@ namespace Silverback.Messaging.Messages
         /// </returns>
         protected virtual IMessageStreamEnumerable<TMessageLinked> CreateLinkedStreamCore<TMessageLinked>(
             int bufferCapacity) =>
-            new MessageStreamEnumerable<TMessageLinked>(bufferCapacity);
+            new MessageStreamEnumerable<TMessageLinked>(this, bufferCapacity);
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
@@ -199,26 +301,37 @@ namespace Silverback.Messaging.Messages
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-                Complete();
+                AsyncHelper.RunSynchronously(CompleteAsync);
         }
 
-        private static async Task PushIfCompatibleType(
-            IWritableMessageStream stream,
+        private static async Task<bool> PushIfCompatibleType(
+            IMessageStreamEnumerable stream,
+            int messageId,
             TMessage message,
             CancellationToken cancellationToken)
         {
             if (message == null)
-                return;
+                return false;
 
             if (stream.MessageType.IsInstanceOfType(message))
-                await stream.PushAsync(message, cancellationToken).ConfigureAwait(false);
+            {
+                var pushedMessage = new PushedMessage(messageId, message, message);
+                await stream.PushAsync(pushedMessage, cancellationToken).ConfigureAwait(false);
+                return true;
+            }
 
             var envelope = message as IEnvelope;
             if (envelope?.Message != null && stream.MessageType.IsInstanceOfType(envelope.Message))
-                await stream.PushAsync(envelope.Message, cancellationToken).ConfigureAwait(false);
+            {
+                var pushedMessage = new PushedMessage(messageId, envelope.Message, message);
+                await stream.PushAsync(pushedMessage, cancellationToken).ConfigureAwait(false);
+                return true;
+            }
+
+            return false;
         }
 
-        private Channel<TMessage> EnsureChannelIsInitialized()
+        private Channel<PushedMessage> EnsureChannelIsInitialized()
         {
             lock (_initializationSyncLock)
             {
@@ -231,8 +344,8 @@ namespace Silverback.Messaging.Messages
                 }
 
                 return _channel ??= _bufferCapacity > 0
-                    ? Channel.CreateBounded<TMessage>(_bufferCapacity)
-                    : Channel.CreateUnbounded<TMessage>();
+                    ? Channel.CreateBounded<PushedMessage>(_bufferCapacity)
+                    : Channel.CreateUnbounded<PushedMessage>();
             }
         }
 
@@ -241,11 +354,17 @@ namespace Silverback.Messaging.Messages
             // TODO: Check this pattern!
             while (AsyncHelper.RunSynchronously(() => TryReadAsync(CancellationToken.None)))
             {
-                yield return _current;
-                ProcessedCallback?.Invoke(_current);
+                var currentMessage = (TMessage)_current.Message;
+                yield return currentMessage;
+
+                if (ProcessedCallback != null)
+                    AsyncHelper.RunSynchronously(() => ProcessedCallback.Invoke(currentMessage));
+
+                _ownerStream?.NotifyLinkedStreamProcessed(_current);
             }
 
-            EnumerationCompletedCallback?.Invoke();
+            if (EnumerationCompletedCallback != null)
+                AsyncHelper.RunSynchronously(() => EnumerationCompletedCallback.Invoke());
         }
 
         private async IAsyncEnumerable<TMessage> GetAsyncEnumerable(
@@ -253,11 +372,19 @@ namespace Silverback.Messaging.Messages
         {
             while (await TryReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                yield return _current!;
-                ProcessedCallback?.Invoke(_current);
+                var currentMessage = (TMessage)_current.Message;
+                yield return currentMessage;
+
+                if (ProcessedCallback != null)
+                    await ProcessedCallback.Invoke(currentMessage).ConfigureAwait(false);
+
+                _ownerStream?.NotifyLinkedStreamProcessed(_current);
             }
 
-            EnumerationCompletedCallback?.Invoke();
+            if (EnumerationCompletedCallback != null)
+                await EnumerationCompletedCallback.Invoke().ConfigureAwait(false);
+
+            _ownerStream?.NotifyLinkedStreamEnumerationCompleted(this);
         }
 
         private TReturn EnumerateExclusively<TReturn>(Func<TReturn> action)
