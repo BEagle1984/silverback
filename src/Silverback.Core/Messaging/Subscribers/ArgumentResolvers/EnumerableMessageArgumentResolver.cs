@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             Check.NotNull(parameterType, nameof(parameterType));
 
             return parameterType.IsGenericType &&
-                      parameterType.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+                   parameterType.GetGenericTypeDefinition() == typeof(IEnumerable<>);
         }
 
         /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />
@@ -31,7 +31,11 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         }
 
         /// <inheritdoc cref="IEnumerableMessageArgumentResolver.GetValue" />
-        public object GetValue(IReadOnlyCollection<object> messages, Type targetMessageType) =>
-            messages.OfType(targetMessageType).ToList(targetMessageType);
+        public object GetValue(IReadOnlyCollection<object> messages, Type targetMessageType)
+        {
+            Check.NotNull(messages, nameof(messages));
+
+            return messages.OfType(targetMessageType).ToList(targetMessageType);
+        }
     }
 }

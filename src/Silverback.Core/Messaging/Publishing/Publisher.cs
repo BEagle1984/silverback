@@ -164,10 +164,6 @@ namespace Silverback.Messaging.Publishing
         {
             Check.NotNull(messages, nameof(messages));
 
-            // Treat the IMessageStreamEnumerable as a single message and avoid enumerating it
-            if (messages is IMessageStreamEnumerable<object>)
-                messages = new[] { messages };
-
             IReadOnlyCollection<object> messagesList = messages.AsReadOnlyCollection();
 
             if (!messagesList.Any())

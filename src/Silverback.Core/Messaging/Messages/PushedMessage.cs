@@ -7,11 +7,11 @@ namespace Silverback.Messaging.Messages
 {
     internal class PushedMessage
     {
-        public PushedMessage(int id, object? message, object? originalMessage)
+        public PushedMessage(int id, object? message, object? originalMessage = null)
         {
             Id = id;
             Message = Check.NotNull(message, nameof(message));
-            OriginalMessage = Check.NotNull(originalMessage, nameof(originalMessage));
+            OriginalMessage = originalMessage ?? Message;
         }
 
         /// <summary>
