@@ -1,6 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Batch;
+using Silverback.Messaging.ErrorHandling;
+
 namespace Silverback.Messaging
 {
     /// <summary>
@@ -9,12 +12,19 @@ namespace Silverback.Messaging
     /// </summary>
     public interface IConsumerEndpoint : IEndpoint
     {
+        IErrorPolicy? ErrorPolicy { get; }
+
         /// <summary>
-        ///     Gets or sets a value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     Gets the batch settings. Can be used to enable and setup batch processing.
+        /// </summary>
+        BatchSettings Batch { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether an exception must be thrown if no subscriber is handling the
         ///     received message. The default is <c>false</c> and it means that the unhandled messages are silently
         ///     discarded.
         /// </summary>
-        bool ThrowIfUnhandled { get; set; }
+        bool ThrowIfUnhandled { get; }
 
         /// <summary>
         ///     Gets a unique name for the consumer group (e.g. Kafka's consumer group id). This value (joint with

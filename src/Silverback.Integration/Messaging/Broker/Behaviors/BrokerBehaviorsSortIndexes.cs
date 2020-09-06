@@ -86,6 +86,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int FatalExceptionLogger = 110;
 
             /// <summary>
+            ///     The <see cref="ServiceScopeFactoryConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int ServiceScopeFactory = 120;
+
+            /// <summary>
             ///     The <see cref="CustomHeadersMapperConsumerBehavior" /> sort index.
             /// </summary>
             public const int CustomHeadersMapper = 150;

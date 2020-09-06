@@ -40,4 +40,8 @@ This package contains the message broker and connectors abstractions.</Descripti
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Messaging\Sequences" />
+  </ItemGroup>
 </Project>

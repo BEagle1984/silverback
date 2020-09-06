@@ -17,7 +17,11 @@ namespace Silverback.Messaging
         {
         }
 
-        /// <inheritdoc cref="IConsumerEndpoint.ThrowIfUnhandled" />
+        /// <summary>
+        ///     Gets or sets a value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     received message. The default is <c>false</c> and it means that the unhandled messages are silently
+        ///     discarded.
+        /// </summary>
         public bool ThrowIfUnhandled { get; set; }
 
         /// <inheritdoc cref="IConsumerEndpoint.GetUniqueConsumerGroupName" />
