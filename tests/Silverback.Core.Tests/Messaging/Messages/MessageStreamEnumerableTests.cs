@@ -10,7 +10,6 @@ using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
-using Silverback.Tests.Core.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Messages
@@ -64,7 +63,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await stream.PushAsync(2);
             await stream.PushAsync(3);
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             stream.ToList().Should().BeEquivalentTo(1, 2, 3);
         }
@@ -78,7 +77,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await stream.PushAsync(2);
             await stream.PushAsync(3);
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             (await stream.ToListAsync()).Should().BeEquivalentTo(1, 2, 3);
         }
@@ -114,7 +113,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
             pushTask.IsCompleted.Should().BeTrue();
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             enumerator.MoveNext();
             enumerator.Current.Should().Be(4);
@@ -154,7 +153,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
             pushTask.IsCompleted.Should().BeTrue();
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             await enumerator.MoveNextAsync();
             enumerator.Current.Should().Be(4);
@@ -195,7 +194,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
             pushTask.IsCompleted.Should().BeTrue();
 
-            sourceStream.Complete();
+            await sourceStream.CompleteAsync();
 
             enumerator.MoveNext();
             enumerator.Current.Should().Be(4);
@@ -236,7 +235,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
             pushTask.IsCompleted.Should().BeTrue();
 
-            sourceStream.Complete();
+            await sourceStream.CompleteAsync();
 
             await enumerator.MoveNextAsync();
             enumerator.Current.Should().Be(4);
@@ -358,6 +357,98 @@ namespace Silverback.Tests.Core.Messaging.Messages
         }
 
         [Fact]
+        public async Task PushAsync_WithLinkedStream_ProcessedCallbackInvokedWhenProcessedByLinkedStream()
+        {
+            var processed = new List<int>();
+            var stream = new MessageStreamEnumerable<int>(5)
+            {
+                ProcessedCallback = message =>
+                {
+                    processed.Add(message);
+                    return Task.CompletedTask;
+                }
+            };
+
+            var linkedStream = stream.CreateLinkedStream<int>();
+
+            await stream.PushAsync(1);
+            await stream.PushAsync(2);
+            await stream.PushAsync(3);
+
+            processed.Should().BeEmpty();
+
+            using var enumerator = linkedStream.GetEnumerator();
+            enumerator.MoveNext();
+            enumerator.MoveNext();
+
+            // One extra MoveNext is needed to invoke the callback for the previous message
+            enumerator.MoveNext();
+
+            processed.Should().BeEquivalentTo(1, 2);
+        }
+
+        [Fact]
+        public async Task PushAsync_WithLinkedStreams_ProcessedCallbackInvokedWhenProcessedByAllLinkedStreams()
+        {
+            var processed = new List<int>();
+            var stream = new MessageStreamEnumerable<int>(5)
+            {
+                ProcessedCallback = message =>
+                {
+                    processed.Add(message);
+                    return Task.CompletedTask;
+                }
+            };
+
+            var linkedStream1 = stream.CreateLinkedStream<int>();
+            var linkedStream2 = stream.CreateLinkedStream<int>();
+
+            await stream.PushAsync(1);
+            await stream.PushAsync(2);
+            await stream.PushAsync(3);
+
+            processed.Should().BeEmpty();
+
+            using var enumerator1 = linkedStream1.GetEnumerator();
+            enumerator1.MoveNext();
+            enumerator1.MoveNext();
+            enumerator1.MoveNext();
+
+            var enumerator2 = linkedStream2.GetAsyncEnumerator();
+            await enumerator2.MoveNextAsync();
+            await enumerator2.MoveNextAsync();
+
+            processed.Should().BeEquivalentTo(1);
+
+            await enumerator2.MoveNextAsync();
+
+            processed.Should().BeEquivalentTo(1, 2);
+        }
+
+        [Fact]
+        public async Task PushAsync_WithNotMatchingLinkedStreams_ProcessedCallbackInvokedImmediately()
+        {
+            var processed = new List<object>();
+            var stream = new MessageStreamEnumerable<object>(5)
+            {
+                ProcessedCallback = message =>
+                {
+                    processed.Add(message);
+                    return Task.CompletedTask;
+                }
+            };
+
+            stream.CreateLinkedStream<string>();
+            stream.CreateLinkedStream<bool>();
+
+            await stream.PushAsync(1);
+            await stream.PushAsync(2);
+            await stream.PushAsync(3);
+
+            processed.Should().BeEquivalentTo(1, 2, 3);
+        }
+
+        [Fact]
         public async Task GetEnumerator_CompletedAndPulledAllMessages_EnumerationCompletedCallbackInvoked()
         {
             var completed = false;
@@ -373,7 +464,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await stream.PushAsync(1);
             await stream.PushAsync(2);
             await stream.PushAsync(3);
-            stream.Complete();
+            await stream.CompleteAsync();
 
             completed.Should().BeFalse();
 
@@ -420,7 +511,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             completed.Should().BeFalse();
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             // Give the other thread a chance to exit the MoveNext and invoke the callback
             await Task.Delay(100);
@@ -444,7 +535,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await stream.PushAsync(1);
             await stream.PushAsync(2);
             await stream.PushAsync(3);
-            stream.Complete();
+            await stream.CompleteAsync();
 
             completed.Should().BeFalse();
 
@@ -490,7 +581,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             completed.Should().BeFalse();
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             // Give the other thread a chance to exit the MoveNext and invoke the callback
             await Task.Delay(100);
@@ -563,7 +654,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             completed.Should().BeFalse();
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             completed.Should().BeTrue();
         }
@@ -594,7 +685,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             completed.Should().BeFalse();
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             // Give the other thread a chance to exit the MoveNext
             await AsyncTestingUtil.WaitAsync(() => completed);
@@ -627,7 +718,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             completed.Should().BeFalse();
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             // Give the other thread a chance to exit the MoveNext
             await AsyncTestingUtil.WaitAsync(() => completed);
@@ -662,7 +753,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             completed.Should().BeFalse();
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             // Give the other thread a chance to exit the MoveNext
             await AsyncTestingUtil.WaitAsync(() => completed);
@@ -697,7 +788,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             completed.Should().BeFalse();
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             // Give the other thread a chance to exit the MoveNext
             await AsyncTestingUtil.WaitAsync(() => completed);
@@ -713,7 +804,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await stream.PushAsync(1);
             await stream.PushAsync(2);
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             Func<Task> act = async () => await stream.PushAsync(2, new CancellationTokenSource(2000).Token);
             act.Should().Throw<InvalidOperationException>();
@@ -736,11 +827,11 @@ namespace Silverback.Tests.Core.Messaging.Messages
         }
 
         [Fact]
-        public void Complete_TryPushingFirstMessageAfterComplete_ExceptionThrown()
+        public async Task Complete_TryPushingFirstMessageAfterComplete_ExceptionThrown()
         {
             var stream = new MessageStreamEnumerable<int>(5);
 
-            stream.Complete();
+            await stream.CompleteAsync();
 
             Func<Task> act = async () => await stream.PushAsync(2, new CancellationTokenSource(2000).Token);
             act.Should().Throw<InvalidOperationException>();
@@ -768,7 +859,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await sourceStream.PushAsync(new TestEventTwo());
             await sourceStream.PushAsync(new TestCommandOne());
 
-            sourceStream.Complete(); // Implicitly tests that the Complete call is also propagated
+            await sourceStream.CompleteAsync(); // Implicitly tests that the Complete call is also propagated
 
             eventsLinkedStream.ToList().Should().BeEquivalentTo(new TestEventOne(), new TestEventTwo());
             testEventOnesLinkedStream.ToList().Should().BeEquivalentTo(new TestEventOne());
@@ -785,7 +876,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await sourceStream.PushAsync(new TestEnvelope(new TestEventTwo()));
             await sourceStream.PushAsync(new TestEnvelope(new TestCommandOne()));
 
-            sourceStream.Complete(); // Implicitly tests that the Complete call is also propagated
+            await sourceStream.CompleteAsync(); // Implicitly tests that the Complete call is also propagated
 
             eventsLinkedStream.ToList().Should().BeEquivalentTo(new TestEventOne(), new TestEventTwo());
             testEventOnesLinkedStream.ToList().Should().BeEquivalentTo(new TestEventOne());

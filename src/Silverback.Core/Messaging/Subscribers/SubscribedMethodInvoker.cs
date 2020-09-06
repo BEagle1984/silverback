@@ -166,7 +166,7 @@ namespace Silverback.Messaging.Subscribers
                             !typeof(IMessageStreamEnumerable<IEnvelope>).IsAssignableFrom(subscribedMethod.MessageType))
                             return true;
 
-                        if (stream is IWritableMessageStream writableStream &&
+                        if (stream is IMessageStreamEnumerable writableStream &&
                             writableStream.MessageType.IsAssignableFrom(subscribedMethod.MessageType))
                             return true;
 
