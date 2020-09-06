@@ -151,7 +151,7 @@ namespace Silverback.Messaging.Subscribers
             IStreamEnumerableMessageArgumentResolver streamEnumerableResolver)
         {
             messages = messages
-                .OfType<IMessageStreamEnumerable<object>>()
+                .OfType<IMessageStreamProvider>()
                 .Where(
                     stream =>
                     {
@@ -162,12 +162,11 @@ namespace Silverback.Messaging.Subscribers
                         // and a subscriber that is not handling a stream of envelopes. The envelopes can contain any
                         // type of message (object? Message) and will automatically be unwrapped, filtered and properly
                         // routed by the MessageStreamEnumerable.
-                        if (stream is IMessageStreamEnumerable<IEnvelope> &&
+                        if (typeof(IEnvelope).IsAssignableFrom(stream.MessageType) &&
                             !typeof(IMessageStreamEnumerable<IEnvelope>).IsAssignableFrom(subscribedMethod.MessageType))
                             return true;
 
-                        if (stream is IMessageStreamEnumerable writableStream &&
-                            writableStream.MessageType.IsAssignableFrom(subscribedMethod.MessageType))
+                        if (stream.MessageType.IsAssignableFrom(subscribedMethod.MessageType))
                             return true;
 
                         return false;

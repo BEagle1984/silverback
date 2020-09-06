@@ -13,11 +13,6 @@ namespace Silverback.Messaging.Messages
     /// <typeparam name="TMessage">
     ///     The type of the messages being streamed.
     /// </typeparam>
-    /// <remarks>
-    ///     The <see cref="IPublisher" /> implementation handles this enumerable differently and avoid forwarding
-    ///     it to the subscribers that aren't explicitly declaring an argument of type
-    ///     <see cref="IMessageStreamEnumerable{TMessage}" /> or <c>IMessageStreamObservable&lt;out TMessage&gt;</c>.
-    /// </remarks>
     public interface IMessageStreamEnumerable<out TMessage> : IEnumerable<TMessage>, IAsyncEnumerable<TMessage>
     {
     }
