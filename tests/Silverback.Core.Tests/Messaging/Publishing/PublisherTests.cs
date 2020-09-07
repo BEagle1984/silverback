@@ -1381,8 +1381,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             using (var scope = serviceProvider.CreateScope())
             {
                 await scope.ServiceProvider.GetRequiredService<IPublisher>()
-                    .PublishAsync(new[] { new MessageStreamProvider<TestCommandOne>() })
-                    .RunWithTimeout();
+                    .PublishAsync(new[] { new MessageStreamProvider<TestCommandOne>() });
             }
 
             resolved.Should().Be(0);
@@ -1445,8 +1444,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             using (var scope = serviceProvider.CreateScope())
             {
                 await scope.ServiceProvider.GetRequiredService<IPublisher>()
-                    .PublishAsync(new[] { new MessageStreamProvider<TestCommandOne>() })
-                    .RunWithTimeout();
+                    .PublishAsync(new[] { new MessageStreamProvider<TestCommandOne>() });
             }
 
             resolved.Should().Be(0);
