@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Subscribers
 
             var arguments = GetArgumentValuesArray(subscribedMethod);
 
-            IReadOnlyCollection<object?>? returnValues = null;
+            IReadOnlyCollection<object?>? returnValues;
 
             switch (subscribedMethod.MessageArgumentResolver)
             {
@@ -57,12 +57,11 @@ namespace Silverback.Messaging.Subscribers
                         enumerableResolver).ConfigureAwait(false);
                     break;
                 case IStreamEnumerableMessageArgumentResolver streamEnumerableResolver:
-                    messages = await InvokeWithStreamEnumerable(
-                            subscribedMethod,
-                            messages,
-                            arguments,
-                            streamEnumerableResolver)
-                        .ConfigureAwait(false);
+                    (messages, returnValues) = InvokeWithStreamEnumerable(
+                        subscribedMethod,
+                        messages,
+                        arguments,
+                        streamEnumerableResolver);
 
                     break;
                 default:
@@ -144,11 +143,12 @@ namespace Silverback.Messaging.Subscribers
             return (messages, new[] { returnValue });
         }
 
-        private async Task<IReadOnlyCollection<object>> InvokeWithStreamEnumerable(
-            SubscribedMethod subscribedMethod,
-            IReadOnlyCollection<object> messages,
-            object?[] arguments,
-            IStreamEnumerableMessageArgumentResolver streamEnumerableResolver)
+        private (IReadOnlyCollection<object> messages, IReadOnlyCollection<object?>? returnValues)
+            InvokeWithStreamEnumerable(
+                SubscribedMethod subscribedMethod,
+                IReadOnlyCollection<object> messages,
+                object?[] arguments,
+                IStreamEnumerableMessageArgumentResolver streamEnumerableResolver)
         {
             messages = messages
                 .OfType<IMessageStreamProvider>()
@@ -174,20 +174,19 @@ namespace Silverback.Messaging.Subscribers
                 .ToArray();
 
             if (messages.Count == 0)
-                return messages;
+                return (messages, null);
 
             var target = subscribedMethod.ResolveTargetType(_serviceProvider);
 
-            await messages
-                .ForEachAsync(
+            var resultTasks = messages
+                .Select(
                     message =>
                     {
                         arguments[0] = streamEnumerableResolver.GetValue(message, subscribedMethod.MessageType);
                         return InvokeWithoutBlockingAsync(target, subscribedMethod.MethodInfo, arguments);
-                    })
-                .ConfigureAwait(false);
+                    });
 
-            return messages;
+            return (messages, resultTasks.ToArray());
         }
 
         private static IEnumerable<object> FilterMessagesAndUnwrapEnvelopes(
