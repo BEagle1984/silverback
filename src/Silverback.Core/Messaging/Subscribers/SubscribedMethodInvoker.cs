@@ -197,15 +197,10 @@ namespace Silverback.Messaging.Subscribers
             {
                 if (message is IEnvelope envelope)
                 {
-                    if (typeof(IEnvelope).IsAssignableFrom(targetMessageType))
-                    {
-                        if (targetMessageType.IsInstanceOfType(envelope))
-                            yield return envelope;
-                    }
-                    else if (envelope.AutoUnwrap && targetMessageType.IsInstanceOfType(envelope.Message))
-                    {
-                        yield return envelope.Message!;
-                    }
+                    var filtered = FilterAndUnwrapEnvelope(targetMessageType, envelope);
+
+                    if (filtered != null)
+                        yield return filtered;
                 }
                 else
                 {
@@ -213,6 +208,21 @@ namespace Silverback.Messaging.Subscribers
                         yield return message;
                 }
             }
+        }
+
+        private static object? FilterAndUnwrapEnvelope(Type targetMessageType, IEnvelope envelope)
+        {
+            if (typeof(IEnvelope).IsAssignableFrom(targetMessageType))
+            {
+                if (targetMessageType.IsInstanceOfType(envelope))
+                    return envelope;
+            }
+            else if (envelope.AutoUnwrap && targetMessageType.IsInstanceOfType(envelope.Message))
+            {
+                return envelope.Message!;
+            }
+
+            return null;
         }
 
         private static Task<object?> Invoke(
