@@ -96,10 +96,9 @@ namespace Silverback.Messaging.Messages
             {
                 await ProcessedCallback.Invoke(message).ConfigureAwait(false);
             }
-            else if (count > 1)
+            else if (count > 1 && !_linkedStreamsByMessage.TryAdd(messageId, count))
             {
-                if (!_linkedStreamsByMessage.TryAdd(messageId, count))
-                    throw new InvalidOperationException("The same message was already pushed to this stream.");
+                throw new InvalidOperationException("The same message was already pushed to this stream.");
             }
         }
 
