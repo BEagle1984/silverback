@@ -42,11 +42,14 @@ steps:
     displayName: 'Build (dotnet build $(buildConfiguration))'
   - script: |
       dotnet test Silverback.sln \
+        --configuration $(buildConfiguration) \
+        --no-build \
+        --verbosity Normal \
         --logger trx \
         --collect "Code coverage" \
         --filter CI!=false \
         -p:CollectCoverage=true \
-        -p:CoverletOutputFormat=\"opencover,cobertura\" \
+        -p:CoverletOutputFormat=opencover%2ccobertura \
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.Common]*"
     displayName: 'Test (dotnet test)'
   - task: SonarCloudAnalyze@1
