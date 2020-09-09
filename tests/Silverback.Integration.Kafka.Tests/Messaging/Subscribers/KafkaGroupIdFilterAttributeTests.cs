@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Silverback.Messaging;
+using Silverback.Messaging.Batch;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
+using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Subscribers;
@@ -78,6 +80,10 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
             public EncryptionSettings? Encryption { get; }
 
             public string Name { get; } = string.Empty;
+
+            public IErrorPolicy? ErrorPolicy { get; } = null!;
+
+            public BatchSettings Batch { get; } = new BatchSettings();
 
             public bool ThrowIfUnhandled { get; set; }
 

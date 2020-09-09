@@ -4,6 +4,7 @@
 using System;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
@@ -36,6 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             silverbackBuilder.Services
                 .AddSingleton<IBrokerCollection, BrokerCollection>()
+                .AddTransient(typeof(IBrokerBehaviorsProvider<>), typeof(BrokerBehaviorsProvider<>))
                 .AddSingleton<ILogTemplates>(new LogTemplates())
                 .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(SilverbackIntegrationLogger<>))
                 .AddSingleton<ISilverbackIntegrationLogger, SilverbackIntegrationLogger>();

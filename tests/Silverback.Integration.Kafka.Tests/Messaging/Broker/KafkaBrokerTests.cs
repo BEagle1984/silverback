@@ -17,8 +17,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 {
     public sealed class KafkaBrokerTests : IDisposable
     {
-        private static readonly MessagesReceivedAsyncCallback VoidCallback = args => Task.CompletedTask;
-
         private readonly KafkaBroker _broker;
 
         public KafkaBrokerTests()
@@ -28,9 +26,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
                 .AddSingleton<EndpointsConfiguratorsInvoker>()
                 .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>));
 
-            _broker = new KafkaBroker(
-                Enumerable.Empty<IBrokerBehavior>(),
-                services.BuildServiceProvider());
+            _broker = new KafkaBroker(services.BuildServiceProvider());
         }
 
         [Fact]
@@ -111,7 +107,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void AddConsumer_SomeEndpoint_ConsumerIsReturned()
         {
-            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
 
             consumer.Should().NotBeNull();
         }
@@ -119,8 +115,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void AddConsumer_SameEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"), VoidCallback);
-            var consumer2 = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
+            var consumer2 = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -128,8 +124,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void AddConsumer_DifferentEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"), VoidCallback);
-            var consumer2 = _broker.AddConsumer(new KafkaConsumerEndpoint("other-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
+            var consumer2 = _broker.AddConsumer(new KafkaConsumerEndpoint("other-endpoint"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }

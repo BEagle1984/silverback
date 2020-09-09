@@ -48,11 +48,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="callback">
-        ///     The delegate to be invoked when a message is received.
-        /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
         /// </param>
         /// <param name="connectionFactory">
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
@@ -67,12 +64,11 @@ namespace Silverback.Messaging.Broker
         public RabbitConsumer(
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<RabbitConsumer> logger)
-            : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;

@@ -11,6 +11,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
+using Silverback.Messaging.ExactlyOnce;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.LargeMessages;
 using Silverback.Messaging.Serialization;
@@ -54,10 +55,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingletonBrokerBehavior<ActivityProducerBehavior>()
                     .AddSingletonBrokerBehavior<ActivityConsumerBehavior>();
 
-                // Pipeline - Exception Logger
-                brokerOptionsBuilder.SilverbackBuilder
-                    .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>();
-
                 // Pipeline - Serialization
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<SerializerProducerBehavior>()
@@ -82,11 +79,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
                 // Pipeline - Chunking
                 brokerOptionsBuilder.SilverbackBuilder
-                    .AddSingletonBrokerBehavior<ChunkSplitterProducerBehavior>()
-                    .AddSingletonBrokerBehavior(
-                        serviceProvider =>
-                            serviceProvider.GetRequiredService<ChunkAggregatorConsumerBehavior>())
-                    .AddSingletonSubscriber<ChunkAggregatorConsumerBehavior>()
+                    // .AddSingletonBrokerBehavior<ChunkSplitterProducerBehavior>()
+                    // .AddSingletonBrokerBehavior<ChunksAggregatorConsumerBehavior>()
+                    // .AddSingletonSubscriber<ChunksAggregatorConsumerBehavior>()
                     .Services
                     .AddScoped<ChunkAggregator>();
 
@@ -99,9 +94,15 @@ namespace Microsoft.Extensions.DependencyInjection
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>();
 
-                // Pipeline - Inbound Processor
+                // Pipeline - Consumer basic logic
                 brokerOptionsBuilder.SilverbackBuilder
-                    .AddSingletonBrokerBehavior<InboundProcessorConsumerBehaviorFactory>()
+                    .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>()
+                    .AddSingletonBrokerBehavior<ServiceScopeFactoryConsumerBehavior>()
+                    .AddSingletonBrokerBehavior<ErrorHandlerConsumerBehavior>()
+                    .AddSingletonBrokerBehavior<TransactionHandlerConsumerBehavior>()
+                    .AddSingletonBrokerBehavior<ExactlyOnceGuardConsumerBehavior>()
+                    .AddSingletonBrokerBehavior<PublisherConsumerBehavior>()
+                    .AddSingletonBrokerBehavior<StreamPublisherConsumerBehavior>()
                     .AddScopedSubscriber<ConsumerTransactionManager>()
                     .Services
                     .AddSingleton<IErrorPolicyBuilder, ErrorPolicyBuilder>();

@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NSubstitute;
@@ -16,11 +17,13 @@ namespace Silverback.Tests.Integration.TestTypes
         public TestOtherProducer(
             TestOtherBroker broker,
             TestOtherProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors)
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
+            IServiceProvider serviceProvider)
             : base(
                 broker,
                 endpoint,
-                behaviors,
+                behaviorsProvider,
+                serviceProvider,
                 Substitute.For<ISilverbackIntegrationLogger<TestOtherProducer>>())
         {
             ProducedMessages = broker.ProducedMessages;

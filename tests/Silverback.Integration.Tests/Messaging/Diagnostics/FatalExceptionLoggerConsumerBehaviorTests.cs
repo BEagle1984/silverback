@@ -35,9 +35,11 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             try
             {
                 await new FatalExceptionLoggerConsumerBehavior(integrationLogger).Handle(
-                    new ConsumerPipelineContext(new[] { rawEnvelope }, Substitute.For<IConsumer>()),
-                    Substitute.For<IServiceProvider>(),
-                    (_, __) => throw new InvalidCastException());
+                    new ConsumerPipelineContext(
+                        rawEnvelope,
+                        Substitute.For<IConsumer>(),
+                        Substitute.For<IServiceProvider>()),
+                    _ => throw new InvalidCastException());
             }
             catch
             {
@@ -60,9 +62,11 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 TestConsumerEndpoint.GetDefault().Name);
 
             Func<Task> act = () => new FatalExceptionLoggerConsumerBehavior(logger).Handle(
-                new ConsumerPipelineContext(new[] { rawEnvelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (_, __) => throw new InvalidCastException());
+                new ConsumerPipelineContext(
+                    rawEnvelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<IServiceProvider>()),
+                _ => throw new InvalidCastException());
 
             act.Should().ThrowExactly<InvalidCastException>();
         }

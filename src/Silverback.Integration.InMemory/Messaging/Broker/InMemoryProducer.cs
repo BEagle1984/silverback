@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
@@ -22,8 +23,11 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to produce to.
         /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
         ///     The <see cref="ISilverbackIntegrationLogger" />.
@@ -31,9 +35,10 @@ namespace Silverback.Messaging.Broker
         public InMemoryProducer(
             InMemoryBroker broker,
             IProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
+            IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Producer> logger)
-            : base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
         }
 

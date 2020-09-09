@@ -33,11 +33,13 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             IRawInboundEnvelope? result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (context, _) =>
+                new ConsumerPipelineContext(
+                    envelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<IServiceProvider>()),
+                context =>
                 {
-                    result = context.Envelopes.First();
+                    result = context.Envelope;
                     return Task.CompletedTask;
                 });
 
@@ -58,11 +60,13 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             IRawInboundEnvelope? result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (context, _) =>
+                new ConsumerPipelineContext(
+                    envelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<IServiceProvider>()),
+                context =>
                 {
-                    result = context.Envelopes.First();
+                    result = context.Envelope;
                     return Task.CompletedTask;
                 });
 
@@ -87,11 +91,13 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             IRawInboundEnvelope? result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (context, _) =>
+                new ConsumerPipelineContext(
+                    envelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<IServiceProvider>()),
+                context =>
                 {
-                    result = context.Envelopes.First();
+                    result = context.Envelope;
                     return Task.CompletedTask;
                 });
 

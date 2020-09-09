@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -15,6 +14,10 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IProducer" />
     public abstract class Producer : IProducer
     {
+        private readonly IBrokerBehaviorsProvider<IProducerBehavior> _behaviorsProvider;
+
+        private readonly IServiceProvider _serviceProvider;
+
         private readonly ISilverbackIntegrationLogger<Producer> _logger;
 
         /// <summary>
@@ -26,8 +29,11 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to produce to.
         /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
         ///     The <see cref="ISilverbackIntegrationLogger" />.
@@ -35,15 +41,15 @@ namespace Silverback.Messaging.Broker
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
+            IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Producer> logger)
         {
-            // Reverse the behaviors order since they will be put in a Stack<T>
-            Behaviors = behaviors?.SortBySortIndex().Reverse().ToArray() ?? Array.Empty<IProducerBehavior>();
-            _logger = Check.NotNull(logger, nameof(logger));
-
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
+            _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _logger = Check.NotNull(logger, nameof(logger));
 
             Endpoint.Validate();
         }
@@ -53,9 +59,6 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IProducer.Endpoint" />
         public IProducerEndpoint Endpoint { get; }
-
-        /// <inheritdoc cref="IProducer.Behaviors" />
-        public IReadOnlyList<IProducerBehavior> Behaviors { get; }
 
         /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?,bool)" />
         public void Produce(
@@ -69,8 +72,8 @@ namespace Silverback.Messaging.Broker
             AsyncHelper.RunSynchronously(
                 () =>
                     ExecutePipeline(
-                        disableBehaviors ? null : new Stack<IProducerBehavior>(Behaviors),
-                        new ProducerPipelineContext(envelope, this),
+                        _behaviorsProvider.CreateStack(),
+                        new ProducerPipelineContext(envelope, this, _serviceProvider),
                         finalContext =>
                         {
                             ((RawOutboundEnvelope)finalContext.Envelope).Offset =
@@ -89,8 +92,8 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,bool)" />
         public async Task ProduceAsync(IOutboundEnvelope envelope, bool disableBehaviors = false) =>
             await ExecutePipeline(
-                disableBehaviors ? null : new Stack<IProducerBehavior>(Behaviors),
-                new ProducerPipelineContext(envelope, this),
+                _behaviorsProvider.CreateStack(),
+                new ProducerPipelineContext(envelope, this, _serviceProvider),
                 async finalContext =>
                 {
                     ((RawOutboundEnvelope)finalContext.Envelope).Offset =

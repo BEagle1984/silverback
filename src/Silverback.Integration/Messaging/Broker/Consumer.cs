@@ -17,15 +17,13 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IConsumer" />
     public abstract class Consumer : IConsumer, IDisposable
     {
-        private readonly IBrokerBehaviorsProvider _behaviorsProvider;
+        private readonly IBrokerBehaviorsProvider<IConsumerBehavior> _behaviorsProvider;
 
         private readonly IServiceProvider _serviceProvider;
 
         private readonly ISilverbackIntegrationLogger<Consumer> _logger;
 
         private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
-
-        private readonly IErrorPolicy? _errorPolicy;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -36,12 +34,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="errorPolicy">
-        ///     The <see cref="IErrorPolicy" /> to be applied when an exception is thrown processing the consumed
-        ///     message.
-        /// </param>
         /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider" />.
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
@@ -52,12 +46,10 @@ namespace Silverback.Messaging.Broker
         protected Consumer(
             IBroker broker,
             IConsumerEndpoint endpoint,
-            IErrorPolicy? errorPolicy,
-            IBrokerBehaviorsProvider behaviorsProvider,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Consumer> logger)
         {
-            _errorPolicy = errorPolicy;
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
 
@@ -177,7 +169,7 @@ namespace Silverback.Messaging.Broker
             _statusInfo.RecordConsumedMessage(offset);
 
             await ExecutePipeline(
-                    _behaviorsProvider.CreateConsumerStack(),
+                    _behaviorsProvider.CreateStack(),
                     new ConsumerPipelineContext(
                         new RawInboundEnvelope(
                             message,
@@ -187,8 +179,7 @@ namespace Silverback.Messaging.Broker
                             offset,
                             additionalLogData),
                         this,
-                        _errorPolicy),
-                    _serviceProvider)
+                        _serviceProvider))
                 .ConfigureAwait(false);
         }
 
@@ -222,8 +213,7 @@ namespace Silverback.Messaging.Broker
 
         private static async Task ExecutePipeline(
             Stack<IConsumerBehavior> behaviors,
-            ConsumerPipelineContext context,
-            IServiceProvider serviceProvider)
+            ConsumerPipelineContext context)
         {
             if (behaviors.Count == 0)
                 return;
@@ -232,8 +222,7 @@ namespace Silverback.Messaging.Broker
 
             await nextBehavior.Handle(
                     context,
-                    serviceProvider,
-                    (nextContext, nextServiceProvider) => ExecutePipeline(behaviors, nextContext, nextServiceProvider))
+                    (nextContext) => ExecutePipeline(behaviors, nextContext))
                 .ConfigureAwait(false);
         }
     }

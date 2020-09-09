@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -18,11 +19,14 @@ namespace Silverback.Tests.Integration.TestTypes
         public TestConsumer(
             TestBroker broker,
             TestConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
-            IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<TestConsumer> logger)
-            : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            IServiceProvider serviceProvider)
+            : base(
+                broker,
+                endpoint,
+                behaviorsProvider,
+                serviceProvider,
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TestConsumer>>())
         {
         }
 

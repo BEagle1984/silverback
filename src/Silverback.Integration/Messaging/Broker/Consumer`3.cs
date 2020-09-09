@@ -28,12 +28,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="errorPolicy">
-        ///     The <see cref="IErrorPolicy" /> to be applied when an exception is thrown processing the consumed
-        ///     message.
-        /// </param>
         /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider" />.
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
@@ -44,11 +40,10 @@ namespace Silverback.Messaging.Broker
         protected Consumer(
             TBroker broker,
             TEndpoint endpoint,
-            IErrorPolicy? errorPolicy,
-            IBrokerBehaviorsProvider behaviorsProvider,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
-            : base(broker, endpoint, errorPolicy, behaviorsProvider, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
         }
 

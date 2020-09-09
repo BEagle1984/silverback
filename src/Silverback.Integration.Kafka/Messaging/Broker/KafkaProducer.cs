@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -45,8 +44,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to produce to.
         /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
@@ -57,10 +56,10 @@ namespace Silverback.Messaging.Broker
         public KafkaProducer(
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<KafkaProducer> logger)
-            : base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             _logger = logger;
 

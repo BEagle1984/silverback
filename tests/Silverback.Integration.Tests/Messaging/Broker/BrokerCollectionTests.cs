@@ -17,8 +17,6 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 {
     public class BrokerCollectionTests
     {
-        private static readonly MessagesReceivedAsyncCallback VoidCallback = args => Task.CompletedTask;
-
         private readonly IProducerEndpoint[] _producerEndpoints =
         {
             TestProducerEndpoint.GetDefault(),
@@ -46,8 +44,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var brokerCollection = new BrokerCollection(
                 new IBroker[]
                 {
-                    new TestBroker(serviceProvider, Enumerable.Empty<IBrokerBehavior>()),
-                    new TestOtherBroker(serviceProvider, Enumerable.Empty<IBrokerBehavior>())
+                    new TestBroker(serviceProvider),
+                    new TestOtherBroker(serviceProvider)
                 });
             var endpoint = _producerEndpoints[endpointIndex];
 
@@ -72,12 +70,12 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var brokerCollection = new BrokerCollection(
                 new IBroker[]
                 {
-                    new TestBroker(serviceProvider, Enumerable.Empty<IBrokerBehavior>()),
-                    new TestOtherBroker(serviceProvider, Enumerable.Empty<IBrokerBehavior>())
+                    new TestBroker(serviceProvider),
+                    new TestOtherBroker(serviceProvider)
                 });
             var endpoint = _consumerEndpoints[endpointIndex];
 
-            var consumer = brokerCollection.AddConsumer(endpoint, VoidCallback);
+            var consumer = brokerCollection.AddConsumer(endpoint);
 
             consumer.Should().NotBeNull();
             consumer.GetType().Name.Should().BeEquivalentTo(expectedConsumerType);
@@ -94,8 +92,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var brokerCollection = new BrokerCollection(
                 new IBroker[]
                 {
-                    new TestBroker(serviceProvider, Enumerable.Empty<IBrokerBehavior>()),
-                    new TestOtherBroker(serviceProvider, Enumerable.Empty<IBrokerBehavior>())
+                    new TestBroker(serviceProvider),
+                    new TestOtherBroker(serviceProvider)
                 });
 
             brokerCollection[0].IsConnected.Should().BeFalse();

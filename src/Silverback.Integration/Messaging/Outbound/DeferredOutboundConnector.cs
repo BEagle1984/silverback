@@ -9,6 +9,8 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors
 {
+    // TODO: Transform into strategy
+    
     /// <summary>
     ///     Stores the outbound messages into a queue to be forwarded to the message broker by the
     ///     <see cref="IOutboundQueueWorker" />.

@@ -1,8 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -21,20 +19,19 @@ namespace Silverback.Messaging.Headers
         /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
             Check.NotNull(next, nameof(next));
 
-            context.Envelopes.OfType<InboundEnvelope>()
-                .ForEach(
-                    envelope => HeaderAttributeHelper.SetFromHeaders(
-                        envelope.Message,
-                        envelope.Headers));
+            if (context.Envelope is IInboundEnvelope inboundEnvelope)
+            {
+                HeaderAttributeHelper.SetFromHeaders(
+                    inboundEnvelope.Message,
+                    inboundEnvelope.Headers);
+            }
 
-            await next(context, serviceProvider).ConfigureAwait(false);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

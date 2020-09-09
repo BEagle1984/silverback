@@ -24,9 +24,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
                 .AddSingleton<EndpointsConfiguratorsInvoker>()
                 .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>));
 
-            _broker = new KafkaBroker(
-                Enumerable.Empty<IBrokerBehavior>(),
-                services.BuildServiceProvider());
+            _broker = new KafkaBroker(services.BuildServiceProvider());
         }
 
         [Fact]

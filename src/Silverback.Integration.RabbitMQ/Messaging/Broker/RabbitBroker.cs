@@ -31,10 +31,9 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         public RabbitBroker(
-            IEnumerable<IBrokerBehavior> behaviors,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider)
-            : base(behaviors, serviceProvider)
+            : base(serviceProvider)
         {
             _connectionFactory = connectionFactory;
         }
@@ -42,26 +41,25 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
         protected override IProducer InstantiateProducer(
             RabbitProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider) =>
             new RabbitProducer(
                 this,
                 endpoint,
-                behaviors,
+                behaviorsProvider,
                 _connectionFactory,
+                serviceProvider,
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<RabbitProducer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
             RabbitConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider) =>
             new RabbitConsumer(
                 this,
                 endpoint,
-                callback,
-                behaviors,
+                behaviorsProvider,
                 _connectionFactory,
                 serviceProvider,
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<RabbitConsumer>>());

@@ -12,8 +12,8 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestOtherBroker : Broker<TestOtherProducerEndpoint, TestOtherConsumerEndpoint>
     {
-        public TestOtherBroker(IServiceProvider serviceProvider, IEnumerable<IBrokerBehavior> behaviors)
-            : base(behaviors, serviceProvider)
+        public TestOtherBroker(IServiceProvider serviceProvider)
+            : base(serviceProvider)
         {
         }
 
@@ -21,21 +21,14 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override IProducer InstantiateProducer(
             TestOtherProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider) =>
-            new TestOtherProducer(this, endpoint, behaviors);
+            new TestOtherProducer(this, endpoint, behaviorsProvider, serviceProvider);
 
         protected override IConsumer InstantiateConsumer(
             TestOtherConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider) =>
-            new TestOtherConsumer(
-                this,
-                endpoint,
-                callback,
-                behaviors,
-                serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TestOtherConsumer>>());
+            new TestOtherConsumer(this, endpoint, behaviorsProvider, serviceProvider);
     }
 }

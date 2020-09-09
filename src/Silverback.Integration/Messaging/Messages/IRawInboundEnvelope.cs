@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Sequences;
+
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
@@ -19,5 +21,7 @@ namespace Silverback.Messaging.Messages
         ///     single <c>KafkaConsumer</c>).
         /// </summary>
         string ActualEndpointName { get; }
+
+        ISequenceInfo? SequenceInfo { get; }
     }
 }

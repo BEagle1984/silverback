@@ -32,7 +32,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 new KafkaProducerEndpoint("test-endpoint"));
 
             new KafkaMessageKeyInitializerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().NotContain(h => h.Name == "x-kafka-message-key");
@@ -53,7 +53,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 new KafkaProducerEndpoint("test-endpoint"));
 
             new KafkaMessageKeyInitializerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "1"));
@@ -74,7 +74,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 new KafkaProducerEndpoint("test-endpoint"));
 
             new KafkaMessageKeyInitializerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "One=1,Two=2"));

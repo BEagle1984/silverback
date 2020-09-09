@@ -21,16 +21,14 @@ namespace Silverback.Messaging.Serialization
         /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
             Check.NotNull(next, nameof(next));
 
-            context.Envelopes = (await context.Envelopes.SelectAsync(Deserialize).ConfigureAwait(false)).ToList();
+            context.Envelope = await Deserialize(context.Envelope).ConfigureAwait(false);
 
-            await next(context, serviceProvider).ConfigureAwait(false);
+            await next(context).ConfigureAwait(false);
         }
 
         private static async Task<IRawInboundEnvelope> Deserialize(IRawInboundEnvelope envelope)

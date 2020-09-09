@@ -11,12 +11,8 @@ namespace Silverback.Tests.Integration.TestTypes
     {
         public int SortIndex => 0;
 
-        public Task Handle(
-            ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
-            ConsumerBehaviorHandler next) => next(context, serviceProvider);
+        public Task Handle(ConsumerPipelineContext context, ConsumerBehaviorHandler next) => next(context);
 
-        public Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next) =>
-            next(context);
+        public Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next) => next(context);
     }
 }

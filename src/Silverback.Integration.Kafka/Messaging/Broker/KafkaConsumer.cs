@@ -50,11 +50,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to be consumed.
         /// </param>
-        /// <param name="callback">
-        ///     The delegate to be invoked when a message is received.
-        /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
@@ -65,11 +62,10 @@ namespace Silverback.Messaging.Broker
         public KafkaConsumer(
             KafkaBroker broker,
             KafkaConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<KafkaConsumer> logger)
-            : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             IServiceProvider serviceProvider1 = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _logger = Check.NotNull(logger, nameof(logger));

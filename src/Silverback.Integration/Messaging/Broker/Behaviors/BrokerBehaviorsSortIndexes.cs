@@ -7,6 +7,7 @@ using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Broker.Behaviors
@@ -60,9 +61,9 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int Encryptor = 950;
 
             /// <summary>
-            ///     The <see cref="ChunkSplitterProducerBehavior" /> sort index.
+            ///     The <see cref="SequencerProducerBehavior" /> sort index.
             /// </summary>
-            public const int ChunkSplitter = 1000;
+            public const int Sequencer = 1000;
 
             /// <summary>
             ///     The <see cref="CustomHeadersMapperProducerBehavior" /> sort index.
@@ -88,22 +89,27 @@ namespace Silverback.Messaging.Broker.Behaviors
             /// <summary>
             ///     The <see cref="ServiceScopeFactoryConsumerBehavior" /> sort index.
             /// </summary>
-            public const int ServiceScopeFactory = 120;
+            public const int ServiceScopeFactory = 200;
+
+            /// <summary>
+            ///     The <see cref="ExactlyOnceGuardConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int ExactlyOnceGuard = 210;
+
+            /// <summary>
+            ///     The <see cref="ErrorHandlerConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int ErrorHandler = 220;
+
+            /// <summary>
+            ///     The <see cref="TransactionHandlerConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int TransactionHandler = 250;
 
             /// <summary>
             ///     The <see cref="CustomHeadersMapperConsumerBehavior" /> sort index.
             /// </summary>
-            public const int CustomHeadersMapper = 150;
-
-            /// <summary>
-            ///     The <see cref="InboundProcessorConsumerBehavior" /> sort index.
-            /// </summary>
-            public const int InboundProcessor = 200;
-
-            /// <summary>
-            ///     The <see cref="ChunkAggregatorConsumerBehavior" /> sort index.
-            /// </summary>
-            public const int ChunkAggregator = 300;
+            public const int CustomHeadersMapper = 300;
 
             /// <summary>
             ///     The <see cref="DecryptorConsumerBehavior" /> sort index.
@@ -111,19 +117,40 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int Decryptor = 400;
 
             /// <summary>
+            ///     The <see cref="SequencerConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int Sequencer = 500;
+
+            // /// <summary>
+            // ///     The <see cref="ChunksAggregatorConsumerBehavior" /> sort index.
+            // /// </summary>
+            // public const int ChunksAggregator = 1000;
+
+
+            /// <summary>
             ///     The <see cref="BinaryFileHandlerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int BinaryFileHandler = 500;
+            public const int BinaryFileHandler = 600;
 
             /// <summary>
             ///     The <see cref="DeserializerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int Deserializer = 600;
+            public const int Deserializer = 700;
 
             /// <summary>
             ///     The <see cref="HeadersReaderConsumerBehavior" /> sort index.
             /// </summary>
-            public const int HeadersReader = 700;
+            public const int HeadersReader = 800;
+
+            /// <summary>
+            ///     The <see cref="StreamPublisherConsumerBehavior"/> sort index.
+            /// </summary>
+            public const int StreamPublisher = 2000;
+
+            /// <summary>
+            ///     The <see cref="PublisherConsumerBehavior"/> sort index.
+            /// </summary>
+            public const int Publisher = 2100;
         }
     }
 }

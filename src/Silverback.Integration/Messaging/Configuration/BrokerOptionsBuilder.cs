@@ -26,8 +26,8 @@ namespace Silverback.Messaging.Configuration
 
         internal void CompleteWithDefaults()
         {
-            if (!SilverbackBuilder.Services.ContainsAny<IInboundConnector>())
-                this.AddInboundConnector();
+            // if (!SilverbackBuilder.Services.ContainsAny<IInboundConnector>())
+            //     this.AddInboundConnector();
 
             if (!SilverbackBuilder.Services.ContainsAny<IOutboundConnector>())
                 this.AddOutboundConnector();

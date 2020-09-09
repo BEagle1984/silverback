@@ -32,19 +32,17 @@ namespace Silverback.Messaging.Headers
         /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
             Check.NotNull(next, nameof(next));
 
             if (_mappings != null && _mappings.Count > 0)
             {
-                context.Envelopes.ForEach(envelope => _mappings.Revert(envelope.Headers));
+                _mappings.Revert(context.Envelope.Headers);
             }
 
-            await next(context, serviceProvider).ConfigureAwait(false);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

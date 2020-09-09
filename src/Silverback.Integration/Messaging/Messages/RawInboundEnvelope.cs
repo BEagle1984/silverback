@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Messages
 {
@@ -28,5 +29,8 @@ namespace Silverback.Messaging.Messages
 
         /// <inheritdoc cref="IRawInboundEnvelope.ActualEndpointName" />
         public string ActualEndpointName { get; }
+
+        /// <inheritdoc cref="IRawInboundEnvelope.SequenceInfo" />
+        public ISequenceInfo? SequenceInfo { get; }
     }
 }

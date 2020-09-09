@@ -1,6 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Batch;
+using Silverback.Messaging.ErrorHandling;
+
 namespace Silverback.Messaging
 {
     /// <inheritdoc cref="IConsumerEndpoint" />
@@ -16,6 +19,12 @@ namespace Silverback.Messaging
             : base(name)
         {
         }
+
+        /// <inheritdoc cref="IConsumerEndpoint.ErrorPolicy" />
+        public IErrorPolicy? ErrorPolicy { get; set; }
+
+        /// <inheritdoc cref="IConsumerEndpoint.Batch" />
+        public BatchSettings Batch { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether an exception must be thrown if no subscriber is handling the

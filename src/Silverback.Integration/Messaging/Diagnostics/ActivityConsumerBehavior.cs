@@ -25,11 +25,9 @@ namespace Silverback.Messaging.Diagnostics
         /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
             Check.NotNull(next, nameof(next));
 
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
@@ -38,9 +36,9 @@ namespace Silverback.Messaging.Diagnostics
                 TryInitActivity(
                     context,
                     activity,
-                    serviceProvider.GetService<ISilverbackLogger<ActivityConsumerBehavior>>());
+                    context.ServiceProvider.GetService<ISilverbackLogger<ActivityConsumerBehavior>>());
 
-                await next(context, serviceProvider).ConfigureAwait(false);
+                await next(context).ConfigureAwait(false);
             }
             finally
             {
@@ -56,7 +54,7 @@ namespace Silverback.Messaging.Diagnostics
         {
             try
             {
-                activity.InitFromMessageHeaders(context.Envelopes.Single().Headers);
+                activity.InitFromMessageHeaders(context.Envelope.Headers);
             }
             catch (Exception ex)
             {

@@ -32,16 +32,14 @@ namespace Silverback.Messaging.Diagnostics
         /// <inheritdoc cref="IConsumerBehavior.Handle" />
         public async Task Handle(
             ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
             Check.NotNull(next, nameof(next));
 
             try
             {
-                await next(context, serviceProvider).ConfigureAwait(false);
+                await next(context).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -49,7 +47,7 @@ namespace Silverback.Messaging.Diagnostics
                     IntegrationEventIds.ConsumerFatalError,
                     ex,
                     "Fatal error occurred consuming the message. The consumer will be stopped.",
-                    context.Envelopes);
+                    context.Envelope);
 
                 throw;
             }

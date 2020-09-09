@@ -39,8 +39,11 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to produce to.
         /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="connectionFactory">
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
@@ -52,10 +55,11 @@ namespace Silverback.Messaging.Broker
         public RabbitProducer(
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IRabbitConnectionFactory connectionFactory,
+            IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Producer> logger)
-            : base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;

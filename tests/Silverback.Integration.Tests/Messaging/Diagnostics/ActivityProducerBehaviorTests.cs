@@ -33,7 +33,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             var envelope = new OutboundEnvelope(null, null, TestProducerEndpoint.GetDefault());
 
             new ActivityProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().Contain(
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             var envelope = new OutboundEnvelope(null, null, TestProducerEndpoint.GetDefault());
 
             new ActivityProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().Contain(

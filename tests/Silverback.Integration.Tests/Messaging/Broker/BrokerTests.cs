@@ -15,8 +15,6 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 {
     public class BrokerTests
     {
-        private static readonly MessagesReceivedAsyncCallback VoidCallback = args => Task.CompletedTask;
-
         [Fact]
         public void GetProducer_SomeEndpoint_ProducerIsReturned()
         {
@@ -78,7 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
                             .AddBroker<TestBroker>()));
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
+            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault());
 
             consumer.Should().NotBeNull();
         }
@@ -94,8 +92,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
                             .AddBroker<TestBroker>()));
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
-            var consumer2 = broker.AddConsumer(new TestConsumerEndpoint("test2"), VoidCallback);
+            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault());
+            var consumer2 = broker.AddConsumer(new TestConsumerEndpoint("test2"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -111,8 +109,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
                             .AddBroker<TestBroker>()));
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
-            var consumer2 = broker.AddConsumer(new TestConsumerEndpoint("test2"), VoidCallback);
+            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault());
+            var consumer2 = broker.AddConsumer(new TestConsumerEndpoint("test2"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }

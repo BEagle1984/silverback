@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -27,7 +28,10 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             IOutboundEnvelope? result = null;
             await new BinaryFileHandlerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                new ProducerPipelineContext(
+                    envelope,
+                    Substitute.For<IProducer>(),
+                    Substitute.For<IServiceProvider>()),
                 context =>
                 {
                     result = context.Envelope;
@@ -49,7 +53,10 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             IOutboundEnvelope? result = null;
             await new BinaryFileHandlerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                new ProducerPipelineContext(
+                    envelope,
+                    Substitute.For<IProducer>(),
+                    Substitute.For<IServiceProvider>()),
                 context =>
                 {
                     result = context.Envelope;
@@ -73,7 +80,10 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             IOutboundEnvelope? result = null;
             await new BinaryFileHandlerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                new ProducerPipelineContext(
+                    envelope,
+                    Substitute.For<IProducer>(),
+                    Substitute.For<IServiceProvider>()),
                 context =>
                 {
                     result = context.Envelope;
@@ -95,7 +105,10 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
 
             IOutboundEnvelope? result = null;
             await new BinaryFileHandlerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                new ProducerPipelineContext(
+                    envelope,
+                    Substitute.For<IProducer>(),
+                    Substitute.For<IServiceProvider>()),
                 context =>
                 {
                     result = context.Envelope;

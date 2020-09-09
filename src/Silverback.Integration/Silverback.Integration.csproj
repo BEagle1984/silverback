@@ -42,6 +42,7 @@ This package contains the message broker and connectors abstractions.</Descripti
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Messaging\Sequences" />
+    <Folder Include="Messaging\Inbound" />
+    <Folder Include="Messaging\OutboundRouting" />
   </ItemGroup>
 </Project>

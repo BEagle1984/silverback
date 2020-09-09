@@ -36,12 +36,15 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             var entered = false;
             await new ActivityConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { rawEnvelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (_, __) =>
+                new ConsumerPipelineContext(
+                    rawEnvelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<IServiceProvider>()),
+                _ =>
                 {
                     Activity.Current.Should().NotBeNull();
-                    Activity.Current.ParentId.Should().Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
+                    Activity.Current.ParentId.Should()
+                        .Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
                     Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
 
                     entered = true;
@@ -66,9 +69,11 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             var entered = false;
             new ActivityConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { rawEnvelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (_, __) =>
+                new ConsumerPipelineContext(
+                    rawEnvelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<IServiceProvider>()),
+                _ =>
                 {
                     Activity.Current.Should().NotBeNull();
                     Activity.Current.Id.Should().NotBeNullOrEmpty();

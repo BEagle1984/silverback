@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
@@ -24,18 +23,13 @@ namespace Silverback.Messaging.Connectors
         /// <param name="queueWriter">
         ///     The <see cref="IOutboundQueueWriter"/> to be used to write to the queue.
         /// </param>
-        /// <param name="behaviors">
-        ///     The <see cref="IEnumerable{T}" /> containing the <see cref="IBrokerBehavior" /> to be passed to the
-        ///     producers and consumers.
-        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         public OutboundQueueBroker(
             IOutboundQueueWriter queueWriter,
-            IEnumerable<IBrokerBehavior> behaviors,
             IServiceProvider serviceProvider)
-            : base(behaviors, serviceProvider)
+            : base(serviceProvider)
         {
             _queueWriter = queueWriter;
         }
@@ -43,20 +37,20 @@ namespace Silverback.Messaging.Connectors
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
         protected override IProducer InstantiateProducer(
             IProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider) =>
             new OutboundQueueProducer(
                 _queueWriter,
                 this,
                 endpoint,
-                behaviors,
+                behaviorsProvider,
+                serviceProvider,
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<OutboundQueueProducer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider) =>
             throw new InvalidOperationException(
                 "This IBroker implementation is used to write to outbound queue. " +

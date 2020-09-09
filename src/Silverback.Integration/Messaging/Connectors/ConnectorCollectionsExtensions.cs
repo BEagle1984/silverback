@@ -16,11 +16,6 @@ namespace Silverback.Messaging.Connectors
             Type? connectorType) =>
             GetConnectorInstance<IOutboundConnector>(connectors, connectorType);
 
-        public static IInboundConnector GetConnectorInstance(
-            this IReadOnlyCollection<IInboundConnector> connectors,
-            Type? connectorType) =>
-            GetConnectorInstance<IInboundConnector>(connectors, connectorType);
-
         private static TConnector GetConnectorInstance<TConnector>(
             this IReadOnlyCollection<TConnector> connectors,
             Type? connectorType)

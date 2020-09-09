@@ -39,8 +39,6 @@ namespace Silverback.Messaging.Broker
 
         private const int MaxDisconnectParallelism = 4;
 
-        private readonly IBrokerBehaviorsProvider _behaviorsProvider;
-
         private readonly EndpointsConfiguratorsInvoker _endpointsConfiguratorsInvoker;
 
         private readonly ISilverbackIntegrationLogger _logger;
@@ -54,17 +52,13 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Initializes a new instance of the <see cref="Broker{TProducerEndpoint, TConsumerEndpoint}" /> class.
         /// </summary>
-        /// <param name="brokerBehaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider"/>.
-        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
-        protected Broker(IBrokerBehaviorsProvider brokerBehaviorsProvider, IServiceProvider serviceProvider)
+        protected Broker(IServiceProvider serviceProvider)
         {
             _producers = new ConcurrentDictionary<IEndpoint, IProducer>();
 
-            _behaviorsProvider = Check.NotNull(brokerBehaviorsProvider, nameof(brokerBehaviorsProvider));
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _endpointsConfiguratorsInvoker = _serviceProvider.GetRequiredService<EndpointsConfiguratorsInvoker>();
             _logger = _serviceProvider
@@ -125,7 +119,10 @@ namespace Silverback.Messaging.Broker
                         endpoint.Name,
                         _producers.Count + 1);
 
-                    return InstantiateProducer((TProducerEndpoint)endpoint, _behaviorsProvider, _serviceProvider);
+                    return InstantiateProducer(
+                        (TProducerEndpoint)endpoint,
+                        _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
+                        _serviceProvider);
                 });
         }
 
@@ -145,7 +142,10 @@ namespace Silverback.Messaging.Broker
                 "Creating new consumer for endpoint {endpointName}.",
                 endpoint.Name);
 
-            var consumer = InstantiateConsumer((TConsumerEndpoint)endpoint, _behaviorsProvider, _serviceProvider);
+            var consumer = InstantiateConsumer(
+                (TConsumerEndpoint)endpoint,
+                _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
+                _serviceProvider);
 
             _consumers.Add(consumer);
 
@@ -215,7 +215,7 @@ namespace Silverback.Messaging.Broker
         ///     The endpoint.
         /// </param>
         /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider"/>.
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
@@ -226,7 +226,7 @@ namespace Silverback.Messaging.Broker
         /// </returns>
         protected abstract IProducer InstantiateProducer(
             TProducerEndpoint endpoint,
-            IBrokerBehaviorsProvider behaviorsProvider,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider);
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace Silverback.Messaging.Broker
         ///     The endpoint.
         /// </param>
         /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider"/>.
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
@@ -247,7 +247,7 @@ namespace Silverback.Messaging.Broker
         /// </returns>
         protected abstract IConsumer InstantiateConsumer(
             TConsumerEndpoint endpoint,
-            IBrokerBehaviorsProvider behaviorsProvider,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider);
 
         /// <summary>
