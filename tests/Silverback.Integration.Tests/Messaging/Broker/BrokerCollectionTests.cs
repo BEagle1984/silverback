@@ -38,6 +38,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = new ServiceCollection()
                 .AddSingleton<EndpointsConfiguratorsInvoker>()
+                .AddTransient(typeof(IBrokerBehaviorsProvider<>), typeof(BrokerBehaviorsProvider<>))
                 .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
                 .BuildServiceProvider();
 
@@ -64,6 +65,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = new ServiceCollection()
                 .AddSingleton<EndpointsConfiguratorsInvoker>()
+                .AddTransient(typeof(IBrokerBehaviorsProvider<>), typeof(BrokerBehaviorsProvider<>))
                 .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
                 .BuildServiceProvider();
 

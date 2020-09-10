@@ -27,12 +27,11 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
 
         public Task Handle(
             ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
-            context.Envelopes.ForEach(envelope => InboundEnvelopes.Add((IInboundEnvelope)envelope));
+            InboundEnvelopes.Add((IInboundEnvelope)context.Envelope);
 
-            return next(context, serviceProvider);
+            return next(context);
         }
     }
 }

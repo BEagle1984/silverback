@@ -90,7 +90,7 @@ namespace Silverback.Messaging.Broker
                     Value = envelope.RawMessage
                 };
 
-                if (envelope.Headers != null && envelope.Headers.Any())
+                if (envelope.Headers.Count >= 1)
                 {
                     kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
                 }

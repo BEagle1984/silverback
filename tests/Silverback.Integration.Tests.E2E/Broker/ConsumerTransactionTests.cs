@@ -80,8 +80,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    settings: new InboundConnectorSettings
+                                    new KafkaConsumerEndpoint("test-e2e")
                                     {
                                         Batch = new BatchSettings
                                         {

@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingleton<IBusOptions>(new BusOptions())
                     .AddScoped<IPublisher, Publisher>()
                     .AddScoped<IStreamPublisher, StreamPublisher>()
-                    .AddSingleton<IBehaviorsProvider, BehaviorsProvider>()
+                    .AddScoped<IBehaviorsProvider, BehaviorsProvider>()
                     .AddScoped<SubscribedMethodInvoker>()
                     .AddScoped<SubscribedMethodsLoader>()
                     .AddLogger()
