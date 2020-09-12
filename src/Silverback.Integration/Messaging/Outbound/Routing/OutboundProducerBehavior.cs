@@ -43,12 +43,30 @@ namespace Silverback.Messaging.Connectors.Behaviors
 
             await messages.OfType<IOutboundEnvelopeInternal>()
                 .ForEachAsync(
-                    outboundMessage => _outboundConnectors
-                        .GetConnectorInstance(outboundMessage.OutboundConnectorType)
-                        .RelayMessage(outboundMessage))
+                    outboundMessage =>
+                        GetConnectorInstance(_outboundConnectors, outboundMessage.OutboundConnectorType)
+                            .RelayMessage(outboundMessage))
                 .ConfigureAwait(false);
 
             return await next(messages).ConfigureAwait(false);
+        }
+
+        private static TConnector GetConnectorInstance<TConnector>(
+            IReadOnlyCollection<TConnector> connectors,
+            Type? connectorType)
+            where TConnector : class
+        {
+            Check.NotEmpty(connectors, nameof(connectors));
+
+            if (connectorType == null)
+            {
+                return connectors.First();
+            }
+
+            return connectors.FirstOrDefault(connector => connector.GetType() == connectorType) ??
+                   connectors.FirstOrDefault(connector => connectorType.IsInstanceOfType(connector)) ??
+                   throw new InvalidOperationException(
+                       $"No instance of {connectorType.Name} could be found in the collection of available connectors.");
         }
     }
 }
