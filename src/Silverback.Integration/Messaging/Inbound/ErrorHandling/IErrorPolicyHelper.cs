@@ -4,7 +4,7 @@
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 
-namespace Silverback.Messaging.ErrorHandling
+namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
     ///     Exposes a method used to wrap the message handler delegate invocation and apply the provided

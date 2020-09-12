@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Deferred
 {
     // TODO: Transform into strategy
     

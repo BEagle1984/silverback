@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Routing
 {
     /// <summary>
     ///     Defines the <see cref="IOutboundRouter" /> to be used to get the destination endpoints to produce

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.ErrorHandling
+namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
     ///     An error policy is used to handle errors that may occur while processing the inbound messages.

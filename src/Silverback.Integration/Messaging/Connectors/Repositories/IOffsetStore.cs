@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Inbound.Transaction;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {

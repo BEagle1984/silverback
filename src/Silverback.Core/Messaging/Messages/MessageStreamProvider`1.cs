@@ -67,8 +67,7 @@ namespace Silverback.Messaging.Messages
         public Type MessageType => typeof(TMessage);
 
         /// <summary>
-        ///     Add the specified message to the stream. This overload is used by the owner stream to push to the
-        ///     linked streams.
+        ///     Adds the specified message to the stream.
         /// </summary>
         /// <param name="message">
         ///     The message to be added.
@@ -85,20 +84,38 @@ namespace Silverback.Messaging.Messages
 
             var messageId = Interlocked.Increment(ref _messagesCount);
 
+            IEnumerable<bool> results;
+
             // ReSharper disable once InconsistentlySynchronizedField
-            var results = await _linkedStreams.ParallelSelectAsync(
-                    linkedStream => PushIfCompatibleType(linkedStream, messageId, message, cancellationToken))
-                .ConfigureAwait(false);
+            if (_linkedStreams.Count > 1)
+            {
+                // ReSharper disable once InconsistentlySynchronizedField
+                results = await _linkedStreams.ParallelSelectAsync(
+                        linkedStream => PushIfCompatibleType(linkedStream, messageId, message, cancellationToken))
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                // ReSharper disable once InconsistentlySynchronizedField
+                results = new[]
+                {
+                    await PushIfCompatibleType(_linkedStreams[0], messageId, message, cancellationToken)
+                        .ConfigureAwait(false)
+                };
+            }
 
-            var count = results.Count(result => result);
+            var pushedCount = results.Count(result => result);
 
-            if (count == 0 && ProcessedCallback != null)
+            if (pushedCount == 0 && ProcessedCallback != null)
             {
                 await ProcessedCallback.Invoke(message).ConfigureAwait(false);
             }
-            else if (count > 1 && !_linkedStreamsByMessage.TryAdd(messageId, count))
+            else if (pushedCount > 1)
             {
-                throw new InvalidOperationException("The same message was already pushed to this stream.");
+                if (!_linkedStreamsByMessage.TryAdd(messageId, pushedCount))
+                {
+                    throw new InvalidOperationException("The same message was already pushed to this stream.");
+                }
             }
         }
 

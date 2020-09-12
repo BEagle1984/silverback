@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration

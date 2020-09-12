@@ -2,11 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker.Behaviors
+namespace Silverback.Messaging.Inbound.Publishing
 {
     /// <summary>
     ///     Publishes the stream containing the consumed messages.

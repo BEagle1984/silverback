@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.ErrorHandling
+namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
     ///     This policy simply skips the message that failed to be processed.

@@ -4,7 +4,7 @@
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound
 {
     /// <summary>
     ///     Forwards the outbound messages to the message broker.

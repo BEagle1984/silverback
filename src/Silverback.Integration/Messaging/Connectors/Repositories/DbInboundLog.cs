@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
+using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 

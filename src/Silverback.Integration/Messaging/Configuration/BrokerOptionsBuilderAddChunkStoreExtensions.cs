@@ -5,7 +5,7 @@ using System;
 using Microsoft.Extensions.Hosting;
 using Silverback.Background;
 using Silverback.Diagnostics;
-using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Chunking;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace

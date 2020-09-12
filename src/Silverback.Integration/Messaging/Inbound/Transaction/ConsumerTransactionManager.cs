@@ -8,7 +8,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Inbound.Transaction
 {
     /// <summary>
     ///     Manages the consumer transaction propagating the commit or rollback to all enlisted services.

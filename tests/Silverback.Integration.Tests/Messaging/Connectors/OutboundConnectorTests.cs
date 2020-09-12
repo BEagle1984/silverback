@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;

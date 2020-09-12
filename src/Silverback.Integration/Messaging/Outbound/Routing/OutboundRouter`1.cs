@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Routing
 {
     /// <inheritdoc cref="IOutboundRouter{TMessage}" />
     public abstract class OutboundRouter<TMessage> : IOutboundRouter<TMessage>

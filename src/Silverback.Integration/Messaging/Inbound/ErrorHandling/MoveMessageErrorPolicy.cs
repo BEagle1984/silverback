@@ -9,7 +9,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.ErrorHandling
+namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
     ///     This policy moves the failed messages to the configured endpoint.

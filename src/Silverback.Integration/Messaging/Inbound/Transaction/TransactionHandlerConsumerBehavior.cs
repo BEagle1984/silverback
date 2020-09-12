@@ -2,16 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Batch;
-using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker.Behaviors
+namespace Silverback.Messaging.Inbound.Transaction
 {
     /// <summary>
     ///     Handles the consumer transaction.

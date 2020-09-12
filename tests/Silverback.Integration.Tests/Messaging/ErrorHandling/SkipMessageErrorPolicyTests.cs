@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Diagnostics;
-using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Xunit;

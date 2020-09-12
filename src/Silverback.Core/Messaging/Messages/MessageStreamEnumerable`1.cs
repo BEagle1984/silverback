@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Messages
     internal class MessageStreamEnumerable<TMessage>
         : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
     {
-        private readonly IMessageStreamProvider _ownerStreamProvider;
+        private readonly IMessageStreamProvider? _ownerStreamProvider;
 
         private readonly Channel<PushedMessage> _channel;
 
@@ -35,9 +35,20 @@ namespace Silverback.Messaging.Messages
         ///     operations.
         /// </param>
         public MessageStreamEnumerable(IMessageStreamProvider ownerStreamProvider, int bufferCapacity = 1)
+            : this(bufferCapacity)
         {
             _ownerStreamProvider = ownerStreamProvider;
+        }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MessageStreamEnumerable{TMessage}" /> class.
+        /// </summary>
+        /// <param name="bufferCapacity">
+        ///     The maximum number of messages that will be stored before blocking the <c>PushAsync</c>
+        ///     operations.
+        /// </param>
+        public MessageStreamEnumerable(int bufferCapacity = 1)
+        {
             _channel = bufferCapacity > 0
                 ? Channel.CreateBounded<PushedMessage>(bufferCapacity)
                 : Channel.CreateUnbounded<PushedMessage>();
@@ -67,15 +78,15 @@ namespace Silverback.Messaging.Messages
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
             EnumerateExclusively(() => GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken));
 
-        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
@@ -102,10 +113,12 @@ namespace Silverback.Messaging.Messages
                 var currentMessage = (TMessage)_current.Message;
                 yield return currentMessage;
 
-                AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyLinkedStreamProcessed(_current));
+                if (_ownerStreamProvider != null)
+                    AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyLinkedStreamProcessed(_current));
             }
 
-            AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyLinkedStreamEnumerationCompleted(this));
+            if (_ownerStreamProvider != null)
+                AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyLinkedStreamEnumerationCompleted(this));
         }
 
         private async IAsyncEnumerable<TMessage> GetAsyncEnumerable(
@@ -119,10 +132,12 @@ namespace Silverback.Messaging.Messages
                 var currentMessage = (TMessage)_current.Message;
                 yield return currentMessage;
 
-                await _ownerStreamProvider.NotifyLinkedStreamProcessed(_current).ConfigureAwait(false);
+                if (_ownerStreamProvider != null)
+                    await _ownerStreamProvider.NotifyLinkedStreamProcessed(_current).ConfigureAwait(false);
             }
 
-            await _ownerStreamProvider.NotifyLinkedStreamEnumerationCompleted(this).ConfigureAwait(false);
+            if (_ownerStreamProvider != null)
+                await _ownerStreamProvider.NotifyLinkedStreamEnumerationCompleted(this).ConfigureAwait(false);
         }
 
         private TReturn EnumerateExclusively<TReturn>(Func<TReturn> action)

@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.LargeMessages
+namespace Silverback.Messaging.Chunking
 {
     internal class ChunkAggregator
     {

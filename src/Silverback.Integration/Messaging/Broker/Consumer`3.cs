@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.ErrorHandling;
 
 namespace Silverback.Messaging.Broker
 {

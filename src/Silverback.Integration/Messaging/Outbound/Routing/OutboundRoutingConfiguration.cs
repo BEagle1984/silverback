@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Routing
 {
     internal class OutboundRoutingConfiguration : IOutboundRoutingConfiguration
     {

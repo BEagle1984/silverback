@@ -4,7 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Deferred
 {
     /// <summary>
     ///     Processes the outbound queue and produces the messages to the target message broker endpoint.

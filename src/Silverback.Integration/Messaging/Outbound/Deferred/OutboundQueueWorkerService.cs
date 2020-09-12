@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Silverback.Background;
 using Silverback.Diagnostics;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Deferred
 {
     /// <summary>
     ///     The <see cref="IHostedService" /> that triggers the outbound queue worker at regular intervals.

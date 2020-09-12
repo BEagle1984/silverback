@@ -10,7 +10,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors.Behaviors
+namespace Silverback.Messaging.Outbound.Routing
 {
     /// <summary>
     ///     Produces the <see cref="IOutboundEnvelope{TMessage}" /> through the correct

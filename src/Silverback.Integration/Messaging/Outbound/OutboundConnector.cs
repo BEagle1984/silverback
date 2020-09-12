@@ -6,7 +6,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound
 {
     /// <inheritdoc cref="IOutboundConnector" />
     public class OutboundConnector : IOutboundConnector

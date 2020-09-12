@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Routing
 {
     /// <summary>
     ///     Routes all messages to a static collection of pre-defined endpoints.

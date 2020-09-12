@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Silverback.Messaging;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes

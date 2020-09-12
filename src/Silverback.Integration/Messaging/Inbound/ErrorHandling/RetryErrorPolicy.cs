@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.ErrorHandling
+namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
     ///     This policy retries the handler method multiple times in case of exception. An optional delay can be

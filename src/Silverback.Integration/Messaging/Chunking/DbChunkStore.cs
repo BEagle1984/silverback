@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
-using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Inbound.Transaction;
 
-namespace Silverback.Messaging.LargeMessages
+namespace Silverback.Messaging.Chunking
 {
     /// <summary>
     ///     Stores the message chunks into the database, waiting for the full message to be available.

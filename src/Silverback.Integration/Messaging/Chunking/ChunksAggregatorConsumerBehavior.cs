@@ -1,20 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
-using Silverback.Util;
-
-namespace Silverback.Messaging.LargeMessages
+namespace Silverback.Messaging.Chunking
 {
     // TODO: Move in sequencer?
 

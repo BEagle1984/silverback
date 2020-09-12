@@ -2,8 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Connectors;
-using Silverback.Messaging.Connectors.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Outbound;
+using Silverback.Messaging.Outbound.Deferred;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using NSubstitute;
 using Silverback.Diagnostics;
-using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.TestTypes

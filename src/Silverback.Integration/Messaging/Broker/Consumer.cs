@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 

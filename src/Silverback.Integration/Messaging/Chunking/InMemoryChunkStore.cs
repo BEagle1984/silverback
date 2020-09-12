@@ -5,11 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Messaging.Connectors;
-using Silverback.Messaging.LargeMessages.Model;
+using Silverback.Messaging.Chunking.Model;
+using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Util;
 
-namespace Silverback.Messaging.LargeMessages
+namespace Silverback.Messaging.Chunking
 {
     /// <summary>
     ///     Temporary stores the message chunks in memory, waiting for the full message to be available.

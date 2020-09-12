@@ -2,16 +2,16 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Deferred;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Routing
 {
     /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
     public class OutboundQueueProducer : Producer<OutboundQueueBroker, IProducerEndpoint>

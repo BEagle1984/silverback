@@ -22,6 +22,9 @@ namespace Silverback.Messaging.Messages
         /// </summary>
         string ActualEndpointName { get; }
 
-        ISequenceInfo? SequenceInfo { get; }
+        /// <summary>
+        ///     Gets the <see cref="ISequence"/> this message belongs to.
+        /// </summary>
+        ISequence? Sequence { get; }
     }
 }

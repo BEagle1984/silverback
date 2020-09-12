@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Connectors.Repositories.Model;
+using Silverback.Messaging.Outbound.Deferred;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {

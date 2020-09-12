@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Outbound;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration

@@ -6,7 +6,10 @@ using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
-using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Inbound;
+using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Inbound.Publishing;
+using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 
@@ -121,10 +124,10 @@ namespace Silverback.Messaging.Broker.Behaviors
             /// </summary>
             public const int Sequencer = 500;
 
-            // /// <summary>
-            // ///     The <see cref="ChunksAggregatorConsumerBehavior" /> sort index.
-            // /// </summary>
-            // public const int ChunksAggregator = 1000;
+            /// <summary>
+            ///     The <see cref="ChunksAggregatorConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int ChunksAggregator = 510;
 
 
             /// <summary>

@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 
-namespace Silverback.Messaging.LargeMessages
+namespace Silverback.Messaging.Chunking
 {
     /// <summary>
     ///     Used to periodically clean the <see cref="IChunkStore" />.

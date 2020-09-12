@@ -5,7 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Inbound.ErrorHandling;
 
 namespace Silverback.Messaging.Configuration
 {

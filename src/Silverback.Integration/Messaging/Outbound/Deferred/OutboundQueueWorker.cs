@@ -14,8 +14,9 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Deferred
 {
     /// <inheritdoc cref="IOutboundQueueWorker" />
     public class OutboundQueueWorker : IOutboundQueueWorker

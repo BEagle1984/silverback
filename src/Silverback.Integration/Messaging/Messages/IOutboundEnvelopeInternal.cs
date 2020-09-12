@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Outbound;
 
 namespace Silverback.Messaging.Messages
 {

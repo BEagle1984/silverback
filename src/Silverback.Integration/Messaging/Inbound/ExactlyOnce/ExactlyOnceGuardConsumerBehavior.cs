@@ -3,11 +3,9 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Headers;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.ExactlyOnce
+namespace Silverback.Messaging.Inbound.ExactlyOnce
 {
     /// <summary>
     ///     Uses the configured implementation of <see cref="IXy"/> to ensure that the message is processed only once.

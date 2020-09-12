@@ -3,8 +3,9 @@
 
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Chunking;
 using Silverback.Messaging.Connectors;
-using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Outbound.Deferred;
 
 namespace Silverback.Diagnostics
 {

@@ -9,10 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Broker
 {
     /// <summary>
     ///     Automatically connects the message brokers when the application starts and disconnects them when the

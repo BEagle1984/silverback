@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Silverback.Messaging.LargeMessages.Model
+namespace Silverback.Messaging.Chunking.Model
 {
     /// <summary>
     ///     The temporary chunk stored in memory.

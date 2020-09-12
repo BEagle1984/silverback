@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Inbound.Transaction
 {
     /// <summary>
     ///     Declares the <c>Commit</c> and <c>Rollback</c> methods, allowing the service to be enlisted into the

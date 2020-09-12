@@ -9,7 +9,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Batch;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
-using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Subscribers;

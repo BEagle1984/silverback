@@ -12,6 +12,8 @@ using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Deferred;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;

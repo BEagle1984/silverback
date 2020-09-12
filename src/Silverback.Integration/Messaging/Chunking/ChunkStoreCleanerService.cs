@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Silverback.Background;
 using Silverback.Diagnostics;
 
-namespace Silverback.Messaging.LargeMessages
+namespace Silverback.Messaging.Chunking
 {
     /// <summary>
     ///     The <see cref="IHostedService" />  that trigger the <see cref="IChunkStoreCleaner" /> at regular

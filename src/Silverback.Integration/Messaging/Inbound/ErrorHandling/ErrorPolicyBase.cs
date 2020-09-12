@@ -11,7 +11,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
-namespace Silverback.Messaging.ErrorHandling
+namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <inheritdoc cref="IErrorPolicy" />
     public abstract class ErrorPolicyBase : IErrorPolicy

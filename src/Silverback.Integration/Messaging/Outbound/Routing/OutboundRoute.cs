@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Routing
 {
     /// <inheritdoc cref="IOutboundRoute" />
     public class OutboundRoute : IOutboundRoute

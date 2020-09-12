@@ -9,7 +9,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.ErrorHandling
+namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
     ///     A chain of error policies to be sequentially applied.

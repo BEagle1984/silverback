@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 
-namespace Silverback.Messaging.LargeMessages
+namespace Silverback.Messaging.Chunking
 {
     /// <inheritdoc cref="IChunkStoreCleaner" />
     public class ChunkStoreCleaner : IChunkStoreCleaner

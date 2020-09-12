@@ -3,9 +3,10 @@
 
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker.Behaviors
+namespace Silverback.Messaging.Inbound
 {
     /// <summary>
     ///     Ensures that a new <see cref="IServiceScope" /> is created to process each consumed message.

@@ -12,7 +12,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors.Behaviors
+namespace Silverback.Messaging.Outbound.Routing
 {
     /// <summary>
     ///     Routes the messages to the outbound endpoint by wrapping them in an

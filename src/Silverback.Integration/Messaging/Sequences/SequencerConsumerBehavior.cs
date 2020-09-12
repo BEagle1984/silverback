@@ -2,10 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
@@ -35,40 +33,5 @@ namespace Silverback.Messaging.Sequences
 
             await next(context).ConfigureAwait(false);
         }
-    }
-
-    public interface ISequencerReader
-    {
-        IRawInboundEnvelope? SetSequence(IRawInboundEnvelope rawInboundEnvelope);
-
-        // TODO:
-        // * Create ChunksSequenceReader
-        //     * Read headers and set SequenceInfo accordingly
-        //     * Ensure proper order is respected
-        //     * Determine if file: either from headers or hardcoded BinaryFileSerializer
-        //     * If not a file, return null until the whole message is received and aggregated
-    }
-
-    public interface ISequencerWriter
-    {
-        IReadOnlyCollection<IRawOutboundEnvelope> SetSequenc(IRawInboundEnvelope rawInboundEnvelope);
-    }
-
-    public class SequenceInfo : ISequenceInfo
-    {
-        public object SequenceId { get; }
-
-        public int? TotalCount { get; }
-
-        public int? Index { get; }
-    }
-
-    public interface ISequenceInfo
-    {
-        object SequenceId { get; }
-
-        int? TotalCount { get; }
-
-        int? Index { get; }
     }
 }

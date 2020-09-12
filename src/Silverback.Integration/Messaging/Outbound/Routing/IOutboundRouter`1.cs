@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Routing
 {
     /// <summary>
     ///     Routes the outbound messages to one or multiple outbound endpoints.

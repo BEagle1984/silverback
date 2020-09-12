@@ -4,8 +4,8 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Silverback.Messaging.LargeMessages;
-using Silverback.Messaging.LargeMessages.Model;
+using Silverback.Messaging.Chunking;
+using Silverback.Messaging.Chunking.Model;
 using Silverback.Util;
 using Xunit;
 

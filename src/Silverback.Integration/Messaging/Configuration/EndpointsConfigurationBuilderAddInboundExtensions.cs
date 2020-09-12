@@ -6,7 +6,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
-using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration

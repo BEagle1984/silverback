@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Deferred;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {

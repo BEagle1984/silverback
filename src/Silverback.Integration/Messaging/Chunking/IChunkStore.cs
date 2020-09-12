@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Inbound.Transaction;
 
-namespace Silverback.Messaging.LargeMessages
+namespace Silverback.Messaging.Chunking
 {
     /// <summary>
     ///     Store the chunks of the partially received message until all chunks are received and the the full

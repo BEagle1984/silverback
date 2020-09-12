@@ -7,7 +7,7 @@ using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Deferred
 {
     /// <summary>
     ///     Manages the consumer transaction calling <c>Commit</c> or <c>Rollback</c> on the

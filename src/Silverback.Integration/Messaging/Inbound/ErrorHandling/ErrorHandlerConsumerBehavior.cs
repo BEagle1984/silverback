@@ -2,10 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using Silverback.Messaging.ErrorHandling;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker.Behaviors
+namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
     ///     Applies the error policies.

@@ -7,8 +7,9 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Outbound.Routing;
 
-namespace Silverback.Messaging.Connectors
+namespace Silverback.Messaging.Outbound.Deferred
 {
     /// <summary>
     ///     An <see cref="IBroker" /> implementation that is used by the  <see cref="DeferredOutboundConnector"/> to write into the outbound queue.

@@ -19,8 +19,7 @@ namespace Silverback.Messaging.Messages
         Type MessageType { get; }
 
         /// <summary>
-        ///     Add the specified message to the stream. This overload is used by the owner stream to push to the
-        ///     linked streams.
+        ///     Adds the specified message to the stream.
         /// </summary>
         /// <param name="pushedMessage">
         ///     The message to be added.
