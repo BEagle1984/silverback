@@ -36,6 +36,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 new ServiceCollection()
                     .AddNullLogger()
                     .AddSingleton<EndpointsConfiguratorsInvoker>()
+                    .AddTransient(typeof(IBrokerBehaviorsProvider<>), typeof(BrokerBehaviorsProvider<>))
                     .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
                     .AddSilverback()
                     .Services.BuildServiceProvider();

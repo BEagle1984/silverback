@@ -19,8 +19,6 @@ namespace Silverback.Tests.Integration.Messaging.Broker
     {
         private readonly TestBroker _broker;
 
-        private readonly SilverbackEventsSubscriber _silverbackEventsSubscriber;
-
         public ConsumerTests()
         {
             var services = new ServiceCollection();
@@ -28,16 +26,11 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             services
                 .AddNullLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddBroker<TestBroker>()
-                        .AddInMemoryChunkStore())
-                .AddSingletonSubscriber<SilverbackEventsSubscriber>();
+                .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
 
             var serviceProvider = services.BuildServiceProvider();
 
             _broker = serviceProvider.GetRequiredService<TestBroker>();
-            _silverbackEventsSubscriber = serviceProvider.GetRequiredService<SilverbackEventsSubscriber>();
         }
 
         // TODO: Migrate or delete tests

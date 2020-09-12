@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.ErrorHandling;
 using Silverback.Util;
@@ -25,11 +26,11 @@ namespace Silverback.Messaging.Configuration
         ///     The endpoint (topic).
         /// </param>
         /// <param name="errorPolicyFactory">
-        ///     An optional function returning the error policy to be applied in case of exceptions while consuming
-        ///     the messages from this topic.
+        ///     An optional function returning the error policy to be applied when an exception occurs during the
+        ///     processing of the consumed messages.
         /// </param>
-        /// <param name="settings">
-        ///     The optional additional settings. If not specified, the default settings will be used.
+        /// <param name="consumersCount">
+        ///     The number of consumers to be instantiated. The default is 1.
         /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
@@ -38,12 +39,28 @@ namespace Silverback.Messaging.Configuration
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
             IConsumerEndpoint endpoint,
             Func<IErrorPolicyBuilder, IErrorPolicy>? errorPolicyFactory = null,
-            InboundConnectorSettings? settings = null)
+            int consumersCount = 1)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(endpoint, nameof(endpoint));
 
-            throw new NotImplementedException("Migrate from inbound connector to...? InboundRoutingConfiguration? ");
+            if (consumersCount <= 0)
+            {
+                throw new ArgumentException(
+                    "The consumers count must be greater or equal to 1.",
+                    nameof(consumersCount));
+            }
+
+            var serviceProvider = endpointsConfigurationBuilder.ServiceProvider;
+            var brokerCollection = serviceProvider.GetRequiredService<IBrokerCollection>();
+
+            if (errorPolicyFactory != null)
+            {
+                var errorPolicyBuilder = serviceProvider.GetRequiredService<IErrorPolicyBuilder>();
+                endpoint.ErrorPolicy = errorPolicyFactory.Invoke(errorPolicyBuilder);
+            }
+
+            Enumerable.Range(0, consumersCount).ForEach(_ => brokerCollection.AddConsumer(endpoint));
 
             return endpointsConfigurationBuilder;
         }

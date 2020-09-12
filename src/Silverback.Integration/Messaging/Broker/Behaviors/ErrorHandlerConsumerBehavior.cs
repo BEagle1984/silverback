@@ -12,18 +12,18 @@ namespace Silverback.Messaging.Broker.Behaviors
     /// </summary>
     public class ErrorHandlerConsumerBehavior : IConsumerBehavior
     {
-        private readonly IErrorPolicyHelper _errorPolicyHelper;
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ErrorHandlerConsumerBehavior" /> class.
-        /// </summary>
-        /// <param name="errorPolicyHelper">
-        ///     The <see cref="IErrorPolicyHelper" /> to be used to apply the defined error policies.
-        /// </param>
-        public ErrorHandlerConsumerBehavior(IErrorPolicyHelper errorPolicyHelper)
-        {
-            _errorPolicyHelper = Check.NotNull(errorPolicyHelper, nameof(errorPolicyHelper));
-        }
+        // private readonly IErrorPolicyHelper _errorPolicyHelper;
+        //
+        // /// <summary>
+        // ///     Initializes a new instance of the <see cref="ErrorHandlerConsumerBehavior" /> class.
+        // /// </summary>
+        // /// <param name="errorPolicyHelper">
+        // ///     The <see cref="IErrorPolicyHelper" /> to be used to apply the defined error policies.
+        // /// </param>
+        // public ErrorHandlerConsumerBehavior(IErrorPolicyHelper errorPolicyHelper)
+        // {
+        //     _errorPolicyHelper = Check.NotNull(errorPolicyHelper, nameof(errorPolicyHelper));
+        // }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.ErrorHandler;

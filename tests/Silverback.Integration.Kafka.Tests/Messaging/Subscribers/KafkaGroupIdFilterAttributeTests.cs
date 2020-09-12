@@ -81,7 +81,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
 
             public string Name { get; } = string.Empty;
 
-            public IErrorPolicy? ErrorPolicy { get; } = null!;
+            public IErrorPolicy? ErrorPolicy { get; set; } = null!;
 
             public BatchSettings Batch { get; } = new BatchSettings();
 

@@ -29,13 +29,38 @@ namespace Silverback.Messaging.Broker.Behaviors
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            // TODO:
-            // * Invoke policies, passing consumer to perform the necessary action (seek, move, etc.)
-            // * Handle rebalance during seek / move (don't crash)
-            // * Count failed attempts
-            // * Can probably move the logic in here and get rid of the helper?
+            try
+            {
+                await next(context).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await Rollback(context, ex).ConfigureAwait(false);
+                throw;
+            }
 
-            await next(context).ConfigureAwait(false);
+            // TODO: Should be inside try block?
+            await Commit(context).ConfigureAwait(false);
+        }
+
+        private async Task Commit(ConsumerPipelineContext context)
+        {
+            await context.ServiceProvider.GetRequiredService<IPublisher>()
+                .PublishAsync(new ConsumingCompletedEvent(context))
+                .ConfigureAwait(false);
+
+            if (context.Envelope.Offset != null)
+                await context.Consumer.Commit(context.Envelope.Offset).ConfigureAwait(false);
+        }
+
+        private async Task Rollback(ConsumerPipelineContext context, Exception exception)
+        {
+            await context.ServiceProvider.GetRequiredService<IPublisher>()
+                .PublishAsync(new ConsumingAbortedEvent(context, exception))
+                .ConfigureAwait(false);
+
+            if (context.Envelope.Offset != null)
+                await context.Consumer.Rollback(context.Envelope.Offset).ConfigureAwait(false);
         }
 
         // private class InboundProcessor

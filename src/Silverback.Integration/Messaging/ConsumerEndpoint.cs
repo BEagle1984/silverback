@@ -20,11 +20,16 @@ namespace Silverback.Messaging
         {
         }
 
-        /// <inheritdoc cref="IConsumerEndpoint.ErrorPolicy" />
+        /// <summary>
+        ///     Gets or sets the error policy to be applied when an exception occurs during the processing of the
+        ///     consumed messages.
+        /// </summary>
         public IErrorPolicy? ErrorPolicy { get; set; }
 
-        /// <inheritdoc cref="IConsumerEndpoint.Batch" />
-        public BatchSettings Batch { get; set; }
+        /// <summary>
+        ///     Gets or sets the batch settings. Can be used to enable and setup batch processing.
+        /// </summary>
+        public BatchSettings? Batch { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether an exception must be thrown if no subscriber is handling the
