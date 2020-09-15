@@ -1,9 +1,11 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
@@ -16,20 +18,41 @@ namespace Silverback.Messaging.Sequences
     /// </remarks>
     public class SequencerConsumerBehavior : IConsumerBehavior
     {
+        private readonly IReadOnlyCollection<ISequenceReader> _sequenceReaders;
+
+        public SequencerConsumerBehavior(IEnumerable<ISequenceReader> sequenceReaders)
+        {
+            _sequenceReaders = sequenceReaders.ToList();
+        }
+
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Sequencer;
 
         /// <inheritdoc cref="IConsumerBehavior.Handle" />
-        public async Task Handle(
-            ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+        public async Task Handle(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            // TODO:
-            // * Call each ISequencerReader
-            // * Skip until we are at the beginning of a sequence
+            foreach (var sequenceReader in _sequenceReaders)
+            {
+                if (sequenceReader.CanHandleSequence(context.Envelope))
+                {
+                    var sequence = await sequenceReader.HandleSequence(context.Envelope).ConfigureAwait(false);
+
+                    // If no sequence is returned it means by convention that the consumer started
+                    // in the middle of a sequence, so the message is ignored.
+                    if (sequence == null)
+                    {
+                        // TODO: LOG!!
+                        return;
+                    }
+
+                    ((RawInboundEnvelope)context.Envelope).Sequence = sequence;
+
+                    break;
+                }
+            }
 
             await next(context).ConfigureAwait(false);
         }

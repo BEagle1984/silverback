@@ -3,9 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
 {
@@ -33,7 +31,8 @@ namespace Silverback.Messaging.Sequences
                 throw new InvalidOperationException(
                     $"Sequence error. Received chunk with index {index} as first chunk for the sequence {SequenceId}, expected index 0. "); // TODO: Use custom exception type?
             }
-            else if (_lastIndex != null && index != _lastIndex + 1)
+
+            if (_lastIndex != null && index != _lastIndex + 1)
             {
                 throw new InvalidOperationException(
                     $"Sequence error. Received chunk with index {index} after index {_lastIndex}."); // TODO: Use custom exception type?

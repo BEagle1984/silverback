@@ -2,21 +2,57 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
 {
     public class ChunksSequenceReader : ISequenceReader
     {
-        public IRawInboundEnvelope? SetSequence(IRawInboundEnvelope rawInboundEnvelope)
+        // TODO: The store should be scoped to the topic (sequenceId may not be globally unique)
+        private readonly ISequenceStore<ChunksSequence> _sequenceStore;
+
+        public ChunksSequenceReader(ISequenceStore<ChunksSequence> sequenceStore)
         {
-            (int? chunkIndex, int? chunksCount, string? messageId) = ExtractHeadersValues(rawInboundEnvelope);
+            _sequenceStore = sequenceStore;
+        }
+
+        public bool CanHandleSequence(IRawInboundEnvelope envelope)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+
+            return envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex);
+        }
+
+        // TODO: Custom exception type instead of InvalidOperationException?
+        public async Task<ISequence?> HandleSequence(IRawInboundEnvelope envelope)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+
+            var chunkIndex = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex);
 
             if (chunkIndex == null)
-                return rawInboundEnvelope;
+                return null;
 
-            if ()
+            var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
 
+            if (string.IsNullOrEmpty(messageId))
+                throw new InvalidOperationException("Message id header not found or invalid.");
+
+            var sequence = chunkIndex == 0
+                ? _sequenceStore.Get(messageId)
+                : _sequenceStore.Add(CreateNewSequence(messageId, envelope));
+
+            // Skip the message if a sequence cannot be found. It probably means that the consumer started in the
+            // middle of a sequence.
+            if (sequence == null)
+                return null;
+
+            await sequence.AddAsync(chunkIndex.Value, envelope).ConfigureAwait(false);
+
+            return chunkIndex == 0 ? sequence : null;
 
             // TODO:
             // * Create ChunksSequenceReader
@@ -32,24 +68,14 @@ namespace Silverback.Messaging.Sequences
             //     * If not a file, return null until the whole message is received and aggregated
         }
 
-        private static (int? chunkIndex, int? chunksCount, string? messageId) ExtractHeadersValues(
-            IRawInboundEnvelope envelope)
+        private static ChunksSequence CreateNewSequence(string messageId, IRawInboundEnvelope envelope)
         {
-            var chunkIndex = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex);
-
-            if (chunkIndex == null)
-                return (null, null, null);
-
             var chunksCount = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
-            var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
 
             if (chunksCount == null)
                 throw new InvalidOperationException("Chunks count header not found or invalid.");
 
-            if (string.IsNullOrEmpty(messageId))
-                throw new InvalidOperationException("Message id header not found or invalid.");
-
-            return (chunkIndex, chunksCount, messageId);
+            return new ChunksSequence(messageId, chunksCount.Value);
         }
     }
 }

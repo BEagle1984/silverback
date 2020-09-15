@@ -32,23 +32,6 @@ namespace Silverback.Tests.Core.Messaging.Messages
         }
 
         [Fact]
-        public async Task PushAsync_StreamCreatedAfterHavingPushedSomeMessages_RelayedToMatchingStreams()
-        {
-            var provider = new MessageStreamProvider<IMessage>(5);
-
-            await provider.PushAsync(new TestEventOne());
-            await provider.PushAsync(new TestEventTwo());
-
-            var stream = provider.CreateStream<ICommand>();
-
-            await provider.PushAsync(new TestCommandOne());
-
-            await provider.CompleteAsync(); // Implicitly tests that the Complete call is also propagated
-
-            stream.ToList().Should().BeEquivalentTo(new TestCommandOne());
-        }
-
-        [Fact]
         public async Task PushAsync_WithStreams_EnvelopeRelayed()
         {
             var provider = new MessageStreamProvider<TestEnvelope>(5);
