@@ -183,11 +183,9 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await Task.Delay(1000);
+            await AsyncTestingUtil.WaitAsync(() => SpyBehavior.InboundEnvelopes.Count >= 1);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
-            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReReadAll()).Should()
-                .BeEquivalentTo(rawMessage.ReadAll());
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
                 {

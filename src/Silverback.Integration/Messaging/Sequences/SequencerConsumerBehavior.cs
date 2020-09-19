@@ -60,7 +60,7 @@ namespace Silverback.Messaging.Sequences
 
             if (context.Envelope.Sequence != null)
             {
-                StartProcessingThread(context, next);
+                StartProcessingInAnotherThread(context, next);
             }
             else
             {
@@ -81,7 +81,7 @@ namespace Silverback.Messaging.Sequences
             return true;
         }
 
-        private static void StartProcessingThread(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        private static void StartProcessingInAnotherThread(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
         {
             // TODO: Handle transaction / exceptions
             Task.Factory.StartNew(

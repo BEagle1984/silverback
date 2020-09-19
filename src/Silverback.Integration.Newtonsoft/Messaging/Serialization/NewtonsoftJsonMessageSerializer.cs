@@ -60,7 +60,7 @@ namespace Silverback.Messaging.Serialization
 
             var type = SerializationHelper.GetTypeFromHeaders(messageHeaders);
 
-            if (message == null || message.Length == 0)
+            if (message == null)
                 return (null, type);
 
             var buffer = await message.ReadAllAsync().ConfigureAwait(false);

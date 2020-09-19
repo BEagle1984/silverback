@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker.Behaviors;
@@ -22,15 +23,23 @@ namespace Silverback.Messaging.Inbound.Publishing
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
         {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
+            try
+            {
+                Check.NotNull(context, nameof(context));
+                Check.NotNull(next, nameof(next));
 
-            await context.ServiceProvider
-                .GetRequiredService<IPublisher>()
-                .PublishAsync(context.Envelope)
-                .ConfigureAwait(false);
+                await context.ServiceProvider
+                    .GetRequiredService<IPublisher>()
+                    .PublishAsync(context.Envelope)
+                    .ConfigureAwait(false);
 
-            await next(context).ConfigureAwait(false);
+                await next(context).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

@@ -13,10 +13,21 @@ namespace Silverback.Tests.Core.Util
     public class StreamExtensionsTests
     {
         [Fact]
-        public async Task ReadAllAsync_Stream_ByteArrayReturned()
+        public async Task ReadAllAsync_MemoryStream_ByteArrayReturned()
         {
             var buffer = Encoding.UTF8.GetBytes("Silverback rocks!");
             var stream = new MemoryStream(buffer);
+
+            var result = await stream.ReadAllAsync();
+
+            result.Should().BeEquivalentTo(buffer);
+        }
+
+        [Fact]
+        public async Task ReadAllAsync_BufferedStream_ByteArrayReturned()
+        {
+            var buffer = Encoding.UTF8.GetBytes("Silverback rocks!");
+            var stream = new BufferedStream(new MemoryStream(buffer));
 
             var result = await stream.ReadAllAsync();
 
@@ -33,10 +44,21 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void ReadAll_Stream_ByteArrayReturned()
+        public void ReadAll_MemoryStream_ByteArrayReturned()
         {
             var buffer = Encoding.UTF8.GetBytes("Silverback rocks!");
             var stream = new MemoryStream(buffer);
+
+            var result = stream.ReadAll();
+
+            result.Should().BeEquivalentTo(buffer);
+        }
+
+        [Fact]
+        public void ReadAll_BufferedStream_ByteArrayReturned()
+        {
+            var buffer = Encoding.UTF8.GetBytes("Silverback rocks!");
+            var stream = new BufferedStream(new MemoryStream(buffer));
 
             var result = stream.ReadAll();
 

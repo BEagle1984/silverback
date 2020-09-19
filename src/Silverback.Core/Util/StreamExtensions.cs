@@ -16,10 +16,13 @@ namespace Silverback.Util
             if (stream == null)
                 return null;
 
-            await using (var memoryStream = new MemoryStream())
-            {
-                await stream.CopyToAsync(memoryStream).ConfigureAwait(false);
+            if (stream is MemoryStream memoryStream)
                 return memoryStream.ToArray();
+
+            await using (var tempMemoryStream = new MemoryStream())
+            {
+                await stream.CopyToAsync(tempMemoryStream).ConfigureAwait(false);
+                return tempMemoryStream.ToArray();
             }
         }
 
@@ -29,10 +32,13 @@ namespace Silverback.Util
             if (stream == null)
                 return null;
 
-            using (var memoryStream = new MemoryStream())
-            {
-                stream.CopyTo(memoryStream);
+            if (stream is MemoryStream memoryStream)
                 return memoryStream.ToArray();
+
+            using (var tempMemoryStream = new MemoryStream())
+            {
+                stream.CopyTo(tempMemoryStream);
+                return tempMemoryStream.ToArray();
             }
         }
 

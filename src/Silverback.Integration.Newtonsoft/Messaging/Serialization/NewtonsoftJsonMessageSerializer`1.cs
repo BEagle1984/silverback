@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Serialization
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (message == null || message.Length == 0)
+            if (message == null)
                 return (null, _type);
 
             var buffer = await message.ReadAllAsync().ConfigureAwait(false);

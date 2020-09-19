@@ -29,24 +29,40 @@ namespace Silverback.Messaging.Sequences.Chunking
 
             if (context.Envelope.Sequence is ChunksSequence chunksSequence)
             {
-                StartProcessingThread(context, next);
+                // TODO: No way to avoid the extra allocation?
+                var envelope = new RawInboundEnvelope(
+                    new ChunkStream(chunksSequence.Stream),
+                    context.Envelope.Headers,
+                    context.Envelope.Endpoint,
+                    context.Envelope.ActualEndpointName,
+                    context.Envelope.Offset,
+                    context.Envelope.AdditionalLogData);
 
-                await foreach (var chunkEnvelope in chunksSequence.Stream.ConfigureAwait(false))
-                {
-                    var chunkIndex = chunkEnvelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
-                                     throw new InvalidOperationException("Chunk index header not found.");
+                var newContext = new ConsumerPipelineContext(envelope, context.Consumer, context.ServiceProvider);
 
-                    // Skip first chunk since the context.Envelope is already the one of the first chunk
-                    if (chunkIndex == 0)
-                        continue;
+                // StartProcessingThread(newContext, next);
 
-                    if (chunkEnvelope.RawMessage == null)
-                        throw new InvalidOperationException("The chunk stream is null.");
+                //
+                // await foreach (var chunkEnvelope in chunksSequence.Stream.ConfigureAwait(false))
+                // {
+                //     var chunkIndex = chunkEnvelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
+                //                      throw new InvalidOperationException("Chunk index header not found.");
+                //
+                //     // Skip first chunk since the context.Envelope is already the one of the first chunk
+                //     if (chunkIndex == 0)
+                //         continue;
+                //
+                //     if (chunkEnvelope.RawMessage == null)
+                //         throw new InvalidOperationException("The chunk stream is null.");
+                //
+                //     await chunkEnvelope.RawMessage.CopyToAsync(context.Envelope.RawMessage).ConfigureAwait(false);
+                // }
 
-                    await chunkEnvelope.RawMessage.CopyToAsync(context.Envelope.RawMessage).ConfigureAwait(false);
-                }
-
-                context.Envelope.RawMessage.
+                await next(newContext).ConfigureAwait(false);
+            }
+            else
+            {
+                await next(context).ConfigureAwait(false);
             }
         }
 

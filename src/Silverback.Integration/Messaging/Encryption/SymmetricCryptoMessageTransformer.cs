@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Encryption
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task<Stream?> TransformAsync(Stream? message, MessageHeaderCollection headers)
         {
-            if (message == null || message.Length == 0)
+            if (message == null)
                 return message;
 
             using var algorithm = CreateSymmetricAlgorithm();

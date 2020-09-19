@@ -123,7 +123,7 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context)
             where TValue : class
         {
-            if (message == null || message.Length == 0)
+            if (message == null)
                 return null;
 
             var avroDeserializer = new AvroDeserializer<TValue>(
