@@ -5,24 +5,13 @@ using System;
 
 namespace Silverback.Messaging.Sequences
 {
+    /// <summary>
+    ///     The temporary store for the sequences being consumed.
+    /// </summary>
+    /// <typeparam name="TSequence">The type of the sequences being stored.</typeparam>
     public interface ISequenceStore<TSequence>
         where TSequence : class, ISequence
     {
-        /// <summary>
-        ///     Gets the sequence with the specified id. If not found, a new one will be created on the fly using the
-        ///     specified factory.
-        /// </summary>
-        /// <param name="sequenceId">
-        ///     The sequence identifier.
-        /// </param>
-        /// <param name="factory">
-        ///     The factory that will be used to create the new sequence.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="ISequence" /> instance.
-        /// </returns>
-        //TSequence GetOrAdd(object sequenceId, Func<ISequence> factory);
-
         /// <summary>
         ///     Gets the sequence with the specified id.
         /// </summary>

@@ -15,6 +15,6 @@ namespace Silverback.Messaging
         ///     Gets the message chunking settings. This option can be used to split large messages into smaller
         ///     chunks.
         /// </summary>
-        ChunkSettings Chunk { get; }
+        ChunkSettings? Chunk { get; }
     }
 }

@@ -18,19 +18,21 @@ namespace Silverback.Messaging.Sequences
         object SequenceId { get; }
 
         /// <summary>
-        ///     Gets the total length of the sequence, if known.
+        ///     Gets the length of the sequence so far.
         /// </summary>
-        int? Length { get; }
+        int Length { get; }
+
+        /// <summary>
+        ///     Gets the declared total length of the sequence, if known.
+        /// </summary>
+        int? TotalLength { get; }
 
         /// <summary>
         ///     Gets the offsets of the messages belonging to the sequence.
         /// </summary>
         IReadOnlyList<IOffset> Offsets { get; }
 
-        /// <summary>
-        ///     Gets a value indicating whether the all messages belonging to the sequence have been consumed.
-        /// </summary>
-        bool IsComplete { get; }
+        // TODO: ISequence.IsCompleted (and IMessageStream.IsCompleted) may be useful?
 
         /// <summary>
         ///     Gets a stream that will be pushed with the messages belonging to the sequence.

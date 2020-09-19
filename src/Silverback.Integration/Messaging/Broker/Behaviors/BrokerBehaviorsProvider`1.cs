@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Broker.Behaviors
     {
         private readonly IServiceProvider _serviceProvider;
 
-        private IReadOnlyCollection<TBehavior>? _behaviors;
+        private IReadOnlyList<TBehavior>? _behaviors;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="BrokerBehaviorsProvider{TBehavior}" /> class.
@@ -28,17 +28,12 @@ namespace Silverback.Messaging.Broker.Behaviors
             _serviceProvider = serviceProvider;
         }
 
-        /// <inheritdoc cref="IBrokerBehaviorsProvider{TBehavior}.CreateStack" />
-        public Stack<TBehavior> CreateStack()
-        {
+        /// <inheritdoc cref="IBrokerBehaviorsProvider{TBehavior}.GetBehaviorsList" />
+        public IReadOnlyList<TBehavior> GetBehaviorsList() =>
             _behaviors ??= _serviceProvider
                 .GetServices<IBrokerBehavior>()
                 .OfType<TBehavior>()
                 .SortBySortIndex()
-                .Reverse() // Reverse the behaviors order since they will be put in a Stack<T>
                 .ToList();
-
-            return new Stack<TBehavior>(_behaviors);
-        }
     }
 }

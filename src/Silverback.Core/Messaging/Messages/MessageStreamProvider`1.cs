@@ -76,7 +76,7 @@ namespace Silverback.Messaging.Messages
         ///     A <see cref="CancellationToken" /> used to cancel the write operation.
         /// </param>
         /// <returns>
-        ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+        ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         public virtual async Task PushAsync(TMessage message, CancellationToken cancellationToken = default)
         {
@@ -122,6 +122,9 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Marks the stream as complete, meaning no more messages will be pushed.
         /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
         public async Task CompleteAsync()
         {
             // ReSharper disable once InconsistentlySynchronizedField

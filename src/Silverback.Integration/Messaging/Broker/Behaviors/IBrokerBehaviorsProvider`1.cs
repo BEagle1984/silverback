@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Silverback.Messaging.Broker.Behaviors
 {
     /// <summary>
-    ///     Provides the <see cref="Stack{T}" /> of <see cref="IProducerBehavior" /> and
+    ///     Provides the <see cref="IReadOnlyList{T}" /> of <see cref="IProducerBehavior" /> and
     ///     <see cref="IConsumerBehavior" /> to be used in the <see cref="IProducer" /> and
     ///     <see cref="IConsumer" /> pipeline.
     /// </summary>
@@ -18,11 +18,11 @@ namespace Silverback.Messaging.Broker.Behaviors
         where TBehavior : IBrokerBehavior
     {
         /// <summary>
-        ///     Creates a new <see cref="Stack{T}" /> of <see cref="IProducerBehavior" /> or
+        ///     Creates a new <see cref="IReadOnlyList{T}" /> of <see cref="IProducerBehavior" /> or
         ///     <see cref="IConsumerBehavior" /> to be used in the <see cref="IProducer" /> or
         ///     <see cref="IConsumer" /> pipeline.
         /// </summary>
         /// <returns>The ready-to-use <see cref="Stack{T}" /> of <typeparamref name="TBehavior" />.</returns>
-        Stack<TBehavior> CreateStack();
+        IReadOnlyList<TBehavior> GetBehaviorsList();
     }
 }

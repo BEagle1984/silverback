@@ -30,10 +30,8 @@ namespace Silverback.Messaging.Sequences
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            var chunkIndex = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex);
-
-            if (chunkIndex == null)
-                return null;
+            var chunkIndex = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
+                             throw new InvalidOperationException("Chunk index header not found.");
 
             var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
 
@@ -41,15 +39,19 @@ namespace Silverback.Messaging.Sequences
                 throw new InvalidOperationException("Message id header not found or invalid.");
 
             var sequence = chunkIndex == 0
-                ? _sequenceStore.Get(messageId)
-                : _sequenceStore.Add(CreateNewSequence(messageId, envelope));
+                ? _sequenceStore.Add(CreateNewSequence(messageId, envelope))
+                : _sequenceStore.Get(messageId);
 
             // Skip the message if a sequence cannot be found. It probably means that the consumer started in the
             // middle of a sequence.
             if (sequence == null)
-                return null;
+            {
+                // TODO: Log
 
-            await sequence.AddAsync(chunkIndex.Value, envelope).ConfigureAwait(false);
+                return null;
+            }
+
+            await sequence.AddAsync(chunkIndex, envelope).ConfigureAwait(false);
 
             return chunkIndex == 0 ? sequence : null;
 

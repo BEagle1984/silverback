@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -45,25 +46,49 @@ namespace Silverback.Messaging.Sequences
 
             foreach (var sequenceReader in _sequenceReaders)
             {
-                if (sequenceReader.CanHandleSequence(context.Envelope))
+                if (await TryHandleSequence(context, sequenceReader).ConfigureAwait(false))
                 {
-                    var sequence = await sequenceReader.HandleSequence(context.Envelope).ConfigureAwait(false);
-
-                    // If no sequence is returned it means by convention that the consumer started
-                    // in the middle of a sequence, so the message is ignored.
-                    if (sequence == null)
-                    {
-                        // TODO: LOG!!
+                    // If no sequence is returned it means either that the message was pushed into an existing
+                    // sequence or the consumer didn't start at the beginning of a sequence. In both cases
+                    // we can just break the pipeline and return.
+                    if (context.Envelope.Sequence == null)
                         return;
-                    }
-
-                    ((RawInboundEnvelope)context.Envelope).Sequence = sequence;
 
                     break;
                 }
             }
 
-            await next(context).ConfigureAwait(false);
+            if (context.Envelope.Sequence != null)
+            {
+                StartProcessingThread(context, next);
+            }
+            else
+            {
+                await next(context).ConfigureAwait(false);
+            }
+        }
+
+        private static async Task<bool> TryHandleSequence(
+            ConsumerPipelineContext context,
+            ISequenceReader sequenceReader)
+        {
+            if (!sequenceReader.CanHandleSequence(context.Envelope))
+                return false;
+
+            ((RawInboundEnvelope)context.Envelope).Sequence =
+                await sequenceReader.HandleSequence(context.Envelope).ConfigureAwait(false);
+
+            return true;
+        }
+
+        private static void StartProcessingThread(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        {
+            // TODO: Handle transaction / exceptions
+            Task.Factory.StartNew(
+                async () => await next(context).ConfigureAwait(false),
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                TaskScheduler.Default);
         }
     }
 }

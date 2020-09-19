@@ -25,7 +25,7 @@ namespace Silverback.Messaging
         ///     Gets or sets the message chunking settings. This option can be used to split large messages into
         ///     smaller chunks.
         /// </summary>
-        public ChunkSettings Chunk { get; set; } = new ChunkSettings();
+        public ChunkSettings? Chunk { get; set; }
 
         /// <inheritdoc cref="Endpoint.Validate" />
         public override void Validate()

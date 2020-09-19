@@ -36,12 +36,11 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.Offsets" />
         public IReadOnlyList<IOffset> Offsets => _offsets;
 
-
         /// <inheritdoc cref="ISequence.Length" />
-        public int? Length { get; protected set; }
+        public int Length { get; protected set; }
 
-        /// <inheritdoc cref="ISequence.IsComplete" />
-        public bool IsComplete { get; protected set; }
+        /// <inheritdoc cref="ISequence.TotalLength" />
+        public int? TotalLength { get; protected set; }
 
         /// <inheritdoc cref="ISequence.Stream" />
         public IMessageStreamEnumerable<IRawInboundEnvelope> Stream { get; }
@@ -55,14 +54,30 @@ namespace Silverback.Messaging.Sequences
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected virtual Task AddAsync(IRawInboundEnvelope envelope)
+        protected virtual async Task AddAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
             if (envelope.Offset != null)
                 _offsets.Add(envelope.Offset);
 
-            return _streamProvider.PushAsync(envelope);
+            if (TotalLength == null || Length < TotalLength)
+            {
+                Length++;
+
+                await _streamProvider.PushAsync(envelope).ConfigureAwait(false);
+            }
+
+            if (TotalLength != null && Length == TotalLength)
+                await _streamProvider.CompleteAsync().ConfigureAwait(false);
         }
+
+        /// <summary>
+        ///     Marks the sequence as complete, meaning no more messages will be pushed.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task CompleteAsync() => _streamProvider.CompleteAsync();
     }
 }

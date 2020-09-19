@@ -27,6 +27,12 @@ namespace Silverback.Messaging.Inbound.Transaction
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
+            // TODO: Handle transaction for sequences:
+            // * Move the transaction handling logic after the sequencer!
+            // * The handler here in this position must serve only as last measure, in the case of an early error (e.g. in the sequencers)
+            // * Use callbacks (MessageStreamEnumerable.OnEnumerationCompleted)
+            // * Remember that IPublisher.PublishAsync is blocking until enumeration completes (and rethrows the exception)
+
             try
             {
                 await next(context).ConfigureAwait(false);
@@ -43,6 +49,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         private async Task Commit(ConsumerPipelineContext context)
         {
+            // TODO: Commit sequence
             await context.ServiceProvider.GetRequiredService<IPublisher>()
                 .PublishAsync(new ConsumingCompletedEvent(context))
                 .ConfigureAwait(false);
@@ -53,6 +60,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         private async Task Rollback(ConsumerPipelineContext context, Exception exception)
         {
+            // TODO: Rollback sequence
             await context.ServiceProvider.GetRequiredService<IPublisher>()
                 .PublishAsync(new ConsumingAbortedEvent(context, exception))
                 .ConfigureAwait(false);

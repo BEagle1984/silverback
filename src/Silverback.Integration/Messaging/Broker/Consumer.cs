@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
@@ -16,11 +17,15 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IConsumer" />
     public abstract class Consumer : IConsumer, IDisposable
     {
-        private readonly IBrokerBehaviorsProvider<IConsumerBehavior> _behaviorsProvider;
+        private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
 
         private readonly IServiceProvider _serviceProvider;
 
         private readonly ISilverbackIntegrationLogger<Consumer> _logger;
+
+        // private readonly MessageStreamProvider<RawInboundEnvelope> _messageStreamProvider;
+        //
+        // private readonly IMessageStreamEnumerable<RawInboundEnvelope> _messageStream;
 
         private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
 
@@ -52,11 +57,21 @@ namespace Silverback.Messaging.Broker
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
 
-            _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
+            _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _logger = Check.NotNull(logger, nameof(logger));
 
             Endpoint.Validate();
+
+            // TODO: Is this useless? Remove?
+            // _messageStreamProvider = new MessageStreamProvider<RawInboundEnvelope>();
+            // _messageStream = _messageStreamProvider.CreateStream<RawInboundEnvelope>();
+            //
+            // Task.Factory.StartNew(
+            //     ProcessMessageStream,
+            //     CancellationToken.None,
+            //     TaskCreationOptions.None,
+            //     TaskScheduler.Current);
         }
 
         /// <inheritdoc cref="IConsumer.Broker" />
@@ -108,6 +123,8 @@ namespace Silverback.Messaging.Broker
 
             DisconnectCore();
 
+            //AsyncHelper.RunSynchronously(() => _messageStreamProvider.CompleteAsync());
+
             IsConnected = false;
             _statusInfo.SetDisconnected();
 
@@ -135,8 +152,7 @@ namespace Silverback.Messaging.Broker
         protected abstract void DisconnectCore();
 
         /// <summary>
-        ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline and
-        ///     finally invoking the callback method.
+        ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline.
         /// </summary>
         /// <param name="message">
         ///     The body of the consumed message.
@@ -165,18 +181,21 @@ namespace Silverback.Messaging.Broker
             IOffset? offset,
             IDictionary<string, string>? additionalLogData)
         {
+            var envelope = new RawInboundEnvelope(
+                message,
+                headers,
+                Endpoint,
+                sourceEndpointName,
+                offset,
+                additionalLogData);
+
             _statusInfo.RecordConsumedMessage(offset);
 
+            //await _messageStreamProvider.PushAsync(envelope).ConfigureAwait(false);
+
             await ExecutePipeline(
-                    _behaviorsProvider.CreateStack(),
                     new ConsumerPipelineContext(
-                        new RawInboundEnvelope(
-                            message,
-                            headers,
-                            Endpoint,
-                            sourceEndpointName,
-                            offset,
-                            additionalLogData),
+                        envelope,
                         this,
                         _serviceProvider))
                 .ConfigureAwait(false);
@@ -210,19 +229,31 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private static async Task ExecutePipeline(
-            Stack<IConsumerBehavior> behaviors,
-            ConsumerPipelineContext context)
+        private async Task ExecutePipeline(
+            ConsumerPipelineContext context,
+            int stepIndex = 0)
         {
-            if (behaviors.Count == 0)
+            if (_behaviors.Count == 0 || stepIndex >= _behaviors.Count)
                 return;
 
-            var nextBehavior = behaviors.Pop();
-
-            await nextBehavior.Handle(
+            await _behaviors[stepIndex].Handle(
                     context,
-                    (nextContext) => ExecutePipeline(behaviors, nextContext))
+                    nextContext => ExecutePipeline(nextContext, stepIndex + 1))
                 .ConfigureAwait(false);
         }
+
+        // private async Task ProcessMessageStream()
+        // {
+        //     await foreach (var envelope in _messageStream.ConfigureAwait(false))
+        //     {
+        //         await ExecutePipeline(
+        //                 _behaviorsProvider.CreateStack(),
+        //                 new ConsumerPipelineContext(
+        //                     envelope,
+        //                     this,
+        //                     _serviceProvider))
+        //             .ConfigureAwait(false);
+        //     }
+        // }
     }
 }

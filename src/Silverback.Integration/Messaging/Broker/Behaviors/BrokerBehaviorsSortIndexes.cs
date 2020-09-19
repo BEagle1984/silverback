@@ -8,9 +8,11 @@ using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.Inbound;
 using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Inbound.Publishing;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Broker.Behaviors
@@ -95,11 +97,6 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int ServiceScopeFactory = 200;
 
             /// <summary>
-            ///     The <see cref="ExactlyOnceGuardConsumerBehavior" /> sort index.
-            /// </summary>
-            public const int ExactlyOnceGuard = 210;
-
-            /// <summary>
             ///     The <see cref="ErrorHandlerConsumerBehavior" /> sort index.
             /// </summary>
             public const int ErrorHandler = 220;
@@ -110,14 +107,14 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int TransactionHandler = 250;
 
             /// <summary>
+            ///     The <see cref="ExactlyOnceGuardConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int ExactlyOnceGuard = 270;
+
+            /// <summary>
             ///     The <see cref="CustomHeadersMapperConsumerBehavior" /> sort index.
             /// </summary>
             public const int CustomHeadersMapper = 300;
-
-            /// <summary>
-            ///     The <see cref="DecryptorConsumerBehavior" /> sort index.
-            /// </summary>
-            public const int Decryptor = 400;
 
             /// <summary>
             ///     The <see cref="SequencerConsumerBehavior" /> sort index.
@@ -128,6 +125,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <see cref="ChunksAggregatorConsumerBehavior" /> sort index.
             /// </summary>
             public const int ChunksAggregator = 510;
+
+            /// <summary>
+            ///     The <see cref="DecryptorConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int Decryptor = 550;
 
             /// <summary>
             ///     The <see cref="BinaryFileHandlerConsumerBehavior" /> sort index.

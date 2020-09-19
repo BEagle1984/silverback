@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets the optional message headers.
         /// </summary>
-        MessageHeaderCollection Headers { get; }
+        MessageHeaderCollection Headers { get; } // TODO: Can/must be readonly? Some sort of IReadOnlyHeaderCollection?
 
         /// <summary>
         ///     Gets the message offset (or similar construct if using a message broker other than Kafka).
@@ -37,6 +37,6 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets or sets the serialized message body.
         /// </summary>
-        Stream? RawMessage { get; set; }
+        Stream? RawMessage { get; set; } // TODO: Should this be get only? Or all the rest should be get/set as well?
     }
 }

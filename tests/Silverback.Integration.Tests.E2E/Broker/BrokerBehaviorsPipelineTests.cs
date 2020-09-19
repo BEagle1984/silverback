@@ -165,8 +165,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
-                                .AddInMemoryChunkStore())
+                                .AddInMemoryBroker())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
@@ -184,8 +183,10 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
+            await Task.Delay(1000);
+
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
-            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReReadAll()).Should()
                 .BeEquivalentTo(rawMessage.ReadAll());
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>

@@ -11,10 +11,10 @@ namespace Silverback.Messaging.Sequences
     {
         private int? _lastIndex;
 
-        public ChunksSequence(object sequenceId, int length)
+        public ChunksSequence(object sequenceId, int totalLength)
             : base(sequenceId)
         {
-            Length = length;
+            TotalLength = totalLength;
         }
 
         public Task AddAsync(int index, IRawInboundEnvelope envelope)

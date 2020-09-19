@@ -44,17 +44,18 @@ namespace Silverback.Messaging.Sequences
 
             foreach (var sequenceWriter in _sequenceWriters)
             {
-                var envelopesEnumerable = await sequenceWriter.CreateSequence(context.Envelope).ConfigureAwait(false);
+                if (!sequenceWriter.MustCreateSequence(context.Envelope))
+                    continue;
 
-                if (envelopesEnumerable != null)
+                var envelopesEnumerable = sequenceWriter.CreateSequence(context.Envelope);
+
+                await foreach (var envelope in envelopesEnumerable.ConfigureAwait(false))
                 {
-                    await foreach (var envelope in envelopesEnumerable)
-                    {
-                        await next(context).ConfigureAwait(false);
-                    }
-
-                    return;
+                    var newContext = new ProducerPipelineContext(envelope, context.Producer, context.ServiceProvider);
+                    await next(newContext).ConfigureAwait(false);
                 }
+
+                return;
             }
 
             await next(context).ConfigureAwait(false);

@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IProducer" />
     public abstract class Producer : IProducer
     {
-        private readonly IBrokerBehaviorsProvider<IProducerBehavior> _behaviorsProvider;
+        private readonly IReadOnlyList<IProducerBehavior> _behaviors;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Broker
         {
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
-            _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
+            _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _logger = Check.NotNull(logger, nameof(logger));
 
@@ -72,7 +72,6 @@ namespace Silverback.Messaging.Broker
             AsyncHelper.RunSynchronously(
                 () =>
                     ExecutePipeline(
-                        _behaviorsProvider.CreateStack(),
                         new ProducerPipelineContext(envelope, this, _serviceProvider),
                         finalContext =>
                         {
@@ -92,7 +91,6 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,bool)" />
         public async Task ProduceAsync(IOutboundEnvelope envelope, bool disableBehaviors = false) =>
             await ExecutePipeline(
-                _behaviorsProvider.CreateStack(),
                 new ProducerPipelineContext(envelope, this, _serviceProvider),
                 async finalContext =>
                 {
@@ -124,17 +122,15 @@ namespace Silverback.Messaging.Broker
         protected abstract Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope);
 
         private async Task ExecutePipeline(
-            Stack<IProducerBehavior>? behaviors,
             ProducerPipelineContext context,
-            ProducerBehaviorHandler finalAction)
+            ProducerBehaviorHandler finalAction,
+            int stepIndex = 0)
         {
-            if (behaviors != null && behaviors.TryPop(out var nextBehavior))
+            if (_behaviors.Count > 0 && stepIndex < _behaviors.Count)
             {
-                await nextBehavior
-                    .Handle(
+                await _behaviors[stepIndex].Handle(
                         context,
-                        nextContext =>
-                            ExecutePipeline(behaviors, nextContext, finalAction))
+                        nextContext => ExecutePipeline(nextContext, finalAction, stepIndex + 1))
                     .ConfigureAwait(false);
             }
             else
