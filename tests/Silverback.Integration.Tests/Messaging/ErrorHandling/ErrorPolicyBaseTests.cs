@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,7 +64,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new object[]
                 {
                     new InboundEnvelope(
-                        new byte[1],
+                        new MemoryStream(),
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
                         null,
                         TestConsumerEndpoint.GetDefault(),
@@ -74,7 +75,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new object[]
                 {
                     new InboundEnvelope(
-                        new byte[1],
+                        new MemoryStream(),
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "6") },
                         null,
                         TestConsumerEndpoint.GetDefault(),
@@ -85,7 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new object[]
                 {
                     new InboundEnvelope(
-                        new byte[1],
+                        new MemoryStream(),
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
                         null,
                         TestConsumerEndpoint.GetDefault(),
@@ -105,7 +106,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var canHandle = policy.CanHandle(
                 new InboundEnvelope(
-                    new byte[1],
+                    new MemoryStream(),
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
                     null,
                     TestConsumerEndpoint.GetDefault(),
@@ -125,7 +126,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var canHandle = policy.CanHandle(
                 new InboundEnvelope(
-                    new byte[1],
+                    new MemoryStream(),
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
                     null,
                     TestConsumerEndpoint.GetDefault(),
@@ -146,7 +147,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var canHandle = policy.CanHandle(
                 new InboundEnvelope(
-                    new byte[1],
+                    new MemoryStream(),
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
                     null,
                     TestConsumerEndpoint.GetDefault(),
@@ -185,7 +186,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     msg => new TestEventTwo
                         { Content = "aaa" });
             var message = new InboundEnvelope(
-                new byte[1],
+                new MemoryStream(),
                 new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
                 null,
                 TestConsumerEndpoint.GetDefault(),

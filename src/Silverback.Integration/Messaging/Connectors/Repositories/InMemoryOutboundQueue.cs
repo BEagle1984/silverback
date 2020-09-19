@@ -32,18 +32,17 @@ namespace Silverback.Messaging.Connectors.Repositories
         }
 
         /// <inheritdoc cref="IOutboundQueueWriter.Enqueue" />
-        public Task Enqueue(IOutboundEnvelope envelope)
+        public async Task Enqueue(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            Add(
-                new QueuedMessage(
-                    envelope.Message?.GetType(),
-                    envelope.RawMessage,
-                    envelope.Headers,
-                    envelope.Endpoint.Name));
+            var item = new QueuedMessage(
+                envelope.Message?.GetType(),
+                await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),
+                envelope.Headers,
+                envelope.Endpoint.Name);
 
-            return Task.CompletedTask;
+            await Add(item).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IOutboundQueueReader.GetLength" />

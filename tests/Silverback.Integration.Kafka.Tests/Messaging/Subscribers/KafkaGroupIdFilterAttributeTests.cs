@@ -1,9 +1,9 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.Batch;
@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
             bool expectedResult)
         {
             var inboundEnvelope = new InboundEnvelope(
-                Array.Empty<byte>(),
+                new MemoryStream(),
                 new List<MessageHeader>(),
                 null,
                 new KafkaConsumerEndpoint("my-topic")
@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
         public void MustProcess_InboundEnvelopeWithNonKafkaEndpoint_FalseIsReturned()
         {
             var inboundEnvelope = new InboundEnvelope(
-                Array.Empty<byte>(),
+                new MemoryStream(),
                 new List<MessageHeader>(),
                 null,
                 new SomeConsumerEndpoint(),
@@ -81,9 +81,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
 
             public string Name { get; } = string.Empty;
 
-            public IErrorPolicy? ErrorPolicy { get; set; } = null!;
-
             public BatchSettings Batch { get; } = new BatchSettings();
+
+            public IErrorPolicy? ErrorPolicy { get; set; } = null!;
 
             public bool ThrowIfUnhandled { get; set; }
 

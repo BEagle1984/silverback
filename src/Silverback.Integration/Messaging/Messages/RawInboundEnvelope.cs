@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Sequences;
 
@@ -14,6 +15,23 @@ namespace Silverback.Messaging.Messages
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public RawInboundEnvelope(
             byte[]? rawMessage,
+            IEnumerable<MessageHeader>? headers,
+            IConsumerEndpoint endpoint,
+            string actualEndpointName,
+            IOffset? offset = null,
+            IDictionary<string, string>? additionalLogData = null)
+            : this(
+                rawMessage != null ? new MemoryStream(rawMessage) : null,
+                headers,
+                endpoint,
+                actualEndpointName,
+                offset,
+                additionalLogData)
+        {
+        }
+
+        public RawInboundEnvelope(
+            Stream? rawMessage,
             IEnumerable<MessageHeader>? headers,
             IConsumerEndpoint endpoint,
             string actualEndpointName,

@@ -14,7 +14,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.InMemory.TestTypes.Messages;
-using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
@@ -50,68 +49,30 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
         }
 
         [Fact]
-        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public void InMemoryBroker_ProduceMessage_MessageConsumed()
+        public async Task InMemoryBroker_ProduceMessages_MessagesReceived()
         {
             var endpointName = "test";
-            var receivedMessages = new List<object>();
-
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(options => options.AddInMemoryBroker())
-                    .AddDelegateSubscriber((IRawInboundEnvelope envelope) =>
-            {
-                var (deserialized, _) = envelope.Endpoint.Serializer.Deserialize(
-                    envelope.RawMessage,
-                    new MessageHeaderCollection(envelope.Headers),
-                    MessageSerializationContext.Empty);
-
-                if (deserialized != null)
-                    receivedMessages.Add(deserialized);
-            }));
-
-            var broker = serviceProvider.GetRequiredService<IBroker>();
-            var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
-            broker.AddConsumer(new KafkaConsumerEndpoint(endpointName));
-
-            producer.Produce(new TestMessage { Content = "hello!" });
-            producer.Produce(new TestMessage { Content = "hello 2!" });
-
-            receivedMessages.Count.Should().Be(2);
-            receivedMessages.Should().AllBeOfType<TestMessage>();
-        }
-
-        [Fact]
-        public void InMemoryBroker_ProduceMessage_MessageReceived()
-        {
-            var endpointName = "test";
-            var receivedMessages = new List<object>();
+            var receivedMessages = new List<object?>();
+            var testMessage1 = new TestMessage { Content = "hello!" };
+            var testMessage2 = new TestMessage { Content = "hello 2!" };
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
                     .WithConnectionToMessageBroker(options => options.AddInMemoryBroker())
                     .AddDelegateSubscriber(
-                        (IRawInboundEnvelope envelope) =>
-                        {
-                            var (deserialized, _) = envelope.Endpoint.Serializer.Deserialize(
-                                envelope.RawMessage,
-                                new MessageHeaderCollection(envelope.Headers),
-                                MessageSerializationContext.Empty);
-
-                            if (deserialized != null)
-                                receivedMessages.Add(deserialized);
-                        }));
+                        (IInboundEnvelope envelope) => receivedMessages.Add(envelope.Message)));
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
             broker.AddConsumer(new KafkaConsumerEndpoint(endpointName));
 
-            producer.Produce(new TestMessage { Content = "hello!" });
+            producer.Produce(testMessage1);
+            await producer.ProduceAsync(testMessage2);
 
-            receivedMessages.First().Should().BeOfType<TestMessage>();
-            receivedMessages.OfType<TestMessage>().First().Content.Should().Be("hello!");
+            receivedMessages.Count.Should().Be(2);
+            receivedMessages[0].Should().BeEquivalentTo(testMessage1);
+            receivedMessages[1].Should().BeEquivalentTo(testMessage2);
         }
 
         [Fact]
@@ -125,10 +86,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
                     .AddSilverback()
                     .WithConnectionToMessageBroker(options => options.AddInMemoryBroker())
                     .AddDelegateSubscriber(
-                        (IRawInboundEnvelope envelope) =>
-                        {
-                            receivedHeaders.Add(envelope.Headers);
-                        }));
+                        (IRawInboundEnvelope envelope) => { receivedHeaders.Add(envelope.Headers); }));
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));

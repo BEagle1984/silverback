@@ -30,13 +30,13 @@ namespace Silverback.Util
         }
 
         /// <summary>
-        ///     Cancels the specified <see cref="CancellationTokenSource"/> if an exception is thrown.
+        ///     Cancels the specified <see cref="CancellationTokenSource" /> if an exception is thrown.
         /// </summary>
         /// <param name="task">
         ///     The <see cref="Task" /> to be awaited.
         /// </param>
         /// <param name="cancellationTokenSource">
-        ///    The <see cref="CancellationTokenSource"/>.
+        ///     The <see cref="CancellationTokenSource" />.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -65,13 +65,13 @@ namespace Silverback.Util
         }
 
         /// <summary>
-        ///     Cancels the specified <see cref="CancellationTokenSource"/> if an exception is thrown.
+        ///     Cancels the specified <see cref="CancellationTokenSource" /> if an exception is thrown.
         /// </summary>
         /// <param name="task">
         ///     The <see cref="Task" /> to be awaited.
         /// </param>
         /// <param name="cancellationTokenSource">
-        ///    The <see cref="CancellationTokenSource"/>.
+        ///     The <see cref="CancellationTokenSource" />.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.

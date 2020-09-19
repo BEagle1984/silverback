@@ -195,34 +195,16 @@ namespace Silverback.Messaging.Subscribers
         {
             foreach (var message in messages)
             {
-                if (message is IEnvelope envelope)
+                if (message is IEnvelope envelope && envelope.AutoUnwrap &&
+                    targetMessageType.IsInstanceOfType(envelope.Message))
                 {
-                    var filtered = FilterAndUnwrapEnvelope(targetMessageType, envelope);
-
-                    if (filtered != null)
-                        yield return filtered;
+                    yield return envelope.Message!;
                 }
-                else
+                else if (targetMessageType.IsInstanceOfType(message))
                 {
-                    if (targetMessageType.IsInstanceOfType(message))
-                        yield return message;
+                    yield return message;
                 }
             }
-        }
-
-        private static object? FilterAndUnwrapEnvelope(Type targetMessageType, IEnvelope envelope)
-        {
-            if (typeof(IEnvelope).IsAssignableFrom(targetMessageType))
-            {
-                if (targetMessageType.IsInstanceOfType(envelope))
-                    return envelope;
-            }
-            else if (envelope.AutoUnwrap && targetMessageType.IsInstanceOfType(envelope.Message))
-            {
-                return envelope.Message!;
-            }
-
-            return null;
         }
 
         private static Task<object?> Invoke(

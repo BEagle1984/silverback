@@ -129,7 +129,6 @@ namespace Silverback.Messaging.Broker.Behaviors
             /// </summary>
             public const int ChunksAggregator = 510;
 
-
             /// <summary>
             ///     The <see cref="BinaryFileHandlerConsumerBehavior" /> sort index.
             /// </summary>
@@ -146,12 +145,12 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int HeadersReader = 800;
 
             /// <summary>
-            ///     The <see cref="StreamPublisherConsumerBehavior"/> sort index.
+            ///     The <see cref="StreamPublisherConsumerBehavior" /> sort index.
             /// </summary>
             public const int StreamPublisher = 2000;
 
             /// <summary>
-            ///     The <see cref="PublisherConsumerBehavior"/> sort index.
+            ///     The <see cref="PublisherConsumerBehavior" /> sort index.
             /// </summary>
             public const int Publisher = 2100;
         }

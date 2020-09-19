@@ -7,9 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Chunking;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
@@ -18,6 +16,7 @@ using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Inbound.Publishing;
 using Silverback.Messaging.Inbound.Transaction;
+using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -81,13 +80,21 @@ namespace Microsoft.Extensions.DependencyInjection
                     .Services
                     .AddSingleton<ICustomHeadersMappings>(new CustomHeadersMappings());
 
-                // Pipeline - Chunking
+                // Pipeline - Sequences
                 brokerOptionsBuilder.SilverbackBuilder
-                    // .AddSingletonBrokerBehavior<ChunkSplitterProducerBehavior>()
-                    // .AddSingletonBrokerBehavior<ChunksAggregatorConsumerBehavior>()
-                    // .AddSingletonSubscriber<ChunksAggregatorConsumerBehavior>()
-                    .Services
-                    .AddScoped<ChunkAggregator>();
+                    .AddSingletonBrokerBehavior<SequencerProducerBehavior>()
+                    .AddSingletonBrokerBehavior<SequencerConsumerBehavior>();
+                // .Services
+                // .AddSingleton<ISequenceWriter, ChunksSequenceReader>();
+                // TODO: Create AddSingletonSequenceReader and AddSingletonSequenceWriter?
+
+                // Pipeline - Chunking
+                // brokerOptionsBuilder.SilverbackBuilder
+                //     .AddSingletonBrokerBehavior<ChunkSplitterProducerBehavior>()
+                //     .AddSingletonBrokerBehavior<ChunksAggregatorConsumerBehavior>()
+                //     .AddSingletonSubscriber<ChunksAggregatorConsumerBehavior>()
+                //     .Services
+                //     .AddScoped<ChunkAggregator>();
 
                 // Pipeline - Binary File
                 brokerOptionsBuilder.SilverbackBuilder

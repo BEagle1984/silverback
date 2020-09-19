@@ -69,5 +69,11 @@ namespace Silverback.Util
                 .GetAwaiter()
                 .GetResult();
         }
+
+        public static TResult RunSynchronously<TResult>(Func<ValueTask<TResult>> func) =>
+            RunSynchronously(() => func().AsTask());
+
+        public static void RunSynchronously(Func<ValueTask> func) =>
+            RunSynchronously(() => func().AsTask());
     }
 }

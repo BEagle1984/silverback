@@ -11,6 +11,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
@@ -57,7 +58,8 @@ namespace Silverback.Tests.Integration.TestTypes
 
             headers ??= new MessageHeaderCollection();
 
-            var buffer = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
+            var stream = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
+            var buffer = await stream.ReadAllAsync();
 
             await TestHandleMessage(buffer, headers, offset);
         }

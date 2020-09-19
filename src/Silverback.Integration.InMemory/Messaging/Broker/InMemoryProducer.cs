@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -47,15 +46,20 @@ namespace Silverback.Messaging.Broker
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            return Broker.GetTopic(Endpoint.Name).Publish(envelope.RawMessage, envelope.Headers.Clone());
+            var topic = Broker.GetTopic(Endpoint.Name);
+            var messageBuffer = envelope.RawMessage.ReadAll();
+            return topic.Publish(messageBuffer, envelope.Headers.Clone());
         }
 
         /// <inheritdoc cref="Producer.ProduceAsyncCore" />
-        protected override Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
+        protected override async Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            return Broker.GetTopic(Endpoint.Name).PublishAsync(envelope.RawMessage, envelope.Headers.Clone());
+            var topic = Broker.GetTopic(Endpoint.Name);
+            var messageBuffer = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false);
+
+            return await topic.PublishAsync(messageBuffer, envelope.Headers.Clone()).ConfigureAwait(false);
         }
     }
 }

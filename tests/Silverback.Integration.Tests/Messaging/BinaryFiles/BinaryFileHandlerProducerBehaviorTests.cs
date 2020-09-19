@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -22,7 +23,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         {
             var message = new BinaryFileMessage
             {
-                Content = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 }
+                Content = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 })
             };
             var envelope = new OutboundEnvelope(message, null, TestProducerEndpoint.GetDefault());
 
@@ -47,7 +48,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         {
             var message = new InheritedBinaryFileMessage
             {
-                Content = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 }
+                Content = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 })
             };
             var envelope = new OutboundEnvelope(message, null, TestProducerEndpoint.GetDefault());
 
@@ -72,7 +73,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         {
             var message = new BinaryFileMessage
             {
-                Content = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 }
+                Content = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 })
             };
             var endpoint = TestProducerEndpoint.GetDefault();
             endpoint.Serializer = new BinaryFileMessageSerializer();

@@ -13,7 +13,6 @@ using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Chunking;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -36,17 +35,16 @@ namespace Silverback.Tests.Integration.E2E.Broker
         };
 
         [Fact]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task DefaultSettings_ProducedAndConsumed()
         {
             var message = new TestEventOne
             {
                 Content = "Hello E2E!"
             };
-            byte[]? rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
                 message,
                 new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+                MessageSerializationContext.Empty)).ReadAll();
 
             var serviceProvider = Host.ConfigureServices(
                     services => services
@@ -72,7 +70,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             Subscriber.InboundEnvelopes.Count.Should().Be(1);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().BeEquivalentTo(rawMessage);
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
@@ -149,14 +147,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
         }
 
         [Fact]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task Chunking_ChunkedAndAggregatedCorrectly()
         {
             var message = new TestEventOne
             {
                 Content = "Hello E2E!"
             };
-            byte[]? rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
                 message,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
@@ -188,8 +185,8 @@ namespace Silverback.Tests.Integration.E2E.Broker
             await publisher.PublishAsync(message);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
-            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
-                .BeEquivalentTo(rawMessage);
+            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+                .BeEquivalentTo(rawMessage.ReadAll());
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
                 {
@@ -408,7 +405,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             {
                 Content = "Hello E2E!"
             };
-            byte[]? rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
                 message,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
@@ -460,11 +457,11 @@ namespace Silverback.Tests.Integration.E2E.Broker
             {
                 Content = "Hello E2E!"
             };
-            byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                                    message,
-                                    new MessageHeaderCollection(),
-                                    MessageSerializationContext.Empty) ??
-                                throw new InvalidOperationException("Serializer returned null");
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+                                 message,
+                                 new MessageHeaderCollection(),
+                                 MessageSerializationContext.Empty) ??
+                             throw new InvalidOperationException("Serializer returned null");
 
             var serviceProvider = Host.ConfigureServices(
                     services => services
@@ -504,7 +501,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             await publisher.PublishAsync(message);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(5);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Take(10));
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Read(10));
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
                 {

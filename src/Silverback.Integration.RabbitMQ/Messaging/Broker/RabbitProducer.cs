@@ -153,7 +153,7 @@ namespace Silverback.Messaging.Broker
                         string.Empty,
                         routingKey,
                         properties,
-                        envelope.RawMessage);
+                        envelope.RawMessage.ReadAll());
                     break;
                 case RabbitExchangeProducerEndpoint exchangeEndpoint:
                     routingKey = GetRoutingKey(envelope.Headers);
@@ -161,7 +161,7 @@ namespace Silverback.Messaging.Broker
                         exchangeEndpoint.Name,
                         routingKey,
                         properties,
-                        envelope.RawMessage);
+                        envelope.RawMessage.ReadAll());
                     break;
                 default:
                     throw new ArgumentException("Unhandled endpoint type.");

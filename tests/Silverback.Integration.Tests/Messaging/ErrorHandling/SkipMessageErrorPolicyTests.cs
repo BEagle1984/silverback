@@ -3,6 +3,7 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -30,7 +31,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(333, ErrorAction.Skip)]
         public async Task SkipTest(int failedAttempts, ErrorAction expectedAction)
         {
-            var rawMessage = new byte[1];
+            var rawMessage = new MemoryStream();
             var headers = new[]
             {
                 new MessageHeader(

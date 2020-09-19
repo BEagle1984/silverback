@@ -45,7 +45,7 @@ namespace Silverback.Messaging.Broker
         ///     The endpoint to produce to.
         /// </param>
         /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
@@ -87,7 +87,7 @@ namespace Silverback.Messaging.Broker
                 var kafkaMessage = new Message<byte[]?, byte[]?>
                 {
                     Key = GetKafkaKeyAndRemoveHeader(envelope.Headers),
-                    Value = envelope.RawMessage
+                    Value = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false)
                 };
 
                 if (envelope.Headers.Count >= 1)

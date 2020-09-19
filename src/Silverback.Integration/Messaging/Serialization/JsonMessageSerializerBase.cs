@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -20,34 +20,16 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         public JsonSerializerOptions Options { get; set; } = new JsonSerializerOptions();
 
-        /// <inheritdoc cref="IMessageSerializer.Serialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public abstract byte[]? Serialize(
-            object? message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context);
-
-        /// <inheritdoc cref="IMessageSerializer.Deserialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public abstract (object?, Type) Deserialize(
-            byte[]? message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context);
-
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public virtual Task<byte[]?> SerializeAsync(
+        public abstract ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            Task.FromResult(Serialize(message, messageHeaders, context));
+            MessageSerializationContext context);
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public virtual Task<(object?, Type)> DeserializeAsync(
-            byte[]? message,
+        public abstract ValueTask<(object?, Type)> DeserializeAsync(
+            Stream? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            Task.FromResult(Deserialize(message, messageHeaders, context));
+            MessageSerializationContext context);
     }
 }

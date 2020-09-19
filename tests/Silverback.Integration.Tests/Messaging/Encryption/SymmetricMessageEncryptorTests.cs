@@ -1,13 +1,14 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Encryption
@@ -18,7 +19,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
         private const int AesDefaultInitializationVectorSizeInBytes = 16;
 
-        private readonly byte[] _clearTextMessage = { 0x1, 0x2, 0x3, 0x4, 0x5 };
+        private readonly MemoryStream _clearTextMessage = new MemoryStream(new byte[] { 0x1, 0x2, 0x3, 0x4, 0x5 });
 
         private readonly MessageHeaderCollection _headers = new MessageHeaderCollection();
 
@@ -92,7 +93,8 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             result.Should().NotBeNull();
             result!.Length.Should().Be(AesDefaultBlockSizeInBytes);
-            result.Take(iv.Length).Should().NotBeEquivalentTo(iv);
+
+            (await result.ReadAsync(iv.Length)).Should().NotBeEquivalentTo(iv);
         }
 
         [Fact]
@@ -150,10 +152,11 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
                     Key = GenerateKey(256)
                 });
 
-            var iv1 = (await encryptor.TransformAsync(_clearTextMessage, _headers))
-                .Take(AesDefaultInitializationVectorSizeInBytes);
-            var iv2 = (await encryptor.TransformAsync(_clearTextMessage, _headers))
-                .Take(AesDefaultInitializationVectorSizeInBytes);
+            var encrypted1 = await encryptor.TransformAsync(_clearTextMessage, _headers);
+            var iv1 = encrypted1.ReadAsync(AesDefaultInitializationVectorSizeInBytes);
+
+            var encrypted2 = await encryptor.TransformAsync(_clearTextMessage, _headers);
+            var iv2 = encrypted2.ReadAsync(AesDefaultInitializationVectorSizeInBytes);
 
             iv2.Should().NotBeEquivalentTo(iv1);
         }
@@ -173,7 +176,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
         }
 
         [Fact]
-        public async Task Transform_EmptyArray_EmptyArrayIsReturned()
+        public async Task Transform_EmptyStream_EmptyStreamIsReturned()
         {
             var encryptor = new SymmetricMessageEncryptor(
                 new SymmetricEncryptionSettings
@@ -181,9 +184,9 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
                     Key = GenerateKey(256)
                 });
 
-            var result = await encryptor.TransformAsync(Array.Empty<byte>(), _headers);
+            var result = await encryptor.TransformAsync(new MemoryStream(), _headers);
 
-            result.Should().BeEmpty();
+            result.Should().BeEquivalentTo(new MemoryStream());
         }
 
         private static byte[] GenerateKey(int size, int seed = 1) =>

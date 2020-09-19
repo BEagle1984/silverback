@@ -148,7 +148,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
             {
                 Content = "Hello E2E!"
             };
-            byte[]? rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
                 message,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
@@ -197,7 +197,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
             await serviceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
-            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
+            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
                 .BeEquivalentTo(rawMessage);
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
@@ -222,7 +222,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
             {
                 Content = "Hello E2E!"
             };
-            byte[]? rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
                 message,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);

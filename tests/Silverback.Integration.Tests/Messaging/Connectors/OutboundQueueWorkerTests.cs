@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
@@ -76,10 +75,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 null,
                 new TestProducerEndpoint("topic1"));
             _sampleOutboundEnvelope.RawMessage =
-                new JsonMessageSerializer().Serialize(
-                    _sampleOutboundEnvelope.Message,
-                    _sampleOutboundEnvelope.Headers,
-                    MessageSerializationContext.Empty);
+                AsyncHelper.RunSynchronously(
+                    () => new JsonMessageSerializer().SerializeAsync(
+                        _sampleOutboundEnvelope.Message,
+                        _sampleOutboundEnvelope.Headers,
+                        MessageSerializationContext.Empty));
         }
 
         [Fact]

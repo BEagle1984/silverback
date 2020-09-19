@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Silverback.Messaging.Broker;
 using Silverback.Util;
 
@@ -12,7 +13,7 @@ namespace Silverback.Messaging.Messages
     {
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         protected RawBrokerEnvelope(
-            byte[]? rawMessage,
+            Stream? rawMessage,
             IEnumerable<MessageHeader>? headers,
             IEndpoint endpoint,
             IOffset? offset,
@@ -29,10 +30,9 @@ namespace Silverback.Messaging.Messages
 
         public IDictionary<string, string> AdditionalLogData { get; }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public byte[]? RawMessage { get; set; }
-
         public MessageHeaderCollection Headers { get; }
+
+        public Stream? RawMessage { get; set; }
 
         public IOffset? Offset { get; internal set; }
     }

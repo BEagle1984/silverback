@@ -3,6 +3,7 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
@@ -46,7 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var policy = _errorPolicyBuilder.Retry().MaxFailedAttempts(3);
 
-            var rawMessage = new byte[1];
+            var rawMessage = new MemoryStream();
             var headers = new[]
             {
                 new MessageHeader(

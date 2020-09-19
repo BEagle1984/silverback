@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -222,7 +221,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             {
                 Content = "Hello E2E!"
             };
-            byte[]? rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
                 message,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
@@ -286,7 +285,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 Content = "Hello E2E!"
             };
 
-            byte[]? rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
                 message,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
@@ -339,7 +338,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             await publisher.PublishAsync(message);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(5);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Take(10));
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Read(10));
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
                 {

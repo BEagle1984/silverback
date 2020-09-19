@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Serialization;
@@ -52,10 +51,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker.ProducedMessages.Count.Should().Be(1);
             _broker.ProducedMessages.First().Endpoint.Should().Be(envelope.Endpoint);
 
-            var producedMessage = envelope.Endpoint.Serializer.Deserialize(
+            var producedMessage = (await envelope.Endpoint.Serializer.DeserializeAsync(
                 _broker.ProducedMessages.First().Message,
                 new MessageHeaderCollection(_broker.ProducedMessages.First().Headers),
-                MessageSerializationContext.Empty).Item1 as TestEventOne;
+                MessageSerializationContext.Empty)).Item1 as TestEventOne;
             producedMessage.Should().BeEquivalentTo(envelope.Message);
         }
 

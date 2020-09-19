@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Silverback.Messaging;
 using Silverback.Messaging.Messages;
 
@@ -11,7 +12,7 @@ namespace Silverback.Tests.Integration.TestTypes
     public class ProducedMessage
     {
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public ProducedMessage(byte[]? message, IEnumerable<MessageHeader> headers, IEndpoint endpoint)
+        public ProducedMessage(Stream? message, IEnumerable<MessageHeader>? headers, IEndpoint endpoint)
         {
             Message = message;
 
@@ -21,9 +22,7 @@ namespace Silverback.Tests.Integration.TestTypes
             Endpoint = endpoint;
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        public byte[]? Message { get; }
+        public Stream? Message { get; }
 
         public MessageHeaderCollection Headers { get; } = new MessageHeaderCollection();
 

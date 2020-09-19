@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
@@ -37,8 +37,6 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets or sets the serialized message body.
         /// </summary>
-        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        byte[]? RawMessage { get; set; }
+        Stream? RawMessage { get; set; }
     }
 }

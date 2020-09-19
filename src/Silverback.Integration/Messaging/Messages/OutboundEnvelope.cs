@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
@@ -21,7 +22,10 @@ namespace Silverback.Messaging.Messages
             Message = message;
 
             if (Message is byte[] rawMessage)
-                RawMessage = rawMessage;
+                RawMessage = new MemoryStream(rawMessage);
+
+            if (Message is Stream stream)
+                RawMessage = stream;
 
             OutboundConnectorType = outboundConnectorType;
             AutoUnwrap = autoUnwrap;

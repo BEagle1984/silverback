@@ -8,6 +8,8 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Chunking;
 using Silverback.Util;
 
+// TODO: DELETE?
+
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -53,7 +55,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             brokerOptionsBuilder.SilverbackBuilder.Services
                 .AddScoped<IChunkStore, TStore>()
-                .AddScoped<ChunkAggregator>()
+                //.AddScoped<ChunkAggregator>()
                 .AddSingleton(
                     serviceProvider => new ChunkStoreCleaner(
                         retention ?? TimeSpan.FromDays(1),

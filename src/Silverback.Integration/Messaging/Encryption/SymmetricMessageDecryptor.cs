@@ -1,9 +1,11 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Linq;
+using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Encryption
 {
@@ -24,15 +26,18 @@ namespace Silverback.Messaging.Encryption
         }
 
         /// <inheritdoc cref="SymmetricCryptoMessageTransformer.Transform" />
-        protected override Task<byte[]> Transform(byte[] message, SymmetricAlgorithm algorithm)
+        protected override async Task<Stream?> Transform(Stream? message, SymmetricAlgorithm algorithm)
         {
+            Check.NotNull(message, nameof(message));
+
+            // TODO: Support streaming
+
             if (Settings.InitializationVector == null)
             {
-                algorithm.IV = message.Take(algorithm.IV.Length).ToArray();
-                message = message.Skip(algorithm.IV.Length).ToArray();
+                await message.ReadAsync(algorithm.IV.AsMemory(0, algorithm.IV.Length)).ConfigureAwait(false);
             }
 
-            return base.Transform(message, algorithm);
+            return await base.Transform(message, algorithm).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="SymmetricCryptoMessageTransformer.CreateCryptoTransform" />

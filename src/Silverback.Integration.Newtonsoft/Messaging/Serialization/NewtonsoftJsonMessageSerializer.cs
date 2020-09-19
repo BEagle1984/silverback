@@ -3,6 +3,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -22,9 +24,9 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         public static NewtonsoftJsonMessageSerializer Default { get; } = new NewtonsoftJsonMessageSerializer();
 
-        /// <inheritdoc cref="IMessageSerializer.Serialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public override byte[]? Serialize(
+        /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
+        [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
+        public override ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
@@ -32,23 +34,25 @@ namespace Silverback.Messaging.Serialization
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
             if (message == null)
-                return null;
+                return ValueTaskFactory.FromResult<Stream?>(null);
 
-            if (message is byte[] bytes)
-                return bytes;
+            if (message is Stream inputStream)
+                return ValueTaskFactory.FromResult<Stream?>(inputStream);
+
+            if (message is byte[] inputBytes)
+                return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
 
             var type = message.GetType();
-            var json = JsonConvert.SerializeObject(message, type, Settings);
+            var jsonString = JsonConvert.SerializeObject(message, type, Settings);
 
             messageHeaders.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
-            return GetSystemEncoding().GetBytes(json);
+            return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(GetSystemEncoding().GetBytes(jsonString)));
         }
 
-        /// <inheritdoc cref="IMessageSerializer.Deserialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public override (object?, Type) Deserialize(
-            byte[]? message,
+        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
+        public override async ValueTask<(object?, Type)> DeserializeAsync(
+            Stream? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
@@ -59,7 +63,8 @@ namespace Silverback.Messaging.Serialization
             if (message == null || message.Length == 0)
                 return (null, type);
 
-            var jsonString = GetSystemEncoding().GetString(message);
+            var buffer = await message.ReadAllAsync().ConfigureAwait(false);
+            var jsonString = GetSystemEncoding().GetString(buffer!);
 
             var deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings) ??
                                      throw new MessageSerializerException("The deserialization returned null.");
@@ -68,7 +73,8 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-        public bool Equals(NewtonsoftJsonMessageSerializer? other) => NewtonsoftComparisonHelper.JsonEquals(this, other);
+        public bool Equals(NewtonsoftJsonMessageSerializer? other) =>
+            NewtonsoftComparisonHelper.JsonEquals(this, other);
 
         /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)

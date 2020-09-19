@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
@@ -39,7 +38,7 @@ namespace Silverback.Messaging.Encryption
 
         /// <inheritdoc cref="IRawMessageTransformer.TransformAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task<byte[]?> TransformAsync(byte[]? message, MessageHeaderCollection headers)
+        public async Task<Stream?> TransformAsync(Stream? message, MessageHeaderCollection headers)
         {
             if (message == null || message.Length == 0)
                 return message;
@@ -60,19 +59,21 @@ namespace Silverback.Messaging.Encryption
         /// <returns>
         ///     The cipher message.
         /// </returns>
-        protected virtual async Task<byte[]> Transform(byte[] message, SymmetricAlgorithm algorithm)
+        protected virtual async Task<Stream> Transform(Stream message, SymmetricAlgorithm algorithm)
         {
+            // TODO: Properly support streaming (don't read all) and test it
+
             Check.NotNull(message, nameof(message));
 
             using var cryptoTransform = CreateCryptoTransform(algorithm);
-            await using var memoryStream = new MemoryStream();
+            var memoryStream = new MemoryStream();
             await using var cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Write);
 
-            await cryptoStream.WriteAsync(message.AsMemory(0, message.Length)).ConfigureAwait(false);
+            await message.CopyToAsync(cryptoStream).ConfigureAwait(false);
             await cryptoStream.FlushAsync().ConfigureAwait(false);
             cryptoStream.Close();
 
-            return memoryStream.ToArray();
+            return memoryStream;
         }
 
         /// <summary>

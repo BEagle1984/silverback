@@ -1,7 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -16,16 +16,15 @@ namespace Silverback.Messaging
         ///     Transforms the specified message.
         /// </summary>
         /// <param name="message">
-        ///     The message to be transformed.
+        ///     The <see cref="Stream" /> containing the message to be transformed.
         /// </param>
         /// <param name="headers">
         ///     The headers collections (can be modified by the transformer).
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
-        ///     transformed message.
+        ///     <see cref="Stream" /> with transformed message.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        Task<byte[]?> TransformAsync(byte[]? message, MessageHeaderCollection headers);
+        Task<Stream?> TransformAsync(Stream? message, MessageHeaderCollection headers);
     }
 }

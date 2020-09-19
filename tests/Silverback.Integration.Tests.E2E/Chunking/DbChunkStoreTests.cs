@@ -81,7 +81,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             await publisher.PublishAsync(message);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
-            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage).Should()
+            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
                 .BeEquivalentTo(rawMessage);
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
@@ -99,11 +99,11 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             var committedOffsets = new List<IOffset>();
 
             var message = new TestEventOne { Content = "Hello E2E!" };
-            byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                                    message,
-                                    new MessageHeaderCollection(),
-                                    MessageSerializationContext.Empty) ??
-                                throw new InvalidOperationException("Serializer returned null");
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+                                 message,
+                                 new MessageHeaderCollection(),
+                                 MessageSerializationContext.Empty) ??
+                             throw new InvalidOperationException("Serializer returned null");
 
             await using var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
@@ -136,17 +136,17 @@ namespace Silverback.Tests.Integration.E2E.Chunking
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
             await producer.ProduceAsync(
-                rawMessage.Take(10).ToArray(),
+                rawMessage.Read(10),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
             committedOffsets.Count.Should().Be(1);
 
             await producer.ProduceAsync(
-                rawMessage.Skip(10).Take(10).ToArray(),
+                rawMessage.Read(10),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 1, 3));
             committedOffsets.Count.Should().Be(2);
 
             await producer.ProduceAsync(
-                rawMessage.Skip(20).ToArray(),
+                rawMessage.ReadAll(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 2, 3));
             committedOffsets.Count.Should().Be(3);
         }
@@ -155,11 +155,11 @@ namespace Silverback.Tests.Integration.E2E.Chunking
         public async Task IncompleteMessages_CleanupAfterDefinedTimeout()
         {
             var message = new TestEventOne { Content = "Hello E2E!" };
-            byte[] rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                                    message,
-                                    new MessageHeaderCollection(),
-                                    MessageSerializationContext.Empty) ??
-                                throw new InvalidOperationException("Serializer returned null");
+            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+                                 message,
+                                 new MessageHeaderCollection(),
+                                 MessageSerializationContext.Empty) ??
+                             throw new InvalidOperationException("Serializer returned null");
 
             await using var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
@@ -189,10 +189,10 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             var broker = serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
             await producer.ProduceAsync(
-                rawMessage.Take(10).ToArray(),
+                rawMessage.Read(10),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
             await producer.ProduceAsync(
-                rawMessage.Skip(10).Take(10).ToArray(),
+                rawMessage.Read(10),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 1, 3));
 
             await Task.Delay(100);
@@ -206,10 +206,10 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             }
 
             await producer.ProduceAsync(
-                rawMessage.Take(10).ToArray(),
+                rawMessage.Read(10),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("456", 0, 3));
             await producer.ProduceAsync(
-                rawMessage.Skip(10).Take(10).ToArray(),
+                rawMessage.Read(10),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("456", 1, 3));
 
             using (var scope = Host.ServiceProvider.CreateScope())

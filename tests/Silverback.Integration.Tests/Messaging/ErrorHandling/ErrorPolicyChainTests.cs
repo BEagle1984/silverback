@@ -3,6 +3,7 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,7 +43,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(4)]
         public void HandleError_RetryWithMaxFailedAttempts_AppliedAccordingToMaxFailedAttempts(int failedAttempts)
         {
-            var rawMessage = new byte[1];
+            var rawMessage = new MemoryStream();
             var headers = new[]
             {
                 new MessageHeader(
@@ -80,7 +81,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             int failedAttempts,
             ErrorAction expectedAction)
         {
-            var rawMessage = new byte[1];
+            var rawMessage = new MemoryStream();
             var headers = new[]
             {
                 new MessageHeader(
@@ -117,7 +118,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             int failedAttempts,
             int expectedAppliedPolicy)
         {
-            var rawMessage = new byte[1];
+            var rawMessage = new MemoryStream();
             var headers = new[]
             {
                 new MessageHeader(

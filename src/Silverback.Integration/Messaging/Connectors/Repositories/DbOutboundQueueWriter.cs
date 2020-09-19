@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Silverback.Database;
@@ -33,7 +34,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         }
 
         /// <inheritdoc cref="IOutboundQueueWriter.Enqueue" />
-        public Task Enqueue(IOutboundEnvelope envelope)
+        public async Task Enqueue(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -41,18 +42,12 @@ namespace Silverback.Messaging.Connectors.Repositories
                 new OutboundMessage
                 {
                     MessageType = envelope.Message?.GetType().AssemblyQualifiedName,
-                    Content = envelope.RawMessage ??
-                              envelope.Endpoint.Serializer.Serialize(
-                                  envelope.Message,
-                                  envelope.Headers,
-                                  new MessageSerializationContext(envelope.Endpoint)),
+                    Content = await GetContent(envelope).ConfigureAwait(false),
                     SerializedHeaders =
                         JsonSerializer.SerializeToUtf8Bytes((IEnumerable<MessageHeader>)envelope.Headers),
                     EndpointName = envelope.Endpoint.Name,
                     Created = DateTime.UtcNow
                 });
-
-            return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="IOutboundQueueWriter.Commit" />
@@ -67,6 +62,20 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
             // Nothing to do, the transaction is aborted by the DbContext
             return Task.CompletedTask;
+        }
+
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        private static async ValueTask<byte[]?> GetContent(IOutboundEnvelope envelope)
+        {
+            var stream =
+                envelope.RawMessage ??
+                await envelope.Endpoint.Serializer.SerializeAsync(
+                        envelope.Message,
+                        envelope.Headers,
+                        new MessageSerializationContext(envelope.Endpoint))
+                    .ConfigureAwait(false);
+
+            return await stream.ReadAllAsync().ConfigureAwait(false);
         }
     }
 }

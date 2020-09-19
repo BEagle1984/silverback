@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
@@ -14,7 +15,7 @@ namespace Silverback.Tests.Integration.Diagnostics
     public class SilverbackIntegrationLoggerTests
     {
         private static readonly IRawInboundEnvelope InboundEnvelope = new RawInboundEnvelope(
-            Array.Empty<byte>(),
+            new MemoryStream(),
             new MessageHeaderCollection
             {
                 new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
@@ -32,7 +33,7 @@ namespace Silverback.Tests.Integration.Diagnostics
         private static readonly IRawInboundEnvelope[] InboundBatch =
         {
             new RawInboundEnvelope(
-                Array.Empty<byte>(),
+                new MemoryStream(),
                 new MessageHeaderCollection
                 {
                     new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
@@ -49,7 +50,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     ["offset-in"] = "9"
                 }),
             new RawInboundEnvelope(
-                Array.Empty<byte>(),
+                new MemoryStream(),
                 new MessageHeaderCollection
                 {
                     new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
@@ -68,7 +69,7 @@ namespace Silverback.Tests.Integration.Diagnostics
         };
 
         private static readonly IRawOutboundEnvelope OutboundEnvelope = new RawOutboundEnvelope(
-            Array.Empty<byte>(),
+            new MemoryStream(),
             new MessageHeaderCollection
             {
                 new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
@@ -84,7 +85,7 @@ namespace Silverback.Tests.Integration.Diagnostics
         private static readonly IRawOutboundEnvelope[] OutboundBatch =
         {
             new RawOutboundEnvelope(
-                Array.Empty<byte>(),
+                new MemoryStream(),
                 new MessageHeaderCollection
                 {
                     new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
@@ -97,7 +98,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     ["offset-out"] = "9"
                 }),
             new RawOutboundEnvelope(
-                Array.Empty<byte>(),
+                new MemoryStream(),
                 new MessageHeaderCollection
                 {
                     new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),

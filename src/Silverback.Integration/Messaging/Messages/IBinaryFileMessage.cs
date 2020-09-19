@@ -1,7 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace Silverback.Messaging.Messages
 {
@@ -13,8 +13,6 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets or sets the binary content.
         /// </summary>
-        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        byte[]? Content { get; set; }
+        Stream? Content { get; set; }
     }
 }
