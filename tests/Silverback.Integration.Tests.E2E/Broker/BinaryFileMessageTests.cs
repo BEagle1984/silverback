@@ -59,11 +59,14 @@ namespace Silverback.Tests.Integration.E2E.Broker
             await publisher.PublishAsync(message);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().BeEquivalentTo(message.Content);
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().BeEquivalentTo(message.Content.ReReadAll());
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-            SpyBehavior.InboundEnvelopes[0].Headers.Should()
-                .ContainEquivalentOf(new MessageHeader("content-type", "application/pdf"));
+            SpyBehavior.InboundEnvelopes[0].Should().BeAssignableTo<IInboundEnvelope<BinaryFileMessage>>();
+            SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader("content-type", "application/pdf"));
+            var inboundBinaryFile = (IInboundEnvelope<BinaryFileMessage>)SpyBehavior.InboundEnvelopes[0];
+            inboundBinaryFile.Message.Should().NotBeNull();
+            inboundBinaryFile.Message!.ContentType.Should().BeEquivalentTo(message.ContentType);
+            inboundBinaryFile.Message!.Content.ReReadAll().Should().BeEquivalentTo(message.Content.ReReadAll());
         }
 
         [Fact]

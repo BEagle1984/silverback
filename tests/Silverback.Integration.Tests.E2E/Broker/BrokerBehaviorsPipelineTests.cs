@@ -339,6 +339,8 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
+            await AsyncTestingUtil.WaitAsync(() => SpyBehavior.InboundEnvelopes.Count >= 1);
+
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
             SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
