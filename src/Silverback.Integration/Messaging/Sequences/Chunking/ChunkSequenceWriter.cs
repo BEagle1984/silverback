@@ -10,7 +10,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences.Chunking
 {
-    public class ChunksSequenceWriter : ISequenceWriter
+    public class ChunkSequenceWriter : ISequenceWriter
     {
         public bool MustCreateSequence(IOutboundEnvelope envelope)
         {
@@ -70,7 +70,9 @@ namespace Silverback.Messaging.Sequences.Chunking
             var messageChunk = new OutboundEnvelope(
                 originalEnvelope.Message,
                 originalEnvelope.Headers,
-                originalEnvelope.Endpoint)
+                originalEnvelope.Endpoint,
+                (originalEnvelope as IOutboundEnvelopeInternal)?.OutboundConnectorType,
+                originalEnvelope.AutoUnwrap)
             {
                 RawMessage = new MemoryStream(rawContent)
             };

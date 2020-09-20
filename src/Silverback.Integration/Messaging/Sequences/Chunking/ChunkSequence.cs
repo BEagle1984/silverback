@@ -5,13 +5,13 @@ using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Sequences
+namespace Silverback.Messaging.Sequences.Chunking
 {
-    public class ChunksSequence : Sequence
+    public class ChunkSequence : Sequence
     {
         private int? _lastIndex;
 
-        public ChunksSequence(object sequenceId, int totalLength)
+        public ChunkSequence(object sequenceId, int totalLength)
             : base(sequenceId)
         {
             TotalLength = totalLength;

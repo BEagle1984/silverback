@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Sequences
+namespace Silverback.Messaging.Sequences.Chunking
 {
-    public class ChunksSequenceReader : ISequenceReader
+    public class ChunkSequenceReader : ISequenceReader
     {
         // TODO: The store should be scoped to the topic (sequenceId may not be globally unique)
-        private readonly ISequenceStore<ChunksSequence> _sequenceStore;
+        private readonly ISequenceStore<ChunkSequence> _sequenceStore;
 
-        public ChunksSequenceReader(ISequenceStore<ChunksSequence> sequenceStore)
+        public ChunkSequenceReader(ISequenceStore<ChunkSequence> sequenceStore)
         {
             _sequenceStore = sequenceStore;
         }
@@ -54,29 +54,16 @@ namespace Silverback.Messaging.Sequences
             await sequence.AddAsync(chunkIndex, envelope).ConfigureAwait(false);
 
             return chunkIndex == 0 ? sequence : null;
-
-            // TODO:
-            // * Create ChunksSequenceReader
-            //     * Read headers and set Sequence accordingly
-            //     * Ensure proper order is respected
-            //     * Preserve headers (last message?) and forward them!
-            // * NEW
-            //     * Stream envelope into sequence
-            //     * Use stream<byte[]> to deserialize without blocking
-
-            // * WAS
-            //     * Determine if file: either from headers or hardcoded BinaryFileSerializer
-            //     * If not a file, return null until the whole message is received and aggregated
         }
 
-        private static ChunksSequence CreateNewSequence(string messageId, IRawInboundEnvelope envelope)
+        private static ChunkSequence CreateNewSequence(string messageId, IRawInboundEnvelope envelope)
         {
             var chunksCount = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
 
             if (chunksCount == null)
                 throw new InvalidOperationException("Chunks count header not found or invalid.");
 
-            return new ChunksSequence(messageId, chunksCount.Value);
+            return new ChunkSequence(messageId, chunksCount.Value);
         }
     }
 }

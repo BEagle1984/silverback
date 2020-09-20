@@ -14,7 +14,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Sequences.Chunking
 {
     /// <summary>
-    ///     Handles the <see cref="ChunksSequence"/> merging the chunks content into an envelope containing the unified <see cref="Stream"/>.
+    ///     Handles the <see cref="ChunkSequence"/> merging the chunks content into an envelope containing the unified <see cref="Stream"/>.
     /// </summary>
     public class ChunksAggregatorConsumerBehavior : IConsumerBehavior
     {
@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Sequences.Chunking
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            if (context.Envelope.Sequence is ChunksSequence chunksSequence)
+            if (context.Envelope.Sequence is ChunkSequence chunksSequence)
             {
                 // TODO: No way to avoid the extra allocation?
                 var envelope = new RawInboundEnvelope(

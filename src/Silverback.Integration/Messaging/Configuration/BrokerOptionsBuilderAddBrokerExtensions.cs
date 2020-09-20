@@ -88,8 +88,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingletonBrokerBehavior<ChunksAggregatorConsumerBehavior>()
                     .Services
                     .AddTransient(typeof(ISequenceStore<>), typeof(DefaultSequenceStore<>))
-                    .AddSingleton<ISequenceWriter, ChunksSequenceWriter>()
-                    .AddSingleton<ISequenceReader, ChunksSequenceReader>();
+                    .AddSingleton<ISequenceWriter, ChunkSequenceWriter>()
+                    .AddSingleton<ISequenceReader, ChunkSequenceReader>();
                 // TODO: Create AddSingletonSequenceReader and AddSingletonSequenceWriter?
 
                 // Pipeline - Chunking

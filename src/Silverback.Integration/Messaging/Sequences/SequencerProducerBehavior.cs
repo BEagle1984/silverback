@@ -53,6 +53,8 @@ namespace Silverback.Messaging.Sequences
                 {
                     var newContext = new ProducerPipelineContext(envelope, context.Producer, context.ServiceProvider);
                     await next(newContext).ConfigureAwait(false);
+
+                    // TODO: Set first offset on next chunks (name returned by the writer)
                 }
 
                 return;
