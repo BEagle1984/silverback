@@ -18,11 +18,6 @@ namespace Silverback.Messaging.Messages
         MessageHeaderCollection Headers { get; } // TODO: Can/must be readonly? Some sort of IReadOnlyHeaderCollection?
 
         /// <summary>
-        ///     Gets the message offset (or similar construct if using a message broker other than Kafka).
-        /// </summary>
-        IOffset? Offset { get; }
-
-        /// <summary>
         ///     Gets the source or destination endpoint.
         /// </summary>
         IEndpoint Endpoint { get; }

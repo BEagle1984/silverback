@@ -92,6 +92,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int FatalExceptionLogger = 110;
 
             /// <summary>
+            ///     The <see cref="CustomHeadersMapperConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int CustomHeadersMapper = 120;
+
+            /// <summary>
             ///     The <see cref="SequencerConsumerBehavior" /> sort index.
             /// </summary>
             public const int Sequencer = 150;
@@ -115,11 +120,6 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <see cref="ExactlyOnceGuardConsumerBehavior" /> sort index.
             /// </summary>
             public const int ExactlyOnceGuard = 270;
-
-            /// <summary>
-            ///     The <see cref="CustomHeadersMapperConsumerBehavior" /> sort index.
-            /// </summary>
-            public const int CustomHeadersMapper = 300;
 
             /// <summary>
             ///     The <see cref="ChunksAggregatorConsumerBehavior" /> sort index.

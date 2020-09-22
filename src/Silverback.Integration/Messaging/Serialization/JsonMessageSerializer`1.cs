@@ -42,14 +42,17 @@ namespace Silverback.Messaging.Serialization
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public override async ValueTask<(object?, Type)> DeserializeAsync(
-            Stream? message,
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            if (message == null)
+            if (messageStream == null)
                 return (null, _type);
 
-            var deserializedObject = await JsonSerializer.DeserializeAsync(message, _type, Options)
+            if (messageStream.CanSeek && messageStream.Length == 0)
+                return (null, _type);
+
+            var deserializedObject = await JsonSerializer.DeserializeAsync(messageStream, _type, Options)
                                          .ConfigureAwait(false) ??
                                      throw new MessageSerializerException("The deserialization returned null.");
 

@@ -17,11 +17,11 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
-    public class SkipMessageErrorPolicyTests
+    public class StopConsumerErrorPolicyTests
     {
         private readonly ServiceProvider _serviceProvider;
 
-        public SkipMessageErrorPolicyTests()
+        public StopConsumerErrorPolicyTests()
         {
             var services = new ServiceCollection();
 
@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
-        public async Task HandleError_Whatever_TrueReturned()
+        public async Task HandleError_Whatever_FalseReturned()
         {
             throw new NotImplementedException();
         }
@@ -50,5 +50,6 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             throw new NotImplementedException();
         }
+
     }
 }

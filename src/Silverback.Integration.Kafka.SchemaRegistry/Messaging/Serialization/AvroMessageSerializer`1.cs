@@ -46,11 +46,11 @@ namespace Silverback.Messaging.Serialization
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public async ValueTask<(object?, Type)> DeserializeAsync(
-            Stream? message,
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            var buffer = await message.ReadAllAsync().ConfigureAwait(false);
+            var buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
             var deserialized = await DeserializeAsync<TMessage>(buffer, MessageComponentType.Value, context)
                 .ConfigureAwait(false);
 

@@ -24,7 +24,7 @@ namespace Silverback.Messaging
         ///     Gets or sets the error policy to be applied when an exception occurs during the processing of the
         ///     consumed messages.
         /// </summary>
-        public IErrorPolicy? ErrorPolicy { get; set; }
+        public IErrorPolicy ErrorPolicy { get; set; } = new StopConsumerErrorPolicy();
 
         /// <summary>
         ///     Gets or sets the batch settings. Can be used to enable and setup batch processing.
@@ -40,5 +40,16 @@ namespace Silverback.Messaging
 
         /// <inheritdoc cref="IConsumerEndpoint.GetUniqueConsumerGroupName" />
         public abstract string GetUniqueConsumerGroupName();
+
+        /// <inheritdoc cref="IEndpoint.Validate" />
+        public override void Validate()
+        {
+            base.Validate();
+
+            if (ErrorPolicy == null)
+                throw new EndpointConfigurationException("ErrorPolicy cannot be null.");
+
+            Batch?.Validate();
+        }
     }
 }

@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Tests.Integration.E2E.TestTypes;
 
@@ -22,6 +23,8 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         protected OutboundInboundSubscriber Subscriber => _outboundInboundSubscriber ??=
             Host.ServiceProvider.GetRequiredService<OutboundInboundSubscriber>();
+
+        protected InMemoryBroker Broker => (InMemoryBroker)Host.ServiceProvider.GetRequiredService<IBroker>();
 
         public void Dispose()
         {

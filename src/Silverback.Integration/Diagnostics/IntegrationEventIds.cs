@@ -15,6 +15,9 @@ namespace Silverback.Diagnostics
     /// </summary>
     public static class IntegrationEventIds
     {
+        // TODO: Review and remove unused
+
+
         private const string Prefix = "Silverback.Integration_";
 
         private const int Offset = 1000;

@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Serialization
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public abstract ValueTask<(object?, Type)> DeserializeAsync(
-            Stream? message,
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context);
 

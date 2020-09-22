@@ -19,8 +19,6 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class ErrorPolicyBaseTests
     {
-        private readonly IServiceProvider _fakeServiceProvider = Substitute.For<IServiceProvider>();
-
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
         [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
 
@@ -98,19 +96,21 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
         [Theory]
         [MemberData(nameof(ApplyTo_TestData))]
-        public void ApplyTo_Exception_CanHandleReturnsExpectedResult(Exception exception, bool mustApply)
+        public void CanHandle_WithApplyTo_ExpectedResultReturned(Exception exception, bool mustApply)
         {
-            var policy = new TestErrorPolicy(_fakeServiceProvider)
+            var policy = new TestErrorPolicy()
                 .ApplyTo<ArgumentException>()
-                .ApplyTo<InvalidCastException>();
+                .ApplyTo<InvalidCastException>()
+                .Build(Substitute.For<IServiceProvider>());
 
             var canHandle = policy.CanHandle(
-                new InboundEnvelope(
-                    new MemoryStream(),
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
-                    null,
-                    TestConsumerEndpoint.GetDefault(),
-                    TestConsumerEndpoint.GetDefault().Name),
+                ConsumerPipelineContextHelper.CreateSubstitute(
+                    new InboundEnvelope(
+                        new MemoryStream(),
+                        new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
+                        null,
+                        TestConsumerEndpoint.GetDefault(),
+                        TestConsumerEndpoint.GetDefault().Name)),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -118,19 +118,21 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
         [Theory]
         [MemberData(nameof(Exclude_TestData))]
-        public void Exclude_Exception_CanHandleReturnsExpectedResult(Exception exception, bool mustApply)
+        public void CanHandle_WithExclude_ExpectedResultReturned(Exception exception, bool mustApply)
         {
-            var policy = (TestErrorPolicy)new TestErrorPolicy(_fakeServiceProvider)
+            var policy = new TestErrorPolicy()
                 .Exclude<ArgumentException>()
-                .Exclude<InvalidCastException>();
+                .Exclude<InvalidCastException>()
+                .Build(Substitute.For<IServiceProvider>());
 
             var canHandle = policy.CanHandle(
-                new InboundEnvelope(
-                    new MemoryStream(),
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
-                    null,
-                    TestConsumerEndpoint.GetDefault(),
-                    TestConsumerEndpoint.GetDefault().Name),
+                ConsumerPipelineContextHelper.CreateSubstitute(
+                    new InboundEnvelope(
+                        new MemoryStream(),
+                        new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
+                        null,
+                        TestConsumerEndpoint.GetDefault(),
+                        TestConsumerEndpoint.GetDefault().Name)),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -138,20 +140,22 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
         [Theory]
         [MemberData(nameof(ApplyToAndExclude_TestData))]
-        public void ApplyToAndExclude_Exception_CanHandleReturnsExpectedResult(Exception exception, bool mustApply)
+        public void CanHandle_WithApplyToAndExclude_ExpectedResultReturned(Exception exception, bool mustApply)
         {
-            var policy = (TestErrorPolicy)new TestErrorPolicy(_fakeServiceProvider)
+            var policy = new TestErrorPolicy()
                 .ApplyTo<ArgumentException>()
                 .Exclude<ArgumentOutOfRangeException>()
-                .ApplyTo<FormatException>();
+                .ApplyTo<FormatException>()
+                .Build(Substitute.For<IServiceProvider>());
 
             var canHandle = policy.CanHandle(
-                new InboundEnvelope(
-                    new MemoryStream(),
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
-                    null,
-                    TestConsumerEndpoint.GetDefault(),
-                    TestConsumerEndpoint.GetDefault().Name),
+                ConsumerPipelineContextHelper.CreateSubstitute(
+                    new InboundEnvelope(
+                        new MemoryStream(),
+                        new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
+                        null,
+                        TestConsumerEndpoint.GetDefault(),
+                        TestConsumerEndpoint.GetDefault().Name)),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -159,44 +163,74 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
         [Theory]
         [MemberData(nameof(ApplyWhen_TestData))]
-        public void ApplyWhen_Exception_CanHandleReturnsExpectedResult(
+        public void CanHandle_WithApplyWhen_ExpectedResultReturned(
             IInboundEnvelope envelope,
             Exception exception,
             bool mustApply)
         {
-            var policy = (TestErrorPolicy)new TestErrorPolicy(_fakeServiceProvider)
+            var policy = new TestErrorPolicy()
                 .ApplyWhen(
                     (msg, ex) =>
-                        msg.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts) <= 5 && ex.Message != "no");
+                        msg.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts) <= 5 && ex.Message != "no")
+                .Build(Substitute.For<IServiceProvider>());
 
-            var canHandle = policy.CanHandle(envelope, exception);
+            var canHandle = policy.CanHandle(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope),
+                exception);
 
             canHandle.Should().Be(mustApply);
         }
 
+        [Theory]
+        [InlineData(1, true)]
+        [InlineData(3, true)]
+        [InlineData(4, false)]
+        [InlineData(7, false)]
+        public void CanHandle_WithMaxFailedAttempts_ExpectedResultReturned(int failedAttempts, bool expectedResult)
+        {
+            var envelope = new InboundEnvelope(
+                new MemoryStream(),
+                new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts) },
+                null,
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
+
+            var policy = new TestErrorPolicy()
+                .MaxFailedAttempts(3)
+                .Build(Substitute.For<IServiceProvider>());
+
+            var canHandle = policy.CanHandle(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope),
+                new InvalidOperationException());
+
+            canHandle.Should().Be(expectedResult);
+        }
+
         [Fact]
-        [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
-        public async Task Publish_Exception_MessagePublished()
+        public async Task HandleError_WithPublish_MessagePublished()
         {
             var publisher = Substitute.For<IPublisher>();
             var serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
                 .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-            var policy =
-                (TestErrorPolicy)new TestErrorPolicy(serviceProvider).Publish(
-                    msg => new TestEventTwo
-                        { Content = "aaa" });
-            var message = new InboundEnvelope(
+
+            var policy = new TestErrorPolicy()
+                .Publish(_ => new TestEventTwo { Content = "aaa" })
+                .Build(serviceProvider);
+
+            var envelope = new InboundEnvelope(
                 new MemoryStream(),
                 new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
 
-            await policy.HandleError(new[] { message }, new ArgumentNullException());
+            await policy.HandleError(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
+                new ArgumentNullException());
 
             await publisher.Received().PublishAsync(Arg.Any<TestEventTwo>());
         }
 
-        // TODO: Test with multiple messages (batch)
+        // TODO: Test with multiple messages (batch) --> TODO2: Do we still need to?
     }
 }

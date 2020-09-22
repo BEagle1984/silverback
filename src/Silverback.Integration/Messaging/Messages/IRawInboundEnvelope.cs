@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Messages
@@ -21,6 +22,11 @@ namespace Silverback.Messaging.Messages
         ///     single <c>KafkaConsumer</c>).
         /// </summary>
         string ActualEndpointName { get; }
+
+        /// <summary>
+        ///     Gets the message offset (or similar construct if using a message broker other than Kafka).
+        /// </summary>
+        IOffset Offset { get; }
 
         /// <summary>
         ///     Gets the <see cref="ISequence"/> this message belongs to.

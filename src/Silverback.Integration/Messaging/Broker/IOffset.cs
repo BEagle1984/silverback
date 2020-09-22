@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Connectors;
 
 namespace Silverback.Messaging.Broker
@@ -21,7 +22,7 @@ namespace Silverback.Messaging.Broker
     ///     The classes implementing this interface should also implement a public constructor accepting key and
     ///     value as string arguments.
     /// </remarks>
-    public interface IOffset
+    public interface IOffset : IEquatable<IOffset>
     {
         /// <summary>
         ///     Gets the unique key of the queue, topic or partition this offset belongs to.

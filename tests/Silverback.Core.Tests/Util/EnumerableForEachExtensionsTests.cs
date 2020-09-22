@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -13,23 +14,23 @@ namespace Silverback.Tests.Core.Util
     public class EnumerableForEachExtensionsTests
     {
         [Fact]
-        public void ForEach_Enumerable_Enumerated()
+        public void ForEach_Action_Enumerated()
         {
-            var array = (IEnumerable<int>)new[] { 1, 2, 3, 4, 5 };
+            var enumerable = Enumerable.Range(1, 5);
 
             var total = 0;
-            array.ForEach(i => total += i);
+            enumerable.ForEach(i => total += i);
 
             total.Should().Be(15);
         }
 
         [Fact]
-        public async Task ForEachAsync_Enumerable_Enumerated()
+        public async Task ForEachAsync_EnumerableWithAsyncFunc_Enumerated()
         {
-            var array = (IEnumerable<int>)new[] { 1, 2, 3, 4, 5 };
+            var enumerable = Enumerable.Range(1, 5);
 
             var total = 0;
-            await array.ForEachAsync(
+            await enumerable.ForEachAsync(
                 async i =>
                 {
                     await Task.Delay(1);
@@ -40,12 +41,40 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public async Task ParallelForEachAsync_Enumerable_Enumerated()
+        public void ForEachAsync_AsyncEnumerableWithAction_Enumerated()
         {
-            var array = (IEnumerable<int>)new[] { 1, 2, 3, 4, 5 };
+            var enumerable = AsyncEnumerable.Range(1, 5);
 
             var total = 0;
-            await array.ParallelForEachAsync(
+            enumerable.ForEachAsync(i => total += i);
+
+            total.Should().Be(15);
+        }
+
+        [Fact]
+        public async Task ForEachAsync_AsyncEnumerableWithAsyncFunc_Enumerated()
+        {
+            var enumerable = AsyncEnumerable.Range(1, 5);
+
+            var total = 0;
+            await enumerable.ForEachAsync(
+                async i =>
+                {
+                    await Task.Delay(1);
+                    total += i;
+                });
+
+            total.Should().Be(15);
+        }
+
+
+        [Fact]
+        public async Task ParallelForEach_AsyncFunc_Enumerated()
+        {
+            var enumerable = Enumerable.Range(1, 5);
+
+            var total = 0;
+            await enumerable.ParallelForEach(
                 async i =>
                 {
                     await Task.Delay(1);

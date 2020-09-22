@@ -13,6 +13,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Chunking;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -125,8 +126,10 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)))
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                    }))
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -168,13 +171,12 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)))
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                    }))
                         .AddDelegateSubscriber(
-                            (ISilverbackEvent silverbackEvent) =>
-                            {
-                                silverbackEvents.Add(silverbackEvent);
-                            })
+                            (ISilverbackEvent silverbackEvent) => { silverbackEvents.Add(silverbackEvent); })
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -221,8 +223,10 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                         Chunk = new ChunkSettings { Size = 10 }
                                     })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)))
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                    }))
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -268,13 +272,12 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                         Chunk = new ChunkSettings { Size = 10 }
                                     })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    errorPolicy => errorPolicy.Retry().MaxFailedAttempts(10)))
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                    }))
                         .AddDelegateSubscriber(
-                            (ISilverbackEvent silverbackEvent) =>
-                            {
-                                silverbackEvents.Add(silverbackEvent);
-                            })
+                            (ISilverbackEvent silverbackEvent) => { silverbackEvents.Add(silverbackEvent); })
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -316,8 +319,10 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    errorPolicy => errorPolicy.Retry().MaxFailedAttempts(2)))
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(2)
+                                    }))
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -370,8 +375,10 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                         Chunk = new ChunkSettings { Size = 10 }
                                     })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    errorPolicy => errorPolicy.Retry().MaxFailedAttempts(2)))
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(2)
+                                    }))
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {

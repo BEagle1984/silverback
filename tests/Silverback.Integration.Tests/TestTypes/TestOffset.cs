@@ -61,18 +61,31 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public string ToLogString() => Value;
 
+        public bool Equals(IOffset? other)
+        {
+            if (ReferenceEquals(this, other))
+                return true;
+            if (ReferenceEquals(other, null))
+                return false;
+
+            if (!(other is TestOffset otherRabbitOffset))
+                return false;
+
+            return Key == otherRabbitOffset.Key && Value == otherRabbitOffset.Value;
+        }
+
+        /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
+            if (ReferenceEquals(null, obj))
+                return false;
             if (ReferenceEquals(this, obj))
                 return true;
 
-            if (ReferenceEquals(obj, null))
+            if (obj.GetType() != GetType())
                 return false;
 
-            if (!(obj is TestOffset other))
-                return false;
-
-            return CompareTo(other) == 0;
+            return Equals((IOffset)obj);
         }
 
         public override int GetHashCode() => HashCode.Combine(Key, Value);

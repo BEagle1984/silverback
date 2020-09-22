@@ -52,11 +52,11 @@ namespace Silverback.Messaging.BinaryFiles
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public ValueTask<(object?, Type)> DeserializeAsync(
-            Stream? message,
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            var binaryFileMessage = new TModel { Content = message };
+            var binaryFileMessage = new TModel { Content = messageStream };
 
             return ValueTaskFactory.FromResult<(object?, Type)>((binaryFileMessage, _type));
         }

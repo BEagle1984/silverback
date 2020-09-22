@@ -394,6 +394,32 @@ namespace Silverback.Diagnostics
         /// <param name="logMessage">
         ///     The log message.
         /// </param>
+        /// <param name="envelope">
+        ///     The <see cref="IRawBrokerEnvelope" /> containing the message related to the this log.
+        /// </param>
+        void LogWithMessageInfo(
+            LogLevel logLevel,
+            EventId eventId,
+            Exception? exception,
+            string logMessage,
+            IRawBrokerEnvelope envelope);
+
+        /// <summary>
+        ///     Writes a log message at the specified log level, enriching it with the information related to the
+        ///     provided message(s).
+        /// </summary>
+        /// <param name="logLevel">
+        ///     Entry will be written on this level.
+        /// </param>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="exception">
+        ///     The exception to log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
         /// <param name="envelopes">
         ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the message(s) related to the this
         ///     log.

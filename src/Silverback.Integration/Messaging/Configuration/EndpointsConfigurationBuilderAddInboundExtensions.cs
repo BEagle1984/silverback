@@ -6,7 +6,6 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors;
-using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
@@ -25,10 +24,6 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpoint">
         ///     The endpoint (topic).
         /// </param>
-        /// <param name="errorPolicyFactory">
-        ///     An optional function returning the error policy to be applied when an exception occurs during the
-        ///     processing of the consumed messages.
-        /// </param>
         /// <param name="consumersCount">
         ///     The number of consumers to be instantiated. The default is 1.
         /// </param>
@@ -38,7 +33,6 @@ namespace Silverback.Messaging.Configuration
         public static IEndpointsConfigurationBuilder AddInbound(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
             IConsumerEndpoint endpoint,
-            Func<IErrorPolicyBuilder, IErrorPolicy>? errorPolicyFactory = null,
             int consumersCount = 1)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
@@ -53,12 +47,6 @@ namespace Silverback.Messaging.Configuration
 
             var serviceProvider = endpointsConfigurationBuilder.ServiceProvider;
             var brokerCollection = serviceProvider.GetRequiredService<IBrokerCollection>();
-
-            if (errorPolicyFactory != null)
-            {
-                var errorPolicyBuilder = serviceProvider.GetRequiredService<IErrorPolicyBuilder>();
-                endpoint.ErrorPolicy = errorPolicyFactory.Invoke(errorPolicyBuilder);
-            }
 
             Enumerable.Range(0, consumersCount).ForEach(_ => brokerCollection.AddConsumer(endpoint));
 

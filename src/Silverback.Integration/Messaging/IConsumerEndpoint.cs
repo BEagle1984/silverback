@@ -28,7 +28,7 @@ namespace Silverback.Messaging
         ///     Gets or sets the error policy to be applied when an exception occurs during the processing of the
         ///     consumed messages.
         /// </summary>
-        IErrorPolicy? ErrorPolicy { get; set; }
+        IErrorPolicy ErrorPolicy { get; set; }
 
         /// <summary>
         ///     Gets a unique name for the consumer group (e.g. Kafka's consumer group id). This value (joint with

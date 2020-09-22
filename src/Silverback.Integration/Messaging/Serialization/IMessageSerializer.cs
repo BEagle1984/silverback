@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Deserializes the byte array back into a message object.
         /// </summary>
-        /// <param name="message">
+        /// <param name="messageStream">
         ///     The <see cref="Stream" /> containing the message to be deserialized.
         /// </param>
         /// <param name="messageHeaders">
@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Serialization
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         ValueTask<(object?, Type)> DeserializeAsync(
-            Stream? message,
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context);
     }

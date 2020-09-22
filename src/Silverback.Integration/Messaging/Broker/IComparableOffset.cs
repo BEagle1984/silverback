@@ -19,6 +19,7 @@ namespace Silverback.Messaging.Broker
     ///         universally comparable (across restarts and across multiple instances, for a given Key).
     ///     </para>
     /// </summary>
+    // TODO: Review summary
     public interface IComparableOffset : IOffset, IComparable<IOffset>
     {
     }

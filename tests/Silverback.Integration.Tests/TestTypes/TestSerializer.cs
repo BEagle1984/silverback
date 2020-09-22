@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.TestTypes
         }
 
         public ValueTask<(object?, Type)> DeserializeAsync(
-            Stream? message,
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 throw new InvalidOperationException("Test failure");
             }
 
-            return new JsonMessageSerializer().DeserializeAsync(message, messageHeaders, context);
+            return new JsonMessageSerializer().DeserializeAsync(messageStream, messageHeaders, context);
         }
     }
 }

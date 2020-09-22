@@ -117,10 +117,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingletonBrokerBehavior<TransactionHandlerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<ExactlyOnceGuardConsumerBehavior>()
                     .AddSingletonBrokerBehavior<PublisherConsumerBehavior>()
-                    .AddSingletonBrokerBehavior<StreamPublisherConsumerBehavior>()
-                    .AddScopedSubscriber<ConsumerTransactionManager>()
-                    .Services
-                    .AddSingleton<IErrorPolicyBuilder, ErrorPolicyBuilder>();
+                    .AddSingletonBrokerBehavior<StreamPublisherConsumerBehavior>();
 
                 // Support - Transactional Lists
                 brokerOptionsBuilder.SilverbackBuilder.Services

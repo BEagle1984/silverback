@@ -1,21 +1,45 @@
-// Copyright (c) 2020 Sergio Aquilini
+﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Silverback.Messaging.Messages;
-using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Broker;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound.Transaction
 {
-    /// <summary>
-    ///     Manages the consumer transaction propagating the commit or rollback to all enlisted services.
-    /// </summary>
-    public class ConsumerTransactionManager
+    public class ConsumerTransactionManager : IConsumerTransactionManager
     {
+        private readonly IConsumer _consumer;
+
+        private readonly ConcurrentBag<IOffset> _offsets = new ConcurrentBag<IOffset>();
+
         private readonly List<ITransactional> _transactionalServices = new List<ITransactional>();
+
+        private bool _isCompleted;
+
+        public ConsumerTransactionManager(IConsumer consumer)
+        {
+            _consumer = consumer;
+        }
+
+        public void AddOffset(IOffset offset)
+        {
+            Check.NotNull(offset, nameof(offset));
+            EnsureNotCompleted();
+
+            _offsets.Add(offset);
+        }
+
+        public void AddOffsets(IEnumerable<IOffset> offsets)
+        {
+            Check.NotNull(offsets, nameof(offsets));
+            EnsureNotCompleted();
+
+            offsets.ForEach(offset => _offsets.Add(offset));
+        }
 
         /// <summary>
         ///     Adds the specified service to the transaction participants to be called upon commit or rollback.
@@ -26,7 +50,9 @@ namespace Silverback.Messaging.Inbound.Transaction
         public void Enlist(ITransactional transactionalService)
         {
             Check.NotNull(transactionalService, nameof(transactionalService));
+            EnsureNotCompleted();
 
+            // ReSharper disable once InconsistentlySynchronizedField
             if (_transactionalServices.Contains(transactionalService))
                 return;
 
@@ -39,18 +65,56 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        private Task OnConsumingCompleted(ConsumingCompletedEvent completedEvent) =>
-            _transactionalServices.ForEachAsync(transactional => transactional.Commit());
+        public async Task Commit()
+        {
+            EnsureNotCompleted();
+            _isCompleted = true;
 
-        [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        private Task OnConsumingAborted(ConsumingAbortedEvent abortedEvent) =>
-            _transactionalServices.ForEachAsync(transactional => transactional.Rollback());
+            try
+            {
+                // TODO: At least once is ok?
+                await _transactionalServices.ForEachAsync(service => service.Commit())
+                    .ConfigureAwait(false);
+                await _consumer.Commit(_offsets.ToArray()).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log
+                throw;
+            }
+        }
+
+        public async Task Rollback(bool commitOffsets = false)
+        {
+            EnsureNotCompleted();
+            _isCompleted = true;
+
+            try
+            {
+                try
+                {
+                    await _transactionalServices.ForEachAsync(service => service.Rollback())
+                        .ConfigureAwait(false);
+                }
+                finally
+                {
+                    if (commitOffsets)
+                        await _consumer.Commit(_offsets.ToArray()).ConfigureAwait(false);
+                    else
+                        await _consumer.Rollback(_offsets.ToArray()).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log
+                throw;
+            }
+        }
+
+        private void EnsureNotCompleted()
+        {
+            if (_isCompleted)
+                throw new InvalidOperationException("The transaction already completed.");
+        }
     }
 }

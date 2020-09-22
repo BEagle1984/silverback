@@ -148,19 +148,122 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             result.Should().Be(expectedResult);
         }
 
-        [Theory]
-        [InlineData(10, 5, false)]
-        [InlineData(1, 3, false)]
-        [InlineData(5, 5, true)]
-        [InlineData(5, null, false)]
-        public void Equals_AnotherInMemoryOffset_ProperlyCompared(int valueA, int? valueB, bool expectedResult)
+        [Fact]
+        public void EqualsOffset_SameInstance_TrueReturned()
         {
-            var offsetA = new InMemoryOffset("key", valueA);
-            var offsetB = valueB != null ? new InMemoryOffset("key", valueB.Value) : null;
+            var offset = new InMemoryOffset("key", 42);
 
-            var result = offsetA.Equals(offsetB);
+            var result = offset.Equals(offset);
 
-            result.Should().Be(expectedResult);
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void EqualsObject_SameInstance_TrueReturned()
+        {
+            var offset = new InMemoryOffset("key", 42);
+
+            var result = offset.Equals((object)offset);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("abc", 1, "abc", 1, true)]
+        [InlineData("abc", 1, "abc", 2, false)]
+        [InlineData("abc", 2, "abc", 1, false)]
+        [InlineData("abc", 1, "def", 1, false)]
+        public void EqualsOffset_AnotherInMemoryOffset_ProperlyCompared(
+            string key1,
+            int value1,
+            string key2,
+            int value2,
+            bool expected)
+        {
+            var offset1 = new InMemoryOffset(key1, value1);
+            var offset2 = new InMemoryOffset(key2, value2);
+
+            var result = offset1.Equals(offset2);
+
+            result.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("abc", 1, "abc", 1, true)]
+        [InlineData("abc", 1, "abc", 2, false)]
+        [InlineData("abc", 2, "abc", 1, false)]
+        [InlineData("abc", 1, "def", 1, false)]
+        public void EqualsObject_AnotherInMemoryOffset_ProperlyCompared(
+            string key1,
+            int value1,
+            string key2,
+            int value2,
+            bool expected)
+        {
+            var offset1 = new InMemoryOffset(key1, value1);
+            var offset2 = new InMemoryOffset(key2, value2);
+
+            var result = offset1.Equals((object)offset2);
+
+            result.Should().Be(expected);
+        }
+
+        [Fact]
+        public void EqualsOffset_Null_FalseReturned()
+        {
+            var offset1 = new InMemoryOffset("key", 42);
+
+            var result = offset1.Equals(null);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void EqualsObject_Null_FalseReturned()
+        {
+            var offset1 = new InMemoryOffset("key", 42);
+
+            var result = offset1.Equals((object?)null);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void EqualsOffset_DifferentOffsetType_FalseReturned()
+        {
+            var offset1 = new InMemoryOffset("key", 42);
+            var offset2 = new TestOtherOffset("key", "42");
+
+            var result = offset1.Equals(offset2);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void EqualsObject_DifferentOffsetType_FalseReturned()
+        {
+            var offset1 = new InMemoryOffset("key", 42);
+            var offset2 = new TestOtherOffset("key", "42");
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var result = offset1.Equals((object)offset2);
+
+            result.Should().BeFalse();
+        }
+
+        private class TestOtherOffset : IOffset
+        {
+            public TestOtherOffset(string key, string value)
+            {
+                Key = key;
+                Value = value;
+            }
+
+            public string Key { get; }
+
+            public string Value { get; }
+
+            public bool Equals(IOffset? other) => false;
         }
     }
 }

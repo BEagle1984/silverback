@@ -52,7 +52,7 @@ namespace Silverback.Messaging.Serialization
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public override async ValueTask<(object?, Type)> DeserializeAsync(
-            Stream? message,
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
@@ -60,10 +60,10 @@ namespace Silverback.Messaging.Serialization
 
             var type = SerializationHelper.GetTypeFromHeaders(messageHeaders);
 
-            if (message == null)
+            if (messageStream == null)
                 return (null, type);
 
-            var buffer = await message.ReadAllAsync().ConfigureAwait(false);
+            var buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
             var jsonString = GetSystemEncoding().GetString(buffer!);
 
             var deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings) ??

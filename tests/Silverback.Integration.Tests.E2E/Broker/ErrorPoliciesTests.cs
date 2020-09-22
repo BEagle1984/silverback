@@ -13,6 +13,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Chunking;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
@@ -55,8 +56,10 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    policy => policy.Retry().MaxFailedAttempts(10)))
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                    }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
@@ -69,6 +72,8 @@ namespace Silverback.Tests.Integration.E2E.Broker
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
+
+            await Broker.WaitUntilAllMessagesAreConsumed();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(3);
@@ -102,8 +107,10 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    policy => policy.Retry().MaxFailedAttempts(10)))
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                    }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
@@ -149,8 +156,10 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    policy => policy.Retry().MaxFailedAttempts(10)))
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                    }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) => { throw new InvalidOperationException("Retry!"); }))
@@ -193,10 +202,12 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e"),
-                                    policy => policy.Chain(
-                                        policy.Retry().MaxFailedAttempts(10),
-                                        policy.Skip())))
+                                    new KafkaConsumerEndpoint("test-e2e")
+                                    {
+                                        ErrorPolicy = ErrorPolicy.Chain(
+                                            ErrorPolicy.Retry().MaxFailedAttempts(10),
+                                            ErrorPolicy.Skip())
+                                    }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) => { throw new InvalidOperationException("Retry!"); }))
@@ -252,9 +263,9 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                         Encryption = new SymmetricEncryptionSettings
                                         {
                                             Key = AesEncryptionKey
-                                        }
-                                    },
-                                    policy => policy.Retry().MaxFailedAttempts(10)))
+                                        },
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                    }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
@@ -321,9 +332,9 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                         Encryption = new SymmetricEncryptionSettings
                                         {
                                             Key = AesEncryptionKey
-                                        }
-                                    },
-                                    policy => policy.Retry().MaxFailedAttempts(10)))
+                                        },
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                    }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>

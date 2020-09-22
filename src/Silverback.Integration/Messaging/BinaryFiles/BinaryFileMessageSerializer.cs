@@ -57,7 +57,7 @@ namespace Silverback.Messaging.BinaryFiles
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public ValueTask<(object?, Type)> DeserializeAsync(
-            Stream? message,
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
@@ -66,7 +66,7 @@ namespace Silverback.Messaging.BinaryFiles
             var type = SerializationHelper.GetTypeFromHeaders<BinaryFileMessage>(messageHeaders);
 
             var messageModel = (IBinaryFileMessage)Activator.CreateInstance(type);
-            messageModel.Content = message;
+            messageModel.Content = messageStream;
 
             return ValueTaskFactory.FromResult<(object?, Type)>((messageModel, type));
         }

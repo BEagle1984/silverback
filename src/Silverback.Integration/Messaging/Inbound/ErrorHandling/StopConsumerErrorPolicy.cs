@@ -5,42 +5,36 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound.ErrorHandling
 {
-    /// <summary>
-    ///     This policy simply skips the message that failed to be processed.
-    /// </summary>
-    public class SkipMessageErrorPolicy : ErrorPolicyBase
+    public class StopConsumerErrorPolicy : ErrorPolicyBase
     {
         /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
         protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
-            new SkipMessageErrorPolicyImplementation(
+            new StopConsumerErrorPolicyImplementation(
                 MaxFailedAttemptsCount,
                 ExcludedExceptions,
                 IncludedExceptions,
                 ApplyRule,
                 MessageToPublishFactory,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<SkipMessageErrorPolicy>>());
+                serviceProvider
+                    .GetRequiredService<ISilverbackIntegrationLogger<StopConsumerErrorPolicy>>());
 
-        private class SkipMessageErrorPolicyImplementation : ErrorPolicyImplementation
+        private class StopConsumerErrorPolicyImplementation : ErrorPolicyImplementation
         {
-            private readonly ISilverbackIntegrationLogger<SkipMessageErrorPolicy> _logger;
-
-            public SkipMessageErrorPolicyImplementation(
+            public StopConsumerErrorPolicyImplementation(
                 int? maxFailedAttempts,
                 ICollection<Type> excludedExceptions,
                 ICollection<Type> includedExceptions,
                 Func<IRawInboundEnvelope, Exception, bool>? applyRule,
                 Func<IRawInboundEnvelope, object>? messageToPublishFactory,
                 IServiceProvider serviceProvider,
-                ISilverbackIntegrationLogger<SkipMessageErrorPolicy> logger)
+                ISilverbackIntegrationLogger<StopConsumerErrorPolicy> logger)
                 : base(
                     maxFailedAttempts,
                     excludedExceptions,
@@ -50,24 +44,13 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                     serviceProvider,
                     logger)
             {
-                _logger = logger;
             }
 
-            protected override async Task<bool> ApplyPolicy(ConsumerPipelineContext context, Exception exception)
+            protected override Task<bool> ApplyPolicy(ConsumerPipelineContext context, Exception exception)
             {
-                Check.NotNull(context, nameof(context));
-                Check.NotNull(exception, nameof(exception));
+                // TODO: Log (consumer will be stopped)
 
-                _logger.LogWithMessageInfo(
-                    LogLevel.Error,
-                    IntegrationEventIds.MessageSkipped,
-                    exception,
-                    "The message(s) will be skipped.",
-                    context.Envelope);
-
-                await context.TransactionManager.Rollback(true).ConfigureAwait(false);
-
-                return true;
+                return Task.FromResult(false);
             }
         }
     }

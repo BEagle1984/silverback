@@ -4,6 +4,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound
@@ -27,6 +28,7 @@ namespace Silverback.Messaging.Inbound
             using var scope = context.ServiceProvider.CreateScope();
 
             context.ServiceProvider = scope.ServiceProvider;
+            context.TransactionManager = new ConsumerTransactionManager(context.Consumer);
             await next(context).ConfigureAwait(false);
         }
     }

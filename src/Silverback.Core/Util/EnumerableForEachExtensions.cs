@@ -26,6 +26,22 @@ namespace Silverback.Util
             }
         }
 
+        public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> source, Action<T> action)
+        {
+            await foreach (T element in source)
+            {
+                action(element);
+            }
+        }
+
+        public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> source, Func<T, Task> action)
+        {
+            await foreach (var element in source)
+            {
+                await action(element).ConfigureAwait(false);
+            }
+        }
+
         public static void ParallelForEach<T>(
             this IEnumerable<T> source,
             Action<T> action,
@@ -36,7 +52,7 @@ namespace Silverback.Util
                 action);
 
         // http://blog.briandrupieski.com/throttling-asynchronous-methods-in-csharp
-        public static Task ParallelForEachAsync<T>(
+        public static Task ParallelForEach<T>(
             this IEnumerable<T> source,
             Func<T, Task> action,
             int? maxDegreeOfParallelism = null) =>

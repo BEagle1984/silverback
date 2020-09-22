@@ -1,8 +1,13 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound.ErrorHandling
@@ -12,6 +17,10 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     /// </summary>
     public class ErrorHandlerConsumerBehavior : IConsumerBehavior
     {
+        // TODO: Ensure instance per consumer
+        private readonly ConcurrentDictionary<IOffset, int> _failedAttemptsCounters =
+            new ConcurrentDictionary<IOffset, int>();
+
         // private readonly IErrorPolicyHelper _errorPolicyHelper;
         //
         // /// <summary>
@@ -42,7 +51,30 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             // * Count failed attempts
             // * Can probably move the logic in here and get rid of the helper?
 
-            await next(context).ConfigureAwait(false);
+            try
+            {
+                await next(context).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                SetFailedAttempts(context.Envelope);
+
+                var handled = await context.Envelope.Endpoint.ErrorPolicy
+                    .Build(context.ServiceProvider)
+                    .HandleError(context, exception)
+                    .ConfigureAwait(false);
+
+                if (!handled)
+                    throw;
+            }
         }
+
+        private void SetFailedAttempts(IRawInboundEnvelope envelope) =>
+            envelope.Headers.AddOrReplace(
+                DefaultMessageHeaders.FailedAttempts,
+                _failedAttemptsCounters.AddOrUpdate(
+                    envelope.Offset,
+                    _ => envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) + 1,
+                    (_, count) => count + 1));
     }
 }

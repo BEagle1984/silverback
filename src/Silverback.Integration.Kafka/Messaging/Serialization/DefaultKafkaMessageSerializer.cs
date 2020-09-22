@@ -37,10 +37,10 @@ namespace Silverback.Messaging.Serialization
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public ValueTask<(object?, Type)> DeserializeAsync(
-            Stream? message,
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
-            _serializer.DeserializeAsync(message, messageHeaders, context);
+            _serializer.DeserializeAsync(messageStream, messageHeaders, context);
 
         /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
         public byte[] SerializeKey(

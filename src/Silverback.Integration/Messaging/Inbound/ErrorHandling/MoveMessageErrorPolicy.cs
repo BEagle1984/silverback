@@ -4,8 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -16,43 +18,23 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     /// </summary>
     public class MoveMessageErrorPolicy : ErrorPolicyBase
     {
-        private readonly IProducer _producer;
-
         private readonly IProducerEndpoint _endpoint;
-
-        private readonly ISilverbackIntegrationLogger _logger;
 
         private Action<IOutboundEnvelope, Exception>? _transformationAction;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MoveMessageErrorPolicy" /> class.
         /// </summary>
-        /// <param name="brokerCollection">
-        ///     The collection containing the available brokers.
-        /// </param>
         /// <param name="endpoint">
         ///     The endpoint to move the message to.
         /// </param>
-        /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" />.
-        /// </param>
-        /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
-        /// </param>
-        public MoveMessageErrorPolicy(
-            IBrokerCollection brokerCollection,
-            IProducerEndpoint endpoint,
-            IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<MoveMessageErrorPolicy> logger)
-            : base(serviceProvider, logger)
+        public MoveMessageErrorPolicy(IProducerEndpoint endpoint)
         {
-            Check.NotNull(brokerCollection, nameof(brokerCollection));
             Check.NotNull(endpoint, nameof(endpoint));
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
 
-            _producer = brokerCollection.GetProducer(endpoint);
+            endpoint.Validate();
+
             _endpoint = endpoint;
-            _logger = logger;
         }
 
         /// <summary>
@@ -72,37 +54,100 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             return this;
         }
 
-        /// <inheritdoc cref="ErrorPolicyBase.ApplyPolicy" />
-        protected override async Task<ErrorAction> ApplyPolicy(
-            IReadOnlyCollection<IRawInboundEnvelope> envelopes,
-            Exception exception)
+        /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
+        protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
+            new MoveMessageErrorPolicyImplementation(
+                _endpoint,
+                _transformationAction,
+                MaxFailedAttemptsCount,
+                ExcludedExceptions,
+                IncludedExceptions,
+                ApplyRule,
+                MessageToPublishFactory,
+                serviceProvider,
+                serviceProvider
+                    .GetRequiredService<ISilverbackIntegrationLogger<MoveMessageErrorPolicy>>());
+
+        private class MoveMessageErrorPolicyImplementation : ErrorPolicyImplementation
         {
-            Check.NotNull(envelopes, nameof(envelopes));
+            private readonly IProducerEndpoint _endpoint;
 
-            _logger.LogInformationWithMessageInfo(
-                IntegrationEventIds.MessageMoved,
-                $"{envelopes.Count} message(s) will be  be moved to endpoint '{_endpoint.Name}'.",
-                envelopes);
+            private readonly Action<IOutboundEnvelope, Exception>? _transformationAction;
 
-            await envelopes.ForEachAsync(envelope => PublishToNewEndpoint(envelope, exception)).ConfigureAwait(false);
+            private readonly ISilverbackIntegrationLogger<MoveMessageErrorPolicy> _logger;
 
-            return ErrorAction.Skip;
-        }
+            private readonly IProducer _producer;
 
-        private async Task PublishToNewEndpoint(IRawInboundEnvelope envelope, Exception exception)
-        {
-            envelope.Headers.AddOrReplace(
-                DefaultMessageHeaders.SourceEndpoint,
-                envelope.Endpoint?.Name ?? string.Empty);
+            public MoveMessageErrorPolicyImplementation(
+                IProducerEndpoint endpoint,
+                Action<IOutboundEnvelope, Exception>? transformationAction,
+                int? maxFailedAttempts,
+                ICollection<Type> excludedExceptions,
+                ICollection<Type> includedExceptions,
+                Func<IRawInboundEnvelope, Exception, bool>? applyRule,
+                Func<IRawInboundEnvelope, object>? messageToPublishFactory,
+                IServiceProvider serviceProvider,
+                ISilverbackIntegrationLogger<MoveMessageErrorPolicy> logger)
+                : base(
+                    maxFailedAttempts,
+                    excludedExceptions,
+                    includedExceptions,
+                    applyRule,
+                    messageToPublishFactory,
+                    serviceProvider,
+                    logger)
+            {
+                _endpoint = Check.NotNull(endpoint, nameof(endpoint));
+                _transformationAction = transformationAction;
+                _logger = logger;
 
-            var outboundEnvelope =
-                envelope is IInboundEnvelope deserializedEnvelope
-                    ? new OutboundEnvelope(deserializedEnvelope.Message, deserializedEnvelope.Headers, _endpoint)
-                    : new OutboundEnvelope(envelope.RawMessage, envelope.Headers, _endpoint);
+                _producer = serviceProvider.GetRequiredService<IBrokerCollection>().GetProducer(endpoint);
+            }
 
-            _transformationAction?.Invoke(outboundEnvelope, exception);
+            public override bool CanHandle(ConsumerPipelineContext context, Exception exception)
+            {
+                Check.NotNull(context, nameof(context));
 
-            await _producer.ProduceAsync(outboundEnvelope).ConfigureAwait(false);
+                if (context.Envelope.Sequence != null)
+                {
+                    // TODO: Log
+                    // TODO: Maybe later implement move for sequences
+                    return false;
+                }
+
+                return base.CanHandle(context, exception);
+            }
+
+            protected override async Task<bool> ApplyPolicy(ConsumerPipelineContext context, Exception exception)
+            {
+                Check.NotNull(context, nameof(context));
+                Check.NotNull(exception, nameof(exception));
+
+                _logger.LogInformationWithMessageInfo(
+                    IntegrationEventIds.MessageMoved,
+                    $"The message will be moved to endpoint '{_endpoint.Name}'.",
+                    context.Envelope);
+
+                await PublishToNewEndpoint(context.Envelope, exception).ConfigureAwait(false);
+
+                return true;
+            }
+
+            private async Task PublishToNewEndpoint(IRawInboundEnvelope envelope, Exception exception)
+            {
+                envelope.Headers.AddOrReplace(
+                    DefaultMessageHeaders.SourceEndpoint,
+                    envelope.Endpoint?.Name ?? string.Empty);
+
+                var outboundEnvelope =
+                    envelope is IInboundEnvelope deserializedEnvelope
+                        ? new OutboundEnvelope(deserializedEnvelope.Message, deserializedEnvelope.Headers, _endpoint)
+                        : new OutboundEnvelope(envelope.RawMessage, envelope.Headers, _endpoint);
+
+                _transformationAction?.Invoke(outboundEnvelope, exception);
+
+                await _producer.ProduceAsync(outboundEnvelope).ConfigureAwait(false);
+            }
         }
     }
 }

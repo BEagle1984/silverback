@@ -4,6 +4,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -19,6 +23,8 @@ namespace Silverback.Messaging.Broker
     {
         private readonly ConcurrentDictionary<string, InMemoryTopic> _topics =
             new ConcurrentDictionary<string, InMemoryTopic>();
+
+        private readonly ConcurrentBag<InMemoryConsumer> _consumers = new ConcurrentBag<InMemoryConsumer>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="InMemoryBroker" /> class.
@@ -36,6 +42,35 @@ namespace Silverback.Messaging.Broker
         ///     used to simulate the case when the very same messages are consumed once again.
         /// </summary>
         public void ResetOffsets() => _topics.Values.ForEach(topic => topic.ResetOffset());
+
+        /// <summary>
+        ///     Returns a <see cref="Task"/> that completes when all messages routed to the consumers have been processed.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> that completes when all messages have been processed.
+        /// </returns>
+        public async Task WaitUntilAllMessagesAreConsumed(TimeSpan? timeout = null)
+        {
+            timeout ??= TimeSpan.FromSeconds(5);
+
+            using var cancellationTokenSource = new CancellationTokenSource(timeout.Value);
+
+            try
+            {
+                while (!cancellationTokenSource.IsCancellationRequested)
+                {
+                    if (_consumers.All(consumer => !consumer.IsConnected || consumer.IsQueueEmpty))
+                        return;
+
+                    await Task.Delay(50, cancellationTokenSource.Token).ConfigureAwait(false);
+                }
+
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore
+            }
+        }
 
         internal InMemoryTopic GetTopic(string name) =>
             _topics.GetOrAdd(name, _ => new InMemoryTopic(name));
@@ -61,13 +96,18 @@ namespace Silverback.Messaging.Broker
             Check.NotNull(endpoint, nameof(endpoint));
             Check.NotNull(serviceProvider, nameof(serviceProvider));
 
-            return GetTopic(endpoint.Name).Subscribe(
-                new InMemoryConsumer(
-                    this,
-                    endpoint,
-                    behaviorsProvider,
-                    serviceProvider,
-                    serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<InMemoryConsumer>>()));
+            var consumer = new InMemoryConsumer(
+                this,
+                endpoint,
+                behaviorsProvider,
+                serviceProvider,
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<InMemoryConsumer>>());
+
+            GetTopic(endpoint.Name).Subscribe(consumer);
+
+            _consumers.Add(consumer);
+
+            return consumer;
         }
     }
 }

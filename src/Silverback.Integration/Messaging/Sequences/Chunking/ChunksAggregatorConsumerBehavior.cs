@@ -38,25 +38,7 @@ namespace Silverback.Messaging.Sequences.Chunking
                     context.Envelope.Offset,
                     context.Envelope.AdditionalLogData);
 
-                var newContext = new ConsumerPipelineContext(envelope, context.Consumer, context.ServiceProvider);
-
-                // StartProcessingThread(newContext, next);
-
-                //
-                // await foreach (var chunkEnvelope in chunksSequence.Stream.ConfigureAwait(false))
-                // {
-                //     var chunkIndex = chunkEnvelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
-                //                      throw new InvalidOperationException("Chunk index header not found.");
-                //
-                //     // Skip first chunk since the context.Envelope is already the one of the first chunk
-                //     if (chunkIndex == 0)
-                //         continue;
-                //
-                //     if (chunkEnvelope.RawMessage == null)
-                //         throw new InvalidOperationException("The chunk stream is null.");
-                //
-                //     await chunkEnvelope.RawMessage.CopyToAsync(context.Envelope.RawMessage).ConfigureAwait(false);
-                // }
+                var newContext = new ConsumerPipelineContext(envelope, context);
 
                 await next(newContext).ConfigureAwait(false);
             }
@@ -64,16 +46,6 @@ namespace Silverback.Messaging.Sequences.Chunking
             {
                 await next(context).ConfigureAwait(false);
             }
-        }
-
-        private static void StartProcessingThread(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
-        {
-            // TODO: Handle transaction / exceptions
-            Task.Factory.StartNew(
-                async () => await next(context).ConfigureAwait(false),
-                CancellationToken.None,
-                TaskCreationOptions.None,
-                TaskScheduler.Default);
         }
     }
 }

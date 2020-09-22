@@ -2,9 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Inbound.ErrorHandling
 {
@@ -14,33 +11,14 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     public interface IErrorPolicy
     {
         /// <summary>
-        ///     Returns a boolean value indicating whether the policy can handle the specified envelopes and the
-        ///     specified exception.
+        ///     Returns the actual implementation of the error policy, built using the provided
+        ///     <see cref="IServiceProvider" />.
         /// </summary>
-        /// <param name="envelopes">
-        ///     The envelopes that failed to be processed.
-        /// </param>
-        /// <param name="exception">
-        ///     The exception that was thrown during the processing.
-        /// </param>
+        /// <param name="serviceProvider">The <see cref="IServiceProvider" /> to be used to build the error policy.</param>
         /// <returns>
-        ///     A value indicating whether the specified envelopes and exception can be handled.
+        ///     An instance of <see cref="IErrorPolicyImplementation" /> that can be used to handle the processing
+        ///     error.
         /// </returns>
-        bool CanHandle(IReadOnlyCollection<IRawInboundEnvelope> envelopes, Exception exception);
-
-        /// <summary>
-        ///     Handles the error and returns the <see cref="ErrorAction" /> to be performed by the consumer.
-        /// </summary>
-        /// <param name="envelopes">
-        ///     The envelopes that failed to be processed.
-        /// </param>
-        /// <param name="exception">
-        ///     The exception that was thrown during the processing.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the action
-        ///     that the consumer should perform (e.g. skip the message or stop consuming).
-        /// </returns>
-        Task<ErrorAction> HandleError(IReadOnlyCollection<IRawInboundEnvelope> envelopes, Exception exception);
+        IErrorPolicyImplementation Build(IServiceProvider serviceProvider);
     }
 }

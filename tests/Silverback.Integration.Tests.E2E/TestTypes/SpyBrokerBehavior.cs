@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
 
         public IList<IInboundEnvelope> InboundEnvelopes { get; } = new List<IInboundEnvelope>();
 
-        public int SortIndex { get; } = int.MaxValue;
+        public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Consumer.Publisher - 1;
 
         public Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {

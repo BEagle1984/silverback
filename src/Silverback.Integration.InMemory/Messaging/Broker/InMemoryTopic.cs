@@ -11,6 +11,12 @@ namespace Silverback.Messaging.Broker
 {
     internal class InMemoryTopic
     {
+        // TODO:
+        // * Convert into pull mechanism
+        // * Forward the topic instance to the consumer
+        // * Use offset to retrieve the message at the specified position
+        // * Can support partitions???
+
         private readonly List<InMemoryConsumer> _consumers = new List<InMemoryConsumer>();
 
         public InMemoryTopic(string name)

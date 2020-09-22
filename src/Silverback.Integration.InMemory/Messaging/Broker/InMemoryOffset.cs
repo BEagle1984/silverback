@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker
 {
     /// <inheritdoc cref="IOffset" />
-    public class InMemoryOffset : IComparableOffset
+    public sealed class InMemoryOffset : IComparableOffset
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="InMemoryOffset" /> class.
@@ -116,7 +116,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="right">
         ///     Right-hand operand.
         /// </param>
-        public static bool operator ==(InMemoryOffset left, InMemoryOffset right)
+        public static bool operator ==(InMemoryOffset? left, InMemoryOffset? right)
         {
             if (ReferenceEquals(left, null))
                 return ReferenceEquals(right, null);
@@ -172,19 +172,32 @@ namespace Silverback.Messaging.Broker
                 : throw new ArgumentException($"Object must be of type {nameof(InMemoryOffset)}");
         }
 
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+        public bool Equals(IOffset? other)
+        {
+            if (ReferenceEquals(this, other))
+                return true;
+            if (ReferenceEquals(other, null))
+                return false;
+
+            if (!(other is InMemoryOffset otherInMemoryOffset))
+                return false;
+
+            return Key == otherInMemoryOffset.Key && Offset == otherInMemoryOffset.Offset;
+        }
+
         /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
+            if (ReferenceEquals(null, obj))
+                return false;
             if (ReferenceEquals(this, obj))
                 return true;
 
-            if (ReferenceEquals(obj, null))
+            if (obj.GetType() != GetType())
                 return false;
 
-            if (!(obj is InMemoryOffset other))
-                return false;
-
-            return CompareTo(other) == 0;
+            return Equals((IOffset)obj);
         }
 
         /// <inheritdoc cref="object.GetHashCode" />

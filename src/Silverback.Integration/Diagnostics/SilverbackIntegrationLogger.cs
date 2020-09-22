@@ -10,6 +10,7 @@ using Silverback.Util;
 
 namespace Silverback.Diagnostics
 {
+    // TODO: Review and remove obsolete overloads (replace enumerable with sequence / base info on pipeline context)
     internal class SilverbackIntegrationLogger : ISilverbackIntegrationLogger
     {
         private readonly ISilverbackLogger _logger;
@@ -39,6 +40,8 @@ namespace Silverback.Diagnostics
             Func<TState, Exception, string> formatter) =>
             _logger.Log(logLevel, eventId, state, exception, formatter);
 
+        // TODO: Invoke
+        // TODO: Change from envelopes to Producer-/ConsumerPipelineContext ;-)
         public void LogProcessing(IReadOnlyCollection<IRawBrokerEnvelope> envelopes)
         {
             Check.NotEmpty(envelopes, nameof(envelopes));
@@ -50,6 +53,8 @@ namespace Silverback.Diagnostics
             LogInformationWithMessageInfo(IntegrationEventIds.ProcessingInboundMessage, message, envelopes);
         }
 
+        // TODO: Invoke
+        // TODO: Change from envelopes to Producer-/ConsumerPipelineContext ;-)
         public void LogProcessingError(
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
             Exception exception)
@@ -180,6 +185,14 @@ namespace Silverback.Diagnostics
             string logMessage,
             IReadOnlyCollection<IRawBrokerEnvelope> envelopes) =>
             LogWithMessageInfo(LogLevel.Critical, eventId, exception, logMessage, envelopes);
+
+        public void LogWithMessageInfo(
+            LogLevel logLevel,
+            EventId eventId,
+            Exception? exception,
+            string logMessage,
+            IRawBrokerEnvelope envelope) =>
+            LogWithMessageInfo(logLevel, eventId, exception, logMessage, new[] { envelope });
 
         public void LogWithMessageInfo(
             LogLevel logLevel,
