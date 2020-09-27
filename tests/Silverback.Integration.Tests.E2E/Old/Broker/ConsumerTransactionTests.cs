@@ -39,26 +39,29 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
-                                .AddInbound(new KafkaConsumerEndpoint("test-e2e"))))
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .AddInbound(new KafkaConsumerEndpoint(DefaultTopicName))))
                 .Run();
-
-            var consumer = (InMemoryConsumer)serviceProvider.GetRequiredService<IBroker>().Consumers[0];
-            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
-            committedOffsets.Count.Should().Be(1);
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(1);
 
             await publisher.PublishAsync(message);
-            committedOffsets.Count.Should().Be(2);
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(2);
 
             await publisher.PublishAsync(message);
-            committedOffsets.Count.Should().Be(3);
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(3);
         }
 
         [Fact]
@@ -75,13 +78,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         Batch = new BatchSettings
                                         {
@@ -90,22 +93,25 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                     })))
                 .Run();
 
-            var consumer = (InMemoryConsumer)serviceProvider.GetRequiredService<IBroker>().Consumers[0];
-            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
-
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
-            committedOffsets.Should().BeEmpty();
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(0);
 
             await publisher.PublishAsync(message);
-            committedOffsets.Should().BeEmpty();
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(0);
 
             await publisher.PublishAsync(message);
-            committedOffsets.Count.Should().Be(3);
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(3);
         }
 
         [Fact]
-        public async Task WithFailuresAndRetryPolicy_NoOffsetRollbacksAndCommittedOnce()
+        public async Task WithFailuresAndRetryPolicy_OffsetCommitted()
         {
             var committedOffsets = new List<IOffset>();
             var rolledBackOffsets = new List<IOffset>();
@@ -120,13 +126,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
                                     }))
@@ -139,16 +145,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             }))
                 .Run();
 
-            var consumer = (InMemoryConsumer)serviceProvider.GetRequiredService<IBroker>().Consumers[0];
-            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
-            consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
-
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
             tryCount.Should().Be(3);
-            committedOffsets.Count.Should().Be(1);
-            rolledBackOffsets.Should().BeEmpty();
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(1);
         }
 
         [Fact]
@@ -165,13 +168,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
                                     }))
@@ -198,7 +201,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
         }
 
         [Fact]
-        public async Task ChunkingWithFailuresAndRetryPolicy_NoOffsetRollbacksAndCommittedOnce()
+        public async Task ChunkingWithFailuresAndRetryPolicy_OffsetCommitted()
         {
             var committedOffsets = new List<IOffset>();
             var rolledBackOffsets = new List<IOffset>();
@@ -213,17 +216,17 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint("test-e2e")
+                                    new KafkaProducerEndpoint(DefaultTopicName)
                                     {
                                         Chunk = new ChunkSettings { Size = 10 }
                                     })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
                                     }))
@@ -236,16 +239,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
                             }))
                 .Run();
 
-            var consumer = (InMemoryConsumer)serviceProvider.GetRequiredService<IBroker>().Consumers[0];
-            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
-            consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
-
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
             tryCount.Should().Be(3);
-            committedOffsets.Count.Should().Be(3);
-            rolledBackOffsets.Should().BeEmpty();
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(3);
         }
 
         [Fact]
@@ -262,17 +262,17 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint("test-e2e")
+                                    new KafkaProducerEndpoint(DefaultTopicName)
                                     {
                                         Chunk = new ChunkSettings { Size = 10 }
                                     })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
                                     }))
@@ -299,7 +299,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
         }
 
         [Fact]
-        public async Task FailedProcessing_RolledBackOffsetOnce()
+        public async Task FailedProcessing_OffsetRolledBack()
         {
             var rolledBackOffsets = new List<IOffset>();
 
@@ -313,13 +313,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(2)
                                     }))
@@ -331,9 +331,6 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                 throw new InvalidOperationException("Retry!");
                             }))
                 .Run();
-
-            var consumer = (InMemoryConsumer)serviceProvider.GetRequiredService<IBroker>().Consumers[0];
-            consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
@@ -347,14 +344,14 @@ namespace Silverback.Tests.Integration.E2E.Broker
             }
 
             tryCount.Should().Be(3);
-            rolledBackOffsets.Count.Should().Be(1);
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(0);
         }
 
         [Fact]
-        public async Task FailedChunkProcessing_RolledBackOffsetOnce()
+        public async Task FailedChunkProcessing_OffsetRolledBack()
         {
-            var rolledBackOffsets = new List<IOffset>();
-
             var message = new TestEventOne { Content = "Hello E2E!" };
             var tryCount = 0;
 
@@ -365,17 +362,17 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint("test-e2e")
+                                    new KafkaProducerEndpoint(DefaultTopicName)
                                     {
                                         Chunk = new ChunkSettings { Size = 10 }
                                     })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(2)
                                     }))
@@ -387,9 +384,6 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                 throw new InvalidOperationException("Retry!");
                             }))
                 .Run();
-
-            var consumer = (InMemoryConsumer)serviceProvider.GetRequiredService<IBroker>().Consumers[0];
-            consumer.RollbackCalled += (_, args) => rolledBackOffsets.AddRange(args.Offsets);
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
@@ -403,7 +397,9 @@ namespace Silverback.Tests.Integration.E2E.Broker
             }
 
             tryCount.Should().Be(3);
-            rolledBackOffsets.Count.Should().Be(3);
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(0);
         }
     }
 }

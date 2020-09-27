@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,124 +35,6 @@ namespace Silverback.Tests.Integration.E2E.Broker
         };
 
         [Fact]
-        public async Task DefaultSettings_ProducedAndConsumed()
-        {
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            var serviceProvider = Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddInMemoryBroker()
-                                .AddInMemoryChunkStore())
-                        .AddEndpoints(
-                            endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
-                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
-                .Run();
-
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(message);
-
-            await Broker.WaitUntilAllMessagesAreConsumed();
-
-            Subscriber.OutboundEnvelopes.Count.Should().Be(1);
-            Subscriber.InboundEnvelopes.Count.Should().Be(1);
-
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-        }
-
-        [Fact]
-        public async Task DefaultSettings_OffsetCommitted()
-        {
-            var committedOffsets = new List<IOffset>();
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-
-            var serviceProvider = Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddInMemoryBroker()
-                                .AddInMemoryChunkStore())
-                        .AddEndpoints(
-                            endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
-                                .AddInbound(new KafkaConsumerEndpoint("test-e2e"))))
-                .Run();
-
-            var consumer = (InMemoryConsumer)serviceProvider.GetRequiredService<IBroker>().Consumers[0];
-            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
-
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(message);
-
-            await Broker.WaitUntilAllMessagesAreConsumed();
-
-            committedOffsets.Count.Should().Be(1);
-        }
-
-        [Fact]
-        public async Task MessageWithCustomHeaders_HeadersTransferred()
-        {
-            var message = new TestEventWithHeaders
-            {
-                Content = "Hello E2E!",
-                CustomHeader = "Hello header!",
-                CustomHeader2 = false
-            };
-
-            var serviceProvider = Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddInMemoryBroker()
-                                .AddInMemoryChunkStore())
-                        .AddEndpoints(
-                            endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
-                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
-                .Run();
-
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(message);
-
-            await Broker.WaitUntilAllMessagesAreConsumed();
-
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-            SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-custom-header", "Hello header!"));
-            SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-custom-header2", "False"));
-        }
-
-        [Fact]
         public async Task Chunking_ChunkedAndAggregatedCorrectly()
         {
             var message = new TestEventOne
@@ -166,25 +49,25 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker())
+                                .AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint("test-e2e")
+                                    new KafkaProducerEndpoint(DefaultTopicName)
                                     {
                                         Chunk = new ChunkSettings
                                         {
                                             Size = 10
                                         }
                                     })
-                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                                .AddInbound(new KafkaConsumerEndpoint(DefaultTopicName)))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await Broker.WaitUntilAllMessagesAreConsumed();
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
             SpyBehavior.OutboundEnvelopes.ForEach(
@@ -216,13 +99,13 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         Batch = new BatchSettings
                                         {
@@ -235,14 +118,14 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
 
-            await Broker.WaitUntilAllMessagesAreConsumed();
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(0);
 
             await publisher.PublishAsync(message2);
 
-            await Broker.WaitUntilAllMessagesAreConsumed();
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(2);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
@@ -267,12 +150,12 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint("test-e2e")
+                                    new KafkaProducerEndpoint(DefaultTopicName)
                                     {
                                         Chunk = new ChunkSettings
                                         {
@@ -280,7 +163,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                         }
                                     })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         Batch = new BatchSettings
                                         {
@@ -293,14 +176,14 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
 
-            await Broker.WaitUntilAllMessagesAreConsumed();
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(0);
 
             await publisher.PublishAsync(message2);
 
-            await Broker.WaitUntilAllMessagesAreConsumed();
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
@@ -329,26 +212,26 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint("test-e2e")
+                                    new KafkaProducerEndpoint(DefaultTopicName)
                                     {
                                         Chunk = new ChunkSettings
                                         {
                                             Size = 10
                                         }
                                     })
-                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                                .AddInbound(new KafkaConsumerEndpoint(DefaultTopicName)))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await Broker.WaitUntilAllMessagesAreConsumed();
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
@@ -373,19 +256,19 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint("test-e2e")
+                                    new KafkaProducerEndpoint(DefaultTopicName)
                                     {
                                         Chunk = new ChunkSettings
                                         {
                                             Size = 10
                                         }
                                     })
-                                .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
+                                .AddInbound(new KafkaConsumerEndpoint(DefaultTopicName)))
                         .WithCustomHeaderName(DefaultMessageHeaders.ChunkIndex, "x-ch-id")
                         .WithCustomHeaderName(DefaultMessageHeaders.ChunksCount, "x-ch-cnt")
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
@@ -394,7 +277,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await Broker.WaitUntilAllMessagesAreConsumed();
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
@@ -429,12 +312,12 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint("test-e2e")
+                                    new KafkaProducerEndpoint(DefaultTopicName)
                                     {
                                         Encryption = new SymmetricEncryptionSettings
                                         {
@@ -442,7 +325,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                         }
                                     })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         Encryption = new SymmetricEncryptionSettings
                                         {
@@ -455,7 +338,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await Broker.WaitUntilAllMessagesAreConsumed();
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage);
@@ -484,12 +367,12 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint("test-e2e")
+                                    new KafkaProducerEndpoint(DefaultTopicName)
                                     {
                                         Chunk = new ChunkSettings
                                         {
@@ -501,7 +384,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                                         }
                                     })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("test-e2e")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         Encryption = new SymmetricEncryptionSettings
                                         {
@@ -514,7 +397,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await Broker.WaitUntilAllMessagesAreConsumed();
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(5);
             SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Read(10));

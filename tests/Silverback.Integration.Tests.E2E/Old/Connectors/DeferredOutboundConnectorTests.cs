@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddDbOutboundConnector()
                                 .AddDbOutboundWorker(TimeSpan.FromMilliseconds(100)))
                         .AddEndpoints(
@@ -109,7 +109,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddDbOutboundConnector()
                                 .AddDbOutboundWorker(TimeSpan.FromMilliseconds(100)))
                         .AddEndpoints(
@@ -166,7 +166,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore()
                                 .AddDbOutboundConnector()
                                 .AddDbOutboundWorker(TimeSpan.FromMilliseconds(100)))
@@ -240,7 +240,7 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddDbOutboundConnector()
                                 .AddDbOutboundWorker(TimeSpan.FromMilliseconds(100)))
                         .AddEndpoints(

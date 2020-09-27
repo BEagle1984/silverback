@@ -55,7 +55,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddDbChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddDbChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -131,24 +131,28 @@ namespace Silverback.Tests.Integration.E2E.Chunking
             }
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var consumer = (InMemoryConsumer)broker.Consumers[0];
-            consumer.CommitCalled += (_, args) => committedOffsets.AddRange(args.Offsets);
 
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
             await producer.ProduceAsync(
                 rawMessage.Read(10),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 0, 3));
-            committedOffsets.Count.Should().Be(1);
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(1);
 
             await producer.ProduceAsync(
                 rawMessage.Read(10),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 1, 3));
-            committedOffsets.Count.Should().Be(2);
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(2);
 
             await producer.ProduceAsync(
                 rawMessage.ReadAll(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 2, 3));
-            committedOffsets.Count.Should().Be(3);
+            DefaultTopic.GetCommittedOffsets("consumer1")
+                .Sum(topicPartitionOffset => topicPartitionOffset.Offset)
+                .Should().Be(3);
         }
 
         [Fact]
@@ -173,7 +177,7 @@ namespace Silverback.Tests.Integration.E2E.Chunking
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddDbChunkStore(TimeSpan.FromMilliseconds(2000), TimeSpan.FromMilliseconds(50)))
                         .AddEndpoints(
                             endpoints => endpoints

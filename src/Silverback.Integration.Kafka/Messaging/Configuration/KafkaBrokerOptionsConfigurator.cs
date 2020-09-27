@@ -4,6 +4,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Behaviors;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.ConfluentWrappers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
@@ -22,6 +23,8 @@ namespace Silverback.Messaging.Configuration
             brokerOptionsBuilder.SilverbackBuilder
                 .AddSingletonBrokerBehavior<KafkaMessageKeyInitializerProducerBehavior>()
                 .Services
+                .AddTransient<IConfluentProducerBuilder, ConfluentProducerBuilder>()
+                .AddTransient<IConfluentConsumerBuilder, ConfluentConsumerBuilder>()
                 .AddSingleton<KafkaEventsHandler>();
 
             brokerOptionsBuilder.LogTemplates

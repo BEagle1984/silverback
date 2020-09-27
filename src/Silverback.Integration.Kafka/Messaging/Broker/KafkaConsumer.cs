@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.ConfluentWrappers;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -25,9 +26,11 @@ namespace Silverback.Messaging.Broker
 
         private static readonly TimeSpan CloseTimeout = TimeSpan.FromSeconds(30); // TODO: Should be configurable
 
-        private readonly ISilverbackIntegrationLogger<KafkaConsumer> _logger;
+        private readonly IConfluentConsumerBuilder _confluentConsumerBuilder;
 
         private readonly KafkaEventsHandler _kafkaEventsHandler;
+
+        private readonly ISilverbackIntegrationLogger<KafkaConsumer> _logger;
 
         private IKafkaMessageSerializer? _serializer;
 
@@ -39,7 +42,7 @@ namespace Silverback.Messaging.Broker
 
         private CancellationTokenSource? _cancellationTokenSource;
 
-        private IConsumer<byte[], byte[]>? _innerConsumer;
+        private IConsumer<byte[]?, byte[]?>? _innerConsumer;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaConsumer" /> class.
@@ -67,10 +70,16 @@ namespace Silverback.Messaging.Broker
             ISilverbackIntegrationLogger<KafkaConsumer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
-            IServiceProvider serviceProvider1 = Check.NotNull(serviceProvider, nameof(serviceProvider));
-            _logger = Check.NotNull(logger, nameof(logger));
+            Check.NotNull(endpoint, nameof(endpoint));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
 
-            _kafkaEventsHandler = serviceProvider1.GetRequiredService<KafkaEventsHandler>();
+            _confluentConsumerBuilder = serviceProvider.GetRequiredService<IConfluentConsumerBuilder>();
+            _confluentConsumerBuilder.SetConfig(endpoint.Configuration.ConfluentConfig);
+
+            _kafkaEventsHandler = serviceProvider.GetRequiredService<KafkaEventsHandler>();
+            _kafkaEventsHandler.SetConsumerEventsHandlers(this, _confluentConsumerBuilder);
+
+            _logger = Check.NotNull(logger, nameof(logger));
         }
 
         /// <inheritdoc cref="Consumer.ConnectCore" />
@@ -96,7 +105,7 @@ namespace Silverback.Messaging.Broker
             StopConsuming().Wait();
 
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
-                CommitAll();
+                CommitOffsets();
 
             DisposeInnerConsumer();
         }
@@ -111,7 +120,7 @@ namespace Silverback.Messaging.Broker
                 .GroupBy(offset => offset.Key)
                 .Select(
                     offsetsGroup => offsetsGroup
-                        .OrderByDescending(offset => offset.Value)
+                        .OrderByDescending(offset => offset.Offset)
                         .First()
                         .AsTopicPartitionOffset())
                 .ToList();
@@ -121,11 +130,10 @@ namespace Silverback.Messaging.Broker
                     .Select(
                         topicPartitionOffset => new TopicPartitionOffset(
                             topicPartitionOffset.TopicPartition,
-                            topicPartitionOffset.Offset + 1))
+                            topicPartitionOffset.Offset + 1)) // Commit next offset (+1)
                     .ToArray());
 
-            if (!Endpoint.Configuration.IsAutoCommitEnabled)
-                CommitOffsets(lastOffsets);
+            CommitOffsetsIfNeeded();
 
             return Task.CompletedTask;
         }
@@ -133,18 +141,30 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.RollbackCore" />
         protected override Task RollbackCore(IReadOnlyCollection<KafkaOffset> offsets)
         {
+            if (_innerConsumer == null)
+                throw new InvalidOperationException("The consumer is not connected.");
+
+            offsets
+                .GroupBy(offset => offset.Key)
+                .Select(
+                    offsetsGroup => offsetsGroup
+                        .OrderBy(offset => offset.Offset)
+                        .First()
+                        .AsTopicPartitionOffset())
+                .ForEach(
+                    topicPartitionOffset =>
+                    {
+                        if (_innerConsumer.Assignment.Contains(topicPartitionOffset.TopicPartition))
+                            _innerConsumer.Seek(topicPartitionOffset);
+                    });
+
             // Nothing to do here. With Kafka the uncommitted messages will be implicitly re-consumed.
             return Task.CompletedTask;
         }
 
         private void InitInnerConsumer()
         {
-            var consumerBuilder =
-                new ConsumerBuilder<byte[], byte[]>(Endpoint.Configuration.ConfluentConfig);
-
-            _kafkaEventsHandler.SetConsumerEventsHandlers(this, consumerBuilder);
-
-            _innerConsumer = consumerBuilder.Build();
+            _innerConsumer = _confluentConsumerBuilder.Build();
             Subscribe();
         }
 
@@ -275,7 +295,7 @@ namespace Silverback.Messaging.Broker
         }
 
         private async Task OnMessageReceived(
-            Message<byte[], byte[]> message,
+            Message<byte[]?, byte[]?> message,
             TopicPartitionOffset topicPartitionOffset)
         {
             // Checking if the message was sent to the subscribed topic is necessary
@@ -289,7 +309,7 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task TryHandleMessage(Message<byte[], byte[]> message, TopicPartitionOffset tpo)
+        private async Task TryHandleMessage(Message<byte[]?, byte[]?> message, TopicPartitionOffset tpo)
         {
             if (_serializer == null)
                 throw new InvalidOperationException("The consumer is not connected.");
@@ -390,20 +410,23 @@ namespace Silverback.Messaging.Broker
             offsets.ForEach(_innerConsumer.StoreOffset);
         }
 
-        private void CommitOffsets(IEnumerable<TopicPartitionOffset> offsets)
+        private void CommitOffsetsIfNeeded()
         {
-            if (_innerConsumer == null)
-                throw new InvalidOperationException("The underlying consumer is not initialized.");
+            if (Endpoint.Configuration.IsAutoCommitEnabled)
+                return;
 
             if (++_messagesSinceCommit < Endpoint.Configuration.CommitOffsetEach)
                 return;
 
-            _innerConsumer.Commit(offsets);
+            if (_innerConsumer == null)
+                throw new InvalidOperationException("The underlying consumer is not initialized.");
+
+            _innerConsumer.Commit();
 
             _messagesSinceCommit = 0;
         }
 
-        private void CommitAll()
+        private void CommitOffsets()
         {
             if (!_hasConsumedAtLeastOnce)
                 return;

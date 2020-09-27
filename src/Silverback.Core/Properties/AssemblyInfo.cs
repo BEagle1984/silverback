@@ -26,6 +26,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Silverback.Integration.InMemory.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Integration.Kafka.Testing")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.ConfigClassGenerator")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.SchemaRegistry")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.SchemaRegistry.Tests")]

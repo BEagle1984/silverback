@@ -35,14 +35,13 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .Services.OverrideWithInMemoryBroker())
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
@@ -68,14 +67,13 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .Services.OverrideWithInMemoryBroker())
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
@@ -103,14 +101,13 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .Services.OverrideWithInMemoryBroker())
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
@@ -136,7 +133,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
+                                .AddMockedKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -149,8 +146,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                                         }
                                     })
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .Services.OverrideWithInMemoryBroker())
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();

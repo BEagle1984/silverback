@@ -8,6 +8,7 @@ using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker.ConfluentWrappers;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
@@ -29,12 +30,12 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public void SetProducerEventsHandlers(ProducerBuilder<byte[]?, byte[]?> producerBuilder) =>
+        public void SetProducerEventsHandlers(IConfluentProducerBuilder producerBuilder) =>
             producerBuilder.SetStatisticsHandler(OnProducerStatistics);
 
         public void SetConsumerEventsHandlers(
             KafkaConsumer ownerConsumer,
-            ConsumerBuilder<byte[], byte[]> consumerBuilder) =>
+            IConfluentConsumerBuilder consumerBuilder) =>
             consumerBuilder
                 .SetStatisticsHandler(OnConsumerStatistics)
                 .SetPartitionsAssignedHandler(OnPartitionsAssigned)

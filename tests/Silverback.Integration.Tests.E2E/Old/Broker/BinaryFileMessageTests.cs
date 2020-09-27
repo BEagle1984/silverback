@@ -46,7 +46,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -122,7 +122,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -162,7 +162,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -202,7 +202,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -239,7 +239,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -280,7 +280,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -329,7 +329,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
@@ -395,7 +395,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddInMemoryBroker()
+                                .AddMockedKafka()
                                 .AddInMemoryChunkStore())
                         .AddEndpoints(
                             endpoints => endpoints
