@@ -108,7 +108,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             {
                 Check.NotNull(context, nameof(context));
 
-                if (context.Envelope.Sequence != null)
+                if (context.Sequence != null)
                 {
                     // TODO: Log
                     // TODO: Maybe later implement move for sequences

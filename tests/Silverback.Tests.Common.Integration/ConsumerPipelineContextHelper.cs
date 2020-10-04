@@ -13,13 +13,13 @@ namespace Silverback.Tests
     public static class ConsumerPipelineContextHelper
     {
         public static ConsumerPipelineContext CreateSubstitute(
-            IRawInboundEnvelope envelope,
+            IRawInboundEnvelope? envelope = null,
             IServiceProvider? serviceProvider = null,
             IConsumerTransactionManager? transactionManager = null,
             IConsumer? consumer = null)
         {
             var context = new ConsumerPipelineContext(
-                envelope,
+                envelope ?? Substitute.For<IRawInboundEnvelope>(),
                 consumer ?? Substitute.For<IConsumer>(),
                 serviceProvider ?? Substitute.For<IServiceProvider>());
 

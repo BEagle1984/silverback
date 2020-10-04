@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var result = reader.CanHandle(envelope);
+            var result = reader.CanHandle(ConsumerPipelineContextHelper.CreateSubstitute(envelope));
 
             result.Should().BeTrue();
         }
@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var result = reader.CanHandle(envelope);
+            var result = reader.CanHandle(ConsumerPipelineContextHelper.CreateSubstitute(envelope));
 
             result.Should().BeFalse();
         }
@@ -69,7 +69,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var sequence = reader.GetSequence(envelope, out var isNew);
+            var sequence = reader.GetSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope), out var isNew);
 
             sequence.Should().NotBeNull();
             sequence!.TotalLength.Should().Be(4);
@@ -77,7 +77,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
         }
 
         [Fact]
-        public async Task GetSequence_ChunkForExistingSequence_SequenceReturned()
+        public void GetSequence_ChunkForExistingSequence_SequenceReturned()
         {
             var envelope1 = new RawInboundEnvelope(
                 new byte[] { 0x01, 0x02, 0x03 },
@@ -102,14 +102,16 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var sequence1 = reader.GetSequence(envelope1, out var isNew);
+            var sequence1 = reader.GetSequence(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope1),
+                out var isNew);
 
             sequence1.Should().NotBeNull();
             sequence1.Should().BeOfType<ChunkSequence>();
             sequence1!.TotalLength.Should().Be(4);
             isNew.Should().BeTrue();
 
-            var sequence2 =reader.GetSequence(envelope2, out isNew);
+            var sequence2 = reader.GetSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope2), out isNew);
 
             sequence2.Should().NotBeNull();
             sequence2.Should().BeSameAs(sequence1);
@@ -117,7 +119,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
         }
 
         [Fact]
-        public async Task GetSequence_MissingFirstChunk_NullReturned()
+        public void GetSequence_MissingFirstChunk_NullReturned()
         {
             var envelope = new RawInboundEnvelope(
                 new byte[] { 0x04, 0x05, 0x06 },
@@ -132,7 +134,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var sequence = reader.GetSequence(envelope, out _);
+            var sequence = reader.GetSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope), out _);
 
             sequence.Should().BeNull();
         }

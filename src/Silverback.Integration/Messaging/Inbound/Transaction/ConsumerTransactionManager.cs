@@ -2,11 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -20,12 +18,15 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         private readonly List<ITransactional> _transactionalServices = new List<ITransactional>();
 
-        private bool _isCompleted;
-
         public ConsumerTransactionManager(ConsumerPipelineContext context)
         {
             _context = context;
         }
+
+        /// <summary>
+        ///     Gets a value indicating whether the transaction has completed.
+        /// </summary>
+        public bool IsCompleted { get; private set; }
 
         /// <summary>
         ///     Adds the specified service to the transaction participants to be called upon commit or rollback.
@@ -54,59 +55,43 @@ namespace Silverback.Messaging.Inbound.Transaction
         public async Task Commit()
         {
             EnsureNotCompleted();
-            _isCompleted = true;
+            IsCompleted = true;
 
-            try
-            {
-                await _context.ServiceProvider.GetRequiredService<IPublisher>()
-                    .PublishAsync(new ConsumingCompletedEvent(_context))
-                    .ConfigureAwait(false);
+            await _context.ServiceProvider.GetRequiredService<IPublisher>()
+                .PublishAsync(new ConsumingCompletedEvent(_context))
+                .ConfigureAwait(false);
 
-                // TODO: At least once is ok?
-                await _transactionalServices.ForEachAsync(service => service.Commit()).ConfigureAwait(false);
-                await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                // TODO: Log
-                throw;
-            }
+            // TODO: At least once is ok?
+            await _transactionalServices.ForEachAsync(service => service.Commit()).ConfigureAwait(false);
+            await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
         }
 
         public async Task Rollback(Exception exception, bool commitOffsets = false)
         {
             EnsureNotCompleted();
-            _isCompleted = true;
+            IsCompleted = true;
 
             try
             {
-                try
-                {
-                    await _context.ServiceProvider.GetRequiredService<IPublisher>()
-                        .PublishAsync(new ConsumingAbortedEvent(_context, exception))
-                        .ConfigureAwait(false);
+                await _context.ServiceProvider.GetRequiredService<IPublisher>()
+                    .PublishAsync(new ConsumingAbortedEvent(_context, exception))
+                    .ConfigureAwait(false);
 
-                    await _transactionalServices.ForEachAsync(service => service.Rollback())
-                        .ConfigureAwait(false);
-                }
-                finally
-                {
-                    if (commitOffsets)
-                        await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
-                    else
-                        await _context.Consumer.Rollback(_context.Offsets).ConfigureAwait(false);
-                }
+                await _transactionalServices.ForEachAsync(service => service.Rollback())
+                    .ConfigureAwait(false);
             }
-            catch (Exception ex)
+            finally
             {
-                // TODO: Log
-                throw;
+                if (commitOffsets)
+                    await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
+                else
+                    await _context.Consumer.Rollback(_context.Offsets).ConfigureAwait(false);
             }
         }
 
         private void EnsureNotCompleted()
         {
-            if (_isCompleted)
+            if (IsCompleted)
                 throw new InvalidOperationException("The transaction already completed.");
         }
     }

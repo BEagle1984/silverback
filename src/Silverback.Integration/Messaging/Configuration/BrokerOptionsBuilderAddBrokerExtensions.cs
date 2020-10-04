@@ -14,7 +14,6 @@ using Silverback.Messaging.Headers;
 using Silverback.Messaging.Inbound;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.ExactlyOnce;
-using Silverback.Messaging.Inbound.Publishing;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
@@ -85,7 +84,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<SequencerProducerBehavior>()
                     .AddTransientBrokerBehavior<SequencerConsumerBehavior>()
-                    .AddSingletonBrokerBehavior<ChunksAggregatorConsumerBehavior>()
                     .Services
                     .AddTransient(typeof(ISequenceStore<>), typeof(DefaultSequenceStore<>))
                     .AddSingleton<ISequenceWriter, ChunkSequenceWriter>()
@@ -112,11 +110,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 // Pipeline - Consumer basic logic
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>()
-                    .AddSingletonBrokerBehavior<ServiceScopeFactoryConsumerBehavior>()
                     .AddSingletonBrokerBehavior<TransactionHandlerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<ExactlyOnceGuardConsumerBehavior>()
-                    .AddSingletonBrokerBehavior<PublisherConsumerBehavior>()
-                    .AddSingletonBrokerBehavior<StreamPublisherConsumerBehavior>();
+                    .AddSingletonBrokerBehavior<PublisherConsumerBehavior>();
 
                 // Support - Transactional Lists
                 brokerOptionsBuilder.SilverbackBuilder.Services

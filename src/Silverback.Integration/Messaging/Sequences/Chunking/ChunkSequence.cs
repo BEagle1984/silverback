@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -12,8 +13,8 @@ namespace Silverback.Messaging.Sequences.Chunking
     {
         private int? _lastIndex;
 
-        public ChunkSequence(object sequenceId, int totalLength)
-            : base(sequenceId)
+        public ChunkSequence(object sequenceId, int totalLength, ConsumerPipelineContext context)
+            : base(sequenceId, context)
         {
             TotalLength = totalLength;
         }

@@ -9,7 +9,6 @@ using Silverback.Messaging.Headers;
 using Silverback.Messaging.Inbound;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.ExactlyOnce;
-using Silverback.Messaging.Inbound.Publishing;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
@@ -99,7 +98,7 @@ namespace Silverback.Messaging.Broker.Behaviors
             /// <summary>
             ///     The <see cref="ServiceScopeFactoryConsumerBehavior" /> sort index.
             /// </summary>
-            public const int ServiceScopeFactory = 200;
+            //public const int ServiceScopeFactory = 200;
 
             // /// <summary>
             // ///     The <see cref="ErrorHandlerConsumerBehavior" /> sort index.
@@ -124,7 +123,7 @@ namespace Silverback.Messaging.Broker.Behaviors
             /// <summary>
             ///     The <see cref="ChunksAggregatorConsumerBehavior" /> sort index.
             /// </summary>
-            public const int ChunksAggregator = 510;
+            //public const int ChunksAggregator = 510;
 
             /// <summary>
             ///     The <see cref="DecryptorConsumerBehavior" /> sort index.

@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Sequences
@@ -29,16 +30,25 @@ namespace Silverback.Messaging.Sequences
         int? TotalLength { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether all messages belonging to the sequence have been pushed.
+        /// </summary>
+        bool IsComplete { get; }
+
+        /// <summary>
         ///     Gets the offsets of the messages belonging to the sequence.
         /// </summary>
         IReadOnlyList<IOffset> Offsets { get; }
-
-        // TODO: ISequence.IsCompleted (and IMessageStream.IsCompleted) may be useful?
 
         /// <summary>
         ///     Gets a stream that will be pushed with the messages belonging to the sequence.
         /// </summary>
         IMessageStreamEnumerable<IRawInboundEnvelope> Stream { get; }
+
+        /// <summary>
+        ///     Gets the <see cref="ConsumerPipelineContext" /> related to the processing of this sequence
+        ///     (usually the context of the first message that initiated the sequence).
+        /// </summary>
+        ConsumerPipelineContext Context { get; }
 
         /// <summary>
         ///     Adds the message to the sequence.
@@ -50,7 +60,8 @@ namespace Silverback.Messaging.Sequences
         Task AddAsync(IRawInboundEnvelope envelope);
 
         /// <summary>
-        ///     Signals that an exception occurred and the processing must be aborted.
+        ///     Aborts the sequence processing. Used for example to signal that an exception occurred or the
+        ///     enumeration returned prematurely.
         /// </summary>
         void AbortProcessing();
     }

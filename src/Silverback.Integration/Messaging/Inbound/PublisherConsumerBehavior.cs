@@ -2,13 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Inbound.Publishing
+namespace Silverback.Messaging.Inbound
 {
     /// <summary>
     ///     Publishes the consumed messages to the internal bus.
@@ -28,10 +29,13 @@ namespace Silverback.Messaging.Inbound.Publishing
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(next, nameof(next));
 
-                await context.ServiceProvider
-                    .GetRequiredService<IPublisher>()
-                    .PublishAsync(context.Envelope)
-                    .ConfigureAwait(false);
+                var publisher = context.ServiceProvider.GetRequiredService<IPublisher>();
+
+                // TODO: Worth optimizing if not a sequence? (I don't think so)
+                // TODO: Task.Run is needed to avoid all locks? (think about sync subscribers)
+                context.ProcessingTask = Task.Run(() => publisher.PublishAsync(context.Envelope));
+
+                // TODO: Publish stream(s) (not sequences) -> will need async thread
 
                 await next(context).ConfigureAwait(false);
             }

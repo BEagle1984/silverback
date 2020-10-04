@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -33,25 +34,60 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             try
             {
+                // TODO: Ensure always disposed (TEST IT!)
+                var scope = context.ServiceProvider.CreateScope();
+
+                context.ReplaceServiceScope(scope);
+                context.TransactionManager = new ConsumerTransactionManager(context);
+
                 await next(context).ConfigureAwait(false);
+
+                if (context.Sequence == null)
+                    await AwaitProcessingAndCommit(context).ConfigureAwait(false);
+                else if (context.Sequence.IsComplete)
+                    await AwaitProcessingAndCommit(context.Sequence.Context).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                context.Dispose();
+
+                if (!await HandleException(context, exception).ConfigureAwait(false))
+                    throw;
+            }
+        }
+
+        private async Task AwaitProcessingAndCommit(ConsumerPipelineContext context)
+        {
+            try
+            {
+                if (context.ProcessingTask != null)
+                    await context.ProcessingTask.ConfigureAwait(false);
+
                 await context.TransactionManager.Commit().ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                SetFailedAttempts(context.Envelope);
-
-                var errorPolicyImplementation = context.Envelope.Endpoint.ErrorPolicy.Build(context.ServiceProvider);
-
-                if (!errorPolicyImplementation.CanHandle(context, exception))
-                    throw;
-
-                var handled = await errorPolicyImplementation
-                    .HandleError(context, exception)
-                    .ConfigureAwait(false);
-
-                if (!handled)
+                if (!await HandleException(context, exception).ConfigureAwait(false))
                     throw;
             }
+            finally
+            {
+                context.Dispose();
+            }
+        }
+
+        private async Task<bool> HandleException(ConsumerPipelineContext context, Exception exception)
+        {
+            SetFailedAttempts(context.Envelope);
+
+            var errorPolicyImplementation = context.Envelope.Endpoint.ErrorPolicy.Build(context.ServiceProvider);
+
+            if (!errorPolicyImplementation.CanHandle(context, exception))
+                return false;
+
+            return await errorPolicyImplementation
+                .HandleError(context, exception)
+                .ConfigureAwait(false);
         }
 
         private void SetFailedAttempts(IRawInboundEnvelope envelope) =>

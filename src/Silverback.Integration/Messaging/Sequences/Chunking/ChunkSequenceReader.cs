@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading.Tasks;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -18,16 +18,18 @@ namespace Silverback.Messaging.Sequences.Chunking
             _sequenceStore = sequenceStore;
         }
 
-        public bool CanHandle(IRawInboundEnvelope envelope)
+        public bool CanHandle(ConsumerPipelineContext context)
         {
-            Check.NotNull(envelope, nameof(envelope));
+            Check.NotNull(context, nameof(context));
 
-            return envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex);
+            return context.Envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex);
         }
 
-        public ISequence? GetSequence(IRawInboundEnvelope envelope, out bool isNew)
+        public ISequence? GetSequence(ConsumerPipelineContext context, out bool isNew)
         {
-            Check.NotNull(envelope, nameof(envelope));
+            Check.NotNull(context, nameof(context));
+
+            var envelope = context.Envelope;
 
             var chunkIndex = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
                              throw new InvalidOperationException("Chunk index header not found.");
@@ -41,7 +43,11 @@ namespace Silverback.Messaging.Sequences.Chunking
 
             if (chunkIndex == 0)
             {
-                sequence = _sequenceStore.Add(CreateNewSequence(messageId, envelope));
+                sequence = _sequenceStore.Add(CreateNewSequence(messageId, context));
+
+                // Replace the envelope with the stream that will be pushed with all the chunks.
+                context.Envelope = context.Envelope.CloneReplacingStream(new ChunkStream(sequence.Stream));
+
                 isNew = true;
             }
             else
@@ -60,14 +66,14 @@ namespace Silverback.Messaging.Sequences.Chunking
             return sequence;
         }
 
-        private static ChunkSequence CreateNewSequence(string messageId, IRawInboundEnvelope envelope)
+        private static ChunkSequence CreateNewSequence(string messageId, ConsumerPipelineContext context)
         {
-            var chunksCount = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
+            var chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
 
             if (chunksCount == null)
                 throw new InvalidOperationException("Chunks count header not found or invalid.");
 
-            return new ChunkSequence(messageId, chunksCount.Value);
+            return new ChunkSequence(messageId, chunksCount.Value, context);
         }
     }
 }

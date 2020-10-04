@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -45,7 +46,7 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            var sequenceReader = _sequenceReaders.FirstOrDefault(reader => reader.CanHandle(context.Envelope));
+            var sequenceReader = _sequenceReaders.FirstOrDefault(reader => reader.CanHandle(context));
 
             if (sequenceReader == null)
             {
@@ -53,42 +54,46 @@ namespace Silverback.Messaging.Sequences
                 return;
             }
 
-            var sequence = sequenceReader.GetSequence(context.Envelope, out var isNew);
+            // Store the original envelope in case it gets replaced in the GetSequence method
+            var originalEnvelope = context.Envelope;
+            var sequence = sequenceReader.GetSequence(context, out var isNew);
 
             if (sequence != null)
             {
                 ((RawInboundEnvelope)context.Envelope).Sequence = sequence;
 
                 if (isNew)
-                    StartProcessingInAnotherThread(context, next);
+                {
+                    context.IsSequenceNew = true;
 
-                await sequence.AddAsync(context.Envelope).ConfigureAwait(false);
+                    await next(context).ConfigureAwait(false);
+
+                    CheckPrematureCompletion(context);
+                }
+
+                await sequence.AddAsync(originalEnvelope).ConfigureAwait(false);
             }
         }
 
-        private static void StartProcessingInAnotherThread(
-            ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+        private void CheckPrematureCompletion(ConsumerPipelineContext context)
         {
-            // TODO: Handle transaction / exceptions
-            Task.Factory.StartNew(
-                async () => await ProcessSequence(context, next),
-                CancellationToken.None,
-                TaskCreationOptions.None,
-                TaskScheduler.Default);
-        }
+            if (context.ProcessingTask == null || context.Sequence == null)
+                return;
 
-        private static ConfiguredTaskAwaitable ProcessSequence(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
-        {
-            try
-            {
-                return next(context).ConfigureAwait(false);
-            }
-            catch
-            {
-                context.Envelope.Sequence?.AbortProcessing();
-                throw;
-            }
+            Task.Run(
+                async () =>
+                {
+                    try
+                    {
+                        await context.ProcessingTask.ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        // Abort the uncompleted sequence if the processing task completes, to avoid unreleased locks.
+                        if (!context.Sequence.IsComplete)
+                            context.Sequence.AbortProcessing();
+                    }
+                });
         }
     }
 }

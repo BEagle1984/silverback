@@ -3,9 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Behaviors
@@ -13,8 +15,10 @@ namespace Silverback.Messaging.Broker.Behaviors
     /// <summary>
     ///     The context that is passed along the consumer behaviors pipeline.
     /// </summary>
-    public class ConsumerPipelineContext
+    public sealed class ConsumerPipelineContext : IDisposable
     {
+        private IServiceScope? _serviceScope;
+
         private IConsumerTransactionManager? _transactionManager;
 
         /// <summary>
@@ -67,6 +71,22 @@ namespace Silverback.Messaging.Broker.Behaviors
         public IConsumer Consumer { get; }
 
         /// <summary>
+        ///     Gets the offsets of the messages being handled in this context (either the single message or the
+        ///     sequence).
+        /// </summary>
+        public IReadOnlyCollection<IOffset> Offsets => Sequence?.Offsets ?? new[] { Envelope.Offset };
+
+        /// <summary>
+        ///     Gets a the <see cref="ISequence" /> the current message belongs to.
+        /// </summary>
+        public ISequence? Sequence => Envelope?.Sequence;
+
+        /// <summary>
+        ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the required services.
+        /// </summary>
+        public IServiceProvider ServiceProvider { get; private set; }
+
+        /// <summary>
         ///     Gets the <see cref="IConsumerTransactionManager" /> that is handling the current pipeline transaction.
         /// </summary>
         public IConsumerTransactionManager TransactionManager
@@ -94,13 +114,36 @@ namespace Silverback.Messaging.Broker.Behaviors
         public IRawInboundEnvelope Envelope { get; set; }
 
         /// <summary>
-        ///     Gets or sets the <see cref="IServiceProvider" /> to be used to resolve the required services.
+        ///     Gets the <see cref="Task" /> representing the message processing. The actual processing is
+        ///     performed in another thread that publishes the messages and the streams to the internal bus and this
+        ///     <see cref="Task" /> will complete when each subscriber has returned.
         /// </summary>
-        public IServiceProvider ServiceProvider { get; set; }
+        public Task? ProcessingTask { get; internal set; }
 
         /// <summary>
-        ///     Gets the offsets of the messages being handled in this context (either the single message or the sequence).
+        ///     Gets a value indicating whether the current envelope contains the first message of a sequence.
         /// </summary>
-        public IReadOnlyCollection<IOffset> Offsets => Envelope.Sequence?.Offsets ?? new[] { Envelope.Offset };
+        public bool IsSequenceNew { get; internal set; }
+
+        /// <summary>
+        ///     Replaces the <see cref="IServiceProvider" /> with the one from the specified scope.
+        /// </summary>
+        /// <param name="newServiceScope">
+        ///     The <see cref="IServiceScope" /> to be used.
+        /// </param>
+        public void ReplaceServiceScope(IServiceScope newServiceScope)
+        {
+            _serviceScope?.Dispose();
+
+            _serviceScope = Check.NotNull(newServiceScope, nameof(newServiceScope));
+            ServiceProvider = newServiceScope.ServiceProvider;
+        }
+
+        /// <inheritdoc cref="IDisposable.Dispose" />
+        public void Dispose()
+        {
+            _serviceScope?.Dispose();
+            ProcessingTask?.Dispose();
+        }
     }
 }

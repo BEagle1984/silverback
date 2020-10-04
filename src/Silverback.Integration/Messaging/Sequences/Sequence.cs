@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -26,12 +27,17 @@ namespace Silverback.Messaging.Sequences
         /// <param name="sequenceId">
         ///     The identifier that is used to match the consumed messages with their belonging sequence.
         /// </param>
-        protected Sequence(object sequenceId)
+        /// <param name="context">
+        ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the
+        ///     sequence gets published to the internal bus.
+        /// </param>
+        protected Sequence(object sequenceId, ConsumerPipelineContext context)
         {
-            SequenceId = sequenceId;
+            SequenceId = Check.NotNull(sequenceId, nameof(sequenceId));
 
             _streamProvider = new MessageStreamProvider<IRawInboundEnvelope>();
             Stream = _streamProvider.CreateStream<IRawInboundEnvelope>();
+            Context = Check.NotNull(context, nameof(context));
         }
 
         /// <inheritdoc cref="ISequence.SequenceId" />
@@ -40,24 +46,32 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.Offsets" />
         public IReadOnlyList<IOffset> Offsets => _offsets;
 
+        /// <inheritdoc cref="ISequence.Stream" />
+        public IMessageStreamEnumerable<IRawInboundEnvelope> Stream { get; }
+
+        /// <inheritdoc cref="ISequence.Context" />
+        public ConsumerPipelineContext Context { get; }
+
         /// <inheritdoc cref="ISequence.Length" />
         public int Length { get; protected set; }
 
         /// <inheritdoc cref="ISequence.TotalLength" />
         public int? TotalLength { get; protected set; }
 
-        /// <inheritdoc cref="ISequence.Stream" />
-        public IMessageStreamEnumerable<IRawInboundEnvelope> Stream { get; } // TODO: Convert to Stream<byte[]>?
+        /// <inheritdoc cref="ISequence.IsComplete" />
+        public bool IsComplete { get; private set; }
 
         /// <inheritdoc cref="ISequence.AbortProcessing" />
         public void AbortProcessing()
         {
+            if (IsComplete)
+                return;
+
             // TODO: Review this!!!
             _abortCancellationTokenSource.Cancel();
-            _streamProvider.CompleteAsync();
         }
 
-        /// <inheritdoc cref="ISequence.AddAsync"/>
+        /// <inheritdoc cref="ISequence.AddAsync" />
         public virtual async Task AddAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
@@ -67,32 +81,44 @@ namespace Silverback.Messaging.Sequences
 
             try
             {
-                if (TotalLength == null || Length < TotalLength)
+                if (TotalLength != null && Length > TotalLength)
                 {
-                    Length++;
+                    // TODO: Log? / Throw?
+                    return;
+                }
 
+                Length++;
+
+                if (!_abortCancellationTokenSource.IsCancellationRequested)
+                {
                     await _streamProvider.PushAsync(envelope, _abortCancellationTokenSource.Token)
-                        .ConfigureAwait(
-                            false); // TODO: Pass cancellation token that must be cancelled when the processing
+                        .ConfigureAwait(false);
                 }
 
                 if (TotalLength != null && Length == TotalLength)
-                {
-                    await _streamProvider.CompleteAsync(_abortCancellationTokenSource.Token).ConfigureAwait(false);
-                }
+                    await CompleteAsync().ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
                 // Ignore
+
+                // TODO: Is it correct to ignore?
             }
         }
 
         /// <summary>
         ///     Marks the sequence as complete, meaning no more messages will be pushed.
         /// </summary>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected virtual Task CompleteAsync() => _streamProvider.CompleteAsync();
+        protected virtual async Task CompleteAsync(CancellationToken cancellationToken = default)
+        {
+            IsComplete = true;
+            await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
+        }
     }
 }

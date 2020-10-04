@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Messages
 {
@@ -17,7 +18,8 @@ namespace Silverback.Messaging.Messages
                 envelope.Offset,
                 envelope.Endpoint,
                 envelope.ActualEndpointName,
-                envelope.AdditionalLogData)
+                envelope.AdditionalLogData,
+                envelope.Sequence)
         {
         }
 
@@ -27,8 +29,9 @@ namespace Silverback.Messaging.Messages
             IOffset? offset,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
-            IDictionary<string, string>? additionalLogData = null)
-            : base(rawMessage, headers, endpoint, actualEndpointName, offset, additionalLogData)
+            IDictionary<string, string>? additionalLogData = null,
+            ISequence? sequence = null)
+            : base(rawMessage, headers, endpoint, actualEndpointName, offset, additionalLogData, sequence)
         {
         }
 
