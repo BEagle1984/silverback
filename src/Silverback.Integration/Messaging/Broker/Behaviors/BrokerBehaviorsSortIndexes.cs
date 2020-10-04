@@ -97,24 +97,24 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int CustomHeadersMapper = 120;
 
             /// <summary>
-            ///     The <see cref="SequencerConsumerBehavior" /> sort index.
-            /// </summary>
-            public const int Sequencer = 150;
-
-            /// <summary>
             ///     The <see cref="ServiceScopeFactoryConsumerBehavior" /> sort index.
             /// </summary>
             public const int ServiceScopeFactory = 200;
 
-            /// <summary>
-            ///     The <see cref="ErrorHandlerConsumerBehavior" /> sort index.
-            /// </summary>
-            public const int ErrorHandler = 220;
+            // /// <summary>
+            // ///     The <see cref="ErrorHandlerConsumerBehavior" /> sort index.
+            // /// </summary>
+            // public const int ErrorHandler = 220;
 
             /// <summary>
             ///     The <see cref="TransactionHandlerConsumerBehavior" /> sort index.
             /// </summary>
             public const int TransactionHandler = 250;
+
+            /// <summary>
+            ///     The <see cref="SequencerConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int Sequencer = 260;
 
             /// <summary>
             ///     The <see cref="ExactlyOnceGuardConsumerBehavior" /> sort index.

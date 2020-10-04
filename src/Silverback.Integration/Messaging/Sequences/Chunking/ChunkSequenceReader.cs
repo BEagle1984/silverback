@@ -18,15 +18,14 @@ namespace Silverback.Messaging.Sequences.Chunking
             _sequenceStore = sequenceStore;
         }
 
-        public bool CanHandleSequence(IRawInboundEnvelope envelope)
+        public bool CanHandle(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
             return envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex);
         }
 
-        // TODO: Custom exception type instead of InvalidOperationException?
-        public async Task<ISequence?> HandleSequence(IRawInboundEnvelope envelope)
+        public ISequence? GetSequence(IRawInboundEnvelope envelope, out bool isNew)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -38,22 +37,27 @@ namespace Silverback.Messaging.Sequences.Chunking
             if (string.IsNullOrEmpty(messageId))
                 throw new InvalidOperationException("Message id header not found or invalid.");
 
-            var sequence = chunkIndex == 0
-                ? _sequenceStore.Add(CreateNewSequence(messageId, envelope))
-                : _sequenceStore.Get(messageId);
+            ChunkSequence? sequence;
+
+            if (chunkIndex == 0)
+            {
+                sequence = _sequenceStore.Add(CreateNewSequence(messageId, envelope));
+                isNew = true;
+            }
+            else
+            {
+                sequence = _sequenceStore.Get(messageId);
+                isNew = false;
+            }
 
             // Skip the message if a sequence cannot be found. It probably means that the consumer started in the
             // middle of a sequence.
             if (sequence == null)
             {
                 // TODO: Log
-
-                return null;
             }
 
-            await sequence.AddAsync(chunkIndex, envelope).ConfigureAwait(false);
-
-            return chunkIndex == 0 ? sequence : null;
+            return sequence;
         }
 
         private static ChunkSequence CreateNewSequence(string messageId, IRawInboundEnvelope envelope)

@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -15,6 +17,8 @@ namespace Silverback.Messaging.Sequences
         private readonly List<IOffset> _offsets = new List<IOffset>();
 
         private readonly MessageStreamProvider<IRawInboundEnvelope> _streamProvider;
+
+        private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Sequence" /> class.
@@ -43,33 +47,44 @@ namespace Silverback.Messaging.Sequences
         public int? TotalLength { get; protected set; }
 
         /// <inheritdoc cref="ISequence.Stream" />
-        public IMessageStreamEnumerable<IRawInboundEnvelope> Stream { get; }
-        // TODO: Convert to Stream<byte[]>?
+        public IMessageStreamEnumerable<IRawInboundEnvelope> Stream { get; } // TODO: Convert to Stream<byte[]>?
 
-        /// <summary>
-        ///     Adds the message to the sequence. This method should be called by the actual implementation in the
-        ///     derived classes.
-        /// </summary>
-        /// <param name="envelope">The envelope to be added to the sequence.</param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        protected virtual async Task AddAsync(IRawInboundEnvelope envelope)
+        /// <inheritdoc cref="ISequence.AbortProcessing" />
+        public void AbortProcessing()
+        {
+            // TODO: Review this!!!
+            _abortCancellationTokenSource.Cancel();
+            _streamProvider.CompleteAsync();
+        }
+
+        /// <inheritdoc cref="ISequence.AddAsync"/>
+        public virtual async Task AddAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
             if (envelope.Offset != null)
                 _offsets.Add(envelope.Offset);
 
-            if (TotalLength == null || Length < TotalLength)
+            try
             {
-                Length++;
+                if (TotalLength == null || Length < TotalLength)
+                {
+                    Length++;
 
-                await _streamProvider.PushAsync(envelope).ConfigureAwait(false);
+                    await _streamProvider.PushAsync(envelope, _abortCancellationTokenSource.Token)
+                        .ConfigureAwait(
+                            false); // TODO: Pass cancellation token that must be cancelled when the processing
+                }
+
+                if (TotalLength != null && Length == TotalLength)
+                {
+                    await _streamProvider.CompleteAsync(_abortCancellationTokenSource.Token).ConfigureAwait(false);
+                }
             }
-
-            if (TotalLength != null && Length == TotalLength)
-                await _streamProvider.CompleteAsync().ConfigureAwait(false);
+            catch (OperationCanceledException)
+            {
+                // Ignore
+            }
         }
 
         /// <summary>

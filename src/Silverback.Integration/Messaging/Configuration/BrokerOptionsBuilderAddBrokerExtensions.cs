@@ -84,7 +84,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 // Pipeline - Sequences (Chunking, ...)
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<SequencerProducerBehavior>()
-                    .AddSingletonBrokerBehavior<SequencerConsumerBehavior>()
+                    .AddTransientBrokerBehavior<SequencerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<ChunksAggregatorConsumerBehavior>()
                     .Services
                     .AddTransient(typeof(ISequenceStore<>), typeof(DefaultSequenceStore<>))
@@ -113,7 +113,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<ServiceScopeFactoryConsumerBehavior>()
-                    .AddSingletonBrokerBehavior<ErrorHandlerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<TransactionHandlerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<ExactlyOnceGuardConsumerBehavior>()
                     .AddSingletonBrokerBehavior<PublisherConsumerBehavior>()

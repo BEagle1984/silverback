@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Inbound
             using var scope = context.ServiceProvider.CreateScope();
 
             context.ServiceProvider = scope.ServiceProvider;
-            context.TransactionManager = new ConsumerTransactionManager(context.Consumer);
+            context.TransactionManager = new ConsumerTransactionManager(context);
             await next(context).ConfigureAwait(false);
         }
     }

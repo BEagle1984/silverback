@@ -47,8 +47,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                             }
                         })));
 
-            var streamProvider1 = new MessageStreamProvider<IEvent>(20);
-            var streamProvider2 = new MessageStreamProvider<IEvent>(20);
+            var streamProvider1 = new MessageStreamProvider<IEvent>();
+            var streamProvider2 = new MessageStreamProvider<IEvent>();
 
             streamPublisher.Publish(streamProvider1);
             await streamPublisher.PublishAsync(streamProvider2);
@@ -121,8 +121,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                             Interlocked.Increment(ref receivedStreams);
                         })));
 
-            var streamProvider1 = new MessageStreamProvider<IEvent>(20);
-            var streamProvider2 = new MessageStreamProvider<IEvent>(20);
+            var streamProvider1 = new MessageStreamProvider<IEvent>();
+            var streamProvider2 = new MessageStreamProvider<IEvent>();
 
             streamPublisher.Publish(streamProvider1);
             await streamPublisher.PublishAsync(streamProvider2);
@@ -163,9 +163,12 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var tasks = streamPublisher.Publish(streamProvider);
 
-            await streamProvider.PushAsync(new TestEventOne());
-            await streamProvider.PushAsync(new TestEventOne());
-            await streamProvider.PushAsync(new TestEventOne());
+            var pushTasks = new[]
+            {
+                streamProvider.PushAsync(new TestEventOne()),
+                streamProvider.PushAsync(new TestEventOne()),
+                streamProvider.PushAsync(new TestEventOne())
+            };
 
             await AsyncTestingUtil.WaitAsync(() => received >= 5);
 
@@ -202,9 +205,12 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var tasks = await streamPublisher.PublishAsync(streamProvider);
 
-            await streamProvider.PushAsync(new TestEventOne());
-            await streamProvider.PushAsync(new TestEventOne());
-            await streamProvider.PushAsync(new TestEventOne());
+            var pushTasks = new[]
+            {
+                streamProvider.PushAsync(new TestEventOne()),
+                streamProvider.PushAsync(new TestEventOne()),
+                streamProvider.PushAsync(new TestEventOne())
+            };
 
             Func<Task> act = async () => await await Task.WhenAny(tasks);
 
@@ -212,7 +218,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public async Task PublishAsync_MessageStreamProviderCompletedAfterException_AllPendingTasksCompleted()
+        public async Task PublishAsync_MessageStreamProviderAbortedAfterException_AllPendingTasksCompleted()
         {
             var received = 0;
 
@@ -239,17 +245,21 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var tasks = await streamPublisher.PublishAsync(streamProvider);
 
-            await streamProvider.PushAsync(new TestEventOne());
-            await streamProvider.PushAsync(new TestEventOne());
-            await streamProvider.PushAsync(new TestEventOne());
+            var pushTasks = new[]
+            {
+                streamProvider.PushAsync(new TestEventOne()),
+                streamProvider.PushAsync(new TestEventOne()),
+                streamProvider.PushAsync(new TestEventOne())
+            };
 
             var whenAnyTask = await Task.WhenAny(tasks);
 
-            if (whenAnyTask.Status == TaskStatus.Faulted)
-                await streamProvider.CompleteAsync();
+            whenAnyTask.Status.Should().Be(TaskStatus.Faulted);
 
-            await AsyncTestingUtil.WaitAsync(() => tasks.All(task => task.IsCompleted || task.IsFaulted));
-            tasks.All(task => task.IsCompleted || task.IsFaulted).Should().BeTrue();
+            await streamProvider.AbortAsync();
+
+            await AsyncTestingUtil.WaitAsync(() => tasks.All(task => task.IsCompleted));
+            tasks.All(task => task.IsCompleted).Should().BeTrue();
         }
 
         [Fact]
@@ -280,7 +290,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                             }
                         })));
 
-            var streamProvider = new MessageStreamProvider<IEnvelope>(20);
+            var streamProvider = new MessageStreamProvider<IEnvelope>();
             await streamPublisher.PublishAsync(streamProvider);
 
             await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 2);
@@ -323,7 +333,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                             }
                         })));
 
-            var stream = new MessageStreamProvider<IEnvelope>(20);
+            var stream = new MessageStreamProvider<IEnvelope>();
             await streamPublisher.PublishAsync(stream);
 
             await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 2);

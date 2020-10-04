@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
@@ -44,51 +45,50 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            foreach (var sequenceReader in _sequenceReaders)
-            {
-                if (await TryHandleSequence(context, sequenceReader).ConfigureAwait(false))
-                {
-                    // If no sequence is returned it means either that the message was pushed into an existing
-                    // sequence or the consumer didn't start at the beginning of a sequence. In both cases
-                    // we can just break the pipeline and return.
-                    if (context.Envelope.Sequence == null)
-                        return;
+            var sequenceReader = _sequenceReaders.FirstOrDefault(reader => reader.CanHandle(context.Envelope));
 
-                    break;
-                }
-            }
-
-            if (context.Envelope.Sequence != null)
-            {
-                StartProcessingInAnotherThread(context, next);
-            }
-            else
+            if (sequenceReader == null)
             {
                 await next(context).ConfigureAwait(false);
+                return;
+            }
+
+            var sequence = sequenceReader.GetSequence(context.Envelope, out var isNew);
+
+            if (sequence != null)
+            {
+                ((RawInboundEnvelope)context.Envelope).Sequence = sequence;
+
+                if (isNew)
+                    StartProcessingInAnotherThread(context, next);
+
+                await sequence.AddAsync(context.Envelope).ConfigureAwait(false);
             }
         }
 
-        private static async Task<bool> TryHandleSequence(
+        private static void StartProcessingInAnotherThread(
             ConsumerPipelineContext context,
-            ISequenceReader sequenceReader)
-        {
-            if (!sequenceReader.CanHandleSequence(context.Envelope))
-                return false;
-
-            ((RawInboundEnvelope)context.Envelope).Sequence =
-                await sequenceReader.HandleSequence(context.Envelope).ConfigureAwait(false);
-
-            return true;
-        }
-
-        private static void StartProcessingInAnotherThread(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+            ConsumerBehaviorHandler next)
         {
             // TODO: Handle transaction / exceptions
             Task.Factory.StartNew(
-                async () => await next(context).ConfigureAwait(false),
+                async () => await ProcessSequence(context, next),
                 CancellationToken.None,
                 TaskCreationOptions.None,
                 TaskScheduler.Default);
+        }
+
+        private static ConfiguredTaskAwaitable ProcessSequence(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        {
+            try
+            {
+                return next(context).ConfigureAwait(false);
+            }
+            catch
+            {
+                context.Envelope.Sequence?.AbortProcessing();
+                throw;
+            }
         }
     }
 }

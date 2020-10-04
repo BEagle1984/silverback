@@ -37,6 +37,7 @@ namespace Silverback.Messaging.Inbound.Publishing
             }
             catch (Exception e)
             {
+                // TODO: ???
                 Console.WriteLine(e);
                 throw;
             }

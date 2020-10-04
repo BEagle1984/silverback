@@ -25,8 +25,6 @@ namespace Silverback.Messaging.Broker
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _storedOffsets =
             new ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>();
 
-        private bool _disposed;
-
         public MockedKafkaConsumer(ConsumerConfig config, IInMemoryTopicCollection topics)
         {
             _config = Check.NotNull(config, nameof(config));
@@ -56,6 +54,8 @@ namespace Silverback.Messaging.Broker
         public List<string> Subscription { get; } = new List<string>();
 
         public IConsumerGroupMetadata ConsumerGroupMetadata => throw new NotSupportedException();
+
+        public bool Disposed { get; private set; }
 
         public int AddBrokers(string brokers)
         {
@@ -245,7 +245,7 @@ namespace Silverback.Messaging.Broker
 
         public void Dispose()
         {
-            _disposed = true;
+            Disposed = true;
         }
 
         internal void OnPartitionsAssigned(string topicName, IReadOnlyCollection<Partition> partitions)
@@ -282,7 +282,7 @@ namespace Silverback.Messaging.Broker
 
         private async Task AutoCommit()
         {
-            while (!_disposed)
+            while (!Disposed)
             {
                 try
                 {

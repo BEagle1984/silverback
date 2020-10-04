@@ -39,10 +39,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName)))
@@ -67,10 +64,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
@@ -79,7 +73,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         Configuration = new KafkaConsumerConfig
                                         {
-                                            GroupId = "consumer1"
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
                                         }
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
@@ -111,6 +106,194 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .BeEquivalentTo(Enumerable.Range(1, 15).Select(i => i.ToString(CultureInfo.InvariantCulture)));
         }
 
+        [Fact]
+        public async Task OutboundAndInbound_MultipleTopics_ProducedAndConsumed()
+        {
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("topic1"))
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("topic2"))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint("topic1")
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint("topic2")
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+
+            await Enumerable.Range(1, 5).ForEachAsync(
+                i =>
+                    publisher.PublishAsync(
+                        new TestEventOne
+                        {
+                            Content = i.ToString(CultureInfo.InvariantCulture)
+                        }));
+
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+
+            Subscriber.OutboundEnvelopes.Count.Should().Be(10);
+            Subscriber.InboundEnvelopes.Count.Should().Be(10);
+
+            SpyBehavior.OutboundEnvelopes.Count.Should().Be(10);
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(10);
+
+            var receivedContentsTopic1 =
+                SpyBehavior.InboundEnvelopes
+                    .Where(envelope => envelope.Endpoint.Name == "topic1")
+                    .Select(envelope => ((TestEventOne)envelope.Message!).Content);
+            var receivedContentsTopic2 =
+                SpyBehavior.InboundEnvelopes
+                    .Where(envelope => envelope.Endpoint.Name == "topic2")
+                    .Select(envelope => ((TestEventOne)envelope.Message!).Content);
+
+            var expectedMessages =
+                Enumerable.Range(1, 5).Select(i => i.ToString(CultureInfo.InvariantCulture)).ToList();
+
+            receivedContentsTopic1.Should().BeEquivalentTo(expectedMessages);
+            receivedContentsTopic2.Should().BeEquivalentTo(expectedMessages);
+        }
+
+        [Fact]
+        public async Task OutboundAndInbound_MultipleTopicsWithSingleConsumer_ProducedAndConsumed()
+        {
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("topic1"))
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("topic2"))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint("topic1", "topic2")
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+
+            await Enumerable.Range(1, 5).ForEachAsync(
+                i =>
+                    publisher.PublishAsync(
+                        new TestEventOne
+                        {
+                            Content = i.ToString(CultureInfo.InvariantCulture)
+                        }));
+
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+
+            Subscriber.OutboundEnvelopes.Count.Should().Be(10);
+            Subscriber.InboundEnvelopes.Count.Should().Be(10);
+
+            SpyBehavior.OutboundEnvelopes.Count.Should().Be(10);
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(10);
+
+            var receivedContentsTopic1 =
+                SpyBehavior.InboundEnvelopes
+                    .Where(envelope => envelope.Endpoint.Name == "topic1")
+                    .Select(envelope => ((TestEventOne)envelope.Message!).Content);
+            var receivedContentsTopic2 =
+                SpyBehavior.InboundEnvelopes
+                    .Where(envelope => envelope.Endpoint.Name == "topic2")
+                    .Select(envelope => ((TestEventOne)envelope.Message!).Content);
+
+            var expectedMessages =
+                Enumerable.Range(1, 5).Select(i => i.ToString(CultureInfo.InvariantCulture)).ToList();
+
+            receivedContentsTopic1.Should().BeEquivalentTo(expectedMessages);
+            receivedContentsTopic2.Should().BeEquivalentTo(expectedMessages);
+        }
+
+        [Fact]
+        public async Task OutboundAndInbound_MultipleConsumersSameConsumerGroup_ProducedAndConsumed()
+        {
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("topic1"))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint("topic1")
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint("topic1")
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+
+            await Enumerable.Range(1, 10).ForEachAsync(
+                i =>
+                    publisher.PublishAsync(
+                        new TestEventOne
+                        {
+                            Content = i.ToString(CultureInfo.InvariantCulture)
+                        }));
+
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+
+            Subscriber.OutboundEnvelopes.Count.Should().Be(10);
+            Subscriber.InboundEnvelopes.Count.Should().Be(10);
+
+            SpyBehavior.OutboundEnvelopes.Count.Should().Be(10);
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(10);
+
+            var receivedContents =
+                SpyBehavior.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).Content);
+
+            receivedContents.Should()
+                .BeEquivalentTo(Enumerable.Range(1, 10).Select(i => i.ToString(CultureInfo.InvariantCulture)));
+        }
+
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -121,10 +304,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
@@ -180,20 +360,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(new KafkaConsumerEndpoint(DefaultTopicName)
-                                {
-                                    Configuration = new KafkaConsumerConfig
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        GroupId = "consumer1",
-                                    }
-                                }))
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 

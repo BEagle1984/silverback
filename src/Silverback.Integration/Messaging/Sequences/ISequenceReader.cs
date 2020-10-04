@@ -8,8 +8,8 @@ namespace Silverback.Messaging.Sequences
 {
     public interface ISequenceReader
     {
-        bool CanHandleSequence(IRawInboundEnvelope envelope);
+        bool CanHandle(IRawInboundEnvelope envelope);
 
-        Task<ISequence?> HandleSequence(IRawInboundEnvelope envelope);
+        ISequence? GetSequence(IRawInboundEnvelope envelope, out bool isNew);
     }
 }

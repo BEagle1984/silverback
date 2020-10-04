@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
     public class ChunkSequenceReaderTests
     {
         [Fact]
-        public void CanHandleSequence_Chunk_TrueReturned()
+        public void CanHandle_Chunk_TrueReturned()
         {
             var envelope = new RawInboundEnvelope(
                 new byte[] { 0x01, 0x02, 0x03 },
@@ -29,13 +29,13 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var result = reader.CanHandleSequence(envelope);
+            var result = reader.CanHandle(envelope);
 
             result.Should().BeTrue();
         }
 
         [Fact]
-        public void CanHandleSequence_NonChunk_FalseReturned()
+        public void CanHandle_NonChunk_FalseReturned()
         {
             var envelope = new RawInboundEnvelope(
                 new byte[] { 0x01, 0x02, 0x03 },
@@ -48,13 +48,13 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var result = reader.CanHandleSequence(envelope);
+            var result = reader.CanHandle(envelope);
 
             result.Should().BeFalse();
         }
 
         [Fact]
-        public async Task HandleSequence_FirstChunk_SequenceReturned()
+        public void GetSequence_FirstChunk_SequenceReturned()
         {
             var envelope = new RawInboundEnvelope(
                 new byte[] { 0x01, 0x02, 0x03 },
@@ -69,18 +69,15 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var sequence = await reader.HandleSequence(envelope);
+            var sequence = reader.GetSequence(envelope, out var isNew);
 
             sequence.Should().NotBeNull();
-            sequence!.Length.Should().Be(1);
             sequence!.TotalLength.Should().Be(4);
-            using var enumerator = sequence.Stream.GetEnumerator();
-            enumerator.MoveNext();
-            enumerator.Current.Should().BeSameAs(envelope);
+            isNew.Should().BeTrue();
         }
 
         [Fact]
-        public async Task HandleSequence_ChunkForExistingSequence_SequencePushed()
+        public async Task GetSequence_ChunkForExistingSequence_SequenceReturned()
         {
             var envelope1 = new RawInboundEnvelope(
                 new byte[] { 0x01, 0x02, 0x03 },
@@ -105,25 +102,22 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var sequence1 = await reader.HandleSequence(envelope1);
+            var sequence1 = reader.GetSequence(envelope1, out var isNew);
 
             sequence1.Should().NotBeNull();
-            sequence1!.Length.Should().Be(1);
+            sequence1.Should().BeOfType<ChunkSequence>();
             sequence1!.TotalLength.Should().Be(4);
-            using var enumerator = sequence1.Stream.GetEnumerator();
-            enumerator.MoveNext();
-            enumerator.Current.Should().BeSameAs(envelope1);
+            isNew.Should().BeTrue();
 
-            var sequence2 = await reader.HandleSequence(envelope2);
+            var sequence2 =reader.GetSequence(envelope2, out isNew);
 
-            sequence2.Should().BeNull();
-            sequence1!.Length.Should().Be(2);
-            enumerator.MoveNext();
-            enumerator.Current.Should().BeSameAs(envelope2);
+            sequence2.Should().NotBeNull();
+            sequence2.Should().BeSameAs(sequence1);
+            isNew.Should().BeFalse();
         }
 
         [Fact]
-        public async Task HandleSequence_MissingFirstChunk_ChunkIgnored()
+        public async Task GetSequence_MissingFirstChunk_NullReturned()
         {
             var envelope = new RawInboundEnvelope(
                 new byte[] { 0x04, 0x05, 0x06 },
@@ -138,7 +132,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var sequence = await reader.HandleSequence(envelope);
+            var sequence = reader.GetSequence(envelope, out _);
 
             sequence.Should().BeNull();
         }

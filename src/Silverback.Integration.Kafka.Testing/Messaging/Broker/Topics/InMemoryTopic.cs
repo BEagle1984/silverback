@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -123,30 +124,25 @@ namespace Silverback.Messaging.Broker.Topics
         /// <returns>
         ///     A <see cref="Task" /> that completes when all messages have been processed.
         /// </returns>
+        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public async Task WaitUntilAllMessagesAreConsumed(TimeSpan? timeout = null)
         {
-            await Task.Delay(1000);
+            using var cancellationTokenSource = new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(60));
 
-            // TODO: Implement
+            try
+            {
+                while (!cancellationTokenSource.IsCancellationRequested)
+                {
+                    if (_consumers.All(HasFinishedConsuming))
+                        return;
 
-            // timeout ??= TimeSpan.FromSeconds(5);
-            // using var cancellationTokenSource = new CancellationTokenSource(timeout.Value);
-            //
-            // try
-            // {
-            //     while (!cancellationTokenSource.IsCancellationRequested)
-            //     {
-            //         if (_consumers.All(consumer => !consumer.IsConnected || consumer.IsQueueEmpty))
-            //             return;
-            //
-            //         await Task.Delay(50, cancellationTokenSource.Token).ConfigureAwait(false);
-            //     }
-            //
-            // }
-            // catch (OperationCanceledException)
-            // {
-            //     // Ignore
-            // }
+                    await Task.Delay(100, cancellationTokenSource.Token).ConfigureAwait(false);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore
+            }
         }
 
         private bool TryPull(
@@ -160,7 +156,7 @@ namespace Silverback.Messaging.Broker.Topics
                 return false;
             }
 
-            foreach (var partitionOffset in partitionOffsets.OrderBy(partitionOffset => partitionOffset.Offset))
+            foreach (var partitionOffset in partitionOffsets.OrderBy(partitionOffset => partitionOffset.Offset.Value))
             {
                 if (_partitions[partitionOffset.Partition].TryPull(partitionOffset.Offset, out result))
                     return true;
@@ -180,7 +176,7 @@ namespace Silverback.Messaging.Broker.Topics
 
                 Enumerable.Range(0, groupConsumers.Count).ForEach(i => assignments[i] = new List<Partition>());
 
-                for (int partitionIndex = 0; partitionIndex < groupConsumers.Count; partitionIndex++)
+                for (int partitionIndex = 0; partitionIndex < _partitions.Count; partitionIndex++)
                 {
                     assignments[partitionIndex % groupConsumers.Count]
                         .Add(new Partition(partitionIndex));
@@ -191,6 +187,21 @@ namespace Silverback.Messaging.Broker.Topics
                     groupConsumers[i].OnPartitionsAssigned(Name, assignments[i]);
                 }
             }
+        }
+
+        private bool HasFinishedConsuming(MockedKafkaConsumer consumer)
+        {
+            if (consumer.Disposed)
+                return true;
+
+            var partitionsOffsets = _offsets[consumer.GroupId];
+
+            return consumer.Assignment.All(
+                topicPartition =>
+                {
+                    var lastOffset = _partitions[topicPartition.Partition].LastOffset;
+                    return lastOffset < 0 || partitionsOffsets[topicPartition.Partition] > lastOffset;
+                });
         }
     }
 }

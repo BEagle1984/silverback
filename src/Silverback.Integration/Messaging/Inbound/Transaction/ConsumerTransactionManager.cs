@@ -5,40 +5,26 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound.Transaction
 {
     public class ConsumerTransactionManager : IConsumerTransactionManager
     {
-        private readonly IConsumer _consumer;
-
-        private readonly ConcurrentBag<IOffset> _offsets = new ConcurrentBag<IOffset>();
+        private readonly ConsumerPipelineContext _context;
 
         private readonly List<ITransactional> _transactionalServices = new List<ITransactional>();
 
         private bool _isCompleted;
 
-        public ConsumerTransactionManager(IConsumer consumer)
+        public ConsumerTransactionManager(ConsumerPipelineContext context)
         {
-            _consumer = consumer;
-        }
-
-        public void AddOffset(IOffset offset)
-        {
-            Check.NotNull(offset, nameof(offset));
-            EnsureNotCompleted();
-
-            _offsets.Add(offset);
-        }
-
-        public void AddOffsets(IEnumerable<IOffset> offsets)
-        {
-            Check.NotNull(offsets, nameof(offsets));
-            EnsureNotCompleted();
-
-            offsets.ForEach(offset => _offsets.Add(offset));
+            _context = context;
         }
 
         /// <summary>
@@ -72,10 +58,13 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             try
             {
-                // TODO: At least once is ok?
-                await _transactionalServices.ForEachAsync(service => service.Commit())
+                await _context.ServiceProvider.GetRequiredService<IPublisher>()
+                    .PublishAsync(new ConsumingCompletedEvent(_context))
                     .ConfigureAwait(false);
-                await _consumer.Commit(_offsets.ToArray()).ConfigureAwait(false);
+
+                // TODO: At least once is ok?
+                await _transactionalServices.ForEachAsync(service => service.Commit()).ConfigureAwait(false);
+                await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -84,7 +73,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        public async Task Rollback(bool commitOffsets = false)
+        public async Task Rollback(Exception exception, bool commitOffsets = false)
         {
             EnsureNotCompleted();
             _isCompleted = true;
@@ -93,15 +82,19 @@ namespace Silverback.Messaging.Inbound.Transaction
             {
                 try
                 {
+                    await _context.ServiceProvider.GetRequiredService<IPublisher>()
+                        .PublishAsync(new ConsumingAbortedEvent(_context, exception))
+                        .ConfigureAwait(false);
+
                     await _transactionalServices.ForEachAsync(service => service.Rollback())
                         .ConfigureAwait(false);
                 }
                 finally
                 {
                     if (commitOffsets)
-                        await _consumer.Commit(_offsets.ToArray()).ConfigureAwait(false);
+                        await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
                     else
-                        await _consumer.Rollback(_offsets.ToArray()).ConfigureAwait(false);
+                        await _context.Consumer.Rollback(_context.Offsets).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)

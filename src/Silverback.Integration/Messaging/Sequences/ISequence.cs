@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
@@ -38,5 +39,19 @@ namespace Silverback.Messaging.Sequences
         ///     Gets a stream that will be pushed with the messages belonging to the sequence.
         /// </summary>
         IMessageStreamEnumerable<IRawInboundEnvelope> Stream { get; }
+
+        /// <summary>
+        ///     Adds the message to the sequence.
+        /// </summary>
+        /// <param name="envelope">The envelope to be added to the sequence.</param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task AddAsync(IRawInboundEnvelope envelope);
+
+        /// <summary>
+        ///     Signals that an exception occurred and the processing must be aborted.
+        /// </summary>
+        void AbortProcessing();
     }
 }

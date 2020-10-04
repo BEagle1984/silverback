@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences.Chunking
 {
@@ -17,11 +18,17 @@ namespace Silverback.Messaging.Sequences.Chunking
             TotalLength = totalLength;
         }
 
-        public Task AddAsync(int index, IRawInboundEnvelope envelope)
+        /// <inheritdoc cref="ISequence.AddAsync"/>
+        public override Task AddAsync(IRawInboundEnvelope envelope)
         {
-            EnsureOrdering(index);
+            Check.NotNull(envelope, nameof(envelope));
 
-            return AddAsync(envelope);
+            var chunkIndex = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
+                             throw new InvalidOperationException("Chunk index header not found.");
+
+            EnsureOrdering(chunkIndex);
+
+            return base.AddAsync(envelope);
         }
 
         private void EnsureOrdering(int index)

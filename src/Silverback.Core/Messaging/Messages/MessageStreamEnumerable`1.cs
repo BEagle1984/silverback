@@ -6,23 +6,35 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
     /// <inheritdoc cref="IMessageStreamEnumerable{TMessage}" />
+    /// <remarks>
+    /// This implementation is not thread-safe.
+    /// </remarks>
     internal class MessageStreamEnumerable<TMessage>
         : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
     {
         private readonly IMessageStreamProvider? _ownerStreamProvider;
 
-        private readonly Channel<PushedMessage> _channel;
+        private readonly SemaphoreSlim _writeSemaphore = new SemaphoreSlim(1, 1);
+
+        private readonly SemaphoreSlim _readSemaphore = new SemaphoreSlim(0, 1);
+
+        private readonly SemaphoreSlim _processedSemaphore = new SemaphoreSlim(0, 1);
+
+        private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
 
         private int _enumeratorsCount;
 
         private PushedMessage? _current;
+
+        private bool _isFirstMessage = true;
+
+        private bool _isComplete;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MessageStreamEnumerable{TMessage}" /> class.
@@ -30,12 +42,7 @@ namespace Silverback.Messaging.Messages
         /// <param name="ownerStreamProvider">
         ///     The owner of the linked stream.
         /// </param>
-        /// <param name="bufferCapacity">
-        ///     The maximum number of messages that will be stored before blocking the <c>PushAsync</c>
-        ///     operations.
-        /// </param>
-        public MessageStreamEnumerable(IMessageStreamProvider ownerStreamProvider, int bufferCapacity = 1)
-            : this(bufferCapacity)
+        public MessageStreamEnumerable(IMessageStreamProvider ownerStreamProvider)
         {
             _ownerStreamProvider = ownerStreamProvider;
         }
@@ -43,15 +50,8 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Initializes a new instance of the <see cref="MessageStreamEnumerable{TMessage}" /> class.
         /// </summary>
-        /// <param name="bufferCapacity">
-        ///     The maximum number of messages that will be stored before blocking the <c>PushAsync</c>
-        ///     operations.
-        /// </param>
-        public MessageStreamEnumerable(int bufferCapacity = 1)
+        public MessageStreamEnumerable()
         {
-            _channel = bufferCapacity > 0
-                ? Channel.CreateBounded<PushedMessage>(bufferCapacity)
-                : Channel.CreateUnbounded<PushedMessage>();
         }
 
         /// <inheritdoc cref="IMessageStreamEnumerable.MessageType" />
@@ -62,13 +62,38 @@ namespace Silverback.Messaging.Messages
         {
             Check.NotNull(pushedMessage, nameof(pushedMessage));
 
-            await _channel
-                .Writer.WriteAsync(pushedMessage, cancellationToken)
-                .ConfigureAwait(false);
+            using var linkedTokenSource = LinkWithAbortCancellationTokenSource(cancellationToken);
+
+            await _writeSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+
+            if (_isComplete)
+                throw new InvalidOperationException("The stream has been marked as complete.");
+
+            _current = pushedMessage;
+            SafelyRelease(_readSemaphore);
+
+            await _processedSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+            _writeSemaphore.Release();
         }
 
-        /// <inheritdoc cref="IMessageStreamEnumerable.Complete" />
-        public void Complete() => _channel.Writer.Complete();
+        /// <inheritdoc cref="IMessageStreamEnumerable.Abort" />
+        public void Abort()
+        {
+            _isComplete = true;
+            _abortCancellationTokenSource.Cancel();
+        }
+
+        /// <inheritdoc cref="IMessageStreamEnumerable.CompleteAsync" />
+        public async Task CompleteAsync(CancellationToken cancellationToken = default)
+        {
+            _isComplete = true;
+
+            await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+            SafelyRelease(_readSemaphore);
+
+            _writeSemaphore.Release();
+        }
 
         /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
         public IEnumerator<TMessage> GetEnumerator() =>
@@ -78,15 +103,15 @@ namespace Silverback.Messaging.Messages
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
             EnumerateExclusively(() => GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken));
 
+        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
@@ -99,13 +124,28 @@ namespace Silverback.Messaging.Messages
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-                Complete();
+            {
+                AsyncHelper.RunSynchronously(() => CompleteAsync());
+
+                _readSemaphore.Dispose();
+                _writeSemaphore.Dispose();
+                _processedSemaphore.Dispose();
+            }
+        }
+
+        private static void SafelyRelease(SemaphoreSlim semaphore)
+        {
+            lock (semaphore)
+            {
+                if (semaphore.CurrentCount == 0)
+                    semaphore.Release();
+            }
         }
 
         private IEnumerable<TMessage> GetEnumerable()
         {
             // TODO: Check this pattern!
-            while (AsyncHelper.RunSynchronously(() => TryReadAsync(CancellationToken.None)))
+            while (AsyncHelper.RunSynchronously(() => WaitForNext(CancellationToken.None)))
             {
                 if (_current == null)
                     continue;
@@ -124,7 +164,7 @@ namespace Silverback.Messaging.Messages
         private async IAsyncEnumerable<TMessage> GetAsyncEnumerable(
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            while (await TryReadAsync(cancellationToken).ConfigureAwait(false))
+            while (await WaitForNext(cancellationToken).ConfigureAwait(false))
             {
                 if (_current == null)
                     continue;
@@ -153,25 +193,26 @@ namespace Silverback.Messaging.Messages
             return action.Invoke();
         }
 
-        private async Task<bool> TryReadAsync(CancellationToken cancellationToken)
+        private async Task<bool> WaitForNext(CancellationToken cancellationToken)
         {
-            CancellationTokenSource? linkedTokenSource = null;
-
-            try
+            if (!_isFirstMessage)
             {
-                await _channel.Reader.WaitToReadAsync(cancellationToken)
-                    .ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                // Ignore
-            }
-            finally
-            {
-                linkedTokenSource?.Dispose();
+                _current = null;
+                SafelyRelease(_processedSemaphore);
             }
 
-            return _channel.Reader.TryRead(out _current);
+            using var linkedTokenSource = LinkWithAbortCancellationTokenSource(cancellationToken);
+
+            await _readSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+
+            _isFirstMessage = false;
+
+            return _current != null;
         }
+
+        private CancellationTokenSource LinkWithAbortCancellationTokenSource(CancellationToken cancellationToken) =>
+            CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken,
+                _abortCancellationTokenSource.Token);
     }
 }

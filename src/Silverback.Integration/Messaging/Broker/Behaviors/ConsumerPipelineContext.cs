@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -95,5 +97,10 @@ namespace Silverback.Messaging.Broker.Behaviors
         ///     Gets or sets the <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </summary>
         public IServiceProvider ServiceProvider { get; set; }
+
+        /// <summary>
+        ///     Gets the offsets of the messages being handled in this context (either the single message or the sequence).
+        /// </summary>
+        public IReadOnlyCollection<IOffset> Offsets => Envelope.Sequence?.Offsets ?? new[] { Envelope.Offset };
     }
 }

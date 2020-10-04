@@ -125,6 +125,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
+        // TODO: DELETE?
         public static IBrokerOptionsBuilder AddInMemoryChunkStore(
             this IBrokerOptionsBuilder brokerOptionsBuilder,
             TimeSpan? retention = null,

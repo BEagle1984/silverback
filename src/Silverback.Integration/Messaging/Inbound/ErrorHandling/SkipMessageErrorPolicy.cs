@@ -65,7 +65,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                     "The message(s) will be skipped.",
                     context.Envelope);
 
-                await context.TransactionManager.Rollback(true).ConfigureAwait(false);
+                await context.TransactionManager.Rollback(exception, true).ConfigureAwait(false);
 
                 return true;
             }
