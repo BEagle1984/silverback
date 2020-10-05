@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -12,15 +14,19 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
 {
     public class SpyBrokerBehavior : IProducerBehavior, IConsumerBehavior
     {
-        public IList<IOutboundEnvelope> OutboundEnvelopes { get; } = new List<IOutboundEnvelope>();
+        private readonly ConcurrentBag<IOutboundEnvelope> _outboundEnvelopes = new ConcurrentBag<IOutboundEnvelope>();
 
-        public IList<IInboundEnvelope> InboundEnvelopes { get; } = new List<IInboundEnvelope>();
+        private readonly ConcurrentBag<IInboundEnvelope> _inboundEnvelopes = new ConcurrentBag<IInboundEnvelope>();
+
+        public IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes => _outboundEnvelopes.ToList();
+
+        public IReadOnlyList<IInboundEnvelope> InboundEnvelopes => _inboundEnvelopes.ToList();
 
         public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Consumer.Publisher - 1;
 
         public Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            OutboundEnvelopes.Add(context.Envelope);
+            _outboundEnvelopes.Add(context.Envelope);
 
             return next(context);
         }
@@ -29,7 +35,7 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
         {
-            InboundEnvelopes.Add((IInboundEnvelope)context.Envelope);
+            _inboundEnvelopes.Add((IInboundEnvelope)context.Envelope);
 
             return next(context);
         }

@@ -192,12 +192,7 @@ namespace Silverback.Messaging.Broker
 
             //await _messageStreamProvider.PushAsync(envelope).ConfigureAwait(false);
 
-            await ExecutePipeline(
-                    new ConsumerPipelineContext(
-                        envelope,
-                        this,
-                        _serviceProvider))
-                .ConfigureAwait(false);
+            await ExecutePipeline(new ConsumerPipelineContext(envelope, this, _serviceProvider)).ConfigureAwait(false);
         }
 
         /// <summary>

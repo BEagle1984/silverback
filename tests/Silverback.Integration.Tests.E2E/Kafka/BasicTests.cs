@@ -151,7 +151,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await Task.WhenAll(
+                GetTopic("topic1").WaitUntilAllMessagesAreConsumed(),
+                GetTopic("topic2").WaitUntilAllMessagesAreConsumed());
 
             Subscriber.OutboundEnvelopes.Count.Should().Be(10);
             Subscriber.InboundEnvelopes.Count.Should().Be(10);
@@ -211,7 +213,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await Task.WhenAll(
+                GetTopic("topic1").WaitUntilAllMessagesAreConsumed(),
+                GetTopic("topic2").WaitUntilAllMessagesAreConsumed());
 
             Subscriber.OutboundEnvelopes.Count.Should().Be(10);
             Subscriber.InboundEnvelopes.Count.Should().Be(10);
@@ -221,11 +225,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var receivedContentsTopic1 =
                 SpyBehavior.InboundEnvelopes
-                    .Where(envelope => envelope.Endpoint.Name == "topic1")
+                    .Where(envelope => envelope.ActualEndpointName == "topic1")
                     .Select(envelope => ((TestEventOne)envelope.Message!).Content);
             var receivedContentsTopic2 =
                 SpyBehavior.InboundEnvelopes
-                    .Where(envelope => envelope.Endpoint.Name == "topic2")
+                    .Where(envelope => envelope.ActualEndpointName == "topic2")
                     .Select(envelope => ((TestEventOne)envelope.Message!).Content);
 
             var expectedMessages =
@@ -246,9 +250,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("topic1"))
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("topic1")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         Configuration = new KafkaConsumerConfig
                                         {
@@ -257,7 +261,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         }
                                     })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint("topic1")
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
                                         Configuration = new KafkaConsumerConfig
                                         {

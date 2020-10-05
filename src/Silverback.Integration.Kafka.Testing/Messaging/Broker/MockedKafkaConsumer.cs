@@ -69,17 +69,43 @@ namespace Silverback.Messaging.Broker
 
         public ConsumeResult<byte[]?, byte[]?> Consume(CancellationToken cancellationToken = default)
         {
-            var topicPair = _currentOffsets.Single(); // TODO: Support multiple topics per consumer
+            using var localCancellationTokenSource = new CancellationTokenSource();
+            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken,
+                localCancellationTokenSource.Token);
 
-            var result = _topics.GetTopic(topicPair.Key).Pull(
-                GroupId,
-                topicPair.Value.Select(
-                        partitionPair => new TopicPartitionOffset(
-                            topicPair.Key,
-                            partitionPair.Key,
-                            partitionPair.Value))
-                    .ToList(),
-                cancellationToken);
+            // Process the topics starting from the one that consumed less messages
+            var topicPairs = _currentOffsets
+                .OrderBy(topicPair => topicPair.Value.Sum(partitionPair => partitionPair.Value.Value));
+
+            var tasks = new List<Task<ConsumeResult<byte[]?, byte[]?>>>();
+
+            foreach (var topicPair in topicPairs)
+            {
+                var task = Task.Run(
+                    () => _topics.GetTopic(topicPair.Key).Pull(
+                        GroupId,
+                        topicPair.Value.Select(
+                                partitionPair => new TopicPartitionOffset(
+                                    topicPair.Key,
+                                    partitionPair.Key,
+                                    partitionPair.Value))
+                            .ToList(),
+                        linkedTokenSource.Token));
+
+                tasks.Add(task);
+
+                task.Wait(10, linkedTokenSource.Token);
+
+                if (task.IsCompleted)
+                    break;
+            }
+
+            var completedTaskIndex = Task.WaitAny(tasks.ToArray());
+            cancellationToken.ThrowIfCancellationRequested();
+            localCancellationTokenSource.Cancel();
+
+            var result = tasks[completedTaskIndex].Result;
 
             _currentOffsets[result.Topic][result.Partition] = result.Offset + 1;
 
