@@ -49,6 +49,9 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.SequenceId" />
         public object SequenceId { get; }
 
+        /// <inheritdoc cref="ISequence.IsNew" />
+        public bool IsNew { get; internal set; } = true;
+
         /// <inheritdoc cref="ISequence.Offsets" />
         public IReadOnlyList<IOffset> Offsets => _offsets;
 

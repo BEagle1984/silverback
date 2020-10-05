@@ -56,16 +56,14 @@ namespace Silverback.Messaging.Sequences
 
             // Store the original envelope in case it gets replaced in the GetSequence method
             var originalEnvelope = context.Envelope;
-            var sequence = sequenceReader.GetSequence(context, out var isNew);
+            var sequence = sequenceReader.GetSequence(context);
 
             if (sequence != null)
             {
                 ((RawInboundEnvelope)context.Envelope).Sequence = sequence;
 
-                if (isNew)
+                if (sequence.IsNew)
                 {
-                    context.IsSequenceNew = true;
-
                     await next(context).ConfigureAwait(false);
 
                     CheckPrematureCompletion(context);

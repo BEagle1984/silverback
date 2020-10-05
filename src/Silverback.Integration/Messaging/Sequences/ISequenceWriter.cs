@@ -6,10 +6,33 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Sequences
 {
+    /// <summary>
+    ///     Can set the headers used to match the message with the sequence it belongs to. If needed it can also
+    ///     split a single message into multiple messages.
+    /// </summary>
     public interface ISequenceWriter
     {
-        bool MustCreateSequence(IOutboundEnvelope envelope);
+        /// <summary>
+        ///     Checks whether this writer can and must handle the specified message.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The envelope containing the message to be handled.
+        /// </param>
+        /// <returns>
+        ///     A value indicating whether this writer can and must handle the message.
+        /// </returns>
+        bool CanHandle(IOutboundEnvelope envelope);
 
-        IAsyncEnumerable<IOutboundEnvelope> CreateSequence(IOutboundEnvelope envelope);
+        /// <summary>
+        ///     Sets the headers used to match the message with the sequence it belongs to. If needed it can also
+        ///     split a single message into multiple messages.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The envelope containing the message to be handled.
+        /// </param>
+        /// <returns>
+        ///     The envelopes containing the messages to be produced.
+        /// </returns>
+        IAsyncEnumerable<IOutboundEnvelope> ProcessMessage(IOutboundEnvelope envelope);
     }
 }

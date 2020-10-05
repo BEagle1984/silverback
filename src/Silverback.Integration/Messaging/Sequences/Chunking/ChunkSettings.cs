@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Configuration;
 
-namespace Silverback.Messaging.Chunking
+namespace Silverback.Messaging.Sequences.Chunking
 {
     /// <summary>
     ///     The chunking settings. To enable chunking just set the <c>Size</c> property to the desired (maximum)

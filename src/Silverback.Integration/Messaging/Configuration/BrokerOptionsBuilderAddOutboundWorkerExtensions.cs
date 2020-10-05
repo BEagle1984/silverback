@@ -6,7 +6,6 @@ using Microsoft.Extensions.Hosting;
 using Silverback.Background;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Outbound.Deferred;
 using Silverback.Messaging.Outbound.Routing;

@@ -138,7 +138,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 new MessageHeader("x-message-id", messageId ?? Guid.NewGuid()),
             };
 
-            return new RawInboundEnvelope(Array.Empty<byte>(), headers, endpoint, endpoint.Name);
+            return new RawInboundEnvelope(
+                Array.Empty<byte>(),
+                headers,
+                endpoint,
+                endpoint.Name,
+                new TestOffset());
         }
     }
 }

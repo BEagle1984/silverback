@@ -14,7 +14,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
-    ///     This policy moves the failed messages to the configured endpoint.
+    ///     This policy moves the message that failed to be processed to the configured endpoint.
     /// </summary>
     public class MoveMessageErrorPolicy : ErrorPolicyBase
     {

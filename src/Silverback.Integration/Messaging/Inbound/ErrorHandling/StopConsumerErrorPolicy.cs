@@ -11,6 +11,10 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Inbound.ErrorHandling
 {
+    /// <summary>
+    ///     This is the default policy and it stops the consumer when an exception is thrown during the
+    ///     message processing.
+    /// </summary>
     public class StopConsumerErrorPolicy : ErrorPolicyBase
     {
         /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />

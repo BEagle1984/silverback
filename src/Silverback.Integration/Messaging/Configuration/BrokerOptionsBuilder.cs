@@ -4,7 +4,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Outbound;
 using Silverback.Util;
 

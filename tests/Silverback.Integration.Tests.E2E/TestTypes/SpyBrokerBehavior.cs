@@ -14,9 +14,9 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
 {
     public class SpyBrokerBehavior : IProducerBehavior, IConsumerBehavior
     {
-        private readonly ConcurrentBag<IOutboundEnvelope> _outboundEnvelopes = new ConcurrentBag<IOutboundEnvelope>();
+        private readonly List<IOutboundEnvelope> _outboundEnvelopes = new List<IOutboundEnvelope>();
 
-        private readonly ConcurrentBag<IInboundEnvelope> _inboundEnvelopes = new ConcurrentBag<IInboundEnvelope>();
+        private readonly List<IInboundEnvelope> _inboundEnvelopes = new List<IInboundEnvelope>();
 
         public IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes => _outboundEnvelopes.ToList();
 
@@ -26,7 +26,10 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
 
         public Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
-            _outboundEnvelopes.Add(context.Envelope);
+            lock (_outboundEnvelopes)
+            {
+                _outboundEnvelopes.Add(context.Envelope);
+            }
 
             return next(context);
         }
@@ -35,7 +38,10 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
         {
-            _inboundEnvelopes.Add((IInboundEnvelope)context.Envelope);
+            lock (_inboundEnvelopes)
+            {
+                _inboundEnvelopes.Add((IInboundEnvelope)context.Envelope);
+            }
 
             return next(context);
         }

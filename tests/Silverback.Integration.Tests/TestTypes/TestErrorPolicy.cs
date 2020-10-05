@@ -32,7 +32,7 @@ namespace Silverback.Tests.Integration.TestTypes
             return _implementation;
         }
 
-        public class TestErrorPolicyImplementation : ErrorPolicyImplementation
+        private class TestErrorPolicyImplementation : ErrorPolicyImplementation
         {
             public TestErrorPolicyImplementation(
                 int? maxFailedAttempts,

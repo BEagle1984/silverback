@@ -25,7 +25,8 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                     { DefaultMessageHeaders.ChunksCount, "4" }
                 },
                 new TestConsumerEndpoint("test"),
-                "test");
+                "test",
+                new TestOffset());
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
@@ -44,7 +45,8 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                     { DefaultMessageHeaders.MessageId, "123" },
                 },
                 new TestConsumerEndpoint("test"),
-                "test");
+                "test",
+                new TestOffset());
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
@@ -65,15 +67,16 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                     { DefaultMessageHeaders.ChunksCount, "4" },
                 },
                 new TestConsumerEndpoint("test"),
-                "test");
+                "test",
+                new TestOffset());
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var sequence = reader.GetSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope), out var isNew);
+            var sequence = reader.GetSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope));
 
             sequence.Should().NotBeNull();
             sequence!.TotalLength.Should().Be(4);
-            isNew.Should().BeTrue();
+            sequence.IsNew.Should().BeTrue();
         }
 
         [Fact]
@@ -88,7 +91,8 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                     { DefaultMessageHeaders.ChunksCount, "4" },
                 },
                 new TestConsumerEndpoint("test"),
-                "test");
+                "test",
+                new TestOffset());
             var envelope2 = new RawInboundEnvelope(
                 new byte[] { 0x04, 0x05, 0x06 },
                 new MessageHeaderCollection
@@ -98,24 +102,23 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                     { DefaultMessageHeaders.ChunksCount, "4" },
                 },
                 new TestConsumerEndpoint("test"),
-                "test");
+                "test",
+                new TestOffset());
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var sequence1 = reader.GetSequence(
-                ConsumerPipelineContextHelper.CreateSubstitute(envelope1),
-                out var isNew);
+            var sequence1 = reader.GetSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope1));
 
             sequence1.Should().NotBeNull();
             sequence1.Should().BeOfType<ChunkSequence>();
             sequence1!.TotalLength.Should().Be(4);
-            isNew.Should().BeTrue();
+            sequence1.IsNew.Should().BeTrue();
 
-            var sequence2 = reader.GetSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope2), out isNew);
+            var sequence2 = reader.GetSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope2));
 
             sequence2.Should().NotBeNull();
             sequence2.Should().BeSameAs(sequence1);
-            isNew.Should().BeFalse();
+            sequence2!.IsNew.Should().BeFalse();
         }
 
         [Fact]
@@ -130,11 +133,12 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                     { DefaultMessageHeaders.ChunksCount, "4" },
                 },
                 new TestConsumerEndpoint("test"),
-                "test");
+                "test",
+                new TestOffset());
 
             var reader = new ChunkSequenceReader(new DefaultSequenceStore<ChunkSequence>());
 
-            var sequence = reader.GetSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope), out _);
+            var sequence = reader.GetSequence(ConsumerPipelineContextHelper.CreateSubstitute(envelope));
 
             sequence.Should().BeNull();
         }

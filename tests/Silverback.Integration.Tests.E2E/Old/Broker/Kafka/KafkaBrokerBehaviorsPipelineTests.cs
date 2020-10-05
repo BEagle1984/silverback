@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
-using Silverback.Messaging.Chunking;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -33,10 +33,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
@@ -65,10 +62,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
@@ -99,10 +93,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
@@ -133,8 +124,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                         .UseModel()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddMockedKafka() // <- this adds all extra behaviors, even though the InMemoryBroker will be used
-                                .AddInMemoryChunkStore())
+                                .AddMockedKafka()) // <- this adds all extra behaviors, even though the InMemoryBroker will be used
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(

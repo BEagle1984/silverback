@@ -16,13 +16,11 @@ namespace Silverback.Messaging.Messages
             Stream? rawMessage,
             IEnumerable<MessageHeader>? headers,
             IEndpoint endpoint,
-            IOffset? offset,
             IDictionary<string, string>? additionalLogData)
         {
             RawMessage = rawMessage;
             Headers = new MessageHeaderCollection(headers);
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
-            Offset = offset;
             AdditionalLogData = additionalLogData ?? new Dictionary<string, string>();
         }
 
@@ -33,7 +31,5 @@ namespace Silverback.Messaging.Messages
         public MessageHeaderCollection Headers { get; }
 
         public Stream? RawMessage { get; set; }
-
-        public IOffset? Offset { get; internal set; }
     }
 }

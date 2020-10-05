@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
@@ -215,7 +214,7 @@ namespace Silverback.Messaging.Broker
         ///     The endpoint.
         /// </param>
         /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
@@ -236,7 +235,7 @@ namespace Silverback.Messaging.Broker
         ///     The endpoint.
         /// </param>
         /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be

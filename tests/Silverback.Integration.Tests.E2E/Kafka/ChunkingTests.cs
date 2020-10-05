@@ -3,17 +3,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
-using Silverback.Messaging.Chunking;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -82,6 +81,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(10));
             SpyBehavior.InboundEnvelopes.Count.Should().Be(5);
+
+            for (int i = 0; i < SpyBehavior.OutboundEnvelopes.Count; i++)
+            {
+                var firstEnvelope = SpyBehavior.OutboundEnvelopes[(i / 3) * 3];
+                var envelope = SpyBehavior.OutboundEnvelopes[i];
+
+                if (envelope == firstEnvelope)
+                {
+                    envelope.Headers.GetValue(DefaultMessageHeaders.FirstChunkOffset).Should().BeNull();
+                }
+                else
+                {
+                    envelope.Headers.GetValue(DefaultMessageHeaders.FirstChunkOffset).Should()
+                        .Be(firstEnvelope.Offset!.Value);
+                }
+            }
 
             var receivedContents =
                 SpyBehavior.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).Content);
@@ -255,8 +270,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Subscriber.InboundEnvelopes.Count.Should().Be(2);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
-            SpyBehavior.OutboundEnvelopes.ForEach(
-                envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
+            SpyBehavior.OutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
             SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
 
             SpyBehavior.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");

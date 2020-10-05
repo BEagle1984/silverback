@@ -8,16 +8,26 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences.Chunking
 {
+    /// <summary>
+    ///     Handles the chunked messages.
+    /// </summary>
     public class ChunkSequenceReader : ISequenceReader
     {
         // TODO: The store should be scoped to the topic (sequenceId may not be globally unique)
         private readonly ISequenceStore<ChunkSequence> _sequenceStore;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChunkSequenceReader"/> class.
+        /// </summary>
+        /// <param name="sequenceStore">
+        ///    The <see cref="ISequenceStore{ChunkSequence}"/> to store the temporary sequences.
+        /// </param>
         public ChunkSequenceReader(ISequenceStore<ChunkSequence> sequenceStore)
         {
             _sequenceStore = sequenceStore;
         }
 
+        /// <inheritdoc cref="ISequenceReader.CanHandle"/>
         public bool CanHandle(ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
@@ -25,7 +35,8 @@ namespace Silverback.Messaging.Sequences.Chunking
             return context.Envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex);
         }
 
-        public ISequence? GetSequence(ConsumerPipelineContext context, out bool isNew)
+        /// <inheritdoc cref="ISequenceReader.GetSequence"/>
+        public ISequence? GetSequence(ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 
@@ -47,13 +58,10 @@ namespace Silverback.Messaging.Sequences.Chunking
 
                 // Replace the envelope with the stream that will be pushed with all the chunks.
                 context.Envelope = context.Envelope.CloneReplacingStream(new ChunkStream(sequence.Stream));
-
-                isNew = true;
             }
             else
             {
                 sequence = _sequenceStore.Get(messageId);
-                isNew = false;
             }
 
             // Skip the message if a sequence cannot be found. It probably means that the consumer started in the
@@ -66,7 +74,10 @@ namespace Silverback.Messaging.Sequences.Chunking
             return sequence;
         }
 
-        private static ChunkSequence CreateNewSequence(string messageId, ConsumerPipelineContext context, ISequenceStore store)
+        private static ChunkSequence CreateNewSequence(
+            string messageId,
+            ConsumerPipelineContext context,
+            ISequenceStore store)
         {
             var chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
 

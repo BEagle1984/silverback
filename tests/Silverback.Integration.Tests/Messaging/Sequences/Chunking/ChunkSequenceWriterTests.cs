@@ -4,7 +4,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Silverback.Messaging.Chunking;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.TestTypes;
@@ -31,7 +30,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 });
 
             var writer = new ChunkSequenceWriter();
-            var result = writer.MustCreateSequence(envelope);
+            var result = writer.CanHandle(envelope);
 
             result.Should().BeTrue();
         }
@@ -52,7 +51,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 });
 
             var writer = new ChunkSequenceWriter();
-            var result = writer.MustCreateSequence(envelope);
+            var result = writer.CanHandle(envelope);
 
             result.Should().BeFalse();
         }
@@ -67,13 +66,13 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 new TestProducerEndpoint("test"));
 
             var writer = new ChunkSequenceWriter();
-            var result = writer.MustCreateSequence(envelope);
+            var result = writer.CanHandle(envelope);
 
             result.Should().BeFalse();
         }
 
         [Fact]
-        public async Task CreateSequence_LargeMessage_ChunkEnvelopesReturned()
+        public async Task ProcessMessage_LargeMessage_ChunkEnvelopesReturned()
         {
             var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10 };
             var sourceEnvelope = new OutboundEnvelope(
@@ -94,7 +93,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 true);
 
             var writer = new ChunkSequenceWriter();
-            var envelopes = await writer.CreateSequence(sourceEnvelope).ToListAsync();
+            var envelopes = await writer.ProcessMessage(sourceEnvelope).ToListAsync();
 
             envelopes.Count.Should().Be(4);
             envelopes.ForEach(envelope => envelope.Endpoint.Should().BeSameAs(sourceEnvelope.Endpoint));

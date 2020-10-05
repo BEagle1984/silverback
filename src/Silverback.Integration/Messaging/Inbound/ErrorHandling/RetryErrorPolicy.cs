@@ -13,7 +13,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
-    ///     This policy retries the handler method multiple times in case of exception. An optional delay can be
+    ///     This policy retries to process the message that previously failed to be to processed. An optional delay can be
     ///     specified.
     /// </summary>
     /// TODO: Exponential backoff variant

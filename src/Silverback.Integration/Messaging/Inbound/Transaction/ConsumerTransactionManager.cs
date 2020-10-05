@@ -12,12 +12,19 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound.Transaction
 {
+    /// <inheritdoc cref="IConsumerTransactionManager"/>
     public class ConsumerTransactionManager : IConsumerTransactionManager
     {
         private readonly ConsumerPipelineContext _context;
 
         private readonly List<ITransactional> _transactionalServices = new List<ITransactional>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConsumerTransactionManager"/> class.
+        /// </summary>
+        /// <param name="context">
+        ///     The current <see cref="ConsumerPipelineContext"/>.
+        /// </param>
         public ConsumerTransactionManager(ConsumerPipelineContext context)
         {
             _context = context;
@@ -52,6 +59,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
+        /// <inheritdoc cref="IConsumerTransactionManager.Commit" />
         public async Task Commit()
         {
             EnsureNotCompleted();
@@ -66,6 +74,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
         }
 
+        /// <inheritdoc cref="IConsumerTransactionManager.Rollback" />
         public async Task Rollback(Exception exception, bool commitOffsets = false)
         {
             EnsureNotCompleted();

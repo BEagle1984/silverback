@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
 using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Chunking;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
@@ -44,10 +44,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     services => services
                         .AddLogging()
                         .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e"))
@@ -83,10 +80,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     services => services
                         .AddLogging()
                         .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e"))
@@ -120,10 +114,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     services => services
                         .AddLogging()
                         .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e"))
@@ -160,10 +151,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     services => services
                         .AddLogging()
                         .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IBinaryFileMessage>(
@@ -200,10 +188,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     services => services
                         .AddLogging()
                         .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddInbound(
@@ -237,10 +222,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     services => services
                         .AddLogging()
                         .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddInbound(
@@ -278,10 +260,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     services => services
                         .AddLogging()
                         .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddInbound(
@@ -327,10 +306,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     services => services
                         .AddLogging()
                         .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IBinaryFileMessage>(
@@ -393,10 +369,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                     services => services
                         .AddLogging()
                         .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IBinaryFileMessage>(

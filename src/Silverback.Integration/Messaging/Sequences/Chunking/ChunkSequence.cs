@@ -9,17 +9,36 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences.Chunking
 {
+    /// <summary>
+    ///     Represents a sequence of chunks that form a message.
+    /// </summary>
     public class ChunkSequence : Sequence
     {
         private int? _lastIndex;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ChunkSequence" /> class.
+        /// </summary>
+        /// <param name="sequenceId">
+        ///     The identifier that is used to match the consumed messages with their belonging sequence.
+        /// </param>
+        /// <param name="totalLength">
+        ///     The expected total length of the sequence.
+        /// </param>
+        /// <param name="context">
+        ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the
+        ///     sequence gets published to the internal bus.
+        /// </param>
+        /// <param name="store">
+        ///     The <see cref="ISequenceStore" /> that references this sequence.
+        /// </param>
         public ChunkSequence(object sequenceId, int totalLength, ConsumerPipelineContext context, ISequenceStore store)
             : base(sequenceId, context, store)
         {
             TotalLength = totalLength;
         }
 
-        /// <inheritdoc cref="ISequence.AddAsync"/>
+        /// <inheritdoc cref="ISequence.AddAsync" />
         public override Task AddAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));

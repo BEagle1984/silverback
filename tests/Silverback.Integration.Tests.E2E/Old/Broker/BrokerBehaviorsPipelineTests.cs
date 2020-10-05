@@ -2,20 +2,17 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
 using Silverback.Messaging.Batch;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Chunking;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
@@ -51,10 +48,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
@@ -102,10 +96,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
@@ -164,10 +155,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
@@ -208,10 +196,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
@@ -247,7 +232,6 @@ namespace Silverback.Tests.Integration.E2E.Broker
         }
 
 
-
         [Fact]
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task EncryptionAndChunking_EncryptedAndChunkedThenAggregatedAndDecrypted()
@@ -267,10 +251,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(

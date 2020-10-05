@@ -26,10 +26,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<TestEventOne>(new KafkaProducerEndpoint("test-e2e-one"))
@@ -59,10 +56,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<TestEventOne>(
@@ -91,10 +85,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<TestPrioritizedCommand, TestPrioritizedOutboundRouter>())

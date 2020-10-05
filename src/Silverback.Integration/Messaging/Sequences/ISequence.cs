@@ -20,6 +20,12 @@ namespace Silverback.Messaging.Sequences
         object SequenceId { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether the first message in the sequence was consumed and this instance was
+        ///     just created.
+        /// </summary>
+        bool IsNew { get; }
+
+        /// <summary>
         ///     Gets the length of the sequence so far.
         /// </summary>
         int Length { get; }

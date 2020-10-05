@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -29,7 +28,8 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 rawContent,
                 headers,
                 TestConsumerEndpoint.GetDefault(),
-                "test");
+                "test",
+                new TestOffset());
 
             IRawInboundEnvelope? result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
@@ -56,7 +56,8 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 rawContent,
                 null,
                 TestConsumerEndpoint.GetDefault(),
-                "test");
+                "test",
+                new TestOffset());
 
             IRawInboundEnvelope? result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(
@@ -87,7 +88,8 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 rawContent,
                 headers,
                 endpoint,
-                "test");
+                "test",
+                new TestOffset());
 
             IRawInboundEnvelope? result = null;
             await new BinaryFileHandlerConsumerBehavior().Handle(

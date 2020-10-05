@@ -34,6 +34,21 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorPolicyImplementation" /> class.
         /// </summary>
+        /// <param name="maxFailedAttempts">
+        ///     The number of times this policy should be applied to the same message in case of multiple failed
+        ///     attempts.
+        /// </param>
+        /// <param name="excludedExceptions">
+        ///     The collection of exception types this policy doesn't have to be applied to.
+        /// </param>
+        /// <param name="includedExceptions">
+        ///     The collection of exception types this policy have to be applied to.
+        /// </param>
+        /// <param name="applyRule">The custom apply rule function.</param>
+        /// <param name="messageToPublishFactory">
+        ///     The factory that builds the message to be published after the policy
+        ///     is applied.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" />.
         /// </param>

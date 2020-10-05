@@ -10,11 +10,11 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
-using Silverback.Messaging.Chunking;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
@@ -167,7 +167,6 @@ namespace Silverback.Tests.Integration.E2E.Connectors
                         .WithConnectionToMessageBroker(
                             options => options
                                 .AddMockedKafka()
-                                .AddInMemoryChunkStore()
                                 .AddDbOutboundConnector()
                                 .AddDbOutboundWorker(TimeSpan.FromMilliseconds(100)))
                         .AddEndpoints(

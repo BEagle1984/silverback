@@ -22,10 +22,6 @@ namespace Silverback.Messaging.Broker
 
         private readonly ISilverbackIntegrationLogger<Consumer> _logger;
 
-        // private readonly MessageStreamProvider<RawInboundEnvelope> _messageStreamProvider;
-        //
-        // private readonly IMessageStreamEnumerable<RawInboundEnvelope> _messageStream;
-
         private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
 
         /// <summary>
@@ -61,16 +57,6 @@ namespace Silverback.Messaging.Broker
             _logger = Check.NotNull(logger, nameof(logger));
 
             Endpoint.Validate();
-
-            // TODO: Is this useless? Remove?
-            // _messageStreamProvider = new MessageStreamProvider<RawInboundEnvelope>();
-            // _messageStream = _messageStreamProvider.CreateStream<RawInboundEnvelope>();
-            //
-            // Task.Factory.StartNew(
-            //     ProcessMessageStream,
-            //     CancellationToken.None,
-            //     TaskCreationOptions.None,
-            //     TaskScheduler.Current);
         }
 
         /// <inheritdoc cref="IConsumer.Broker" />
@@ -121,8 +107,6 @@ namespace Silverback.Messaging.Broker
                 return;
 
             DisconnectCore();
-
-            //AsyncHelper.RunSynchronously(() => _messageStreamProvider.CompleteAsync());
 
             IsConnected = false;
             _statusInfo.SetDisconnected();
@@ -177,7 +161,7 @@ namespace Silverback.Messaging.Broker
             byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
             string sourceEndpointName,
-            IOffset? offset,
+            IOffset offset,
             IDictionary<string, string>? additionalLogData)
         {
             var envelope = new RawInboundEnvelope(
@@ -190,9 +174,9 @@ namespace Silverback.Messaging.Broker
 
             _statusInfo.RecordConsumedMessage(offset);
 
-            //await _messageStreamProvider.PushAsync(envelope).ConfigureAwait(false);
+            var consumerPipelineContext = new ConsumerPipelineContext(envelope, this, _serviceProvider);
 
-            await ExecutePipeline(new ConsumerPipelineContext(envelope, this, _serviceProvider)).ConfigureAwait(false);
+            await ExecutePipeline(consumerPipelineContext).ConfigureAwait(false);
         }
 
         /// <summary>

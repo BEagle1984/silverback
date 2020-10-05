@@ -46,10 +46,13 @@ namespace Silverback.Messaging.Inbound.Transaction
                     await AwaitProcessingAndCommit(context).ConfigureAwait(false);
                 else if (context.Sequence.IsComplete || (context.ProcessingTask?.IsCompleted ?? false))
                     await AwaitProcessingAndCommit(context.Sequence.Context).ConfigureAwait(false);
+                else if (context != context.Sequence.Context)
+                    context.Dispose();
             }
             catch (Exception exception)
             {
                 context.Dispose();
+                context.Sequence?.Context.Dispose();
 
                 if (!await HandleException(context, exception).ConfigureAwait(false))
                     throw;

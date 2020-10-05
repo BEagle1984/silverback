@@ -30,7 +30,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new byte[5],
                 null,
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
+                TestConsumerEndpoint.GetDefault().Name,
+                new TestOffset());
 
             try
             {
@@ -59,7 +60,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new byte[5],
                 null,
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
+                TestConsumerEndpoint.GetDefault().Name,
+                new TestOffset());
 
             Func<Task> act = () => new FatalExceptionLoggerConsumerBehavior(logger).Handle(
                 new ConsumerPipelineContext(

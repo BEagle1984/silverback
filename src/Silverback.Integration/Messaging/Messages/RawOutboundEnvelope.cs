@@ -25,10 +25,13 @@ namespace Silverback.Messaging.Messages
             IProducerEndpoint endpoint,
             IOffset? offset = null,
             IDictionary<string, string>? additionalLogData = null)
-            : base(rawMessage, headers, endpoint, offset, additionalLogData)
+            : base(rawMessage, headers, endpoint, additionalLogData)
         {
+            Offset = offset;
         }
 
         public new IProducerEndpoint Endpoint => (IProducerEndpoint)base.Endpoint;
+
+        public IOffset? Offset { get; internal set; }
     }
 }

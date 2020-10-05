@@ -13,7 +13,8 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
 {
     public class DefaultSequenceStoreTests
     {
-        private readonly ConsumerPipelineContext _consumerPipelineContext = ConsumerPipelineContextHelper.CreateSubstitute();
+        private readonly ConsumerPipelineContext _consumerPipelineContext =
+            ConsumerPipelineContextHelper.CreateSubstitute();
 
         [Fact]
         public void Get_ExistingSequence_SequenceReturned()
@@ -65,6 +66,20 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
 
             Action act = () => store.Add(new ChunkSequence("abc", 10, _consumerPipelineContext, store));
             act.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void AddAndGet_Sequence_IsNewFlagAutomaticallyHandled()
+        {
+            var store = new DefaultSequenceStore<ChunkSequence>();
+
+            var sequence = store.Add(new ChunkSequence("abc", 10, _consumerPipelineContext, store));
+
+            sequence.IsNew.Should().BeTrue();
+
+            sequence = store.Get("abc");
+
+            sequence!.IsNew.Should().BeFalse();
         }
 
         [Fact]

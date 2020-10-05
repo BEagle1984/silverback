@@ -14,7 +14,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
-    ///     This policy simply skips the message that failed to be processed.
+    ///     This policy skips the message that failed to be processed.
     /// </summary>
     public class SkipMessageErrorPolicy : ErrorPolicyBase
     {

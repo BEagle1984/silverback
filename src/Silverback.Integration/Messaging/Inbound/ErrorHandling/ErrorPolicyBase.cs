@@ -19,12 +19,12 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         internal int? MaxFailedAttemptsCount { get; private set; }
 
         /// <summary>
-        ///     Gets the list of exception types this policy doesn't have to be applied to.
+        ///     Gets the collection of exception types this policy doesn't have to be applied to.
         /// </summary>
         protected ICollection<Type> ExcludedExceptions { get; } = new List<Type>();
 
         /// <summary>
-        ///     Gets the list of exception types this policy have to be applied to.
+        ///     Gets the collection of exception types this policy have to be applied to.
         /// </summary>
         protected ICollection<Type> IncludedExceptions { get; } = new List<Type>();
 

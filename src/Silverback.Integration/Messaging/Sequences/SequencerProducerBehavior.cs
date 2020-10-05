@@ -44,17 +44,15 @@ namespace Silverback.Messaging.Sequences
 
             foreach (var sequenceWriter in _sequenceWriters)
             {
-                if (!sequenceWriter.MustCreateSequence(context.Envelope))
+                if (!sequenceWriter.CanHandle(context.Envelope))
                     continue;
 
-                var envelopesEnumerable = sequenceWriter.CreateSequence(context.Envelope);
+                var envelopesEnumerable = sequenceWriter.ProcessMessage(context.Envelope);
 
                 await foreach (var envelope in envelopesEnumerable.ConfigureAwait(false))
                 {
                     var newContext = new ProducerPipelineContext(envelope, context.Producer, context.ServiceProvider);
                     await next(newContext).ConfigureAwait(false);
-
-                    // TODO: Set first offset on next chunks (name returned by the writer)
                 }
 
                 return;

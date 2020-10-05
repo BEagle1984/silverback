@@ -121,11 +121,6 @@ namespace Silverback.Messaging.Broker.Behaviors
         public Task? ProcessingTask { get; internal set; }
 
         /// <summary>
-        ///     Gets a value indicating whether the current envelope contains the first message of a sequence.
-        /// </summary>
-        public bool IsSequenceNew { get; internal set; }
-
-        /// <summary>
         ///     Replaces the <see cref="IServiceProvider" /> with the one from the specified scope.
         /// </summary>
         /// <param name="newServiceScope">
@@ -143,7 +138,9 @@ namespace Silverback.Messaging.Broker.Behaviors
         public void Dispose()
         {
             _serviceScope?.Dispose();
+            _serviceScope = null;
             ProcessingTask?.Dispose();
+            ProcessingTask = null;
         }
     }
 }

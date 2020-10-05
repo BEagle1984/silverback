@@ -14,8 +14,12 @@ namespace Silverback.Messaging.Sequences
 
         public TSequence? Get(object sequenceId)
         {
-            _store.TryGetValue(sequenceId, out var result);
-            return result;
+            _store.TryGetValue(sequenceId, out var sequence);
+
+            if (sequence is Sequence sequenceImpl)
+                sequenceImpl.IsNew = false;
+
+            return sequence;
         }
 
         public TSequence Add(TSequence sequence)
@@ -24,9 +28,13 @@ namespace Silverback.Messaging.Sequences
 
             if (!_store.TryAdd(sequence.SequenceId, sequence))
             {
-                throw new InvalidOperationException("A sequence with the same SequenceId has " +
-                                                    "already been added to the store.");
+                throw new InvalidOperationException(
+                    "A sequence with the same SequenceId has " +
+                    "already been added to the store.");
             }
+
+            if (sequence is Sequence sequenceImpl)
+                sequenceImpl.IsNew = true;
 
             return sequence;
         }

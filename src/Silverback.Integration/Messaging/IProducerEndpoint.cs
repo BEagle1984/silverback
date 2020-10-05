@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Chunking;
+using Silverback.Messaging.Sequences.Chunking;
 
 namespace Silverback.Messaging
 {

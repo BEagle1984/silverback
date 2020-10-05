@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Broker
 {
